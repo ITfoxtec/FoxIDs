@@ -1,0 +1,169 @@
+﻿@page "/{tenantName}/plans"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link active">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="mr-auto">
+    </div>
+    <div class="p-2">
+        <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreatePlan())">
+            <span class="oi oi-plus" aria-hidden="true"></span> Create Plan
+        </button>
+    </div>
+</div>
+
+
+<PageEditForm @ref="planFilterForm" TModel="FilterPlanViewModel" OnValidSubmit="OnPlanFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="planFilterForm.Model.FilterName" For="@(() => planFilterForm.Model.FilterName)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @foreach (var plan in plans)
+    {
+        <li class="list-group-item @(plan.Edit ? "active" : string.Empty)">
+            @if (!plan.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @plan.Error
+                </div>
+            }
+            @if (plan.Edit)
+            {
+                <PageEditForm @ref="plan.Form" TModel="Plan" OnAfterInit="@(m => PlanViewModelAfterInit(plan, m))" OnValidSubmit="@(async (editContext) => await OnEditPlanValidSubmitAsync(plan, editContext))">
+                    <div class="modal-header">
+                        Plan
+                    </div>
+                    <div class="modal-body">
+                        @if (plan.CreateMode)
+                        {
+                            <FInputText @bind-Value="plan.Form.Model.Name" For="@(() => plan.Form.Model.Name)" Focus="true" />
+                        }
+                        else
+                        {
+                            <FFieldText @bind-Value="plan.Form.Model.Name" For="@(() => plan.Form.Model.Name)" />
+                            <input type="hidden" @bind="plan.Form.Model.Name" />
+                        }
+
+                        <FInputText @bind-Value="plan.Form.Model.Text" For="@(() => plan.Form.Model.Text)" />
+                        <FInputText @bind-Value="plan.Form.Model.Currency" For="@(() => plan.Form.Model.Currency)" />
+                        <FInputNumberD @bind-Value="plan.Form.Model.CostPerMonth" For="@(() => plan.Form.Model.CostPerMonth)" />
+                        <FInputToggle @bind-Value="plan.Form.Model.EnableCustomDomain" For="@(() => plan.Form.Model.EnableCustomDomain)" TextType="e.d" />
+                        <FInputToggle @bind-Value="plan.Form.Model.EnableKeyVault" For="@(() => plan.Form.Model.EnableKeyVault)" TextType="e.d" />
+
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.Tracks)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.Tracks.Included" For="@(() => plan.Form.Model.Tracks.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.Tracks.IsLimited" For="@(() => plan.Form.Model.Tracks.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.Tracks.FirstLevelCost" For="@(() => plan.Form.Model.Tracks.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Tracks.FirstLevelThreshold" For="@(() => plan.Form.Model.Tracks.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.Tracks.SecondLevelCost" For="@(() => plan.Form.Model.Tracks.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.Users)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.Users.Included" For="@(() => plan.Form.Model.Users.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.Users.IsLimited" For="@(() => plan.Form.Model.Users.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.Users.FirstLevelCost" For="@(() => plan.Form.Model.Users.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Users.FirstLevelThreshold" For="@(() => plan.Form.Model.Users.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.Users.SecondLevelCost" For="@(() => plan.Form.Model.Users.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.Logins)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.Logins.Included" For="@(() => plan.Form.Model.Logins.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.Logins.IsLimited" For="@(() => plan.Form.Model.Logins.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.Logins.FirstLevelCost" For="@(() => plan.Form.Model.Logins.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Logins.FirstLevelThreshold" For="@(() => plan.Form.Model.Logins.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.Logins.SecondLevelCost" For="@(() => plan.Form.Model.Logins.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.TokenRequests)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.TokenRequests.Included" For="@(() => plan.Form.Model.TokenRequests.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.TokenRequests.IsLimited" For="@(() => plan.Form.Model.TokenRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.TokenRequests.FirstLevelCost" For="@(() => plan.Form.Model.TokenRequests.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.TokenRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.TokenRequests.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.TokenRequests.SecondLevelCost" For="@(() => plan.Form.Model.TokenRequests.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.ControlApiGetRequests)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiGetRequests.Included" For="@(() => plan.Form.Model.ControlApiGetRequests.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.ControlApiGetRequests.IsLimited" For="@(() => plan.Form.Model.ControlApiGetRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiGetRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.ControlApiUpdateRequests)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiUpdateRequests.Included" For="@(() => plan.Form.Model.ControlApiUpdateRequests.Included)" />
+                                <FInputToggle @bind-Value="plan.Form.Model.ControlApiUpdateRequests.IsLimited" For="@(() => plan.Form.Model.ControlApiUpdateRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost)" />
+                            </li>
+                        </ul>
+
+                        <FInputText @bind-Value="plan.Form.Model.ApplicationInsightsConnectionString" For="@(() => plan.Form.Model.ApplicationInsightsConnectionString)" />
+                        <FInputText @bind-Value="plan.Form.Model.LogAnalyticsWorkspaceId" For="@(() => plan.Form.Model.LogAnalyticsWorkspaceId)" />
+                    </div>
+                    @if (!plan.CreateMode && plan.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete Plan "@plan.Name", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeletePlanAsync(plan))">Yes delete plan</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => plan.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!plan.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => plan.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        <button type="submit" class="btn btn-primary">@(plan.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => PlanCancel(plan))">@(@plan.CreateMode ? "Cancel" : "Close")</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdatePlanAsync(plan))">
+                    @PlanInfoText(plan)
+                </button>
+            }
+        </li>
+    }
+</ul>

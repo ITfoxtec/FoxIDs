@@ -3,7 +3,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -12,21 +11,20 @@ namespace FoxIDs.Logic
     public class DownPartyCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public DownPartyCacheLogic(Settings settings, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
         }
 
         public async Task InvalidateDownPartyCacheAsync(Party.IdKey idKey)
         {
             var key = RadisDownPartyNameKey(idKey);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         public async Task InvalidateDownPartyCacheAsync(string downPartyName, string tenantName = null, string trackName = null)
@@ -37,9 +35,8 @@ namespace FoxIDs.Logic
         public async Task<DownParty> GetDownPartyAsync(Party.IdKey idKey, bool required = true)
         {
             var key = RadisDownPartyNameKey(idKey);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var downPartyAsString = (string)await db.StringGetAsync(key);
+            var downPartyAsString = await cacheProvider.GetAsync(key);
             if (!downPartyAsString.IsNullOrEmpty())
             {
                 return downPartyAsString.ToObject<DownParty>();
@@ -48,7 +45,7 @@ namespace FoxIDs.Logic
             var downParty = await tenantRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
             if (downParty != null)
             {
-                await db.StringSetAsync(key, downParty.ToJson(), TimeSpan.FromSeconds(settings.Cache.DownPartyLifetime));
+                await cacheProvider.SetAsync(key, downParty.ToJson(), settings.Cache.DownPartyLifetime);
             }
             return downParty;
         }
@@ -70,7 +67,7 @@ namespace FoxIDs.Logic
                 var routeBinding = RouteBinding;
                 if (routeBinding == null)
                 {
-                    throw new InvalidOperationException("RouteBinding is null in down-party cache.");
+                    throw new InvalidOperationException("RouteBinding is null in application registration cache.");
                 }
                 tenantName = routeBinding.TenantName;
                 trackName = routeBinding.TrackName;

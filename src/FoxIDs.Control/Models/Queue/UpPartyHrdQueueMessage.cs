@@ -13,6 +13,11 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "n")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "dn")]
+        public string DisplayName { get; set; }
+
         [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "i")]
         public List<string> Issuers { get; set; }

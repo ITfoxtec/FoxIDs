@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
-            logger.ScopeTrace(() => "Up, SAML Logout request.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Logout request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -69,12 +69,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, SAML Logout request.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             if (samlUpSequenceData.RequireLogoutConsent)
@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
             {
                 if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
                 {
-                    throw new Exception("Requested session ID do not match up-party session ID.");
+                    throw new Exception("Requested session ID do not match authentication method session ID.");
                 }
             }
             catch (Exception ex)
@@ -163,7 +163,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2LogoutRequest);
             logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
-            logger.ScopeTrace(() => "Up, SAML Logout request.", triggerEvent: true);
+            logger.ScopeTrace(() => "AuthMethod, SAML Logout request.", triggerEvent: true);
 
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(samlUpSequenceData.SessionId);
@@ -186,7 +186,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
         {
-            logger.ScopeTrace(() => $"Up, SAML Logout response.");
+            logger.ScopeTrace(() => $"AuthMethod, SAML Logout response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
@@ -217,7 +217,7 @@ namespace FoxIDs.Logic
             {
                 logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.SetScopeProperty(Constants.Logs.Status, saml2LogoutResponse.Status.ToString());
-                logger.ScopeTrace(() => "Up, SAML Logout response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AuthMethod, SAML Logout response.", triggerEvent: true);
 
                 if (saml2LogoutResponse.Status != Saml2StatusCodes.Success)
                 {
@@ -227,7 +227,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2LogoutResponse);
-                    logger.ScopeTrace(() => "Up, Successful SAML Logout response.", triggerEvent: true);
+                    logger.ScopeTrace(() => "AuthMethod, Successful SAML Logout response.", triggerEvent: true);
 
                 }
                 catch (Exception ex)
@@ -279,7 +279,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             if (!sequenceData.ExternalInitiatedSingleLogout)
             {
@@ -295,7 +295,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -337,7 +337,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutRequestAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
         {
-            logger.ScopeTrace(() => "Up, SAML Single Logout request.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
@@ -364,12 +364,12 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => "Up, SAML Single Logout request.", triggerEvent: true);
+                logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request.", triggerEvent: true);
 
                 try
                 {
                     samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2LogoutRequest);
-                    logger.ScopeTrace(() => "Up, Successful SAML Single Logout request.", triggerEvent: true);
+                    logger.ScopeTrace(() => "AuthMethod, Successful SAML Single Logout request.", triggerEvent: true);
 
                 }
                 catch (Exception ex)
@@ -437,12 +437,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutRequestJumpAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, SAML Single Logout request jump.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request jump.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
@@ -464,7 +464,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> SingleLogoutResponseAsync(SamlUpParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
-            logger.ScopeTrace(() => $"Down, SAML Single Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
+            logger.ScopeTrace(() => $"AppReg, SAML Single Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
             var binding = party.LogoutBinding.ResponseBinding;
             logger.ScopeTrace(() => $"Binding '{binding}'");
@@ -494,7 +494,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2LogoutResponse);
             logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Single logged out response URL '{singleLogoutResponseUrl}'.");
-            logger.ScopeTrace(() => "Down, SAML Single Logout response.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, SAML Single Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
             securityHeaderLogic.AddFormActionAllowAll();

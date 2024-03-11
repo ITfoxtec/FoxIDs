@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
 
         public async Task<OidcDiscovery> OpenidConfiguration(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OpenID configuration request.");
+            logger.ScopeTrace(() => "AppReg, OpenID configuration request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<TParty>(partyId) : null;
 
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
 
         public JsonWebKeySet Keys(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OpenID configuration keys request.");
+            logger.ScopeTrace(() => "AppReg, OpenID configuration keys request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };

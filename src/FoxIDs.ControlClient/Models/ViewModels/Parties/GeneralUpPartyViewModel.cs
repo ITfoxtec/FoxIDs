@@ -12,8 +12,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralUpPartyViewModel(UpParty upParty)
         {
             Name = upParty.Name;
+            DisplayName = upParty.DisplayName;
             Type = upParty.Type;
         }
+
+        public bool TokenExchange { get; set; }
 
         public bool Edit { get; set; }
 

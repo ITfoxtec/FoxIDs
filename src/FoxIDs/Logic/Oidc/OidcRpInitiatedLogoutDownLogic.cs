@@ -41,12 +41,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, End session request.");
+            logger.ScopeTrace(() => "AppReg, End session request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException("Party Client not configured.");
+                throw new NotSupportedException("Application Client not configured.");
             }
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
-            logger.ScopeTrace(() => "Down, OIDC End session request accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC End session request accepted.", triggerEvent: true);
 
             if (!rpInitiatedLogoutRequest.UiLocales.IsNullOrWhiteSpace())
             {
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             });
 
             var toUpParty = await GetToUpPartyAsync(idTokenClaims);
-            logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+            logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
             switch (toUpParty.Type)
             {
                 case PartyTypes.Login:
@@ -121,14 +121,14 @@ namespace FoxIDs.Logic
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
-                        throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up-party.") { RouteBinding = RouteBinding };
+                        throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 authentication method.") { RouteBinding = RouteBinding };
                     }
                     return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, sessionId));
                 case PartyTypes.TrackLink:
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
 
                 default:
-                    throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                    throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
             }
         }
 
@@ -146,8 +146,8 @@ namespace FoxIDs.Logic
 
         private UpPartyLink GetUpPartyFromIdToken(IEnumerable<Claim> idTokenClaims)
         {
-            var upPartyName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
-            var upPartyTypeValue = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
+            var upPartyName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethod) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
+            var upPartyTypeValue = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethodType) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
             if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
             {
                 return new UpPartyLink { Name = upPartyName, Type = upPartyType };
@@ -197,8 +197,8 @@ namespace FoxIDs.Logic
             rpInitiatedLogoutRequest.Validate();
 
             if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
-                !client.RedirectUris.Any(u => u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
-                !rpInitiatedLogoutRequest.PostLogoutRedirectUri.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
+                !client.RedirectUris.Any(u => client.DisableAbsoluteUris ? rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
+                !(client.DisableAbsoluteUris ? rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(client.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true : client.PostLogoutRedirectUri?.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true))
             {
                 throw new OAuthRequestException($"Invalid post logout redirect URI '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
             }
@@ -206,7 +206,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, End session response.");
+            logger.ScopeTrace(() => "AppReg, End session response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
@@ -220,7 +220,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
-            logger.ScopeTrace(() => "Down, OIDC End session response.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
             if (sequenceData.RestrictFormAction)

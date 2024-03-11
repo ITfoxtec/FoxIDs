@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get all track log stream settings.
+        /// Get all environment log stream settings.
         /// </summary>
         /// <returns>All log stream settings.</returns>
         [ProducesResponseType(typeof(Api.LogStreams), StatusCodes.Status200OK)]
@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)}", RouteBinding.TrackName);
                 }
                 throw;
@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Save all track log stream settings.
+        /// Save all environment log stream settings.
         /// </summary>
         /// <param name="logStreams">All log stream settings.</param>
         /// <returns>All log stream settings.</returns>
@@ -91,7 +91,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)}", RouteBinding.TrackName);
                 }
                 throw;

@@ -1,0 +1,190 @@
+﻿@page "/{tenantName}/texts"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Texts</a>
+    </li>
+    @if (IsMasterTenant)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@plansHref">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        The texts are used in the FoxIDs login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
+    </div>
+    <div class="py-2">
+        <button class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+            Text settings
+        </button>
+    </div>
+</div>
+
+<PageEditForm @ref="resourceFilterForm" TModel="FilterResourceViewModel" OnValidSubmit="OnResourceFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="resourceFilterForm.Model.FilterName" For="@(() => resourceFilterForm.Model.FilterName)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @foreach (var resource in resources)
+    {
+        <li class="list-group-item @(resource.Edit ? "active" : string.Empty)">
+            @if (!resource.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @resource.Error
+                </div>
+            }
+            @if (resource.Edit)
+            {
+                <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
+                    <div class="modal-header">
+                        Resource @(!resource.Form.Model.Name.IsNullOrEmpty() ? $"(ID: {resource.Form.Model.Id})" : "")
+                    </div>
+                    <div class="modal-body">
+                        @if (!resource.Form.Model.Name.IsNullOrEmpty())
+                        {
+                            <FFieldText @bind-Value="resource.Form.Model.Name" For="@(() => resource.Form.Model.Name)" />
+                            <div class="form-group active-group active">
+                                <Label For="@(() => resource.Form.Model.Items)" class="label-control" />
+                                <div class="card">
+                                    <div class="card-body">
+                                        @foreach (var item in resource.Form.Model.Items)
+                                        {
+                                            var includeLabel = resource.Form.Model.Items.IndexOf(item) <= 0;
+                                            <div class="row">
+                                                <div class="col-3 col-lg-2">
+                                                    @if (includeLabel)
+                                                    {
+                                                        <div class="active-group active pb-0 mb-0">
+                                                            <input type="text" @bind="@item.Culture" class="form-control input-control" />
+                                                            <Label For="@(() => item.Culture)" class="label-control" />
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" @bind="@item.Culture" class="form-control input-control" />
+                                                    }
+                                                    <ValidationMessage For="@(() => item.Culture)" />
+                                                </div>
+                                                <div class="col-8 col-lg-9">
+                                                    @if (includeLabel)
+                                                    {
+                                                        <div class="active-group active pb-0 mb-0">
+                                                            <input type="text" @bind="@item.Value" class="form-control input-control" />
+                                                            <Label For="@(() => item.Value)" class="label-control" />
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" @bind="@item.Value" class="form-control input-control" />
+                                                    }
+                                                    <ValidationMessage For="@(() => item.Value)" />
+                                                </div>
+                                                <div class="col-1 p-0">
+                                                    @if (includeLabel)
+                                                    {
+                                                        <div class="active-group active pb-0 mb-0">
+                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceItem(e, resource.Form.Model.Items, item))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceItem(e, resource.Form.Model.Items, item))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <ValidationMessage For="@(() => resource.Form.Model.Items)" />
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddResourceItem(e, resource.Form.Model.Items))"><span class="oi oi-plus" aria-hidden="true"></span> Add text</button>
+                            </div>
+
+                        }
+                    </div>
+                    @if (!resource.CreateMode && resource.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete texts for "@resource.Name", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteResourceAsync(resource))">Yes delete texts</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => resource.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!resource.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => resource.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        <button type="submit" class="btn btn-primary">@(resource.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => ResourceCancel(resource))">Cancel</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
+                    @resource.Name
+                </button><br />
+                <span>ID: @resource.Id</span>
+            }
+        </li>
+    }
+</ul>
+
+<Modal @ref="textSettingsModal" Title="Text Settings">
+    <div class="info-text">
+        Each text element in FoxIDs has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text, making it possible to search the text elements by ID.
+    </div>
+
+    @if (!generalTextSettings.Error.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @generalTextSettings.Error
+        </div>
+    }
+    <PageEditForm @ref="generalTextSettings.Form" TModel="Api.ResourceSettings" OnValidSubmit="OnUpdateTextSettingsValidSubmitAsync">
+        @if (generalTextSettings.Form?.Model != null)
+        {
+            <div class="modal-header">
+                Text settings
+            </div>
+            <div class="modal-body">
+                <FInputToggle @bind-Value="generalTextSettings.Form.Model.ShowResourceId" For="@(() => generalTextSettings.Form.Model.ShowResourceId)" TextType="e.d" />
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => { generalTextSettings.Edit = false; textSettingsModal.Hide(); })">Cancel</button>
+            </div>
+        }
+    </PageEditForm>
+</Modal>
+

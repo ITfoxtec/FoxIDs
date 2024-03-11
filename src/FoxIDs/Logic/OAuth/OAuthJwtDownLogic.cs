@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
 
             accessTokenClaims.AddClaim(JwtClaimTypes.ClientId, client.ClientId);
 
-            logger.ScopeTrace(() => $"Down, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Party client JWT not valid. Client id '{client.ClientId}', Route '{RouteBinding.Route}'.");
+                logger.Error(ex, $"Application client JWT not valid. Client id '{client.ClientId}', Route '{RouteBinding.Route}'.");
                 return null;
             }
         }

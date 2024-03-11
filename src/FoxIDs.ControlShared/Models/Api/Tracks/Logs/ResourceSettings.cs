@@ -3,7 +3,7 @@
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Resource settings in track.
+    /// Resource settings in environment.
     /// </summary>
     public class ResourceSettings
     {

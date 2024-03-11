@@ -61,6 +61,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
                 {
                     afterMap.IsManual = true;
@@ -74,8 +79,6 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.AutomaticStopped = false;
                 }
-
-                afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
 
                 if (samlUpParty.AuthnContextComparison.HasValue)
                 {
@@ -111,6 +114,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlUpParty.CreateMode)
             {
+                if (samlUpParty.TokenExchange)
+                {
+                    model.DisableUserAuthenticationTrust = true;
+                }
                 model.Claims = new List<string> { "*" };
             }
         }
@@ -262,8 +269,6 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
-                    afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
-
                     if (generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
                     {
                         afterMap.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());
@@ -294,15 +299,17 @@ namespace FoxIDs.Client.Pages.Components
                     var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     generalSamlUpParty.CreateMode = false;
-                    toastService.ShowSuccess("SAML 2.0 up-party created.");
+                    toastService.ShowSuccess("SAML 2.0 application created.");
+                    generalSamlUpParty.Name = samlUpPartyResult.Name;
+                    generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
                 }
                 else
                 {
                     var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
-                    toastService.ShowSuccess("SAML 2.0 up-party updated.");
-                }
-                generalSamlUpParty.Name = generalSamlUpParty.Form.Model.Name;
+                    toastService.ShowSuccess("SAML 2.0 application updated.");
+                    generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
+                }                
             }
             catch (FoxIDsApiException ex)
             {

@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using FoxIDs.Models.Config;
-using StackExchange.Redis;
 using Azure.Core;
 using Azure.Security.KeyVault.Certificates;
 using FoxIDs.Logic;
@@ -22,15 +21,15 @@ namespace FoxIDs.Infrastructure.Hosting
         private readonly FoxIDsSettings settings;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly TokenCredential tokenCredential;
 
-        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, trackCacheLogic)
+        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IDistributedCacheProvider cacheProvider, TokenCredential tokenCredential) : base(next, trackCacheLogic)
         {
             this.settings = settings;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tokenCredential = tokenCredential;
         }
 
@@ -163,7 +162,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 var partyNameBindingMatch = partyNameBindingRegex.Match(partyNameAndBinding);
                 if (!partyNameBindingMatch.Success)
                 {
-                    throw new ArgumentException($"Invalid party name and binding match. PartyNameAndBinding '{partyNameAndBinding}'");
+                    throw new ArgumentException($"Invalid connection name and binding match. PartyNameAndBinding '{partyNameAndBinding}'");
                 }
 
                 if (partyNameBindingMatch.Groups["upparty"].Success)
@@ -189,7 +188,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    throw new ArgumentException($"Invalid party name and binding group match. PartyNameAndBinding '{partyNameAndBinding}'");
+                    throw new ArgumentException($"Invalid connection name and binding group match. PartyNameAndBinding '{partyNameAndBinding}'");
                 }
             }
 
@@ -240,7 +239,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', track '{trackIdKey.TrackName}' and up-party '{upPartyGroup.Value}' combination.", ex);
+                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', environment '{trackIdKey.TrackName}' and authentication method '{upPartyGroup.Value}' combination.", ex);
             }
         }
 
@@ -252,7 +251,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', track '{trackIdKey.TrackName}' and down-party '{downPartyGroup.Value}' combination.", ex);
+                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', environment '{trackIdKey.TrackName}' and application registration '{downPartyGroup.Value}' combination.", ex);
             }
         }
 
@@ -260,7 +259,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             if (toUpPartyGroup.Captures.Count > Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax)
             {
-                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to up-party for down-party '{downPartyId}'.");
+                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to authentication method for application registration '{downPartyId}'.");
             }
 
             var toUpParties = new List<UpPartyLink>();
@@ -286,7 +285,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         try
                         {
-                            throw new ArgumentException($"Up-party name '{upPartyCapture.Value}' not allowed for down-party '{downPartyId}',");
+                            throw new ArgumentException($"Authentication method name '{upPartyCapture.Value}' not allowed for application registration '{downPartyId}',");
                         }
                         catch (Exception ex)
                         {
@@ -302,9 +301,8 @@ namespace FoxIDs.Infrastructure.Hosting
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
             var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var trackKeyExternalValue = (string)await db.StringGetAsync(key);
+            var trackKeyExternalValue = await cacheProvider.GetAsync(key);
             if (!trackKeyExternalValue.IsNullOrEmpty())
             {
                 return trackKeyExternalValue.ToObject<TrackKeyExternal>();
@@ -313,7 +311,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var trackKeyExternal = await LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
             if (trackKeyExternal != null)
             {
-                await db.StringSetAsync(key, trackKeyExternal.ToJson(), TimeSpan.FromSeconds(track.KeyExternalCacheLifetime));
+                await cacheProvider.SetAsync(key, trackKeyExternal.ToJson(), track.KeyExternalCacheLifetime);
             }
             return trackKeyExternal;
         }

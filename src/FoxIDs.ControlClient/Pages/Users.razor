@@ -2,15 +2,17 @@
 @inherits PageBase
 
 <div class="d-flex">
-    <div class="mr-auto p-2">
+    <div class="info-text mr-auto pt-0">
+        The user store in the environment where you can add more <DocsLink Page="users">users</DocsLink>.
+        <br />
+        More about: <DocsLink Page="login">Login and MFA</DocsLink>
     </div>
-    <div class="p-2">
+    <div class="pb-2">
         <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateUser())">
             <span class="oi oi-plus" aria-hidden="true"></span> Create User
         </button>
     </div>
 </div>
-
 
 <PageEditForm @ref="userFilterForm" TModel="FilterUserViewModel" OnValidSubmit="OnUserFilterValidSubmitAsync">
     <FInputTextFilter @bind-Value="userFilterForm.Model.FilterEmail" For="@(() => userFilterForm.Model.FilterEmail)" />

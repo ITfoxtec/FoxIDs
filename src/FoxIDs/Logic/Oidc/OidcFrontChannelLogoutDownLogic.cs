@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
         {
-            logger.ScopeTrace(() => "Down, OIDC Front Channel logout request.");
+            logger.ScopeTrace(() => "AppReg, OIDC Front Channel logout request.");
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
                 Issuer = trackIssuerLogic.GetIssuer(),
@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
                     var party = await tenantRepository.GetAsync<TParty>(partyId);
                     if (party.Client == null)
                     {
-                        throw new NotSupportedException("Party Client not configured.");
+                        throw new NotSupportedException("Application Client not configured.");
                     }
                     if (party.Client.FrontChannelLogoutUri.IsNullOrWhiteSpace())
                     {
@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    logger.Warning(ex, $"Unable to get front channel logout for party ID '{partyId}'.");
+                    logger.Warning(ex, $"Unable to get front channel logout for application ID '{partyId}'.");
                 }
             }
 

@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace()));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, audience: audience, validateIssuer: !issuer.IsNullOrWhiteSpace(), validateAudience: !audience.IsNullOrWhiteSpace()));
                 return claimsPrincipal;
             }
             catch (Exception ex)
@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
                 new Claim(JwtClaimTypes.JwtId, Guid.NewGuid().ToString())
             };
 
-            logger.ScopeTrace(() => $"Up, JWT client assertion claims '{clientAssertionClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, JWT client assertion claims '{clientAssertionClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var claims = clientAssertionClaims.Where(c => c.Type != JwtClaimTypes.Issuer && c.Type != JwtClaimTypes.Audience);
             var token = JwtHandler.CreateToken(clientKeySecretLogic.GetClientKey(client), clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Issuer).Value, clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Audience).Value, 
                 claims, expiresIn: client.ClientAssertionLifetime, algorithm: algorithm);

@@ -18,21 +18,21 @@
         switch (type)
         {
             case UsageLogTypes.Tenant:
-                return "Tenants";
+                return UsageLogIncludeTypes.Tenants;
             case UsageLogTypes.Track:
-                return "Tracks";
+                return UsageLogIncludeTypes.Tracks;
             case UsageLogTypes.KeyVaultManagedCertificate:
-                return "Key Vault managed certificates";
+                return UsageLogIncludeTypes.KeyVaultManagedCertificate;
             case UsageLogTypes.User:
-                return "Users";
+                return UsageLogIncludeTypes.Users;
             case UsageLogTypes.Login:
-                return "Logins";
+                return UsageLogIncludeTypes.Logins;
             case UsageLogTypes.TokenRequest:
-                return "Token requests";
+                return UsageLogIncludeTypes.TokenRequests;
             case UsageLogTypes.ControlApiGet:
-                return "Control API gets";
+                return UsageLogIncludeTypes.ControlApiGets;
             case UsageLogTypes.ControlApiUpdate:
-                return "Control API updates";
+                return UsageLogIncludeTypes.ControlApiUpdates;
             default:
                 throw new NotImplementedException();
         }

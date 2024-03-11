@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track key type.
+        /// Get environment key type.
         /// </summary>
         /// <returns>Track keys.</returns>
         [ProducesResponseType(typeof(Api.TrackKeyItemsContained), StatusCodes.Status200OK)]
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKey).Name}' type by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKey).Name}' type by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKey).Name, RouteBinding.TrackName);
                 }
                 throw;
@@ -63,7 +63,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track key type.
+        /// Update environment key type.
         /// </summary>
         /// <param name="trackKey">Track key.</param>
         /// <returns>Track keys.</returns>
@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKey).Name}' type by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKey).Name}' type by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKey).Name, RouteBinding.TrackName);
                 }
                 throw;

@@ -20,7 +20,7 @@ namespace FoxIDs.Client.Pages
     public partial class Tenants : IDisposable 
     {
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
-        private List<GeneralTenantViewModel> tenants = new List<GeneralTenantViewModel>();
+        private List<GeneralTenantViewModel> tenants;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -87,14 +87,15 @@ namespace FoxIDs.Client.Pages
 
         private void SetGeneralTenants(IEnumerable<Tenant> dataTenans)
         {
-            tenants.Clear();
+            var tes = new List<GeneralTenantViewModel>();
             foreach (var dp in dataTenans)
             {
-                tenants.Add(new GeneralTenantViewModel(dp) 
+                tes.Add(new GeneralTenantViewModel(dp) 
                 {
                     LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{dp.Name}".ToLower()
                 });
             }
+            tenants = tes;
         }
 
         private async Task ShowUpdateTenantAsync(GeneralTenantViewModel generalTenant)

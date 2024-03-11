@@ -34,6 +34,7 @@ namespace FoxIDs.Logic
                     try
                     {
                         var upParty = await upPartyCacheLogic.GetUpPartyAsync(upPartyLink.Name);
+                        upPartyLink.DisplayName = upParty.DisplayName;
                         upPartyLink.Type = upParty.Type;
                         upPartyLink.Issuers = upParty.ReadIssuers;
                         upPartyLink.SpIssuer = upParty.SpIssuer;
@@ -49,7 +50,7 @@ namespace FoxIDs.Logic
                         if (ex.StatusCode == HttpStatusCode.NotFound)
                         {
                             isValid = false;
-                            var errorMessage = $"Allow up-party '{upPartyLink.Name}' not found.";
+                            var errorMessage = $"Allow authentication method '{upPartyLink.Name}' not found.";
                             logger.Warning(ex, errorMessage);
                             modelState.TryAddModelError(propertyName.ToCamelCase(), errorMessage);
                         }

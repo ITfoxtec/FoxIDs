@@ -436,7 +436,7 @@ namespace FoxIDs
                 public const int HrdDomainMin = 0;
                 public const int HrdDomainMax = 5;
                 public const int HrdDomainLength = 100;
-                public const int HrdDisplayNameLength = 30;
+                public const int HrdDisplayNameLength = 100;
                 public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
                 public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
                 public const int HrdLogoUrlLength = 500;

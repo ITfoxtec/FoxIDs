@@ -232,9 +232,12 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && 
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
                     c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType && 
                     c.Type != Constants.JwtClaimTypes.IssuerWildcard).ToList();
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
                 if (tokenIssuers?.Count() > 0)

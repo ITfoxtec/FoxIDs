@@ -90,8 +90,8 @@ namespace FoxIDs.Client.Shared
             {
                 await LoadAndSelectTracAsync();
                 myProfileClaims = user.Claims;
-                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpPartyType && c.Value == Constants.DefaultLogin.Name).Any() &&
-                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpParty && c.Value == Constants.DefaultLogin.Name).Any() &&
+                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethodType && c.Value == Constants.DefaultLogin.Name).Any() &&
+                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethod && c.Value == Constants.DefaultLogin.Name).Any() &&
                     user.Claims.Where(c => c.Type == JwtClaimTypes.Email).Any())
                 {
                     myProfileMasterMasterLogin = true;

@@ -256,7 +256,11 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
-                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex &&
+                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
+                    c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+                claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+                claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
 
@@ -479,7 +483,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"AuthMethod, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+            claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
             claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
 

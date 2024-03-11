@@ -197,8 +197,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, OAuth token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"AuthMethod, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
+            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
+                c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
                 c.Type != Constants.JwtClaimTypes.IssuerWildcard).ToList();
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
             if (!tokenIssuer.IsNullOrEmpty())

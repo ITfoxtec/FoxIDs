@@ -7,7 +7,7 @@ FoxIDs environments in the same tenant can be connected with environment links. 
 Environment links is fast and secure but can only be used in the same tenant. A link based on [OpenID Connect connection](howto-oidc-foxids.md) is required if you need to jump between environments located in different tenants.
 
 > Take a look at the sample environment links configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then e.g., take a look at the `nemlogin` and `- (dash is production)` environments.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then e.g., take a look at the `nemlogin` and `Production` environments.
 
 Environment links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting authentication methods and application registrations.
 

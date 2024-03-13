@@ -51,11 +51,11 @@
                             <div class="modal-footer">
                                 @if (tenant.Name != Constants.Routes.MasterTenantName)
                                 {
-                                    <a class="btn btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                                    <a class="btn btn-link @(tenantWorking ? "disabled" : "")" href="@tenant.LoginUri" target="_blank">Open tenant</a>
                                 }
-                                <button type="button" class="btn btn-link" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                                <button type="button" class="btn btn-secondary" @onclick="@(() => tenant.Edit = false)">Close</button>
+                                <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
+                                <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
+                                <button type="button" class="btn btn-secondary @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.Edit = false)">Close</button>
                             </div>
                         </PageEditForm>
                     }

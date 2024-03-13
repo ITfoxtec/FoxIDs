@@ -66,8 +66,7 @@
                         </button>
                         @if (tenant.Name != Constants.Routes.MasterTenantName)
                         {
-                            <span> - </span>
-                            <a class="btn btn-sm btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                            <a class="btn btn-sm btn-outline-dark" href="@tenant.LoginUri" target="_blank">Open tenant</a>
                         }
                     }
                 </li>

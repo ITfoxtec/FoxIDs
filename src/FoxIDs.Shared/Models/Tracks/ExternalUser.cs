@@ -14,7 +14,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"ext:{idKey.TenantName}:{idKey.TrackName}:{idKey.UpPartyName}:{idKey.LinkClaimHash}";
+            return $"{Constants.Models.DataType.ExternalUser}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UpPartyName}:{idKey.LinkClaimHash}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string upPartyName, string LinkClaimHash)
@@ -49,6 +49,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [JsonProperty(PropertyName = "link_claim")]
         public string LinkClaim { get; set; }
+
+        [JsonProperty(PropertyName = "disable_account")]
+        public bool DisableAccount { get; set; }
 
         [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]

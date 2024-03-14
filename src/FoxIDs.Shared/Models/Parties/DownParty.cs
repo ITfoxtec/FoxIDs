@@ -16,7 +16,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"party:down:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
+            return $"{Constants.Models.DataType.DownParty}:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)

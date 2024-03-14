@@ -1,0 +1,113 @@
+﻿@page "/{tenantName}/externalusers"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@usersHref">Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">External Users</a>
+    </li>
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        The <DocsLink Page="external-users">external users</DocsLink> are stored in the environment per authentication method and connected to a external identity with a link claim.
+    </div>
+    <div class="py-2">
+        <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateExternalUser())">
+            <span class="oi oi-plus" aria-hidden="true"></span> Create External User
+        </button>
+    </div>
+</div>
+
+<PageEditForm @ref="externalUserFilterForm" TModel="FilterExternalUserViewModel" OnValidSubmit="OnExternalUserFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="externalUserFilterForm.Model.FilterValue" For="@(() => externalUserFilterForm.Model.FilterValue)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @foreach (var externalUser in externalUsers)
+    {
+        <li class="list-group-item @(externalUser.Edit ? "active" : string.Empty)">
+            @if (!externalUser.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @externalUser.Error
+                </div>
+            }
+            @if (externalUser.Edit)
+            {
+                <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(m => ExternalUserViewModelAfterInit(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
+                    <div class="modal-header">
+                        ExternalUser
+                    </div>
+                    <div class="modal-body">
+                        @if (externalUser.CreateMode)
+                        {
+                            <FInputText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" Focus="true" />
+                        }
+                        else
+                        {
+                            <FFieldText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
+                            <FFieldText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" />
+                            <FFieldText @bind-Value="externalUser.Form.Model.UserId" For="@(() => externalUser.Form.Model.UserId)" />
+                        }
+                        <FInputToggle @bind-Value="externalUser.Form.Model.DisableAccount" For="@(() => externalUser.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
+
+                        <div class="form-group active-group active">
+                            <Label For="@(() => externalUser.Form.Model.Claims)" class="label-control" />
+                            <ul class="list-group">
+                                @foreach (var claimAndValues in externalUser.Form.Model.Claims)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
+                                                <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" />
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveClaim(e, externalUser.Form.Model.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => externalUser.Form.Model.Claims)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddClaim(e, externalUser.Form.Model.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                        </div>
+                    </div>
+                    @if (!externalUser.CreateMode && externalUser.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete external user "@externalUser.LinkClaim (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteExternalUserAsync(externalUser))">Yes delete externalUser</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => externalUser.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!externalUser.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => externalUser.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        <button type="submit" class="btn btn-primary">@(externalUser.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => ExternalUserCancel(externalUser))">@(@externalUser.CreateMode ? "Cancel" : "Close")</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
+                    @externalUser.LinkClaim (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                </button>
+            }
+        </li>
+    }
+</ul>

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class CreateExternalUser : IValidatableObject
+    public class LinkExternalUser : IValidatableObject
     {
         /// <summary>
         /// Automatic creation / provisioning of users

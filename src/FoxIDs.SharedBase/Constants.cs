@@ -122,6 +122,21 @@ namespace FoxIDs
             public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
+            public static class DataType
+            {
+                public const string Tenant = "tenant";
+                public const string Track = "track";
+                public const string UpParty = "party:up";
+                public const string DownParty = "party:down";
+                public const string User = "user";
+                public const string UserControlProfile = "ucp";                
+                public const string ExternalUser = "ext";
+                public const string AuthCodeTtlGrant = "acgrant";
+                public const string RefreshTokenGrant = "rtgrant";
+                public const string RiskPassword = "prisk";
+                public const string Plan = "plan";
+            }
+
             public static class Master
             {
                 public const int IdLength = 10;

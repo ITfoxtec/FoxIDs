@@ -149,6 +149,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<CreateUser, Api.CreateUser>()
                 .ReverseMap();
 
+            CreateMap<CreateExternalUser, Api.CreateExternalUser>()
+                .ReverseMap();
+
             CreateMap<OAuthUpParty, Api.OAuthUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))

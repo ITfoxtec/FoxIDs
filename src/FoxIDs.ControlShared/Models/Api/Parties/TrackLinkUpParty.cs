@@ -94,6 +94,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [ValidateComplexType]
+        public CreateExternalUser CreateExternalUser { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

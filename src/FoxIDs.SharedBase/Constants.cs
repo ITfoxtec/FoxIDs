@@ -277,7 +277,16 @@ namespace FoxIDs
 
             public static class UserControlProfile
             {
+                public const int IdLength = 170;
+                public const string IdRegExPattern = @"^[\w:\-.+@]*$";
                 public const int UserHashIdLength = 50;
+            }
+            
+            public static class ExternalUser
+            {
+                public const int IdLength = 220;
+                public const string IdRegExPattern = @"^[\w:\-.+@]*$";
+                public const int LinkClaimHashLength = 50;
             }
 
             public static class DynamicElements

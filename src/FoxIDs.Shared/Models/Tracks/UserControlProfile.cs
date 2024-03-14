@@ -31,8 +31,8 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(Constants.Models.User.IdLength)]
-        [RegularExpression(Constants.Models.User.IdRegExPattern)]
+        [MaxLength(Constants.Models.UserControlProfile.IdLength)]
+        [RegularExpression(Constants.Models.UserControlProfile.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 

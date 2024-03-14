@@ -82,9 +82,9 @@
             <div class="modal-footer px-0">
                 @if (!IsMasterTrack)
                 {
-                    <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete environment</button>
+                    <button type="button" class="btn btn-link @(trackWorking ? "disabled" : "")" @onclick="@(() => deleteTrackAcknowledge = true)">Delete environment</button>
                 }
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary @(trackWorking ? "disabled" : "")">Update</button>
             </div>
         }
     </PageEditForm>

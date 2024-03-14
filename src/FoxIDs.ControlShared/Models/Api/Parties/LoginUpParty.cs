@@ -133,6 +133,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [ValidateComplexType]
         public CreateUser CreateUser { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

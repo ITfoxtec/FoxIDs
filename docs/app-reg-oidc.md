@@ -129,3 +129,11 @@ The scopes can be configured in the client configuration tab. It is possible to 
 A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 
 ![Default scopes](images/configure-default-scope-claims.png)
+
+## Token lifetime
+
+The token lifetime is configured for the ID token, access token and refresh token.
+
+![Token lifetime](images/configure-oidc-lifetime.png)
+
+In this example each refresh token is valid for 36,000 seconds. The application can continue to refresh the session with refresh tokens until the absolute lifetime of 86,400 seconds is reached.

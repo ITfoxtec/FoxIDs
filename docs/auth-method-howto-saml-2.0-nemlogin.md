@@ -88,7 +88,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
     - `https://data.gov.dk/model/core/eid/lastName`
     - `https://data.gov.dk/model/core/eid/professional/cvr`
     - `https://data.gov.dk/model/core/eid/professional/orgName`
-    - `https://data.gov.dk/model/core/eid/professional/rid`
+    - `https://data.gov.dk/model/core/eid/professional/uuid/persistent`
     - `https://data.gov.dk/model/core/specVersion`
     - optionally include the privilege claim, see step 3)
 

@@ -27,6 +27,7 @@ namespace FoxIDs.Client.Pages.Settings
         private bool deleteTenantAcknowledge = false;
         private string savedCustomDomain;
         private Modal tenantDeletedModal;
+        private bool tenantWorking;
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -92,6 +93,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                tenantWorking = false;
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
                 var myTenant = await MyTenantService.GetTenantAsync();
@@ -113,15 +115,22 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                if (tenantWorking)
+                {
+                    return;
+                }
+                tenantWorking = true;
                 var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>());
                 ToastService.ShowSuccess("Tenant settings updated.");
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;
                 RouteBindingLogic.SetMyTenant(myTenant);
+                tenantWorking = false;
             }
             catch (Exception ex)
             {
+                tenantWorking = false;
                 tenantSettingsForm.SetError(ex.Message);
             }
         }
@@ -130,8 +139,15 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                deleteTenantAcknowledge = false;
+                if (tenantWorking)
+                {
+                    return;
+                }
+                tenantWorking = true;
                 await MyTenantService.DeleteTenantAsync();
                 tenantDeletedModal.Show();
+                tenantWorking = false;
             }
             catch (TokenUnavailableException)
             {
@@ -139,6 +155,7 @@ namespace FoxIDs.Client.Pages.Settings
             }
             catch (Exception ex)
             {
+                tenantWorking = false;
                 deleteTenantError = ex.Message;
             }
         }

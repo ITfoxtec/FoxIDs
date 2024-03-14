@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [MaxLength(Constants.Models.Tenant.NameLength)]
-        [RegularExpression(Constants.Models.Tenant.NameRegExPattern, ErrorMessage = "The field {0} must start with a letter or number and can contain '-' and '_'.")]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern, ErrorMessage = "The field {0} must start with a letter or a number and can contain '-' and '_'.")]
         [Display(Name = "Tenant name")]
         public string Name { get; set; }
 

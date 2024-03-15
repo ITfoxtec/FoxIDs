@@ -12,7 +12,7 @@
 
 <div class="d-flex pt-2">
     <div class="info-text mr-auto">
-        The <DocsLink Page="external-users">external users</DocsLink> are stored in the environment per authentication method and connected to a external identity with a link claim.
+        The <DocsLink Page="external-users">external users</DocsLink> are stored in the environment per authentication method and connected to the external identity with a link claim.
     </div>
     <div class="py-2">
         <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateExternalUser())">
@@ -37,20 +37,71 @@
             }
             @if (externalUser.Edit)
             {
-                <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(m => ExternalUserViewModelAfterInit(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
+                <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(async m => await ExternalUserViewModelAfterInitAsync(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
                     <div class="modal-header">
                         ExternalUser
                     </div>
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
                         {
-                            <FInputText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
                             <FInputText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" Focus="true" />
+
+                            <ValidationMessage For="@(() => externalUser.Form.Model.UpPartyName)" />
+                            @if (@externalUser.Form.Model.UpPartyName.IsNullOrWhiteSpace())
+                            {
+                                <div class=" form-group active-group active">
+                                    <label class="label-control">Select the authentication method</label>
+                                    <div class="card pb-3">
+                                        <PageEditForm @ref="SelectUpPartyFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnSelectUpPartyFilterValidSubmitAsync">
+                                            <div class="form-group active-group px-3 mt-4 pb-2">
+                                                <FInputTextFilter @bind-Value="SelectUpPartyFilterForm.Model.FilterName" For="@(() => SelectUpPartyFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                                            </div>
+                                        </PageEditForm>
+
+                                        @if (selectUpParties != null)
+                                        {
+                                            @if (selectUpParties.Count() > 0)
+                                            {
+                                                @foreach (var upParty in selectUpParties)
+                                                {
+                                                    <button class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
+                                                        @(upParty.DisplayName ?? upParty.Name)
+                                                    </button>
+                                                }
+                                            }
+                                            else if (!SelectUpPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="font-italic px-4">No match</div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())
+                                {
+                                    <FFieldText Class="pb-0" @bind-Value="externalUser.Form.Model.UpPartyDisplayName" For="@(() => externalUser.Form.Model.UpPartyDisplayName)" />
+                                }
+                                else
+                                {
+                                    <FFieldText Class="pb-0" @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
+                                }
+                                <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectUpParty(externalUser.Form.Model))">Link to a different authentication method</button>
+                            }
+
                         }
                         else
                         {
-                            <FFieldText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
                             <FFieldText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" />
+                            @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())
+                            {
+                                <FFieldText @bind-Value="externalUser.Form.Model.UpPartyDisplayName" For="@(() => externalUser.Form.Model.UpPartyDisplayName)" />
+                            }
+                            else
+                            {
+                                <FFieldText @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
+                            }
                             <FFieldText @bind-Value="externalUser.Form.Model.UserId" For="@(() => externalUser.Form.Model.UserId)" />
                         }
                         <FInputToggle @bind-Value="externalUser.Form.Model.DisableAccount" For="@(() => externalUser.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />

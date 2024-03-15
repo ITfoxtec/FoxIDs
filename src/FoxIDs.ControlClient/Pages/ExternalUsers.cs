@@ -15,13 +15,14 @@ using System.Threading.Tasks;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
 using System.Linq;
-using static FoxIDs.Constants.Models.SamlParty;
 using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class ExternalUsers
     {
+        private PageEditForm<FilterUpPartyViewModel> SelectUpPartyFilterForm;
+        private IEnumerable<UpParty> selectUpParties;
         private PageEditForm<FilterExternalUserViewModel> externalUserFilterForm;
         private List<GeneralExternalUserViewModel> externalUsers = new List<GeneralExternalUserViewModel>();
         private string usersHref;
@@ -110,10 +111,10 @@ namespace FoxIDs.Client.Pages
 
             if (externalUsers.Count() > 0)
             {
-                var eups = await UpPartyService.FilterUpPartyAsync(null);
+                await LoadUpPartiesAsync();
                 foreach (var externalUser in externalUsers)
                 {
-                    var eup = eups.Where(u => u.Name == externalUser.UpPartyName).FirstOrDefault();
+                    var eup = selectUpParties.Where(u => u.Name == externalUser.UpPartyName).FirstOrDefault();
                     if (eup != null)
                     {
                         externalUser.UpPartyDisplayName = eup.DisplayName;
@@ -148,8 +149,11 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser);
-                await generalExternalUser.Form.InitAsync(externalUser.Map<ExternalUserViewModel>());
+                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaim);
+                await generalExternalUser.Form.InitAsync(externalUser.Map<ExternalUserViewModel>(afterMap: afterMap =>
+                {
+                    afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
+                }));
             }
             catch (TokenUnavailableException)
             {
@@ -161,12 +165,11 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ExternalUserViewModelAfterInit(GeneralExternalUserViewModel generalExternalUser, ExternalUserViewModel externalUser)
+        private async Task ExternalUserViewModelAfterInitAsync(GeneralExternalUserViewModel generalExternalUser, ExternalUserViewModel externalUser)
         {
             if (generalExternalUser.CreateMode)
             {
-              
-
+                await LoadUpPartiesAsync();
             }
         }
         private void ExternalUserCancel(GeneralExternalUserViewModel externalUser)
@@ -191,6 +194,46 @@ namespace FoxIDs.Client.Pages
             claims.Remove(claimAndValues);
         }
 
+        private void ShowSelectUpParty(ExternalUserViewModel externalUserViewModel)
+        {
+            externalUserViewModel.UpPartyName = null;
+            externalUserViewModel.UpPartyDisplayName = null;
+        }
+
+        private async Task LoadUpPartiesAsync(string filterName = null, bool force = false)
+        {
+            if (force || !(selectUpParties?.Count() > 0) || !filterName.IsNullOrEmpty())
+            {
+                var sup = await UpPartyService.FilterUpPartyAsync(filterName);
+                selectUpParties = sup.Where(u => u.Type != PartyTypes.Login);
+            }
+        }
+
+        private async Task OnSelectUpPartyFilterValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                await LoadUpPartiesAsync(SelectUpPartyFilterForm.Model.FilterName, force: true);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    SelectUpPartyFilterForm.SetFieldError(nameof(SelectUpPartyFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void SelectUpParty(GeneralExternalUserViewModel generalExternalUser, UpParty upParty)
+        {
+            generalExternalUser.Form.Model.UpPartyName = upParty.Name;
+            generalExternalUser.Form.Model.UpPartyDisplayName = upParty.DisplayName;
+        }
+
         private async Task OnEditExternalUserValidSubmitAsync(GeneralExternalUserViewModel generalExternalUser, EditContext editContext)
         {
             try
@@ -198,16 +241,24 @@ namespace FoxIDs.Client.Pages
                 if (generalExternalUser.CreateMode)
                 {
                     var externalUserResult = await ExternalUserService.CreateExternalUserAsync(generalExternalUser.Form.Model.Map<ExternalUserRequest>());
-                    generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>());
+                    generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap => 
+                    {
+                        afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
+                    }));
                     generalExternalUser.CreateMode = false;
                     toastService.ShowSuccess("External user created.");
                     generalExternalUser.LinkClaim = generalExternalUser.Form.Model.LinkClaim;
+                    generalExternalUser.UpPartyName = generalExternalUser.Form.Model.UpPartyName;
+                    generalExternalUser.UpPartyDisplayName = generalExternalUser.Form.Model.UpPartyDisplayName;
                     generalExternalUser.UserId = generalExternalUser.Form.Model.UserId;
                 }
                 else
                 {
                     var externalUserResult = await ExternalUserService.UpdateExternalUserAsync(generalExternalUser.Form.Model.Map<ExternalUserRequest>());
-                    generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>());
+                    generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap =>
+                    {
+                        afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
+                    }));
                     toastService.ShowSuccess("External user updated.");
                 }
             }
@@ -228,7 +279,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser);
+                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaim);
                 externalUsers.Remove(generalExternalUser);
             }
             catch (TokenUnavailableException)

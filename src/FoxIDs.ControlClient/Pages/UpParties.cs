@@ -240,7 +240,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var selectTrackTasks = (await TrackService.FilterTrackAsync(filterName)).OrderTracks();
-                newUpPartyModal.SelectTrackTasks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
+                newUpPartyModal.SelectTracks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
             }
             catch (FoxIDsApiException ex)
             {

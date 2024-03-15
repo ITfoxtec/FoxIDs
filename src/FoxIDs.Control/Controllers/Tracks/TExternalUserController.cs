@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Net;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -70,6 +71,7 @@ namespace FoxIDs.Controllers
                 var mExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
                 var linkClaimHash = await externalUserRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();
                 mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash);
+                mExternalUser.UserId = Guid.NewGuid().ToString();
                 await tenantRepository.CreateAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
@@ -101,7 +103,9 @@ namespace FoxIDs.Controllers
                 var linkClaimHash = await externalUserRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();              
                 var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash));
 
-                mExternalUser.Claims = mapper.Map<ExternalUser>(externalUserRequest).Claims;   
+                var tempMExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
+                mExternalUser.DisableAccount = tempMExternalUser.DisableAccount;
+                mExternalUser.Claims = tempMExternalUser.Claims;   
                 await tenantRepository.SaveAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));

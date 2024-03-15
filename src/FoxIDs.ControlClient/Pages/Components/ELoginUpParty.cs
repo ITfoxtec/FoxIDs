@@ -56,6 +56,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                 }
+                if (afterMap.CreateUser?.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapClaimTransforms();
+                }
             });           
         }
 
@@ -74,6 +78,16 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalLoginUpParty.Form.Model.ClaimTransforms?.Count() > 0)
                 {
                     foreach (var claimTransform in generalLoginUpParty.Form.Model.ClaimTransforms)
+                    {
+                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
+                }
+                if (generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms?.Count() > 0)
+                {
+                    foreach (var claimTransform in generalLoginUpParty.Form.Model.CreateUser.ClaimTransforms)
                     {
                         if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
                         {

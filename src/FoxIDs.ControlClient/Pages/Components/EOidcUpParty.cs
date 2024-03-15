@@ -137,6 +137,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                 }
+                if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapClaimTransforms();
+                }
             });
         }
 
@@ -161,6 +165,16 @@ namespace FoxIDs.Client.Pages.Components
                 if(generalOidcUpParty.Form.Model.ClaimTransforms?.Count() > 0)
                 {
                     foreach (var claimTransform in generalOidcUpParty.Form.Model.ClaimTransforms)
+                    {
+                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
+                }
+                if (generalOidcUpParty.Form.Model.LinkExternalUser?.ClaimTransforms?.Count() > 0)
+                {
+                    foreach (var claimTransform in generalOidcUpParty.Form.Model.LinkExternalUser.ClaimTransforms)
                     {
                         if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
                         {

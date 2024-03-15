@@ -205,7 +205,7 @@ namespace FoxIDs.Client.Pages
             if (force || !(selectUpParties?.Count() > 0) || !filterName.IsNullOrEmpty())
             {
                 var sup = await UpPartyService.FilterUpPartyAsync(filterName);
-                selectUpParties = sup.Where(u => u.Type != PartyTypes.Login);
+                selectUpParties = sup.Where(u => u.Type != PartyTypes.Login && u.Type != PartyTypes.OAuth2);
             }
         }
 

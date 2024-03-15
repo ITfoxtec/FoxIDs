@@ -10,6 +10,7 @@ using System.Net;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
 using System;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -19,12 +20,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic;
 
-        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.validateApiModelExternalUserLogic = validateApiModelExternalUserLogic;
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace FoxIDs.Controllers
 
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(externalUserRequest)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(externalUserRequest) || !await validateApiModelExternalUserLogic.ValidateApiModelAsync(ModelState, externalUserRequest)) return BadRequest(ModelState);
 
                 var mExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
                 var linkClaimHash = await externalUserRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();

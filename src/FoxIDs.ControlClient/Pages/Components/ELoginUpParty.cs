@@ -65,36 +65,6 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.TwoFactorAppName = TenantName;
             }
-            if(model.CreateUser.Elements?.Any() != true)
-            {
-                model.CreateUser.Elements = new List<DynamicElementViewModel>
-                {
-                    new DynamicElementViewModel
-                    {
-                        IsStaticRequired = true,
-                        Type = DynamicElementTypes.EmailAndPassword,
-                        Required = true
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.GivenName
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.FamilyName
-                    }
-                };
-            }
-            else
-            {
-                foreach(var element in model.CreateUser.Elements)
-                {
-                    if (element.Type == DynamicElementTypes.EmailAndPassword)
-                    {
-                        element.IsStaticRequired = true;
-                    }
-                }
-            }
         }
 
         private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
@@ -110,11 +80,6 @@ namespace FoxIDs.Client.Pages.Components
                             claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
                         }
                     }
-                }
-
-                if (!generalLoginUpParty.Form.Model.EnableCreateUser)
-                {
-                    generalLoginUpParty.Form.Model.CreateUser = null;
                 }
 
                 if (generalLoginUpParty.CreateMode)

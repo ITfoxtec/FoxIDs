@@ -1,11 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LinkExternalUser : IValidatableObject
+    public class LinkExternalUserViewModel : IValidatableObject, ILinkExternalUser
     {
         /// <summary>
         /// Automatic creation / provisioning of external users
@@ -16,7 +16,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Require a user")]
         public bool RequireUser { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [Display(Name = "Link claim")]
@@ -25,26 +24,25 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Overwrite revived claims")]
         public bool OverwriteClaims { get; set; }
 
-        /// <summary>
-        /// UI elements used for automatic creation.
-        /// </summary>
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
-        [Display(Name = "Dynamic elements shown in order")]
-        public List<DynamicElement> Elements { get; set; }
+        public List<DynamicElementViewModel> Elements { get; set; } = new List<DynamicElementViewModel>();
 
         /// <summary>
-        /// aAutomatic creation claim transforms, run after user creation before the user is saved.
+        /// Claim transforms.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [Display(Name = "Claim transforms executed in order")]
-        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
-        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if ((AutoCreateUser || RequireUser) && LinkClaimType.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The link claim type is required.", new[] { nameof(LinkClaimType) }));
+            }
             if (AutoCreateUser && RequireUser)
             {
-                results.Add(new ValidationResult($"Both the {nameof(AutoCreateUser)} and the {nameof(RequireUser)} can not be enabled at the same time.", new[] { nameof(AutoCreateUser), nameof(RequireUser) }));
+                results.Add(new ValidationResult($"Both the Automatically create/provision and the Require user can not be enabled at the same time.", new[] { nameof(AutoCreateUser), nameof(RequireUser) }));
             }
             return results;
         }

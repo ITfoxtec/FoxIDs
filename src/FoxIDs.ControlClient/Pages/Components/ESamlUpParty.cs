@@ -292,6 +292,11 @@ namespace FoxIDs.Client.Pages.Components
                             claimTransform.Order = order++;
                         }
                     }
+
+                    if (!(afterMap.LinkExternalUser?.AutoCreateUser == true || afterMap.LinkExternalUser?.RequireUser == true))
+                    {
+                        afterMap.LinkExternalUser = null;
+                    }
                 });
 
                 if (generalSamlUpParty.CreateMode)

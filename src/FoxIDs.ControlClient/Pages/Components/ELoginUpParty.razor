@@ -71,6 +71,10 @@
                     }
                 </li>
             }
+            else
+            {
+                loginUpParty.Form.Model.CreateUser = null;
+            }
             <li class="nav-item">
                 @if (loginUpParty.ShowSessionTab)
                 {
@@ -120,11 +124,14 @@
             }
             else if (loginUpParty.ShowCreateUserTab)
             {
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
-                <DynamicElements Model="loginUpParty.Form.Model.CreateUser" />
-                <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
-                <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" />
+                @if (loginUpParty.Form.Model.CreateUser != null)
+                {
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
+                    <DynamicElements Model="loginUpParty.Form.Model.CreateUser" />
+                    <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
+                    <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" />
+                }
             }
             else if (loginUpParty.ShowSessionTab)
             {

@@ -22,6 +22,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "link_claim_type")]
         public string LinkClaimType { get; set; }
 
+        [JsonProperty(PropertyName = "overwrite_claims")]
+        public bool OverwriteClaims { get; set; }
+
         /// <summary>
         /// UI elements used for automatic creation.
         /// </summary>

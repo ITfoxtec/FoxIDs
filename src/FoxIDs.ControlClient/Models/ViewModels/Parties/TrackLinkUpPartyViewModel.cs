@@ -105,5 +105,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
+
+        [ValidateComplexType]
+        public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
     }
 }

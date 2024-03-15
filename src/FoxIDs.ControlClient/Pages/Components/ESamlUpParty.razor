@@ -106,6 +106,16 @@
             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
             {
                 <li class="nav-item">
+                    @if (samlUpParty.ShowLinkExternalUserTab)
+                    {
+                        <a class="nav-link active">Link External User</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Link External User</button>
+                    }
+                </li>
+                <li class="nav-item">
                     @if (samlUpParty.ShowSessionTab)
                     {
                         <a class="nav-link active">Logout session</a>
@@ -125,6 +135,10 @@
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
                     }
                 </li>
+            }
+            else
+            {
+                samlUpParty.Form.Model.LinkExternalUser = null;
             }
         </ul>
 
@@ -357,6 +371,13 @@
                     If you create a new claim the claim is local unless you add the claim to the 'Forward claims' list.
                 </div>
                 <SamlClaimTransforms Model="samlUpParty.Form.Model" />
+            }
+            else if (samlUpParty.ShowLinkExternalUserTab)
+            {
+                @if (samlUpParty.Form.Model.LinkExternalUser != null)
+                {
+                    <LinkExternalUser Model="samlUpParty.Form.Model.LinkExternalUser" />
+                }
             }
             else if (samlUpParty.ShowSessionTab)
             {

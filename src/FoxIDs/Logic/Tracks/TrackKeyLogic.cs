@@ -1,34 +1,28 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Azure.Core;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
-using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using RSAKeyVaultProvider;
-using ITfoxtec.Identity.Util;
 using System.Collections.Generic;
+using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
     public class TrackKeyLogic : LogicSequenceBase
     {
-        private readonly FoxIDsSettings settings;
-        private readonly TelemetryScopedLogger logger;
-        private readonly TokenCredential tokenCredential;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackKeyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, TokenCredential tokenCredential, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.settings = settings;
-            this.logger = logger;
-            this.tokenCredential = tokenCredential;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -93,16 +87,14 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
+                var logger = HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
                 logger.Warning(ex);
             }
 
             return null;
         }
 
-        private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey)
-        {
-            return RSAFactory.Create(tokenCredential, new Uri(UrlCombine.Combine(settings.KeyVault.EndpointUri, "keys", trackKey.ExternalName, trackKey.PrimaryKey.ExternalId)), new Azure.Security.KeyVault.Keys.JsonWebKey(trackKey.PrimaryKey.Key.ToRsa()));
-        }
+        private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey) => externalKeyLogic.GetExternalRSAKey(trackKey, trackKey.PrimaryKey);
 
         private async Task ValidatePrimaryTrackKeyAsync(RouteTrackKey trackKey)
         {
@@ -144,6 +136,65 @@ namespace FoxIDs.Logic
         {
             var certificate = trackKey.SecondaryKey.Key.ToX509Certificate();
             certificate.ValidateCertificate("Track secondary key");
+        }
+
+        public async Task<RouteTrackKey> LoadTrackKeyAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Track track)
+        {
+            switch (track.Key.Type)
+            {
+                case TrackKeyTypes.Contained:
+                    return new RouteTrackKey
+                    {
+                        Type = track.Key.Type,
+                        PrimaryKey = new RouteTrackKeyItem { Key = track.Key.Keys[0].Key },
+                        SecondaryKey = track.Key.Keys.Count > 1 ? new RouteTrackKeyItem { Key = track.Key.Keys[1].Key } : null,
+                    };
+
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
+                    var trackKeyExternal = await GetTrackKeyItemsAsync(scopedLogger, trackIdKey.TenantName, trackIdKey.TrackName, track);
+                    var externalRouteTrackKey = new RouteTrackKey
+                    {
+                        Type = track.Key.Type,
+                        ExternalName = track.Key.ExternalName,
+                    };
+                    if (trackKeyExternal == null)
+                    {
+                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalKeyIsNotReady = true };
+                    }
+                    else
+                    {
+                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[0].ExternalId, Key = trackKeyExternal.Keys[0].Key };
+                        externalRouteTrackKey.SecondaryKey = trackKeyExternal.Keys.Count > 1 ? new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[1].ExternalId, Key = trackKeyExternal.Keys[1].Key } : null;
+                    }
+                    return externalRouteTrackKey;
+
+                case TrackKeyTypes.KeyVaultImport:
+                default:
+                    throw new Exception($"Track key type not supported '{track.Key.Type}'.");
+            }
+        }
+
+        public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
+        {
+            var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
+
+            var trackKeyExternalValue = await cacheProvider.GetAsync(key);
+            if (!trackKeyExternalValue.IsNullOrEmpty())
+            {
+                return trackKeyExternalValue.ToObject<TrackKeyExternal>();
+            }
+
+            var trackKeyExternal = await externalKeyLogic.LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
+            if (trackKeyExternal != null)
+            {
+                await cacheProvider.SetAsync(key, trackKeyExternal.ToJson(), track.KeyExternalCacheLifetime);
+            }
+            return trackKeyExternal;
+        }
+
+        private string RadisTrackKeyExternalKey(string tenantName, string trackName, string name)
+        {
+            return $"track_key_ext_{tenantName}_{trackName}_{name}";
         }
     }
 }

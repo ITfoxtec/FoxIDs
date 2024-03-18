@@ -151,11 +151,11 @@
             <li class="nav-item">
                 @if (oidcUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim transform</a>
+                    <a class="nav-link active">Claim Transform</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
             @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
@@ -173,11 +173,11 @@
                 <li class="nav-item">
                     @if (oidcUpParty.ShowSessionTab)
                     {
-                        <a class="nav-link active">Logout session</a>
+                        <a class="nav-link active">Logout Session</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout session</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout Session</button>
                     }
                 </li>
                 <li class="nav-item">

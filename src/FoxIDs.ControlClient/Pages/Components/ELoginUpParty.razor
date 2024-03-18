@@ -52,22 +52,22 @@
             <li class="nav-item">
                 @if (loginUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim transform</a>
+                    <a class="nav-link active">Claim Transform</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
             @if (loginUpParty.Form.Model.EnableCreateUser) {
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
                     {
-                        <a class="nav-link active">Create user</a>
+                        <a class="nav-link active">Create User</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create user</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create User</button>
                     }
                 </li>
             }
@@ -78,11 +78,11 @@
             <li class="nav-item">
                 @if (loginUpParty.ShowSessionTab)
                 {
-                    <a class="nav-link active">User session</a>
+                    <a class="nav-link active">User Session</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User session</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User Session</button>
                 }
             </li>
             <li class="nav-item">

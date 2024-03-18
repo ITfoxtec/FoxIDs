@@ -96,11 +96,11 @@
             <li class="nav-item">
                 @if (samlUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim transform</a>
+                    <a class="nav-link active">Claim Transform</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
@@ -118,11 +118,11 @@
                 <li class="nav-item">
                     @if (samlUpParty.ShowSessionTab)
                     {
-                        <a class="nav-link active">Logout session</a>
+                        <a class="nav-link active">Logout Session</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout session</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout Session</button>
                     }
                 </li>
                 <li class="nav-item">

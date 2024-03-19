@@ -96,10 +96,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_token_exchange_trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
-        [ValidateComplexType]
-        [JsonProperty(PropertyName = "link_external_user")]
-        public LinkExternalUser LinkExternalUser { get; set; }
-
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

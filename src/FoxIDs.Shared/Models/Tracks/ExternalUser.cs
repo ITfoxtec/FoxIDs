@@ -14,21 +14,21 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.ExternalUser}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UpPartyName}:{idKey.LinkClaimHash}";
+            return $"{Constants.Models.DataType.ExternalUser}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UpPartyName}:{idKey.LinkClaimValueHash}";
         }
 
-        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string upPartyName, string LinkClaimHash)
+        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string upPartyName, string LinkClaimValueHash)
         {
             if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
             if (upPartyName == null) new ArgumentNullException(nameof(upPartyName));
-            if (LinkClaimHash == null) new ArgumentNullException(nameof(LinkClaimHash));
+            if (LinkClaimValueHash == null) new ArgumentNullException(nameof(LinkClaimValueHash));
 
             var idKey = new IdKey
             {
                 TenantName = routeBinding.TenantName,
                 TrackName = routeBinding.TrackName,
                 UpPartyName = upPartyName,
-                LinkClaimHash = LinkClaimHash
+                LinkClaimValueHash = LinkClaimValueHash
             };
 
             return await IdFormatAsync(idKey);
@@ -47,8 +47,8 @@ namespace FoxIDs.Models
 
         [Required]
         [MaxLength(Constants.Models.Claim.ValueLength)]
-        [JsonProperty(PropertyName = "link_claim")]
-        public string LinkClaim { get; set; }
+        [JsonProperty(PropertyName = "link_claim_value")]
+        public string LinkClaimValue { get; set; }
 
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
@@ -64,8 +64,8 @@ namespace FoxIDs.Models
             public string UpPartyName { get; set; }
 
             [Required]
-            [MaxLength(Constants.Models.ExternalUser.LinkClaimHashLength)]
-            public string LinkClaimHash { get; set; }
+            [MaxLength(Constants.Models.ExternalUser.LinkClaimValueHashLength)]
+            public string LinkClaimValueHash { get; set; }
         }
     }
 }

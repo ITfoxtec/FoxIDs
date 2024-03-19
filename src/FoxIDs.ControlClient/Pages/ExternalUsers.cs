@@ -149,7 +149,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaim);
+                var externalUser = await ExternalUserService.GetExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue);
                 await generalExternalUser.Form.InitAsync(externalUser.Map<ExternalUserViewModel>(afterMap: afterMap =>
                 {
                     afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
@@ -247,7 +247,7 @@ namespace FoxIDs.Client.Pages
                     }));
                     generalExternalUser.CreateMode = false;
                     toastService.ShowSuccess("External user created.");
-                    generalExternalUser.LinkClaim = generalExternalUser.Form.Model.LinkClaim;
+                    generalExternalUser.LinkClaimValue = generalExternalUser.Form.Model.LinkClaimValue;
                     generalExternalUser.UpPartyName = generalExternalUser.Form.Model.UpPartyName;
                     generalExternalUser.UpPartyDisplayName = generalExternalUser.Form.Model.UpPartyDisplayName;
                     generalExternalUser.UserId = generalExternalUser.Form.Model.UserId;
@@ -266,7 +266,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    generalExternalUser.Form.SetFieldError(nameof(generalExternalUser.Form.Model.LinkClaim), ex.Message);
+                    generalExternalUser.Form.SetFieldError(nameof(generalExternalUser.Form.Model.LinkClaimValue), ex.Message);
                 }
                 else
                 {
@@ -279,7 +279,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaim);
+                await ExternalUserService.DeleteExternalUserAsync(generalExternalUser.UpPartyName, generalExternalUser.LinkClaimValue);
                 externalUsers.Remove(generalExternalUser);
             }
             catch (TokenUnavailableException)

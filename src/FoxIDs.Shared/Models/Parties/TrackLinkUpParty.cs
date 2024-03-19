@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkUpParty : UpParty
+    public class TrackLinkUpParty : ExternalUserUpParty
     {
         public TrackLinkUpParty()
         {

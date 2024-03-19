@@ -44,7 +44,7 @@
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
                         {
-                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" Focus="true" />
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" Focus="true" />
 
                             <ValidationMessage For="@(() => externalUser.Form.Model.UpPartyName)" />
                             @if (@externalUser.Form.Model.UpPartyName.IsNullOrWhiteSpace())
@@ -93,7 +93,7 @@
                         }
                         else
                         {
-                            <FFieldText @bind-Value="externalUser.Form.Model.LinkClaim" For="@(() => externalUser.Form.Model.LinkClaim)" />
+                            <FFieldText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
                             @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())
                             {
                                 <FFieldText @bind-Value="externalUser.Form.Model.UpPartyDisplayName" For="@(() => externalUser.Form.Model.UpPartyDisplayName)" />
@@ -133,7 +133,7 @@
                         <div class="modal-footer">
                             <div class="alert alert-danger" role="alert">
                                 <div>
-                                    You are about to delete external user "@externalUser.LinkClaim (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))", are you sure?
+                                    You are about to delete external user "@externalUser.LinkClaimValue (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))", are you sure?
                                 </div>
 
                                 <div class="mt-3">
@@ -156,7 +156,7 @@
             else
             {
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @externalUser.LinkClaim (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                    @externalUser.LinkClaimValue (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
                 </button>
             }
         </li>

@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model CreateUserViewModel
+@model CreateExternalUserViewModel
 
 @{
     ViewData["Title"] = Localizer["Create user"];
@@ -17,19 +17,7 @@
             <div asp-validation-summary="ModelOnly"></div>
             @for(var i = 0; i < Model.Elements.Count(); i++)
             {
-                if (Model.Elements[i] is EmailAndPasswordDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: true)
-                    </div>
-                    <div class="form-group active-group">
-                        @Html.GetPasswordControl($"Elements[{i}].DField2", Model.Elements[i].DField2, isRequired: true)
-                    </div>
-                    <div class="form-group active-group">
-                        @Html.GetConfirmPasswordControl($"Elements[{i}].DField3", Model.Elements[i].DField3, $"Elements[{i}].DField2", isRequired: true)
-                    </div>
-                }
-                else if (Model.Elements[i] is NameDElement)
+                if (Model.Elements[i] is NameDElement)
                 {
                     <div class="form-group active-group">
                         @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
@@ -56,9 +44,6 @@
                 <div>
                     <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
                 </div>
-            </div>
-            <div class="form-group existing-user-group">
-                <a href="../../_@Model.SequenceString" class="link">@Localizer["Log in with your existing user"]</a>
             </div>
         </form>
     </div>

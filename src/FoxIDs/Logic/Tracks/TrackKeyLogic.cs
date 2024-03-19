@@ -9,7 +9,6 @@ using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic

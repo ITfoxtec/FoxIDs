@@ -11,7 +11,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralExternalUserViewModel(ExternalUser externalUser)
         {
             UpPartyName = externalUser.UpPartyName;
-            LinkClaim = externalUser.LinkClaim;
+            LinkClaimValue = externalUser.LinkClaimValue;
         }
 
         public string UpPartyDisplayName { get; set; }

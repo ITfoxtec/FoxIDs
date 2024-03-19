@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
             }
 
             var sequenceException = FindException<SequenceException>(exception);
-            var sequence = await ReadAndUseSequence(errorViewModel, exceptionHandlerPathFeature);
+            var sequence = await ReadAndUseSequenceAsync(errorViewModel, exceptionHandlerPathFeature);
             if (sequence != null)
             {
                 if (sequenceException != null)
@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
             return View(errorViewModel);
         }
 
-        private async Task<Sequence> ReadAndUseSequence(ErrorViewModel errorViewModel, IExceptionHandlerPathFeature exceptionHandlerPathFeature)
+        private async Task<Sequence> ReadAndUseSequenceAsync(ErrorViewModel errorViewModel, IExceptionHandlerPathFeature exceptionHandlerPathFeature)
         {
             if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
             {
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
                         var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
                         if (sequence != null)
                         {
-                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
+                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(await sequenceLogic.GetUiUpPartyIdAsync(sequence));
                             securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                             securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                             errorViewModel.Title = uiLoginUpParty.Title ?? RouteBinding.DisplayName;

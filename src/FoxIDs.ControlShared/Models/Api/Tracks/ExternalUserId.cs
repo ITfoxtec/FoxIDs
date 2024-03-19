@@ -11,6 +11,6 @@ namespace FoxIDs.Models.Api
 
         [Required]
         [MaxLength(Constants.Models.Claim.ValueLength)]
-        public string LinkClaim { get; set; }
+        public string LinkClaimValue { get; set; }
     }
 }

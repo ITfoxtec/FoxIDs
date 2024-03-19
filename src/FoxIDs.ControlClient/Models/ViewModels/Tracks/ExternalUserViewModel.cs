@@ -21,14 +21,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authentication method")]
         public string UpPartyDisplayName { get; set; }
 
-        [MaxLength(Constants.Models.ExternalUser.LinkClaimHashLength)]
-        [Display(Name = "Link claim")]
-        public string LinkClaim { get; set; }
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Link claim value")]
+        public string LinkClaimValue { get; set; }
 
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
 
+        [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
 
         [ValidateComplexType]

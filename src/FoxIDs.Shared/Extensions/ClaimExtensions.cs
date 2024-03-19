@@ -94,5 +94,15 @@ namespace FoxIDs
             }
             return string.Empty;
         }
+
+        /// <summary>
+        /// Concatenates two sequences and only include a claim from the second sequence if not already in the first sequence.
+        /// </summary>
+        /// <param name="first">The first sequence to concatenate.</param>
+        /// <param name="second">The sequence to concatenate to the first sequence.</param>
+        public static IEnumerable<Claim> ConcatOnce(this IEnumerable<Claim> first, IEnumerable<Claim> second)
+        {           
+            return first.ConcatOnce(second, (f, s) => s.Type == f.Type);
+        }
     }
 }

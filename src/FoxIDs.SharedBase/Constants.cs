@@ -806,6 +806,7 @@ namespace FoxIDs
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
             public const string LocalSub = "local_sub";
+            public const string Upn = "upn";
         }
 
         public static class SamlClaimTypes
@@ -851,6 +852,8 @@ namespace FoxIDs
             public readonly static ClaimMap[] ChangeableMappings =
             {
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = JwtClaimTypes.Upn, SamlClaim = ClaimTypes.Upn },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Name, SamlClaim = ClaimTypes.Name },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.GivenName, SamlClaim = ClaimTypes.GivenName },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role },

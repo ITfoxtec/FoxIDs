@@ -17,7 +17,13 @@
             <div asp-validation-summary="ModelOnly"></div>
             @for(var i = 0; i < Model.Elements.Count(); i++)
             {
-                if (Model.Elements[i] is NameDElement)
+                if (Model.Elements[i] is EmailDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is NameDElement)
                 {
                     <div class="form-group active-group">
                         @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)

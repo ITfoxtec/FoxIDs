@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements).ToList()
+                    Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
                 });
 
             }
@@ -92,7 +92,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                createExternalUser.Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, createExternalUser.Elements).ToList();
+                createExternalUser.Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.Elements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {

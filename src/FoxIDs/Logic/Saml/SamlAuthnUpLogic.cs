@@ -14,13 +14,13 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
-using System.Xml;
-using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Logic
 {
@@ -270,28 +270,22 @@ namespace FoxIDs.Logic
                 var validClaims = ValidateClaims(party, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, SAML Authn output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var disableAccount, var linkClaim, var externalUserClaims) = await externalUserLogic.GetUserAsync(party, validClaims);
-                if (!(externalUserClaims?.Count() > 0))
+                var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
+
+                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, jwtValidClaims, 
+                    (externalUserUpSequenceData) =>
+                    {
+                        externalUserUpSequenceData.ExternalSessionId = externalSessionId;
+                        externalUserUpSequenceData.Saml2Status = saml2AuthnResponse.Status;
+                    },
+                    (linkClaimType, linkClaimValue) => throw new SamlRequestException($"Require external user for link claim type '{linkClaimType}' and value '{linkClaimValue}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder });
+                if (externalUserActionResult != null)
                 {
-                    if (!disableAccount && !linkClaim.IsNullOrWhiteSpace() && party.LinkExternalUser?.AutoCreateUser == true)
-                    {
-                        if (party.LinkExternalUser.Elements?.Count > 0)
-                        {
-                            return await externalUserLogic.StartUICreateUserAsync(party, linkClaim, validClaims, externalSessionId, saml2AuthnResponse.Status);
-                        }
-                        else
-                        {
-                            externalUserClaims = await externalUserLogic.CreateUserAsync(party, linkClaim);
-                        }
-                    }
-                    else if (party.LinkExternalUser?.RequireUser == true)
-                    {
-                        throw new SamlRequestException($"Require external user for link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaim}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
-                    }
+                    return externalUserActionResult;
                 }
 
                 await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
-                return await AuthnResponsePostInternalAsync(sequenceData, party, validClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId);
+                return await AuthnResponsePostAsync(sequenceData, party, jwtValidClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId);
             }
             catch (StopSequenceException)
             {
@@ -323,7 +317,7 @@ namespace FoxIDs.Logic
             try
             {
                 var party = await tenantRepository.GetAsync<SamlUpParty>(externalUserSequenceData.UpPartyId);
-                return await AuthnResponsePostInternalAsync(sequenceData, party, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.Saml2Status, externalUserSequenceData.ExternalSessionId);
+                return await AuthnResponsePostAsync(sequenceData, party, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.Saml2Status, externalUserSequenceData.ExternalSessionId);
             }
             catch (StopSequenceException)
             {
@@ -341,14 +335,10 @@ namespace FoxIDs.Logic
             }        
         }
 
-        private async Task<IActionResult> AuthnResponsePostInternalAsync(SamlUpSequenceData sequenceData, SamlUpParty party, IEnumerable<Claim> validClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId)
+        private async Task<IActionResult> AuthnResponsePostAsync(SamlUpSequenceData sequenceData, SamlUpParty party, List<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId)
         {
-            if (externalUserClaims?.Count() > 0)
-            {
-                validClaims = party.LinkExternalUser?.OverwriteClaims == true ? externalUserClaims.ConcatOnce(validClaims) : externalUserClaims.Concat(validClaims);
-            }
+            jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
-            var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
             var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {

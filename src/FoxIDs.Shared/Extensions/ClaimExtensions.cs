@@ -102,7 +102,7 @@ namespace FoxIDs
         /// <param name="second">The sequence to concatenate to the first sequence.</param>
         public static IEnumerable<Claim> ConcatOnce(this IEnumerable<Claim> first, IEnumerable<Claim> second)
         {           
-            return first.ConcatOnce(second, (f, s) => s.Type == f.Type);
+            return first.ConcatOnce(second, (f, s) => f.Type == s.Type);
         }
     }
 }

@@ -61,6 +61,7 @@
                         <FInputToggle @bind-Value="user.Form.Model.EmailVerified" For="@(() => user.Form.Model.EmailVerified)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
+                        <div class="info-text">The user must verify the account as part of multi-factor.</div>
                         <FInputToggle @bind-Value="user.Form.Model.ActiveTwoFactorApp" For="@(() => user.Form.Model.ActiveTwoFactorApp)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
 

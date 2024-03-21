@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2.Schemas;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,107 +18,148 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly DynamicElementLogic dynamicElementLogic;
+        private readonly ClaimsDownLogic claimsDownLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
 
-        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, DynamicElementLogic dynamicElementLogic, ClaimsDownLogic claimsDownLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.dynamicElementLogic = dynamicElementLogic;
+            this.claimsDownLogic = claimsDownLogic;
             this.claimTransformLogic = claimTransformLogic;
         }
 
-        public async Task<(bool disableAccount, string linkClaim, IEnumerable<Claim> externalUserClaims)> GetUserAsync(ExternalUserUpParty upParty, IEnumerable<Claim> claims)
+
+        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync(ExternalUserUpParty party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string, string> requireUserExceptionAction)
         {
-            var linkClaim = GetLinkClaim(upParty, claims);
-            logger.ScopeTrace(() => $"Validating external user, link claim value '{linkClaim}', Route '{RouteBinding?.Route}'.");
-            if (linkClaim.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(party.LinkExternalUser?.LinkClaimType))
             {
-                return (false, linkClaim, null);
+                return (null, null);
             }
 
-            var externalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, upParty.Name, await linkClaim.HashIdStringAsync()), required: false);
-            if (externalUser == null || externalUser.DisableAccount)
+            var linkClaimType = party.LinkExternalUser.LinkClaimType;
+            if (party.Type == PartyTypes.Saml2)
             {
-                return (externalUser == null ? false : externalUser.DisableAccount, linkClaim, null);
+                var jwtLinkClaimTypes = claimsDownLogic.FromSamlToJwtInfoClaimType(linkClaimType);
+                if (jwtLinkClaimTypes.Count() > 0)
+                {
+                    linkClaimType = jwtLinkClaimTypes.First();
+                }
             }
 
-            var externalUserClaims = externalUser.Claims?.ToClaimList() ?? new List<Claim>();
-            externalUserClaims = AddUserIdClaim(upParty, externalUserClaims, externalUser);
-            logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (externalUser == null ? false : externalUser.DisableAccount, linkClaim, externalUserClaims);
+            var linkClaimValue = GetLinkClaim(linkClaimType, claims);
+            logger.ScopeTrace(() => $"Validating external user, link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
+            if (!linkClaimValue.IsNullOrWhiteSpace())
+            {
+                var externalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), required: false);
+                if (externalUser != null)
+                {
+                    if (!externalUser.DisableAccount)
+                    {
+                        var externalUserClaims = GetExternalUserClaim(party, externalUser);
+                        logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                        return (null, externalUserClaims);
+                    }
+                }
+                else if (party.LinkExternalUser.AutoCreateUser)
+                {
+                    if (party.LinkExternalUser.Elements?.Count > 0)
+                    {
+                        return (await StartUICreateUserAsync(party, linkClaimValue, claims, populateSequenceDataAction), null);
+                    }
+                    else
+                    {
+                        return (null, await CreateUserAsync(party, linkClaimValue));
+                    }
+                }
+
+                if (party.LinkExternalUser.RequireUser)
+                {
+                    requireUserExceptionAction(party.LinkExternalUser.LinkClaimType, linkClaimValue);
+                }
+            }
+            else
+            {
+                try
+                {
+                    throw new EndpointException($"External user, link claim value is empty for link claim type '{party.LinkExternalUser.LinkClaimType}'.") { RouteBinding = RouteBinding };
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                }            
+            }
+
+            return (null, null);
         }
 
-        public async Task<IEnumerable<Claim>> CreateUserAsync(ExternalUserUpParty upParty, string linkClaim, IEnumerable<Claim> externalUserClaims = null)
+        public async Task<IEnumerable<Claim>> CreateUserAsync(ExternalUserUpParty upParty, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null)
         {
-            logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaim}', Route '{RouteBinding?.Route}'.");
+            logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
 
-            externalUserClaims = externalUserClaims ?? new List<Claim>();
-            var transformedClaims = await claimTransformLogic.Transform(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), externalUserClaims);
+            dynamicElementClaims = dynamicElementClaims ?? new List<Claim>();
+            var transformedClaims = await claimTransformLogic.Transform(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims);
 
             var externalUser = new ExternalUser
             {
-                Id = await ExternalUser.IdFormatAsync(RouteBinding, upParty.Name, await linkClaim.HashIdStringAsync()),
+                Id = await ExternalUser.IdFormatAsync(RouteBinding, upParty.Name, await linkClaimValue.HashIdStringAsync()),
                 UserId = Guid.NewGuid().ToString(),
-                LinkClaimValue = linkClaim,
+                LinkClaimValue = linkClaimValue,
                 Claims = transformedClaims.ToClaimAndValues()
             };
 
             await tenantRepository.CreateAsync(externalUser);
             logger.ScopeTrace(() => $"External user created, with user id '{externalUser.UserId}'.");
 
-            transformedClaims = AddUserIdClaim(upParty, transformedClaims, externalUser);
-            logger.ScopeTrace(() => $"AuthMethod, Create external user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
+            var externalUserClaims = GetExternalUserClaim(upParty, externalUser);
+            logger.ScopeTrace(() => $"AuthMethod, Created external user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return externalUserClaims;
         }  
-        
-        public async Task<IActionResult> StartUICreateUserAsync(ExternalUserUpParty upParty, string linkClaim, IEnumerable<Claim> claims, string externalSessionId, Saml2StatusCodes saml2Status)
+
+        private async Task<IActionResult> StartUICreateUserAsync(ExternalUserUpParty party, string linkClaimValue, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction)
         {
-            logger.ScopeTrace(() => $"Start UI create external user, link claim '{linkClaim}', Route '{RouteBinding?.Route}'.");
-            await sequenceLogic.SaveSequenceDataAsync(new ExternalUserUpSequenceData
+            logger.ScopeTrace(() => $"Start UI create external user, link claim '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
+            var sequenceData = new ExternalUserUpSequenceData
             {
-                UpPartyId = upParty.Id,
-                UpPartyType = upParty.Type,
-                Claims = claims.ToClaimAndValues(),
-                LinkClaimValue = linkClaim,
-                ExternalSessionId = externalSessionId,
-                Saml2Status = saml2Status
-            });
-            return HttpContext.GetUpPartyUrl(upParty.Name, Constants.Routes.ExtController, Constants.Endpoints.CreateUser, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                UpPartyId = party.Id,
+                UpPartyType = party.Type,
+                Claims = claims?.ToClaimAndValues(),
+                LinkClaimValue = linkClaimValue
+            };
+            populateSequenceDataAction(sequenceData);
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.ExtController, Constants.Endpoints.CreateUser, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
-        private List<Claim> AddUserIdClaim(ExternalUserUpParty upParty, List<Claim> claims, ExternalUser externalUser)
+        private List<Claim> GetExternalUserClaim(ExternalUserUpParty party, ExternalUser externalUser)
         {
-            var userIdClaimType = GetUserIdClaimType(upParty);
-
-            var userIdClaims = claims.Where(c => c.Type == userIdClaimType).Select(c => c.Value);
+            var claims = externalUser.Claims?.ToClaimList() ?? new List<Claim>();
+            var userIdClaims = claims.Where(c => c.Type == Constants.JwtClaimTypes.LocalSub).Select(c => c.Value);
             if (userIdClaims.Count() > 0)
             {
-                claims = claims.Where(c => c.Type != userIdClaimType).ToList();
+                claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.LocalSub).ToList();
                 foreach (var userIdClaim in userIdClaims)
                 {
-                    claims.Add(new Claim(userIdClaimType, $"{upParty.Name}|{userIdClaim}"));
+                    claims.Add(new Claim(Constants.JwtClaimTypes.LocalSub, $"{party.Name}|{userIdClaim}"));
                 }
             }
 
-            claims.AddClaim(userIdClaimType, externalUser.UserId);
+            claims.AddClaim(Constants.JwtClaimTypes.LocalSub, externalUser.UserId);
             return claims;
         }
 
-        private string GetUserIdClaimType(ExternalUserUpParty upParty)
-        {
-            switch (upParty.Type)
-            {
-                case PartyTypes.Oidc:
-                case PartyTypes.TrackLink:
-                    return Constants.JwtClaimTypes.LocalSub;
-                case PartyTypes.Saml2:
-                    return Constants.SamlClaimTypes.LocalNameIdentifier;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
+        private string GetLinkClaim(string linkClaimType, IEnumerable<Claim> claims) => claims.Where(c => c.Type.Equals(linkClaimType, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
 
-        private string GetLinkClaim(ExternalUserUpParty upParty, IEnumerable<Claim> claims) => claims.Where(c => c.Type.Equals(upParty.LinkExternalUser.LinkClaimType, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
+        public List<Claim> AddExternalUserClaims(ExternalUserUpParty party, List<Claim> claims, IEnumerable<Claim> externalUserClaims)
+        {
+            if (externalUserClaims?.Count() > 0)
+            {
+                claims = party.LinkExternalUser?.OverwriteClaims == true ? externalUserClaims.ConcatOnce(claims).ToList() : externalUserClaims.Concat(claims).ToList();
+            }
+            return claims;
+        }
     }
 }

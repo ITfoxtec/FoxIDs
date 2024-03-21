@@ -119,11 +119,11 @@ namespace FoxIDs.Controllers
                 switch (sequenceData.UpPartyType)
                 {
                     case PartyTypes.Oidc:
-                        throw new NotImplementedException();
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.TrackLink:
-                        throw new NotImplementedException();
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
                     default:
                         throw new NotSupportedException();
                 }

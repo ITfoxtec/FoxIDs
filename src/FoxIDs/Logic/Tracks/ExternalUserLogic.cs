@@ -18,22 +18,20 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly DynamicElementLogic dynamicElementLogic;
         private readonly ClaimsDownLogic claimsDownLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
 
-        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, DynamicElementLogic dynamicElementLogic, ClaimsDownLogic claimsDownLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimsDownLogic claimsDownLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.dynamicElementLogic = dynamicElementLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.claimTransformLogic = claimTransformLogic;
         }
 
 
-        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync(ExternalUserUpParty party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string, string> requireUserExceptionAction)
+        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync(ExternalUserUpParty party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction)
         {
             if (string.IsNullOrWhiteSpace(party.LinkExternalUser?.LinkClaimType))
             {
@@ -78,7 +76,7 @@ namespace FoxIDs.Logic
 
                 if (party.LinkExternalUser.RequireUser)
                 {
-                    requireUserExceptionAction(party.LinkExternalUser.LinkClaimType, linkClaimValue);
+                    requireUserExceptionAction($"Require external user for link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}'.");
                 }
             }
             else

@@ -107,6 +107,7 @@
                 @if (trackLinkUpParty.ShowAdvanced)
                 {
                     <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Claims" For="@(() => trackLinkUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
+                    <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.PipeExternalId" For="@(() => trackLinkUpParty.Form.Model.PipeExternalId)" TextType="y.n" />
                 }
             }
             else if (trackLinkUpParty.ShowClaimTransformTab)

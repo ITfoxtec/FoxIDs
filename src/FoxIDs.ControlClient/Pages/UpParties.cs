@@ -277,6 +277,7 @@ namespace FoxIDs.Client.Pages
                     afterMap.ToDownPartyName = "x";
                     afterMap.SelectedUpParties = new List<string> { "*" };
                     afterMap.Claims = new List<string> { "*" };
+                    afterMap.PipeExternalId = true;
                 });
                 var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
 

@@ -24,6 +24,15 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "esi")]
         public string ExternalSessionId { get; set; }
 
+        [JsonProperty(PropertyName = "it")]
+        public string IdToken { get; set; }
+
+        [JsonProperty(PropertyName = "e")]
+        public string Error { get; set; }
+
+        [JsonProperty(PropertyName = "ed")]
+        public string ErrorDescription { get; set; }
+
         [JsonProperty(PropertyName = "sst")]
         public Saml2StatusCodes Saml2Status { get; set; }
     }

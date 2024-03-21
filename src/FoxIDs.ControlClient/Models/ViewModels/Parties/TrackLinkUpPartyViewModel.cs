@@ -47,12 +47,14 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
+        [Display(Name = "Pipe the external ID.")]
+        public bool PipeExternalId { get; set; }
+
         /// <summary>
         /// Claim transforms.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
-
 
         /// <summary>
         /// Default 10 hours.

@@ -17,11 +17,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly PlanCacheLogic planCacheLogic;
+        private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.planCacheLogic = planCacheLogic;
+            this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
         public async Task<bool> ValidateApiModelAsync(ModelStateDictionary modelState, Api.LoginUpParty party)
@@ -78,7 +80,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    if (!ValidateApiModelCreateUserElements(modelState, party.CreateUser.Elements))
+                    if (!validateApiModelDynamicElementLogic.ValidateApiModelCreateUserElements(modelState, party.CreateUser.Elements))
                     {
                         isValid = false;
                     }
@@ -90,40 +92,6 @@ namespace FoxIDs.Logic
                 }
             }
 
-            return isValid;
-        }
-
-        public bool ValidateApiModelCreateUserElements(ModelStateDictionary modelState, List<Api.DynamicElement> createUserElements) 
-        {
-            var isValid = true;
-            try
-            {
-                if (createUserElements?.Count() > 0)
-                {
-                    var duplicatedOrderNumber = createUserElements.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                    if (duplicatedOrderNumber >= 0)
-                    {
-                        throw new ValidationException($"Duplicated create user dynamic element order number '{duplicatedOrderNumber}'");
-                    }
-
-                    if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() != 1)
-                    {
-                        throw new ValidationException("Exactly one create user dynamic element of type EmailAndPassword is required.");
-                    }
-
-                    var duplicatedElementType = createUserElements.GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                    if (duplicatedElementType > 0)
-                    {
-                        throw new ValidationException($"Duplicated create user dynamic element type '{duplicatedElementType}'");
-                    }
-                }
-            }
-            catch (ValidationException vex)
-            {
-                isValid = false;
-                logger.Warning(vex);
-                modelState.TryAddModelError(nameof(Api.LoginUpParty.CreateUser.Elements).ToCamelCase(), vex.Message);
-            }
             return isValid;
         }
 

@@ -200,6 +200,25 @@ namespace FoxIDs.Client.Pages.Components
                     {
                         afterMap.LinkExternalUser = null;
                     }
+                    if (afterMap.LinkExternalUser != null)
+                    {
+                        if (afterMap.LinkExternalUser.Elements?.Count() > 0)
+                        {
+                            int order = 1;
+                            foreach (var element in afterMap.LinkExternalUser.Elements)
+                            {
+                                element.Order = order++;
+                            }
+                        }
+                        if (afterMap.LinkExternalUser.ClaimTransforms?.Count() > 0)
+                        {
+                            int order = 1;
+                            foreach (var claimTransform in afterMap.LinkExternalUser.ClaimTransforms)
+                            {
+                                claimTransform.Order = order++;
+                            }
+                        }
+                    }
                 });
 
                 if (generalOidcUpParty.CreateMode)

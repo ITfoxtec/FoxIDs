@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TFilterUserController : ApiController
     {
-        private const string dataType = "user";
+        private const string dataType = Constants.Models.DataType.User;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;

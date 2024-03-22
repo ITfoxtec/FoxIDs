@@ -21,6 +21,7 @@ namespace FoxIDs.Client.Pages
     {
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
+        private bool tenantWorking;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -100,6 +101,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task ShowUpdateTenantAsync(GeneralTenantViewModel generalTenant)
         {
+            tenantWorking = false;
             generalTenant.DeleteAcknowledge = false;
             generalTenant.ShowAdvanced = false;
             generalTenant.Error = null;
@@ -129,15 +131,22 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
+                if (tenantWorking)
+                {
+                    return;
+                }
+                tenantWorking = true;
                 var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
                 generalTenant.Form.UpdateModel(tenantResult);
                 toastService.ShowSuccess("Tenant updated.");
 
                 generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;
                 generalTenant.CustomDomainVerified = generalTenant.Form.Model.CustomDomainVerified;
+                tenantWorking = false;
             }
             catch (FoxIDsApiException ex)
             {
+                tenantWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     generalTenant.Form.SetFieldError(nameof(generalTenant.Form.Model.Name), ex.Message);
@@ -153,8 +162,15 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
+                generalTenant.DeleteAcknowledge = false;                
+                if(tenantWorking)
+                {
+                    return;
+                }
+                tenantWorking = true;
                 await TenantService.DeleteTenantAsync(generalTenant.Name);
                 tenants.Remove(generalTenant);
+                tenantWorking = false;
             }
             catch (TokenUnavailableException)
             {
@@ -162,6 +178,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
+                tenantWorking = false;
                 generalTenant.Form.SetError(ex.Message);
             }
         }

@@ -2,6 +2,7 @@
 {
     public enum DynamicElementTypes
     {
+        Email = 5,
         EmailAndPassword = 10,
 
         Name = 20,

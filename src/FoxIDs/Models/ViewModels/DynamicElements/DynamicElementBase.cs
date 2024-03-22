@@ -8,6 +8,6 @@
 
         public virtual string DField3 { get; set; }
 
-        public bool Required { get; set; }
+        public virtual bool Required => false;
     }
 }

@@ -88,13 +88,13 @@ It is subsequently possible to add a secondary certificate and to swap between t
     - `https://data.gov.dk/model/core/eid/lastName`
     - `https://data.gov.dk/model/core/eid/professional/cvr`
     - `https://data.gov.dk/model/core/eid/professional/orgName`
-    - `https://data.gov.dk/model/core/eid/professional/rid`
+    - `https://data.gov.dk/model/core/eid/professional/uuid/persistent`
     - `https://data.gov.dk/model/core/specVersion`
     - optionally include the privilege claim, see step 3)
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
- 12. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
+ 12. In production only! Set the certificate revocation mode to `Online` and optionally the validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure.
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 

@@ -15,7 +15,7 @@
                         {
                             <li class="nav-item pt-2">
                                 <strong class="align-middle">Master tenant</strong>
-                                <button class="btn btn-link" @onclick="ShowCreateTenantModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                                <button class="btn btn-primary ml-4" type="button" @onclick="ShowCreateTenantModal"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
                             </li>
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
@@ -90,7 +90,6 @@
                                                     <div class="font-italic pl-1">No match</div>
                                                 }
                                             }
-
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +141,7 @@
                                 <TenantLiNavLink Href="authentication">
                                     Authentication Methods
                                 </TenantLiNavLink>
-                                <TenantLiNavLink Href="users">
+                                <TenantLiNavLink Href="users" SubPages="externalusers">
                                     Users
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="certificates">
@@ -163,7 +162,7 @@
 
         <AuthorizeView>
             <Authorized>
-                <Modal @ref="createTenantModal" Title="Create Tenant">
+                <Modal @ref="createTenantModal" Title="Create New Tenant">
                     <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
                         <div class="modal-body">
                             <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />

@@ -14,7 +14,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"track:{idKey.TenantName}:{idKey.TrackName}";
+            return $"{Constants.Models.DataType.Track}:{idKey.TenantName}:{idKey.TrackName}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)

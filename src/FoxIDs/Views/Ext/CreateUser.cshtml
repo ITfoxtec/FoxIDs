@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model CreateExternalUserViewModel
+
+@{
+    ViewData["Title"] = Localizer["Create user"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container name-create-user">
+    <div class="col-md page-content">
+        <editForm model>
+
+        </editForm>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            @for(var i = 0; i < Model.Elements.Count(); i++)
+            {
+                if (Model.Elements[i] is EmailDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is NameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is GivenNameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is FamilyNameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else
+                {
+                    throw new NotSupportedException($"Dynamic element type '{Model.Elements[i].GetTypeName()}' not supported.");
+                }
+            }
+            <div class="form-group button-group">
+                <div>
+                    <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

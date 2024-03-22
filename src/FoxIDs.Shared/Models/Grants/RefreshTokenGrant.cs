@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"rtgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.RefreshToken}";
+            return $"{Constants.Models.DataType.RefreshTokenGrant}:{idKey.TenantName}:{idKey.TrackName}:{idKey.RefreshToken}";
         }
 
         [Required]

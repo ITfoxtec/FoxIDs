@@ -59,8 +59,8 @@
                 }
             </div>
             <div class="modal-footer px-0">
-                <button type="button" class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+                <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
             </div>
         }
     </PageEditForm>

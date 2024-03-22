@@ -12,7 +12,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"tenant:{idKey.TenantName}";
+            return $"{Constants.Models.DataType.Tenant}:{idKey.TenantName}";
         }
 
         public static async Task<string> IdFormatAsync(string name)

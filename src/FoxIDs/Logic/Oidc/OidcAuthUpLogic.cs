@@ -6,13 +6,11 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
-using ITfoxtec.Identity.Saml2.Schemas;
 using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,7 +19,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -39,10 +36,11 @@ namespace FoxIDs.Logic
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
+        private readonly ExternalUserLogic externalUserLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -55,6 +53,7 @@ namespace FoxIDs.Logic
             this.securityHeaderLogic = securityHeaderLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformLogic = claimTransformLogic;
+            this.externalUserLogic = externalUserLogic;
             this.claimValidationLogic = claimValidationLogic;
             this.httpClientFactory = httpClientFactory;
         }
@@ -201,7 +200,7 @@ namespace FoxIDs.Logic
             try
             {
                 await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
             }
             catch (Exception ex)
             {
@@ -233,8 +232,8 @@ namespace FoxIDs.Logic
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
-                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
-                    c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType && 
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
+                    c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
                     c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
@@ -245,25 +244,27 @@ namespace FoxIDs.Logic
                     foreach (var tokenIssuer in tokenIssuers)
                     {
                         claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
-                    }                  
+                    }
                 }
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
+                logger.ScopeTrace(() => $"AuthMethod, OIDC transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
-                if (!sessionId.IsNullOrEmpty())
+                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, validClaims,
+                    (externalUserUpSequenceData) =>
+                    {
+                        externalUserUpSequenceData.ExternalSessionId = externalSessionId;
+                        externalUserUpSequenceData.IdToken = idToken;
+                    },
+                    (errorMessage) => throw new OAuthRequestException(errorMessage) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest });
+                if (externalUserActionResult != null)
                 {
-                    validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                    return externalUserActionResult;
                 }
 
-                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-                {
-                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
-                }
-
-                logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                return await AuthenticationRequestPostAsync(party, sequenceData, validClaims, externalUserClaims, idToken, externalSessionId);
             }
             catch (StopSequenceException)
             {
@@ -286,6 +287,57 @@ namespace FoxIDs.Logic
                 logger.Error(ex);
                 return await AuthenticationResponseDownAsync(sequenceData, error: IdentityConstants.ResponseErrors.InvalidRequest);
             }
+        }
+
+        public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            var party = await tenantRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
+
+            try
+            {
+                return await AuthenticationRequestPostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.ExternalSessionId, externalUserSequenceData.IdToken);
+            }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
+            catch (ResponseErrorException rex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, rex.Error);
+                logger.Error(rex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: rex.Error, errorDescription: $"{party.Name}|{rex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: IdentityConstants.ResponseErrors.InvalidRequest);
+            }
+        }
+
+        private async Task<IActionResult> AuthenticationRequestPostAsync(TParty party, OidcUpSequenceData sequenceData, List<Claim> validClaims, IEnumerable<Claim> externalUserClaims, string idToken, string externalSessionId)
+        {
+            validClaims = externalUserLogic.AddExternalUserClaims(party, validClaims, externalUserClaims);
+
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
+            if (!sessionId.IsNullOrEmpty())
+            {
+                validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+            }
+
+            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+            {
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
+            }
+
+            logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
         }
 
         private (Dictionary<string, string> formOrQueryDictionary, bool onlyAcceptGetResponseWithError) GetFormOrQueryDictionary(TParty party)

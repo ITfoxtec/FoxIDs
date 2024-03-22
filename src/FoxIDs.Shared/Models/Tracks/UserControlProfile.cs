@@ -12,7 +12,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"ucp:{idKey.TenantName}:{idKey.TrackName}:{idKey.UserHashId}";
+            return $"{Constants.Models.DataType.UserControlProfile}:{idKey.TenantName}:{idKey.TrackName}:{idKey.UserHashId}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string userHashId)
@@ -31,8 +31,8 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(Constants.Models.User.IdLength)]
-        [RegularExpression(Constants.Models.User.IdRegExPattern)]
+        [MaxLength(Constants.Models.UserControlProfile.IdLength)]
+        [RegularExpression(Constants.Models.UserControlProfile.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 

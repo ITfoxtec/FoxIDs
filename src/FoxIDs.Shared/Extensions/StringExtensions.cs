@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FoxIDs
 {
@@ -44,6 +45,8 @@ namespace FoxIDs
             var split = upPartyId.Split(':');
             return split[split.Length - 1];
         }
+
+        public static Task<string> HashIdStringAsync(this string linkClaim) => linkClaim?.ToLower()?.Sha256HashBase64urlEncodedAsync();
 
         public static string Compress(this string text)
         {

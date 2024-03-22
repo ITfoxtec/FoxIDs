@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OidcUpParty>> PostOidcUpParty([FromBody] Api.OidcUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp));
+        public async Task<ActionResult<Api.OidcUpParty>> PostOidcUpParty([FromBody] Api.OidcUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), (ap, mp) => new ValueTask<bool>(validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp)));
 
         /// <summary>
         /// Update OIDC authentication method.
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OidcUpParty>> PutOidcUpParty([FromBody] Api.OidcUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp));
+        public async Task<ActionResult<Api.OidcUpParty>> PutOidcUpParty([FromBody] Api.OidcUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), (ap, mp) => new ValueTask<bool>(validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp)));
 
         /// <summary>
         /// Delete OIDC authentication method.

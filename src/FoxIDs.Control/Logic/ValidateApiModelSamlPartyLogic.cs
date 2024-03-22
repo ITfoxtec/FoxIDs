@@ -14,17 +14,20 @@ namespace FoxIDs.Logic
     public class ValidateApiModelSamlPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelSamlPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelSamlPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
         {
             return ValidateSignatureAlgorithmAndSigningKeys(modelState, samlUpParty) && 
                 ValidateLogout(modelState, samlUpParty) &&
-                ValidateMetadataNameIdFormats(modelState, samlUpParty);
+                ValidateMetadataNameIdFormats(modelState, samlUpParty) &&
+                validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, samlUpParty.LinkExternalUser?.Elements);
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)

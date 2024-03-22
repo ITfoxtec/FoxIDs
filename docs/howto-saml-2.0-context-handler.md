@@ -77,7 +77,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 
 7. Select Show advanced settings
 8. Configure a custom SP issuer, the issuer can optionally start with `https://saml.` The issuer in this example is `https://saml.foxids.com/test-corp/context-handler-test/`
-9. Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
+9. Set the certificate revocation mode to `Online` and optionally the validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure.
 10. Select to add logout response location URL in metadata
 11. Select to include the encryption certificate in metadata
 12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
@@ -185,7 +185,7 @@ The following claims is most often used:
 12. Select Encrypt authn response
 13. Add the certificate from the metadata as a optional encryption certificate
 
-14. Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
+14. Set the certificate revocation mode to `Online` and optionally the validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure.
 15. Set Authn response sign type to Sign assertion
 16. Configure a custom IdP issuer, the issuer can optionally start with `https://saml.` The issuer in this example `https://saml.foxids.com/test-corp/context-handler-test-idp/`.
 17. Select to add logout response location URL in metadata

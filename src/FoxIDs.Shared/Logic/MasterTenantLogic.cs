@@ -63,6 +63,7 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
+                DisplayName = "Default",
                 Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
@@ -85,6 +86,7 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
+                DisplayName = "Default",
                 Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
@@ -112,6 +114,7 @@ namespace FoxIDs.Logic
         {
             var mControlApiResourceDownParty = new OAuthDownParty
             {
+                DisplayName = "FoxIDs Control API",
                 Name = Constants.ControlApi.ResourceName
             };
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName };
@@ -177,6 +180,7 @@ namespace FoxIDs.Logic
         {
             var mControlClientDownParty = new OidcDownParty
             {
+                DisplayName = "FoxIDs Control Client",
                 Name = Constants.ControlClient.ClientId
             };
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId };

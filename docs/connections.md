@@ -1,4 +1,4 @@
-﻿# FoxIDs connections
+﻿# Connections
 
 FoxIDs is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to FoxIDs as application registrations.
 

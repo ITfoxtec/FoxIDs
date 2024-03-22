@@ -11,8 +11,8 @@ namespace FoxIDs.Logic
 {
     public class ClaimTransformValidationLogic : LogicBase
     {
-        private readonly string[] replaceClaimOutJwtTypes = new[] { JwtClaimTypes.Subject, JwtClaimTypes.SessionId, JwtClaimTypes.AuthTime, JwtClaimTypes.Acr, JwtClaimTypes.Amr, JwtClaimTypes.ExpirationTime, JwtClaimTypes.NotBefore, JwtClaimTypes.IssuedAt, JwtClaimTypes.Nonce, JwtClaimTypes.Azp, JwtClaimTypes.AtHash, JwtClaimTypes.CHash };
-        private readonly string[] replaceClaimOutSamlTypes = new[] { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod };
+        private readonly string[] replaceClaimOutJwtTypes = [JwtClaimTypes.Subject, JwtClaimTypes.SessionId, JwtClaimTypes.AuthTime, JwtClaimTypes.Acr, JwtClaimTypes.Amr, JwtClaimTypes.ExpirationTime, JwtClaimTypes.NotBefore, JwtClaimTypes.IssuedAt, JwtClaimTypes.Nonce, JwtClaimTypes.Azp, JwtClaimTypes.AtHash, JwtClaimTypes.CHash];
+        private readonly string[] replaceClaimOutSamlTypes = [ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod];
 
         public ClaimTransformValidationLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }

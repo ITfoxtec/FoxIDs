@@ -174,6 +174,34 @@ namespace FoxIDs.Logic
             }
         }
 
+        public List<string> FromSamlToJwtInfoClaimType(string samlClaimType)
+        {
+            try
+            {
+                var mappings = GetMappings(RouteBinding);
+
+                var jwtClaimTypes = new List<string>();
+                var claimMaps = mappings.Where(m => m.SamlClaim.Equals(samlClaimType, StringComparison.InvariantCultureIgnoreCase));
+                if (claimMaps?.Count() > 0)
+                {
+                    foreach (var claimMap in claimMaps)
+                    {
+                        jwtClaimTypes.Add(claimMap.JwtClaim);
+                    }
+                }
+                else if (!MappedClaimType(samlClaimType))
+                {
+                    jwtClaimTypes.Add(samlClaimType);
+                }
+                return jwtClaimTypes;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to map SAML claims to JWT claim types.");
+                throw;
+            }
+        }
+
         private bool MappedClaimType(string type)
         {
             return type switch
@@ -211,7 +239,7 @@ namespace FoxIDs.Logic
                 jwtClaims.Add(new Claim(JwtClaimTypes.AuthTime, value.ToString(), samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
             }
         }
-
+ 
         private void FromSamlAmrToJwt(List<Claim> jwtClaims, IEnumerable<Claim> samlClaims)
         {
             if(samlClaims.Where(c => c.Type == Constants.SamlClaimTypes.Amr).Any())

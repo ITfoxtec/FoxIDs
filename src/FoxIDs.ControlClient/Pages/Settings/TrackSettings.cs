@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
+        private bool trackWorking;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -73,6 +74,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                trackWorking = false;
                 deleteTrackError = null;
                 deleteTrackAcknowledge = false;
                 var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
@@ -92,11 +94,18 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                if (trackWorking)
+                {
+                    return;
+                }
+                trackWorking = true;
                 await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>());
                 toastService.ShowSuccess("Track settings updated.");
+                trackWorking = false;
             }
             catch (Exception ex)
             {
+                trackWorking = false;
                 trackSettingsForm.SetError(ex.Message);
             }
         }
@@ -105,8 +114,15 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                deleteTrackAcknowledge = false;
+                if (trackWorking)
+                {
+                    return;
+                }
+                trackWorking = true;
                 await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
                 await TrackSelectedLogic.SelectTrackAsync();
+                trackWorking = false;
             }
             catch (TokenUnavailableException)
             {
@@ -114,6 +130,7 @@ namespace FoxIDs.Client.Pages.Settings
             }
             catch (Exception ex)
             {
+                trackWorking = false;
                 deleteTrackError = ex.Message;
             }
         }

@@ -45,21 +45,31 @@
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim transform</a>
+                    <a class="nav-link active">Claim Transform</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ClaimsTransform))">Claim Transform</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowLinkExternalUserTab)
+                {
+                    <a class="nav-link active">Link External User</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.LinkExternalUser))">Link External User</button>
                 }
             </li>
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowSessionTab)
                 {
-                    <a class="nav-link active">Logout session</a>
+                    <a class="nav-link active">Logout Session</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout session</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout Session</button>
                 }
             </li>
             <li class="nav-item">
@@ -97,6 +107,7 @@
                 @if (trackLinkUpParty.ShowAdvanced)
                 {
                     <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Claims" For="@(() => trackLinkUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
+                    <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.PipeExternalId" For="@(() => trackLinkUpParty.Form.Model.PipeExternalId)" TextType="y.n" />
                 }
             }
             else if (trackLinkUpParty.ShowClaimTransformTab)
@@ -105,6 +116,13 @@
                     If you create a new claim the claim is local unless you add the claim to the 'Forward claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
                 <OAuthClaimTransforms Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowLinkExternalUserTab)
+            {
+                @if (trackLinkUpParty.Form.Model.LinkExternalUser != null)
+                {
+                    <LinkExternalUser Model="trackLinkUpParty.Form.Model.LinkExternalUser" />
+                }
             }
             else if (trackLinkUpParty.ShowSessionTab)
             {

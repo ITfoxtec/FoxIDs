@@ -15,7 +15,7 @@ Recommended SAML 2.0 bindings:
 Remark; The authn request redirect binding can result in a long query string which can cause problems I some devices. Therefore post binding is preferable.
 
 > Take a look at the AD FS sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` environment and the `Authentication methods` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication methods` tab.
 
 The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration using AD FS metadata in [FoxIDs Control Client](control.md#foxids-control-client).
 

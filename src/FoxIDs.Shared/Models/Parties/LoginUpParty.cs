@@ -59,6 +59,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
 
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "create_user")]
         public CreateUser CreateUser { get; set; }
     }

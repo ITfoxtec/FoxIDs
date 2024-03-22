@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System;
 using ITfoxtec.Identity;
-using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
@@ -20,17 +19,15 @@ namespace FoxIDs.Controllers
     public class TTrackKeyTypeController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
-            this.settings = settings;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.planCacheLogic = planCacheLogic;

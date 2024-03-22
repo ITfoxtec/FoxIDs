@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool ChangePassword { get; set; }
 
         [Display(Name = "Account status")]
-        public bool AccountStatus { get; set; }
+        public bool DisableAccount { get; set; }
 
         [Display(Name = "Active two-factor (2FA) app (only for deactivation)")]
         public bool ActiveTwoFactorApp { get; set; }

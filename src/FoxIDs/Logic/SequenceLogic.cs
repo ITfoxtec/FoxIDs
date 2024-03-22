@@ -123,6 +123,12 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<string> GetUiUpPartyIdAsync(Sequence sequence = null)
+        {
+            sequence = sequence ?? Sequence;
+            return !sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name);
+        }
+
         public Task<Sequence> TryReadSequenceAsync(string sequenceString)
         {
             if (!sequenceString.IsNullOrWhiteSpace())

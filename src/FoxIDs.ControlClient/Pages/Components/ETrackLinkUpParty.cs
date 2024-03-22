@@ -120,7 +120,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
 
-                    if (!(afterMap.LinkExternalUser?.AutoCreateUser == true || afterMap.LinkExternalUser?.RequireUser == true))
+                    if (string.IsNullOrWhiteSpace(afterMap.LinkExternalUser?.LinkClaimType) && !(afterMap.LinkExternalUser?.AutoCreateUser == true || afterMap.LinkExternalUser?.RequireUser == true))
                     {
                         afterMap.LinkExternalUser = null;
                     }

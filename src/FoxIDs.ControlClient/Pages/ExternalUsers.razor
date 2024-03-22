@@ -3,7 +3,7 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" href="@usersHref">Users</a>
+        <a class="nav-link" href="@usersHref">Internal Users</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active">External Users</a>
@@ -12,7 +12,7 @@
 
 <div class="d-flex pt-2">
     <div class="info-text mr-auto">
-        The <DocsLink Page="external-users">external users</DocsLink> are stored in the environment per authentication method and connected to the external identity with a link claim.
+        The <DocsLink Page="users" Fragment="external-users">external linked users</DocsLink> are stored in the environment per authentication method and connected to the external user with a link claim.
     </div>
     <div class="py-2">
         <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateExternalUser())">
@@ -39,7 +39,7 @@
             {
                 <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(async m => await ExternalUserViewModelAfterInitAsync(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
                     <div class="modal-header">
-                        ExternalUser
+                        External User
                     </div>
                     <div class="modal-body">
                         @if (externalUser.CreateMode)

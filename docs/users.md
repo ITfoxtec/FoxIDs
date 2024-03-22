@@ -59,6 +59,8 @@ All external user grouped under a authentication method is linked with the same 
 
 > With external users you can store claims on each user. E.g. store the your user ID claim representing the user in your system and thereby mapping the external user ID to your user ID. 
 
+A unique ID is by default added to each external user.
+
 ### Create external user
 Depending on the selected authentication method's configuration, new users is asked to fill out a form to create a user.
 

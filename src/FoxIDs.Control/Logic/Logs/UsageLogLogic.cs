@@ -1,6 +1,5 @@
 ﻿using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
-using Azure.Core;
 using Azure.Monitor.Query;
 using System;
 using System.Threading.Tasks;

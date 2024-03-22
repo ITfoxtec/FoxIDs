@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public InvalidAppCodeException() { }
         public InvalidAppCodeException(string message) : base(message) { }
         public InvalidAppCodeException(string message, Exception innerException) : base(message, innerException) { }
-        protected InvalidAppCodeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

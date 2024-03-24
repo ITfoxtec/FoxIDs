@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var mappings = GetMappings(RouteBinding);
+                var mappings = GetMappings(RouteBinding, false);
 
                 var samlClaims = new List<Claim>();
 
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var mappings = GetMappings(RouteBinding);
+                var mappings = GetMappings(RouteBinding, true);
 
                 var jwtClaims = new List<Claim>();
 
@@ -178,7 +178,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var mappings = GetMappings(RouteBinding);
+                var mappings = GetMappings(RouteBinding, true);
 
                 var jwtClaimTypes = new List<string>();
                 var claimMaps = mappings.Where(m => m.SamlClaim.Equals(samlClaimType, StringComparison.InvariantCultureIgnoreCase));
@@ -262,16 +262,16 @@ namespace FoxIDs.Logic
             }
         }
 
-        private IEnumerable<ClaimMap> GetMappings(RouteBinding RouteBinding)
+        private IEnumerable<ClaimMap> GetMappings(RouteBinding RouteBinding, bool toJwtClaims)
         {
             var mappings = Constants.DefaultClaimMappings.LockedMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim });
 
             if (RouteBinding.ClaimMappings != null && RouteBinding.ClaimMappings?.Count() > 0)
             {
-                mappings = mappings.ConcatOnce(RouteBinding.ClaimMappings, (f, s) => s.JwtClaim == f.JwtClaim);
+                mappings = mappings.ConcatOnce(RouteBinding.ClaimMappings, (f, s) => toJwtClaims ? s.SamlClaim == f.SamlClaim: s.JwtClaim == f.JwtClaim);
             }
 
-            mappings = mappings.ConcatOnce(Constants.DefaultClaimMappings.ChangeableMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim }), (f, s) => s.JwtClaim == f.JwtClaim);
+            mappings = mappings.ConcatOnce(Constants.DefaultClaimMappings.ChangeableMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim }), (f, s) => toJwtClaims ? s.SamlClaim == f.SamlClaim : s.JwtClaim == f.JwtClaim);
 
             return mappings;
         }

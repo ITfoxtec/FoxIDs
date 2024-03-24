@@ -12,12 +12,14 @@ using ITfoxtec.Identity;
 using System.Collections.Generic;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TTrackKeyTypeController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
@@ -25,8 +27,9 @@ namespace FoxIDs.Controllers
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
@@ -73,6 +76,11 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(trackKey)) return BadRequest(ModelState);
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
+
+                if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault && (mTrackKey.Type == TrackKeyTypes.KeyVaultRenewSelfSigned || mTrackKey.Type == TrackKeyTypes.KeyVaultImport))
+                {
+                    throw new Exception("KeyVault option not enabled.");
+                }
 
                 if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyTypes.Contained)
                 {

@@ -12,6 +12,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using ITfoxtec.Identity;
+using FoxIDs.Models.Config;
 
 
 namespace FoxIDs.Controllers
@@ -20,6 +21,7 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class TTenantController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
@@ -29,8 +31,9 @@ namespace FoxIDs.Controllers
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
@@ -104,14 +107,14 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType());
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType());
-                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType());
+                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
+                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }

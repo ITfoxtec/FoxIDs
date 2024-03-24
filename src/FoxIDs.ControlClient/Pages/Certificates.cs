@@ -15,6 +15,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages
 {
@@ -27,6 +28,9 @@ namespace FoxIDs.Client.Pages
         private string changeContainerTypeError;
         private string certificateLoadError;
         private TrackKey trackKey;
+
+        [Inject]
+        public ClientSettings clientSettings { get; set; }
 
         [Inject]
         public TrackService TrackService { get; set; }

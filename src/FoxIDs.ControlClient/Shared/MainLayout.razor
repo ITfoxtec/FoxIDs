@@ -147,9 +147,12 @@
                                 <TenantLiNavLink Href="certificates">
                                     Certificates
                                 </TenantLiNavLink>
-                                <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
-                                    Logs
-                                </TenantLiNavLink>
+                                @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+                                {
+                                    <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
+                                        Logs
+                                    </TenantLiNavLink>
+                                }
                                 <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings,texts,plans,riskpasswords">
                                     Settings
                                 </TenantLiNavLink>

@@ -1,6 +1,7 @@
 ﻿using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Config
 {
@@ -9,7 +10,7 @@ namespace FoxIDs.Models.Config
         [Required]
         public string DownParty { get; set; }
 
-        [Required]
+        [ValidateComplexType]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }
 
         public bool DisableBackgroundQueueService { get; set; }
@@ -19,9 +20,10 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public bool MasterSeedEnabled { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var results = new List<ValidationResult>();
+            var results = base.Validate(validationContext).ToList();
+
             if (FoxIDsEndpoint.IsNullOrEmpty())
             {
                 results.Add(new ValidationResult($"The field {nameof(FoxIDsEndpoint)} is required.", new[] { nameof(FoxIDsEndpoint) }));
@@ -30,6 +32,15 @@ namespace FoxIDs.Models.Config
             {
                 results.Add(new ValidationResult($"The field {nameof(FoxIDsControlEndpoint)} is required.", new[] { nameof(FoxIDsControlEndpoint) }));
             }
+
+            if (Options.Log == LogOptions.ApplicationInsights)
+            {
+                if (ApplicationInsights == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(ApplicationInsights)} is required if {nameof(Options.Log)} is {Options.Log}.", new[] { nameof(ApplicationInsights) }));
+                }
+            }
+
             return results;
         }
     }

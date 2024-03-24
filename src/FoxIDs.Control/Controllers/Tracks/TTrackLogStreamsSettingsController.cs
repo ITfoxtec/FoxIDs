@@ -10,19 +10,23 @@ using System.Net;
 using System.Collections.Generic;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
+using System;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
     public class TTrackLogStreamsSettingsController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackLogStreamsSettingsController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackLogStreamsSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
@@ -38,6 +42,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogStreams>> GetTrackLogStreamsSettings()
         {
+            if (settings.Options.Log != LogOptions.ApplicationInsights)
+            {
+                throw new Exception("ApplicationInsights option not enabled.");
+            }
+
             try
             {
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
@@ -70,6 +79,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogStreams>> PostTrackLogStreamsSettings([FromBody] Api.LogStreams logStreams)
         {
+            if (settings.Options.Log != LogOptions.ApplicationInsights)
+            {
+                throw new Exception("ApplicationInsights option not enabled.");
+            }
+
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(logStreams)) return BadRequest(ModelState);

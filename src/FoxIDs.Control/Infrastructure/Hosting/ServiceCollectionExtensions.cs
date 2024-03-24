@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -80,16 +81,24 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddHostedService<BackgroundQueueService>();
 
-            if (!env.IsDevelopment())
+            if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
-            }
-            else
-            {
-                services.AddSingleton<TokenCredential>(serviceProvider =>
+                if (!env.IsDevelopment())
                 {
-                    return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
-                });
+                    services.AddSingleton<TokenCredential, DefaultAzureCredential>();
+                }
+                else
+                {
+                    services.AddSingleton<TokenCredential>(serviceProvider =>
+                    {
+                        return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
+                    });
+                }
+            }
+
+            if (settings.Options.Cache == CacheOptions.Redis)
+            {
+                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString));
             }
 
             services.AddApiSwagger();

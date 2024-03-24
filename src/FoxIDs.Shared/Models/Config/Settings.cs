@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
 {
-    public class Settings
+    public class Settings : IValidatableObject
     {
         /// <summary>
         /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control. Optionally in FoxIDs.
@@ -17,31 +18,76 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// Cosmos DB configuration.
         /// </summary>
-        [Required]
+        [ValidateComplexType]
         public CosmosDbSettings CosmosDb { get; set; }
 
         /// <summary>
         /// Key Vault configuration.
         /// </summary>
-        [Required]
+        [ValidateComplexType]
         public KeyVaultSettings KeyVault { get; set; }
 
         /// <summary>
         /// Redis Cache configuration.
         /// </summary>
-        [Required]
+        [ValidateComplexType]
         public RedisCacheSettings RedisCache { get; set; }
 
         /// <summary>
         /// Cache configuration.
         /// </summary>
-        [Required]
+        [ValidateComplexType]
         public CacheSettings Cache { get; set; } = new CacheSettings();
- 
+
         /// <summary>
         /// Only used in development!
         /// The servers client credentials. 
         /// </summary>
+        [ValidateComplexType]
         public ClientCredentialSettings ServerClientCredential { get; set; }
+
+        /// <summary>
+        /// Specify the selected options.
+        /// </summary>
+        [Required]
+        public OptionsSettings Options { get; set; } = new OptionsSettings();
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (Options.DataStorage == DataStorageOptions.CosmosDb)
+            {
+                if (CosmosDb == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
+                }
+            }
+
+            if (Options.KeyStorage == KeyStorageOptions.KeyVault)
+            {
+                if (KeyVault == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(KeyVault)} is required if {nameof(Options.KeyStorage)} is {Options.KeyStorage}.", new[] { nameof(KeyVault) }));
+                }
+            }
+
+            if (Options.Cache == CacheOptions.Redis)
+            {
+                if (RedisCache == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(RedisCache)} is required if {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(RedisCache) }));
+                }
+            }
+            if (Options.Cache != CacheOptions.None)
+            {
+                if (Cache == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Cache)} is required if {nameof(Options.Cache)} is not {CacheOptions.None}.", new[] { nameof(Cache) }));
+                }
+            }
+
+            return results;
+        }
     }
 }

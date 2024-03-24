@@ -1,4 +1,6 @@
-﻿namespace FoxIDs.Client.Models.Config
+﻿using FoxIDs.Models.Api;
+
+namespace FoxIDs.Client.Models.Config
 {
     public class ClientSettings
     {
@@ -8,5 +10,9 @@
         public string LogoutCallBackPath { get; set; }
         public string Version { get; set; }
         public string FullVersion { get; set; }
+
+        public LogOptions LogOption { get; set; }
+        public KeyStorageOptions KeyStorageOption { get; set; }
+
     }
 }

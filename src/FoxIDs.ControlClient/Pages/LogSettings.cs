@@ -1,6 +1,7 @@
 ﻿using Blazored.Toast.Services;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -25,6 +26,9 @@ namespace FoxIDs.Client.Pages
         private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
 
         [Inject]
+        public ClientSettings clientSettings { get; set; }
+
+        [Inject]
         public IToastService toastService { get; set; }
 
         [Inject]
@@ -38,6 +42,11 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            if (clientSettings.LogOption != LogOptions.ApplicationInsights)
+            {
+                throw new Exception("ApplicationInsights option not enabled.");
+            }
+
             logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
             logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             await base.OnInitializedAsync();

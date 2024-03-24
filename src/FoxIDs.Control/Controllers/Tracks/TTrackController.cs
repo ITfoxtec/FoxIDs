@@ -12,12 +12,14 @@ using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity.Util;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TTrackController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
@@ -26,8 +28,9 @@ namespace FoxIDs.Controllers
         private readonly TrackLogic trackLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
@@ -112,12 +115,17 @@ namespace FoxIDs.Controllers
 
         private async Task<TrackKeyTypes> GetKeyTypeAsync()
         {
+            if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault)
+            {
+                return TrackKeyTypes.Contained;
+            }
+
             Plan plan = null;
             if (!RouteBinding.PlanName.IsNullOrEmpty())
             {            
                 plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);                
             }
-            return plan.GetKeyType();
+            return plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault);
         }
 
         /// <summary>

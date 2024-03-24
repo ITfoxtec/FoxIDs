@@ -41,7 +41,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static (IServiceCollection, IConnectionMultiplexer) AddSharedInfrastructure(this IServiceCollection services, Models.Config.Settings settings)
+        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Models.Config.Settings settings)
         {
             IdentityModelEventSource.ShowPII = true;
 
@@ -65,13 +65,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 options.Timeout = TimeSpan.FromSeconds(30);
             });
 
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
-            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
-
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
 
-            return (services, connectionMultiplexer);
+            return services;
         }
     }
 }

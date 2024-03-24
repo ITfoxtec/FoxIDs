@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Infrastructure.DataAnnotations
 {
@@ -19,7 +18,6 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         {
             ValidationResults = validationResults;
         }
-        protected ValidationResultException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public List<ValidationResult> ValidationResults { get; }
 

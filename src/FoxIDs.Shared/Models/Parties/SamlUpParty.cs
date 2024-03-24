@@ -7,11 +7,10 @@ using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
 using System;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Models
 {
-    public class SamlUpParty : UpParty, IValidatableObject
+    public class SamlUpParty : ExternalUserUpParty, IValidatableObject
     {
         public SamlUpParty()
         {

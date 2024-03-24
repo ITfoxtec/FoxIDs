@@ -122,6 +122,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
+        [ValidateComplexType]
+        public LinkExternalUser LinkExternalUser { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

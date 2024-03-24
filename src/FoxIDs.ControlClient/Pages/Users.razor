@@ -1,13 +1,22 @@
 ﻿@page "/{tenantName}/users"
 @inherits PageBase
 
-<div class="d-flex">
-    <div class="info-text mr-auto pt-0">
-        The user store in the environment where you can add more <DocsLink Page="users">users</DocsLink>.
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Internal Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        The <DocsLink Page="users" Fragment="internal-users">internal user</DocsLink> are stored in the environment's user store.
         <br />
         More about: <DocsLink Page="login">Login and MFA</DocsLink>
     </div>
-    <div class="pb-2">
+    <div class="py-2">
         <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateUser())">
             <span class="oi oi-plus" aria-hidden="true"></span> Create User
         </button>
@@ -51,7 +60,8 @@
                         <FInputToggle @bind-Value="user.Form.Model.ConfirmAccount" For="@(() => user.Form.Model.ConfirmAccount)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.EmailVerified" For="@(() => user.Form.Model.EmailVerified)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
-                        <FInputToggle @bind-Value="user.Form.Model.AccountStatus" For="@(() => user.Form.Model.AccountStatus)" TextType="e.d" />
+                        <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
+                        <div class="info-text">The user must verify the account as part of multi-factor.</div>
                         <FInputToggle @bind-Value="user.Form.Model.ActiveTwoFactorApp" For="@(() => user.Form.Model.ActiveTwoFactorApp)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
 
@@ -105,7 +115,7 @@
             else
             {
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUserAsync(user))">
-                    @UserInfoText(user)
+                    @user.Email
                 </button>
             }
         </li>

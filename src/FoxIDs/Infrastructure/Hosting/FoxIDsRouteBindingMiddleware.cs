@@ -7,10 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Security.Cryptography.X509Certificates;
-using FoxIDs.Models.Config;
-using Azure.Core;
-using Azure.Security.KeyVault.Certificates;
 using FoxIDs.Logic;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -18,19 +14,15 @@ namespace FoxIDs.Infrastructure.Hosting
     public class FoxIDsRouteBindingMiddleware : RouteBindingMiddleware
     {
         private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:(?<downparty>[\w-_]+)(?:\~(?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\~)?)|(?:(?<downparty>[\w-_]+)(?:.(?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*)).)?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~)|(?:.(?<upparty>[\w-_]+).))$", RegexOptions.Compiled);
-        private readonly FoxIDsSettings settings;
+        private readonly TrackKeyLogic trackKeyLogic;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
-        private readonly IDistributedCacheProvider cacheProvider;
-        private readonly TokenCredential tokenCredential;
 
-        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IDistributedCacheProvider cacheProvider, TokenCredential tokenCredential) : base(next, trackCacheLogic)
+        public FoxIDsRouteBindingMiddleware(RequestDelegate next, TrackKeyLogic trackKeyLogic, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic) : base(next, trackCacheLogic)
         {
-            this.settings = settings;
+            this.trackKeyLogic = trackKeyLogic;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
-            this.cacheProvider = cacheProvider;
-            this.tokenCredential = tokenCredential;
         }
 
         protected override bool CheckCustomDomainSupport(string[] route)
@@ -144,7 +136,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             routeBinding.DisplayName = track.DisplayName;
             routeBinding.PartyNameAndBinding = partyNameAndBinding;
-            routeBinding.Key = await LoadTrackKeyAsync(scopedLogger, trackIdKey, track);
+            routeBinding.Key = await trackKeyLogic.LoadTrackKeyAsync(scopedLogger, trackIdKey, track);
             routeBinding.ClaimMappings = track.ClaimMappings;
             routeBinding.SequenceLifetime = track.SequenceLifetime;
             routeBinding.MaxFailingLogins = track.MaxFailingLogins;
@@ -193,42 +185,6 @@ namespace FoxIDs.Infrastructure.Hosting
             }
 
             return routeBinding;
-        }
-
-        private async Task<RouteTrackKey> LoadTrackKeyAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Track track)
-        {
-            switch (track.Key.Type)
-            {
-                case TrackKeyTypes.Contained:
-                    return new RouteTrackKey
-                    {
-                        Type = track.Key.Type,
-                        PrimaryKey = new RouteTrackKeyItem { Key = track.Key.Keys[0].Key },
-                        SecondaryKey = track.Key.Keys.Count > 1 ? new RouteTrackKeyItem { Key = track.Key.Keys[1].Key } : null,
-                    };
-
-                case TrackKeyTypes.KeyVaultRenewSelfSigned:
-                    var trackKeyExternal = await GetTrackKeyItemsAsync(scopedLogger, trackIdKey.TenantName, trackIdKey.TrackName, track);
-                    var externalRouteTrackKey = new RouteTrackKey
-                    {
-                        Type = track.Key.Type,
-                        ExternalName = track.Key.ExternalName,
-                    };
-                    if (trackKeyExternal == null)
-                    {
-                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalKeyIsNotReady = true };
-                    }
-                    else
-                    {
-                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[0].ExternalId, Key = trackKeyExternal.Keys[0].Key };
-                        externalRouteTrackKey.SecondaryKey = trackKeyExternal.Keys.Count > 1 ? new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[1].ExternalId, Key = trackKeyExternal.Keys[1].Key } : null;
-                    }
-                    return externalRouteTrackKey;
-
-                case TrackKeyTypes.KeyVaultImport:
-                default:
-                    throw new Exception($"Track key type not supported '{track.Key.Type}'.");
-            }
         }
 
         private async Task<UpParty> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
@@ -296,89 +252,6 @@ namespace FoxIDs.Infrastructure.Hosting
             }
 
             return toUpParties;
-        }
-
-        public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
-        {
-            var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
-
-            var trackKeyExternalValue = await cacheProvider.GetAsync(key);
-            if (!trackKeyExternalValue.IsNullOrEmpty())
-            {
-                return trackKeyExternalValue.ToObject<TrackKeyExternal>();
-            }
-
-            var trackKeyExternal = await LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
-            if (trackKeyExternal != null)
-            {
-                await cacheProvider.SetAsync(key, trackKeyExternal.ToJson(), track.KeyExternalCacheLifetime);
-            }
-            return trackKeyExternal;
-        }
-
-        private async Task<TrackKeyExternal> LoadTrackKeyExternalFromKeyVaultAsync(TelemetryScopedLogger scopedLogger, Track track)
-        {
-            var now = DateTimeOffset.UtcNow;
-            var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
-
-            var externalKeys = new List<(string Id, DateTimeOffset? NotBefore)>();
-            var certificateVersions = certificateClient.GetPropertiesOfCertificateVersionsAsync(track.Key.ExternalName);
-            await foreach (var certificateVersion in certificateVersions)
-            {
-                if (certificateVersion.Enabled == true && certificateVersion.ExpiresOn >= now)
-                {
-                    externalKeys.Add((certificateVersion.Version, certificateVersion.NotBefore));
-                }
-            }
-
-            if (externalKeys.Count <= 0)
-            {
-                try
-                {
-                    throw new Exception($"Track key external certificate '{track.Key.ExternalName}' do not exist in Key Vault, probably because it is not ready in Key Vault.");
-                }
-                catch (Exception ex)
-                {
-                    scopedLogger.Warning(ex);
-                    return null;
-                }            
-            }
-
-            var trackKeyExternal = new TrackKeyExternal();
-            if (externalKeys.Count == 1)
-            {
-                trackKeyExternal.Keys = new List<TrackKeyExternalItem> { new TrackKeyExternalItem { ExternalId = externalKeys.First().Id } };
-            }
-            else
-            {
-                var topTwoExternalKeys = externalKeys.OrderByDescending(e => e.NotBefore).Take(2);
-                var firstExternalKey = topTwoExternalKeys.First();
-                if (firstExternalKey.NotBefore <= now.AddDays(-track.KeyExternalPrimaryAfterDays))
-                {
-                    trackKeyExternal.Keys = new List<TrackKeyExternalItem> { new TrackKeyExternalItem { ExternalId = firstExternalKey.Id }, new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id } };
-                }
-                else
-                {
-                    trackKeyExternal.Keys = new List<TrackKeyExternalItem> { new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id }, new TrackKeyExternalItem { ExternalId = firstExternalKey.Id } };
-                }
-            }
-
-            foreach (var keyItem in trackKeyExternal.Keys)
-            {
-                var certificateWithPolicy = certificateClient.GetCertificateVersion(track.Key.ExternalName, keyItem.ExternalId);
-                var certificateRawValue = certificateWithPolicy?.Value?.Cer;
-                if (certificateRawValue == null)
-                {
-                    throw new Exception($"Track key external certificate '{track.Key.ExternalName}' version '{keyItem.ExternalId}' from Key Vault is null.");
-                }
-                keyItem.Key = await new X509Certificate2(certificateRawValue).ToFTJsonWebKeyAsync();
-            }
-            return trackKeyExternal;
-        }
-
-        private string RadisTrackKeyExternalKey(string tenantName, string trackName, string name)
-        {
-            return $"track_key_ext_{tenantName}_{trackName}_{name}";
         }
     }
 }

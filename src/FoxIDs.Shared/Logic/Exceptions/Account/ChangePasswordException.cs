@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public ChangePasswordException() { }
         public ChangePasswordException(string message) : base(message) { }
         public ChangePasswordException(string message, Exception innerException) : base(message, innerException) { }
-        protected ChangePasswordException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

@@ -60,6 +60,13 @@ namespace FoxIDs.MappingProfiles
             CreateMap<UserControlProfile, Api.UserControlProfile>()
                 .ReverseMap();
 
+            CreateMap<ExternalUser, Api.ExternalUserRequest>()
+                .ReverseMap();
+
+            CreateMap<ExternalUser, Api.ExternalUser>()
+                .ForMember(d => d.UpPartyName, opt => opt.MapFrom(s => s.Id.Split(':', StringSplitOptions.None).SkipLast(1).Last()))
+                .ReverseMap();
+
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 
@@ -147,6 +154,9 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<CreateUser, Api.CreateUser>()
+                .ReverseMap();
+
+            CreateMap<LinkExternalUser, Api.LinkExternalUser>()
                 .ReverseMap();
 
             CreateMap<OAuthUpParty, Api.OAuthUpParty>()

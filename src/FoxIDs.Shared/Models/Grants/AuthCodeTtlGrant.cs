@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"acgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
+            return $"{Constants.Models.DataType.AuthCodeTtlGrant}:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
         }
 
         [Required]

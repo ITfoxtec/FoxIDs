@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public class TFilterDownPartyController : ApiController
     {
-        private const string dataType = "party:down";
+        private const string dataType = Constants.Models.DataType.DownParty;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;

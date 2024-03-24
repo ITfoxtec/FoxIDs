@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public class TFilterUpPartyController : ApiController
     {
-        private const string dataType = "party:up";
+        private const string dataType = Constants.Models.DataType.UpParty;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;

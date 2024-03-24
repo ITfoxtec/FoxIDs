@@ -171,13 +171,13 @@
                                             </div>
                                         </PageEditForm>
 
-                                        @if (newUpPartyModal.SelectTrackTasks != null)
+                                        @if (newUpPartyModal.SelectTracks != null)
                                         {
-                                            @if (newUpPartyModal.SelectTrackTasks.Count() > 0)
+                                            @if (newUpPartyModal.SelectTracks.Count() > 0)
                                             {
-                                                @foreach (var track in newUpPartyModal.SelectTrackTasks)
+                                                @foreach (var track in newUpPartyModal.SelectTracks)
                                                 {
-                                                    @if (newUpPartyModal.SelectTrackTasks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
+                                                    @if (newUpPartyModal.SelectTracks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
                                                     {
                                                         <div class="dropdown-divider"></div>
                                                         <div class="info-text px-4 pb-1">

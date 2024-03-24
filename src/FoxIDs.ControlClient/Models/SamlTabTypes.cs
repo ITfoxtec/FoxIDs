@@ -4,6 +4,7 @@
     {
         Saml,
         ClaimsTransform,
+        LinkExternalUser,
         Session,
         Hrd
     }

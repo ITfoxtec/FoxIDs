@@ -6,15 +6,14 @@ using ITfoxtec.Identity;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq;
-using Microsoft.IdentityModel.Abstractions;
 
 namespace FoxIDs
 {
     public static class DynamicElementExtension
     {
-        public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxlength = 60, bool isRequired = false)
+        public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxlength = 60, bool isRequired = false, bool autocompleteAsUsername = false)
         {
-            return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxlength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: "username", isRequired: isRequired);
+            return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxlength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: autocompleteAsUsername ? "email" : "", isRequired: isRequired);
         }
 
         public static IHtmlContent GetPasswordControl(this IHtmlHelper html, string name, string value, int maxlength = 50, bool isRequired = false)

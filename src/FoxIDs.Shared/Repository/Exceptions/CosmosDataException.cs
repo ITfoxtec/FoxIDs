@@ -16,9 +16,6 @@ namespace FoxIDs.Repository
         public CosmosDataException(string partitionId, Exception inner) : base(IdToMessage(partitionId), inner) { }
         public CosmosDataException(string id, string partitionId, Exception inner) : base(IdToMessage(id, partitionId), inner) { }
         public CosmosDataException(string id, string partitionId, string message, Exception inner) : base($"{IdToMessage(id, partitionId)} {message}", inner) { }
-        protected CosmosDataException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 
         public HttpStatusCode? StatusCode => (InnerException as CosmosException)?.StatusCode;
 

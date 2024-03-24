@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public KeyException() { }
         public KeyException(string message) : base(message) { }
         public KeyException(string message, Exception inner) : base(message, inner) { }
-        protected KeyException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

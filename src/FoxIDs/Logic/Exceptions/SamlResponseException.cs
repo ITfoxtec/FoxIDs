@@ -1,6 +1,5 @@
 ﻿using ITfoxtec.Identity.Saml2.Schemas;
 using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -12,7 +11,6 @@ namespace FoxIDs.Logic
         public SamlResponseException() { }
         public SamlResponseException(string message) : base(message) { }
         public SamlResponseException(string message, Exception inner) : base(message, inner) { }
-        protected SamlResponseException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public override string Message => $"{base.Message} SAML 2.0 Status '{Status}'";
 

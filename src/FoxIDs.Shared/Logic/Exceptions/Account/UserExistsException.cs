@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public InvalidEmailException() { }
         public InvalidEmailException(string message) : base(message) { }
         public InvalidEmailException(string message, Exception innerException) : base(message, innerException) { }
-        protected InvalidEmailException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

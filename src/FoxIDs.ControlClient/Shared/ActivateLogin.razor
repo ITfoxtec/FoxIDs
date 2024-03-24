@@ -9,9 +9,6 @@
 </div>
 
 @code {
-    [Inject]
-    public OpenidConnectPkce OpenidConnectPkce { get; set; }
-
     protected override async Task OnParametersSetAsync()
     {
         await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();

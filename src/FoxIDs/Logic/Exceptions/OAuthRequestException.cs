@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -18,6 +17,5 @@ namespace FoxIDs.Logic
         {
             ErrorDescription = errorDescription;
         }
-        protected OAuthRequestException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Logic;
 
 namespace FoxIDs.Client.Pages
 {
@@ -20,9 +21,13 @@ namespace FoxIDs.Client.Pages
     {
         private PageEditForm<FilterUserViewModel> userFilterForm;
         private List<GeneralUserViewModel> users = new List<GeneralUserViewModel>();
+        private string externalUsersHref;
 
         [Inject]
         public IToastService toastService { get; set; }
+
+        [Inject]
+        public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public UserService UserService { get; set; }
@@ -32,6 +37,7 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            externalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/externalusers";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -133,7 +139,6 @@ namespace FoxIDs.Client.Pages
             return user.Map<UserViewModel>(afterMap: afterMap =>
             {
                 afterMap.Password = "****";
-                afterMap.AccountStatus = !user.DisableAccount;
             });
         }
 
@@ -145,13 +150,7 @@ namespace FoxIDs.Client.Pages
                 user.ConfirmAccount = true;
                 user.EmailVerified = false;
                 user.ChangePassword = true;
-                user.AccountStatus = !generalUser.DisableAccount;
             }
-        }
-
-        private string UserInfoText(GeneralUserViewModel generalUser)
-        {
-            return $"User - {generalUser.Email}";
         }
 
         private void UserCancel(GeneralUserViewModel user)
@@ -182,14 +181,14 @@ namespace FoxIDs.Client.Pages
             {
                 if (generalUser.CreateMode)
                 {
-                    var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
+                    var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>());
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     generalUser.CreateMode = false;
                     toastService.ShowSuccess("User created.");
                 }
                 else
                 {
-                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
+                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>());
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     toastService.ShowSuccess("User updated.");
                 }

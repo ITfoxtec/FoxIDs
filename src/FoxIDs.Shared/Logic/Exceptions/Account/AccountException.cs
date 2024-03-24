@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {    
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public AccountException() { }
         public AccountException(string message) : base(message) { }
         public AccountException(string message, Exception inner) : base(message, inner) { }
-        protected AccountException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

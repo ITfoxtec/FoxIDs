@@ -40,6 +40,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
 
+            services.AddTransient<LogAnalyticsWorkspaceProvider>();   
             services.AddTransient<UsageLogLogic>();            
 
             services.AddTransient<ValidateModelGenericPartyLogic>();
@@ -49,6 +50,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ValidateApiModelLoginPartyLogic>();
             services.AddTransient<ValidateApiModelOAuthOidcPartyLogic>();
             services.AddTransient<ValidateApiModelSamlPartyLogic>();
+            services.AddTransient<ValidateApiModelTrackLinkPartyLogic>();
+            services.AddTransient<ValidateApiModelDynamicElementLogic>();
+            services.AddTransient<ValidateApiModelExternalUserLogic>();
 
             services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();

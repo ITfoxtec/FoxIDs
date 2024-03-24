@@ -18,11 +18,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
+        private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
+            this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OAuthUpParty party)
@@ -57,6 +59,11 @@ namespace FoxIDs.Logic
             if (party.Client.UseUserInfoClaims && party.Client.UseIdTokenClaims)
             {
                 party.Client.UseIdTokenClaims = false;
+            }
+
+            if(!validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements))
+            {
+                isValid = false;
             }
 
             return isValid;

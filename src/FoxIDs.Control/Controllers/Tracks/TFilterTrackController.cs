@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize]
     public class TFilterTrackController : ApiController
     {
-        private const string dataType = "track";
+        private const string dataType = Constants.Models.DataType.Track;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;

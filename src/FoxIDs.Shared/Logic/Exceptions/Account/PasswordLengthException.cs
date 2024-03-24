@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +8,5 @@ namespace FoxIDs.Logic
         public PasswordLengthException() { }
         public PasswordLengthException(string message) : base(message) { }
         public PasswordLengthException(string message, Exception innerException) : base(message, innerException) { }
-        protected PasswordLengthException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

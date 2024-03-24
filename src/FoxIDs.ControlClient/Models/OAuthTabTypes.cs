@@ -5,6 +5,7 @@
         Client,
         Resource,
         ClaimsTransform,
+        LinkExternalUser,
         Session,
         Hrd
     }

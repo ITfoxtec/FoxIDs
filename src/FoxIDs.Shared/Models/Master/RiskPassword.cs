@@ -13,7 +13,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
+            return $"{Constants.Models.DataType.RiskPassword}:{idKey.Master}:{idKey.PasswordSha1Hash}";
         }
 
         public static async Task<string> IdFormatAsync(string passwordSha1Hash)

@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"party:up:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
+            return $"{Constants.Models.DataType.UpParty}:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)
@@ -95,10 +95,6 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "disable_token_exchange_trust")]
         public bool DisableTokenExchangeTrust { get; set; }
-
-        [ValidateComplexType]
-        [JsonProperty(PropertyName = "create_external_user")]
-        public CreateExternalUser CreateExternalUser { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {

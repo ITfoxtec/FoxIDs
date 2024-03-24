@@ -1,13 +1,13 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace FoxIDs.Models.Api
 {
-    public class ExternalUserRequest : ExternalUserIdRequest
+    public class ExternalUserRequest : ExternalUserId
     {
-        [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
-        [JsonProperty(PropertyName = "claims")]
+        public bool DisableAccount { get; set; }
+
+        [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]       
         public List<ClaimAndValues> Claims { get; set; }
     }
 }

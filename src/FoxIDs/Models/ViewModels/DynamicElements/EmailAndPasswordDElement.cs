@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class EmailAndPasswordDElement :  DynamicElementBase
+    public class EmailAndPasswordDElement : DynamicElementBase
     {
         [Required]
         [MaxLength(Constants.Models.User.EmailLength)]
@@ -22,5 +22,7 @@ namespace FoxIDs.Models.ViewModels
         [Display(Name = "Confirm password")]
         [Compare(nameof(DField2))]
         public override string DField3 { get; set; }
+
+        public override bool Required => true;
     }
 }

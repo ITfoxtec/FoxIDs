@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Net;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
+using System;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -18,12 +20,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic;
 
-        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.validateApiModelExternalUserLogic = validateApiModelExternalUserLogic;
         }
 
         /// <summary>
@@ -32,14 +36,13 @@ namespace FoxIDs.Controllers
         /// <returns>External user.</returns>
         [ProducesResponseType(typeof(Api.ExternalUser), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.ExternalUser>> GetExternalUser(Api.ExternalUserIdRequest userRequest)
+        public async Task<ActionResult<Api.ExternalUser>> GetExternalUser(Api.ExternalUserId userRequest)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
-                var linkClaimHash = userRequest.LinkClaimHash ?? await userRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();
-
+                var linkClaimHash = await userRequest.LinkClaimValue.HashIdStringAsync();
                 var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
@@ -47,8 +50,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by up-party name '{userRequest.UpPartyName}' and link claim hash '{userRequest.LinkClaimHash}' or link claim '{userRequest.LinkClaim}'.");
-                    return NotFound(typeof(Api.ExternalUser).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimHash ?? userRequest.LinkClaim}");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUser).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
                 }
                 throw;
             }
@@ -57,20 +60,21 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Create external user.
         /// </summary>
-        /// <param name="createExternalUserRequest">ExternalUser.</param>
+        /// <param name="externalUserRequest">ExternalUser.</param>
         /// <returns>ExternalUser.</returns>
         [ProducesResponseType(typeof(Api.ExternalUser), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.ExternalUser>> PostExternalUser([FromBody] Api.CreateExternalUserRequest createExternalUserRequest)
+        public async Task<ActionResult<Api.ExternalUser>> PostExternalUser([FromBody] Api.ExternalUserRequest externalUserRequest)
         {
 
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(createExternalUserRequest)) return BadRequest(ModelState);
-                var linkClaimHash = await createExternalUserRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();
+                if (!await ModelState.TryValidateObjectAsync(externalUserRequest) || !await validateApiModelExternalUserLogic.ValidateApiModelAsync(ModelState, externalUserRequest)) return BadRequest(ModelState);
 
-                var mExternalUser = mapper.Map<ExternalUser>(createExternalUserRequest);
-                mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, createExternalUserRequest.UpPartyName, linkClaimHash);
+                var mExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
+                var linkClaimHash = await externalUserRequest.LinkClaimValue.HashIdStringAsync();
+                mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash);
+                mExternalUser.UserId = Guid.NewGuid().ToString();
                 await tenantRepository.CreateAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
@@ -79,8 +83,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserIdRequest).Name}' by up-party name '{createExternalUserRequest.UpPartyName}' and link claim '{createExternalUserRequest.LinkClaim}'.");
-                    return Conflict(typeof(Api.ExternalUserIdRequest).Name, $"{createExternalUserRequest.UpPartyName}:{createExternalUserRequest.LinkClaim}");
+                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{externalUserRequest.UpPartyName}' and link claim '{externalUserRequest.LinkClaimValue}'.");
+                    return Conflict(typeof(Api.ExternalUserId).Name, $"{externalUserRequest.UpPartyName}:{externalUserRequest.LinkClaimValue}");
                 }
                 throw;
             }
@@ -99,11 +103,12 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(externalUserRequest)) return BadRequest(ModelState);
 
-                var linkClaimHash = externalUserRequest.LinkClaimHash ?? await externalUserRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();
-               
+                var linkClaimHash = await externalUserRequest.LinkClaimValue.HashIdStringAsync();              
                 var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash));
 
-                mExternalUser.Claims = mapper.Map<ExternalUser>(externalUserRequest).Claims;   
+                var tempMExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
+                mExternalUser.DisableAccount = tempMExternalUser.DisableAccount;
+                mExternalUser.Claims = tempMExternalUser.Claims;   
                 await tenantRepository.SaveAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
@@ -112,8 +117,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserIdRequest).Name}' by up-party name '{externalUserRequest.UpPartyName}' and link claim hash '{externalUserRequest.LinkClaimHash}' or link claim '{externalUserRequest.LinkClaim}'.");
-                    return NotFound(typeof(Api.ExternalUserIdRequest).Name, $"{externalUserRequest.UpPartyName}:{externalUserRequest.LinkClaimHash ?? externalUserRequest.LinkClaim}");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserId).Name}' by up-party name '{externalUserRequest.UpPartyName}' and link claim '{externalUserRequest.LinkClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUserId).Name, $"{externalUserRequest.UpPartyName}:{externalUserRequest.LinkClaimValue}");
                 }
                 throw;
             }
@@ -124,15 +129,13 @@ namespace FoxIDs.Controllers
         /// </summary>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteExternalUser(Api.ExternalUserIdRequest userRequest)
+        public async Task<IActionResult> DeleteExternalUser(Api.ExternalUserId userRequest)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
-                var linkClaimHash = userRequest.LinkClaimHash ?? await userRequest.LinkClaim.ToLower().Sha256HashBase64urlEncodedAsync();
-
-
+                var linkClaimHash = await userRequest.LinkClaimValue.HashIdStringAsync();
                 _ = await tenantRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return NoContent();
             }
@@ -140,8 +143,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.CreateExternalUserRequest).Name}' by up-party name '{userRequest.UpPartyName}' and link claim hash '{userRequest.LinkClaimHash}' or link claim '{userRequest.LinkClaim}'.");
-                    return NotFound(typeof(Api.CreateExternalUserRequest).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimHash ?? userRequest.LinkClaim}");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
                 }
                 throw;
             }

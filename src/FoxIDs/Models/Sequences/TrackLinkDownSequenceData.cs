@@ -45,7 +45,6 @@ namespace FoxIDs.Models.Sequences
         public string Error { get; set; }
 
         [JsonProperty(PropertyName = "ed")]
-        public string ErrorDescription { get; set; }
- 
+        public string ErrorDescription { get; set; } 
     }
 }

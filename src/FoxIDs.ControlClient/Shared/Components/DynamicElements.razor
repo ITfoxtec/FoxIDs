@@ -8,6 +8,10 @@
                     <div class="col-9">
                         @switch (element.Type)
                         {
+                            case DynamicElementTypes.Email:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email</div>
+                                break;
+
                             case DynamicElementTypes.EmailAndPassword:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email and password</div>
                                 break;
@@ -69,26 +73,51 @@
         }
     </ul>
     <ValidationMessage For="@(() => Model.Elements)" />
-    <div class="btn-group" role="group">
-        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="oi oi-plus" aria-hidden="true"></span> Add dynamic element
-        </button>
-        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (name claim)</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (given_name claim)</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (family_name claim)</button>
+    @if (!((!IncludeEmailElement || Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any()) && Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any()))
+    {
+        <div class="btn-group" role="group">
+            <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add dynamic element
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+                @if (IncludeEmailElement && !Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any())
+                {
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Email))">Email (@JwtClaimTypes.Email claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any())
+                {
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (@JwtClaimTypes.Name claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any())
+                {
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (@JwtClaimTypes.GivenName claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any())
+                {
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (@JwtClaimTypes.FamilyName claim)</button>
+                }
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 @code {
     [Parameter]
     public IDynamicElementsViewModel Model { get; set; }
 
+    [Parameter]
+    public bool IncludeEmailElement { get; set; }
+
     private void AddElement(DynamicElementTypes dynamicElementTypes)
     {
         switch (dynamicElementTypes)
         {
+            case DynamicElementTypes.Email:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Email
+                    });
+                break;
             case DynamicElementTypes.EmailAndPassword:
                 Model.Elements.Add(new DynamicElementViewModel
                     {

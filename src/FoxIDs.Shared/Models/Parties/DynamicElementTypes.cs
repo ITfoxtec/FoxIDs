@@ -4,6 +4,8 @@ namespace FoxIDs.Models
 {
     public enum DynamicElementTypes
     {
+        [EnumMember(Value = "email")]
+        Email = 5,
         [EnumMember(Value = "email_password")]
         EmailAndPassword = 10,
 

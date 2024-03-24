@@ -4,14 +4,26 @@ namespace FoxIDs.Client
 {
     public static class LogExtensions
     {
-        public static string RemovePreFLogKey(this string logKey)
+        public static string GetDisplayLogKey(this string logKey)
         {
-            if (!logKey.IsNullOrEmpty() && logKey.StartsWith("f_"))
+            if (!logKey.IsNullOrEmpty())
             {
-                return logKey.Substring(2);
+                return logKey.Replace("f_", string.Empty).Replace("Track", "Environment").Replace("DownParty", "Application").Replace("UpParty", "AuthMethod");
             }
 
             return logKey;
         }
+
+        public static string GetDisplayLogValue(this string logValue)
+        {
+            if (!logValue.IsNullOrEmpty())
+            {
+                return logValue.Replace("party:down:", string.Empty).Replace("party:up:", string.Empty);
+            }
+
+            return logValue;
+        }
+
+        
     }
 }

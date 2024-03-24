@@ -99,5 +99,25 @@ namespace FoxIDs.Logic
 
             return claims?.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
         }
+
+        public IEnumerable<Claim> AdjustClaims(List<Claim> idTokenClaims)
+        {
+            var hasSubClaim = false;
+            foreach (var claim in idTokenClaims) 
+            {
+                if (claim.Type == JwtClaimTypes.Subject)
+                {
+                    if (!hasSubClaim)
+                    {
+                        hasSubClaim = true;
+                        yield return claim;
+                    }
+                }
+                else
+                {
+                    yield return claim;
+                }
+            }
+        }
     }
 }

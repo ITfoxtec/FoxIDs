@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
                     throw new Exception("User control profile only supported in master environment.");
                 }
 
-                var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();
+                var userHashId = await User.Identity.Name.HashIdStringAsync();
 
                 var mUserControlProfile = await tenantRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfile);
-                mUserControlProfile.Id = await UserControlProfile.IdFormatAsync(RouteBinding, await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync());
+                mUserControlProfile.Id = await UserControlProfile.IdFormatAsync(RouteBinding, await User.Identity.Name.HashIdStringAsync());
                 await tenantRepository.SaveAsync(mUserControlProfile);
 
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
@@ -105,7 +105,7 @@ namespace FoxIDs.Controllers
                     throw new Exception("User control profile only supported in master environment.");
                 }
 
-                var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();
+                var userHashId = await User.Identity.Name.HashIdStringAsync();
 
                 _ = await tenantRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();

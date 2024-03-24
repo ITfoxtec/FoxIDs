@@ -15,8 +15,12 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TTrackLinkUpPartyController : GenericPartyApiController<Api.TrackLinkUpParty, Api.OAuthClaimTransform, TrackLinkUpParty>
     {
-        public TTrackLinkUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
-        { }
+        private readonly ValidateApiModelTrackLinkPartyLogic validateApiModelTrackLinkPartyLogic;
+
+        public TTrackLinkUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelTrackLinkPartyLogic validateApiModelTrackLinkPartyLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
+        {
+            this.validateApiModelTrackLinkPartyLogic = validateApiModelTrackLinkPartyLogic;
+        }
 
         /// <summary>
         /// Get environment link authentication method.
@@ -34,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.TrackLinkUpParty>> PostTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Post(party);
+        public async Task<ActionResult<Api.TrackLinkUpParty>> PostTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelTrackLinkPartyLogic.ValidateApiModel(ModelState, ap)));
 
         /// <summary>
         /// Update environment link authentication method.
@@ -43,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.TrackLinkUpParty>> PutTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Put(party);
+        public async Task<ActionResult<Api.TrackLinkUpParty>> PutTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelTrackLinkPartyLogic.ValidateApiModel(ModelState, ap)));
 
         /// <summary>
         /// Delete environment link authentication method.

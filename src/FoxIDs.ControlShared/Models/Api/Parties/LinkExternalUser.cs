@@ -3,37 +3,40 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
-    public class CreateExternalUser : IValidatableObject
+    public class LinkExternalUser : IValidatableObject
     {
         /// <summary>
-        /// Automatic creation / provisioning of users
+        /// Automatic creation / provisioning of external users
         /// </summary>
-        [JsonProperty(PropertyName = "auto_create_user")]
+        [Display(Name = "Automatically create/provision users")]
         public bool AutoCreateUser { get; set; }
 
-        [JsonProperty(PropertyName = "require_user")]
+        [Display(Name = "Require a user")]
         public bool RequireUser { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
-        [JsonProperty(PropertyName = "link_claim_type")]
+        [Display(Name = "Link claim")]
         public string LinkClaimType { get; set; }
+
+        [Display(Name = "Overwrite revived claims")]
+        public bool OverwriteClaims { get; set; }
 
         /// <summary>
         /// UI elements used for automatic creation.
         /// </summary>
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
-        [JsonProperty(PropertyName = "elements")]
+        [Display(Name = "Dynamic elements shown in order")]
         public List<DynamicElement> Elements { get; set; }
 
         /// <summary>
         /// aAutomatic creation claim transforms, run after user creation before the user is saved.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [JsonProperty(PropertyName = "claim_transforms")]
+        [Display(Name = "Claim transforms executed in order")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

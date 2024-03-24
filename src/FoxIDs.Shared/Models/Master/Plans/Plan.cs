@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"plan:{idKey.Master}:{idKey.PlanName}";
+            return $"{Constants.Models.DataType.Plan}:{idKey.Master}:{idKey.PlanName}";
         }
 
         public static async Task<string> IdFormatAsync(string planName)

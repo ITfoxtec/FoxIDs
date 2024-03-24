@@ -35,6 +35,7 @@ namespace FoxIDs
             public const string LoginController = "login";
             public const string ActionController = "action";
             public const string MfaController = "mfa";
+            public const string ExtController = "ext";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
@@ -121,6 +122,21 @@ namespace FoxIDs
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
             public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
+
+            public static class DataType
+            {
+                public const string Tenant = "tenant";
+                public const string Track = "track";
+                public const string UpParty = "party:up";
+                public const string DownParty = "party:down";
+                public const string User = "user";
+                public const string UserControlProfile = "ucp";                
+                public const string ExternalUser = "extu";
+                public const string AuthCodeTtlGrant = "acgrant";
+                public const string RefreshTokenGrant = "rtgrant";
+                public const string RiskPassword = "prisk";
+                public const string Plan = "plan";
+            }
 
             public static class Master
             {
@@ -286,7 +302,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 220;
                 public const string IdRegExPattern = @"^[\w:\-.+@]*$";
-                public const int LinkClaimHashLength = 50;
+                public const int LinkClaimValueHashLength = 50;
             }
 
             public static class DynamicElements
@@ -731,27 +747,51 @@ namespace FoxIDs
             /// <summary>
             /// Default ID Token claims.
             /// </summary>
-            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] { JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat }).ToArray();
+            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] 
+                { 
+                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                    JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, JwtClaimTypes.LocalSub
+                }).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
-            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] { JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor }).ToArray();
+            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] 
+                { 
+                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                    JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
+                }).ToArray();
 
             /// <summary>
             /// Default JWT Token authentication method claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.AuthMethodIssuer, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+            public readonly static string[] JwtTokenUpParty = 
+            {
+                FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, 
+                JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                JwtClaimTypes.AuthMethodIssuer, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr 
+            };
 
             /// <summary>
             /// Exclude JWT Token authentication method claims.
             /// </summary>
-            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+            public readonly static string[] ExcludeJwtTokenUpParty = 
+            {
+                FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, 
+                FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, 
+                FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash 
+            };
 
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, SamlClaimTypes.AuthMethodIssuer };
+            public readonly static string[] SamlClaims =
+            {
+                ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, 
+                ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, 
+                SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, 
+                SamlClaimTypes.AuthMethodIssuer, SamlClaimTypes.LocalNameIdentifier
+            };
         }
 
         public static class JwtClaimTypes
@@ -765,6 +805,8 @@ namespace FoxIDs
             public const string AuthMethodIssuer = "auth_method_issuer";
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
+            public const string LocalSub = "local_sub";
+            public const string Upn = "upn";
         }
 
         public static class SamlClaimTypes
@@ -778,6 +820,7 @@ namespace FoxIDs
             public const string AuthMethodIssuer = "http://schemas.foxids.com/identity/claims/authmethodissuer";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
             public const string Amr = "http://schemas.foxids.com/identity/claims/amr";
+            public const string LocalNameIdentifier = "http://schemas.foxids.com/identity/claims/localnameidentifier";
         }
 
         /// <summary>
@@ -799,7 +842,8 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpParty, SamlClaim = SamlClaimTypes.UpParty },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AuthMethodIssuer, SamlClaim = SamlClaimTypes.AuthMethodIssuer },
-                new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
+                new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken },
+                new ClaimMap { JwtClaim = JwtClaimTypes.LocalSub, SamlClaim = SamlClaimTypes.LocalNameIdentifier }
             };
 
             /// <summary>
@@ -808,6 +852,8 @@ namespace FoxIDs
             public readonly static ClaimMap[] ChangeableMappings =
             {
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = JwtClaimTypes.Upn, SamlClaim = ClaimTypes.Upn },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Name, SamlClaim = ClaimTypes.Name },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.GivenName, SamlClaim = ClaimTypes.GivenName },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role },

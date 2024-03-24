@@ -20,7 +20,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool Created { get; set; }
 
-        public IEnumerable<Track> SelectTrackTasks { get; set; }
+        public IEnumerable<Track> SelectTracks { get; set; }
 
         public PageEditForm<FilterTrackViewModel> SelectTrackFilterForm { get; set; }
 

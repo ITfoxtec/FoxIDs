@@ -220,6 +220,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
+        [ValidateComplexType]
+        public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

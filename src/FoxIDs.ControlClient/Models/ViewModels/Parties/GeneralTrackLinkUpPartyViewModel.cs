@@ -17,8 +17,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<KeyInfoViewModel> KeyInfoList { get; set; } = new List<KeyInfoViewModel>();
 
         public bool ShowTrackLinkTab { get; set; } = true;
-        public bool ShowSessionTab { get; set; }
         public bool ShowClaimTransformTab { get; set; }
+        public bool ShowLinkExternalUserTab { get; set; }
+        public bool ShowSessionTab { get; set; }
         public bool ShowHrdTab { get; set; }
     }
 }

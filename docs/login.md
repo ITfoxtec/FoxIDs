@@ -1,9 +1,9 @@
 # Login, Home Realm Discovery (HRD) and 2FA / MFA
-FoxIDs handle user login in the login authentication method user interface (UI). There can be configured a number of login authentication methods per environment with different configurations and look and feel.
+FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customization.md).
 
-A environment contains one [user repository](users.md#user-repository) and all login authentication methods configured in a environment authenticate users with the same user repository.
+A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users.md#internal-users) with the same user repository.
 
-When a user authenticates the user's session is connected to the particular login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
+When a [users](users.md#internal-users) authenticates, the user's session is associated with the login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
 A user session is only established in the login authentication method if the session lifetime is set to more than 0 seconds.
 
 A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login authentication method.
@@ -33,7 +33,7 @@ The [title, icon and CSS](title-icon-css.md) configured on the first allowed log
 A login authentication method support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
 
 Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
-Two-factor authentication can be set as a requirement in each [login authentication method](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](app-reg-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](app-reg-saml-2.0.md#require-multi-factor-authentication-mfa) application registration.  
+Two-factor authentication can be set as a requirement in each [login authentication method](login.md#configure-two-factor-authentication-2fa), per [user](users.md#multi-factor-authentication-mfa) or required by the calling [OpenID Connect](app-reg-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](app-reg-saml-2.0.md#require-multi-factor-authentication-mfa) application registration.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
@@ -45,7 +45,7 @@ A default login authentication method is created in each environment.
 The [title, icon and CSS](title-icon-css.md) configured on the default login authentication method is use in the case where no login authentication method is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login authentication method.
 
 ### Configure login options
-It can be configured whether users should be allowed to cancel login and whether users are allowed to create a new user online through the login user interface. New users can alternatively be created by the administrator through [FoxIDs Control Client](control.md#foxids-control-client) or be provisioned through [FoxIDs Control API](control.md#foxids-control-api).
+It can be configured whether users should be allowed to cancel login and whether users are allowed to create a [new user online](users.md#internal-users) through the login user interface. New users can alternatively be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-login.png)
 

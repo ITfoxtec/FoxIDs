@@ -33,11 +33,13 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly LoginUpLogic loginUpLogic;
+        private readonly DynamicElementLogic dynamicElementLogic;
         private readonly LogoutUpLogic logoutUpLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
+        private int emailPasswordIndex;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, LoginUpLogic loginUpLogic, DynamicElementLogic dynamicElementLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -49,6 +51,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.loginUpLogic = loginUpLogic;
+            this.dynamicElementLogic = dynamicElementLogic;
             this.logoutUpLogic = logoutUpLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
@@ -713,7 +716,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
-                    Elements = ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList()
+                    Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, requireEmailAndPasswordElement: true).ToList()
                 });
 
             }
@@ -739,7 +742,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }                
                 PopulateCreateUserDefault(loginUpParty);
-                createUser.Elements = ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements).ToList();
+                createUser.Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements, requireEmailAndPasswordElement: true).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -751,7 +754,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                (var email, var password, var emailPasswordI) = await ValidateCreateUserViewModelElements(createUser.Elements);
+                (var email, var password, var emailPasswordI) = await ValidateCreateUserViewModelElementsAsync(createUser.Elements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -767,22 +770,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var claims = new List<Claim>();
-                    var nameDElament = createUser.Elements.Where(e => e is NameDElement).FirstOrDefault() as NameDElement;
-                    if (!string.IsNullOrWhiteSpace(nameDElament?.DField1))
-                    {
-                        claims.AddClaim(JwtClaimTypes.Name, nameDElament.DField1);
-                    }
-                    var givenNameDElament = createUser.Elements.Where(e => e is GivenNameDElement).FirstOrDefault() as GivenNameDElement;
-                    if (!string.IsNullOrWhiteSpace(givenNameDElament?.DField1))
-                    {
-                        claims.AddClaim(JwtClaimTypes.GivenName, givenNameDElament.DField1);
-                    }
-                    var familyNameDElament = createUser.Elements.Where(e => e is FamilyNameDElement).FirstOrDefault() as FamilyNameDElement;
-                    if (!string.IsNullOrWhiteSpace(familyNameDElament?.DField1))
-                    {
-                        claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
-                    }
+                    var claims = dynamicElementLogic.GetClaims(createUser.Elements);
                     claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
 
                     var user = await userAccountLogic.CreateUser(email, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
@@ -832,33 +820,26 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<(string email, string password, int emailPasswordI)> ValidateCreateUserViewModelElements(List<DynamicElementBase> elements)
+        private async Task<(string email, string password, int emailPasswordIndex)> ValidateCreateUserViewModelElementsAsync(List<DynamicElementBase> elements)
         {
             var email = string.Empty;
             var password = string.Empty;
-            var emailPasswordI = 0;
-            var i = 0;
+            var emailPasswordIndex = 0;
+            var index = 0;
             foreach (var element in elements)
             {
-                var elementValidation = await element.ValidateObjectResultsAsync();
-                if (!elementValidation.isValid)
-                {
-                    foreach (var result in elementValidation.results)
-                    {
-                        ModelState.AddModelError($"Elements[{i}].{result.MemberNames.First()}", result.ErrorMessage);
-                    }
-                }
+                await dynamicElementLogic.ValidateViewModelElementAsync(ModelState, element, index);
                 if (element is EmailAndPasswordDElement)
                 {
-                    emailPasswordI = i;
+                    emailPasswordIndex = index;
                     email = element.DField1;
                     password = element.DField2;
                     element.DField2 = null;
                     element.DField3 = null;
                 }
-                i++;
+                index++;
             }
-            return (email, password, emailPasswordI);
+            return (email, password, emailPasswordIndex);
         } 
 
         private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string email)
@@ -899,39 +880,6 @@ namespace FoxIDs.Controllers
                         }
                     }
                 };               
-            }
-        }
-
-        private IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null)
-        {
-            bool hasEmailAndPasswordDElement = false;
-            var i = 0;
-            foreach(var element in elements)
-            {
-                var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
-                switch (element.Type)
-                {
-                    case DynamicElementTypes.EmailAndPassword:
-                        hasEmailAndPasswordDElement = true;
-                        yield return new EmailAndPasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2, DField3 = valueElement?.DField3, Required = true };
-                        break;
-                    case DynamicElementTypes.Name:
-                        yield return new NameDElement { DField1 = valueElement?.DField1, Required = element.Required };
-                        break;
-                    case DynamicElementTypes.GivenName:
-                        yield return new GivenNameDElement { DField1 = valueElement?.DField1, Required = element.Required };
-                        break;
-                    case DynamicElementTypes.FamilyName:
-                        yield return new FamilyNameDElement { DField1 = valueElement?.DField1, Required = element.Required };
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-                i++;
-            }
-            if(!hasEmailAndPasswordDElement)
-            {
-                throw new Exception("The EmailAndPasswordDElement is required.");
             }
         }
 

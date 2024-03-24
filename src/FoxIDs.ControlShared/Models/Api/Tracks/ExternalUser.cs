@@ -5,23 +5,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class ExternalUser 
+    public class ExternalUser : ExternalUserId
     {
-        [Required]
-        [MaxLength(Constants.Models.Party.NameLength)]
-        public string UpPartyName { get; set; }
-
-        [Required]
-        [MaxLength(Constants.Models.ExternalUser.LinkClaimHashLength)]
-        public string LinkClaimHash { get; set; }
-
+        /// <summary>
+        /// User id (unique and persistent).
+        /// </summary>
         [Required]
         [MaxLength(Constants.Models.User.UserIdLength)]
-        [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
 
+        public bool DisableAccount { get; set; }
+
         [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
-        [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
     }
 }

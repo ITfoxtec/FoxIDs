@@ -50,7 +50,7 @@
 
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key.RemovePreFLogKey(): @value.Value</div>
+            <div>@value.Key.GetDisplayLogKey(): @value.Value.GetDisplayLogValue()</div>
         }
     }
     else if (Item.Type == LogItemTypes.Trace)
@@ -71,7 +71,7 @@
 
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key.RemovePreFLogKey(): @value.Value</div>
+            <div>@value.Key.GetDisplayLogKey(): @value.Value.GetDisplayLogValue()</div>
         }
     }
     else if (Item.Type == LogItemTypes.Event)

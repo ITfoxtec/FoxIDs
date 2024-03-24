@@ -56,6 +56,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                 }
+                if (afterMap.CreateUser?.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapClaimTransforms();
+                }
             });           
         }
 
@@ -64,36 +68,6 @@ namespace FoxIDs.Client.Pages.Components
             if (model.TwoFactorAppName.IsNullOrWhiteSpace())
             {
                 model.TwoFactorAppName = TenantName;
-            }
-            if(model.CreateUser.Elements?.Any() != true)
-            {
-                model.CreateUser.Elements = new List<DynamicElementViewModel>
-                {
-                    new DynamicElementViewModel
-                    {
-                        IsStaticRequired = true,
-                        Type = DynamicElementTypes.EmailAndPassword,
-                        Required = true
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.GivenName
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.FamilyName
-                    }
-                };
-            }
-            else
-            {
-                foreach(var element in model.CreateUser.Elements)
-                {
-                    if (element.Type == DynamicElementTypes.EmailAndPassword)
-                    {
-                        element.IsStaticRequired = true;
-                    }
-                }
             }
         }
 
@@ -111,10 +85,15 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
                 }
-
-                if (!generalLoginUpParty.Form.Model.EnableCreateUser)
+                if (generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms?.Count() > 0)
                 {
-                    generalLoginUpParty.Form.Model.CreateUser = null;
+                    foreach (var claimTransform in generalLoginUpParty.Form.Model.CreateUser.ClaimTransforms)
+                    {
+                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
                 }
 
                 if (generalLoginUpParty.CreateMode)

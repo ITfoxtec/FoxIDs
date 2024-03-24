@@ -1,6 +1,5 @@
 ﻿using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
-using Azure.Core;
 using Azure.Monitor.Query;
 using System;
 using System.Threading.Tasks;
@@ -22,14 +21,14 @@ namespace FoxIDs.Logic
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly TokenCredential tokenCredential;
+        private readonly LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider;
 
-        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, TokenCredential tokenCredential, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.tokenCredential = tokenCredential;
+            this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
         public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
@@ -85,8 +84,7 @@ namespace FoxIDs.Logic
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
-            var client = new LogsQueryClient(tokenCredential);
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
+            var rows = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
             foreach (var row in rows)
             {
                 if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
@@ -338,7 +336,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
+        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
             if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
             {
@@ -353,7 +351,7 @@ namespace FoxIDs.Logic
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
             var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMasterTenant), eventsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMasterTenant), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
         }

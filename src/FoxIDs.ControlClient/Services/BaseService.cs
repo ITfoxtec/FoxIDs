@@ -117,5 +117,11 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
         }
 
+        protected async Task DeleteAsync<TRequest>(string url, TRequest request)
+        {
+            var requestItems = request.ToDictionary();
+            var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url), requestItems);
+            using var response = await httpClient.DeleteAsync(requestUrl);
+        }
     }
 }

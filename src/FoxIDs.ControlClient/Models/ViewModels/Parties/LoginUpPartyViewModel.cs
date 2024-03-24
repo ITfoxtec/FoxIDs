@@ -134,6 +134,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
-        public CreateUserViewModel CreateUser { get; set; } = new CreateUserViewModel();
+        public CreateUserViewModel CreateUser { get; set; }
     }
 }

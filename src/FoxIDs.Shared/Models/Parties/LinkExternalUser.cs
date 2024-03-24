@@ -3,37 +3,40 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Models
 {
-    public class CreateExternalUser : IValidatableObject
+    public class LinkExternalUser : IValidatableObject
     {
         /// <summary>
-        /// Automatic creation / provisioning of external users
+        /// Automatic creation / provisioning of users
         /// </summary>
-        [Display(Name = "Automatically create/provision users")]
+        [JsonProperty(PropertyName = "auto_create_user")]
         public bool AutoCreateUser { get; set; }
 
-        [Display(Name = "Require a user")]
+        [JsonProperty(PropertyName = "require_user")]
         public bool RequireUser { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Link claim")]
+        [JsonProperty(PropertyName = "link_claim_type")]
         public string LinkClaimType { get; set; }
+
+        [JsonProperty(PropertyName = "overwrite_claims")]
+        public bool OverwriteClaims { get; set; }
 
         /// <summary>
         /// UI elements used for automatic creation.
         /// </summary>
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
-        [Display(Name = "Dynamic elements shown in order")]
+        [JsonProperty(PropertyName = "elements")]
         public List<DynamicElement> Elements { get; set; }
 
         /// <summary>
         /// aAutomatic creation claim transforms, run after user creation before the user is saved.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [Display(Name = "Claim transforms executed in order")]
+        [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

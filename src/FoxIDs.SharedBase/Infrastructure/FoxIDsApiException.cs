@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Runtime.Serialization;
 
 namespace FoxIDs.Infrastructure
 {
@@ -28,8 +27,6 @@ namespace FoxIDs.Infrastructure
             StatusCode = statusCode;
             Response = response;
         }
-
-        protected FoxIDsApiException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public override string Message => Response.IsNullOrWhiteSpace() ? base.Message : Response.Substring(0, Response.Length >= 512 ? 512 : Response.Length);
 

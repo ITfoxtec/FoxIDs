@@ -51,9 +51,9 @@ namespace FoxIDs.Controllers
                     return NoContent();
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.ClaimMappings)} by track name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.ClaimMappings)}", RouteBinding.TrackName);
@@ -92,9 +92,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<List<Api.ClaimMap>>(mTrack.ClaimMappings));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.ClaimMappings)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.ClaimMappings)}", RouteBinding.TrackName);

@@ -46,9 +46,9 @@ namespace FoxIDs.Controllers
                     return Ok(new Api.OAuthClientSecretSingleResponse());
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(TParty).Name}' client key by name '{partyName}'.");
                     return NotFound(typeof(TParty).Name, partyName);
@@ -75,9 +75,9 @@ namespace FoxIDs.Controllers
 
                 return Created(new Api.OAuthUpParty { Name = secretRequest.PartyName });
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create client key on client '{typeof(TParty).Name}' by name '{secretRequest.PartyName}'.");
                     return Conflict(typeof(TParty).Name, secretRequest.PartyName, nameof(secretRequest.PartyName));
@@ -104,9 +104,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete client secret from client '{typeof(TParty).Name}' by name '{name}'.");
                     return NotFound(typeof(TParty).Name, name);

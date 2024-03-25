@@ -57,9 +57,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Track).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Track).Name, name);
@@ -102,9 +102,9 @@ namespace FoxIDs.Controllers
 
                 return Created(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Track).Name}' by name '{track.Name}'.");
                     return Conflict(typeof(Api.Track).Name, track.Name, nameof(track.Name));
@@ -159,9 +159,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Track).Name}' by name '{track.Name}'.");
                     return NotFound(typeof(Api.Track).Name, track.Name, nameof(track.Name));
@@ -198,9 +198,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Track).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Track).Name, name);

@@ -55,9 +55,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aDownPartys);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.DownParty).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.DownParty).Name, filterName);

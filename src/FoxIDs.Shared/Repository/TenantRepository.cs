@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Data;
 
 namespace FoxIDs.Repository
 {
@@ -49,12 +50,13 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {
                 //logger.ScopeMetric($"CosmosDB RU, tenant - count '{typeof(T)}'.", totalRU);
             }
+
         }
 
         public async Task<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
@@ -107,11 +109,11 @@ namespace FoxIDs.Repository
                 {
                     return default(T);
                 }
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             finally
             {
@@ -137,7 +139,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(ex);
+                throw new FoxIDsDataException(ex);
             }
             finally
             {
@@ -164,7 +166,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -191,7 +193,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -218,7 +220,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -243,7 +245,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             finally
             {
@@ -278,7 +280,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {
@@ -314,7 +316,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {

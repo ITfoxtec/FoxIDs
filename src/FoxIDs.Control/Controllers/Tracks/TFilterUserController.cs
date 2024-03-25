@@ -54,9 +54,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aUsers);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by filter email '{filterEmail}'.");
                     return NotFound(typeof(Api.User).Name, filterEmail);

@@ -47,9 +47,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(mapper.Map<Api.SendEmail>(mTrack.SendEmail));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", RouteBinding.TrackName);
@@ -81,9 +81,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.SendEmail>(mTrack.SendEmail));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));
@@ -111,9 +111,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));

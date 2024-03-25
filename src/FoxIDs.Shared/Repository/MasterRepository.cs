@@ -42,7 +42,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             finally
             {
@@ -66,7 +66,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {
@@ -126,11 +126,11 @@ namespace FoxIDs.Repository
                 {
                     return default(T);
                 }
-                throw new CosmosDataException(id, partitionId, $"{typeof(T).Name} not found. The master seed has probably not been executed.", ex);
+                throw new FoxIDsDataException(id, partitionId, $"{typeof(T).Name} not found. The master seed has probably not been executed.", ex);
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             finally
             {
@@ -155,7 +155,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(ex);
+                throw new FoxIDsDataException(ex);
             }
             finally
             {
@@ -180,7 +180,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -205,7 +205,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -230,7 +230,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
             }
             finally
             {
@@ -253,7 +253,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new FoxIDsDataException(id, partitionId, ex);
             }
             finally
             {
@@ -276,7 +276,7 @@ namespace FoxIDs.Repository
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {
@@ -313,11 +313,11 @@ namespace FoxIDs.Repository
                                 var innerException = responseTask.Exception.Flatten()?.InnerExceptions?.FirstOrDefault();
                                 if (innerException != null)
                                 {
-                                    throw new CosmosDataException(partitionId, innerException);
+                                    throw new FoxIDsDataException(partitionId, innerException);
                                 }
                                 else
                                 {
-                                    throw new CosmosDataException(partitionId);
+                                    throw new FoxIDsDataException(partitionId);
                                 }
                             }
                             totalRU += (await responseTask).RequestCharge;
@@ -326,13 +326,13 @@ namespace FoxIDs.Repository
 
                 await Task.WhenAll(concurrentTasks);
             }
-            catch (CosmosDataException)
+            catch (FoxIDsDataException)
             {
                 throw;
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {
@@ -363,11 +363,11 @@ namespace FoxIDs.Repository
                                 var innerException = responseTask.Exception.Flatten()?.InnerExceptions?.FirstOrDefault();
                                 if (innerException != null)
                                 {
-                                    throw new CosmosDataException(partitionId, innerException);
+                                    throw new FoxIDsDataException(partitionId, innerException);
                                 }
                                 else
                                 {
-                                    throw new CosmosDataException(partitionId);
+                                    throw new FoxIDsDataException(partitionId);
                                 }
                             }
                             totalRU += (await responseTask).RequestCharge;
@@ -376,13 +376,13 @@ namespace FoxIDs.Repository
 
                 await Task.WhenAll(concurrentTasks);
             }
-            catch (CosmosDataException)
+            catch (FoxIDsDataException)
             {
                 throw;
             }
             catch (Exception ex)
             {
-                throw new CosmosDataException(partitionId, ex);
+                throw new FoxIDsDataException(partitionId, ex);
             }
             finally
             {

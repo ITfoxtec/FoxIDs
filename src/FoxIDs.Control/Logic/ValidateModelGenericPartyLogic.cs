@@ -45,9 +45,9 @@ namespace FoxIDs.Logic
                         upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;
                         upPartyLink.DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust;
                     }
-                    catch (CosmosDataException ex)
+                    catch (FoxIDsDataException ex)
                     {
-                        if (ex.StatusCode == HttpStatusCode.NotFound)
+                        if (ex.StatusCode == DataStatusCode.NotFound)
                         {
                             isValid = false;
                             var errorMessage = $"Allow authentication method '{upPartyLink.Name}' not found.";

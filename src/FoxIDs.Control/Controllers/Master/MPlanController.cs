@@ -52,9 +52,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Plan).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Plan).Name, name);
@@ -84,9 +84,9 @@ namespace FoxIDs.Controllers
 
                 return Created(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Plan).Name}' by name '{plan.Name}'.");
                     return Conflict(typeof(Api.Plan).Name, plan.Name, nameof(plan.Name));
@@ -116,9 +116,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Plan).Name}' by name '{plan.Name}'.");
                     return NotFound(typeof(Api.Plan).Name, plan.Name, nameof(plan.Name));
@@ -148,9 +148,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Plan).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Plan).Name, name);

@@ -38,9 +38,9 @@ namespace FoxIDs.Controllers
                 var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
                 return Ok(true);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     return Ok(false);
                 }

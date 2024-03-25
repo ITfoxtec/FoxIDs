@@ -46,9 +46,9 @@ namespace FoxIDs.Controllers
                 var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
                     return NotFound(typeof(Api.ExternalUser).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
@@ -79,9 +79,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{externalUserRequest.UpPartyName}' and link claim '{externalUserRequest.LinkClaimValue}'.");
                     return Conflict(typeof(Api.ExternalUserId).Name, $"{externalUserRequest.UpPartyName}:{externalUserRequest.LinkClaimValue}");
@@ -113,9 +113,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserId).Name}' by up-party name '{externalUserRequest.UpPartyName}' and link claim '{externalUserRequest.LinkClaimValue}'.");
                     return NotFound(typeof(Api.ExternalUserId).Name, $"{externalUserRequest.UpPartyName}:{externalUserRequest.LinkClaimValue}");
@@ -139,9 +139,9 @@ namespace FoxIDs.Controllers
                 _ = await tenantRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
                     return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");

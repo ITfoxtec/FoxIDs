@@ -51,9 +51,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aPlans);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Plan).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.Plan).Name, filterName);

@@ -52,9 +52,9 @@ namespace FoxIDs.Logic.Seed
             {
                 _ = await tenantRepository.GetAsync<Tenant>(masterTenant.Id);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode != HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     throw new Exception($"{masterTenant.Id} document exists.");
                 }

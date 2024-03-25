@@ -61,9 +61,9 @@ namespace FoxIDs.Controllers
                 var MTenant = await tenantRepository.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Tenant).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Tenant).Name, name);
@@ -131,9 +131,9 @@ namespace FoxIDs.Controllers
                 ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
                 return BadRequest(ModelState, aex);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
                     return Conflict(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
@@ -202,9 +202,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
@@ -225,9 +225,9 @@ namespace FoxIDs.Controllers
                 var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
                 return (true, plan);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     var errorMessage = $"Plan '{planName}' not found and can not be connected to tenant '{tenantName}'.";
                     logger.Warning(ex, errorMessage);
@@ -282,9 +282,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Tenant).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Tenant).Name, name);

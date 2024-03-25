@@ -60,9 +60,9 @@ namespace FoxIDs.Controllers
                     return Ok(new Api.OAuthClientKeyResponse());
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(TParty).Name}' client key by name '{partyName}'.");
                     return NotFound(typeof(TParty).Name, partyName);
@@ -115,9 +115,9 @@ namespace FoxIDs.Controllers
                     PrimaryKey = mapper.Map<Api.ClientKey>(clientKey)
                 });
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create client key on client '{typeof(TParty).Name}' by name '{keyRequest.PartyName}'.");
                     return Conflict(typeof(TParty).Name, keyRequest.PartyName, nameof(keyRequest.PartyName));
@@ -149,9 +149,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete client key from client '{typeof(TParty).Name}' by name '{name}'.");
                     return NotFound(typeof(TParty).Name, name);

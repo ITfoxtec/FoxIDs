@@ -45,9 +45,9 @@ namespace FoxIDs.Controllers
                 var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.MyUser).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.MyUser).Name, email);
@@ -79,9 +79,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.MyUser).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.MyUser).Name, email, nameof(email));

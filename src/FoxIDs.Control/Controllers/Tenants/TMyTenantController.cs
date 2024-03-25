@@ -49,9 +49,9 @@ namespace FoxIDs.Controllers
                 var MTenant = await tenantRepository.GetTenantByNameAsync(RouteBinding.TenantName);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
@@ -96,9 +96,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
@@ -144,9 +144,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);

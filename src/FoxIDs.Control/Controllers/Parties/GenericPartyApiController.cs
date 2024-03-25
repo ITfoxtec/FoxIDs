@@ -51,9 +51,9 @@ namespace FoxIDs.Controllers
                 var mParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
                 return base.Ok(ModelToApiMap(mParty));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(AParty).Name}' by name '{name}'.");
                     return NotFound(typeof(AParty).Name, name);
@@ -119,9 +119,9 @@ namespace FoxIDs.Controllers
 
                 return Created(ModelToApiMap(mParty));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(AParty).Name}' by name '{party.Name}'.");
                     return Conflict(typeof(AParty).Name, party.Name, nameof(party.Name));
@@ -192,9 +192,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(ModelToApiMap(mParty));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(AParty).Name}' by name '{party.Name}'.");
                     return NotFound(typeof(AParty).Name, party.Name, nameof(party.Name));
@@ -230,9 +230,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(AParty).Name}' by id '{name}'.");
                     return NotFound(typeof(AParty).Name, name);

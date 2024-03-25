@@ -48,9 +48,9 @@ namespace FoxIDs.Controllers
                 var resourceItem = mTrack.Resources?.SingleOrDefault(r => r.Id == resourceId);
                 return Ok(mapper.Map<Api.ResourceItem>(resourceItem));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));
@@ -110,9 +110,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.TrackResourceItem>(mResourceItem));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
                     return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id), nameof(trackResourceItem.Id));
@@ -147,9 +147,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));

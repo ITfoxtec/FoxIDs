@@ -59,9 +59,9 @@ namespace FoxIDs.Controllers
                     return NoContent();
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)}", RouteBinding.TrackName);
@@ -101,9 +101,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<HashSet<Api.LogStreamSettings>>(mTrack.Logging.ScopedStreamLoggers));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedStreamLoggers)}", RouteBinding.TrackName);

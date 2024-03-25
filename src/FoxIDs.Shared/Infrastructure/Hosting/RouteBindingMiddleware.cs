@@ -165,7 +165,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                if (ex is CosmosDataException cex)
+                if (ex is FoxIDsDataException cex)
                 {
                     if (cex.InnerException is CosmosException)
                     {

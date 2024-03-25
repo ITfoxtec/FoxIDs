@@ -269,9 +269,9 @@ namespace FoxIDs.Logic
                                 }
                             }
                         }
-                        catch (CosmosDataException ex)
+                        catch (FoxIDsDataException ex)
                         {
-                            if (ex.StatusCode == HttpStatusCode.NotFound)
+                            if (ex.StatusCode == DataStatusCode.NotFound)
                             {
                                 isValid = false;
                                 var errorMessage = $"Resource scope application registration resource '{resourceScope.Resource}' not found.";

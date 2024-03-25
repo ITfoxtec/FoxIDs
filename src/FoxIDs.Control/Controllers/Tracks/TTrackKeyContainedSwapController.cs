@@ -85,9 +85,9 @@ namespace FoxIDs.Controllers
 
                 return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Swap Environment key contained '{typeof(Api.TrackKeyItemContainedSwap).Name}' by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContainedSwap).Name, RouteBinding.TrackName);

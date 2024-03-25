@@ -47,9 +47,9 @@ namespace FoxIDs.Controllers
                 var mUserControlProfile = await tenantRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
@@ -80,9 +80,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
@@ -110,9 +110,9 @@ namespace FoxIDs.Controllers
                 _ = await tenantRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);

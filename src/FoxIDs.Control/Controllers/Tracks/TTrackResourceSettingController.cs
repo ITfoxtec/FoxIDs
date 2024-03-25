@@ -42,9 +42,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 return new Api.ResourceSettings { ShowResourceId = mTrack.ShowResourceId };
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);
@@ -78,9 +78,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(resourceSettings);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Save {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);

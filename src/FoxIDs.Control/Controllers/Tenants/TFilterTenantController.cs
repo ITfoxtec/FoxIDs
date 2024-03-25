@@ -50,9 +50,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aTenants);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Tenant).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.Tenant).Name, filterName);

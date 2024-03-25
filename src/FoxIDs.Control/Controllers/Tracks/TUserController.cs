@@ -53,9 +53,9 @@ namespace FoxIDs.Controllers
                 var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.User).Name, email);
@@ -126,9 +126,9 @@ namespace FoxIDs.Controllers
                 ModelState.TryAddModelError(nameof(createUserRequest.Password), aex.Message);
                 return BadRequest(ModelState, aex);
             }            
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.User).Name}' by email '{createUserRequest.Email}'.");
                     return Conflict(typeof(Api.User).Name, createUserRequest.Email, nameof(createUserRequest.Email));
@@ -190,9 +190,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.User>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserRequest).Name}' by email '{user.Email}'.");
                     return NotFound(typeof(Api.UserRequest).Name, user.Email, nameof(user.Email));
@@ -217,9 +217,9 @@ namespace FoxIDs.Controllers
                 await tenantRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.User).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.User).Name, email);

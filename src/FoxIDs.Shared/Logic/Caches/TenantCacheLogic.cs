@@ -76,9 +76,9 @@ namespace FoxIDs.Logic
                 (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.OrdinalIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     throw new Exception($"Custom domain '{customDomain}' is not connected to a tenant.", ex);
                 }

@@ -22,13 +22,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterDataRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MFilterPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterRepository) : base(logger)
+        public MFilterPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
 
@@ -66,11 +66,11 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace())
             {
-                return masterRepository.GetListAsync<Plan>();
+                return masterDataRepository.GetListAsync<Plan>();
             }
             else
             {
-                return masterRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName));
+                return masterDataRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName));
             }
         }
     }

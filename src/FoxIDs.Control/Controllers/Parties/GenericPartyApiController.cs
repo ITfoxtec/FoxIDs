@@ -22,18 +22,18 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateModelGenericPartyLogic validateModelGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
             this.downPartyAllowUpPartiesQueueLogic = downPartyAllowUpPartiesQueueLogic;
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
+                var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
                 return base.Ok(ModelToApiMap(mParty));
             }
             catch (FoxIDsDataException ex)
@@ -101,7 +101,7 @@ namespace FoxIDs.Controllers
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
-                await tenantRepository.CreateAsync(mParty);
+                await tenantDataRepository.CreateAsync(mParty);
 
                 if (mParty is UpParty)
                 {
@@ -145,7 +145,7 @@ namespace FoxIDs.Controllers
 
                 if (mParty is OidcDownParty mOidcDownParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<OidcDownParty>(mParty.Id);
+                    var tempMParty = await tenantDataRepository.GetAsync<OidcDownParty>(mParty.Id);
                     if(tempMParty.Client != null && mOidcDownParty.Client != null)
                     {
                         mOidcDownParty.Client.Secrets = tempMParty.Client.Secrets;
@@ -153,7 +153,7 @@ namespace FoxIDs.Controllers
                 }
                 else if (mParty is OAuthDownParty mOAuthDownParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<OAuthDownParty>(mParty.Id);
+                    var tempMParty = await tenantDataRepository.GetAsync<OAuthDownParty>(mParty.Id);
                     if (tempMParty.Client != null && mOAuthDownParty.Client != null)
                     {
                         mOAuthDownParty.Client.Secrets = tempMParty.Client.Secrets;
@@ -161,7 +161,7 @@ namespace FoxIDs.Controllers
                 }
                 else if (mParty is OidcUpParty mOidcUpParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<OidcUpParty>(mParty.Id);
+                    var tempMParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
                     mOidcUpParty.Client.ClientSecret = tempMParty.Client.ClientSecret;
                     mOidcUpParty.Client.ClientKeys = tempMParty.Client.ClientKeys;
                 }
@@ -173,8 +173,8 @@ namespace FoxIDs.Controllers
 
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
-                var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
-                await tenantRepository.UpdateAsync(mParty);
+                var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantDataRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
+                await tenantDataRepository.UpdateAsync(mParty);
 
                 if (mParty is UpParty)
                 {
@@ -216,7 +216,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var isUpParty = IsUpParty();
-                await tenantRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
+                await tenantDataRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
 
                 if (isUpParty)
                 {
@@ -298,7 +298,7 @@ namespace FoxIDs.Controllers
 
         private async Task<int> CountParties(string dataType)
         {
-            return await tenantRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
+            return await tenantDataRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
         }
 
         private async Task<string> GetPartyNameAsync(string name = null, int count = 0)
@@ -308,7 +308,7 @@ namespace FoxIDs.Controllers
                 name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
                 if (count < 3)
                 {
-                    var mParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name), required: false);
+                    var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name), required: false);
                     if (mParty != null)
                     {
                         count++;

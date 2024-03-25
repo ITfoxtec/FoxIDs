@@ -22,16 +22,16 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
         private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
             this.externalSecretLogic = externalSecretLogic;
@@ -50,7 +50,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     if (plan.Users.IsLimited)
                     {
                         Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
-                        var count = await tenantRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
+                        var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
                         // included + one master user
                         if (count > plan.Users.Included)
                         {
@@ -160,7 +160,7 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = user.EmailVerified;
@@ -186,7 +186,7 @@ namespace FoxIDs.Controllers
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
                 var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
-                await tenantRepository.UpdateAsync(mUser);
+                await tenantDataRepository.UpdateAsync(mUser);
 
                 return Ok(mapper.Map<Api.User>(mUser));
             }
@@ -214,7 +214,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

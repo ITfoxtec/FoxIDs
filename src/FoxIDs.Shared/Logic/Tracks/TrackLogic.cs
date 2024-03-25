@@ -10,14 +10,14 @@ namespace FoxIDs.Logic
 {
     public  class TrackLogic : LogicBase
     {
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantDataRepository tenantRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(ITenantDataRepository tenantDataRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.externalKeyLogic = externalKeyLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Track key type '{keyType}' not supported.");
             }
 
-            await tenantRepository.CreateAsync(mTrack);
+            await tenantDataRepository.CreateAsync(mTrack);
 
             await trackCacheLogic.InvalidateTrackCacheAsync(trackName ?? RouteBinding.TrackName, tenantName ?? RouteBinding.TenantName);
         }
@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);
 
-            await tenantRepository.CreateAsync(mLoginUpParty);
+            await tenantDataRepository.CreateAsync(mLoginUpParty);
 
             await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
         }

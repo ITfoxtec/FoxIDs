@@ -17,13 +17,13 @@ namespace FoxIDs.Logic
     {
         private const string downPartyDataType = "party:down";
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantDataRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantDataRepository tenantDataRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
@@ -139,7 +139,7 @@ namespace FoxIDs.Logic
             string continuationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, continuationToken) = await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == messageObj.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: scopedLogger);
+                (var downParties, continuationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == messageObj.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: scopedLogger);
                 stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
@@ -180,7 +180,7 @@ namespace FoxIDs.Logic
                 TrackName = trackName,
                 PartyName = downParty.Name
             };
-            var downPartyFullObj = await tenantRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: scopedLogger);
+            var downPartyFullObj = await tenantDataRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: scopedLogger);
             var upParty = downPartyFullObj.AllowUpParties.Where(up => up.Name == messageObj.Name).FirstOrDefault();
             if (upParty != null)
             {
@@ -201,7 +201,7 @@ namespace FoxIDs.Logic
                     downPartyFullObj.AllowUpParties.Remove(upParty);
                 }
 
-                await tenantRepository.UpdateAsync(downPartyFullObj, scopedLogger: scopedLogger);
+                await tenantDataRepository.UpdateAsync(downPartyFullObj, scopedLogger: scopedLogger);
                 await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
             }
         }

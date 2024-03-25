@@ -15,15 +15,15 @@ namespace FoxIDs.Logic
     public class BaseAccountLogic : LogicBase
     {
         protected readonly TelemetryScopedLogger logger;
-        protected readonly ITenantDataRepository tenantRepository;
-        protected readonly IMasterDataRepository masterRepository;
+        protected readonly ITenantDataRepository tenantDataRepository;
+        protected readonly IMasterDataRepository masterDataRepository;
         protected readonly SecretHashLogic secretHashLogic;
 
-        public BaseAccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public BaseAccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
-            this.masterRepository = masterRepository;
+            this.tenantDataRepository = tenantDataRepository;
+            this.masterDataRepository = masterDataRepository;
             this.secretHashLogic = secretHashLogic;
         }
 
@@ -46,14 +46,14 @@ namespace FoxIDs.Logic
 
             if(checkUserAndPasswordPolicy)
             {
-                if (await tenantRepository.ExistsAsync<User>(await User.IdFormatAsync(userIdKey)))
+                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(userIdKey)))
                 {
                     throw new UserExistsException($"User '{email}' already exists.") { Email = email };
                 }
                 await ValidatePasswordPolicy(email, password);
             }
             user.ChangePassword = changePassword;
-            await tenantRepository.CreateAsync(user);
+            await tenantDataRepository.CreateAsync(user);
 
             logger.ScopeTrace(() => $"User '{email}' created, with user id '{user.UserId}'.");
 
@@ -152,7 +152,7 @@ namespace FoxIDs.Logic
         private async Task CheckPasswordRisk(string password)
         {
             var passwordSha1Hash = password.Sha1Hash();
-            if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
+            if (await masterDataRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
             {
                 throw new PasswordRiskException("Password has appeared in a data breach and is at risk.");
             }

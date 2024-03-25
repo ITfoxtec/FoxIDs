@@ -21,14 +21,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecretHashLogic secretHashLogic;
 
-        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
+        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.secretHashLogic = secretHashLogic;
         }
 
@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthDownParty = await tenantDataRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthDownParty?.Client?.Secrets?.Count > 0)
                 {
                     return Ok(mapper.Map<List<Api.OAuthClientSecretResponse>>(oauthDownParty.Client.Secrets).Set(s => s.ForEach(es => es.Name = new[] { partyName, es.Name }.ToDotList())));
@@ -67,7 +67,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
                 secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
+                var oauthDownParty = await tenantDataRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
 
                 foreach(var s in secretRequest.Secrets)
                 {
@@ -81,7 +81,7 @@ namespace FoxIDs.Controllers
                 }
                 secretRequest.Secrets = oauthDownParty.Client.Secrets.Select(s => s.Id).ToList();
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
-                await tenantRepository.UpdateAsync(oauthDownParty);
+                await tenantDataRepository.UpdateAsync(oauthDownParty);
 
                 return Created(new Api.OAuthDownParty { Name = secretRequest.PartyName });
             }
@@ -111,14 +111,14 @@ namespace FoxIDs.Controllers
                 var secretId = name.GetLastInDotList();
                 if (!ModelState.TryValidateRequiredParameter(secretId, $"{nameof(name)}[1]")) return BadRequest(ModelState);
 
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthDownParty = await tenantDataRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 var secret = oauthDownParty.Client.Secrets.Where(s => s.Id == secretId).FirstOrDefault();
                 if (secret == null)
                 {
                     return NotFound("Secret", secretId);
                 }
                 oauthDownParty.Client.Secrets.Remove(secret);
-                await tenantRepository.UpdateAsync(oauthDownParty);
+                await tenantDataRepository.UpdateAsync(oauthDownParty);
 
                 return NoContent();
             }

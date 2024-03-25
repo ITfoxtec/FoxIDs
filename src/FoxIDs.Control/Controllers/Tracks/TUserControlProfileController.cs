@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository) : base(logger)
+        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
 
                 var userHashId = await User.Identity.Name.HashIdStringAsync();
 
-                var mUserControlProfile = await tenantRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
+                var mUserControlProfile = await tenantDataRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
             catch (FoxIDsDataException ex)
@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
 
                 var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfile);
                 mUserControlProfile.Id = await UserControlProfile.IdFormatAsync(RouteBinding, await User.Identity.Name.HashIdStringAsync());
-                await tenantRepository.SaveAsync(mUserControlProfile);
+                await tenantDataRepository.SaveAsync(mUserControlProfile);
 
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
 
                 var userHashId = await User.Identity.Name.HashIdStringAsync();
 
-                _ = await tenantRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
+                _ = await tenantDataRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

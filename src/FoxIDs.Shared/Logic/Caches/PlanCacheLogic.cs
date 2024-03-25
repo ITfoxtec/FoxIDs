@@ -12,13 +12,13 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly IMasterDataRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public PlanCacheLogic(Settings settings, IDataCacheProvider cacheProvider, IMasterDataRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanCacheLogic(Settings settings, IDataCacheProvider cacheProvider, IMasterDataRepository masterDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
         public async Task InvalidatePlanCacheAsync(string planName)
@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
                 return planAsString.ToObject<Plan>();
             }
 
-            var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName), required: required);
+            var plan = await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName), required: required);
             if (plan != null)
             {
                 await cacheProvider.SetAsync(key, plan.ToJson(), settings.Cache.PlanLifetime);

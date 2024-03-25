@@ -16,7 +16,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOidcClientKeyUpPartyController : GenericOAuthClientKeyUpPartyController<OidcUpParty, OidcUpClient>
     {
-        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger, mapper, tenantRepository, planCacheLogic, externalKeyLogic)
+        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger, mapper, tenantDataRepository, planCacheLogic, externalKeyLogic)
         { }
 
         /// <summary>

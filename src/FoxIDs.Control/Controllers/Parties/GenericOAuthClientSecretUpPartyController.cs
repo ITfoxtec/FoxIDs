@@ -18,12 +18,12 @@ namespace FoxIDs.Controllers
     public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository) : base(logger)
+        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         protected async Task<ActionResult<Api.OAuthClientSecretSingleResponse>> Get(string partyName)
@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (!string.IsNullOrWhiteSpace(oauthUpParty?.Client?.ClientSecret))
                 {
                     return Ok(new Api.OAuthClientSecretSingleResponse
@@ -64,14 +64,14 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
                 secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && secretRequest.Secret.IsNullOrEmpty())
                 {
                     throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = secretRequest.Secret;
-                await tenantRepository.UpdateAsync(oauthUpParty);
+                await tenantDataRepository.UpdateAsync(oauthUpParty);
 
                 return Created(new Api.OAuthUpParty { Name = secretRequest.PartyName });
             }
@@ -93,14 +93,14 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
                 var partyName = name?.ToLower();
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt)
                 {
                     throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = null;
-                await tenantRepository.UpdateAsync(oauthUpParty);
+                await tenantDataRepository.UpdateAsync(oauthUpParty);
 
                 return NoContent();
             }

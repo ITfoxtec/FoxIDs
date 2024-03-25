@@ -20,17 +20,17 @@ namespace FoxIDs.Logic
     public class OAuthAuthUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, TrackIssuerLogic trackIssuerLogic, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackIssuerLogic = trackIssuerLogic;
             this.oauthJwtUpLogic = oauthJwtUpLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -190,7 +190,7 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(partyId);
 
             (var claims, string tokenIssuer) = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
 

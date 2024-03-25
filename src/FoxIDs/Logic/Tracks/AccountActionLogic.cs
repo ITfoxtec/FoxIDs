@@ -22,19 +22,19 @@ namespace FoxIDs.Logic
         protected readonly TelemetryScopedLogger logger;
         private readonly ICacheProvider cacheProvider;
         private readonly IStringLocalizer localizer;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.cacheProvider = cacheProvider;
             this.localizer = localizer;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
                     if (!user.EmailVerified)
                     {
                         user.EmailVerified = true;
-                        await tenantRepository.SaveAsync(user);
+                        await tenantDataRepository.SaveAsync(user);
                     }
                     if (onSuccess != null)
                     {

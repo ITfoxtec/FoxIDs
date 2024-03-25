@@ -22,18 +22,18 @@ namespace FoxIDs.Controllers
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
             catch (FoxIDsDataException ex)
@@ -87,7 +87,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (plan.Tracks.IsLimited)
                     {
-                        var count = await tenantRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
+                        var count = await tenantDataRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
                         // included + master track
                         if (count > plan.Tracks.Included) 
                         {
@@ -143,7 +143,7 @@ namespace FoxIDs.Controllers
                 track.Name = await GetTrackNameAsync(track.Name);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 mTrack.DisplayName = track.DisplayName;
                 mTrack.SequenceLifetime = track.SequenceLifetime;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;
@@ -153,7 +153,7 @@ namespace FoxIDs.Controllers
                 mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
                 mTrack.AllowIframeOnDomains = track.AllowIframeOnDomains;
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
@@ -184,10 +184,10 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
-                await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                await tenantRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
+                await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                await tenantDataRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
 
                 if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                 {
@@ -216,7 +216,7 @@ namespace FoxIDs.Controllers
                 name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
                 if (count < 3)
                 {
-                    var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
+                    var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
                     if (mTrack != null)
                     {
                         count++;

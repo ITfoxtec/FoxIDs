@@ -13,13 +13,13 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public DownPartyCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task InvalidateDownPartyCacheAsync(Party.IdKey idKey)
@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
                 return downPartyAsString.ToObject<DownParty>();
             }
 
-            var downParty = await tenantRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
+            var downParty = await tenantDataRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
             if (downParty != null)
             {
                 await cacheProvider.SetAsync(key, downParty.ToJson(), settings.Cache.DownPartyLifetime);

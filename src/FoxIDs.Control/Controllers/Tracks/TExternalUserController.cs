@@ -19,14 +19,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic;
 
-        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
+        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.validateApiModelExternalUserLogic = validateApiModelExternalUserLogic;
         }
 
@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
                 var linkClaimHash = await userRequest.LinkClaimValue.HashIdStringAsync();
-                var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
+                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
             catch (FoxIDsDataException ex)
@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
                 var linkClaimHash = await externalUserRequest.LinkClaimValue.HashIdStringAsync();
                 mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash);
                 mExternalUser.UserId = Guid.NewGuid().ToString();
-                await tenantRepository.CreateAsync(mExternalUser);
+                await tenantDataRepository.CreateAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
@@ -104,12 +104,12 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(externalUserRequest)) return BadRequest(ModelState);
 
                 var linkClaimHash = await externalUserRequest.LinkClaimValue.HashIdStringAsync();              
-                var mExternalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash));
+                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, externalUserRequest.UpPartyName, linkClaimHash));
 
                 var tempMExternalUser = mapper.Map<ExternalUser>(externalUserRequest);
                 mExternalUser.DisableAccount = tempMExternalUser.DisableAccount;
                 mExternalUser.Claims = tempMExternalUser.Claims;   
-                await tenantRepository.SaveAsync(mExternalUser);
+                await tenantDataRepository.SaveAsync(mExternalUser);
 
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
@@ -136,7 +136,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
                 var linkClaimHash = await userRequest.LinkClaimValue.HashIdStringAsync();
-                _ = await tenantRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
+                _ = await tenantDataRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

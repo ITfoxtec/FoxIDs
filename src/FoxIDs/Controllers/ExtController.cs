@@ -22,18 +22,18 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly IStringLocalizer localizer;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ExternalUserLogic externalUserLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public ExtController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalUserLogic externalUserLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public ExtController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalUserLogic externalUserLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.localizer = localizer;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.externalUserLogic = externalUserLogic;
@@ -48,13 +48,13 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start external create user.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalUserUpSequenceData>(remove: false);
-                var externalUserUpParty = await tenantRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
+                var externalUserUpParty = await tenantDataRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
                 if (!(externalUserUpParty.LinkExternalUser?.AutoCreateUser == true))
                 {
                     throw new InvalidOperationException("Automatic create external user not enabled.");
                 }
 
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -82,13 +82,13 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalUserUpSequenceData>(remove: false);
-                var externalUserUpParty = await tenantRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
+                var externalUserUpParty = await tenantDataRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
                 if (!(externalUserUpParty.LinkExternalUser?.AutoCreateUser == true))
                 {
                     throw new InvalidOperationException("Automatic create external user not enabled.");
                 }
 
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 

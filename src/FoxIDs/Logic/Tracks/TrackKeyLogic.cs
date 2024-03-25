@@ -17,13 +17,13 @@ namespace FoxIDs.Logic
     public class TrackKeyLogic : LogicSequenceBase
     {
         private readonly ICacheProvider cacheProvider;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackKeyLogic(ICacheProvider cacheProvider, ITenantDataRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -107,13 +107,13 @@ namespace FoxIDs.Logic
             {
                 if (RouteBinding.TrackName == Constants.Routes.MasterTrackName && RouteBinding.Key.Type != TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
-                    var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                    var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
                     if (RouteBinding.Key.Type == TrackKeyTypes.Contained)
                     {
                         var ContainedCertificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                         mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };
-                        await tenantRepository.UpdateAsync(mTrack);
+                        await tenantDataRepository.UpdateAsync(mTrack);
 
                         throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary environment key certificate has been created, please try one more time.", ex);
                     }
@@ -122,7 +122,7 @@ namespace FoxIDs.Logic
                         mTrack.Key.Type = TrackKeyTypes.KeyVaultRenewSelfSigned;
                         mTrack.Key.Keys = null;
                         mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
-                        await tenantRepository.UpdateAsync(mTrack);
+                        await tenantDataRepository.UpdateAsync(mTrack);
 
                         throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary external environment key certificate is under construction in Key Vault, it is ready in a little while.", ex);
                     }

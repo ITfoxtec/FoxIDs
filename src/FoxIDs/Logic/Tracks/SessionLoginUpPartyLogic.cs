@@ -15,13 +15,13 @@ namespace FoxIDs.Logic
     public class SessionLoginUpPartyLogic : SessionBaseLogic
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository;
 
-        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
+        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
                 if (sessionEnabled && sessionValid)
                 {
                     var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email });
-                    var user = await tenantRepository.GetAsync<User>(id, false);
+                    var user = await tenantDataRepository.GetAsync<User>(id, false);
                     if (user != null && !user.DisableAccount)
                     {
                         AddDownPartyLink(session, newDownPartyLink);

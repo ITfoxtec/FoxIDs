@@ -13,13 +13,13 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TrackCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task InvalidateTrackCacheAsync(Track.IdKey idKey)
@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
                 return trackAsString.ToObject<Track>();
             }
 
-            var track = await tenantRepository.GetAsync<Track>(await Track.IdFormatAsync(idKey), required: required);
+            var track = await tenantDataRepository.GetAsync<Track>(await Track.IdFormatAsync(idKey), required: required);
             if (track != null)
             {
                 await cacheProvider.SetAsync(key, track.ToJson(), settings.Cache.TrackLifetime);

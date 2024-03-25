@@ -24,20 +24,20 @@ namespace FoxIDs.Controllers
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
-        private readonly IMasterDataRepository masterRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
+        private readonly IMasterDataRepository masterDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
-            this.masterRepository = masterRepository;
+            this.tenantDataRepository = tenantDataRepository;
+            this.masterDataRepository = masterDataRepository;
             this.masterTenantLogic = masterTenantLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MTenant = await tenantRepository.GetTenantByNameAsync(name);
+                var MTenant = await tenantDataRepository.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
             catch (FoxIDsDataException ex)
@@ -99,7 +99,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
-                await tenantRepository.CreateAsync(mTenant);
+                await tenantDataRepository.CreateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
                 if (!string.IsNullOrEmpty(tenant.CustomDomain))
@@ -174,7 +174,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
                 tenant.Name = tenant.Name.ToLower();
 
-                var mTenant = await tenantRepository.GetTenantByNameAsync(tenant.Name);
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(tenant.Name);
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
@@ -192,7 +192,7 @@ namespace FoxIDs.Controllers
                 }
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
-                await tenantRepository.UpdateAsync(mTenant);
+                await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
@@ -222,7 +222,7 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
+                var plan = await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
                 return (true, plan);
             }
             catch (FoxIDsDataException ex)
@@ -259,12 +259,12 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = name, TrackName = mTrack.Name };
-                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                    await tenantRepository.DeleteAsync<Track>(mTrack.Id);
+                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
@@ -272,7 +272,7 @@ namespace FoxIDs.Controllers
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
-                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
+                var mTenant = await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(name);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))

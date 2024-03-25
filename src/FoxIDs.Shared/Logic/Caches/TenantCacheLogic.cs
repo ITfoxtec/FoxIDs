@@ -15,13 +15,13 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TenantCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TenantCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task InvalidateTenantCacheAsync(string tenantName)
@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
                 return tenantAsString.ToObject<Tenant>();
             }
 
-            var tenant = await tenantRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), required: required);
+            var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), required: required);
             if (tenant != null)
             {
                 await cacheProvider.SetAsync(key, tenant.ToJson(), settings.Cache.TenantLifetime);
@@ -73,7 +73,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.OrdinalIgnoreCase) && t.CustomDomainVerified);
+                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.OrdinalIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
             catch (FoxIDsDataException ex)

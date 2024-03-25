@@ -22,14 +22,14 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var party = RouteBinding.UpParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
+            var party = RouteBinding.UpParty != null ? await tenantDataRepository.GetAsync<SamlUpParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: signMetadata, includeSignatureValidationCertificates: false);
@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
+            var party = RouteBinding.DownParty != null ? await tenantDataRepository.GetAsync<SamlDownParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: signMetadata, includeSignatureValidationCertificates: false);

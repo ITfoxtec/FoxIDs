@@ -20,13 +20,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterDataRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MRiskPasswordController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterRepository) : base(logger)
+        public MRiskPasswordController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(passwordSha1Hash, nameof(passwordSha1Hash))) return BadRequest(ModelState);
 
-                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
+                var mRiskPassword = await masterDataRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
                 return Ok(mapper.Map<Api.RiskPassword>(mRiskPassword));
             }
             catch (FoxIDsDataException ex)
@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
                 });
             }
 
-            await masterRepository.SaveBulkAsync(riskPasswords);
+            await masterDataRepository.SaveBulkAsync(riskPasswords);
 
             return NoContent();
         }
@@ -97,7 +97,7 @@ namespace FoxIDs.Controllers
                 ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
             }
 
-            await masterRepository.DeleteBulkAsync<RiskPassword>(ids);
+            await masterDataRepository.DeleteBulkAsync<RiskPassword>(ids);
 
             return NoContent();
         }

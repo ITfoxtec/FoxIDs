@@ -19,17 +19,17 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var MTenant = await tenantRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+                var MTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
             catch (FoxIDsDataException ex)
@@ -71,7 +71,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTenant = await tenantRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
 
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = false;
-                await tenantRepository.UpdateAsync(mTenant);
+                await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
@@ -121,12 +121,12 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name };
-                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                    await tenantRepository.DeleteAsync<Track>(mTrack.Id);
+                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
@@ -134,7 +134,7 @@ namespace FoxIDs.Controllers
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
-                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
+                var mTenant = await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))

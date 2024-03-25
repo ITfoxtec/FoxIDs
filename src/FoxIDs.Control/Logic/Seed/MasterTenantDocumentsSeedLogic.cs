@@ -13,14 +13,14 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly Settings settings;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
 
-        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantDataRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.masterTenantLogic = masterTenantLogic;
         }
 
@@ -50,7 +50,7 @@ namespace FoxIDs.Logic.Seed
 
             try
             {
-                _ = await tenantRepository.GetAsync<Tenant>(masterTenant.Id);
+                _ = await tenantDataRepository.GetAsync<Tenant>(masterTenant.Id);
             }
             catch (FoxIDsDataException ex)
             {
@@ -60,7 +60,7 @@ namespace FoxIDs.Logic.Seed
                 }
             }
 
-            await tenantRepository.CreateAsync(masterTenant);
+            await tenantDataRepository.CreateAsync(masterTenant);
         }
     }
 }

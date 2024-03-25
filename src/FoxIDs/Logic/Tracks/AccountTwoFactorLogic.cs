@@ -16,16 +16,16 @@ namespace FoxIDs.Logic
         private const string secretName = "2fa";  
 
         protected readonly TelemetryScopedLogger logger;
-        protected readonly ITenantDataRepository tenantRepository;
+        protected readonly ITenantDataRepository tenantDataRepository;
         private readonly ExternalSecretLogic externalSecretLogic;
         protected readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.externalSecretLogic = externalSecretLogic;
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
             var recoveryCode = new TwoFactorAppRecoveryCode();
             await secretHashLogic.AddSecretHashAsync(recoveryCode, twoFactorAppRecoveryCode);
             user.TwoFactorAppRecoveryCode = recoveryCode;
-            await tenantRepository.SaveAsync(user);
+            await tenantDataRepository.SaveAsync(user);
 
             logger.ScopeTrace(() => $"User '{user.Email}', two-factor app secret set.", triggerEvent: true);
             return user;

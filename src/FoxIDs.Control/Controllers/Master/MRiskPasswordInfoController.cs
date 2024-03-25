@@ -14,11 +14,11 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class MRiskPasswordInfoController : ApiController
     {
-        private readonly IMasterDataRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MRiskPasswordInfoController(TelemetryScopedLogger logger, IMasterDataRepository masterRepository) : base(logger)
+        public MRiskPasswordInfoController(TelemetryScopedLogger logger, IMasterDataRepository masterDataRepository) : base(logger)
         {
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.RiskPasswordInfo>> GetRiskPasswordInfo()
         {
-            var mRiskPasswordCount = await masterRepository.CountAsync<RiskPassword>();
+            var mRiskPasswordCount = await masterDataRepository.CountAsync<RiskPassword>();
             return Ok(new Api.RiskPasswordInfo { RiskPasswordCount = mRiskPasswordCount });
         }
     }

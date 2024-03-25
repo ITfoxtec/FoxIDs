@@ -16,7 +16,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOAuthClientSecretDownPartyController : GenericOAuthClientSecretDownPartyController<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>
     {
-        public TOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger, mapper, tenantRepository, secretHashLogic)
+        public TOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic) : base(logger, mapper, tenantDataRepository, secretHashLogic)
         { }
 
         /// <summary>

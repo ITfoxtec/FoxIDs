@@ -20,14 +20,14 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider;
 
-        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
@@ -137,7 +137,7 @@ namespace FoxIDs.Logic
         {
             var usePartitionId = tenantName.IsNullOrWhiteSpace();
 
-            var count = await tenantRepository.CountAsync(whereQuery: await GetTenantCountWhereQueryAsync(tenantName, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantDataRepository.CountAsync(whereQuery: await GetTenantCountWhereQueryAsync(tenantName, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem
@@ -169,7 +169,7 @@ namespace FoxIDs.Logic
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && idKey.TrackName.IsNullOrWhiteSpace();
 
-            var count = await tenantRepository.CountAsync(idKey, whereQuery: await GetTrackCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantDataRepository.CountAsync(idKey, whereQuery: await GetTrackCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem
@@ -206,7 +206,7 @@ namespace FoxIDs.Logic
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && idKey.TrackName.IsNullOrWhiteSpace();
 
-            var count = await tenantRepository.CountAsync(idKey, whereQuery: await GetKeyVaultManagedCertificateCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantDataRepository.CountAsync(idKey, whereQuery: await GetKeyVaultManagedCertificateCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem
@@ -243,7 +243,7 @@ namespace FoxIDs.Logic
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && !idKey.TrackName.IsNullOrWhiteSpace();
 
-            var count = await tenantRepository.CountAsync(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantDataRepository.CountAsync(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem

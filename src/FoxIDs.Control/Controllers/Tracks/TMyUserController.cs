@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TMyUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository) : base(logger)
+        public TMyUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -73,9 +73,9 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 mUser.ChangePassword = user.ChangePassword;
-                await tenantRepository.UpdateAsync(mUser);
+                await tenantDataRepository.UpdateAsync(mUser);
 
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }

@@ -22,13 +22,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository) : base(logger)
+        public TFilterTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -65,19 +65,19 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>();
+                return tenantDataRepository.GetListAsync<Tenant>();
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
         }
     }

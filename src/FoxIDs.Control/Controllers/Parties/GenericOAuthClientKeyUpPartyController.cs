@@ -25,15 +25,15 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public GenericOAuthClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public GenericOAuthClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthUpParty.Client.ClientKeys?.Count() > 0 && oauthUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultImport)
                 {
                     var clientKey = oauthUpParty.Client.ClientKeys.First();
@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
                 }
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 
                 (var externalName, var publicCertificate, var externalId) = await externalKeyLogic.ImportExternalKeyAsync(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, upPartyName: keyRequest.PartyName);
                 var publicKey = new X509Certificate2(publicCertificate).ToFTJsonWebKey();
@@ -106,7 +106,7 @@ namespace FoxIDs.Controllers
                 }
 
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
-                await tenantRepository.UpdateAsync(oauthUpParty);
+                await tenantDataRepository.UpdateAsync(oauthUpParty);
 
                 var clientKey = oauthUpParty.Client.ClientKeys.First();
                 return Created(new Api.OAuthClientKeyResponse
@@ -137,13 +137,13 @@ namespace FoxIDs.Controllers
                 var externalName = name.GetLastInDotList();
                 if (!ModelState.TryValidateRequiredParameter(externalName, $"{nameof(name)}[1]")) return BadRequest(ModelState);
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
 
                 var key = oauthUpParty.Client.ClientKeys?.Where(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
                 {
                     oauthUpParty.Client.ClientKeys.Remove(key);
-                    await tenantRepository.UpdateAsync(oauthUpParty);
+                    await tenantDataRepository.UpdateAsync(oauthUpParty);
                     await externalKeyLogic.DeleteExternalKeyAsync(externalName);
                 }
 

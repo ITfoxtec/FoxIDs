@@ -11,7 +11,7 @@ namespace FoxIDs.Logic
     {
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, masterRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
         {
             this.failingLoginLogic = failingLoginLogic;
         }
@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         {
             email = email?.ToLowerInvariant();
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            return await tenantRepository.GetAsync<User>(id, required: false);
+            return await tenantDataRepository.GetAsync<User>(id, required: false);
         }
 
         public async Task<User> ValidateUser(string email, string password)
@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, required: false);
+            var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {
@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, required: false);
+            var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {
@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
-                await tenantRepository.SaveAsync(user);
+                await tenantDataRepository.SaveAsync(user);
 
                 logger.ScopeTrace(() => $"User '{email}', password changed.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
                 return user;
@@ -123,7 +123,7 @@ namespace FoxIDs.Logic
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.ChangePassword = false;
-            await tenantRepository.SaveAsync(user);
+            await tenantDataRepository.SaveAsync(user);
 
             logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
         }

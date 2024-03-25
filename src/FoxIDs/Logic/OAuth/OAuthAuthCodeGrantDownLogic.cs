@@ -14,13 +14,13 @@ namespace FoxIDs.Logic
     public class OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthAuthCodeGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthCodeGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
                 CodeChallengeMethod = codeChallengeMethod
             };
             await grant.SetIdAsync(new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code });
-            await tenantRepository.SaveAsync(grant);
+            await tenantDataRepository.SaveAsync(grant);
 
             logger.ScopeTrace(() => $"Authorization code grant created, Code '{code}'.");
             return code;
@@ -59,7 +59,7 @@ namespace FoxIDs.Logic
             var grantIdKey = new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code };
             await grantIdKey.ValidateObjectAsync();
 
-            var grant = await tenantRepository.GetAsync<AuthCodeTtlGrant>(await AuthCodeTtlGrant.IdFormatAsync(grantIdKey), required: false, delete: true);
+            var grant = await tenantDataRepository.GetAsync<AuthCodeTtlGrant>(await AuthCodeTtlGrant.IdFormatAsync(grantIdKey), required: false, delete: true);
             if (grant == null)
             {
                 throw new OAuthRequestException("Authorization code grant not found.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };

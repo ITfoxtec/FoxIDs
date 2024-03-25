@@ -30,17 +30,17 @@ namespace FoxIDs.Controllers
         private readonly IStringLocalizer localizer;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantDataRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
+        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
         {
             this.logger = logger;
             this.environment = environment;
             this.localizer = localizer;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.securityHeaderLogic = securityHeaderLogic;
         }
 
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
                         var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
                         if (sequence != null)
                         {
-                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(await sequenceLogic.GetUiUpPartyIdAsync(sequence));
+                            var uiLoginUpParty = await tenantDataRepository.GetAsync<UiLoginUpPartyData>(await sequenceLogic.GetUiUpPartyIdAsync(sequence));
                             securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                             securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                             errorViewModel.Title = uiLoginUpParty.Title ?? RouteBinding.DisplayName;

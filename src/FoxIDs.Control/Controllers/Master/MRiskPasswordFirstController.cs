@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterDataRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MRiskPasswordFirstController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterRepository) : base(logger)
+        public MRiskPasswordFirstController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.RiskPassword>>> GetRiskPasswordFirst()
         {
-            var mRiskPasswords = await masterRepository.GetListAsync<RiskPassword>(maxItemCount: 1000);
+            var mRiskPasswords = await masterDataRepository.GetListAsync<RiskPassword>(maxItemCount: 1000);
             if (mRiskPasswords?.Count > 0) 
             {
                 return Ok(mapper.Map<HashSet<Api.RiskPassword>>(mRiskPasswords));

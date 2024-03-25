@@ -18,15 +18,15 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly TrackIssuerLogic trackIssuerLogic;
-        private readonly ITenantDataRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantDataRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackIssuerLogic = trackIssuerLogic;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.securityHeaderLogic = securityHeaderLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    var party = await tenantRepository.GetAsync<TParty>(partyId);
+                    var party = await tenantDataRepository.GetAsync<TParty>(partyId);
                     if (party.Client == null)
                     {
                         throw new NotSupportedException("Application Client not configured.");

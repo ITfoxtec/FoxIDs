@@ -1,16 +1,15 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
-using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
-using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic.Seed
 {
     public class SeedLogic : LogicBase
     {
+        private static bool isSeeded = false;
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
         private readonly IServiceProvider serviceProvider;
@@ -28,8 +27,9 @@ namespace FoxIDs.Logic.Seed
         {
             try
             {
-                if (settings.MasterSeedEnabled)
+                if (!isSeeded && settings.MasterSeedEnabled)
                 {
+                    isSeeded = true;
                     if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
                     {
                         await serviceProvider.GetService<CosmosDbSeedLogic>().SeedCosmosDbAsync();

@@ -53,7 +53,7 @@ namespace FoxIDs.Logic.Seed
             await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = Constants.Routes.MasterTenantName });
 
             var tenant = await tenantDataRepository.GetAsync<Tenant>(masterTenant.Id, required: false);
-            if (tenant == null)
+            if (tenant != null)
             {
                 return false;
             }

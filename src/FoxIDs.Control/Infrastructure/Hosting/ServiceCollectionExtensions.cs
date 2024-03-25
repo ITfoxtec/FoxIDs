@@ -30,6 +30,10 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<EmbeddedResourceLogic>();
 
+            if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
+            {
+                services.AddTransient<CosmosDbSeedLogic>();                
+            }
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
 
@@ -73,13 +77,16 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsControlSettings settings, IWebHostEnvironment env)
         {
             services.AddSharedInfrastructure(settings);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
-            services.AddHostedService<BackgroundQueueService>();
+            if (!settings.DisableBackgroundQueueService)
+            {
+                services.AddHostedService<BackgroundQueueService>();
+            }
 
             if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

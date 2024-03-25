@@ -24,17 +24,21 @@ namespace FoxIDs.Logic.Seed
             this.masterTenantLogic = masterTenantLogic;
         }
 
-        public async Task SeedAsync()
+        public async Task<bool> SeedAsync()
         {
             try
             {
-                await CreateAndValidateMasterTenantDocumentAsync();
+                if (!await CreateAndValidateMasterTenantDocumentAsync())
+                {
+                    return false;
+                }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName, TrackKeyTypes.KeyVaultRenewSelfSigned);
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName, settings.Options.KeyStorage == KeyStorageOptions.KeyVault ? TrackKeyTypes.KeyVaultRenewSelfSigned : TrackKeyTypes.Contained);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MasterTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MasterTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MasterTenantName, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(Constants.Routes.MasterTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
+                return true;
             }
             catch (Exception ex)
             {
@@ -43,24 +47,19 @@ namespace FoxIDs.Logic.Seed
             }
         }
 
-        private async Task CreateAndValidateMasterTenantDocumentAsync()
+        private async Task<bool> CreateAndValidateMasterTenantDocumentAsync()
         {
             var masterTenant = new Tenant();
             await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = Constants.Routes.MasterTenantName });
 
-            try
+            var tenant = await tenantDataRepository.GetAsync<Tenant>(masterTenant.Id, required: false);
+            if (tenant == null)
             {
-                _ = await tenantDataRepository.GetAsync<Tenant>(masterTenant.Id);
-            }
-            catch (FoxIDsDataException ex)
-            {
-                if (ex.StatusCode == DataStatusCode.Conflict)
-                {
-                    throw new Exception($"{masterTenant.Id} document exists.");
-                }
+                return false;
             }
 
             await tenantDataRepository.CreateAsync(masterTenant);
+            return true;
         }
     }
 }

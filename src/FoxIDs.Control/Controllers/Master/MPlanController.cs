@@ -21,11 +21,11 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
-        private readonly IMasterRepository masterRepository;
+        private readonly ITenantDataRepository tenantRepository;
+        private readonly IMasterDataRepository masterRepository;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, PlanCacheLogic planCacheLogic) : base(logger)
+        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

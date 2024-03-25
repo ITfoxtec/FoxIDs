@@ -111,9 +111,9 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services)
+        public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
         {
-            services.AddSharedRepository();
+            services.AddSharedRepository(settings);
 
             services.AddTransient(typeof(TrackCookieRepository<>));
             services.AddTransient(typeof(UpPartyCookieRepository<>));

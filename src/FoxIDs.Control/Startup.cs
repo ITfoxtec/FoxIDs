@@ -32,7 +32,7 @@ namespace FoxIDs
             services.AddSingleton<Settings>(settings);
 
             services.AddInfrastructure(settings, CurrentEnvironment);
-            services.AddRepository();
+            services.AddRepository(settings);
             services.AddLogic(settings);
 
             services.AddAuthenticationAndAuthorization(settings);

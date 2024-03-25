@@ -6,7 +6,7 @@ using FoxIDs.Models;
 
 namespace FoxIDs.Repository
 {
-    public interface IMasterRepository
+    public interface IMasterDataRepository
     {
         Task<bool> ExistsAsync<T>(string id) where T : MasterDocument;
 
@@ -20,6 +20,7 @@ namespace FoxIDs.Repository
         Task SaveAsync<T>(T item) where T : MasterDocument;
         Task DeleteAsync<T>(T item) where T : MasterDocument;
         Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument;
+
         Task<T> DeleteAsync<T>(string id) where T : MasterDocument;
         Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument;
     }

@@ -19,14 +19,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly LoginPageLogic loginPageLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorLogic accountTwoFactorLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;

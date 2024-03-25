@@ -22,10 +22,10 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

@@ -13,10 +13,10 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly Settings settings;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly MasterTenantLogic masterTenantLogic;
 
-        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;

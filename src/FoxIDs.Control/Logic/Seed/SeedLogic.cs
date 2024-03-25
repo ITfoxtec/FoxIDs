@@ -13,10 +13,10 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
-        private readonly IRepositoryClient repositoryClient;
+        private readonly ICosmosDbDataRepositoryClient repositoryClient;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, IRepositoryClient repositoryClient, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, ICosmosDbDataRepositoryClient repositoryClient, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
@@ -52,7 +52,7 @@ namespace FoxIDs.Logic.Seed
                                     DefaultTimeToLive = -1
                                 });
                             logger.Trace("One Cosmos DB Document container created.");
-                            (repositoryClient as RepositoryClientBase).SetContainers(container, container);
+                            (repositoryClient as CosmosDbDataRepositoryClientBase).SetContainers(container, container);
                         }
                         else
                         {
@@ -69,7 +69,7 @@ namespace FoxIDs.Logic.Seed
                                     DefaultTimeToLive = -1
                                 });
                             logger.Trace("Two Cosmos DB Document containers created.");
-                            (repositoryClient as RepositoryClientBase).SetContainers(container, ttlContainer);
+                            (repositoryClient as CosmosDbDataRepositoryClientBase).SetContainers(container, ttlContainer);
                         }
                         
                         await masterTenantDocumentsSeedLogic.SeedAsync();

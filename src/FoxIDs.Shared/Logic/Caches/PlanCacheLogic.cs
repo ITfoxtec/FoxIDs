@@ -12,9 +12,9 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly IMasterRepository masterRepository;
+        private readonly IMasterDataRepository masterRepository;
 
-        public PlanCacheLogic(Settings settings, IDataCacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanCacheLogic(Settings settings, IDataCacheProvider cacheProvider, IMasterDataRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

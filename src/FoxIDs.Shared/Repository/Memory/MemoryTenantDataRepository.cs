@@ -1,24 +1,19 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
-using FoxIDs.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace FoxIDs.UnitTests.Mocks
+namespace FoxIDs.Repository
 {
-    public class FakeTenantRepository : ITenantDataRepository
+    public class MemoryTenantDataRepository : ITenantDataRepository
     {
-
         public Task<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
-            if(id == "user:testtenant:testtrack:a2@test.com")
-            {
-                return Task.FromResult(true);
-            }
-
-            return Task.FromResult(false);
+            throw new NotImplementedException();
         }
 
         public Task<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument
@@ -48,7 +43,7 @@ namespace FoxIDs.UnitTests.Mocks
 
         public Task CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
-            return Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument

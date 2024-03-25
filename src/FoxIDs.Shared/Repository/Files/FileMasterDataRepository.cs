@@ -1,22 +1,18 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace FoxIDs.UnitTests.Mocks
+namespace FoxIDs.Repository
 {
-    public class FakeMasterRepository : IMasterDataRepository
+    public class FileMasterDataRepository : IMasterDataRepository
     {
         public Task<bool> ExistsAsync<T>(string id) where T : MasterDocument
         {
-            if (id == "prisk:@master:3357229DDDC9963302283F4D4863A74F310C9E80") // Password: !QAZ2wsx
-            {
-                return Task.FromResult(true);
-            }
-
-            return Task.FromResult(false);
+            throw new NotImplementedException();
         }
 
         public Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
@@ -29,7 +25,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : MasterDocument
+        public Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
@@ -49,17 +45,17 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(string id) where T : MasterDocument
-        {
-            throw new NotImplementedException();
-        }
-
         public Task DeleteAsync<T>(T item) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
         public Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeleteAsync<T>(string id) where T : MasterDocument
         {
             throw new NotImplementedException();
         }

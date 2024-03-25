@@ -10,12 +10,12 @@ namespace FoxIDs.Logic
 {
     public  class TrackLogic : LogicBase
     {
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(ITenantDataRepository tenantRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.externalKeyLogic = externalKeyLogic;

@@ -21,10 +21,10 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
 
-        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
+        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

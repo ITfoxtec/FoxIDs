@@ -20,14 +20,14 @@ namespace FoxIDs.Logic
     public class OAuthAuthUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

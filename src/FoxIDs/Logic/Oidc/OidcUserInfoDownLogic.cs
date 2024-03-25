@@ -15,10 +15,10 @@ namespace FoxIDs.Logic
     public class OidcUserInfoDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

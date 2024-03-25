@@ -13,13 +13,13 @@ namespace FoxIDs.Logic
 {
     public class MasterTenantLogic : LogicBase
     {
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
         private readonly TrackLogic trackLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantDataRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;

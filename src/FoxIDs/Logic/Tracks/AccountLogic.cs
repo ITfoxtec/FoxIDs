@@ -11,7 +11,7 @@ namespace FoxIDs.Logic
     {
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, masterRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, masterRepository, secretHashLogic, httpContextAccessor)
         {
             this.failingLoginLogic = failingLoginLogic;
         }

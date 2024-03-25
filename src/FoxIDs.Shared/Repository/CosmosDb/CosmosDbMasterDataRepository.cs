@@ -12,16 +12,16 @@ using Microsoft.Azure.Cosmos.Linq;
 
 namespace FoxIDs.Repository
 {
-    public class MasterRepository : IMasterRepository
+    public class CosmosDbMasterDataRepository : IMasterDataRepository
     {
         private Container container;
         private Container bulkContainer;
         private readonly TelemetryLogger logger;
 
-        public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient, IRepositoryBulkClient repositoryBulkClient)
+        public CosmosDbMasterDataRepository(TelemetryLogger logger, ICosmosDbDataRepositoryClient dataRepositoryClient, ICosmosDbDataRepositoryBulkClient dataRepositoryBulkClient)
         {
-            container = repositoryClient.Container;
-            bulkContainer = repositoryBulkClient.Container;
+            container = dataRepositoryClient.Container;
+            bulkContainer = dataRepositoryBulkClient.Container;
             this.logger = logger;
         }
 

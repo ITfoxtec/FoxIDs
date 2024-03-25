@@ -30,10 +30,10 @@ namespace FoxIDs.Controllers
         private readonly IStringLocalizer localizer;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
+        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantDataRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
         {
             this.logger = logger;
             this.environment = environment;

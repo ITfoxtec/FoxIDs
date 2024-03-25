@@ -15,10 +15,10 @@ namespace FoxIDs.Logic
     public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

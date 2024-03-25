@@ -20,9 +20,9 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterRepository masterRepository;
+        private readonly IMasterDataRepository masterRepository;
 
-        public MRiskPasswordController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
+        public MRiskPasswordController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

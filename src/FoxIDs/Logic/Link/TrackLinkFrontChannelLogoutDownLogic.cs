@@ -15,12 +15,12 @@ namespace FoxIDs.Logic
     public class TrackLinkFrontChannelLogoutDownLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

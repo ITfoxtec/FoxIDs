@@ -31,7 +31,7 @@ namespace FoxIDs
             
 
             services.AddInfrastructure(settings, CurrentEnvironment);
-            services.AddRepository();
+            services.AddRepository(settings);
             services.AddLogic(settings);
 
             services.AddControllersWithViews()

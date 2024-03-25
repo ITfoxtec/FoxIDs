@@ -17,10 +17,10 @@ namespace FoxIDs.Logic
     public class TrackKeyLogic : LogicSequenceBase
     {
         private readonly ICacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackKeyLogic(ICacheProvider cacheProvider, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(ICacheProvider cacheProvider, ITenantDataRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;

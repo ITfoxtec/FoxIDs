@@ -20,10 +20,10 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider;
 
-        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, LogAnalyticsWorkspaceProvider logAnalyticsWorkspaceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

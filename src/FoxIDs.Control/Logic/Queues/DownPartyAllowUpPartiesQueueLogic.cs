@@ -17,10 +17,10 @@ namespace FoxIDs.Logic
     {
         private const string downPartyDataType = "party:down";
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantDataRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.tenantRepository = tenantRepository;

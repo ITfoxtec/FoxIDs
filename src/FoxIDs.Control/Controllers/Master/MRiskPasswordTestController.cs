@@ -14,9 +14,9 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class MRiskPasswordTestController : ApiController
     {
-        private readonly IMasterRepository masterRepository;
+        private readonly IMasterDataRepository masterRepository;
 
-        public MRiskPasswordTestController(TelemetryScopedLogger logger, IMasterRepository masterRepository) : base(logger)
+        public MRiskPasswordTestController(TelemetryScopedLogger logger, IMasterDataRepository masterRepository) : base(logger)
         {
             this.masterRepository = masterRepository;
         }

@@ -21,9 +21,9 @@ namespace FoxIDs.Controllers
         private const string dataType = Constants.Models.DataType.ExternalUser;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
 
-        public TFilterExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

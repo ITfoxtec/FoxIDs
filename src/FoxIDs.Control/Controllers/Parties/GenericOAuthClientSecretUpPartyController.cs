@@ -18,9 +18,9 @@ namespace FoxIDs.Controllers
     public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
 
-        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : base(logger)
+        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

@@ -13,9 +13,9 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly IDataCacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
 
-        public DownPartyCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

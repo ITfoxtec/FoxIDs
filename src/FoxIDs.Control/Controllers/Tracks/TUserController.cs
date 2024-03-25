@@ -22,12 +22,12 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
         private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

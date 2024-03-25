@@ -61,12 +61,30 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddSharedRepository(this IServiceCollection services)
-        {            
-            services.AddSingleton<IRepositoryClient, RepositoryClient>();
-            services.AddSingleton<IRepositoryBulkClient, RepositoryBulkClient>();
-            services.AddSingleton<IMasterRepository, MasterRepository>();
-            services.AddSingleton<ITenantRepository, TenantRepository>();
+        public static IServiceCollection AddSharedRepository(this IServiceCollection services, Settings settings)
+        {
+            switch (settings.Options.DataStorage)
+            {
+                case DataStorageOptions.Memory:
+                    services.AddSingleton<IMasterDataRepository, MemoryMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, MemoryTenantDataRepository>();
+                    break;
+                case DataStorageOptions.File:
+                    services.AddSingleton<IMasterDataRepository, FileMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, FileTenantDataRepository>();
+                    break;
+                case DataStorageOptions.CosmosDb:
+                    services.AddSingleton<ICosmosDbDataRepositoryClient, CosmosDbDataRepositoryClient>();
+                    services.AddSingleton<ICosmosDbDataRepositoryBulkClient, CosmosDbDataRepositoryBulkClient>();
+                    services.AddSingleton<IMasterDataRepository, CosmosDbMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, CosmosDbTenantDataRepository>();
+                    break;
+                case DataStorageOptions.MongoDb:
+                    throw new NotImplementedException();
+                    //break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.DataStorage)} option '{settings.Options.DataStorage}' not supported.");
+            }
 
             return services;
         }

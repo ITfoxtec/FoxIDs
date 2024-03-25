@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly PlanUsageLogic planUsageLogic;
@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;

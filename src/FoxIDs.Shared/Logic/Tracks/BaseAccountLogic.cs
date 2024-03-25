@@ -15,11 +15,11 @@ namespace FoxIDs.Logic
     public class BaseAccountLogic : LogicBase
     {
         protected readonly TelemetryScopedLogger logger;
-        protected readonly ITenantRepository tenantRepository;
-        protected readonly IMasterRepository masterRepository;
+        protected readonly ITenantDataRepository tenantRepository;
+        protected readonly IMasterDataRepository masterRepository;
         protected readonly SecretHashLogic secretHashLogic;
 
-        public BaseAccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public BaseAccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, IMasterDataRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

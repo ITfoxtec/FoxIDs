@@ -19,10 +19,10 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
         private readonly ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic;
 
-        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
+        public TExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantRepository, ValidateApiModelExternalUserLogic validateApiModelExternalUserLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

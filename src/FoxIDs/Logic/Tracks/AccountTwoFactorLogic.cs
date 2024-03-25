@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
         private const string secretName = "2fa";  
 
         protected readonly TelemetryScopedLogger logger;
-        protected readonly ITenantRepository tenantRepository;
+        protected readonly ITenantDataRepository tenantRepository;
         private readonly ExternalSecretLogic externalSecretLogic;
         protected readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

@@ -6,7 +6,7 @@ using Microsoft.Azure.Cosmos.Fluent;
 
 namespace FoxIDs.Repository
 {
-    public abstract class RepositoryClientBase : IDisposable
+    public abstract class CosmosDbDataRepositoryClientBase : IDisposable
     {
         private bool isDisposed = false;
         private readonly Settings settings;
@@ -14,7 +14,7 @@ namespace FoxIDs.Repository
         private readonly bool withTtlContainer;
         private readonly bool withBulkExecution;
 
-        public RepositoryClientBase(Settings settings, TelemetryLogger logger, bool withTtlContainer, bool withBulkExecution)
+        public CosmosDbDataRepositoryClientBase(Settings settings, TelemetryLogger logger, bool withTtlContainer, bool withBulkExecution)
         {
             this.settings = settings;
             this.logger = logger;

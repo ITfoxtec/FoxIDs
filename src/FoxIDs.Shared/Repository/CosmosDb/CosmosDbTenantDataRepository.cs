@@ -15,15 +15,15 @@ using System.Data;
 
 namespace FoxIDs.Repository
 {
-    public class TenantRepository : ITenantRepository
+    public class CosmosDbTenantDataRepository : ITenantDataRepository
     {
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly IRepositoryClient repositoryClient;
+        private readonly ICosmosDbDataRepositoryClient dataRepositoryClient;
 
-        public TenantRepository(IHttpContextAccessor httpContextAccessor, IRepositoryClient repositoryClient)
+        public CosmosDbTenantDataRepository(IHttpContextAccessor httpContextAccessor, ICosmosDbDataRepositoryClient dataRepositoryClient)
         {
             this.httpContextAccessor = httpContextAccessor;
-            this.repositoryClient = repositoryClient;
+            this.dataRepositoryClient = dataRepositoryClient;
         }
 
         public async Task<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
@@ -354,11 +354,11 @@ namespace FoxIDs.Repository
         {
             if (typeof(T) is IDataTtlDocument)
             {
-                return repositoryClient.TtlContainer;
+                return dataRepositoryClient.TtlContainer;
             }
             else
             {
-                return repositoryClient.Container;
+                return dataRepositoryClient.Container;
             }
         }
 

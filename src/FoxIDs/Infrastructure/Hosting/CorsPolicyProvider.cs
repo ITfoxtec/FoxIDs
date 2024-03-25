@@ -14,9 +14,9 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantRepository;
 
-        public CorsPolicyProvider(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository)
+        public CorsPolicyProvider(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantRepository)
         {
             this.settings = settings;
             this.logger = logger;

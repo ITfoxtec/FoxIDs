@@ -7,7 +7,7 @@ using FoxIDs.Models;
 
 namespace FoxIDs.Repository
 {
-    public interface ITenantRepository
+    public interface ITenantDataRepository
     {
         Task<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
 

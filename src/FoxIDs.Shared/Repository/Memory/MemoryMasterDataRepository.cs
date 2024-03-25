@@ -40,15 +40,15 @@ namespace FoxIDs.Repository
             throw new NotImplementedException();
         }
 
-        public Task SaveAsync<T>(T item) where T : MasterDocument
-        {
-            throw new NotImplementedException();
-        }
+        //public Task SaveAsync<T>(T item) where T : MasterDocument
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Task DeleteAsync<T>(T item) where T : MasterDocument
-        {
-            throw new NotImplementedException();
-        }
+        //public Task DeleteAsync<T>(T item) where T : MasterDocument
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
         {

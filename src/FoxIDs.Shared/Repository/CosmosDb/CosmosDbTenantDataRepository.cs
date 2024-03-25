@@ -254,40 +254,40 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
-        {
-            if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
+        //public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        //{
+        //    if (idKey == null) new ArgumentNullException(nameof(idKey));
+        //    await idKey.ValidateObjectAsync();
 
-            var partitionId = PartitionIdFormat<T>(idKey);
-            var query = GetQueryAsync<T>(partitionId);
-            var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
+        //    var partitionId = PartitionIdFormat<T>(idKey);
+        //    var query = GetQueryAsync<T>(partitionId);
+        //    var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
-            double totalRU = 0;
-            try
-            {
-                var response = await setIterator.ReadNextAsync();
-                totalRU += response.RequestCharge;         
-                var item = response.FirstOrDefault();
-                if (item != null)
-                {
-                    var container = GetContainer<T>();
-                    var deleteResponse = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
-                    totalRU += deleteResponse.RequestCharge;
-                }
-                await item.ValidateObjectAsync();
-                return item;
-            }
-            catch (Exception ex)
-            {
-                throw new FoxIDsDataException(partitionId, ex);
-            }
-            finally
-            {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
-            }
-        }
+        //    double totalRU = 0;
+        //    try
+        //    {
+        //        var response = await setIterator.ReadNextAsync();
+        //        totalRU += response.RequestCharge;         
+        //        var item = response.FirstOrDefault();
+        //        if (item != null)
+        //        {
+        //            var container = GetContainer<T>();
+        //            var deleteResponse = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
+        //            totalRU += deleteResponse.RequestCharge;
+        //        }
+        //        await item.ValidateObjectAsync();
+        //        return item;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new FoxIDsDataException(partitionId, ex);
+        //    }
+        //    finally
+        //    {
+        //        scopedLogger = scopedLogger ?? GetScopedLogger();
+        //        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+        //    }
+        //}
 
         public async Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {

@@ -17,8 +17,8 @@ namespace FoxIDs.Repository
 
         Task CreateAsync<T>(T item) where T : MasterDocument;
         Task UpdateAsync<T>(T item) where T : MasterDocument;
-        Task SaveAsync<T>(T item) where T : MasterDocument;
-        Task DeleteAsync<T>(T item) where T : MasterDocument;
+        //Task SaveAsync<T>(T item) where T : MasterDocument;
+        //Task DeleteAsync<T>(T item) where T : MasterDocument;
         Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument;
 
         Task<T> DeleteAsync<T>(string id) where T : MasterDocument;

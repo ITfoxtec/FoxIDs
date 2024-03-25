@@ -213,76 +213,53 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task SaveAsync<T>(T item) where T : MasterDocument
-        {
-            if (item == null) new ArgumentNullException(nameof(item));
-            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+        //public async Task SaveAsync<T>(T item) where T : MasterDocument
+        //{
+        //    if (item == null) new ArgumentNullException(nameof(item));
+        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            item.PartitionId = item.Id.IdToMasterPartitionId();
-            item.SetDataType();
-            await item.ValidateObjectAsync();
+        //    item.PartitionId = item.Id.IdToMasterPartitionId();
+        //    item.SetDataType();
+        //    await item.ValidateObjectAsync();
 
-            double totalRU = 0;
-            try
-            {
-                var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
-                totalRU += response.RequestCharge;
-            }
-            catch (Exception ex)
-            {
-                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
-            }
-            finally
-            {
-                logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
-            }
-        }
+        //    double totalRU = 0;
+        //    try
+        //    {
+        //        var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
+        //        totalRU += response.RequestCharge;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
+        //    }
+        //    finally
+        //    {
+        //        logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
+        //    }
+        //}
 
-        public async Task<T> DeleteAsync<T>(string id) where T : MasterDocument
-        {
-            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+        //public async Task DeleteAsync<T>(T item) where T : MasterDocument
+        //{
+        //    if (item == null) new ArgumentNullException(nameof(item));
+        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            var partitionId = id.IdToMasterPartitionId();
+        //    var partitionId = item.Id.IdToMasterPartitionId();
 
-            double totalRU = 0;
-            try
-            {
-                var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
-                totalRU += deleteResponse.RequestCharge;
-                return deleteResponse;
-            }
-            catch (Exception ex)
-            {
-                throw new FoxIDsDataException(id, partitionId, ex);
-            }
-            finally
-            {
-                logger.Metric($"CosmosDB RU, @master - delete document id '{id}', partitionId '{partitionId}'.", totalRU);
-            }
-        }
-
-        public async Task DeleteAsync<T>(T item) where T : MasterDocument
-        {
-            if (item == null) new ArgumentNullException(nameof(item));
-            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
-
-            var partitionId = item.Id.IdToMasterPartitionId();
-
-            double totalRU = 0;
-            try
-            {
-                var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
-                totalRU += response.RequestCharge;
-            }
-            catch (Exception ex)
-            {
-                throw new FoxIDsDataException(partitionId, ex);
-            }
-            finally
-            {
-                logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
-            }
-        }
+        //    double totalRU = 0;
+        //    try
+        //    {
+        //        var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
+        //        totalRU += response.RequestCharge;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new FoxIDsDataException(partitionId, ex);
+        //    }
+        //    finally
+        //    {
+        //        logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
+        //    }
+        //}
 
         public async Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
         {
@@ -337,6 +314,29 @@ namespace FoxIDs.Repository
             finally
             {
                 logger.Metric($"CosmosDB RU, @master - save bulk count '{items.Count}' type '{typeof(T)}'.", totalRU);
+            }
+        }
+
+        public async Task<T> DeleteAsync<T>(string id) where T : MasterDocument
+        {
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToMasterPartitionId();
+
+            double totalRU = 0;
+            try
+            {
+                var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
+                totalRU += deleteResponse.RequestCharge;
+                return deleteResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(id, partitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - delete document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
 

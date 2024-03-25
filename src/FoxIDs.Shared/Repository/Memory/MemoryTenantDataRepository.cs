@@ -61,10 +61,10 @@ namespace FoxIDs.Repository
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {

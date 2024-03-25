@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -13,10 +14,10 @@ namespace FoxIDs.Logic
     public class TenantCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly IDataCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public TenantCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TenantCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

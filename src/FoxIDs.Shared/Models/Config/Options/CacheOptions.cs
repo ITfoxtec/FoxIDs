@@ -3,7 +3,7 @@
     public enum CacheOptions
     {
         None = 100,
-        Memery = 200,
+        Memory = 200,
         Redis = 1100,
     }
 }

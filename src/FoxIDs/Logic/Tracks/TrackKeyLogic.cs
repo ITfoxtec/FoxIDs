@@ -10,16 +10,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Logic.Caches.Providers;
 
 namespace FoxIDs.Logic
 {
     public class TrackKeyLogic : LogicSequenceBase
     {
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly ICacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackKeyLogic(IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(ICacheProvider cacheProvider, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;

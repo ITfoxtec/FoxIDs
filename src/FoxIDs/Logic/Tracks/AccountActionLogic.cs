@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
@@ -19,7 +20,7 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly ICacheProvider cacheProvider;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
@@ -27,7 +28,7 @@ namespace FoxIDs.Logic
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

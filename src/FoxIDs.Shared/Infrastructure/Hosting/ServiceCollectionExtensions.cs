@@ -1,10 +1,12 @@
 ﻿using FoxIDs.Logic;
+using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
-using StackExchange.Redis;
 using System;
 using System.Net.Http;
 
@@ -12,7 +14,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSharedLogic(this IServiceCollection services)
+        public static IServiceCollection AddSharedLogic(this IServiceCollection services, Settings settings)
         {
             services.AddTransient<PlanUsageLogic>();
 
@@ -21,7 +23,35 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
-            services.AddTransient<IDistributedCacheProvider, RedisCacheProvider>();
+
+            switch (settings.Options.Cache)
+            {
+                case CacheOptions.None:
+                    services.AddTransient<ICacheProvider, InactiveCacheProvider>();
+                    break;
+                case CacheOptions.Memory:                    
+                    services.AddTransient<IMemoryCache, MemoryCache>();
+                    services.AddTransient<ICacheProvider, MemoryCacheProvider>();
+                    break;
+                case CacheOptions.Redis:
+                    services.AddTransient<ICacheProvider, RedisCacheProvider>();
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.Cache)} Cache option '{settings.Options.Cache}' not supported.");
+            }
+
+            switch (settings.Options.DataCache)
+            {
+                case DataCacheOptions.None:
+                    services.AddTransient<IDataCacheProvider, InactiveCacheProvider>();
+                    break;
+                case DataCacheOptions.Default:
+                    services.AddTransient<IDataCacheProvider, RedisCacheProvider>();
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.DataCache)} option '{settings.Options.DataCache}' not supported.");
+            }
+
             services.AddTransient<PlanCacheLogic>();
             services.AddTransient<TenantCacheLogic>();
             services.AddTransient<TrackCacheLogic>();

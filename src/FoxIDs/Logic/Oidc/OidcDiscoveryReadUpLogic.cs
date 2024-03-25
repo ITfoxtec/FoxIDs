@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
@@ -12,11 +13,11 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly ICacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 
 namespace FoxIDs.Logic
 {
     public class FailingLoginLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly ICacheProvider cacheProvider;
 
-        public FailingLoginLogic(TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public FailingLoginLogic(TelemetryScopedLogger logger, ICacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.cacheProvider = cacheProvider;

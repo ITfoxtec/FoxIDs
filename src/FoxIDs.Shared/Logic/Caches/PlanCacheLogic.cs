@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -10,10 +11,10 @@ namespace FoxIDs.Logic
     public class PlanCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly IDataCacheProvider cacheProvider;
         private readonly IMasterRepository masterRepository;
 
-        public PlanCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanCacheLogic(Settings settings, IDataCacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

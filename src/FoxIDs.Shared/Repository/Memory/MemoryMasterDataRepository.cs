@@ -1,68 +1,144 @@
-﻿using FoxIDs.Models;
+﻿using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
-    public class MemoryMasterDataRepository : IMasterDataRepository
+    public class MemoryMasterDataRepository : MasterDataRepositoryBase
     {
-        public ValueTask<bool> ExistsAsync<T>(string id) where T : MasterDocument
+        private readonly MemoryDataRepository memoryDataRepository;
+
+        public MemoryMasterDataRepository(MemoryDataRepository memoryDataRepository)
         {
-            throw new NotImplementedException();
+            this.memoryDataRepository = memoryDataRepository;
         }
 
-        public ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        public override ValueTask<bool> ExistsAsync<T>(string id) 
         {
-            throw new NotImplementedException();
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToMasterPartitionId();
+            return memoryDataRepository.ExistsAsync(id, partitionId);
         }
 
-        public ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
+        public override async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) 
         {
-            throw new NotImplementedException();
+            var partitionId = IdToMasterPartitionId<T>();
+            if (whereQuery == null)
+            {
+                return await memoryDataRepository.CountAsync(partitionId);
+            }
+            else
+            {
+                var dataItems = (await memoryDataRepository.GetListAsync(partitionId)).Select(i => i.DataJsonToObject<T>());
+                var lambda = whereQuery.Compile();
+                return dataItems.Where(d => lambda(d)).Count();
+            }
         }
 
-        public ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true)
         {
-            throw new NotImplementedException();
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToMasterPartitionId();
+            return (await memoryDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<T>();
         }
 
-        public ValueTask CreateAsync<T>(T item) where T : MasterDocument
+        public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) 
         {
-            throw new NotImplementedException();
+            var partitionId = IdToMasterPartitionId<T>();
+            var dataItems = (await memoryDataRepository.GetListAsync(partitionId, maxItemCount)).Select(i => i.DataJsonToObject<T>());
+            if (whereQuery == null)
+            {
+                return dataItems.ToHashSet();
+            }
+            else
+            {
+                var lambda = whereQuery.Compile();
+                return dataItems.Where(d => lambda(d)).ToHashSet();
+            }
         }
 
-        public ValueTask UpdateAsync<T>(T item) where T : MasterDocument
+        public override async ValueTask CreateAsync<T>(T item) 
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            await memoryDataRepository.CreateAsync(item.Id, item.PartitionId, item.ToJson());
         }
 
-        //public ValueTask SaveAsync<T>(T item) where T : MasterDocument
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ValueTask DeleteAsync<T>(T item) where T : MasterDocument
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public ValueTask SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        public override async ValueTask UpdateAsync<T>(T item)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            await memoryDataRepository.UpdateAsync(item.Id, item.PartitionId, item.ToJson());
         }
 
-        public ValueTask<T> DeleteAsync<T>(string id) where T : MasterDocument
+        public override async ValueTask SaveAsync<T>(T item)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            await memoryDataRepository.SaveAsync(item.Id, item.ToJson());
         }
 
-        public ValueTask DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        public override async ValueTask DeleteAsync<T>(T item)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            await item.ValidateObjectAsync();
+
+            await memoryDataRepository.DeleteAsync(item.Id);
+        }
+
+        public override async ValueTask SaveBulkAsync<T>(List<T> items)
+        {
+            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
+            var firstItem = items.First();
+            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
+
+            var partitionId = firstItem.Id.IdToMasterPartitionId();
+            foreach (var item in items)
+            {
+                item.PartitionId = partitionId;
+                item.SetDataType();
+                await item.ValidateObjectAsync();
+            }
+
+            foreach (var item in items)
+            {
+                await memoryDataRepository.SaveAsync(item.Id, item.ToJson());
+            }
+        }
+
+        public override async ValueTask<T> DeleteAsync<T>(string id)
+        {
+            return (await memoryDataRepository.DeleteAsync(id)).DataJsonToObject<T>();
+        }
+
+        public override async ValueTask DeleteBulkAsync<T>(List<string> ids)
+        {
+            foreach (string id in ids)
+            {
+                _ = await memoryDataRepository.DeleteAsync(id);
+            }
         }
     }
 }

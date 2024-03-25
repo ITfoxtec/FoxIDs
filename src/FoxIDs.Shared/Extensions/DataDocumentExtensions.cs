@@ -62,5 +62,10 @@ namespace FoxIDs
                 return DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });
             }
         }
+
+        public static T DataJsonToObject<T>(this string data) 
+        {
+            return data == null ? default : data.ToObject<T>();
+        }
     }
 }

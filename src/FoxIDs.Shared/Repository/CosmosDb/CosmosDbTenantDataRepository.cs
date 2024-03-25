@@ -15,7 +15,7 @@ using System.Data;
 
 namespace FoxIDs.Repository
 {
-    public class CosmosDbTenantDataRepository : ITenantDataRepository
+    public class CosmosDbTenantDataRepository : TenantDataRepositoryBase
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ICosmosDbDataRepositoryClient dataRepositoryClient;
@@ -26,7 +26,7 @@ namespace FoxIDs.Repository
             this.dataRepositoryClient = dataRepositoryClient;
         }
 
-        public async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -34,7 +34,7 @@ namespace FoxIDs.Repository
             return item != null;
         }
 
-        public async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument
+        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
             var orderedQueryable = GetQueryAsync<T>(partitionId, usePartitionId: usePartitionId);
@@ -59,28 +59,28 @@ namespace FoxIDs.Repository
 
         }
 
-        public async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete, scopedLogger: scopedLogger);
         }
 
-        public async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
             return await ReadItemAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), Tenant.PartitionIdFormat(), required, scopedLogger: scopedLogger);
         }
 
-        public async ValueTask<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             return await ReadItemAsync<Track>(await Track.IdFormatAsync(idKey), Track.PartitionIdFormat(idKey), required, scopedLogger: scopedLogger);
         }
 
-        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -122,7 +122,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount, continuationToken: continuationToken);
@@ -148,7 +148,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -175,7 +175,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -202,7 +202,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -229,7 +229,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -254,7 +254,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public async ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        //public override async ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         //{
         //    if (idKey == null) new ArgumentNullException(nameof(idKey));
         //    await idKey.ValidateObjectAsync();
@@ -289,7 +289,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        public async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        public override async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -325,32 +325,14 @@ namespace FoxIDs.Repository
             }
         }
 
-        private string PartitionIdFormat<T>(Track.IdKey idKey) where T : IDataDocument
-        {
-            if(typeof(T).Equals(typeof(Tenant)))
-            {
-                return Tenant.PartitionIdFormat();
-            }
-            else if (typeof(T).Equals(typeof(Track)))
-            {
-                if (idKey == null) new ArgumentNullException(nameof(idKey));
-                return Track.PartitionIdFormat(idKey);
-            }
-            else
-            {
-                if (idKey == null) new ArgumentNullException(nameof(idKey));
-                return DataDocument.PartitionIdFormat(idKey);
-            }
-        }
-
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null, bool usePartitionId = true) where T : IDataDocument
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null, bool usePartitionId = true)
         {
             var container = GetContainer<T>();
             var queryRequestOptions = usePartitionId ? new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount } : new QueryRequestOptions { MaxItemCount = maxItemCount };
             return container.GetItemLinqQueryable<T>(requestOptions: queryRequestOptions, continuationToken: continuationToken);
         }
 
-        private Container GetContainer<T>() where T : IDataDocument
+        private Container GetContainer<T>()
         {
             if (typeof(T) is IDataTtlDocument)
             {

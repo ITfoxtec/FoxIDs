@@ -12,7 +12,7 @@ using Microsoft.Azure.Cosmos.Linq;
 
 namespace FoxIDs.Repository
 {
-    public class CosmosDbMasterDataRepository : IMasterDataRepository
+    public class CosmosDbMasterDataRepository : MasterDataRepositoryBase
     {
         private Container container;
         private Container bulkContainer;
@@ -25,7 +25,7 @@ namespace FoxIDs.Repository
             this.logger = logger;
         }
 
-        public async ValueTask<bool> ExistsAsync<T>(string id) where T : MasterDocument
+        public override async ValueTask<bool> ExistsAsync<T>(string id)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -50,7 +50,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        public override async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var orderedQueryable = GetQueryAsync<T>(partitionId);
@@ -74,31 +74,14 @@ namespace FoxIDs.Repository
             }
         }
 
-        private string IdToMasterPartitionId<T>() where T : MasterDocument
-        {
-            if (typeof(T) == typeof(Plan))
-            {
-                return Plan.PartitionIdFormat(new MasterDocument.IdKey());
-            }
-            else if(typeof(T) == typeof(RiskPassword))
-            {
-                return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
-            }
-            else
-            {
-                return MasterDocument.PartitionIdFormat(new MasterDocument.IdKey());
-            }
-
-        }
-
-        public async ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             return await ReadItemAsync<T>(id, id.IdToMasterPartitionId(), required);
         }        
 
-        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -138,7 +121,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
+        public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
@@ -163,7 +146,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask CreateAsync<T>(T item) where T : MasterDocument
+        public override async ValueTask CreateAsync<T>(T item)
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -188,7 +171,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask UpdateAsync<T>(T item) where T : MasterDocument
+        public override async ValueTask UpdateAsync<T>(T item)
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -213,55 +196,55 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public async ValueTask SaveAsync<T>(T item) where T : MasterDocument
-        //{
-        //    if (item == null) new ArgumentNullException(nameof(item));
-        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+        public override async ValueTask SaveAsync<T>(T item)
+        {
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-        //    item.PartitionId = item.Id.IdToMasterPartitionId();
-        //    item.SetDataType();
-        //    await item.ValidateObjectAsync();
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
 
-        //    double totalRU = 0;
-        //    try
-        //    {
-        //        var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
-        //        totalRU += response.RequestCharge;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
-        //    }
-        //    finally
-        //    {
-        //        logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
-        //    }
-        //}
+            double totalRU = 0;
+            try
+            {
+                var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
+                totalRU += response.RequestCharge;
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
+            }
+        }
 
-        //public async ValueTask DeleteAsync<T>(T item) where T : MasterDocument
-        //{
-        //    if (item == null) new ArgumentNullException(nameof(item));
-        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+        public override async ValueTask DeleteAsync<T>(T item)
+        {
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-        //    var partitionId = item.Id.IdToMasterPartitionId();
+            var partitionId = item.Id.IdToMasterPartitionId();
 
-        //    double totalRU = 0;
-        //    try
-        //    {
-        //        var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
-        //        totalRU += response.RequestCharge;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new FoxIDsDataException(partitionId, ex);
-        //    }
-        //    finally
-        //    {
-        //        logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
-        //    }
-        //}
+            double totalRU = 0;
+            try
+            {
+                var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
+                totalRU += response.RequestCharge;
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
+            }
+        }
 
-        public async ValueTask SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        public override async ValueTask SaveBulkAsync<T>(List<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -317,7 +300,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask<T> DeleteAsync<T>(string id) where T : MasterDocument
+        public override async ValueTask<T> DeleteAsync<T>(string id)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -340,7 +323,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async ValueTask DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        public override async ValueTask DeleteBulkAsync<T>(List<string> ids)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();

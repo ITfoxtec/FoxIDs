@@ -27,7 +27,7 @@ namespace FoxIDs.Repository
             StatusCode = GetStatusCode(inner);
         }
 
-        public DataStatusCode? StatusCode { get; private set; }
+        public DataStatusCode? StatusCode { get; set; }
 
         public override string Message => $"{base.Message}{GetStatusMessage()}";
 

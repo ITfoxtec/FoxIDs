@@ -10,57 +10,57 @@ namespace FoxIDs.Repository
 {
     public class MemoryMasterDataRepository : IMasterDataRepository
     {
-        public Task<bool> ExistsAsync<T>(string id) where T : MasterDocument
+        public ValueTask<bool> ExistsAsync<T>(string id) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        public ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
+        public ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
+        public ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateAsync<T>(T item) where T : MasterDocument
+        public ValueTask CreateAsync<T>(T item) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync<T>(T item) where T : MasterDocument
+        public ValueTask UpdateAsync<T>(T item) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        //public Task SaveAsync<T>(T item) where T : MasterDocument
+        //public ValueTask SaveAsync<T>(T item) where T : MasterDocument
         //{
         //    throw new NotImplementedException();
         //}
 
-        //public Task DeleteAsync<T>(T item) where T : MasterDocument
+        //public ValueTask DeleteAsync<T>(T item) where T : MasterDocument
         //{
         //    throw new NotImplementedException();
         //}
 
-        public Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        public ValueTask SaveBulkAsync<T>(List<T> items) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(string id) where T : MasterDocument
+        public ValueTask<T> DeleteAsync<T>(string id) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        public ValueTask DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
         {
             throw new NotImplementedException();
         }

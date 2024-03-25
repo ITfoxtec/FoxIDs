@@ -25,7 +25,7 @@ namespace FoxIDs.Repository
             this.logger = logger;
         }
 
-        public async Task<bool> ExistsAsync<T>(string id) where T : MasterDocument
+        public async ValueTask<bool> ExistsAsync<T>(string id) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -50,7 +50,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        public async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
         {
             var partitionId = IdToMasterPartitionId<T>();
             var orderedQueryable = GetQueryAsync<T>(partitionId);
@@ -91,14 +91,14 @@ namespace FoxIDs.Repository
 
         }
 
-        public async Task<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
+        public async ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             return await ReadItemAsync<T>(id, id.IdToMasterPartitionId(), required);
         }        
 
-        private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -138,7 +138,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
+        public async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
         {
             var partitionId = IdToMasterPartitionId<T>();
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
@@ -163,7 +163,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task CreateAsync<T>(T item) where T : MasterDocument
+        public async ValueTask CreateAsync<T>(T item) where T : MasterDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -188,7 +188,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task UpdateAsync<T>(T item) where T : MasterDocument
+        public async ValueTask UpdateAsync<T>(T item) where T : MasterDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -213,7 +213,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public async Task SaveAsync<T>(T item) where T : MasterDocument
+        //public async ValueTask SaveAsync<T>(T item) where T : MasterDocument
         //{
         //    if (item == null) new ArgumentNullException(nameof(item));
         //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -238,7 +238,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        //public async Task DeleteAsync<T>(T item) where T : MasterDocument
+        //public async ValueTask DeleteAsync<T>(T item) where T : MasterDocument
         //{
         //    if (item == null) new ArgumentNullException(nameof(item));
         //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -261,7 +261,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        public async Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        public async ValueTask SaveBulkAsync<T>(List<T> items) where T : MasterDocument
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -317,7 +317,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<T> DeleteAsync<T>(string id) where T : MasterDocument
+        public async ValueTask<T> DeleteAsync<T>(string id) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -340,7 +340,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        public async ValueTask DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();

@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<(HashSet<Tenant> items, string continuationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
+        private ValueTask<(HashSet<Tenant> items, string continuationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {

@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<HashSet<Plan>> GetFilterPlanInternalAsync(string filterName)
+        private ValueTask<HashSet<Plan>> GetFilterPlanInternalAsync(string filterName)
         {
             if (filterName.IsNullOrWhiteSpace())
             {

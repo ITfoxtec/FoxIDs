@@ -1,8 +1,10 @@
-﻿using FoxIDs.Models;
-using System;
+﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,57 +12,59 @@ namespace FoxIDs.Repository
 {
     public class MemoryDataRepository 
     {
-        public Task<bool> ExistsAsync(string id) 
+        private ConcurrentDictionary<string, (string, DateTimeOffset)> dataRepository = new ConcurrentDictionary<string, (string, DateTimeOffset)>();
+
+        public ValueTask<bool> ExistsAsync(string id) 
+        {
+            return ValueTask.FromResult(dataRepository.ContainsKey(id));
+        }
+
+        public ValueTask<int> CountAsync(Expression<Func<string, bool>> whereQuery = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> CountAsync(Expression<Func<string, bool>> whereQuery = null)
+        public ValueTask GetAsync(string id, bool required = true)
         {
             throw new NotImplementedException();
         }
 
-        public Task GetAsync(string id, bool required = true)
+        public ValueTask<HashSet<string>> GetListAsync(Expression<Func<string, bool>> whereQuery = null, int maxItemCount = 50)
         {
             throw new NotImplementedException();
         }
 
-        public Task<HashSet<string>> GetListAsync(Expression<Func<string, bool>> whereQuery = null, int maxItemCount = 50)
+        public ValueTask CreateAsync(string item)
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateAsync(string item)
+        public ValueTask UpdateAsync(string item)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(string item)
+        public ValueTask SaveAsync(string item)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveAsync(string item)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public Task DeleteAsync(string item)
+        //public ValueTask DeleteAsync(string item)
         //{
         //    throw new NotImplementedException();
         //}
 
-        public Task SaveBulkAsync(List<string> items)
+        public ValueTask SaveBulkAsync(List<string> items)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(string id)
+        public ValueTask DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteBulkAsync(List<string> ids)
+        public ValueTask DeleteBulkAsync(List<string> ids)
         {
             throw new NotImplementedException();
         }

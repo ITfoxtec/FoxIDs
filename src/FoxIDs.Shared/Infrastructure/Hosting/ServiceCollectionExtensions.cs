@@ -23,13 +23,12 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
-
             switch (settings.Options.Cache)
             {
                 case CacheOptions.None:
                     services.AddTransient<ICacheProvider, InactiveCacheProvider>();
                     break;
-                case CacheOptions.Memory:                    
+                case CacheOptions.Memory:
                     services.AddTransient<IMemoryCache, MemoryCache>();
                     services.AddTransient<ICacheProvider, MemoryCacheProvider>();
                     break;
@@ -66,6 +65,7 @@ namespace FoxIDs.Infrastructure.Hosting
             switch (settings.Options.DataStorage)
             {
                 case DataStorageOptions.Memory:
+                    services.AddSingleton<MemoryDataRepository>();
                     services.AddSingleton<IMasterDataRepository, MemoryMasterDataRepository>();
                     services.AddSingleton<ITenantDataRepository, MemoryTenantDataRepository>();
                     break;

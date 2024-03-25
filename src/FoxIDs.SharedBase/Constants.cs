@@ -136,6 +136,9 @@ namespace FoxIDs
                 public const string RefreshTokenGrant = "rtgrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
+
+                // data type used for the cache
+                public const string Cache = "cache";
             }
 
             public static class Master

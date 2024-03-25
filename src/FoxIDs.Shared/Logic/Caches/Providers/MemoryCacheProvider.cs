@@ -15,19 +15,25 @@ namespace FoxIDs.Logic.Caches.Providers
 
         public ValueTask DeleteAsync(string key)
         {
+            key = GetKey(key);
+
             memoryCache.Remove(key);
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask<string> GetAsync(string key) => ValueTask.FromResult(memoryCache.Get(key) as string);
+        public ValueTask<string> GetAsync(string key) => ValueTask.FromResult(memoryCache.Get(GetKey(key)) as string);
         public ValueTask<long> GetNumberAsync(string key)
         {
+            key = GetKey(key);
+
             var number = GetNumber(key);
             return ValueTask.FromResult(number);
         }
 
         private long GetNumber(string key)
         {
+            key = GetKey(key);
+
             var value = memoryCache.Get(key) as string;
             if (!long.TryParse(value, out var number))
             {
@@ -37,21 +43,27 @@ namespace FoxIDs.Logic.Caches.Providers
             return number;
         }
 
-        public ValueTask<bool> ExistsAsync(string key) => ValueTask.FromResult(memoryCache.TryGetValue(key, out var value));
+        public ValueTask<bool> ExistsAsync(string key) => ValueTask.FromResult(memoryCache.TryGetValue(GetKey(key), out var value));
 
         public ValueTask SetAsync(string key, string value, int lifetime)
         {
+            key = GetKey(key);
+
             _ = memoryCache.Set(key, value, DateTimeOffset.Now.AddSeconds(lifetime));
             return ValueTask.CompletedTask;
         }
 
         public ValueTask SetFlagAsync(string key, int lifetime)
         {
+            key = GetKey(key);
+
             return SetAsync(key, true.ToString(), lifetime);
         }
 
         public ValueTask<long> IncrementNumberAsync(string key, int? lifetime = null)
         {
+            key = GetKey(key);
+
             var number = GetNumber(key);
             number++;
             if (lifetime.HasValue)
@@ -64,5 +76,7 @@ namespace FoxIDs.Logic.Caches.Providers
             }
             return ValueTask.FromResult(number);
         }
+
+        private string GetKey(string key) => $"{Constants.Models.DataType.Cache}:{key}";
     }
 }

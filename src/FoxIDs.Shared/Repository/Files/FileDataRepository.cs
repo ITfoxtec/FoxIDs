@@ -16,9 +16,12 @@ namespace FoxIDs.Repository
         public FileDataRepository(Settings settings)
         {
             this.settings = settings;
-            if (!Directory.Exists(GetDbPath()))
+            if (settings.Options.DataStorage == DataStorageOptions.File)
             {
-                Directory.CreateDirectory(GetDbPath());
+                if (!Directory.Exists(GetDbPath()))
+                {
+                    Directory.CreateDirectory(GetDbPath());
+                }
             }
             if (settings.Options.Cache == CacheOptions.File)
             {
@@ -169,14 +172,21 @@ namespace FoxIDs.Repository
             await File.WriteAllTextAsync(filePath, item);
         }
 
-        public async ValueTask<string> DeleteAsync(string id, string partitionId)
+        public async ValueTask<string> DeleteAsync(string id, string partitionId, bool required = true)
         {
             Console.WriteLine("DeleteAsync " + id);
 
             var filePath = await GetFilePathAsync(id, partitionId);
             if (!File.Exists(filePath))
             {
-                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                if (required)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             var data = await ReadData(filePath);
@@ -201,7 +211,18 @@ namespace FoxIDs.Repository
 
         public async Task CleanDataAsync(CancellationToken stoppingToken)
         {
-            var filePaths = Directory.GetFiles(GetDbPath());
+            if (settings.Options.DataStorage == DataStorageOptions.File)
+            {
+                await CleanDataAsync(Directory.GetFiles(GetDbPath()), stoppingToken);
+            }
+            if (settings.Options.Cache == CacheOptions.File)
+            {
+                await CleanDataAsync(Directory.GetFiles(GetCachePath()), stoppingToken);
+            }
+        }
+
+        private async Task CleanDataAsync(string[] filePaths, CancellationToken stoppingToken)
+        {
             foreach (string filePath in filePaths)
             {
                 if (stoppingToken.IsCancellationRequested)
@@ -243,7 +264,7 @@ namespace FoxIDs.Repository
             {
                 return $"{idSplit[0]}_{idSplit[1]}-";
             }
-            else if (!id.StartsWith(Constants.Models.DataType.Tenant, StringComparison.Ordinal) && !id.StartsWith(Constants.Models.DataType.Track, StringComparison.Ordinal))
+            else if (!id.StartsWith(Constants.Models.DataType.Tenant, StringComparison.Ordinal) && !id.StartsWith(Constants.Models.DataType.Track, StringComparison.Ordinal) && !id.StartsWith(Constants.Models.DataType.Cache, StringComparison.Ordinal))
             {
                 return $"{idSplit[0]}-";
             }

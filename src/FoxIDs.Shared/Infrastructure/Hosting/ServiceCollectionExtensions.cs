@@ -29,6 +29,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<IMemoryCache, MemoryCache>();
                     services.AddTransient<ICacheProvider, MemoryCacheProvider>();
                     break;
+                case CacheOptions.File:
+                    services.AddTransient<ICacheProvider, FileCacheProvider>();
+                    break;
                 case CacheOptions.Redis:
                     services.AddTransient<ICacheProvider, RedisCacheProvider>();
                     break;
@@ -59,6 +62,11 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddSharedRepository(this IServiceCollection services, Settings settings)
         {
+            if (settings.Options.DataStorage == DataStorageOptions.File || settings.Options.Cache == CacheOptions.File)
+            {
+                services.AddSingleton<FileDataRepository>();
+            }
+
             switch (settings.Options.DataStorage)
             {
                 case DataStorageOptions.Memory:
@@ -67,7 +75,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ITenantDataRepository, MemoryTenantDataRepository>();
                     break;
                 case DataStorageOptions.File:
-                    services.AddSingleton<FileDataRepository>();
                     services.AddSingleton<IMasterDataRepository, FileMasterDataRepository>();
                     services.AddSingleton<ITenantDataRepository, FileTenantDataRepository>();
                     break;

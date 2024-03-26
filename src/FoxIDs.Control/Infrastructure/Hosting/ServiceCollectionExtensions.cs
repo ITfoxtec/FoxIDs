@@ -8,6 +8,7 @@ using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -73,6 +74,11 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
         {
             services.AddSharedRepository(settings);
+
+            if (settings.Options.DataStorage == DataStorageOptions.File)
+            {
+                services.AddHostedService<BackgroundFileDataService>();                
+            }
 
             return services;
         }

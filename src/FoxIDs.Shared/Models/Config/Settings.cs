@@ -23,9 +23,10 @@ namespace FoxIDs.Models.Config
         public CosmosDbSettings CosmosDb { get; set; }
 
         /// <summary>
-        /// Save data in directory if the DataStore option is File.
+        /// File data configuration.
         /// </summary>
-        public string DataPath { get; set; }
+        [ValidateComplexType]
+        public FileDataSettings FileData { get; set; } = new FileDataSettings();
 
         /// <summary>
         /// Key Vault configuration.
@@ -71,9 +72,9 @@ namespace FoxIDs.Models.Config
             }
             if (Options.DataStorage == DataStorageOptions.File)
             {
-                if (DataPath.IsNullOrWhiteSpace())
+                if (FileData == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(DataPath)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(DataPath) }));
+                    results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
                 }
             }
 

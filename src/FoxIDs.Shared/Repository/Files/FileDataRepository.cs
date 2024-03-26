@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
@@ -198,6 +199,19 @@ namespace FoxIDs.Repository
             return ValueTask.FromResult(count);
         }
 
+        public async Task CleanDataAsync(CancellationToken stoppingToken)
+        {
+            var filePaths = Directory.GetFiles(GetDbPath());
+            foreach (string filePath in filePaths)
+            {
+                if (stoppingToken.IsCancellationRequested)
+                {
+                    return;
+                }
+                _ = await ReadData(filePath);
+            }
+        }
+
         private bool IsValid(string filePath, string data)
         {
             var ttlDocument = data.DataJsonToObject<DataTtlDocument>();
@@ -253,7 +267,7 @@ namespace FoxIDs.Repository
 
         private string GetFilePartitionId(string partitionId) => partitionId.Replace(':', '_');
 
-        private string GetDataPath() => $"{settings.DataPath.TrimEnd('\\')}\\data";
+        private string GetDataPath() => $"{settings.FileData.DataPath.TrimEnd('\\')}\\data";
         private string GetDbPath() => $"{GetDataPath()}\\db";
         private string GetCachePath() => $"{GetDataPath()}\\{Constants.Models.DataType.Cache}";
     }

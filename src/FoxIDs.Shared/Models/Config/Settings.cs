@@ -1,5 +1,4 @@
-﻿using ITfoxtec.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
@@ -43,7 +42,7 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// Cache configuration.
         /// </summary>
-        [ValidateComplexType]
+        [Required]
         public CacheSettings Cache { get; set; } = new CacheSettings();
 
         /// <summary>
@@ -91,13 +90,6 @@ namespace FoxIDs.Models.Config
                 if (RedisCache == null)
                 {
                     results.Add(new ValidationResult($"The field {nameof(RedisCache)} is required if {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(RedisCache) }));
-                }
-            }
-            if (Options.Cache != CacheOptions.None)
-            {
-                if (Cache == null)
-                {
-                    results.Add(new ValidationResult($"The field {nameof(Cache)} is required if {nameof(Options.Cache)} is not {CacheOptions.None}.", new[] { nameof(Cache) }));
                 }
             }
 

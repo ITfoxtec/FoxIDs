@@ -26,19 +26,19 @@ namespace FoxIDs.Logic
 
         public async Task InvalidateTenantCacheAsync(string tenantName)
         {
-            var key = RadisTenantNameKey(tenantName);
+            var key = CacheTenantNameKey(tenantName);
             await cacheProvider.DeleteAsync(key);
         }
 
         public async Task InvalidateCustomDomainCacheAsync(string customDomain)
         {
-            var key = RadisTenantCustomDomainKey(customDomain);
+            var key = CacheTenantCustomDomainKey(customDomain);
             await cacheProvider.DeleteAsync(key);
         }
 
         public async Task<Tenant> GetTenantAsync(string tenantName, bool required = true)
         {
-            var key = RadisTenantNameKey(tenantName);
+            var key = CacheTenantNameKey(tenantName);
 
             var tenantAsString = await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
 
         public async Task<Tenant> GetTenantByCustomDomainAsync(string customDomain)
         {
-            var key = RadisTenantCustomDomainKey(customDomain);
+            var key = CacheTenantCustomDomainKey(customDomain);
 
             var tenantAsString = await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
@@ -91,12 +91,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string RadisTenantNameKey(string tenantName)
+        private string CacheTenantNameKey(string tenantName)
         {
             return $"tenant_cache_name_{tenantName}";
         }
 
-        private string RadisTenantCustomDomainKey(string customDomain)
+        private string CacheTenantCustomDomainKey(string customDomain)
         {
             return $"tenant_cache_customdomain_{customDomain}";
         }

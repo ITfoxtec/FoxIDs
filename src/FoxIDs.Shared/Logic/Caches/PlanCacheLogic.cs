@@ -23,13 +23,13 @@ namespace FoxIDs.Logic
 
         public async Task InvalidatePlanCacheAsync(string planName)
         {
-            var key = RadisPlanNameKey(planName);
+            var key = CachePlanNameKey(planName);
             await cacheProvider.DeleteAsync(key);
         }
 
         public async Task<Plan> GetPlanAsync(string planName, bool required = true)
         {
-            var key = RadisPlanNameKey(planName);
+            var key = CachePlanNameKey(planName);
             var planAsString = await cacheProvider.GetAsync(key);
             if (!planAsString.IsNullOrEmpty())
             {
@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
             return plan;
         }
 
-        private string RadisPlanNameKey(string planName)
+        private string CachePlanNameKey(string planName)
         {
             return $"plan_cache_name_{planName}";
         }

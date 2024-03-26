@@ -90,7 +90,7 @@ namespace FoxIDs.Logic
 
         private async Task<ConfirmationCodeSendStatus> SendEmailCodeAsync(Func<string, EmailContent> emailContent, string redisKeyElement, string email, bool forceNewCode, string logText)
         {
-            var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
+            var key = EmailConfirmationCodeCacheKey(redisKeyElement, email);
             if (!forceNewCode && await cacheProvider.ExistsAsync(key))
             {
                 return ConfirmationCodeSendStatus.UseExistingCode;
@@ -124,7 +124,7 @@ namespace FoxIDs.Logic
         {
             var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
+            var key = EmailConfirmationCodeCacheKey(redisKeyElement, email);
             var confirmationCodeValue = await cacheProvider.GetAsync(key);
             if (!confirmationCodeValue.IsNullOrEmpty())
             {
@@ -188,7 +188,7 @@ namespace FoxIDs.Logic
             return displayName;
         }
 
-        private string EmailConfirmationCodeRadisKey(string keyElement, string email)
+        private string EmailConfirmationCodeCacheKey(string keyElement, string email)
         {
             return $"{keyElement}_{RouteBinding.TenantNameDotTrackName}_{email}";
         }      

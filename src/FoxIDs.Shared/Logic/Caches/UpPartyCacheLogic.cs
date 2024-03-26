@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
 
         public async Task InvalidateUpPartyCacheAsync(Party.IdKey idKey)
         {
-            var key = RadisUpPartyNameKey(idKey);
+            var key = CacheUpPartyNameKey(idKey);
             await cacheProvider.DeleteAsync(key);
         }
 
@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<UpParty> GetUpPartyAsync(Party.IdKey idKey, bool required = true)
         {
-            var key = RadisUpPartyNameKey(idKey);
+            var key = CacheUpPartyNameKey(idKey);
 
             var upPartyAsString = await cacheProvider.GetAsync(key);
             if (!upPartyAsString.IsNullOrEmpty())
@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
             return await GetUpPartyAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName), required);
         }
 
-        private string RadisUpPartyNameKey(Party.IdKey partyIdKey)
+        private string CacheUpPartyNameKey(Party.IdKey partyIdKey)
         {          
             return $"upParty_cache_name_{partyIdKey.TenantName}_{partyIdKey.TrackName}_{partyIdKey.PartyName}";
         }

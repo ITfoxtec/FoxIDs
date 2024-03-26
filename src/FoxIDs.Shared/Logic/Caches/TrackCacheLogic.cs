@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
 
         public async Task InvalidateTrackCacheAsync(Track.IdKey idKey)
         {
-            var key = RadisTrackNameKey(idKey);
+            var key = CacheTrackNameKey(idKey);
             await cacheProvider.DeleteAsync(key);
         }
 
@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<Track> GetTrackAsync(Track.IdKey idKey, bool required = true)
         {
-            var key = RadisTrackNameKey(idKey);
+            var key = CacheTrackNameKey(idKey);
 
             var trackAsString = await cacheProvider.GetAsync(key);
             if (!trackAsString.IsNullOrEmpty())
@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
             return await GetTrackAsync(GetTrackIdKey(trackName, tenantName), required);
         }
 
-        private string RadisTrackNameKey(Track.IdKey trackIdKey)
+        private string CacheTrackNameKey(Track.IdKey trackIdKey)
         {
             return $"track_cache_name_{trackIdKey.TenantName}_{trackIdKey.TrackName}";
         }

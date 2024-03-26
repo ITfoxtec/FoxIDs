@@ -25,11 +25,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             switch (settings.Options.Cache)
             {
-                case CacheOptions.None:
-                    services.AddTransient<ICacheProvider, InactiveCacheProvider>();
-                    break;
                 case CacheOptions.Memory:
-                    services.AddTransient<IMemoryCache, MemoryCache>();
+                    services.AddSingleton<IMemoryCache, MemoryCache>();
                     services.AddTransient<ICacheProvider, MemoryCacheProvider>();
                     break;
                 case CacheOptions.Redis:

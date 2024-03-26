@@ -21,21 +21,21 @@ namespace FoxIDs.Logic
 
         public async Task<long> IncreaseFailingLoginCountAsync(string email)
         {
-            var key = FailingLoginCountRadisKey(email);
+            var key = FailingLoginCountCacheKey(email);
 
             return await cacheProvider.IncrementNumberAsync(key, RouteBinding.FailingLoginCountLifetime);
         }
 
         public async Task ResetFailingLoginCountAsync(string email)
         {
-            await cacheProvider.DeleteAsync(FailingLoginCountRadisKey(email));
+            await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(email));
         }
 
         public async Task<long> VerifyFailingLoginCountAsync(string email)
         {
-            var key = FailingLoginCountRadisKey(email);
+            var key = FailingLoginCountCacheKey(email);
 
-            if (await cacheProvider.ExistsAsync(FailingLoginLockedRadisKey(email)))
+            if (await cacheProvider.ExistsAsync(FailingLoginLockedCacheKey(email)))
             {
                 logger.ScopeTrace(() => $"User '{email}' locked by observation period.", triggerEvent: true);
                 throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = await cacheProvider.GetNumberAsync(key);
             if (failingLoginCount >= RouteBinding.MaxFailingLogins)
             {
-                await cacheProvider.SetFlagAsync(FailingLoginLockedRadisKey(email), RouteBinding.FailingLoginObservationPeriod);
+                await cacheProvider.SetFlagAsync(FailingLoginLockedCacheKey(email), RouteBinding.FailingLoginObservationPeriod);
                 await cacheProvider.DeleteAsync(key);
 
                 logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
@@ -57,12 +57,12 @@ namespace FoxIDs.Logic
             failingLoginCount > 0 ? new Dictionary<string, string> { { Constants.Logs.FailingLoginCount, Convert.ToString(failingLoginCount) } } : null;
 
 
-        private string FailingLoginCountRadisKey(string email)
+        private string FailingLoginCountCacheKey(string email)
         {
             return $"failing_login_count_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
 
-        private string FailingLoginLockedRadisKey(string email)
+        private string FailingLoginLockedCacheKey(string email)
         {
             return $"failing_login_locked_{RouteBinding.TenantNameDotTrackName}_{email}";
         }

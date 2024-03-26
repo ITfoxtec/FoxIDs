@@ -176,7 +176,7 @@ namespace FoxIDs.Logic
 
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
-            var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
+            var key = CacheTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
 
             var trackKeyExternalValue = await cacheProvider.GetAsync(key);
             if (!trackKeyExternalValue.IsNullOrEmpty())
@@ -192,7 +192,7 @@ namespace FoxIDs.Logic
             return trackKeyExternal;
         }
 
-        private string RadisTrackKeyExternalKey(string tenantName, string trackName, string name)
+        private string CacheTrackKeyExternalKey(string tenantName, string trackName, string name)
         {
             return $"track_key_ext_{tenantName}_{trackName}_{name}";
         }

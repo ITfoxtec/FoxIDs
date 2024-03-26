@@ -22,6 +22,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+# ignore data folder
+**/data
+
 # ignore appsettings configuration files
 **/appsettings.development.json
 **/appsettings.staging.json

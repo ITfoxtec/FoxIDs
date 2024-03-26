@@ -70,6 +70,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ITenantDataRepository, MemoryTenantDataRepository>();
                     break;
                 case DataStorageOptions.File:
+                    services.AddSingleton<FileDataRepository>();
                     services.AddSingleton<IMasterDataRepository, FileMasterDataRepository>();
                     services.AddSingleton<ITenantDataRepository, FileTenantDataRepository>();
                     break;

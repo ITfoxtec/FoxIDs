@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
 namespace FoxIDs.Logic.Seed
 {
     public class SeedLogic : LogicBase
     {
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
         private static bool isSeeded = false;
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
@@ -25,6 +27,8 @@ namespace FoxIDs.Logic.Seed
 
         public async Task SeedAsync()
         {
+            await semaphore.WaitAsync();
+
             try
             {
                 if (!isSeeded && settings.MasterSeedEnabled)
@@ -45,6 +49,10 @@ namespace FoxIDs.Logic.Seed
             {
                 logger.CriticalError(ex, "Error seeding master documents.");
                 throw;
+            }
+            finally
+            {
+                semaphore.Release(1);
             }
         }
     }

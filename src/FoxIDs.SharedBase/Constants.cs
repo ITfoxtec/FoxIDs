@@ -127,6 +127,7 @@ namespace FoxIDs
             {
                 public const string Tenant = "tenant";
                 public const string Track = "track";
+                public const string Party = "party";
                 public const string UpParty = "party:up";
                 public const string DownParty = "party:down";
                 public const string User = "user";
@@ -137,7 +138,7 @@ namespace FoxIDs
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
 
-                // data type used for the cache
+                // data type used for cache
                 public const string Cache = "cache";
             }
 

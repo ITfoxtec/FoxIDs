@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ITfoxtec.Identity;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
@@ -20,6 +21,11 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [ValidateComplexType]
         public CosmosDbSettings CosmosDb { get; set; }
+
+        /// <summary>
+        /// Save data in directory if the DataStore option is File.
+        /// </summary>
+        public string DataPath { get; set; }
 
         /// <summary>
         /// Key Vault configuration.
@@ -61,6 +67,13 @@ namespace FoxIDs.Models.Config
                 if (CosmosDb == null)
                 {
                     results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
+                }
+            }
+            if (Options.DataStorage == DataStorageOptions.File)
+            {
+                if (DataPath.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(DataPath)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(DataPath) }));
                 }
             }
 

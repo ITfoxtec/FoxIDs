@@ -89,10 +89,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
-            if (!settings.DisableBackgroundQueueService)
-            {
-                services.AddHostedService<BackgroundQueueService>();
-            }
+            services.AddSingleton<BackgroundQueue>();
+            services.AddHostedService<BackgroundQueueService>();
 
             if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

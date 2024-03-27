@@ -13,8 +13,6 @@ namespace FoxIDs.Models.Config
         [ValidateComplexType]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }
 
-        public bool DisableBackgroundQueueService { get; set; }
-
         /// <summary>
         /// Enable master seed if true.
         /// </summary>

@@ -1,9 +1,9 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,22 +34,28 @@ namespace FoxIDs.Repository
 
         public async ValueTask<bool> ExistsAsync(string id, string partitionId)
         {
-            Console.WriteLine("ExistsAsync " + id);
-
             var data = await GetAsync(id, partitionId, required: false);
             return data != null;
         }
 
-        public ValueTask<int> CountAsync(string partitionId)
+        public ValueTask<int> CountAsync(string partitionId, string dataType)
         {
-            Console.WriteLine("CountAsync partition " + partitionId);
+            if (dataType.IsNullOrWhiteSpace())
+            {
+                throw new ArgumentNullException(nameof(dataType));
+            }
 
             var count = 0;
             var filePaths = Directory.GetFiles(GetDbPath());
             foreach (string filePath in filePaths)
             {
                 var filePathSplit = filePath.Split('\\');
-                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionId(partitionId), StringComparison.Ordinal))
+                if (partitionId.IsNullOrWhiteSpace())
+                {
+                    filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
+                }
+
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
                 {
                     count++;
                 }
@@ -59,8 +65,6 @@ namespace FoxIDs.Repository
 
         public async ValueTask<string> GetAsync(string id, string partitionId, bool required = true, bool delete = false)
         {
-            Console.WriteLine("GetAsync " + id);
-
             var filePath = await GetFilePathAsync(id, partitionId);
 
             if (!File.Exists(filePath))
@@ -102,19 +106,26 @@ namespace FoxIDs.Repository
             return null;
         }
 
-        public async ValueTask<List<string>> GetListAsync(string partitionId, int? maxItemCount = null)
+        public async ValueTask<List<string>> GetListAsync(string partitionId, string dataType, int? maxItemCount = null)
         {
-            var filePaths = Directory.GetFiles(GetDbPath());
-            var selectedFilePaths = partitionId == null ? filePaths.ToList() : new List<string>();
-            if (partitionId != null)
+            if(dataType.IsNullOrWhiteSpace())
             {
-                foreach (string filePath in filePaths)
+                throw new ArgumentNullException(nameof(dataType));
+            }
+
+            var filePaths = Directory.GetFiles(GetDbPath());
+            var selectedFilePaths = new List<string>();
+            foreach (string filePath in filePaths)
+            {
+                var filePathSplit = filePath.Split('\\');
+                if (partitionId.IsNullOrWhiteSpace())
                 {
-                    var filePathSplit = filePath.Split('\\');
-                    if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionId(partitionId), StringComparison.Ordinal))
-                    {
-                        selectedFilePaths.Add(filePath);
-                    }
+                    filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
+                }
+
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
+                {
+                    selectedFilePaths.Add(filePath);
                 }
             }
 
@@ -139,8 +150,6 @@ namespace FoxIDs.Repository
 
         public async ValueTask CreateAsync(string id, string partitionId, string item)
         {
-            Console.WriteLine("CreateAsync " + id);
-
             var filePath = await GetFilePathAsync(id, partitionId);
             if (File.Exists(filePath))
             {
@@ -152,8 +161,6 @@ namespace FoxIDs.Repository
 
         public async ValueTask UpdateAsync(string id, string partitionId, string item)
         {
-            Console.WriteLine("UpdateAsync " + id);
-
             var filePath = await GetFilePathAsync(id, partitionId);
             if (!File.Exists(filePath))
             {
@@ -165,8 +172,6 @@ namespace FoxIDs.Repository
 
         public async ValueTask SaveAsync(string id, string partitionId, string item)
         {
-            Console.WriteLine("SaveAsync " + id);
-
             var filePath = await GetFilePathAsync(id, partitionId);
 
             await File.WriteAllTextAsync(filePath, item);
@@ -174,8 +179,6 @@ namespace FoxIDs.Repository
 
         public async ValueTask<string> DeleteAsync(string id, string partitionId, bool required = true)
         {
-            Console.WriteLine("DeleteAsync " + id);
-
             var filePath = await GetFilePathAsync(id, partitionId);
             if (!File.Exists(filePath))
             {
@@ -194,13 +197,18 @@ namespace FoxIDs.Repository
             return data;
         }
 
-        public ValueTask<int> DeleteListAsync(string partitionId)
+        public ValueTask<int> DeleteListAsync(string partitionId, string dataType)
         {
+            if (dataType.IsNullOrWhiteSpace())
+            {
+                throw new ArgumentNullException(nameof(dataType));
+            }
+
             var count = 0;
             foreach (string filePath in Directory.GetFiles(GetDbPath()))
             {
                 var filePathSplit = filePath.Split('\\');
-                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionId(partitionId), StringComparison.Ordinal))
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
                 {
                     File.Delete(filePath);
                     count++;
@@ -255,7 +263,7 @@ namespace FoxIDs.Repository
         private async Task<string> GetFilePathAsync(string id, string partitionId)
         {
             var idSplit = id.Split(':');
-            return $"{GetPath(idSplit)}\\{GetFilePartitionId(partitionId)}-{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
+            return $"{GetPath(idSplit)}\\{GetFilePartitionId(partitionId)}^{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
         }
 
         private string GetPre(string id, string[] idSplit)
@@ -264,13 +272,9 @@ namespace FoxIDs.Repository
             {
                 return $"{idSplit[0]}_{idSplit[1]}-";
             }
-            else if (!id.StartsWith(Constants.Models.DataType.Tenant, StringComparison.Ordinal) && !id.StartsWith(Constants.Models.DataType.Track, StringComparison.Ordinal) && !id.StartsWith(Constants.Models.DataType.Cache, StringComparison.Ordinal))
-            {
-                return $"{idSplit[0]}-";
-            }
             else
             {
-                return string.Empty;
+                return $"{idSplit[0]}-";
             }
         }
 
@@ -284,6 +288,11 @@ namespace FoxIDs.Repository
             {
                 return GetDbPath();
             }
+        }
+
+        private string GetFilePartitionIdAndDataType(string partitionId, string dataType)
+        {
+            return $"{(partitionId.IsNullOrWhiteSpace() ? string.Empty : $"{GetFilePartitionId(partitionId)}")}^{dataType.Replace(':', '_')}";
         }
 
         private string GetFilePartitionId(string partitionId) => partitionId.Replace(':', '_');

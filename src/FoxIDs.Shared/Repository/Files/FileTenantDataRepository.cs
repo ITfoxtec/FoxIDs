@@ -26,16 +26,16 @@ namespace FoxIDs.Repository
             return fileDataRepository.ExistsAsync(id, partitionId);
         }
 
-        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
+        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
             if (whereQuery == null)
             {
-                return await fileDataRepository.CountAsync(partitionId);
+                return await fileDataRepository.CountAsync(partitionId, GetDataType<T>());
             }
             else
             {
-                var dataItems = (await fileDataRepository.GetListAsync(partitionId)).Select(i => i.DataJsonToObject<T>());
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
                 var lambda = whereQuery.Compile();
                 return dataItems.Where(d => lambda(d)).Count();
             }
@@ -70,7 +70,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = (await fileDataRepository.GetListAsync(partitionId, maxItemCount)).Select(i => i.DataJsonToObject<T>());
+            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
             continuationToken = null;
             if (whereQuery == null)
             {
@@ -141,11 +141,11 @@ namespace FoxIDs.Repository
 
             if (whereQuery == null)
             {
-                return await fileDataRepository.DeleteListAsync(partitionId);
+                return await fileDataRepository.DeleteListAsync(partitionId, GetDataType<T>());
             }
             else
             {
-                var dataItems = (await fileDataRepository.GetListAsync(partitionId)).Select(i => i.DataJsonToObject<T>());
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
                 var lambda = whereQuery.Compile();
                 var deleteItems = dataItems.Where(d => lambda(d));
                 foreach (var item in deleteItems)
@@ -153,6 +153,59 @@ namespace FoxIDs.Repository
                     _ = await fileDataRepository.DeleteAsync(item.Id, item.PartitionId);
                 }
                 return deleteItems.Count();
+            }
+        }
+
+        private string GetDataType<T>() where T : IDataDocument
+        {
+            var type = typeof(T);
+            if (type == typeof(Tenant))
+            {
+                return Constants.Models.DataType.Tenant;
+            }
+            else if (type == typeof(Track))
+            {
+                return Constants.Models.DataType.Track;
+            }
+            else if (type == typeof(Party))
+            {
+                return Constants.Models.DataType.Party;
+            }
+            else if (type == typeof(UpParty))
+            {
+                return Constants.Models.DataType.UpParty;
+            }
+            else if (type == typeof(DownParty))
+            {
+                return Constants.Models.DataType.DownParty;
+            }
+            else if (type == typeof(User))
+            {
+                return Constants.Models.DataType.User;
+            }
+            else if (type == typeof(UserControlProfile))
+            {
+                return Constants.Models.DataType.UserControlProfile;
+            }
+            else if (type == typeof(ExternalUser))
+            {
+                return Constants.Models.DataType.ExternalUser;
+            }
+            else if (type == typeof(ExternalUser))
+            {
+                return Constants.Models.DataType.ExternalUser;
+            }
+            else if (type == typeof(AuthCodeTtlGrant))
+            {
+                return Constants.Models.DataType.AuthCodeTtlGrant;
+            }
+            else if (type == typeof(RefreshTokenGrant) || type == typeof(RefreshTokenTtlGrant))
+            {
+                return Constants.Models.DataType.RefreshTokenGrant;
+            }           
+            else
+            { 
+                throw new NotSupportedException($"Type '{type}'.");
             }
         }
     }

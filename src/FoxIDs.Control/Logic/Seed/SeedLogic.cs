@@ -10,7 +10,7 @@ namespace FoxIDs.Logic.Seed
 {
     public class SeedLogic : LogicBase
     {
-        private static SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim signal = new SemaphoreSlim(1, 1);
         private static bool isSeeded = false;
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
@@ -27,21 +27,27 @@ namespace FoxIDs.Logic.Seed
 
         public async Task SeedAsync()
         {
-            await semaphore.WaitAsync();
-
+            if (isSeeded)
+            {
+                return;
+            }
+            await signal.WaitAsync();
             try
             {
-                if (!isSeeded && settings.MasterSeedEnabled)
+                if (!isSeeded)
                 {
                     isSeeded = true;
-                    if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
+                    if (settings.MasterSeedEnabled)
                     {
-                        await serviceProvider.GetService<CosmosDbSeedLogic>().SeedCosmosDbAsync();
-                    }
+                        if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
+                        {
+                            await serviceProvider.GetService<CosmosDbSeedLogic>().SeedCosmosDbAsync();
+                        }
 
-                    if (await masterTenantDocumentsSeedLogic.SeedAsync())
-                    {
-                        logger.Trace("Document container(s) seeded.");
+                        if (await masterTenantDocumentsSeedLogic.SeedAsync())
+                        {
+                            logger.Trace("Document container(s) seeded.");
+                        }
                     }
                 }
             }
@@ -52,7 +58,7 @@ namespace FoxIDs.Logic.Seed
             }
             finally
             {
-                semaphore.Release(1);
+                signal.Release(1);
             }
         }
     }

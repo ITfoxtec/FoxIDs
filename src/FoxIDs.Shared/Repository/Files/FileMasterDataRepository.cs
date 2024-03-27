@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +30,11 @@ namespace FoxIDs.Repository
             var partitionId = IdToMasterPartitionId<T>();
             if (whereQuery == null)
             {
-                return await fileDataRepository.CountAsync(partitionId);
+                return await fileDataRepository.CountAsync(partitionId, GetDataType<T>());
             }
             else
             {
-                var dataItems = (await fileDataRepository.GetListAsync(partitionId)).Select(i => i.DataJsonToObject<T>());
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
                 var lambda = whereQuery.Compile();
                 return dataItems.Where(d => lambda(d)).Count();
             }
@@ -50,7 +51,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
         {
             var partitionId = IdToMasterPartitionId<T>();
-            var dataItems = (await fileDataRepository.GetListAsync(partitionId, maxItemCount)).Select(i => i.DataJsonToObject<T>());
+            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
                 return dataItems.ToHashSet();
@@ -141,6 +142,23 @@ namespace FoxIDs.Repository
             {
                 var partitionId = id.IdToMasterPartitionId();
                 _ = await fileDataRepository.DeleteAsync(id, partitionId);
+            }
+        }
+
+        private string GetDataType<T>() where T : MasterDocument
+        {
+            var type = typeof(T);
+            if (type == typeof(RiskPassword))
+            {
+                return Constants.Models.DataType.RiskPassword;
+            }
+            else if (type == typeof(Plan))
+            {
+                return Constants.Models.DataType.Plan;
+            }
+            else
+            {
+                throw new NotSupportedException($"Type '{type}'.");
             }
         }
     }

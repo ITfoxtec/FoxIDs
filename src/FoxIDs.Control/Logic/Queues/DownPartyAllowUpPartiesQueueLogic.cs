@@ -3,9 +3,7 @@ using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
 using FoxIDs.Models.Queue;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading;
@@ -13,16 +11,18 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class DownPartyAllowUpPartiesQueueLogic : LogicBase, IQueueProcessingService
+    public class DownPartyAllowUpPartiesQueueLogic : LogicBase
     {
         private const string downPartyDataType = "party:down";
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly TelemetryScopedLogger logger;
+        private readonly BackgroundQueue backgroundQueue;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantDataRepository tenantDataRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyAllowUpPartiesQueueLogic(TelemetryScopedLogger logger, BackgroundQueue backgroundQueue, ITenantDataRepository tenantDataRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.logger = logger;
+            this.backgroundQueue = backgroundQueue;
             this.tenantDataRepository = tenantDataRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
@@ -108,43 +108,34 @@ namespace FoxIDs.Logic
             await message.ValidateObjectAsync();
 
             var routeBinding = RouteBinding;
-            var envalope = new QueueEnvelope
+            backgroundQueue.QueueBackgroundWorkItem(async (stoppingToken) =>
             {
-                TenantName = routeBinding.TenantName,
-                TrackName = routeBinding.TrackName,
-                Logging = routeBinding.Logging,
-                LogicClassTypeFullName = GetType().FullName,
-                Info = remove ? $"Remove authentication method '{upParty.Name}' from application registrations allow authentication method list" : $"Update authentication method '{upParty.Name}' in application registrations allow authentication method list",
-                Message = message.ToJson(),
-            };
-            if (routeBinding.TelemetryClient != null)
-            {
-                envalope.ApplicationInsightsConnectionString = routeBinding.TelemetryClient.TelemetryConfiguration.ConnectionString;
-            }
-            await envalope.ValidateObjectAsync();
-
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.ListLeftPushAsync(BackgroundQueueService.QueueKey, envalope.ToJson());
-
-            var sub = redisConnectionMultiplexer.GetSubscriber();
-            await sub.PublishAsync(BackgroundQueueService.QueueEventKey, string.Empty);
+                try
+                {
+                    var info = $"{(remove ? "Remove" : "Update")} authentication method '{upParty.Name}' {(remove ? "from" : "in")} application registrations allow authentication method list";                                       
+                    logger.Event($"Start to process '{info}'.");
+                    await DoWorkAsync(routeBinding.TenantName, routeBinding.TrackName, message, stoppingToken);
+                    logger.Event($"Done processing '{info}'.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Background queue error.");
+                }
+            });
         }
 
-        public async Task DoWorkAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, string message, CancellationToken stoppingToken)
+        public async Task DoWorkAsync(string tenantName, string trackName, UpPartyHrdQueueMessage message, CancellationToken stoppingToken)
         {
-            var messageObj = message.ToObject<UpPartyHrdQueueMessage>();
-            await messageObj.ValidateObjectAsync();
-
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             string continuationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, continuationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == messageObj.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: scopedLogger);
+                (var downParties, continuationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == message.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: logger);
                 stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
-                    await UpdateDownPartyAsync(scopedLogger, tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync(tenantName, trackName, downParty, message);
                 }
                 
                 if (continuationToken == null)
@@ -154,25 +145,25 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task UpdateDownPartyAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj)
+        private async Task UpdateDownPartyAsync(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage message)
         {
             switch (downParty.Type)
             {
                 case PartyTypes.Oidc:
-                    await UpdateDownPartyAsync<OidcDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<OidcDownParty>(tenantName, trackName, downParty, message);
                     break;
                 case PartyTypes.Saml2:
-                    await UpdateDownPartyAsync<SamlDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<SamlDownParty>(tenantName, trackName, downParty, message);
                     break;
                 case PartyTypes.OAuth2:
-                    await UpdateDownPartyAsync<OAuthDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<OAuthDownParty>(tenantName, trackName, downParty, message);
                     break;
                 default:
                     throw new NotSupportedException($"Application registration type {downParty.Type} not supported.");
             }
         }
 
-        private async Task UpdateDownPartyAsync<T>(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj) where T : DownParty
+        private async Task UpdateDownPartyAsync<T>(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj) where T : DownParty
         {
             var idKey = new Party.IdKey
             {
@@ -180,7 +171,7 @@ namespace FoxIDs.Logic
                 TrackName = trackName,
                 PartyName = downParty.Name
             };
-            var downPartyFullObj = await tenantDataRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: scopedLogger);
+            var downPartyFullObj = await tenantDataRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: logger);
             var upParty = downPartyFullObj.AllowUpParties.Where(up => up.Name == messageObj.Name).FirstOrDefault();
             if (upParty != null)
             {
@@ -201,7 +192,7 @@ namespace FoxIDs.Logic
                     downPartyFullObj.AllowUpParties.Remove(upParty);
                 }
 
-                await tenantDataRepository.UpdateAsync(downPartyFullObj, scopedLogger: scopedLogger);
+                await tenantDataRepository.UpdateAsync(downPartyFullObj, scopedLogger: logger);
                 await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
             }
         }

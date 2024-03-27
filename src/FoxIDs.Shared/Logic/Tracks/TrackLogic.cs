@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
         {
             if (keyType == TrackKeyTypes.Contained)
             {
-                var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
+                var certificate = await (tenantName ?? RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
                 mTrack.Key = new TrackKey()
                 {
                     Type = keyType,

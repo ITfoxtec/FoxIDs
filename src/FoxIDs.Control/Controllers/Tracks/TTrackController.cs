@@ -6,13 +6,13 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
@@ -21,23 +21,23 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -189,9 +189,9 @@ namespace FoxIDs.Controllers
                 await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                 await tenantDataRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
 
-                if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
+                if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                 {
-                    await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                    await serviceProvider.GetService<ExternalKeyLogic>().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                 }
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);

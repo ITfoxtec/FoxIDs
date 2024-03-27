@@ -7,26 +7,29 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
+using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
     public class AccountTwoFactorLogic : LogicSequenceBase
     {
         private const int secretAndRecoveryCodeLength = 30;
-        private const string secretName = "2fa";  
-
+        private const string secretName = "2fa";
+        private readonly Settings settings;
         protected readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         protected readonly ITenantDataRepository tenantDataRepository;
-        private readonly ExternalSecretLogic externalSecretLogic;
         protected readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
-            this.externalSecretLogic = externalSecretLogic;
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
@@ -68,16 +71,19 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task ValidateTwoFactorByExternalSecretAsync(string email, string secretExternalName, string appCode)
+        public async Task ValidateTwoFactorByExternalSecretAsync(string email, string secretOrExtName, string appCode)
         {
             email = email?.ToLowerInvariant();
-            var secret = await externalSecretLogic.GetExternalSecretAsync(secretExternalName);
-            if (secret.IsNullOrWhiteSpace())
+            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(secretExternalName)} '{secretExternalName}'.");
+                secretOrExtName = await GetExternalSecretLogic().GetExternalSecretAsync(secretOrExtName);
+                if (secretOrExtName.IsNullOrWhiteSpace())
+                {
+                    throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(secretOrExtName)} '{secretOrExtName}'.");
+                }
             }
 
-            await ValidateTwoFactorBySecretAsync(email, secret, appCode);
+            await ValidateTwoFactorBySecretAsync(email, secretOrExtName, appCode);
         }
 
         public string CreateRecoveryCode()
@@ -85,7 +91,7 @@ namespace FoxIDs.Logic
             return Base32Encoding.ToString(RandomGenerator.GenerateBytes(secretAndRecoveryCodeLength)).TrimEnd('=');
         }
 
-        public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string secretExternalName, string twoFactorAppRecoveryCode)
+        public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string secretOrExtName, string twoFactorAppRecoveryCode)
         {
             email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
@@ -96,13 +102,24 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to set two-factor app secret.");
             }          
 
-            if(!secretExternalName.IsNullOrEmpty())
+            if (settings.Options.KeyStorage == KeyStorageOptions.None) 
             {
-                user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretByExternalNameAsync(secretExternalName, newSecret);
+                user.TwoFactorAppSecret = newSecret;
+            }
+            else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+            {
+                if (!secretOrExtName.IsNullOrEmpty())
+                {
+                    user.TwoFactorAppSecretExternalName = await GetExternalSecretLogic().SetExternalSecretByExternalNameAsync(secretOrExtName, newSecret);
+                }
+                else
+                {
+                    user.TwoFactorAppSecretExternalName = await GetExternalSecretLogic().SetExternalSecretByNameAsync(secretName, newSecret);
+                }
             }
             else
             {
-                user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretByNameAsync(secretName, newSecret);
+                throw new NotSupportedException();
             }
 
             var recoveryCode = new TwoFactorAppRecoveryCode();
@@ -145,5 +162,7 @@ namespace FoxIDs.Logic
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{email}'.");
             }
         }
+
+        private ExternalSecretLogic GetExternalSecretLogic() => serviceProvider.GetService<ExternalSecretLogic>();
     }
 }

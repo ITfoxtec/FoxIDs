@@ -12,19 +12,22 @@ using System.Linq;
 using FoxIDs.Models.Session;
 using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Logic;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Logic
 {
     public class LoginPageLogic : LogicSequenceBase
     {
+        private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly LoginUpLogic loginUpLogic;
 
-        public LoginPageLogic(TelemetryScopedLogger logger, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.logger = logger;
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
@@ -86,7 +89,7 @@ namespace FoxIDs.Logic
                     return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
                 }
 
-                if (user.TwoFactorAppSecretExternalName.IsNullOrEmpty())
+                if (RegisterTwoFactor(user))
                 {
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -94,7 +97,18 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    sequenceData.TwoFactorAppSecretExternalName = user.TwoFactorAppSecretExternalName;
+                    if (settings.Options.KeyStorage == KeyStorageOptions.None)
+                    {
+                        sequenceData.TwoFactorAppSecretOrExtName = user.TwoFactorAppSecret;
+                    }
+                    else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+                    {
+                        sequenceData.TwoFactorAppSecretOrExtName = user.TwoFactorAppSecretExternalName;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
@@ -103,6 +117,22 @@ namespace FoxIDs.Logic
             else
             {
                 return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData.AuthMethods, session: session);
+            }
+        }
+
+        private bool RegisterTwoFactor(User user)
+        {
+            if (settings.Options.KeyStorage == KeyStorageOptions.None)
+            {
+                return user.TwoFactorAppSecret.IsNullOrEmpty();
+            }
+            else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+            {
+                return user.TwoFactorAppSecretExternalName.IsNullOrEmpty();
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
 

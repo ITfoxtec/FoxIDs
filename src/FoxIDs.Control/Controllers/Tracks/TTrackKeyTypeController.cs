@@ -6,13 +6,13 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
@@ -21,21 +21,21 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
                             mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } };
                             if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                             {
-                                await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                                await GetExternalKeyLogic().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                                 mTrack.Key.ExternalName = null;
                             }
                             break;
@@ -111,7 +111,7 @@ namespace FoxIDs.Controllers
                         case TrackKeyTypes.KeyVaultRenewSelfSigned:
                             mTrack.Key.Type = mTrackKey.Type;
                             mTrack.Key.Keys = null;
-                            mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
+                            mTrack.Key.ExternalName = await GetExternalKeyLogic().CreateExternalKeyAsync(mTrack);
                             break;
 
                         case TrackKeyTypes.KeyVaultImport:
@@ -137,6 +137,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-
+        private ExternalKeyLogic GetExternalKeyLogic() => serviceProvider.GetService<ExternalKeyLogic>();
     }
 }

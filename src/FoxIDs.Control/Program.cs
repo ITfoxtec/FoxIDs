@@ -1,4 +1,5 @@
 ﻿using Azure.Identity;
+using FoxIDs.Models.Config;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,11 @@ namespace FoxIDs
                     var builtConfig = config.Build();
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
+                        var KeyStorageOption = builtConfig["Settings:Options:KeyStorage"];
+                        if (string.IsNullOrWhiteSpace(KeyStorageOption) || KeyStorageOption.Equals(KeyStorageOptions.KeyVault.ToString(), StringComparison.Ordinal))
+                        {
+                            config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
+                        }
                     }
                 })
                 .UseStartup<Startup>()

@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using System.Security.Claims;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using ITfoxtec.Identity;
 using System;
 using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
@@ -21,20 +21,20 @@ namespace FoxIDs.Controllers
     public class TUserController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
-        private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic) : base(logger)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
-            this.externalSecretLogic = externalSecretLogic;
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace FoxIDs.Controllers
                     {
                         try
                         {
-                            await externalSecretLogic.DeleteExternalSecretAsync(mUser.TwoFactorAppSecretExternalName);
+                            await serviceProvider.GetService<ExternalSecretLogic>().DeleteExternalSecretAsync(mUser.TwoFactorAppSecretExternalName);
                         }
                         catch (Exception ex)
                         {
@@ -180,6 +180,7 @@ namespace FoxIDs.Controllers
                         }
                     }
 
+                    mUser.TwoFactorAppSecret = null;
                     mUser.TwoFactorAppSecretExternalName = null;
                     mUser.TwoFactorAppRecoveryCode = null;
                 }

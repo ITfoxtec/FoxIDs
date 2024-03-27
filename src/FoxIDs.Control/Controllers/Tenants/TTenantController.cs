@@ -6,13 +6,13 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 
 namespace FoxIDs.Controllers
@@ -23,25 +23,25 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly IMasterDataRepository masterDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.masterDataRepository = masterDataRepository;
             this.masterTenantLogic = masterTenantLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -266,9 +266,9 @@ namespace FoxIDs.Controllers
                     await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                     await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
-                    if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
+                    if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
-                        await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                        await serviceProvider.GetService<ExternalKeyLogic>().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }

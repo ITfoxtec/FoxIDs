@@ -18,8 +18,11 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddTransient<PlanUsageLogic>();
 
-            services.AddTransient<ExternalSecretLogic>();
-            services.AddTransient<ExternalKeyLogic>();
+            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+            {
+                services.AddTransient<ExternalSecretLogic>();
+                services.AddTransient<ExternalKeyLogic>();
+            }
 
             services.AddTransient<ClaimTransformValidationLogic>();
 

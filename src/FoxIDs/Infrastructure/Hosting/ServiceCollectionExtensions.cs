@@ -132,7 +132,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
-            if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
                 if (!env.IsDevelopment())
                 {

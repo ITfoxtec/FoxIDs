@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,6 +13,9 @@ using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using FoxIDs.Infrastructure.Security;
+using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Config;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Controllers
 {
@@ -23,19 +25,21 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericOAuthClientKeyUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public GenericOAuthClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public GenericOAuthClientKeyUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         protected async Task<ActionResult<Api.OAuthClientKeyResponse>> Get(string partyName)
@@ -46,7 +50,7 @@ namespace FoxIDs.Controllers
                 partyName = partyName?.ToLower();
 
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
-                if (oauthUpParty.Client.ClientKeys?.Count() > 0 && oauthUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultImport)
+                if (oauthUpParty.Client.ClientKeys?.Count() > 0)
                 {
                     var clientKey = oauthUpParty.Client.ClientKeys.First();
                     return Ok(new Api.OAuthClientKeyResponse
@@ -78,27 +82,52 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
                 keyRequest.PartyName = keyRequest.PartyName?.ToLower();
 
-                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                if (!plan.EnableKeyVault)
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
-                    throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableKeyVault)
+                    {
+                        throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
+                    }
                 }
 
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 
-                (var externalName, var publicCertificate, var externalId) = await externalKeyLogic.ImportExternalKeyAsync(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, upPartyName: keyRequest.PartyName);
-                var publicKey = new X509Certificate2(publicCertificate).ToFTJsonWebKey();
+                var clientKey = new ClientKey();
+                if(settings.Options.KeyStorage == KeyStorageOptions.None)
+                {
+                    var certificate = keyRequest.Password.IsNullOrWhiteSpace() switch
+                    {
+                        true => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
+                        false => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
+                    };
+                    if (!keyRequest.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)
+                    {
+                        throw new ValidationException("Unable to read the certificates private key. E.g, try to convert the certificate and save the certificate with 'TripleDES-SHA1'.");
+                    }
+                    var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
+                    clientKey.Type = ClientKeyTypes.Contained;
+                    clientKey.ExternalName = Guid.NewGuid().ToString();
+                    clientKey.Key = jwt;
+                    clientKey.PublicKey = jwt.GetPublicKey();
+                }
+                else if (settings.Options.KeyStorage == KeyStorageOptions.None)
+                {
+                    (var externalName, var publicCertificate, var externalId) = await GetExternalKeyLogic().ImportExternalKeyAsync(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, upPartyName: keyRequest.PartyName);
+                    clientKey.Type = ClientKeyTypes.KeyVaultImport;
+                    clientKey.ExternalName = externalName;
+                    clientKey.ExternalId = externalId;
+                    clientKey.PublicKey = new X509Certificate2(publicCertificate).ToFTJsonWebKey();
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
 
                 var secondaryKey = oauthUpParty.Client.ClientKeys?.Count() > 1 ? oauthUpParty.Client.ClientKeys[2] : null;
                 oauthUpParty.Client.ClientKeys = new List<ClientKey>
                 {
-                    new ClientKey
-                    {
-                        Type = ClientKeyTypes.KeyVaultImport,
-                        ExternalName = externalName,
-                        PublicKey = publicKey,
-                        ExternalId = externalId,
-                    }
+                    clientKey
                 };
                 if (secondaryKey != null)
                 {
@@ -108,7 +137,6 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
                 await tenantDataRepository.UpdateAsync(oauthUpParty);
 
-                var clientKey = oauthUpParty.Client.ClientKeys.First();
                 return Created(new Api.OAuthClientKeyResponse
                 {
                     Name = clientKey.ExternalName,
@@ -139,12 +167,15 @@ namespace FoxIDs.Controllers
 
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
 
-                var key = oauthUpParty.Client.ClientKeys?.Where(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
+                var key = oauthUpParty.Client.ClientKeys?.Where(k => k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
                 {
                     oauthUpParty.Client.ClientKeys.Remove(key);
                     await tenantDataRepository.UpdateAsync(oauthUpParty);
-                    await externalKeyLogic.DeleteExternalKeyAsync(externalName);
+                    if (key.Type == ClientKeyTypes.KeyVaultImport)
+                    {
+                        await GetExternalKeyLogic().DeleteExternalKeyAsync(externalName);
+                    }
                 }
 
                 return NoContent();
@@ -159,5 +190,7 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
+
+        private ExternalKeyLogic GetExternalKeyLogic() => serviceProvider.GetService<ExternalKeyLogic>();
     }
 }

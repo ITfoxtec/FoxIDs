@@ -2,6 +2,7 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,15 +11,15 @@ namespace FoxIDs.Logic
 {
     public  class TrackLogic : LogicBase
     {
+        private readonly IServiceProvider serviceProvider;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly ExternalKeyLogic externalKeyLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantDataRepository tenantDataRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
-            this.externalKeyLogic = externalKeyLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
         }
@@ -39,7 +40,7 @@ namespace FoxIDs.Logic
                 mTrack.Key = new TrackKey()
                 {
                     Type = keyType,
-                    ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
+                    ExternalName = await serviceProvider.GetService<ExternalKeyLogic>().CreateExternalKeyAsync(mTrack, tenantName, trackName)
                 };
             }
             else

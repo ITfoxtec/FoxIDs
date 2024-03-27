@@ -24,8 +24,8 @@ namespace FoxIDs
                     var builtConfig = config.Build();
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        var KeyStorageOption = builtConfig["Settings:Options:KeyStorage"];
-                        if (string.IsNullOrWhiteSpace(KeyStorageOption) || KeyStorageOption.Equals(KeyStorageOptions.KeyVault.ToString(), StringComparison.Ordinal))
+                        var keyStorageOption = builtConfig["Settings:Options:KeyStorage"];
+                        if (string.IsNullOrWhiteSpace(keyStorageOption) || keyStorageOption.Equals(KeyStorageOptions.KeyVault.ToString(), StringComparison.Ordinal))
                         {
                             config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
                         }
@@ -34,19 +34,23 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;                
-                    if (string.IsNullOrWhiteSpace(connectionString))
+                    var logOption = context.Configuration["Settings:Options:Log"];
+                    if (string.IsNullOrWhiteSpace(logOption) || logOption.Equals(LogOptions.ApplicationInsights.ToString(), StringComparison.Ordinal))
                     {
-                        return;
-                    }
+                        var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
+                        if (string.IsNullOrWhiteSpace(connectionString))
+                        {
+                            return;
+                        }
 
-                    // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
-                    if (!context.HostingEnvironment.IsDevelopment())
-                    {
-                        logging.ClearProviders();
-                    }
+                        // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
+                        if (!context.HostingEnvironment.IsDevelopment())
+                        {
+                            logging.ClearProviders();
+                        }
 
-                    logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
+                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
+                    }
                 });
     }
 }

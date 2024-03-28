@@ -58,6 +58,6 @@ namespace FoxIDs.Logic
 
         private string EmbeddedResourceName => $"{typeof(EmbeddedResource).FullName}.json";
 
-        private string EmbeddedResourceFile => EmbeddedResourceName.Replace('.', Path.PathSeparator).Replace($@"{Path.PathSeparator}json", ".json").Replace($@"FoxIDs{Path.PathSeparator}", $@"..{Path.PathSeparator}FoxIDs.Shared{Path.PathSeparator}");
+        private string EmbeddedResourceFile => EmbeddedResourceName.Replace('.', '\\').Replace(@"\json", ".json").Replace(@"FoxIDs\", @"..\FoxIDs.Shared\");
     }
 }

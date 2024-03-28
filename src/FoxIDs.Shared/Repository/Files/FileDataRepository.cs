@@ -297,7 +297,7 @@ namespace FoxIDs.Repository
 
         private string GetFilePartitionId(string partitionId) => partitionId.Replace(':', '_');
 
-        private string GetDataPath() => Path.Join($"{settings.FileData.DataPath.TrimEnd('\\').TrimEnd('/')}", "data");
+        private string GetDataPath() => Path.Join(settings.FileData.DataPath, "data");
         private string GetDbPath() => Path.Join(GetDataPath(), "db");
         private string GetCachePath() => Path.Join(GetDataPath(), Constants.Models.DataType.Cache);
     }

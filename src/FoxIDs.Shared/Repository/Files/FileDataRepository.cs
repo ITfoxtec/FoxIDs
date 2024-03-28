@@ -49,7 +49,7 @@ namespace FoxIDs.Repository
             var filePaths = Directory.GetFiles(GetDbPath());
             foreach (string filePath in filePaths)
             {
-                var filePathSplit = filePath.Split('\\');
+                var filePathSplit = filePath.Split(Path.PathSeparator);
                 if (partitionId.IsNullOrWhiteSpace())
                 {
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
@@ -117,7 +117,7 @@ namespace FoxIDs.Repository
             var selectedFilePaths = new List<string>();
             foreach (string filePath in filePaths)
             {
-                var filePathSplit = filePath.Split('\\');
+                var filePathSplit = filePath.Split(Path.PathSeparator);
                 if (partitionId.IsNullOrWhiteSpace())
                 {
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
@@ -207,7 +207,7 @@ namespace FoxIDs.Repository
             var count = 0;
             foreach (string filePath in Directory.GetFiles(GetDbPath()))
             {
-                var filePathSplit = filePath.Split('\\');
+                var filePathSplit = filePath.Split(Path.PathSeparator);
                 if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
                 {
                     File.Delete(filePath);
@@ -263,7 +263,7 @@ namespace FoxIDs.Repository
         private async Task<string> GetFilePathAsync(string id, string partitionId)
         {
             var idSplit = id.Split(':');
-            return $"{GetPath(idSplit)}\\{GetFilePartitionId(partitionId)}^{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
+            return $"{GetPath(idSplit)}{Path.PathSeparator}{GetFilePartitionId(partitionId)}^{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
         }
 
         private string GetPre(string id, string[] idSplit)
@@ -297,8 +297,8 @@ namespace FoxIDs.Repository
 
         private string GetFilePartitionId(string partitionId) => partitionId.Replace(':', '_');
 
-        private string GetDataPath() => $"{settings.FileData.DataPath.TrimEnd('\\')}\\data";
-        private string GetDbPath() => $"{GetDataPath()}\\db";
-        private string GetCachePath() => $"{GetDataPath()}\\{Constants.Models.DataType.Cache}";
+        private string GetDataPath() => Path.Join($"{settings.FileData.DataPath.TrimEnd('\\').TrimEnd('/')}", "data");
+        private string GetDbPath() => Path.Join(GetDataPath(), "db");
+        private string GetCachePath() => Path.Join(GetDataPath(), Constants.Models.DataType.Cache);
     }
 }

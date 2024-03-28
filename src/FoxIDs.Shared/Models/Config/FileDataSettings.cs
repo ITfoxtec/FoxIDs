@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace FoxIDs.Models.Config
 {
@@ -8,7 +9,7 @@ namespace FoxIDs.Models.Config
         /// Save data in directory if the DataStore option is File.
         /// </summary>
         [Required]
-        public string DataPath { get; set; } = "..\\..\\";
+        public string DataPath { get; set; } = Path.Join("..", "..");
 
         /// <summary>
         /// The background file data service wait period in seconds.

@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
 
         protected async Task<OidcDiscovery> GetOidcDiscoveryAsync(string oidcDiscoveryUrl)
         {
-            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            var httpClient = httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, oidcDiscoveryUrl));
             // Handle the response
             switch (response.StatusCode)
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
 
         protected async Task<JsonWebKeySet> GetOidcDiscoveryKeysAsync(string jwksUri)
         {
-            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            var httpClient = httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, jwksUri));
             // Handle the response
             switch (response.StatusCode)

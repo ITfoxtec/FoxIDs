@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
             ValidateClientUserInfoSupport(client);
             logger.ScopeTrace(() => $"AuthMethod, OIDC UserInfo request URL '{client.UserInfoUrl}'.", traceType: TraceTypes.Message);
 
-            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            var httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
 
             using var response = await httpClient.GetAsync(client.UserInfoUrl);

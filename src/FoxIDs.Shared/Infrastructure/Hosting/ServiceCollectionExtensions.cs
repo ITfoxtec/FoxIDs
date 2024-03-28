@@ -4,8 +4,11 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using System;
 using System.Net.Http;
@@ -97,7 +100,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Models.Config.Settings settings)
+        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
         {
             IdentityModelEventSource.ShowPII = true;
 
@@ -115,11 +118,16 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<TelemetryScopedProperties>();
 
             services.AddHttpContextAccessor();
-            services.AddHttpClient(nameof(HttpClient), options => 
+            var httpClientBuilder = services.AddHttpClient(Options.DefaultName, options => 
             { 
                 options.MaxResponseContentBufferSize = 500000; // 500kB 
                 options.Timeout = TimeSpan.FromSeconds(30);
             });
+            if (env.IsDevelopment()) {
+                httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() =>
+                    new HttpClientHandler { ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true }
+                );
+            }
 
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();

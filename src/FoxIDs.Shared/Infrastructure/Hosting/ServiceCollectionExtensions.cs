@@ -93,6 +93,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 case DataStorageOptions.MongoDb:
                     throw new NotImplementedException();
                     //break;
+                case DataStorageOptions.PostgreSQL:
+                    services.AddNpgsqlDocumentDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "master");
+                    services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
+                    services.AddNpgsqlDocumentDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "tenant");
+                    services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
+                    break;
                 default:
                     throw new NotSupportedException($"{nameof(settings.Options.DataStorage)} option '{settings.Options.DataStorage}' not supported.");
             }

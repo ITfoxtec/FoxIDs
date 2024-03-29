@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj" />
+		<ProjectReference Include="/home/bjorn/code/Npgsql.DocumentDB/src/Npgsql.DocumentDB\Npgsql.DocumentDB.csproj" />
 	</ItemGroup>
 
 </Project>

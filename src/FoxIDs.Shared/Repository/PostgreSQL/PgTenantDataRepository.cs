@@ -127,27 +127,26 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
-            /*if (idKey == null) new ArgumentNullException(nameof(idKey));
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             await idKey.ValidateObjectAsync();
             var partitionId = PartitionIdFormat<T>(idKey);
 
             if (whereQuery == null)
             {
-                return await fileDataRepository.DeleteListAsync(partitionId, GetDataType<T>());
+                return await db.RemoveAllAsync(partitionId);
             }
             else
             {
-                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
+                var dataItems = await db.GetSetAsync<T>(partitionId);
                 var lambda = whereQuery.Compile();
                 var deleteItems = dataItems.Where(d => lambda(d));
                 foreach (var item in deleteItems)
                 {
-                    _ = await fileDataRepository.DeleteAsync(item.Id, item.PartitionId);
+                    _ = await db.RemoveAsync(item.Id, item.PartitionId);
                 }
                 return deleteItems.Count();
-            }*/
-            throw new NotImplementedException();
+            }
         }
     }
 }

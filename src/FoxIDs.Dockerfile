@@ -4,8 +4,10 @@ COPY . /build
 WORKDIR /build
 RUN rm -rf ./FoxIDs/web.config
 RUN rm -rf ./FoxIDs/web.Release.config
-RUN dotnet publish ./FoxIDs/FoxIDs.csproj -c Release -o FoxIDs
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+RUN dotnet publish ./FoxIDs/FoxIDs.csproj -c Debug -o FoxIDs
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 COPY --from=build /build/FoxIDs /app
 WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=https://+:44330
 ENTRYPOINT ["/app/FoxIDs"]

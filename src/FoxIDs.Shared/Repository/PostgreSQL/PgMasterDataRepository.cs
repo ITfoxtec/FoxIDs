@@ -1,16 +1,16 @@
 ﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql.DocumentDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgMasterDataRepository([FromKeyedServices("master")] NpgsqlDocumentDB db) : MasterDataRepositoryBase
+    public class PgMasterDataRepository([FromKeyedServices("master")] PgKeyValueDB db) : MasterDataRepositoryBase
     {
         public override async ValueTask<bool> ExistsAsync<T>(string id)
         {

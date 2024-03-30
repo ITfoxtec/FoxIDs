@@ -2,16 +2,16 @@
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql.DocumentDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgTenantDataRepository([FromKeyedServices("tenant")] NpgsqlDocumentDB db) : TenantDataRepositoryBase
+    public class PgTenantDataRepository([FromKeyedServices("tenant")] PgKeyValueDB db) : TenantDataRepositoryBase
     {
         public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {

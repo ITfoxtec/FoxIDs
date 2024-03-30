@@ -94,9 +94,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     throw new NotImplementedException();
                     //break;
                 case DataStorageOptions.PostgreSQL:
-                    services.AddNpgsqlDocumentDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "master");
+                    services.AddPgKeyValueDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "master");
                     services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
-                    services.AddNpgsqlDocumentDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "tenant");
+                    services.AddPgKeyValueDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "tenant");
                     services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
                     break;
                 default:

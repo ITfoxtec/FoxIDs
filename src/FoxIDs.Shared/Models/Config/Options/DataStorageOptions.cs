@@ -6,6 +6,6 @@
         File = 300,
         CosmosDb = 1100,
         MongoDb = 1200,
-        PostgreSQL = 1300,
+        PostgreSql = 1300,
     }
 }

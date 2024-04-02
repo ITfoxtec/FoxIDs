@@ -93,10 +93,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 case DataStorageOptions.MongoDb:
                     throw new NotImplementedException();
                     //break;
-                case DataStorageOptions.PostgreSQL:
-                    services.AddPgKeyValueDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "master");
+                case DataStorageOptions.PostgreSql:
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, "master");
                     services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
-                    services.AddPgKeyValueDB($"Host=localhost;Username=postgres;Password=postgres;Database=foxids", a => a.TableName = "foxids", ServiceLifetime.Singleton, "tenant");
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, "tenant");
                     services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
                     break;
                 default:

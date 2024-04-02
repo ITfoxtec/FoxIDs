@@ -16,16 +16,22 @@ namespace FoxIDs.Models.Config
         public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
+        /// File data configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public FileDataSettings FileData { get; set; } = new FileDataSettings();
+
+        /// <summary>
         /// Cosmos DB configuration.
         /// </summary>
         [ValidateComplexType]
         public CosmosDbSettings CosmosDb { get; set; }
 
         /// <summary>
-        /// File data configuration.
+        /// PostgreSQL configuration.
         /// </summary>
         [ValidateComplexType]
-        public FileDataSettings FileData { get; set; } = new FileDataSettings();
+        public PostgreSqlSettings PostgreSql { get; set; }
 
         /// <summary>
         /// Key Vault configuration.
@@ -62,6 +68,13 @@ namespace FoxIDs.Models.Config
         {
             var results = new List<ValidationResult>();
 
+            if (Options.DataStorage == DataStorageOptions.File)
+            {
+                if (FileData == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
+                }
+            }
             if (Options.DataStorage == DataStorageOptions.CosmosDb)
             {
                 if (CosmosDb == null)
@@ -69,11 +82,11 @@ namespace FoxIDs.Models.Config
                     results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
                 }
             }
-            if (Options.DataStorage == DataStorageOptions.File)
+            if (Options.DataStorage == DataStorageOptions.PostgreSql)
             {
-                if (FileData == null)
+                if (PostgreSql == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
+                    results.Add(new ValidationResult($"The field {nameof(PostgreSql)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(PostgreSql) }));
                 }
             }
 

@@ -49,7 +49,7 @@ namespace FoxIDs.Repository
             var filePaths = Directory.GetFiles(GetDbPath());
             foreach (string filePath in filePaths)
             {
-                var filePathSplit = filePath.Split(Path.PathSeparator);
+                var filePathSplit = filePath.Split(Path.DirectorySeparatorChar);
                 if (partitionId.IsNullOrWhiteSpace())
                 {
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
@@ -117,7 +117,7 @@ namespace FoxIDs.Repository
             var selectedFilePaths = new List<string>();
             foreach (string filePath in filePaths)
             {
-                var filePathSplit = filePath.Split(Path.PathSeparator);
+                var filePathSplit = filePath.Split(Path.DirectorySeparatorChar);
                 if (partitionId.IsNullOrWhiteSpace())
                 {
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
@@ -207,7 +207,7 @@ namespace FoxIDs.Repository
             var count = 0;
             foreach (string filePath in Directory.GetFiles(GetDbPath()))
             {
-                var filePathSplit = filePath.Split(Path.PathSeparator);
+                var filePathSplit = filePath.Split(Path.DirectorySeparatorChar);
                 if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
                 {
                     File.Delete(filePath);
@@ -263,7 +263,7 @@ namespace FoxIDs.Repository
         private async Task<string> GetFilePathAsync(string id, string partitionId)
         {
             var idSplit = id.Split(':');
-            return $"{GetPath(idSplit)}{Path.PathSeparator}{GetFilePartitionId(partitionId)}^{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
+            return $"{GetPath(idSplit)}{Path.DirectorySeparatorChar}{GetFilePartitionId(partitionId)}^{GetPre(id, idSplit)}{await id.HashIdStringAsync()}.data";
         }
 
         private string GetPre(string id, string[] idSplit)

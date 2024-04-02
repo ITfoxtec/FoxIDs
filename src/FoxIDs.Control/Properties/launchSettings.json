@@ -10,6 +10,7 @@
   "profiles": {
     "Default": {
       "commandName": "Project",
+      "launchBrowser": true,
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:44331",
       "environmentVariables": {

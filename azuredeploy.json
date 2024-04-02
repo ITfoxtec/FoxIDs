@@ -453,6 +453,7 @@
         "Settings:Options:KeyStorage": "KeyVault",
         "Settings:Options:Cache": "Redis",
         "Settings:Options:DataCache": "Default",
+        "Settings:MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"

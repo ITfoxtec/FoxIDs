@@ -10,7 +10,7 @@ using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgMasterDataRepository([FromKeyedServices("master")] PgKeyValueDB db) : MasterDataRepositoryBase
+    public class PgMasterDataRepository([FromKeyedServices(Constants.Models.DataType.Master)] PgKeyValueDB db) : MasterDataRepositoryBase
     {
         public override async ValueTask<bool> ExistsAsync<T>(string id)
         {

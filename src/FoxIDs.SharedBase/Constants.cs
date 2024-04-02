@@ -125,6 +125,8 @@ namespace FoxIDs
 
             public static class DataType
             {
+                public const string Master = "master";
+
                 public const string Tenant = "tenant";
                 public const string Track = "track";
                 public const string Party = "party";

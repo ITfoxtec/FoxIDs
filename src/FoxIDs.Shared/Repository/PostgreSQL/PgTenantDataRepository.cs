@@ -11,7 +11,7 @@ using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgTenantDataRepository([FromKeyedServices("tenant")] PgKeyValueDB db) : TenantDataRepositoryBase
+    public class PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db) : TenantDataRepositoryBase
     {
         public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {

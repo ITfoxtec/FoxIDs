@@ -94,9 +94,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     throw new NotImplementedException();
                     //break;
                 case DataStorageOptions.PostgreSql:
-                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, "master");
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Master);
                     services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
-                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, "tenant");
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Tenant);
                     services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
                     break;
                 default:

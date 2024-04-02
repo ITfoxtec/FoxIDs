@@ -453,7 +453,6 @@
         "Settings:Options:KeyStorage": "KeyVault",
         "Settings:Options:Cache": "Redis",
         "Settings:Options:DataCache": "Default",
-        "Settings:MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
@@ -523,7 +522,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:Options:Log", "Settings:Options:DataStorage", "Settings:Options:KeyStorage", "Settings:Options:Cache", "Settings:Options:DataCache", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
       }
     },
     {
@@ -535,7 +534,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "Settings:Options:Log", "Settings:Options:DataStorage", "Settings:Options:KeyStorage", "Settings:Options:Cache", "Settings:Options:DataCache", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
       }
     },
     {

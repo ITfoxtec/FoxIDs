@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
 
         private async Task<string> ReadMetadataAsync(string metadataUrl)
         {
-            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            var httpClient = httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, metadataUrl));
             // Handle the response
             switch (response.StatusCode)

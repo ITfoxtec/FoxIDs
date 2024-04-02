@@ -26,7 +26,7 @@ bld/
 **/data
 
 # ignore appsettings configuration files
-**/appsettings.development-local.json
+**/appsettings.development.json
 **/appsettings.staging.json
 **/appsettings.production.json
 
@@ -267,3 +267,4 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/src/FoxIDs/appsettings.Development.json

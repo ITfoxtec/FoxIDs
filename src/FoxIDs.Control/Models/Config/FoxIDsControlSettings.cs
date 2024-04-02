@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Config
     public class FoxIDsControlSettings : Settings, IValidatableObject
     {
         [Required]
-        public string DownParty { get; set; }
+        public string DownParty { get; set; } = Constants.ControlApi.ResourceName;
 
         [ValidateComplexType]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }

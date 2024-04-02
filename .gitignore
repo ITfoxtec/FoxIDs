@@ -27,6 +27,7 @@ bld/
 
 # ignore appsettings configuration files
 **/appsettings.development.json
+**/appsettings.development-cloud.json
 **/appsettings.staging.json
 **/appsettings.production.json
 

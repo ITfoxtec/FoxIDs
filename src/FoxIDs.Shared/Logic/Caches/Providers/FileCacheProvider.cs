@@ -88,18 +88,5 @@ namespace FoxIDs.Logic.Caches.Providers
         private async Task<string> GetIdAsync(string key) => $"{Constants.Models.DataType.Cache}:{await key.HashIdStringAsync()}";
 
         private string GetPartitionId() => Constants.Models.DataType.Cache;
-
-
-        private class CacheData 
-        {
-            public string Id { get; set; }
-            public string PartitionId { get; set; }
-            public string Data { get; set; }
-        }
-
-        private class CacheTtlData : CacheData, IDataTtlDocument
-        {
-            public int TimeToLive { get; set; }
-        }
     }
 }

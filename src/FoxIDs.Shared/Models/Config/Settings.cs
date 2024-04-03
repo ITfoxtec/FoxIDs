@@ -28,6 +28,12 @@ namespace FoxIDs.Models.Config
         public CosmosDbSettings CosmosDb { get; set; }
 
         /// <summary>
+        /// Mongo DB configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public MongoDbSettings MongoDb { get; set; }
+
+        /// <summary>
         /// PostgreSQL configuration.
         /// </summary>
         [ValidateComplexType]
@@ -75,14 +81,21 @@ namespace FoxIDs.Models.Config
                     results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
                 }
             }
-            if (Options.DataStorage == DataStorageOptions.CosmosDb)
+            else if (Options.DataStorage == DataStorageOptions.CosmosDb)
             {
                 if (CosmosDb == null)
                 {
                     results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
                 }
             }
-            if (Options.DataStorage == DataStorageOptions.PostgreSql)
+            else if (Options.DataStorage == DataStorageOptions.MongoDb)
+            {
+                if (MongoDb == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(MongoDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(MongoDb) }));
+                }
+            }
+            else if (Options.DataStorage == DataStorageOptions.PostgreSql)
             {
                 if (PostgreSql == null)
                 {

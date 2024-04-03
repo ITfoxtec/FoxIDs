@@ -2,6 +2,7 @@
 using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using FoxIDs.Repository.MongoDb;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
+using MongoDB.Driver;
 using System;
 using System.Net.Http;
 
@@ -91,8 +93,11 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ITenantDataRepository, CosmosDbTenantDataRepository>();
                     break;
                 case DataStorageOptions.MongoDb:
-                    throw new NotImplementedException();
-                    //break;
+                    services.AddSingleton<IMongoClient>(s => new MongoClient(settings.MongoDb.ConnectionString));
+                    services.AddSingleton<MongoDbRepositoryClient>();
+                    services.AddSingleton<IMasterDataRepository, MongoDbMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, MongoDbTenantDataRepository>();
+                    break;
                 case DataStorageOptions.PostgreSql:
                     services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Master);
                     services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();

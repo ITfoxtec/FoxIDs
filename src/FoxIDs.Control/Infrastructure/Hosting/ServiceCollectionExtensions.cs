@@ -34,7 +34,7 @@ namespace FoxIDs.Infrastructure.Hosting
             if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
             {
                 services.AddTransient<CosmosDbSeedLogic>();                
-            }
+            } 
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
 

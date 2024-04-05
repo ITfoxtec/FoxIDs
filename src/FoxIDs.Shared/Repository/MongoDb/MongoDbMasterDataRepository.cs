@@ -65,6 +65,10 @@ namespace FoxIDs.Repository
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
                 }
+                if (data != null)
+                {
+                    await data.ValidateObjectAsync();
+                }
                 return data;
             }
             catch (FoxIDsDataException)
@@ -87,6 +91,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
                 var items = await collection.Find(filter).Limit(maxItemCount).ToListAsync();
+                await items.ValidateObjectAsync();
                 return items;
             }
             catch (Exception ex)

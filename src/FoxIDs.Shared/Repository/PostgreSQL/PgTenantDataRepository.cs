@@ -43,7 +43,13 @@ namespace FoxIDs.Repository
             var partitionId = id.IdToTenantPartitionId();
             var item = await db.GetAsync<T>(id, partitionId);
             if (required && item == null)
+            { 
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+            if (item != null)
+            {
+                await item.ValidateObjectAsync();
+            }
             return item;
         }
 
@@ -55,7 +61,13 @@ namespace FoxIDs.Repository
             var partitionId = Tenant.PartitionIdFormat();
             var item = await db.GetAsync<Tenant>(id, partitionId);
             if (required && item == null)
+            {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+            if (item != null)
+            {
+                await item.ValidateObjectAsync();
+            }
             return item;
         }
 
@@ -67,7 +79,13 @@ namespace FoxIDs.Repository
             var partitionId = Track.PartitionIdFormat(idKey);
             var item = await db.GetAsync<Track>(id, partitionId);
             if (required && item == null)
+            {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+            if (item != null)
+            {
+                await item.ValidateObjectAsync();
+            }
             return item;
         }
 
@@ -78,18 +96,24 @@ namespace FoxIDs.Repository
             continuationToken = null;
             if (whereQuery == null)
             {
-                return (dataItems.ToList(), continuationToken);
+                var items = dataItems.ToList();
+                await items.ValidateObjectAsync();
+                return (items, continuationToken);
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
+                var items = dataItems.Where(d => lambda(d)).ToList();
+                await items.ValidateObjectAsync();
+                return (items, continuationToken);
             }
             throw new NotImplementedException();
         }
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
+            //TODO fail if the ID already exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.Conflict };
             await UpdateAsync(item);
         }
 
@@ -102,6 +126,8 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            //TODO fail if the ID do not exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             await db.SetAsync(item.Id, item, item.PartitionId);
         }
 

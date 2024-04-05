@@ -41,7 +41,13 @@ namespace FoxIDs.Repository
             var partitionId = id.IdToMasterPartitionId();
             var item = await db.GetAsync<T>(id, partitionId);
             if (required && item == null)
+            { 
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+            if (item != null)
+            {
+                await item.ValidateObjectAsync();
+            }
             return item;
         }
 
@@ -51,18 +57,24 @@ namespace FoxIDs.Repository
             var dataItems = await db.GetSetAsync<T>(partitionId, maxItemCount);
             if (whereQuery == null)
             {
-                return dataItems.ToList();
+                var items = dataItems.ToList();
+                await items.ValidateObjectAsync();
+                return items;
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).ToList();
+                var items = dataItems.Where(d => lambda(d)).ToList();
+                await items.ValidateObjectAsync();
+                return items;
             }
             throw new NotImplementedException();
         }
 
         public override async ValueTask CreateAsync<T>(T item)
         {
+            //TODO fail if the ID already exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.Conflict };
             await UpdateAsync(item);
         }
 
@@ -75,6 +87,8 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            //TODO fail if the ID do not exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             await db.SetAsync(item.Id, item, item.PartitionId);
         }
 
@@ -119,6 +133,8 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
+            //TODO fail if the ID do not exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             await db.RemoveAsync(id, partitionId);
         }
 

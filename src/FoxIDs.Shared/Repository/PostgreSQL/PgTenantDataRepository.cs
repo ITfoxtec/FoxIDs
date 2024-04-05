@@ -21,7 +21,7 @@ namespace FoxIDs.Repository
             return await db.ExistsAsync(id, partitionId);
         }
 
-        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
+        public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
             if (whereQuery == null)
@@ -71,19 +71,19 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var dataItems = await db.GetSetAsync<T>(partitionId, maxItemCount);
             continuationToken = null;
             if (whereQuery == null)
             {
-                return (dataItems, continuationToken);
+                return (dataItems.ToList(), continuationToken);
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return (dataItems.Where(d => lambda(d)).ToHashSet(), continuationToken);
+                return (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
             }
             throw new NotImplementedException();
         }
@@ -110,22 +110,20 @@ namespace FoxIDs.Repository
             await UpdateAsync(item);
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
             var partitionId = id.IdToTenantPartitionId();
-            var item = await db.GetAsync<T>(id, partitionId);
-            await db.RemoveAsync(item.Id, partitionId);
-            return item;
+            await db.RemoveAsync(id, partitionId);
         }
 
-        //public override ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        //public override ValueTask DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         //{
         //    throw new NotImplementedException();
         //}
 
-        public override async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 

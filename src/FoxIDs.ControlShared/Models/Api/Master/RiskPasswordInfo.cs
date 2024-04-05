@@ -5,6 +5,6 @@ namespace FoxIDs.Models.Api
     public class RiskPasswordInfo
     {
         [Display(Name = "Risk password count")]
-        public int? RiskPasswordCount { get; set; }
+        public long? RiskPasswordCount { get; set; }
     }
 }

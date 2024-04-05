@@ -137,7 +137,8 @@ namespace FoxIDs.Controllers
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
-                var mTenant = await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
+                await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))

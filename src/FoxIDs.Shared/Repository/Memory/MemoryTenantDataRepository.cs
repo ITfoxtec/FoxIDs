@@ -26,7 +26,7 @@ namespace FoxIDs.Repository
             return memoryDataRepository.ExistsAsync(id, partitionId);
         }
 
-        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
+        public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
 
@@ -68,19 +68,19 @@ namespace FoxIDs.Repository
             return (await memoryDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Track>();
         }
 
-        public override async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
 
             var dataItems = (await memoryDataRepository.GetListAsync(partitionId, maxItemCount)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
-                return (dataItems.ToHashSet(), continuationToken);
+                return (dataItems.ToList(), continuationToken);
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return (dataItems.Where(d => lambda(d)).ToHashSet(), continuationToken);
+                return (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
             }
         }
 
@@ -120,11 +120,11 @@ namespace FoxIDs.Repository
             await memoryDataRepository.SaveAsync(item.Id, item.ToJson());
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return (await memoryDataRepository.DeleteAsync(id)).DataJsonToObject<T>();
+            await memoryDataRepository.DeleteAsync(id);
         }
 
         //public override ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
@@ -132,7 +132,7 @@ namespace FoxIDs.Repository
         //    throw new NotImplementedException();
         //}
 
-        public override async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -144,7 +144,7 @@ namespace FoxIDs.Repository
                 var ids = await memoryDataRepository.GetListIdsAsync(partitionId);
                 foreach (var id in ids)
                 {
-                    _ = await memoryDataRepository.DeleteAsync(id);
+                    await memoryDataRepository.DeleteAsync(id);
                 }
                 return ids.Count();
             }
@@ -155,7 +155,7 @@ namespace FoxIDs.Repository
                 var deleteItems = dataItems.Where(d => lambda(d));
                 foreach (var item in deleteItems)
                 {
-                    _ = await memoryDataRepository.DeleteAsync(item.Id);
+                    await memoryDataRepository.DeleteAsync(item.Id);
                 }
                 return deleteItems.Count();
             }

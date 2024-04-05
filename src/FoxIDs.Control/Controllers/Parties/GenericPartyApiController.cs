@@ -296,7 +296,7 @@ namespace FoxIDs.Controllers
             return EqualsBaseType(recursivCount, bt, baseType);
         }
 
-        private async Task<int> CountParties(string dataType)
+        private async Task<long> CountParties(string dataType)
         {
             return await tenantDataRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
         }

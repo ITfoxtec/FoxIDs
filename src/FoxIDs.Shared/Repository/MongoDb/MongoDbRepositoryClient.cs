@@ -1,15 +1,10 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
-namespace FoxIDs.Repository.MongoDb
+namespace FoxIDs.Repository
 {
     public class MongoDbRepositoryClient
     {
@@ -27,50 +22,77 @@ namespace FoxIDs.Repository.MongoDb
 
         private void Init()
         {
+            var pack = new ConventionPack
+            {
+                new IgnoreExtraElementsConvention(true),
+                new IgnoreIfNullConvention(true),
+                new MongoDbJsonPropertyConvention()
+            };
+            ConventionRegistry.Register(nameof(MongoDbRepositoryClient), pack, t => true);
+
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
-            InitCollection<AuthCodeTtlGrant>(database);
-            InitCollection<RefreshTokenTtlGrant>(database);
-            InitCollection<CacheTtlData>(database);
+            _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
+            InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlTenantsCollectionName);
+            _ = InitCollection<DataDocument>(database, settings.MongoDb.CacheCollectionName);
+            InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlCacheCollectionName);
         }
 
-        private void InitCollection<T>(IMongoDatabase database)
+        private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument
         {
-            var name = GetCollectionName<T>();
+            //var ttlOptions = new CreateCollectionOptions<T>
+            //{
+            //    TimeSeriesOptions = new TimeSeriesOptions("expire_at")
+            //};
+            //database.CreateCollection(name, typeof(T) is IDataTtlDocument ? ttlOptions : null);
+
             database.CreateCollection(name);
+
             var collection = database.GetCollection<T>(name);
-            if (typeof(T) is IDataTtlDocument)
+            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
+            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
+            return collection;
+        }
+
+        private void InitTtlCollection<T>(IMongoDatabase database, string name) where T : DataTtlDocument
+        {
+            var collection = InitCollection<T>(database, name);
+            //collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
+            //    options: new CreateIndexOptions
+            //    {
+            //        ExpireAfter = TimeSpan.FromSeconds(0),
+            //        Name = $"{name}ExpireAtIndex"
+            //    })); 
+        }
+
+        public IMongoCollection<T> GetTenantsCollection<T>()
+        {
+            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
             {
-                var indexModel = new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending("expire_at"),
-                    options: new CreateIndexOptions
-                    {
-                        ExpireAfter = TimeSpan.FromSeconds(0),
-                        Name = $"{name}_ExpireAtIndex"
-                    });
-                collection.Indexes.CreateOne(indexModel);
+                return GetCollection<T>(settings.MongoDb.TtlTenantsCollectionName);
+            }
+            else
+            {
+                return GetCollection<T>(settings.MongoDb.TenantsCollectionName);
             }
         }
 
-        public IMongoCollection<T> GetCollection<T>()
+        public IMongoCollection<T> GetCacheCollection<T>()
         {
+            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
+            {
+                return GetCollection<T>(settings.MongoDb.TtlCacheCollectionName);
+            }
+            else
+            {
+                return GetCollection<T>(settings.MongoDb.CacheCollectionName);
+            }
+        }
 
+        private IMongoCollection<T> GetCollection<T>(string name)
+        {
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
-            return database.GetCollection<T>(GetCollectionName<T>());
-        }
-
-        private string GetCollectionName<T>()
-        {
-            var name = typeof(T).Name;
-            if (name.EndsWith("Party", StringComparison.OrdinalIgnoreCase))
-            {
-                name = $"{name.Substring(name.Length - 5)}Parties";
-            }
-            else if (!name.EndsWith("Data", StringComparison.OrdinalIgnoreCase))
-            {
-                name = $"{name}s";
-            }
-
-            return name;
+            return database.GetCollection<T>(name);
         }
     }
 }

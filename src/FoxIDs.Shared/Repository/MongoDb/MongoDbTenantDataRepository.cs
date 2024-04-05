@@ -1,13 +1,13 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using ITfoxtec.Identity;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Repository.MongoDb
+namespace FoxIDs.Repository
 {
     public class MongoDbTenantDataRepository : TenantDataRepositoryBase
     {
@@ -18,60 +18,194 @@ namespace FoxIDs.Repository.MongoDb
             this.mongoDbRepositoryClient = mongoDbRepositoryClient;
         }
 
-        public override ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false);
+            return item != null;
         }
 
-        public override ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
         {
-            throw new NotImplementedException();
+            var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
+
+            if (usePartitionId)
+            {
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
+                whereQuery = whereQuery == null ? filter : Expression.Lambda<Func<T, bool>>(Expression.AndAlso(filter, whereQuery));
+            }
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                return await collection.CountDocumentsAsync(whereQuery);
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
         }
 
-        public override ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete);
         }
 
-        public override ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
+
+            return await ReadItemAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), Tenant.PartitionIdFormat(), required);
         }
 
-        public override ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+
+            return await ReadItemAsync<Track>(await Track.IdFormatAsync(idKey), Track.PartitionIdFormat(idKey), required);
         }
 
-        public override ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataElement
         {
-            var col = mongoDbRepositoryClient.GetCollection<T>();
-            throw new NotImplementedException();
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+            if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                Expression<Func<T, bool>> filter = d => d.Id.Equals(id, StringComparison.Ordinal);
+                var data = delete ? await collection.FindOneAndDeleteAsync(filter) : await collection.Find(filter).FirstOrDefaultAsync();
+                if (required && data == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                return data;
+            }
+            catch(FoxIDsDataException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(id, partitionId, ex);
+            }
         }
 
-        public override ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            var partitionId = PartitionIdFormat<T>(idKey);
+            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
+            filter = whereQuery == null ? filter : Expression.Lambda<Func<T, bool>>(Expression.AndAlso(filter, whereQuery));
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var items = await collection.Find(filter).Limit(maxItemCount).ToListAsync();
+                return (items, null);                
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
         }
 
-        public override ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetTenantPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                await collection.InsertOneAsync(item);
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
+            }
         }
 
-        public override ValueTask<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetTenantPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                await collection.ReplaceOneAsync(d => d.Id.Equals(item.Id, StringComparison.Ordinal), item);
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
+            }
         }
 
-        public override ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetTenantPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                await collection.ReplaceOneAsync(d => d.Id.Equals(item.Id, StringComparison.Ordinal), item/*, new ReplaceOptions { IsUpsert = true }*/);
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
+            }
         }
 
-        public override ValueTask UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
-            throw new NotImplementedException();
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToTenantPartitionId();
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var result = await collection.DeleteOneAsync(d => d.Id.Equals(id, StringComparison.Ordinal));
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(id, partitionId, ex);
+            }
+        }
+
+        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            var partitionId = PartitionIdFormat<T>(idKey);
+            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
+            filter = whereQuery == null ? filter : Expression.Lambda<Func<T, bool>>(Expression.AndAlso(filter, whereQuery));
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var result = await collection.DeleteManyAsync(filter);
+                return result.DeletedCount;
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
         }
     }
 }

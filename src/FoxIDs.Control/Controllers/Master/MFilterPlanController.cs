@@ -5,7 +5,6 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using ITfoxtec.Identity;
@@ -62,7 +61,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private ValueTask<HashSet<Plan>> GetFilterPlanInternalAsync(string filterName)
+        private ValueTask<List<Plan>> GetFilterPlanInternalAsync(string filterName)
         {
             if (filterName.IsNullOrWhiteSpace())
             {

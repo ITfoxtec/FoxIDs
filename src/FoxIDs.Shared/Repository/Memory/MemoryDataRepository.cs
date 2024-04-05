@@ -112,16 +112,10 @@ namespace FoxIDs.Repository
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask<string> DeleteAsync(string id)
-        {
-            if (dataRepository.TryRemove(id, out var result))
-            {
-                return ValueTask.FromResult(result.Item1);
-            }
-            else
-            {
-                return ValueTask.FromResult<string>(null);
-            }
+        public ValueTask DeleteAsync(string id)
+        {            
+            dataRepository.TryRemove(id, out var result);
+            return ValueTask.CompletedTask;
         }
 
         private bool IsValid(DateTimeOffset? validUntil)

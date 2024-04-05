@@ -50,7 +50,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
+        public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var orderedQueryable = GetQueryAsync<T>(partitionId);
@@ -121,7 +121,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
@@ -132,7 +132,7 @@ namespace FoxIDs.Repository
             {
                 var response = await setIterator.ReadNextAsync();
                 totalRU += response.RequestCharge;
-                var items = response.ToHashSet();
+                var items = response.ToList();
                 await items.ValidateObjectAsync();
                 return items;
             }
@@ -300,7 +300,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id)
+        public override async ValueTask DeleteAsync<T>(string id)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -311,7 +311,6 @@ namespace FoxIDs.Repository
             {
                 var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                 totalRU += deleteResponse.RequestCharge;
-                return deleteResponse;
             }
             catch (Exception ex)
             {

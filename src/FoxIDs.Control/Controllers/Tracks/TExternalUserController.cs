@@ -136,7 +136,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
                 var linkClaimHash = await userRequest.LinkClaimValue.HashIdStringAsync();
-                _ = await tenantDataRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
+                await tenantDataRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, linkClaimHash));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

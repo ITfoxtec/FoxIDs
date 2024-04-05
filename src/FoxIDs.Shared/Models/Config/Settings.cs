@@ -81,25 +81,28 @@ namespace FoxIDs.Models.Config
                     results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
                 }
             }
-            else if (Options.DataStorage == DataStorageOptions.CosmosDb)
+
+            if (Options.DataStorage == DataStorageOptions.CosmosDb)
             {
                 if (CosmosDb == null)
                 {
                     results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
                 }
             }
-            else if (Options.DataStorage == DataStorageOptions.MongoDb)
+            
+            if (Options.DataStorage == DataStorageOptions.MongoDb || Options.Cache == CacheOptions.MongoDb)
             {
                 if (MongoDb == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(MongoDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(MongoDb) }));
+                    results.Add(new ValidationResult($"The field {nameof(MongoDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(MongoDb) }));
                 }
             }
-            else if (Options.DataStorage == DataStorageOptions.PostgreSql)
+            
+            if (Options.DataStorage == DataStorageOptions.PostgreSql || Options.Cache == CacheOptions.PostgreSql)
             {
                 if (PostgreSql == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(PostgreSql)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(PostgreSql) }));
+                    results.Add(new ValidationResult($"The field {nameof(PostgreSql)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(PostgreSql) }));
                 }
             }
 

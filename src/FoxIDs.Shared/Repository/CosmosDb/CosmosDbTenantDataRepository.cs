@@ -34,7 +34,7 @@ namespace FoxIDs.Repository
             return item != null;
         }
 
-        public override async ValueTask<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
+        public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
             var orderedQueryable = GetQueryAsync<T>(partitionId, usePartitionId: usePartitionId);
@@ -122,7 +122,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount, continuationToken: continuationToken);
@@ -133,7 +133,7 @@ namespace FoxIDs.Repository
             {
                 var response = await setIterator.ReadNextAsync();
                 totalRU += response.RequestCharge;
-                var items = response.ToHashSet();
+                var items = response.ToList();
                 await items.ValidateObjectAsync();
                 return (items, response.ContinuationToken);
             }
@@ -229,7 +229,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -241,7 +241,6 @@ namespace FoxIDs.Repository
                 var container = GetContainer<T>();
                 var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                 totalRU += deleteResponse.RequestCharge;
-                return deleteResponse;
             }
             catch (Exception ex)
             {
@@ -254,7 +253,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public override async ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        //public override async ValueTask DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         //{
         //    if (idKey == null) new ArgumentNullException(nameof(idKey));
         //    await idKey.ValidateObjectAsync();
@@ -275,8 +274,6 @@ namespace FoxIDs.Repository
         //            var deleteResponse = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
         //            totalRU += deleteResponse.RequestCharge;
         //        }
-        //        await item.ValidateObjectAsync();
-        //        return item;
         //    }
         //    catch (Exception ex)
         //    {
@@ -289,7 +286,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        public override async ValueTask<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -303,7 +300,7 @@ namespace FoxIDs.Repository
             {
                 var response = await setIterator.ReadNextAsync();
                 totalRU += response.RequestCharge;
-                var items = response.ToHashSet();
+                var items = response.ToList();
                 var count = 0;
                 var container = GetContainer<T>();
                 foreach (var item in items) 
@@ -334,7 +331,7 @@ namespace FoxIDs.Repository
 
         private Container GetContainer<T>()
         {
-            if (typeof(T) is IDataTtlDocument)
+            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
             {
                 return dataRepositoryClient.TtlContainer;
             }

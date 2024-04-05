@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace FoxIDs.Repository
             return await db.ExistsAsync(id, partitionId);
         }
 
-        public override async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
+        public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             var partitionId = IdToMasterPartitionId<T>();
             if (whereQuery == null)
@@ -46,18 +45,18 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var dataItems = await db.GetSetAsync<T>(partitionId, maxItemCount);
             if (whereQuery == null)
             {
-                return dataItems;
+                return dataItems.ToList();
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).ToHashSet();
+                return dataItems.Where(d => lambda(d)).ToList();
             }
             throw new NotImplementedException();
         }
@@ -115,12 +114,12 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id)
+        public override async ValueTask DeleteAsync<T>(string id)
         {
-            var partitionId = id.IdToMasterPartitionId();
-            var item = await db.GetAsync<T>(id, partitionId);
-            await DeleteAsync(item);
-            return item;
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToTenantPartitionId();
+            await db.RemoveAsync(id, partitionId);
         }
 
         public override async ValueTask DeleteBulkAsync<T>(List<string> ids)

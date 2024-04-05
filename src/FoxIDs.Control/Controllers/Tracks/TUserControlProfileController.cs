@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
 
                 var userHashId = await User.Identity.Name.HashIdStringAsync();
 
-                _ = await tenantDataRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
+                await tenantDataRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

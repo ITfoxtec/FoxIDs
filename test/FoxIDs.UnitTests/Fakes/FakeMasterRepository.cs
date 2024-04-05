@@ -18,7 +18,7 @@ namespace FoxIDs.UnitTests.Mocks
             return ValueTask.FromResult(false);
         }
 
-        public override ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
+        public override ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             throw new NotImplementedException();
         }
@@ -28,7 +28,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10)
+        public override ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask<T> DeleteAsync<T>(string id)
+        public override ValueTask DeleteAsync<T>(string id)
         {
             throw new NotImplementedException();
         }

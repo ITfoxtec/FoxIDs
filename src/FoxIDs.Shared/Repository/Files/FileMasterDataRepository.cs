@@ -25,7 +25,7 @@ namespace FoxIDs.Repository
             return fileDataRepository.ExistsAsync(id, partitionId);
         }
 
-        public override async ValueTask<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
+        public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             var partitionId = IdToMasterPartitionId<T>();
             if (whereQuery == null)
@@ -48,18 +48,18 @@ namespace FoxIDs.Repository
             return (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<T>();
         }
 
-        public override async ValueTask<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
         {
             var partitionId = IdToMasterPartitionId<T>();
             var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
-                return dataItems.ToHashSet();
+                return dataItems.ToList();
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).ToHashSet();
+                return dataItems.Where(d => lambda(d)).ToList();
             }
         }
 
@@ -130,10 +130,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> DeleteAsync<T>(string id)
+        public override async ValueTask DeleteAsync<T>(string id)
         {
             var partitionId = id.IdToMasterPartitionId();
-            return (await fileDataRepository.DeleteAsync(id, partitionId)).DataJsonToObject<T>();
+            await fileDataRepository.DeleteAsync(id, partitionId);
         }
 
         public override async ValueTask DeleteBulkAsync<T>(List<string> ids)
@@ -141,7 +141,7 @@ namespace FoxIDs.Repository
             foreach (string id in ids)
             {
                 var partitionId = id.IdToMasterPartitionId();
-                _ = await fileDataRepository.DeleteAsync(id, partitionId);
+                await fileDataRepository.DeleteAsync(id, partitionId);
             }
         }
 

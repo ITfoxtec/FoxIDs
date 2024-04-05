@@ -177,7 +177,7 @@ namespace FoxIDs.Repository
             await File.WriteAllTextAsync(filePath, item);
         }
 
-        public async ValueTask<string> DeleteAsync(string id, string partitionId, bool required = true)
+        public async ValueTask DeleteAsync(string id, string partitionId, bool required = true)
         {
             var filePath = await GetFilePathAsync(id, partitionId);
             if (!File.Exists(filePath))
@@ -188,23 +188,21 @@ namespace FoxIDs.Repository
                 }
                 else
                 {
-                    return null;
+                    return;
                 }
             }
 
-            var data = await ReadData(filePath);
             File.Delete(filePath);
-            return data;
         }
 
-        public ValueTask<int> DeleteListAsync(string partitionId, string dataType)
+        public ValueTask<long> DeleteListAsync(string partitionId, string dataType)
         {
             if (dataType.IsNullOrWhiteSpace())
             {
                 throw new ArgumentNullException(nameof(dataType));
             }
 
-            var count = 0;
+            long count = 0;
             foreach (string filePath in Directory.GetFiles(GetDbPath()))
             {
                 var filePathSplit = filePath.Split(Path.DirectorySeparatorChar);

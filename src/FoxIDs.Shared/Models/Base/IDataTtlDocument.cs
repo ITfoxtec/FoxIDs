@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace FoxIDs.Models
 {
@@ -7,7 +6,6 @@ namespace FoxIDs.Models
     {
         int TimeToLive { get; set; }
 
-        [JsonProperty(PropertyName = "expire_at")]
-        public DateTimeOffset ExpireAt => DateTimeOffset.UtcNow.AddSeconds(TimeToLive);
+        DateTimeOffset ExpireAt { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using FoxIDs.Repository.MongoDb;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +42,9 @@ namespace FoxIDs.Infrastructure.Hosting
                 case CacheOptions.Redis:
                     services.AddTransient<ICacheProvider, RedisCacheProvider>();
                     break;
+                case CacheOptions.MongoDb:
+                    services.AddTransient<ICacheProvider, MongoDbCacheProvider>();
+                    break;
                 default:
                     throw new NotSupportedException($"{nameof(settings.Options.Cache)} Cache option '{settings.Options.Cache}' not supported.");
             }
@@ -75,6 +77,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 services.AddSingleton<FileDataRepository>();
             }
 
+            if (settings.Options.DataStorage == DataStorageOptions.MongoDb || settings.Options.Cache == CacheOptions.MongoDb)
+            {
+                services.AddSingleton<IMongoClient>(s => new MongoClient(settings.MongoDb.ConnectionString));
+                services.AddSingleton<MongoDbRepositoryClient>();
+            }
+
             switch (settings.Options.DataStorage)
             {
                 case DataStorageOptions.Memory:
@@ -93,8 +101,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ITenantDataRepository, CosmosDbTenantDataRepository>();
                     break;
                 case DataStorageOptions.MongoDb:
-                    services.AddSingleton<IMongoClient>(s => new MongoClient(settings.MongoDb.ConnectionString));
-                    services.AddSingleton<MongoDbRepositoryClient>();
                     services.AddSingleton<IMasterDataRepository, MongoDbMasterDataRepository>();
                     services.AddSingleton<ITenantDataRepository, MongoDbTenantDataRepository>();
                     break;

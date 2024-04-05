@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using System;
 
 namespace FoxIDs.Repository
 {
@@ -40,12 +41,6 @@ namespace FoxIDs.Repository
 
         private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument
         {
-            //var ttlOptions = new CreateCollectionOptions<T>
-            //{
-            //    TimeSeriesOptions = new TimeSeriesOptions("expire_at")
-            //};
-            //database.CreateCollection(name, typeof(T) is IDataTtlDocument ? ttlOptions : null);
-
             database.CreateCollection(name);
 
             var collection = database.GetCollection<T>(name);
@@ -57,17 +52,17 @@ namespace FoxIDs.Repository
         private void InitTtlCollection<T>(IMongoDatabase database, string name) where T : DataTtlDocument
         {
             var collection = InitCollection<T>(database, name);
-            //collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
-            //    options: new CreateIndexOptions
-            //    {
-            //        ExpireAfter = TimeSpan.FromSeconds(0),
-            //        Name = $"{name}ExpireAtIndex"
-            //    })); 
+            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
+                options: new CreateIndexOptions
+                {
+                    ExpireAfter = TimeSpan.FromSeconds(0),
+                    Name = $"{name}ExpireAtIndex"
+                }));
         }
 
-        public IMongoCollection<T> GetTenantsCollection<T>()
+        public IMongoCollection<T> GetTenantsCollection<T>(T item = default)
         {
-            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
+            if (IsTtlDocument(item))
             {
                 return GetCollection<T>(settings.MongoDb.TtlTenantsCollectionName);
             }
@@ -77,15 +72,27 @@ namespace FoxIDs.Repository
             }
         }
 
-        public IMongoCollection<T> GetCacheCollection<T>()
+        public IMongoCollection<T> GetCacheCollection<T>(T item = default)
         {
-            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
+            if (IsTtlDocument(item))
             {
                 return GetCollection<T>(settings.MongoDb.TtlCacheCollectionName);
             }
             else
             {
                 return GetCollection<T>(settings.MongoDb.CacheCollectionName);
+            }
+        }
+
+        private static bool IsTtlDocument<T>(T item)
+        {
+            if (item != null)
+            {
+                return item.GetType().GetInterface(nameof(IDataTtlDocument)) != null;
+            }
+            else
+            {
+                return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
             }
         }
 

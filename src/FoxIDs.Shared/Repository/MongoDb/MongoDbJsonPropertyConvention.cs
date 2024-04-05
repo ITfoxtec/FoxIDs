@@ -18,7 +18,7 @@ namespace FoxIDs.Repository
             if (memberMap.MemberName != nameof(DataElement.Id))
             {
                 var jsonPropertyAtt = memberMap.MemberInfo.GetCustomAttribute<JsonPropertyAttribute>();
-                if (!string.IsNullOrEmpty(jsonPropertyAtt.PropertyName))
+                if (!string.IsNullOrEmpty(jsonPropertyAtt?.PropertyName))
                 {
                     return jsonPropertyAtt.PropertyName;
                 }

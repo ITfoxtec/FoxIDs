@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -30,12 +31,12 @@ namespace FoxIDs.Repository
         {
             var partitionId = IdToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
-            filter = whereQuery == null ? filter : Expression.Lambda<Func<T, bool>>(Expression.AndAlso(filter, whereQuery));
+            filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                return await collection.CountDocumentsAsync(whereQuery);
+                return await collection.CountDocumentsAsync(filter);
             }
             catch (Exception ex)
             {
@@ -50,7 +51,7 @@ namespace FoxIDs.Repository
             return await ReadItemAsync<T>(id, id.IdToMasterPartitionId(), required);
         }
 
-        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required) where T : IDataElement
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -58,7 +59,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                Expression<Func<T, bool>> filter = d => d.Id.Equals(id, StringComparison.Ordinal);
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal);
                 var data = await collection.Find(filter).FirstOrDefaultAsync();
                 if (required && data == null)
                 {
@@ -80,7 +81,7 @@ namespace FoxIDs.Repository
         {
             var partitionId = IdToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
-            filter = whereQuery == null ? filter : Expression.Lambda<Func<T, bool>>(Expression.AndAlso(filter, whereQuery));
+            filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
             try
             {
@@ -105,7 +106,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
                 await collection.InsertOneAsync(item);
             }
             catch (Exception ex)
@@ -125,8 +126,16 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                await collection.ReplaceOneAsync(d => d.Id.Equals(item.Id, StringComparison.Ordinal), item);
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal), item);
+                if (!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                {
+                    throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -145,8 +154,25 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                await collection.ReplaceOneAsync(d => d.Id.Equals(item.Id, StringComparison.Ordinal), item, new ReplaceOptions { IsUpsert = true });
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal);
+                var data = await collection.Find(filter).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    await collection.InsertOneAsync(item);
+                }
+                else
+                {
+                    var result = await collection.ReplaceOneAsync(filter, item);
+                    if (!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                    {
+                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+                    }
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -163,8 +189,16 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteOneAsync(d => d.Id.Equals(item.Id, StringComparison.Ordinal));
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal));
+                if (!result.IsAcknowledged || !(result.DeletedCount > 0))
+                {
+                    throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -188,7 +222,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(firstItem);
                 await collection.InsertManyAsync(items);
             }
             catch (Exception ex)
@@ -206,7 +240,15 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteOneAsync(d => d.Id.Equals(id, StringComparison.Ordinal));
+                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal));
+                if (!result.IsAcknowledged || !(result.DeletedCount > 0))
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -225,7 +267,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteManyAsync(d => d.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Contains(d.Id, StringComparer.Ordinal));
+                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Contains(f.Id, StringComparer.Ordinal));
             }
             catch (Exception ex)
             {

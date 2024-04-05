@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using MongoDB.Driver;
 using System;
 using System.Net;
 
@@ -49,6 +50,13 @@ namespace FoxIDs.Repository
                     return DataStatusCode.NotFound;
                 }
                 else if (cosmosException.StatusCode == HttpStatusCode.Conflict)
+                {
+                    return DataStatusCode.Conflict;
+                }
+            }
+            if (inner is MongoWriteException mongoWriteException)
+            {
+                if (mongoWriteException.WriteError.Category == ServerErrorCategory.DuplicateKey)
                 {
                     return DataStatusCode.Conflict;
                 }

@@ -6,6 +6,6 @@ namespace FoxIDs.Models
     {
         int TimeToLive { get; set; }
 
-        DateTimeOffset ExpireAt { get; set; }
+        DateTime ExpireAt { get; set; }
     }
 }

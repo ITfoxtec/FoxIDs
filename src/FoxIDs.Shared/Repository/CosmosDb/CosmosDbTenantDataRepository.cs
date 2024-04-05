@@ -160,7 +160,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var container = GetContainer<T>();
+                var container = GetContainer(item);
                 var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
             }
@@ -187,7 +187,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var container = GetContainer<T>();
+                var container = GetContainer(item);
                 var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
             }
@@ -214,7 +214,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var container = GetContainer<T>();
+                var container = GetContainer(item);
                 var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId), new ItemRequestOptions { IndexingDirective = IndexingDirective.Exclude });
                 totalRU += response.RequestCharge;
             }
@@ -329,9 +329,9 @@ namespace FoxIDs.Repository
             return container.GetItemLinqQueryable<T>(requestOptions: queryRequestOptions, continuationToken: continuationToken);
         }
 
-        private Container GetContainer<T>()
+        private Container GetContainer<T>(T item = default)
         {
-            if (typeof(T).GetInterface(nameof(IDataTtlDocument)) != null)
+            if (IsTtlDocument(item))
             {
                 return dataRepositoryClient.TtlContainer;
             }
@@ -340,6 +340,19 @@ namespace FoxIDs.Repository
                 return dataRepositoryClient.Container;
             }
         }
+
+        private static bool IsTtlDocument<T>(T item)
+        {
+            if (item != null)
+            {
+                return item.GetType().GetInterface(nameof(IDataTtlDocument)) != null;
+            }
+            else
+            {
+                return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
+            }
+        }
+
 
         private TelemetryScopedLogger GetScopedLogger()
         {

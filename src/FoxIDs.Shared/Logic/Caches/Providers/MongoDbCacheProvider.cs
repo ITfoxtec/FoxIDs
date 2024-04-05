@@ -1,5 +1,8 @@
+using FoxIDs.Models;
 using FoxIDs.Repository;
+using MongoDB.Driver;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic.Caches.Providers
@@ -13,39 +16,114 @@ namespace FoxIDs.Logic.Caches.Providers
             this.mongoDbRepositoryClient = mongoDbRepositoryClient;
         }
 
-        public ValueTask DeleteAsync(string key)
+        public async ValueTask DeleteAsync(string key)
         {
-            throw new NotImplementedException();
+            var id = GetId(key);
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+            _ = await collection.DeleteOneAsync(f => f.Id.Equals(id, StringComparison.Ordinal));
         }
 
-        public ValueTask<bool> ExistsAsync(string key)
+        public async ValueTask<bool> ExistsAsync(string key)
         {
-            throw new NotImplementedException();
+            var id = GetId(key);
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            return cachItem != null;
         }
 
-        public ValueTask<string> GetAsync(string key)
+        public async ValueTask<string> GetAsync(string key)
         {
-            throw new NotImplementedException();
+            var id = GetId(key);
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            return cachItem?.Data;
         }
 
-        public ValueTask<long> GetNumberAsync(string key)
+        public async ValueTask SetAsync(string key, string value, int lifetime)
         {
-            throw new NotImplementedException();
+            var id = GetId(key);
+            var cachItem = new CacheTtlData { Id = id, PartitionId = GetPartitionId(), Data = value, TimeToLive = lifetime };
+
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+            Expression<Func<CacheData, bool>> filter = f => f.Id.Equals(id, StringComparison.Ordinal);
+            var data = await collection.Find(filter).FirstOrDefaultAsync();
+            if (data == null)
+            {
+                await collection.InsertOneAsync(cachItem);
+            }
+            else
+            {
+                _ = await collection.ReplaceOneAsync(filter, cachItem);
+            }
         }
 
-        public ValueTask<long> IncrementNumberAsync(string key, int? lifetime = null)
+        public async ValueTask SetFlagAsync(string key, int lifetime)
         {
-            throw new NotImplementedException();
+            await SetAsync(key, true.ToString(), lifetime);
         }
 
-        public ValueTask SetAsync(string key, string value, int lifetime)
+        public async ValueTask<long> GetNumberAsync(string key)
         {
-            throw new NotImplementedException();
+            var id = GetId(key);
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+            return await GetNumberInternalAsync(collection, id);
         }
 
-        public ValueTask SetFlagAsync(string key, int lifetime)
+        private static async ValueTask<long> GetNumberInternalAsync(IMongoCollection<CacheData> collection, string id)
         {
-            throw new NotImplementedException();
+            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            if (cachItem == null)
+            {
+                return 0;
+            }
+            if (!long.TryParse(cachItem.Data, out var number))
+            {
+                number = 0;
+            }
+            return number;
         }
+
+        public async ValueTask<long> IncrementNumberAsync(string key, int? lifetime = null)
+        {
+            var id = GetId(key);
+            var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
+
+            var number = await GetNumberInternalAsync(collection, id);
+            number++;
+
+            Expression<Func<CacheData, bool>> filter = f => f.Id.Equals(id, StringComparison.Ordinal);
+            var data = await collection.Find(filter).FirstOrDefaultAsync();
+
+            if (lifetime.HasValue)
+            {
+                var cachItem = new CacheTtlData { Id = id, PartitionId = GetPartitionId(), Data = number.ToString(), TimeToLive = lifetime.Value };
+                if (data == null)
+                {
+                    await collection.InsertOneAsync(cachItem);
+                }
+                else
+                {
+                    _ = await collection.ReplaceOneAsync(filter, cachItem);
+                }
+            }
+            else
+            {
+                var cachItem = new CacheData { Id = id, PartitionId = GetPartitionId(), Data = number.ToString() };
+                if (data == null)
+                {
+                    await collection.InsertOneAsync(cachItem);
+                }
+                else
+                {
+                    _ = await collection.ReplaceOneAsync(filter, cachItem);
+                }
+            }
+            return number;
+        }
+
+        private  string GetId(string key) => $"{GetPartitionId()}:{key}";
+
+        private string GetPartitionId() => Constants.Models.DataType.Cache;
+
     }
 }

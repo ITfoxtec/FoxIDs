@@ -29,15 +29,9 @@ namespace FoxIDs.Models.Config
         public string TtlTenantsCollectionName { get; set; } = "TenantsTtl";
 
         /// <summary>
-        /// Cache Collection Name.
+        /// Cache Collection Name also supporting Time-to-live (TTL).
         /// </summary>
         [Required]
         public string CacheCollectionName { get; set; } = "Cache";
-
-        /// <summary>
-        /// Time-to-live (TTL) Cache Collection Name.
-        /// </summary>
-        [Required]
-        public string TtlCacheCollectionName { get; set; } = "CacheTtl";
     }
 }

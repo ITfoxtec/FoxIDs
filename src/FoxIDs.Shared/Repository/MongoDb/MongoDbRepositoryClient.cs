@@ -35,8 +35,7 @@ namespace FoxIDs.Repository
 
             _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
             InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlTenantsCollectionName);
-            _ = InitCollection<DataDocument>(database, settings.MongoDb.CacheCollectionName);
-            InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlCacheCollectionName);
+            _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
         }
 
         private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument
@@ -72,18 +71,6 @@ namespace FoxIDs.Repository
             }
         }
 
-        public IMongoCollection<T> GetCacheCollection<T>(T item = default)
-        {
-            if (IsTtlDocument(item))
-            {
-                return GetCollection<T>(settings.MongoDb.TtlCacheCollectionName);
-            }
-            else
-            {
-                return GetCollection<T>(settings.MongoDb.CacheCollectionName);
-            }
-        }
-
         private static bool IsTtlDocument<T>(T item)
         {
             if (item != null)
@@ -94,6 +81,11 @@ namespace FoxIDs.Repository
             {
                 return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
             }
+        }
+
+        public IMongoCollection<T> GetCacheCollection<T>()
+        {
+            return GetCollection<T>(settings.MongoDb.CacheCollectionName);
         }
 
         private IMongoCollection<T> GetCollection<T>(string name)

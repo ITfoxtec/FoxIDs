@@ -85,7 +85,7 @@ namespace FoxIDs.Logic.Caches.Providers
             return number;
         }
 
-        private async Task<string> GetIdAsync(string key) => $"{Constants.Models.DataType.Cache}:{await key.HashIdStringAsync()}";
+        private async Task<string> GetIdAsync(string key) => $"{GetPartitionId()}:{await key.HashIdStringAsync()}";
 
         private string GetPartitionId() => Constants.Models.DataType.Cache;
     }

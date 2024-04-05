@@ -389,6 +389,7 @@ namespace FoxIDs
                 public static class Grant
                 {
                     public const int IdLength = 220;
+                    public const string IdRegExPattern = @"^[\w:\-_]*$";
                     public const int ClaimsMin = 1;
                     public const int ClaimsMax = 1000;
                 }

@@ -1,9 +1,21 @@
-﻿namespace FoxIDs.Models
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+
+namespace FoxIDs.Models
 {
-    public class CacheData
+    public class CacheData : DataElement
     {
-        public string Id { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "id")]
+        public override string Id { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.DocumentPartitionIdLength)]
+        [RegularExpression(Constants.Models.DocumentPartitionIdExPattern)]
+        [JsonProperty(PropertyName = "partition_id")]
         public string PartitionId { get; set; }
+
+        [JsonProperty(PropertyName = "data")]
         public string Data { get; set; }
     }
 }

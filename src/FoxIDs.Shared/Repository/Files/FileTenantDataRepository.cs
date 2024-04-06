@@ -46,7 +46,9 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            return (await fileDataRepository.GetAsync(id, partitionId, required, delete)).DataJsonToObject<T>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required, delete)).DataJsonToObject<T>();
+            await item.ValidateObjectAsync();
+            return item;
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -55,7 +57,9 @@ namespace FoxIDs.Repository
 
             var id = await Tenant.IdFormatAsync(tenantName);
             var partitionId = Tenant.PartitionIdFormat();
-            return (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Tenant>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Tenant>();
+            await item.ValidateObjectAsync();
+            return item;
         }
 
         public override async ValueTask<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -64,7 +68,9 @@ namespace FoxIDs.Repository
 
             var id = await Track.IdFormatAsync(idKey);
             var partitionId = Track.PartitionIdFormat(idKey);
-            return (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Track>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Track>();
+            await item.ValidateObjectAsync();
+            return item;
         }
 
         public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
@@ -74,12 +80,16 @@ namespace FoxIDs.Repository
             continuationToken = null;
             if (whereQuery == null)
             {
-                return (dataItems.ToList(), continuationToken);
+                var items = (dataItems.ToList(), continuationToken);
+                await items.ValidateObjectAsync();
+                return items;
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
+                var items = (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
+                await items.ValidateObjectAsync();
+                return items;
             }
         }
 

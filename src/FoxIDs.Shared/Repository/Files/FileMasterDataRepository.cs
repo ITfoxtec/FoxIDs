@@ -45,7 +45,9 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToMasterPartitionId();
-            return (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<T>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<T>();
+            await item.ValidateObjectAsync();
+            return item;
         }
 
         public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
@@ -54,12 +56,16 @@ namespace FoxIDs.Repository
             var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
-                return dataItems.ToList();
+                var items = dataItems.ToList();
+                await items.ValidateObjectAsync();
+                return items;
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).ToList();
+                var items = dataItems.Where(d => lambda(d)).ToList();
+                await items.ValidateObjectAsync();
+                return items;
             }
         }
 

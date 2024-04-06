@@ -85,11 +85,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
             switch (settings.Options.DataStorage)
             {
-                //case DataStorageOptions.Memory:
-                //    services.AddSingleton<MemoryDataRepository>();
-                //    services.AddSingleton<IMasterDataRepository, MemoryMasterDataRepository>();
-                //    services.AddSingleton<ITenantDataRepository, MemoryTenantDataRepository>();
-                //    break;
                 case DataStorageOptions.File:
                     services.AddSingleton<IMasterDataRepository, FileMasterDataRepository>();
                     services.AddSingleton<ITenantDataRepository, FileTenantDataRepository>();

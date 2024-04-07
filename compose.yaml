@@ -1,0 +1,13 @@
+services:
+  foxids:
+    build:
+      context: ./src
+      dockerfile: FoxIDs.Dockerfile
+    ports:
+      - 44330:44330
+  foxids-control:
+    build:
+      context: ./src
+      dockerfile: FoxIDs.Control.Dockerfile
+    ports:
+      - 44331:44331

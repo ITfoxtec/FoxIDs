@@ -50,10 +50,10 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
-            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
+            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
                 var items = dataItems.ToList();

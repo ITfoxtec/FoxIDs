@@ -161,7 +161,7 @@ namespace FoxIDs.Controllers
 
         private async Task<bool> ValidatePlanNotUsedAsync(string planName)
         {
-            (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.DataType.Equals(Constants.Models.DataType.Tenant) && t.PlanName.Equals(planName), maxItemCount: 1);
+            (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.DataType.Equals(Constants.Models.DataType.Tenant) && t.PlanName.Equals(planName), pageSize: 1);
             if (tenants.Count() > 0)
             {
                 try

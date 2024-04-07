@@ -122,10 +122,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount, continuationToken: continuationToken);
+            var query = GetQueryAsync<T>(partitionId, pageSize: pageSize, continuationToken: paginationToken);
             var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
             double totalRU = 0;
@@ -144,7 +144,7 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (pageSize: {pageSize}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -322,10 +322,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null, bool usePartitionId = true)
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int pageSize = 1, string continuationToken = null, bool usePartitionId = true)
         {
             var container = GetContainer<T>();
-            var queryRequestOptions = usePartitionId ? new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount } : new QueryRequestOptions { MaxItemCount = maxItemCount };
+            var queryRequestOptions = usePartitionId ? new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = pageSize } : new QueryRequestOptions { MaxItemCount = pageSize };
             return container.GetItemLinqQueryable<T>(requestOptions: queryRequestOptions, continuationToken: continuationToken);
         }
 

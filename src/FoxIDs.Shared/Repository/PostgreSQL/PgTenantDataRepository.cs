@@ -89,23 +89,23 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = await db.GetSetAsync<T>(partitionId, maxItemCount);
-            continuationToken = null;
+            var dataItems = await db.GetSetAsync<T>(partitionId, pageSize);
+            paginationToken = null;
             if (whereQuery == null)
             {
                 var items = dataItems.ToList();
                 await items.ValidateObjectAsync();
-                return (items, continuationToken);
+                return (items, paginationToken);
             }
             else
             {
                 var lambda = whereQuery.Compile();
                 var items = dataItems.Where(d => lambda(d)).ToList();
                 await items.ValidateObjectAsync();
-                return (items, continuationToken);
+                return (items, paginationToken);
             }
             throw new NotImplementedException();
         }

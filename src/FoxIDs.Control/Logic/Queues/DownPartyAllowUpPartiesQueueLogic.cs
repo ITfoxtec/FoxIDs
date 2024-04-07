@@ -13,7 +13,6 @@ namespace FoxIDs.Logic
 {
     public class DownPartyAllowUpPartiesQueueLogic : LogicBase
     {
-        private const string downPartyDataType = "party:down";
         private readonly TelemetryScopedLogger logger;
         private readonly BackgroundQueue backgroundQueue;
         private readonly ITenantDataRepository tenantDataRepository;
@@ -127,10 +126,10 @@ namespace FoxIDs.Logic
         public async Task DoWorkAsync(string tenantName, string trackName, UpPartyHrdQueueMessage message, CancellationToken stoppingToken)
         {
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
-            string continuationToken = null;
+            string paginationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, continuationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == message.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: logger);
+                (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == message.Name).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
                 stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
@@ -138,7 +137,7 @@ namespace FoxIDs.Logic
                     await UpdateDownPartyAsync(tenantName, trackName, downParty, message);
                 }
                 
-                if (continuationToken == null)
+                if (paginationToken == null)
                 {
                     break;
                 } 

@@ -106,7 +106,7 @@ namespace FoxIDs.Repository
             return null;
         }
 
-        public async ValueTask<List<string>> GetListAsync(string partitionId, string dataType, int? maxItemCount = null)
+        public async ValueTask<List<string>> GetListAsync(string partitionId, string dataType, int? pageSize = null)
         {
             if(dataType.IsNullOrWhiteSpace())
             {
@@ -139,7 +139,7 @@ namespace FoxIDs.Repository
                     dataItems.Add(data);
                 }
                 count++;
-                if (maxItemCount.HasValue && count >= maxItemCount.Value)
+                if (pageSize.HasValue && count >= pageSize.Value)
                 {
                     break;
                 }

@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                 var mParty = mapper.Map<MParty>(party);
                 if (mParty is UpParty)
                 {
-                    var count = await CountParties("party:up");
+                    var count = await CountParties(Constants.Models.DataType.UpParty);
                     if (count >= Constants.Models.UpParty.PartiesMax)
                     {
                         throw new Exception($"Maximum number of authentication methods ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
                 }
                 else if (mParty is DownParty)
                 {
-                    var count = await CountParties("party:down");
+                    var count = await CountParties(Constants.Models.DataType.DownParty);
                     if (count >= Constants.Models.DownParty.PartiesMax)
                     {
                         throw new Exception($"Maximum number of application registrations ({Constants.Models.DownParty.PartiesMax}) per environment has been reached.");

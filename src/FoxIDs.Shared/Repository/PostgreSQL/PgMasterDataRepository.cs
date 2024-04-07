@@ -51,10 +51,10 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
-            var dataItems = await db.GetSetAsync<T>(partitionId, maxItemCount);
+            var dataItems = await db.GetSetAsync<T>(partitionId, pageSize);
             if (whereQuery == null)
             {
                 var items = dataItems.ToList();

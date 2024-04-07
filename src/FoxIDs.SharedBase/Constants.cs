@@ -123,6 +123,8 @@ namespace FoxIDs
             public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
+            public const int ListPageSize = 50;
+
             public static class DataType
             {
                 public const string Master = "master";

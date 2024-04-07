@@ -13,7 +13,7 @@ namespace FoxIDs.Repository
         ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument;
 
         ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument;
-        ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument;
+        ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize) where T : MasterDocument;
 
         ValueTask CreateAsync<T>(T item) where T : MasterDocument;
         ValueTask UpdateAsync<T>(T item) where T : MasterDocument;

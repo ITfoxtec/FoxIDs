@@ -121,10 +121,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
-            var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
+            var query = GetQueryAsync<T>(partitionId, pageSize: pageSize);
             var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
             double totalRU = 0;
@@ -142,7 +142,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Metric($"CosmosDB RU, @master - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}', partitionId '{partitionId}'.", totalRU);
+                logger.Metric($"CosmosDB RU, @master - read list (pageSize: {pageSize}) by query of type '{typeof(T)}', partitionId '{partitionId}'.", totalRU);
             }
         }
 
@@ -372,9 +372,9 @@ namespace FoxIDs.Repository
             }
         }
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1) where T : IDataDocument
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int pageSize = 1) where T : IDataDocument
         {           
-            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
+            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = pageSize });
         }
     }
 }

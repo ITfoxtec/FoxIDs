@@ -5,6 +5,7 @@ using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -93,7 +94,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
@@ -102,14 +103,35 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var items = await collection.Find(filter).Limit(maxItemCount).ToListAsync();
+                var pageNumber = GetPageNumber(paginationToken);
+                var items = pageNumber > 1 ? await collection.Find(filter).Limit(pageSize + 1).Skip((pageNumber - 1) * pageSize).ToListAsync() : await collection.Find(filter).Limit(pageSize + 1).ToListAsync();
+
+                if(items.Count() > pageSize)
+                {
+                    items.RemoveAt(pageSize);
+                    paginationToken = Convert.ToString(++pageNumber);
+                }
+                else
+                {
+                    paginationToken = null;
+                }
+
                 await items.ValidateObjectAsync();
-                return (items, null);                
+                return (items, paginationToken);                
             }
             catch (Exception ex)
             {
                 throw new FoxIDsDataException(partitionId, ex);
             }
+        }
+
+        private int GetPageNumber(string paginationToken)
+        {
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+            {
+                return pageNumber;
+            }
+            return 1;
         }
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)

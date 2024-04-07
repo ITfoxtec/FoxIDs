@@ -81,7 +81,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50)
+        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
@@ -90,7 +90,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var items = await collection.Find(filter).Limit(maxItemCount).ToListAsync();
+                var items = await collection.Find(filter).Limit(pageSize).ToListAsync();
                 await items.ValidateObjectAsync();
                 return items;
             }

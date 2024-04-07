@@ -73,21 +73,21 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<(List<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), maxItemCount)).Select(i => i.DataJsonToObject<T>());
-            continuationToken = null;
+            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize)).Select(i => i.DataJsonToObject<T>());
+            paginationToken = null;
             if (whereQuery == null)
             {
-                var items = (dataItems.ToList(), continuationToken);
+                var items = (dataItems.ToList(), paginationToken);
                 await items.ValidateObjectAsync();
                 return items;
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                var items = (dataItems.Where(d => lambda(d)).ToList(), continuationToken);
+                var items = (dataItems.Where(d => lambda(d)).ToList(), paginationToken);
                 await items.ValidateObjectAsync();
                 return items;
             }

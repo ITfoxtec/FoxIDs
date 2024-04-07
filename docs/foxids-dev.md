@@ -20,13 +20,12 @@ Solution description:
 
 Open the FoxIDs solution in Visual Studio or in your preferred developer tool.
 
-![FoxIDs in Visual Studio](images/development-foxids-vs.png)
+The solution is default configured to rune locally and to use a file store for both data and cache. The files are by default saved in the `data` folder in the root of the solution folder.
 
-Configure to use a file store for both data and cache. The files are by default saved in the `data` folder in the root of the solution folder.
-
-Create a `appsettings.Development.json` file in the FoxIDs project, with this JSON: 
+The default configuration file `appsettings.json` in the FoxIDs project: 
 
     {
+      ...
       "Settings": {   
         "FoxIDsEndpoint": "https://localhost:44330",
         "Options": {
@@ -40,9 +39,10 @@ Create a `appsettings.Development.json` file in the FoxIDs project, with this JS
     }
 
 
-Create a `appsettings.Development.json` file in the FoxIDs.Control project, with this JSON: 
+The default configuration file `appsettings.json` in the FoxIDs.Control project: 
 
     {
+      ...
       "Settings": {   
         "FoxIDsEndpoint": "https://localhost:44330",
         "FoxIDsControlEndpoint": "https://localhost:44331",
@@ -57,7 +57,7 @@ Create a `appsettings.Development.json` file in the FoxIDs.Control project, with
     }
 
 
-And hit run! The FoxIDs Control site should be lunched in a browser.
+Hit run! The FoxIDs Control site should be lunched in a browser.
 
 Login with the default admin user `admin@foxids.com` with password `FirstAccess!`
 

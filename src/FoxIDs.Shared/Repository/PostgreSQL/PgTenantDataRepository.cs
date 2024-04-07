@@ -91,6 +91,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
+            //TODO pagination
             var partitionId = PartitionIdFormat<T>(idKey);
             var dataItems = await db.GetSetAsync<T>(partitionId, pageSize);
             paginationToken = null;

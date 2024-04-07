@@ -104,7 +104,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
                 var pageNumber = GetPageNumber(paginationToken);
-                var items = pageNumber > 1 ? await collection.Find(filter).Limit(pageSize + 1).Skip((pageNumber - 1) * pageSize).ToListAsync() : await collection.Find(filter).Limit(pageSize + 1).ToListAsync();
+                var items = pageNumber > 1 ? await collection.Find(filter).Skip((pageNumber - 1) * pageSize).Limit(pageSize + 1).ToListAsync() : await collection.Find(filter).Limit(pageSize + 1).ToListAsync();
 
                 if(items.Count() > pageSize)
                 {
@@ -167,7 +167,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
                 var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal), item);
-                if (!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                if (!result.IsAcknowledged || !(result.MatchedCount > 0))
                 {
                     throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
                 }
@@ -203,7 +203,7 @@ namespace FoxIDs.Repository
                 else
                 {
                     var result = await collection.ReplaceOneAsync(filter, item);
-                    if(!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                    if(!result.IsAcknowledged || !(result.MatchedCount > 0))
                     {
                         throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
                     }

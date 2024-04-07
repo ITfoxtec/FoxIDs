@@ -76,21 +76,54 @@ namespace FoxIDs.Repository
         public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize)).Select(i => i.DataJsonToObject<T>());
-            paginationToken = null;
+
+            var pageNumber = GetPageNumber(paginationToken);
             if (whereQuery == null)
             {
-                var items = (dataItems.ToList(), paginationToken);
+                var dataStringItems = pageNumber > 1 ? await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize + 1, (pageNumber - 1) * pageSize) : await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize + 1);
+
+                if (dataStringItems.Count() > pageSize)
+                {
+                    dataStringItems.RemoveAt(pageSize);
+                    paginationToken = Convert.ToString(++pageNumber);
+                }
+                else
+                {
+                    paginationToken = null;
+                }
+
+                var items = dataStringItems.Select(i => i.DataJsonToObject<T>()).ToList();
                 await items.ValidateObjectAsync();
-                return items;
+                return (items, paginationToken);
             }
             else
             {
-                var lambda = whereQuery.Compile();
-                var items = (dataItems.Where(d => lambda(d)).ToList(), paginationToken);
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
+                var selectedItems = dataItems.Where(d => whereQuery.Compile()(d));
+
+                var items = pageNumber > 1 ? selectedItems.Skip((pageNumber - 1) * pageSize).Take(pageSize + 1).ToList() : selectedItems.Take(pageSize + 1).ToList();
+                if (items.Count() > pageSize)
+                {
+                    items.RemoveAt(pageSize);
+                    paginationToken = Convert.ToString(++pageNumber);
+                }
+                else
+                {
+                    paginationToken = null;
+                }
+
                 await items.ValidateObjectAsync();
-                return items;
+                return (items, paginationToken);
             }
+        }
+
+        private int GetPageNumber(string paginationToken)
+        {
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+            {
+                return pageNumber;
+            }
+            return 1;
         }
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)

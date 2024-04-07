@@ -133,7 +133,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
                 var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal), item);
-                if (!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                if (!result.IsAcknowledged || !(result.MatchedCount > 0))
                 {
                     throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
                 }
@@ -169,7 +169,7 @@ namespace FoxIDs.Repository
                 else
                 {
                     var result = await collection.ReplaceOneAsync(filter, item);
-                    if (!result.IsAcknowledged || !(result.ModifiedCount > 0))
+                    if (!result.IsAcknowledged || !(result.MatchedCount > 0))
                     {
                         throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
                     }

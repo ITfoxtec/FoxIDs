@@ -106,7 +106,7 @@ namespace FoxIDs.Repository
             return null;
         }
 
-        public async ValueTask<List<string>> GetListAsync(string partitionId, string dataType, int? pageSize = null)
+        public async ValueTask<List<string>> GetListAsync(string partitionId, string dataType, int? pageSize = null, int? skip = null)
         {
             if(dataType.IsNullOrWhiteSpace())
             {
@@ -131,15 +131,20 @@ namespace FoxIDs.Repository
 
             var dataItems = new List<string>();
             var count = 0;
+            var sizeCount = 0;
             foreach (string filePath in selectedFilePaths)
             {
-                var data = await ReadData(filePath);
-                if(data != null)
-                {
-                    dataItems.Add(data);
-                }
                 count++;
-                if (pageSize.HasValue && count >= pageSize.Value)
+                if (!skip.HasValue || count > skip.Value)
+                {
+                    var data = await ReadData(filePath);
+                    if (data != null)
+                    {
+                        dataItems.Add(data);
+                        sizeCount++;
+                    }
+                }
+                if (pageSize.HasValue && sizeCount >= pageSize.Value)
                 {
                     break;
                 }

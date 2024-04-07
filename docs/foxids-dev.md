@@ -29,7 +29,7 @@ The default configuration file `appsettings.json` in the FoxIDs project:
       "Settings": {   
         "FoxIDsEndpoint": "https://localhost:44330",
         "Options": {
-          "Log": "None",
+          "Log": "Stdout",
           "DataStorage": "File",
           "KeyStorage": "None",
           "Cache": "File",
@@ -47,7 +47,7 @@ The default configuration file `appsettings.json` in the FoxIDs.Control project:
         "FoxIDsEndpoint": "https://localhost:44330",
         "FoxIDsControlEndpoint": "https://localhost:44331",
         "Options": {
-          "Log": "None",
+          "Log": "Stdout",
           "DataStorage": "File",
           "KeyStorage": "None",
           "Cache": "File",

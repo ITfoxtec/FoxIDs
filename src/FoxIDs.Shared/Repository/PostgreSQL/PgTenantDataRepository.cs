@@ -89,7 +89,7 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<(List<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             //TODO pagination
             var partitionId = PartitionIdFormat<T>(idKey);
@@ -97,14 +97,14 @@ namespace FoxIDs.Repository
             paginationToken = null;
             if (whereQuery == null)
             {
-                var items = dataItems.ToList();
+                var items = dataItems;
                 await items.ValidateObjectAsync();
                 return (items, paginationToken);
             }
             else
             {
                 var lambda = whereQuery.Compile();
-                var items = dataItems.Where(d => lambda(d)).ToList();
+                var items = dataItems.Where(d => lambda(d)).ToHashSet();
                 await items.ValidateObjectAsync();
                 return (items, paginationToken);
             }

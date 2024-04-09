@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private ValueTask<(List<Tenant> items, string paginationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
+        private ValueTask<(IReadOnlyCollection<Tenant> items, string paginationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {

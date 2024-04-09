@@ -28,7 +28,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = 10)
+        public override ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = 10)
         {
             throw new NotImplementedException();
         }
@@ -58,12 +58,12 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask SaveBulkAsync<T>(List<T> items)
+        public override ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteBulkAsync<T>(List<string> ids)
+        public override ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
         {
             throw new NotImplementedException();
         }

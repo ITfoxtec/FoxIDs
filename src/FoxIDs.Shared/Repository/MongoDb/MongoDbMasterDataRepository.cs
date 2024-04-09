@@ -81,7 +81,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<List<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
+        public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
@@ -211,7 +211,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveBulkAsync<T>(List<T> items)
+        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -261,7 +261,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(List<string> ids)
+        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();

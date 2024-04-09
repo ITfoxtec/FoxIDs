@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private ValueTask<List<Plan>> GetFilterPlanInternalAsync(string filterName)
+        private ValueTask<IReadOnlyCollection<Plan>> GetFilterPlanInternalAsync(string filterName)
         {
             if (filterName.IsNullOrWhiteSpace())
             {

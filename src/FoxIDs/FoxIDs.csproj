@@ -20,6 +20,10 @@
 
 	<PropertyGroup>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+		<UserSecretsId>e675a4a7-24fe-4cc7-8e89-54faad64de60</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,6 +41,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.1" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 		<PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
 		<PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />

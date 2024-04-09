@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "foxids.control",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "serviceActions": {
+        "foxids": "StartDebugging",
+        "foxids.control": "StartDebugging"
+      }
+    }
+  }
+}

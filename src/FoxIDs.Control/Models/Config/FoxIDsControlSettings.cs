@@ -7,6 +7,11 @@ namespace FoxIDs.Models.Config
 {
     public class FoxIDsControlSettings : Settings, IValidatableObject
     {
+        /// <summary>
+        /// FoxIDs backend endpoint, optionally used in FoxIDs Control to keep the communication from FoxIDs Control to FoxIDs in the backend network.
+        /// </summary>
+        public string FoxIDsBackendEndpoint { get; set; }
+
         [Required]
         public string DownParty { get; set; } = Constants.ControlApi.ResourceName;
 

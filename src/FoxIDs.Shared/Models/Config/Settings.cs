@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Config
     public class Settings : IValidatableObject
     {
         /// <summary>
-        /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control. Optionally in FoxIDs.
+        /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control.
         /// </summary>
         public string FoxIDsEndpoint { get; set; }
 

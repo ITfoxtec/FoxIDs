@@ -1,27 +1,27 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+#ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
-COPY ["src/FoxIDs.Control/FoxIDs.Control.csproj", "src/FoxIDs.Control/"]
-COPY ["src/FoxIDs.ControlClient/FoxIDs.ControlClient.csproj", "src/FoxIDs.ControlClient/"]
-COPY ["src/FoxIDs.ControlShared/FoxIDs.ControlShared.csproj", "src/FoxIDs.ControlShared/"]
-COPY ["src/FoxIDs.SharedBase/FoxIDs.SharedBase.csproj", "src/FoxIDs.SharedBase/"]
-COPY ["src/FoxIDs.Shared/FoxIDs.Shared.csproj", "src/FoxIDs.Shared/"]
-RUN dotnet restore "./src/FoxIDs.Control/./FoxIDs.Control.csproj"
+COPY ["src/FoxIDs.Control/FoxIDs.Control.csproj", "FoxIDs.Control/"]
+COPY ["src/FoxIDs.ControlClient/FoxIDs.ControlClient.csproj", "FoxIDs.ControlClient/"]
+COPY ["src/FoxIDs.ControlShared/FoxIDs.ControlShared.csproj", "FoxIDs.ControlShared/"]
+COPY ["src/FoxIDs.SharedBase/FoxIDs.SharedBase.csproj", "FoxIDs.SharedBase/"]
+COPY ["src/FoxIDs.Shared/FoxIDs.Shared.csproj", "FoxIDs.Shared/"]
+RUN dotnet restore "FoxIDs.Control/FoxIDs.Control.csproj"
 COPY . .
 WORKDIR "/src/src/FoxIDs.Control"
-RUN dotnet build "./FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+#ARG BUILD_CONFIGURATION=Debug
+RUN dotnet publish "FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

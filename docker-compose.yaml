@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  foxids:
+    image: ${DOCKER_REGISTRY-}foxids
+    build:
+      context: .
+      dockerfile: src/FoxIDs/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+;http://+    
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=MongoDb 
+    depends_on: 
+      - mongodb
+      - redis
+  foxidscontrol:
+    image: ${DOCKER_REGISTRY-}foxidscontrol
+    build:
+      context: .
+      dockerfile: src/FoxIDs.Control/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+;http://+    
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=MongoDb
+    depends_on: 
+      - foxids
+      - mongodb
+      - redis
+  redis:
+    image: "redis:latest" 
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - foxids-data:/data/db
+volumes:
+    foxids-data:

@@ -9,6 +9,7 @@ using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -125,7 +126,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddAuthentication(JwtBearerMultipleTenantsHandler.AuthenticationScheme)
                 .AddScheme<JwtBearerMultipleTenantsOptions, JwtBearerMultipleTenantsHandler>(JwtBearerMultipleTenantsHandler.AuthenticationScheme, options =>
                 {
-                    options.FoxIDsEndpoint = settings.FoxIDsEndpoint;
+                    options.FoxIDsEndpoint = settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace() ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint;
                     options.DownParty = settings.DownParty;
                 });
 

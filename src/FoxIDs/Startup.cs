@@ -46,9 +46,9 @@ namespace FoxIDs
             if (!CurrentEnvironment.IsDevelopment())
             {
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyMiddleware();
 

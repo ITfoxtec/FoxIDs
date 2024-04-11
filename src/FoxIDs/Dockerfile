@@ -1,25 +1,25 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+#ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
-COPY ["src/FoxIDs/FoxIDs.csproj", "src/FoxIDs/"]
-COPY ["src/FoxIDs.Shared/FoxIDs.Shared.csproj", "src/FoxIDs.Shared/"]
-COPY ["src/FoxIDs.SharedBase/FoxIDs.SharedBase.csproj", "src/FoxIDs.SharedBase/"]
-RUN dotnet restore "./src/FoxIDs/./FoxIDs.csproj"
+COPY ["src/FoxIDs/FoxIDs.csproj", "FoxIDs/"]
+COPY ["src/FoxIDs.Shared/FoxIDs.Shared.csproj", "FoxIDs.Shared/"]
+COPY ["src/FoxIDs.SharedBase/FoxIDs.SharedBase.csproj", "FoxIDs.SharedBase/"]
+RUN dotnet restore "FoxIDs/FoxIDs.csproj"
 COPY . .
 WORKDIR "/src/src/FoxIDs"
-RUN dotnet build "./FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+#ARG BUILD_CONFIGURATION=Debug
+RUN dotnet publish "FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

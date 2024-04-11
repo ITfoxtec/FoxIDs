@@ -2,15 +2,15 @@
   {
     "outputFileName": "wwwroot/css/site1.min.css",
     "inputFiles": [
-      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
       "wwwroot/css/site.css"
     ]
   },
   {
     "outputFileName": "wwwroot/js/site1.min.js",
     "inputFiles": [
-      "node_modules/jquery/dist/jquery.min.js",
-      "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
       "wwwroot/js/site.js"
     ],
     "minify": {
@@ -18,59 +18,5 @@
       "renameLocals": true
     },
     "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
-    "inputFiles": [
-      "node_modules/bootstrap/dist/css/bootstrap.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.css.map",
-    "inputFiles": [
-      "node_modules/bootstrap/dist/css/bootstrap.css.map"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/jquery/dist/jquery.js",
-    "inputFiles": [
-      "node_modules/jquery/dist/jquery.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
-    "inputFiles": [
-      "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map",
-    "inputFiles": [
-      "node_modules/bootstrap/dist/js/bootstrap.bundle.js.map"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/jquery-validation/dist/jquery.validate.js",
-    "inputFiles": [
-      "node_modules/jquery-validation/dist/jquery.validate.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/jquery-validation/dist/jquery.validate.min.js",
-    "inputFiles": [
-      "node_modules/jquery-validation/dist/jquery.validate.min.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
-    "inputFiles": [
-      "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js",
-    "inputFiles": [
-      "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"
-    ]
   }
 ]

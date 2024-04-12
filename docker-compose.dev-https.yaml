@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  foxids:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+    
+      - Settings:FoxIDsEndpoint=https://localhost:44330
+    ports:
+      - 8800:80
+      - 44330:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  foxids-control:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+    
+      - Settings:FoxIDsEndpoint=https://localhost:44330
+      - Settings:FoxIDsBackendEndpoint=https://foxids
+      - Settings:FoxIDsControlEndpoint=https://localhost:44331
+    ports:
+      - 8801:80
+      - 44331:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  mongodb:
+    ports:
+      - 27018:27017

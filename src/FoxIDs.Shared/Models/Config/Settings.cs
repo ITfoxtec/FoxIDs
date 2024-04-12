@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Config
     public class Settings : IValidatableObject
     {
         /// <summary>
-        /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control. Optionally in FoxIDs.
+        /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control.
         /// </summary>
         public string FoxIDsEndpoint { get; set; }
 
@@ -14,6 +14,11 @@ namespace FoxIDs.Models.Config
         /// FoxIDs Control endpoint, used in FoxIDs Control.
         /// </summary>
         public string FoxIDsControlEndpoint { get; set; }
+
+        /// <summary>
+        /// Optionally only use HTTP in development environment and not HTTPS.
+        /// </summary>
+        public bool UseHttp { get; set; }
 
         /// <summary>
         /// File data configuration.

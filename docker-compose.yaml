@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  foxids:
+    image: ${DOCKER_REGISTRY-}foxids
+    build:
+      context: .
+      dockerfile: src/FoxIDs/Dockerfile
+    environment:
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=Redis 
+      - Settings:Options:DataCache=Default
+      - Settings:MongoDb:ConnectionString=mongodb://mongodb:27017
+      - Settings:RedisCache:ConnectionString=redis:6379
+    depends_on: 
+      - mongodb
+      - redis
+  foxids-control:
+    image: ${DOCKER_REGISTRY-}foxids-control
+    build:
+      context: .
+      dockerfile: src/FoxIDs.Control/Dockerfile
+    environment:
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=Redis
+      - Settings:Options:DataCache=Default
+      - Settings:MongoDb:ConnectionString=mongodb://mongodb:27017
+      - Settings:RedisCache:ConnectionString=redis:6379
+    depends_on: 
+      - foxids
+      - mongodb
+      - redis
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - foxids-data:/data/db
+  redis:
+    image: "redis:latest" 
+volumes:
+    foxids-data:

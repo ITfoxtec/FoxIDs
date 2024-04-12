@@ -80,7 +80,7 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "default-src 'self';";
                     yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
 
-                    var cspImgSrc = CspImgSrc();
+                    var cspImgSrc = CspImgSrc(httpContext);
                     if (!cspImgSrc.IsNullOrEmpty())
                     {
                         yield return cspImgSrc;
@@ -91,12 +91,12 @@ namespace FoxIDs.Infrastructure.Filters
 
                     yield return "base-uri 'self';";
 
-                    var cspFormAction = CspFormAction();
+                    var cspFormAction = CspFormAction(httpContext);
                     if (!cspFormAction.IsNullOrEmpty())
                     {
                         yield return cspFormAction;
                     }
-                    var cspFrameSrc = CspFrameSrc();
+                    var cspFrameSrc = CspFrameSrc(httpContext);
                     if (!cspFrameSrc.IsNullOrEmpty())
                     {
                         yield return cspFrameSrc;
@@ -104,7 +104,7 @@ namespace FoxIDs.Infrastructure.Filters
 
                     yield return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
 
-                    yield return CspFrameAncestors();
+                    yield return CspFrameAncestors(httpContext);
                 }
 
                 if (!env.IsDevelopment())
@@ -124,22 +124,22 @@ namespace FoxIDs.Infrastructure.Filters
                 return string.Empty;
             }
 
-            protected virtual string CspImgSrc()
+            protected virtual string CspImgSrc(HttpContext httpContext)
             {
                 return "img-src 'self' data: 'unsafe-inline';";
             }
 
-            protected virtual string CspFormAction()
+            protected virtual string CspFormAction(HttpContext httpContext)
             {
                 return string.Empty;
             }
 
-            protected virtual string CspFrameSrc()
+            protected virtual string CspFrameSrc(HttpContext httpContext)
             {
                 return string.Empty;
             }            
 
-            protected virtual string CspFrameAncestors()
+            protected virtual string CspFrameAncestors(HttpContext httpContext)
             {
                 return "frame-ancestors 'none';";
             }

@@ -8,6 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}"
 	ProjectSection(SolutionItems) = preProject
 		azuredeploy.json = azuredeploy.json
+		deployment.yaml = deployment.yaml
+		docker-compose.yaml = docker-compose.yaml
+		docker-compose.dev-http.yaml = docker-compose.dev-http.yaml
+		docker-compose.dev-https.yaml = docker-compose.dev-https.yaml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

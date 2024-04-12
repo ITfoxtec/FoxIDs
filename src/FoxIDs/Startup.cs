@@ -39,7 +39,7 @@ namespace FoxIDs
                 .AddNewtonsoftJson(options => { options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; }); 
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, Settings settings)
         {
             app.UseExceptionHandler($"/{Constants.Routes.ErrorController}/{Constants.Routes.DefaultAction}");
 
@@ -48,7 +48,11 @@ namespace FoxIDs
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!CurrentEnvironment.IsDevelopment() || !settings.UseHttp)
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyMiddleware();
 

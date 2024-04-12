@@ -46,7 +46,7 @@ namespace FoxIDs
                 .AddFoxIDsApiExplorer();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, Settings settings)
         {
             if (CurrentEnvironment.IsDevelopment())
             {
@@ -55,6 +55,11 @@ namespace FoxIDs
             else
             {
                 app.UseHsts();
+            }
+
+            if (!CurrentEnvironment.IsDevelopment() || !settings.UseHttp)
+            {
+                app.UseHttpsRedirection();
             }
 
             app.UseProxyClientIpMiddleware();

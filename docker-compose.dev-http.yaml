@@ -5,6 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  
       - ASPNETCORE_URLS=http://+    
+      - Settings:UseHttp=true
       - Settings:FoxIDsEndpoint=http://localhost:8800    
     ports:
       - 8800:80
@@ -12,6 +13,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  
       - ASPNETCORE_URLS=http://+    
+      - Settings:UseHttp=true
       - Settings:FoxIDsEndpoint=http://localhost:8800
       - Settings:FoxIDsBackendEndpoint=http://foxids
       - Settings:FoxIDsControlEndpoint=http://localhost:8801 

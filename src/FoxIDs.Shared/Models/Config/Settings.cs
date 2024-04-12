@@ -16,6 +16,11 @@ namespace FoxIDs.Models.Config
         public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
+        /// Optionally only use HTTP in development environment and not HTTPS.
+        /// </summary>
+        public bool UseHttp { get; set; }
+
+        /// <summary>
         /// File data configuration.
         /// </summary>
         [ValidateComplexType]

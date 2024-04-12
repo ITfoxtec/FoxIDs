@@ -7,17 +7,20 @@ using System.Net;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsApiExceptionMiddleware 
     {
         private readonly RequestDelegate next;
+        private readonly Settings settings;
         private readonly IWebHostEnvironment environment;
 
-        public FoxIDsApiExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment)
+        public FoxIDsApiExceptionMiddleware(RequestDelegate next, Settings settings, IWebHostEnvironment environment)
         {
             this.next = next;
+            this.settings = settings;
             this.environment = environment;
         }
 
@@ -67,7 +70,7 @@ namespace FoxIDs.Infrastructure.Hosting
         private void LogError(TelemetryScopedLogger scopedLogger, Exception ex)
         {
             scopedLogger.Error(ex);
-            if (environment.IsDevelopment())
+            if (environment.IsDevelopment() && settings.Options.Log == LogOptions.ApplicationInsights)
             {
                 Console.WriteLine(ex.ToString());
             }

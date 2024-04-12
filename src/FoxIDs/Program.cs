@@ -38,18 +38,22 @@ namespace FoxIDs
                     if (string.IsNullOrWhiteSpace(logOption) || logOption.Equals(LogOptions.ApplicationInsights.ToString(), StringComparison.Ordinal))
                     {
                         var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
-                        if (string.IsNullOrWhiteSpace(connectionString))
+                        if (!string.IsNullOrWhiteSpace(connectionString))
                         {
+                            // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
+                            if (!context.HostingEnvironment.IsDevelopment())
+                            {
+                                logging.ClearProviders();
+                            }
+
+                            logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
                             return;
                         }
-
-                        // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
-                        if (!context.HostingEnvironment.IsDevelopment())
-                        {
-                            logging.ClearProviders();
-                        }
-
-                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
+                    }
+                    else
+                    {
+                        // When not using ApplicationInsights logging, remove other loggers like console, debug, event source etc.
+                        logging.ClearProviders();
                     }
                 });
     }

@@ -33,9 +33,15 @@ namespace FoxIDs.Repository
 
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
-            _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
-            InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlTenantsCollectionName);
-            _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+            if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
+            {
+                _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
+                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlTenantsCollectionName);
+            }
+            if (settings.Options.Cache == CacheOptions.MongoDb)
+            {
+                _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+            }
         }
 
         private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument

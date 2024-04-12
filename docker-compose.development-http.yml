@@ -4,7 +4,7 @@ services:
   foxids:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  
-      - ASPNETCORE_URLS=http://+    
+      - ASPNETCORE_URLS=http://+
       - Settings:UseHttp=true
       - Settings:FoxIDsEndpoint=http://localhost:8800    
     ports:
@@ -12,7 +12,7 @@ services:
   foxids-control:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  
-      - ASPNETCORE_URLS=http://+    
+      - ASPNETCORE_URLS=http://+
       - Settings:UseHttp=true
       - Settings:FoxIDsEndpoint=http://localhost:8800
       - Settings:FoxIDsBackendEndpoint=http://foxids

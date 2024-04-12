@@ -4,7 +4,8 @@ services:
   foxids:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+;http://+    
+      - ASPNETCORE_URLS=https://+;http://+
+      - https_port=44330
       - Settings:FoxIDsEndpoint=https://localhost:44330
     ports:
       - 8800:80
@@ -15,7 +16,8 @@ services:
   foxids-control:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+;http://+    
+      - ASPNETCORE_URLS=https://+;http://+
+      - https_port=44331
       - Settings:FoxIDsEndpoint=https://localhost:44330
       - Settings:FoxIDsBackendEndpoint=https://foxids
       - Settings:FoxIDsControlEndpoint=https://localhost:44331

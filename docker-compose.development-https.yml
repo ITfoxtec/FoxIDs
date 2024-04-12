@@ -27,6 +27,9 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  mongodb:
-    ports:
-      - 27018:27017
+  # mongodb:
+  #   ports:
+  #     - 27017:27017
+  # redis:
+  #   ports:
+  #     - 6379:6379

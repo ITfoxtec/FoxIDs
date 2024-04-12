@@ -7,7 +7,6 @@ using System.Net;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
 
 namespace FoxIDs.Infrastructure.Hosting
 {

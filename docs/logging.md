@@ -2,10 +2,12 @@
 
 FoxIDs default log errors and events including the time and the client IP address. 
 
-The two support log options `Settings:Options:Log` is:
+The two supported log options `Settings:Options:Log` is:
 
-- `Stdout` which logs to the console output. This log options is used for Deploy / Kubernetes deployment.
+- `Stdout` which logs to the console output. This log options are used for Deploy / Kubernetes (k8s) deployment.
 - `ApplicationInsights` which sends logs to [Application Insights](#application-insights) and the logs can subsequently be view in FoxIDs Control.
+
+The [log settings](#log-settings) and [log stream](#log-stream) are available for both log options.
 
 ## Application Insights
 
@@ -29,7 +31,7 @@ Logs can be searched in [FoxIDs Control Client and API](control.md).
 
 ![Search logs](images/search-logs.png)
 
-### Log settings
+## Log settings
 
 The log level can be configured per FoxIDs environment:
 
@@ -40,7 +42,7 @@ The log level can be configured per FoxIDs environment:
 
 ![Log settings](images/configure-log.png)
 
-### Log stream
+## Log stream
 
 It can be configured which logs should be logged to an external repository with a log stream.
 

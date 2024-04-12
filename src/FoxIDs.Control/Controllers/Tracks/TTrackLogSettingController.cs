@@ -6,11 +6,9 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models.Config;
-using System;
 
 namespace FoxIDs.Controllers
 {
@@ -41,11 +39,6 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogSettings>> GetTrackLogSetting()
         {
-            if (settings.Options.Log != LogOptions.ApplicationInsights)
-            {
-                throw new Exception("ApplicationInsights option not enabled.");
-            }
-
             try
             {
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
@@ -78,11 +71,6 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogSettings>> PostTrackLogSetting([FromBody] Api.LogSettings logSettings)
         {
-            if (settings.Options.Log != LogOptions.ApplicationInsights)
-            {
-                throw new Exception("ApplicationInsights option not enabled.");
-            }
-
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(logSettings)) return BadRequest(ModelState);

@@ -20,7 +20,6 @@
 
 	<PropertyGroup>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-		<UserSecretsId>e675a4a7-24fe-4cc7-8e89-54faad64de60</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

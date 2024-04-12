@@ -3,21 +3,31 @@
 
 <div class="pb-2">
     <div class="info-text pt-0">
-        Search the <DocsLink Page="logging">logs</DocsLink> and change what should be logged in the environment.
+        @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+        {
+            <div>Search the <DocsLink Page="logging">logs</DocsLink> and change what should be logged in the environment.</div>
+        }
+        else
+        {
+            <div><DocsLink Page="logging">Logs</DocsLink> are written to the console output (stdout). You can change what should be logged in the environment.</div>
+        }
     </div>
 </div>
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link" href="@logUsagesHref">Usages</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@logsHref">Logs</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active">Settings</a>
-    </li>
-</ul>
+@if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+{
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="@logUsagesHref">Usages</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@logsHref">Logs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active">Settings</a>
+        </li>
+    </ul>
+}
 
 <div class="tab-content pt-4">
     <div class="card">
@@ -27,7 +37,10 @@
 
                 <div>
                     <p>FoxIDs default log warnings, errors, critical errors and events to the log store. The trace level and metric are configurable.</p>
-                    <p>Logs are saved for 180 days (6 month) and thereafter deleted.</p>
+                    @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+                    {
+                        <p>Logs are saved for 180 days (6 month) and thereafter deleted.</p>
+                    }
                 </div>
 
                 @if (generalLogSettings.Edit && !generalLogSettings.Error.IsNullOrWhiteSpace())

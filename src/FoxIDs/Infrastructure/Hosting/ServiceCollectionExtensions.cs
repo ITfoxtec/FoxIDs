@@ -152,17 +152,14 @@ namespace FoxIDs.Infrastructure.Hosting
                 var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
                 services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
 
-                if (!environment.IsDevelopment())
-                {
-                    services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
+                services.AddDataProtection()
+                    .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
 
-                    services.AddStackExchangeRedisCache(options =>
-                    {
-                        options.Configuration = settings.RedisCache.ConnectionString;
-                        options.InstanceName = "cache";
-                    });
-                }
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = settings.RedisCache.ConnectionString;
+                    options.InstanceName = "cache";
+                });
             }
 
             return services;

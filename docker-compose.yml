@@ -34,7 +34,11 @@ services:
     image: mongo:latest
     volumes:
       - foxids-data:/data/db
+      #- foxids-data-config:/data/configdb"
   redis:
     image: "redis:latest" 
 volumes:
     foxids-data:
+        external: true
+    #foxids-data-config:
+    #    external: true

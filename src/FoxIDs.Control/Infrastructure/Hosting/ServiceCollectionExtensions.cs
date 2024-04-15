@@ -84,9 +84,9 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsControlSettings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsControlSettings settings, IWebHostEnvironment environment)
         {
-            services.AddSharedInfrastructure(settings, env);
+            services.AddSharedInfrastructure(settings, environment);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
@@ -95,7 +95,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                if (!env.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     services.AddSingleton<TokenCredential, DefaultAzureCredential>();
                 }

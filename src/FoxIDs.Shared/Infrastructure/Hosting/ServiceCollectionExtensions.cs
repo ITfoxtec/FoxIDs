@@ -1,4 +1,5 @@
-﻿using FoxIDs.Logic;
+﻿using FoxIDs.Infrastructure.Logging;
+using FoxIDs.Logic;
 using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
@@ -112,7 +113,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment environment)
         {
             IdentityModelEventSource.ShowPII = true;
 
@@ -124,6 +125,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddCors();
 
+            services.AddSingleton<StdoutTelemetryLogger>();
             services.AddSingleton<TelemetryLogger>();
             services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
@@ -135,7 +137,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 options.MaxResponseContentBufferSize = 500000; // 500kB 
                 options.Timeout = TimeSpan.FromSeconds(30);
             });
-            if (env.IsDevelopment()) {
+            if (environment.IsDevelopment()) {
                 httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() =>
                     new HttpClientHandler { ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true }
                 );

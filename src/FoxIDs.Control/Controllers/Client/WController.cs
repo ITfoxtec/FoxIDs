@@ -12,9 +12,9 @@ namespace FoxIDs.Controllers.Client
         private static string indexFile;
         private readonly IWebHostEnvironment currentEnvironment;
 
-        public WController(IWebHostEnvironment env)
+        public WController(IWebHostEnvironment environment)
         {
-            currentEnvironment = env;
+            currentEnvironment = environment;
         }
 
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]

@@ -121,9 +121,9 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment environment)
         {
-            services.AddSharedInfrastructure(settings, env);
+            services.AddSharedInfrastructure(settings, environment);
 
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
@@ -134,7 +134,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                if (!env.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     services.AddSingleton<TokenCredential, DefaultAzureCredential>();
                 }
@@ -152,7 +152,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
                 services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
 
-                if (!env.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     services.AddDataProtection()
                         .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");

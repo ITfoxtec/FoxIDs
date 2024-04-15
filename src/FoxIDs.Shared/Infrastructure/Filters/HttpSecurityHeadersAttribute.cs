@@ -22,12 +22,12 @@ namespace FoxIDs.Infrastructure.Filters
         {
             protected bool isHtmlContent;
             private readonly TelemetryScopedLogger logger;
-            private readonly IWebHostEnvironment env;
+            private readonly IWebHostEnvironment environment;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment env)
+            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment environment)
             {
                 this.logger = logger;
-                this.env = env;
+                this.environment = environment;
             }
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -107,7 +107,7 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return CspFrameAncestors(httpContext);
                 }
 
-                if (!env.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     yield return "upgrade-insecure-requests;";
                 }
@@ -116,7 +116,7 @@ namespace FoxIDs.Infrastructure.Filters
             private string GetConnectSrc(HttpContext httpContext)
             {
 #if DEBUG
-                if (env.IsDevelopment())
+                if (environment.IsDevelopment())
                 {
                     return $" *";
                 }

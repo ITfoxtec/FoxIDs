@@ -13,10 +13,10 @@ namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
-            CurrentEnvironment = env;
+            CurrentEnvironment = environment;
         }
 
         private IConfiguration Configuration { get; }

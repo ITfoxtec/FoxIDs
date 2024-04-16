@@ -18,6 +18,9 @@ jobs:
         uses: KageKirin/get-csproj-version@v0
         with:
           file: src/FoxIDs/FoxIDs.csproj      
+      - 
+        name: Echo version
+        run: Version is ${{ steps.package_version.version }}
       -
         name: Docker meta
         id: meta-f
@@ -25,7 +28,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
           tags: |            
-            type=raw,value={{steps.package_version.version}}
+            type=raw,value=${{ steps.package_version.version }},enable=true
             type=raw,value=latest,enable=true
       -
         name: Docker meta
@@ -34,7 +37,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
           tags: |     
-            type=raw,value={{steps.package_version.version}}
+            type=raw,value=${{ steps.package_version.version }},enable=true
             type=raw,value=latest,enable=true
       -
         name: Login to Docker Hub

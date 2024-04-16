@@ -15,7 +15,6 @@ jobs:
       - 
         name: Get version
         id: package_version
-        regex: 
         uses: KageKirin/get-csproj-version@v0
         with:
           file: src/FoxIDs/FoxIDs.csproj      

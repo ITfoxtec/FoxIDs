@@ -1,5 +1,5 @@
 # Update
-FoxIDs is updated by updating the two test slots of the App Services FoxIDs and FoxIDs Control. Updates is picked up from the [master branch](https://github.com/ITfoxtec/FoxIDs) in GitHub with Kudu.
+FoxIDs is updated by updating the two test slots of the App Services FoxIDs and FoxIDs Control. Updates is picked up from the [main branch](https://github.com/ITfoxtec/FoxIDs) in GitHub with Kudu.
 
 1. Open the [Azure portal](https://portal.azure.com/) and navigate to the FoxIDs resource group.
 2. First navigate to the FoxIDs App Services test slots `foxidsxxxxxxxx/test`. 

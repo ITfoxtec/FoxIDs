@@ -35,7 +35,7 @@ Deploy FoxIDs in your Azure tenant. FoxIDs is deployed in a resource group e.g.,
 The Azure deployment include:
 
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
-- FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. [Updates](https://www.foxids.com/docs/update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
+- FoxIDs is deployed to the two App Services test slots from the `main` branch with Kudu. [Updates](https://www.foxids.com/docs/update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
 - Cosmos DB. Contain all data including tenants, tracks and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
 - Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.

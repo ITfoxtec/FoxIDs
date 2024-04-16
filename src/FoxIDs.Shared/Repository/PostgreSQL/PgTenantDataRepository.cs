@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Wololo.PgKeyValueDB;
 
@@ -172,6 +173,11 @@ namespace FoxIDs.Repository
                 }
                 return deleteItems.Count();
             }
+        }
+
+        public async Task RemoveAllExpired(CancellationToken stoppingToken)
+        {
+            _ = await db.RemoveAllExpiredAsync();
         }
     }
 }

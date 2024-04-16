@@ -76,9 +76,14 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedRepository(settings);
 
-            if (settings.Options.DataStorage == DataStorageOptions.File)
+            switch (settings.Options.DataStorage)
             {
-                services.AddHostedService<BackgroundFileDataService>();                
+                case DataStorageOptions.File:
+                    services.AddHostedService<BackgroundFileDataService>();
+                    break;
+                case DataStorageOptions.PostgreSql:
+                    services.AddHostedService<BackgroundPgDataService>();
+                    break;
             }
 
             return services;

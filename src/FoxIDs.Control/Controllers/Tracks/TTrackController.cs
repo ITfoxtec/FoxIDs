@@ -6,35 +6,38 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity.Util;
+using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TTrackController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -51,12 +54,12 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Track).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Track).Name, name);
@@ -84,7 +87,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (plan.Tracks.IsLimited)
                     {
-                        var count = await tenantRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
+                        var count = await tenantDataRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
                         // included + master track
                         if (count > plan.Tracks.Included) 
                         {
@@ -99,9 +102,9 @@ namespace FoxIDs.Controllers
 
                 return Created(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Track).Name}' by name '{track.Name}'.");
                     return Conflict(typeof(Api.Track).Name, track.Name, nameof(track.Name));
@@ -112,12 +115,17 @@ namespace FoxIDs.Controllers
 
         private async Task<TrackKeyTypes> GetKeyTypeAsync()
         {
+            if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault)
+            {
+                return TrackKeyTypes.Contained;
+            }
+
             Plan plan = null;
             if (!RouteBinding.PlanName.IsNullOrEmpty())
             {            
                 plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);                
             }
-            return plan.GetKeyType();
+            return plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault);
         }
 
         /// <summary>
@@ -135,7 +143,7 @@ namespace FoxIDs.Controllers
                 track.Name = await GetTrackNameAsync(track.Name);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 mTrack.DisplayName = track.DisplayName;
                 mTrack.SequenceLifetime = track.SequenceLifetime;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;
@@ -145,15 +153,15 @@ namespace FoxIDs.Controllers
                 mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
                 mTrack.AllowIframeOnDomains = track.AllowIframeOnDomains;
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Track).Name}' by name '{track.Name}'.");
                     return NotFound(typeof(Api.Track).Name, track.Name, nameof(track.Name));
@@ -176,23 +184,23 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
-                await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                await tenantRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
+                await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                await tenantDataRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
 
-                if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
+                if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                 {
-                    await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                    await serviceProvider.GetService<ExternalKeyLogic>().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                 }
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Track).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Track).Name, name);
@@ -208,7 +216,7 @@ namespace FoxIDs.Controllers
                 name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
                 if (count < 3)
                 {
-                    var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
+                    var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
                     if (mTrack != null)
                     {
                         count++;

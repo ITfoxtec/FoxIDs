@@ -6,12 +6,13 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using ITfoxtec.Identity;
+using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 
 namespace FoxIDs.Controllers
@@ -20,25 +21,27 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class TTenantController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
-        private readonly IMasterRepository masterRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
+        private readonly IMasterDataRepository masterDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
-            this.masterRepository = masterRepository;
+            this.tenantDataRepository = tenantDataRepository;
+            this.masterDataRepository = masterDataRepository;
             this.masterTenantLogic = masterTenantLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -55,12 +58,12 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MTenant = await tenantRepository.GetTenantByNameAsync(name);
+                var MTenant = await tenantDataRepository.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Tenant).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Tenant).Name, name);
@@ -96,7 +99,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
-                await tenantRepository.CreateAsync(mTenant);
+                await tenantDataRepository.CreateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
                 if (!string.IsNullOrEmpty(tenant.CustomDomain))
@@ -104,14 +107,14 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType());
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType());
-                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType());
+                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
+                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -128,9 +131,9 @@ namespace FoxIDs.Controllers
                 ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
                 return BadRequest(ModelState, aex);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
                     return Conflict(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
@@ -171,7 +174,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
                 tenant.Name = tenant.Name.ToLower();
 
-                var mTenant = await tenantRepository.GetTenantByNameAsync(tenant.Name);
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(tenant.Name);
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
@@ -189,7 +192,7 @@ namespace FoxIDs.Controllers
                 }
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
-                await tenantRepository.UpdateAsync(mTenant);
+                await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
@@ -199,9 +202,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
@@ -219,12 +222,12 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
+                var plan = await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
                 return (true, plan);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     var errorMessage = $"Plan '{planName}' not found and can not be connected to tenant '{tenantName}'.";
                     logger.Warning(ex, errorMessage);
@@ -256,20 +259,21 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = name, TrackName = mTrack.Name };
-                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                    await tenantRepository.DeleteAsync<Track>(mTrack.Id);
+                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
-                    if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
+                    if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
-                        await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                        await serviceProvider.GetService<ExternalKeyLogic>().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
-                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(name));
+                await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(name);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
@@ -279,9 +283,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Tenant).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Tenant).Name, name);

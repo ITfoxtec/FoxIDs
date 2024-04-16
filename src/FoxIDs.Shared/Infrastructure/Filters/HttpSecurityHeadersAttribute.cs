@@ -22,12 +22,12 @@ namespace FoxIDs.Infrastructure.Filters
         {
             protected bool isHtmlContent;
             private readonly TelemetryScopedLogger logger;
-            private readonly IWebHostEnvironment env;
+            private readonly IWebHostEnvironment environment;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment env)
+            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment environment)
             {
                 this.logger = logger;
-                this.env = env;
+                this.environment = environment;
             }
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -80,7 +80,7 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "default-src 'self';";
                     yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
 
-                    var cspImgSrc = CspImgSrc();
+                    var cspImgSrc = CspImgSrc(httpContext);
                     if (!cspImgSrc.IsNullOrEmpty())
                     {
                         yield return cspImgSrc;
@@ -91,12 +91,12 @@ namespace FoxIDs.Infrastructure.Filters
 
                     yield return "base-uri 'self';";
 
-                    var cspFormAction = CspFormAction();
+                    var cspFormAction = CspFormAction(httpContext);
                     if (!cspFormAction.IsNullOrEmpty())
                     {
                         yield return cspFormAction;
                     }
-                    var cspFrameSrc = CspFrameSrc();
+                    var cspFrameSrc = CspFrameSrc(httpContext);
                     if (!cspFrameSrc.IsNullOrEmpty())
                     {
                         yield return cspFrameSrc;
@@ -104,10 +104,10 @@ namespace FoxIDs.Infrastructure.Filters
 
                     yield return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
 
-                    yield return CspFrameAncestors();
+                    yield return CspFrameAncestors(httpContext);
                 }
 
-                if (!env.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     yield return "upgrade-insecure-requests;";
                 }
@@ -116,7 +116,7 @@ namespace FoxIDs.Infrastructure.Filters
             private string GetConnectSrc(HttpContext httpContext)
             {
 #if DEBUG
-                if (env.IsDevelopment())
+                if (environment.IsDevelopment())
                 {
                     return $" *";
                 }
@@ -124,22 +124,22 @@ namespace FoxIDs.Infrastructure.Filters
                 return string.Empty;
             }
 
-            protected virtual string CspImgSrc()
+            protected virtual string CspImgSrc(HttpContext httpContext)
             {
                 return "img-src 'self' data: 'unsafe-inline';";
             }
 
-            protected virtual string CspFormAction()
+            protected virtual string CspFormAction(HttpContext httpContext)
             {
                 return string.Empty;
             }
 
-            protected virtual string CspFrameSrc()
+            protected virtual string CspFrameSrc(HttpContext httpContext)
             {
                 return string.Empty;
             }            
 
-            protected virtual string CspFrameAncestors()
+            protected virtual string CspFrameAncestors(HttpContext httpContext)
             {
                 return "frame-ancestors 'none';";
             }

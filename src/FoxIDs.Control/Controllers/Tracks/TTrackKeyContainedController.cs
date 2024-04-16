@@ -19,14 +19,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackKeyContainedController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackKeyContainedController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -40,7 +40,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName});
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName});
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyTypes.Contained)
@@ -57,9 +57,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKeyItemsContained).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemsContained).Name, RouteBinding.TrackName);
@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyTypes.Contained)
@@ -137,15 +137,15 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKeyItemContainedRequest).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContainedRequest).Name, RouteBinding.TrackName);
@@ -164,7 +164,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyTypes.Contained)
@@ -182,16 +182,16 @@ namespace FoxIDs.Controllers
                 if (mTrack.Key.Keys.Count > 1)
                 {
                     mTrack.Key.Keys.RemoveAt(1);
-                    await tenantRepository.UpdateAsync(mTrack);
+                    await tenantDataRepository.UpdateAsync(mTrack);
 
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackKeyItemContained).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContained).Name, RouteBinding.TrackName);

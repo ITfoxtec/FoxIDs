@@ -14,13 +14,13 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public CorsPolicyProvider(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository)
+        public CorsPolicyProvider(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository)
         {
             this.settings = settings;
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task<CorsPolicy> GetPolicyAsync(HttpContext context, string policyName)
@@ -31,7 +31,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 var routeBinding = context.GetRouteBinding();
                 if (routeBinding != null && routeBinding.DownParty != null && (routeBinding.DownParty.Type == PartyTypes.OAuth2 || routeBinding.DownParty.Type == PartyTypes.Oidc))
                 {
-                    var party = await tenantRepository.GetAsync<OAuthDownParty>(routeBinding.DownParty.Id);
+                    var party = await tenantDataRepository.GetAsync<OAuthDownParty>(routeBinding.DownParty.Id);
                     if (party?.AllowCorsOrigins != null && party.AllowCorsOrigins.Count() > 0)
                     {
                         logger.ScopeTrace(() => $"Get CORS policy for origin '{origin}'.");

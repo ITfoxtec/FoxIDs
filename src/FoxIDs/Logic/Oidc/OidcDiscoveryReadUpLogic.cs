@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
@@ -12,16 +13,16 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IDistributedCacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ICacheProvider cacheProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
         }
 
@@ -53,7 +54,7 @@ namespace FoxIDs.Logic
             if (failingUpdateCount >= settings.UpPartyMaxFailingUpdate)
             {
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
-                await tenantRepository.SaveAsync(party);
+                await tenantDataRepository.SaveAsync(party);
                 await cacheProvider.DeleteAsync(FailingUpdateCountKey(party.Id));
                 return;
             }
@@ -69,7 +70,7 @@ namespace FoxIDs.Logic
                     throw new EndpointException("Failed to read OIDC discovery.", ex) { RouteBinding = RouteBinding };
                 }
 
-                await tenantRepository.SaveAsync(party);
+                await tenantDataRepository.SaveAsync(party);
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' updated by OIDC discovery.", triggerEvent: true);
 
                 await cacheProvider.DeleteAsync(FailingUpdateCountKey(party.Id));

@@ -13,14 +13,15 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
+using StackExchange.Redis;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services)
+        public static IServiceCollection AddLogic(this IServiceCollection services, Settings settings)
         {
-            services.AddSharedLogic();
+            services.AddSharedLogic(settings);
 
             services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
@@ -110,9 +111,9 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services)
+        public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
         {
-            services.AddSharedRepository();
+            services.AddSharedRepository(settings);
 
             services.AddTransient(typeof(TrackCookieRepository<>));
             services.AddTransient(typeof(UpPartyCookieRepository<>));
@@ -120,9 +121,9 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment environment)
         {
-            (_, var connectionMultiplexer) = services.AddSharedInfrastructure(settings);
+            services.AddSharedInfrastructure(settings, environment);
 
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
@@ -131,24 +132,31 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
-            if (!env.IsDevelopment())
+            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
-            }
-            else
-            {
-                services.AddSingleton<TokenCredential>(serviceProvider =>
+                if (!environment.IsDevelopment())
                 {
-                    return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
-                });
+                    services.AddSingleton<TokenCredential, DefaultAzureCredential>();
+                }
+                else
+                {
+                    services.AddSingleton<TokenCredential>(serviceProvider =>
+                    {
+                        return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
+                    });
+                }
             }
 
-            if (!env.IsDevelopment())
+            if (settings.Options.Cache == CacheOptions.Redis)
             {
+                var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
+                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
                 services.AddDataProtection()
                     .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
 
-                services.AddStackExchangeRedisCache(options => {
+                services.AddStackExchangeRedisCache(options =>
+                {
                     options.Configuration = settings.RedisCache.ConnectionString;
                     options.InstanceName = "cache";
                 });

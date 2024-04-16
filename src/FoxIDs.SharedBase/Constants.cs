@@ -123,10 +123,15 @@ namespace FoxIDs
             public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
+            public const int ListPageSize = 50;
+
             public static class DataType
             {
+                public const string Master = "master";
+
                 public const string Tenant = "tenant";
                 public const string Track = "track";
+                public const string Party = "party";
                 public const string UpParty = "party:up";
                 public const string DownParty = "party:down";
                 public const string User = "user";
@@ -136,6 +141,9 @@ namespace FoxIDs
                 public const string RefreshTokenGrant = "rtgrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
+
+                // data type used for cache
+                public const string Cache = "cache";
             }
 
             public static class Master
@@ -383,6 +391,7 @@ namespace FoxIDs
                 public static class Grant
                 {
                     public const int IdLength = 220;
+                    public const string IdRegExPattern = @"^[\w:\-_]*$";
                     public const int ClaimsMin = 1;
                     public const int ClaimsMax = 1000;
                 }

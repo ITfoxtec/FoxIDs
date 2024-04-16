@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
@@ -19,21 +20,21 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
-        private readonly IDistributedCacheProvider cacheProvider;
+        private readonly ICacheProvider cacheProvider;
         private readonly IStringLocalizer localizer;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.cacheProvider = cacheProvider;
             this.localizer = localizer;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
@@ -89,7 +90,7 @@ namespace FoxIDs.Logic
 
         private async Task<ConfirmationCodeSendStatus> SendEmailCodeAsync(Func<string, EmailContent> emailContent, string redisKeyElement, string email, bool forceNewCode, string logText)
         {
-            var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
+            var key = EmailConfirmationCodeCacheKey(redisKeyElement, email);
             if (!forceNewCode && await cacheProvider.ExistsAsync(key))
             {
                 return ConfirmationCodeSendStatus.UseExistingCode;
@@ -123,7 +124,7 @@ namespace FoxIDs.Logic
         {
             var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
+            var key = EmailConfirmationCodeCacheKey(redisKeyElement, email);
             var confirmationCodeValue = await cacheProvider.GetAsync(key);
             if (!confirmationCodeValue.IsNullOrEmpty())
             {
@@ -140,7 +141,7 @@ namespace FoxIDs.Logic
                     if (!user.EmailVerified)
                     {
                         user.EmailVerified = true;
-                        await tenantRepository.SaveAsync(user);
+                        await tenantDataRepository.SaveAsync(user);
                     }
                     if (onSuccess != null)
                     {
@@ -187,7 +188,7 @@ namespace FoxIDs.Logic
             return displayName;
         }
 
-        private string EmailConfirmationCodeRadisKey(string keyElement, string email)
+        private string EmailConfirmationCodeCacheKey(string keyElement, string email)
         {
             return $"{keyElement}_{RouteBinding.TenantNameDotTrackName}_{email}";
         }      

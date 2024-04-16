@@ -11,10 +11,10 @@ namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
-            CurrentEnvironment = env;
+            CurrentEnvironment = environment;
         }
 
         private IConfiguration Configuration { get; }
@@ -29,17 +29,16 @@ namespace FoxIDs
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
             
-
             services.AddInfrastructure(settings, CurrentEnvironment);
-            services.AddRepository();
-            services.AddLogic();
+            services.AddRepository(settings);
+            services.AddLogic(settings);
 
             services.AddControllersWithViews()
                 .AddMvcLocalization()
                 .AddNewtonsoftJson(options => { options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; }); 
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, Settings settings)
         {
             app.UseExceptionHandler($"/{Constants.Routes.ErrorController}/{Constants.Routes.DefaultAction}");
 
@@ -48,7 +47,11 @@ namespace FoxIDs
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!CurrentEnvironment.IsDevelopment() || !settings.UseHttp)
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyMiddleware();
 

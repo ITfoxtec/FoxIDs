@@ -23,25 +23,25 @@ namespace FoxIDs.Models.Config
         /// Persistent session max unlimited lifetime in years.
         /// </summary>
         [Required]
-        public int PersistentSessionMaxUnlimitedLifetimeYears { get; set; }
+        public int PersistentSessionMaxUnlimitedLifetimeYears { get; set; } = 30; // years
 
         /// <summary>
         /// CORS preflight max age in seconds.
         /// </summary>
         [Required]
-        public int CorsPreflightMaxAge { get; set; }
+        public int CorsPreflightMaxAge { get; set; } = 300; // 5 minutes
 
         /// <summary>
         /// Add time before where the SAML 2.0 token is valid in seconds.
         /// </summary>
         [Required]
-        public int SamlTokenAddNotBeforeTime { get; set; }
+        public int SamlTokenAddNotBeforeTime { get; set; } = 30; // 30 seconds
 
         /// <summary>
         /// Account action sequence lifetime in seconds.
         /// </summary>
         [Required]
-        public int AccountActionSequenceLifetime { get; set; }
+        public int AccountActionSequenceLifetime { get; set; } = 7776000; // 90 days,
 
         /// <summary>
         /// Key sequence lifetime in seconds. Default 30 seconds.
@@ -53,25 +53,25 @@ namespace FoxIDs.Models.Config
         /// Add a grace period to the sequence lifetime. Used in down and down link sequence data and external sequence ID to achieve graceful error handling. Default 2 hours.
         /// </summary>
         [Required]
-        public int SequenceGracePeriod { get; set; } = 7200; 
+        public int SequenceGracePeriod { get; set; } = 7200;
 
         /// <summary>
         /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]
-        public int ConfirmationCodeLifetime { get; set; }
+        public int ConfirmationCodeLifetime { get; set; } = 7200; // 2 hours
 
         /// <summary>
         /// Authentication method update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.
         /// </summary>
         [Required]
-        public int UpPartyUpdateWaitPeriod { get; set; }
+        public int UpPartyUpdateWaitPeriod { get; set; } = 900; // 15 minutes
 
         /// <summary>
         /// Authentication method max failing update with OIDC Discovery or SAML 2.0 Metadata before automatic update is stopped.
         /// </summary>
         [Required]
-        public int UpPartyMaxFailingUpdate { get; set; }
+        public int UpPartyMaxFailingUpdate { get; set; } = 8;
 
         /// <summary>
         /// The max number of authentication methods in the HRD cookie.

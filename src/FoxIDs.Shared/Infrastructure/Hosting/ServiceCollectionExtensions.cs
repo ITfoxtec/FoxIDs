@@ -1,10 +1,17 @@
-﻿using FoxIDs.Logic;
+﻿using FoxIDs.Infrastructure.Logging;
+using FoxIDs.Logic;
+using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
-using StackExchange.Redis;
+using MongoDB.Driver;
 using System;
 using System.Net.Http;
 
@@ -12,16 +19,49 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSharedLogic(this IServiceCollection services)
+        public static IServiceCollection AddSharedLogic(this IServiceCollection services, Settings settings)
         {
             services.AddTransient<PlanUsageLogic>();
 
-            services.AddTransient<ExternalSecretLogic>();
-            services.AddTransient<ExternalKeyLogic>();
+            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+            {
+                services.AddTransient<ExternalSecretLogic>();
+                services.AddTransient<ExternalKeyLogic>();
+            }
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
-            services.AddTransient<IDistributedCacheProvider, RedisCacheProvider>();
+            switch (settings.Options.Cache)
+            {
+                case CacheOptions.Memory:
+                    services.AddSingleton<IMemoryCache, MemoryCache>();
+                    services.AddTransient<ICacheProvider, MemoryCacheProvider>();
+                    break;
+                case CacheOptions.File:
+                    services.AddTransient<ICacheProvider, FileCacheProvider>();
+                    break;
+                case CacheOptions.Redis:
+                    services.AddTransient<ICacheProvider, RedisCacheProvider>();
+                    break;
+                case CacheOptions.MongoDb:
+                    services.AddTransient<ICacheProvider, MongoDbCacheProvider>();
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.Cache)} Cache option '{settings.Options.Cache}' not supported.");
+            }
+
+            switch (settings.Options.DataCache)
+            {
+                case DataCacheOptions.None:
+                    services.AddTransient<IDataCacheProvider, InactiveCacheProvider>();
+                    break;
+                case DataCacheOptions.Default:
+                    services.AddTransient<IDataCacheProvider, RedisCacheProvider>();
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.DataCache)} option '{settings.Options.DataCache}' not supported.");
+            }
+
             services.AddTransient<PlanCacheLogic>();
             services.AddTransient<TenantCacheLogic>();
             services.AddTransient<TrackCacheLogic>();
@@ -31,17 +71,49 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddSharedRepository(this IServiceCollection services)
-        {            
-            services.AddSingleton<IRepositoryClient, RepositoryClient>();
-            services.AddSingleton<IRepositoryBulkClient, RepositoryBulkClient>();
-            services.AddSingleton<IMasterRepository, MasterRepository>();
-            services.AddSingleton<ITenantRepository, TenantRepository>();
+        public static IServiceCollection AddSharedRepository(this IServiceCollection services, Settings settings)
+        {
+            if (settings.Options.DataStorage == DataStorageOptions.File || settings.Options.Cache == CacheOptions.File)
+            {
+                services.AddSingleton<FileDataRepository>();
+            }
+
+            if (settings.Options.DataStorage == DataStorageOptions.MongoDb || settings.Options.Cache == CacheOptions.MongoDb)
+            {
+                services.AddSingleton<IMongoClient>(s => new MongoClient(settings.MongoDb.ConnectionString));
+                services.AddSingleton<MongoDbRepositoryClient>();
+            }
+
+            switch (settings.Options.DataStorage)
+            {
+                case DataStorageOptions.File:
+                    services.AddSingleton<IMasterDataRepository, FileMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, FileTenantDataRepository>();
+                    break;
+                case DataStorageOptions.CosmosDb:
+                    services.AddSingleton<ICosmosDbDataRepositoryClient, CosmosDbDataRepositoryClient>();
+                    services.AddSingleton<ICosmosDbDataRepositoryBulkClient, CosmosDbDataRepositoryBulkClient>();
+                    services.AddSingleton<IMasterDataRepository, CosmosDbMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, CosmosDbTenantDataRepository>();
+                    break;
+                case DataStorageOptions.MongoDb:
+                    services.AddSingleton<IMasterDataRepository, MongoDbMasterDataRepository>();
+                    services.AddSingleton<ITenantDataRepository, MongoDbTenantDataRepository>();
+                    break;
+                case DataStorageOptions.PostgreSql:
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Master);
+                    services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Tenant);
+                    services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
+                    break;
+                default:
+                    throw new NotSupportedException($"{nameof(settings.Options.DataStorage)} option '{settings.Options.DataStorage}' not supported.");
+            }
 
             return services;
         }
 
-        public static (IServiceCollection, IConnectionMultiplexer) AddSharedInfrastructure(this IServiceCollection services, Models.Config.Settings settings)
+        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment environment)
         {
             IdentityModelEventSource.ShowPII = true;
 
@@ -53,25 +125,28 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddCors();
 
+            services.AddSingleton<StdoutTelemetryLogger>();
             services.AddSingleton<TelemetryLogger>();
             services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
             services.AddScoped<TelemetryScopedProperties>();
 
             services.AddHttpContextAccessor();
-            services.AddHttpClient(nameof(HttpClient), options => 
+            var httpClientBuilder = services.AddHttpClient(Options.DefaultName, options => 
             { 
                 options.MaxResponseContentBufferSize = 500000; // 500kB 
                 options.Timeout = TimeSpan.FromSeconds(30);
             });
-
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
-            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+            if (environment.IsDevelopment()) {
+                httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() =>
+                    new HttpClientHandler { ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true }
+                );
+            }
 
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
 
-            return (services, connectionMultiplexer);
+            return services;
         }
     }
 }

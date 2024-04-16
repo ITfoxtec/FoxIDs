@@ -17,15 +17,15 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
 
-        public TrackLinkRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
         }
@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);

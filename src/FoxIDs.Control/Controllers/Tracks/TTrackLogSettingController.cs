@@ -6,25 +6,27 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
     public class TTrackLogSettingController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackLogSettingController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackLogSettingController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -39,7 +41,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 if (mTrack.Logging != null && mTrack.Logging.ScopedLogger != null)
                 {
                     return Ok(mapper.Map<Api.LogSettings>(mTrack.Logging.ScopedLogger));
@@ -49,9 +51,9 @@ namespace FoxIDs.Controllers
                     return NoContent();
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)}", RouteBinding.TrackName);
@@ -74,21 +76,21 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(logSettings)) return BadRequest(ModelState);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 if (mTrack.Logging == null)
                 {
                     mTrack.Logging = new Logging();
                 }
                 mTrack.Logging.ScopedLogger = mapper.Map<ScopedLogger>(logSettings);
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.LogSettings>(mTrack.Logging.ScopedLogger));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)}", RouteBinding.TrackName);

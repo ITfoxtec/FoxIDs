@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -11,19 +12,19 @@ namespace FoxIDs.Logic
     public class DownPartyCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IDistributedCacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly IDataCacheProvider cacheProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public DownPartyCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task InvalidateDownPartyCacheAsync(Party.IdKey idKey)
         {
-            var key = RadisDownPartyNameKey(idKey);
+            var key = CacheDownPartyNameKey(idKey);
             await cacheProvider.DeleteAsync(key);
         }
 
@@ -34,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<DownParty> GetDownPartyAsync(Party.IdKey idKey, bool required = true)
         {
-            var key = RadisDownPartyNameKey(idKey);
+            var key = CacheDownPartyNameKey(idKey);
 
             var downPartyAsString = await cacheProvider.GetAsync(key);
             if (!downPartyAsString.IsNullOrEmpty())
@@ -42,7 +43,7 @@ namespace FoxIDs.Logic
                 return downPartyAsString.ToObject<DownParty>();
             }
 
-            var downParty = await tenantRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
+            var downParty = await tenantDataRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
             if (downParty != null)
             {
                 await cacheProvider.SetAsync(key, downParty.ToJson(), settings.Cache.DownPartyLifetime);
@@ -55,7 +56,7 @@ namespace FoxIDs.Logic
             return await GetDownPartyAsync(GetDownPartyIdKey(downPartyName, tenantName, trackName), required);
         }
 
-        private string RadisDownPartyNameKey(Party.IdKey partyIdKey)
+        private string CacheDownPartyNameKey(Party.IdKey partyIdKey)
         {
             return $"downParty_cache_name_{partyIdKey.TenantName}_{partyIdKey.TrackName}_{partyIdKey.PartyName}";
         }

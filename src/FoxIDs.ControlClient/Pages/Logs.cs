@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -25,6 +26,9 @@ namespace FoxIDs.Client.Pages
         private string logSettingsHref;
 
         [Inject]
+        public ClientSettings clientSettings { get; set; }
+
+        [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
@@ -35,6 +39,11 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            if (clientSettings.LogOption != LogOptions.ApplicationInsights)
+            {
+                throw new Exception("ApplicationInsights option not enabled.");
+            }
+
             logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             logSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logsettings";
             await base.OnInitializedAsync();

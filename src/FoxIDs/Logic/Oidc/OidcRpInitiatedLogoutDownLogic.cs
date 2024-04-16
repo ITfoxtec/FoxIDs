@@ -22,17 +22,17 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, End session request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
                 throw new NotSupportedException("Application Client not configured.");

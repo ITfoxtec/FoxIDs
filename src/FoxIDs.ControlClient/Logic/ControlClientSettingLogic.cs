@@ -24,6 +24,8 @@ namespace FoxIDs.Client.Logic
                 clientSettings.FoxIDsEndpoint = controlClientSettings.FoxIDsEndpoint;
                 clientSettings.Version = controlClientSettings.Version;
                 clientSettings.FullVersion = controlClientSettings.FullVersion;
+                clientSettings.LogOption = controlClientSettings.LogOption;
+                clientSettings.KeyStorageOption = controlClientSettings.KeyStorageOption;
             }
         }
     }

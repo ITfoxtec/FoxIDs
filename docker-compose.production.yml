@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  foxids:
+    environment:
+      - ASPNETCORE_URLS=https://+;http://+
+      - Settings:FoxIDsEndpoint=https://localhost:44330
+    ports:
+      - 8800:80
+      - 44330:443
+  foxids-control:
+    environment:
+      - ASPNETCORE_URLS=https://+;http://+
+      - Settings:FoxIDsEndpoint=https://localhost:44330
+      - Settings:FoxIDsBackendEndpoint=https://foxids
+      - Settings:FoxIDsControlEndpoint=https://localhost:44331
+    ports:
+      - 8801:80
+      - 44331:443

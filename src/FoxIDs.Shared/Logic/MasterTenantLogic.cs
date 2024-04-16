@@ -13,15 +13,15 @@ namespace FoxIDs.Logic
 {
     public class MasterTenantLogic : LogicBase
     {
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly BaseAccountLogic accountLogic;
         private readonly TrackLogic trackLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantDataRepository tenantDataRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.accountLogic = accountLogic;
             this.trackLogic = trackLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);
 
-            await tenantRepository.CreateAsync(mLoginUpParty);
+            await tenantDataRepository.CreateAsync(mLoginUpParty);
 
             await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
 
@@ -97,7 +97,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);
 
-            await tenantRepository.CreateAsync(mLoginUpParty);
+            await tenantDataRepository.CreateAsync(mLoginUpParty);
 
             await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
 
@@ -171,7 +171,7 @@ namespace FoxIDs.Logic
                 Scopes = scopes
             };
 
-            await tenantRepository.CreateAsync(mControlApiResourceDownParty);
+            await tenantDataRepository.CreateAsync(mControlApiResourceDownParty);
 
             await downPartyCacheLogic.InvalidateDownPartyCacheAsync(partyIdKey);
         }
@@ -212,7 +212,7 @@ namespace FoxIDs.Logic
                 DisableClientCredentialsGrant = true
             };
             
-            await tenantRepository.CreateAsync(mControlClientDownParty);
+            await tenantDataRepository.CreateAsync(mControlClientDownParty);
 
             await downPartyCacheLogic.InvalidateDownPartyCacheAsync(partyIdKey);
         }

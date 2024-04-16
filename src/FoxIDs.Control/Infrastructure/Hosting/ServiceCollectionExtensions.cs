@@ -8,12 +8,15 @@ using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -23,12 +26,16 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services)
+        public static IServiceCollection AddLogic(this IServiceCollection services, Settings settings)
         {
-            services.AddSharedLogic();
+            services.AddSharedLogic(settings);
 
             services.AddSingleton<EmbeddedResourceLogic>();
 
+            if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
+            {
+                services.AddTransient<CosmosDbSeedLogic>();                
+            } 
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
 
@@ -65,31 +72,45 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services)
+        public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
         {
-            services.AddSharedRepository();
+            services.AddSharedRepository(settings);
+
+            if (settings.Options.DataStorage == DataStorageOptions.File)
+            {
+                services.AddHostedService<BackgroundFileDataService>();                
+            }
 
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsControlSettings settings, IWebHostEnvironment environment)
         {
-            services.AddSharedInfrastructure(settings);
+            services.AddSharedInfrastructure(settings, environment);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
+            services.AddSingleton<BackgroundQueue>();
             services.AddHostedService<BackgroundQueueService>();
 
-            if (!env.IsDevelopment())
+            if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
-                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
-            }
-            else
-            {
-                services.AddSingleton<TokenCredential>(serviceProvider =>
+                if (!environment.IsDevelopment())
                 {
-                    return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
-                });
+                    services.AddSingleton<TokenCredential, DefaultAzureCredential>();
+                }
+                else
+                {
+                    services.AddSingleton<TokenCredential>(serviceProvider =>
+                    {
+                        return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
+                    });
+                }
+            }
+
+            if (settings.Options.Cache == CacheOptions.Redis)
+            {
+                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString));
             }
 
             services.AddApiSwagger();
@@ -105,7 +126,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddAuthentication(JwtBearerMultipleTenantsHandler.AuthenticationScheme)
                 .AddScheme<JwtBearerMultipleTenantsOptions, JwtBearerMultipleTenantsHandler>(JwtBearerMultipleTenantsHandler.AuthenticationScheme, options =>
                 {
-                    options.FoxIDsEndpoint = settings.FoxIDsEndpoint;
+                    options.FoxIDsEndpoint = settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace() ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint;
                     options.DownParty = settings.DownParty;
                 });
 

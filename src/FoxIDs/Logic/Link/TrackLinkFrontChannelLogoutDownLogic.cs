@@ -15,15 +15,15 @@ namespace FoxIDs.Logic
     public class TrackLinkFrontChannelLogoutDownLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.securityHeaderLogic = securityHeaderLogic;
             this.sequenceLogic = sequenceLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
             var partyLogoutUrls = new List<string>();
             foreach (var partyId in partyIds)
             {
-                var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
+                var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
                 firstParty = party;
 
                 partyNames.Add(party.Name);

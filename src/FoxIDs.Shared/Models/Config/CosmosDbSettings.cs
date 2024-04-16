@@ -18,16 +18,16 @@ namespace FoxIDs.Models.Config
         /// Default database Id.
         /// </summary>
         [Required]
-        public string DatabaseId { get; set; }
+        public string DatabaseId { get; set; } = "FoxIDs";
         /// <summary>
         /// Default Collection Id.
         /// </summary>
         [Required]
-        public string ContainerId { get; set; }
+        public string ContainerId { get; set; } = "Tenants";
         /// <summary>
         /// Time-to-live (TTL) Collection Id.
         /// </summary>
         [Required]
-        public string TtlContainerId { get; set; }
+        public string TtlContainerId { get; set; } = "Tenants";
     }
 }

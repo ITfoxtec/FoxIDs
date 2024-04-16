@@ -13,10 +13,10 @@ namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
-            CurrentEnvironment = env;
+            CurrentEnvironment = environment;
         }
 
         private IConfiguration Configuration { get; }
@@ -32,8 +32,8 @@ namespace FoxIDs
             services.AddSingleton<Settings>(settings);
 
             services.AddInfrastructure(settings, CurrentEnvironment);
-            services.AddRepository();
-            services.AddLogic();
+            services.AddRepository(settings);
+            services.AddLogic(settings);
 
             services.AddAuthenticationAndAuthorization(settings);
 
@@ -46,7 +46,7 @@ namespace FoxIDs
                 .AddFoxIDsApiExplorer();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, Settings settings)
         {
             if (CurrentEnvironment.IsDevelopment())
             {
@@ -55,6 +55,11 @@ namespace FoxIDs
             else
             {
                 app.UseHsts();
+            }
+
+            if (!CurrentEnvironment.IsDevelopment() || !settings.UseHttp)
+            {
+                app.UseHttpsRedirection();
             }
 
             app.UseProxyClientIpMiddleware();

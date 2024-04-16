@@ -20,7 +20,7 @@ jobs:
           file: src/FoxIDs/FoxIDs.csproj      
       - 
         name: Echo version
-        run: Version is ${{ steps.package_version.version }}
+        run: Version is ${{ steps.test.package_version.version }}
       -
         name: Docker meta
         id: meta-f

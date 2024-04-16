@@ -13,14 +13,13 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
       - 
-        name: Get version
-        id: package_version
-        uses: KageKirin/get-csproj-version@v0
+        uses: kzrnm/get-net-sdk-project-versions-action@v2
+        id: get-version
         with:
-          file: src/FoxIDs/FoxIDs.csproj      
+          proj-path: src/FoxIDs/FoxIDs.csproj
       - 
         name: Echo version
-        run: Version is ${{ steps.test.package_version.version }}
+        run: Version is ${{ steps.get-version.outputs.version }}
       -
         name: Docker meta
         id: meta-f

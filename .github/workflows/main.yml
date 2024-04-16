@@ -1,9 +1,9 @@
-name: ci_master_docker
+name: ci_main_docker
 
 on:
   push:
     branches:
-      - "dev_ci_docker"
+      - "main"
 jobs:
   build:
     name: Build Docker image

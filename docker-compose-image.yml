@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   foxids:
-    image: ${DOCKER_REGISTRY-}foxids
-    build:
-      context: .
-      dockerfile: src/FoxIDs/Dockerfile
+    image: foxids/foxids:latest
     environment:
       - Settings:Options:DataStorage=MongoDb
       - Settings:Options:Cache=Redis 
@@ -16,10 +13,7 @@ services:
       - mongodb
       - redis
   foxids-control:
-    image: ${DOCKER_REGISTRY-}foxids-control
-    build:
-      context: .
-      dockerfile: src/FoxIDs.Control/Dockerfile
+    image: foxids/foxids-control:latest
     environment:
       - Settings:Options:DataStorage=MongoDb
       - Settings:Options:Cache=Redis
@@ -39,6 +33,6 @@ services:
     image: "redis:latest" 
 volumes:
     foxids-data:
-        external: true
+    #    external: true
     #foxids-data-config:
     #    external: true

@@ -12,6 +12,12 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v4
+      - 
+        name: Get version
+        id: package_version
+        uses: KageKirin/get-csproj-version@v0
+        with:
+          file: src/FoxIDs/FoxIDs.csproj
       -
         name: Docker meta
         id: meta-f
@@ -19,11 +25,8 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
           tags: |            
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=sha
+            type=semver,pattern={{version}},value={{steps.package_version.version}}
+            type=raw,value=latest,enable={{is_default_branch}}
       -
         name: Docker meta
         id: meta-fc
@@ -31,11 +34,8 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
           tags: |            
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=sha
+            type=semver,pattern={{version}},value={{steps.package_version.version}}
+            type=raw,value=latest,enable={{is_default_branch}}
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3

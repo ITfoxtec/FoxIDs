@@ -258,6 +258,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{7A25628F-DC8
 		k8s-mongo-configmap.yaml = k8s-mongo-configmap.yaml
 		k8s-mongo-deployment.yaml = k8s-mongo-deployment.yaml
 		k8s-mongo-secret.yaml = k8s-mongo-secret.yaml
+		k8s-redis-configmap.yaml = k8s-redis-configmap.yaml
+		k8s-redis-deployment.yaml = k8s-redis-deployment.yaml
 	EndProjectSection
 EndProject
 Global

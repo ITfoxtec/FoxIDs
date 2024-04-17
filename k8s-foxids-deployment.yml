@@ -32,11 +32,11 @@ spec:
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
-              value: "MongoDb"
-            #  value: "Redis"
+            #  value: "MongoDb"
+              value: "Redis"
             - name: "Settings__Options__DataCache"
-              value: "None"
-            #  value: "Default"
+            #  value: "None"
+              value: "Default"
             - name: MONGO_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -54,8 +54,13 @@ spec:
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
               value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
-            #- name: "Settings__RedisCache__ConnectionString"
-            #  value: "redis:6379"
+            - name: REDIS_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: redis-configmap
+                  key: database_url
+            - name: "Settings__RedisCache__ConnectionString"
+              value: "$(REDIS_SERVER):6379"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -95,11 +100,11 @@ spec:
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
-              value: "MongoDb"
-            #  value: "Redis"
+            #  value: "MongoDb"
+              value: "Redis"
             - name: "Settings__Options__DataCache"
-              value: "None"
-            #  value: "Default"
+            #  value: "None"
+              value: "Default"
             - name: MONGO_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -117,8 +122,13 @@ spec:
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
               value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
-            #- name: "Settings__RedisCache__ConnectionString"
-            #  value: "redis:6379"
+            - name: REDIS_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: redis-configmap
+                  key: database_url
+            - name: "Settings__RedisCache__ConnectionString"
+              value: "$(REDIS_SERVER):6379"
 ---
 apiVersion: v1
 kind: Service

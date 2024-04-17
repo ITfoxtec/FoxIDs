@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs", "src\FoxIDs\FoxIDs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}"
 	ProjectSection(SolutionItems) = preProject
-		azuredeploy.json = azuredeploy.json
-		docker-compose-image.yml = docker-compose-image.yml
-		.github\workflows\ci_main_docker.yml = .github\workflows\ci_main_docker.yml
-		docker-compose-project.yml = docker-compose-project.yml
-		docker-compose.development-http.yml = docker-compose.development-http.yml
-		docker-compose.development-https.yml = docker-compose.development-https.yml
-		docker-compose.production.yml = docker-compose.production.yml
-		k8s-deployment.yml = k8s-deployment.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -241,6 +233,26 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateTool", "src\FoxIDs.ResourceTranslateTool\FoxIDs.ResourceTranslateTool.csproj", "{B63EC694-505A-4730-92B7-6827B8E61A6E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker and K8s", "Docker and K8s", "{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose-image.yml = docker-compose-image.yml
+		docker-compose-project.yml = docker-compose-project.yml
+		docker-compose.development-http.yml = docker-compose.development-http.yml
+		docker-compose.development-https.yml = docker-compose.development-https.yml
+		docker-compose.production.yml = docker-compose.production.yml
+		k8s-deployment.yml = k8s-deployment.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
+	ProjectSection(SolutionItems) = preProject
+		azuredeploy.json = azuredeploy.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci_main_docker.yml = .github\workflows\ci_main_docker.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -303,6 +315,9 @@ Global
 		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 		{B63EC694-505A-4730-92B7-6827B8E61A6E} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{376A9D7A-D64B-4526-8EFC-D21A3B77612B} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

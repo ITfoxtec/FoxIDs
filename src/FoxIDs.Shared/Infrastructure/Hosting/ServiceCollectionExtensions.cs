@@ -46,6 +46,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 case CacheOptions.MongoDb:
                     services.AddTransient<ICacheProvider, MongoDbCacheProvider>();
                     break;
+                case CacheOptions.PostgreSql:
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Cache);
+                    services.AddTransient<ICacheProvider, PostgreSqlCacheProvider>();
+                    break;
                 default:
                     throw new NotSupportedException($"{nameof(settings.Options.Cache)} Cache option '{settings.Options.Cache}' not supported.");
             }

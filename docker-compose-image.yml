@@ -30,7 +30,7 @@ services:
       - foxids-data:/data/db
       #- foxids-data-config:/data/configdb"
   redis:
-    image: "redis:latest" 
+    image: redis:latest
 volumes:
     foxids-data:
     #    external: true

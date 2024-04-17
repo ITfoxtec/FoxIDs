@@ -35,7 +35,7 @@ services:
     volumes:
       - foxids-data:/data/db
   redis:
-    image: "redis:latest" 
+    image: redis:latest
 volumes:
     foxids-data:
     #    external: true

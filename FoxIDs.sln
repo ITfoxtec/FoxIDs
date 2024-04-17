@@ -240,7 +240,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker and K8s", "Docker an
 		docker-compose.development-http.yml = docker-compose.development-http.yml
 		docker-compose.development-https.yml = docker-compose.development-https.yml
 		docker-compose.production.yml = docker-compose.production.yml
-		k8s-deployment.yml = k8s-deployment.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
@@ -251,6 +250,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci_main_docker.yml = .github\workflows\ci_main_docker.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
+	ProjectSection(SolutionItems) = preProject
+		k8s-foxids-deployment.yml = k8s-foxids-deployment.yml
+		k8s-mongo-configmap.yaml = k8s-mongo-configmap.yaml
+		k8s-mongo-deployment.yaml = k8s-mongo-deployment.yaml
+		k8s-mongo-secret.yaml = k8s-mongo-secret.yaml
 	EndProjectSection
 EndProject
 Global
@@ -318,6 +325,7 @@ Global
 		{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{376A9D7A-D64B-4526-8EFC-D21A3B77612B} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

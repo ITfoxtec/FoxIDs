@@ -1,0 +1,194 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foxids-deployment
+  labels:
+    app: foxids
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foxids
+  template:
+    metadata:
+      labels:
+        app: foxids
+    spec:
+      containers:
+        - name: foxids
+          image: foxids/foxids:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Development"
+            - name: "ASPNETCORE_URLS"
+              value: "http://+"
+            #  value: "https://+;http://+"
+            - name: "Settings__UseHttp"
+              value: "true"
+            - name: "Settings__FoxIDsEndpoint"
+              value: "http://localhost:8800"
+            - name: "Settings__Options__DataStorage"
+              value: "MongoDb"
+            - name: "Settings__Options__Cache"
+              value: "MongoDb"
+            #  value: "Redis"
+            - name: "Settings__Options__DataCache"
+              value: "None"
+            #  value: "Default"
+            - name: MONGO_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_ROOT_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: MONGO_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: database_url
+            - name: "Settings__MongoDb__ConnectionString"
+              value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
+            #- name: "Settings__RedisCache__ConnectionString"
+            #  value: "redis:6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foxids-control-deployment
+  labels:
+    app: foxids-control
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foxids-control
+  template:
+    metadata:
+      labels:
+        app: foxids-control
+    spec:
+      containers:
+        - name: foxids-control
+          image: foxids/foxids-control:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Development"
+            - name: "ASPNETCORE_URLS"
+              value: "http://+"
+            #  value: "https://+;http://+"
+            - name: "Settings__UseHttp"
+              value: "true"
+            - name: "Settings__FoxIDsEndpoint"
+              value: "http://localhost:8800"
+            - name: "Settings__FoxIDsBackendEndpoint"
+              value: "http://foxids:8800"
+            - name: "Settings__FoxIDsControlEndpoint"
+              value: "http://localhost:8801"
+            - name: "Settings__Options__DataStorage"
+              value: "MongoDb"
+            - name: "Settings__Options__Cache"
+              value: "MongoDb"
+            #  value: "Redis"
+            - name: "Settings__Options__DataCache"
+              value: "None"
+            #  value: "Default"
+            - name: MONGO_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_ROOT_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: MONGO_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: database_url
+            - name: "Settings__MongoDb__ConnectionString"
+              value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
+            #- name: "Settings__RedisCache__ConnectionString"
+            #  value: "redis:6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foxids-service
+spec:
+  selector:
+    app: foxids
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8800
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foxids
+spec:
+  selector:
+    app: foxids
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8800
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foxids-control
+spec:
+  selector:
+    app: foxids-control
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8801
+      targetPort: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: http-ingress
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: foxids
+#             port:
+#               number: 8800
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: http-ingress
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: foxids-control
+#             port:
+#               number: 8801

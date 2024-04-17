@@ -8,9 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}"
 	ProjectSection(SolutionItems) = preProject
 		azuredeploy.json = azuredeploy.json
-		docker-compose.development-http.yml = docker-compose.development-http.yml
 		docker-compose-image.yml = docker-compose-image.yml
+		.github\workflows\ci_main_docker.yml = .github\workflows\ci_main_docker.yml
 		docker-compose-project.yml = docker-compose-project.yml
+		docker-compose.development-http.yml = docker-compose.development-http.yml
 		docker-compose.development-https.yml = docker-compose.development-https.yml
 		docker-compose.production.yml = docker-compose.production.yml
 		k8s-deployment.yml = k8s-deployment.yml

@@ -20,14 +20,14 @@ namespace FoxIDs.Logic.Caches.Providers
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            _ = await collection.DeleteOneAsync(f => f.Id.Equals(id, StringComparison.Ordinal));
+            _ = await collection.DeleteOneAsync(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal));
         }
 
         public async ValueTask<bool> ExistsAsync(string key)
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
             return cachItem != null;
         }
 
@@ -35,17 +35,17 @@ namespace FoxIDs.Logic.Caches.Providers
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
             return cachItem?.Data;
         }
 
         public async ValueTask SetAsync(string key, string value, int lifetime)
         {
             var id = GetId(key);
-            var cachItem = new CacheTtlData { Id = id, PartitionId = GetPartitionId(), Data = value, TimeToLive = lifetime };
+            var cachItem = new CacheTtlData { Id = id, PartitionId = CachePartitionId, Data = value, TimeToLive = lifetime };
 
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            Expression<Func<CacheData, bool>> filter = f => f.Id.Equals(id, StringComparison.Ordinal);
+            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal);
             var data = await collection.Find(filter).FirstOrDefaultAsync();
             if (data == null)
             {
@@ -69,9 +69,9 @@ namespace FoxIDs.Logic.Caches.Providers
             return await GetNumberInternalAsync(collection, id);
         }
 
-        private static async ValueTask<long> GetNumberInternalAsync(IMongoCollection<CacheData> collection, string id)
+        private async ValueTask<long> GetNumberInternalAsync(IMongoCollection<CacheData> collection, string id)
         {
-            var cachItem = await collection.Find(f => f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
             if (cachItem == null)
             {
                 return 0;
@@ -91,12 +91,12 @@ namespace FoxIDs.Logic.Caches.Providers
             var number = await GetNumberInternalAsync(collection, id);
             number++;
 
-            Expression<Func<CacheData, bool>> filter = f => f.Id.Equals(id, StringComparison.Ordinal);
+            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal);
             var data = await collection.Find(filter).FirstOrDefaultAsync();
 
             if (lifetime.HasValue)
             {
-                var cachItem = new CacheTtlData { Id = id, PartitionId = GetPartitionId(), Data = number.ToString(), TimeToLive = lifetime.Value };
+                var cachItem = new CacheTtlData { Id = id, PartitionId = CachePartitionId, Data = number.ToString(), TimeToLive = lifetime.Value };
                 if (data == null)
                 {
                     await collection.InsertOneAsync(cachItem);
@@ -108,7 +108,7 @@ namespace FoxIDs.Logic.Caches.Providers
             }
             else
             {
-                var cachItem = new CacheData { Id = id, PartitionId = GetPartitionId(), Data = number.ToString() };
+                var cachItem = new CacheData { Id = id, PartitionId = CachePartitionId, Data = number.ToString() };
                 if (data == null)
                 {
                     await collection.InsertOneAsync(cachItem);
@@ -121,9 +121,9 @@ namespace FoxIDs.Logic.Caches.Providers
             return number;
         }
 
-        private  string GetId(string key) => $"{GetPartitionId()}:{key}";
+        private  string GetId(string key) => $"{CachePartitionId}:{key}";
 
-        private string GetPartitionId() => Constants.Models.DataType.Cache;
+        private string CachePartitionId => Constants.Models.DataType.Cache;
 
     }
 }

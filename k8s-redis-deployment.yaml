@@ -17,6 +17,14 @@ spec:
         image: redis:latest
         ports:
         - containerPort: 6379
+        volumeMounts:
+          - mountPath: /data
+            name: redis-data  
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-data-pvc
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service

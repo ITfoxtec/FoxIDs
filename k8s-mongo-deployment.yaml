@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb-deployment
+  name: mongo-deployment
   labels:
     app: mongodb
 spec:
@@ -15,26 +15,34 @@ spec:
         app: mongodb
     spec:
       containers:
-      - name: mongodb
+      - name: mongo
         image: mongo:latest
         ports:
         - containerPort: 27017
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-data
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-username
+              name: mongo-secret
+              key: mongo-username
         - name: MONGO_INITDB_ROOT_PASSWORD
           valueFrom: 
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-password
+              name: mongo-secret
+              key: mongo-password
+      volumes:
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongo-data-pvc
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-service
+  name: mongo-service
 spec:
   selector:
     app: mongodb
@@ -46,7 +54,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: mongo
 spec:
   selector:
     app: mongodb

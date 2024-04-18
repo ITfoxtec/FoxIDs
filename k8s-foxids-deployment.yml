@@ -37,23 +37,23 @@ spec:
             - name: "Settings__Options__DataCache"
             #  value: "None"
               value: "Default"
-            - name: MONGO_ROOT_USERNAME
+            - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-secret
-                  key: mongo-root-username
-            - name: MONGO_ROOT_PASSWORD
+                  name: mongo-secret
+                  key: mongo-username
+            - name: MONGO_PASSWORD
               valueFrom: 
                 secretKeyRef:
-                  name: mongodb-secret
-                  key: mongo-root-password
+                  name: mongo-secret
+                  key: mongo-password
             - name: MONGO_SERVER
               valueFrom: 
                 configMapKeyRef:
-                  name: mongodb-configmap
+                  name: mongo-configmap
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
-              value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
             - name: REDIS_SERVER
               valueFrom: 
                 configMapKeyRef:
@@ -105,23 +105,23 @@ spec:
             - name: "Settings__Options__DataCache"
             #  value: "None"
               value: "Default"
-            - name: MONGO_ROOT_USERNAME
+            - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-secret
-                  key: mongo-root-username
-            - name: MONGO_ROOT_PASSWORD
+                  name: mongo-secret
+                  key: mongo-username
+            - name: MONGO_PASSWORD
               valueFrom: 
                 secretKeyRef:
-                  name: mongodb-secret
-                  key: mongo-root-password
+                  name: mongo-secret
+                  key: mongo-password
             - name: MONGO_SERVER
               valueFrom: 
                 configMapKeyRef:
-                  name: mongodb-configmap
+                  name: mongo-configmap
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
-              value: "mongodb://$(MONGO_ROOT_USERNAME):$(MONGO_ROOT_PASSWORD)@$(MONGO_SERVER):27017"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
             - name: REDIS_SERVER
               valueFrom: 
                 configMapKeyRef:

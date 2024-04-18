@@ -237,11 +237,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateToo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker and K8s", "Docker and K8s", "{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose-image.yml = docker-compose-image.yml
-		docker-compose-project.yml = docker-compose-project.yml
-		docker-compose.development-http.yml = docker-compose.development-http.yml
-		docker-compose.development-https.yml = docker-compose.development-https.yml
-		docker-compose.production.yml = docker-compose.production.yml
+		docker-compose-image.yaml = docker-compose-image.yaml
+		docker-compose-project.yaml = docker-compose-project.yaml
+		docker-compose.development-http.yaml = docker-compose.development-http.yaml
+		docker-compose.development-https.yaml = docker-compose.development-https.yaml
+		docker-compose.production.yaml = docker-compose.production.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
@@ -251,13 +251,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\ci_main_docker.yml = .github\workflows\ci_main_docker.yml
+		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
 	ProjectSection(SolutionItems) = preProject
-		k8s-foxids-deployment.yml = k8s-foxids-deployment.yml
 		k8s-mongo-configmap.yaml = k8s-mongo-configmap.yaml
+		k8s-foxids-deployment.yaml = k8s-foxids-deployment.yaml
 		k8s-mongo-deployment.yaml = k8s-mongo-deployment.yaml
 		k8s-mongo-secret.yaml = k8s-mongo-secret.yaml
 		k8s-mongo-pv-dockerdesktop.yaml = k8s-mongo-pv-dockerdesktop.yaml

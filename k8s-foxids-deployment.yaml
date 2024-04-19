@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: foxids
-          image: foxids:1.4.0.2
+          image: foxids:1.4.0.3
           #image: foxids/foxids:latest
           ports:
             - containerPort: 80
@@ -82,7 +82,7 @@ spec:
     spec:
       containers:
         - name: foxids-control
-          image: foxids-control:1.4.0.2
+          image: foxids-control:1.4.0.3
          # image: foxids/foxids-control:latest
           ports:
             - containerPort: 80

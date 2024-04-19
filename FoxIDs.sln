@@ -237,11 +237,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateToo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose-image.yaml = docker-compose-image.yaml
-		docker-compose-project.yaml = docker-compose-project.yaml
-		docker-compose.development-http.yaml = docker-compose.development-http.yaml
-		docker-compose.development-https.yaml = docker-compose.development-https.yaml
-		docker-compose.production.yaml = docker-compose.production.yaml
+		Docker\docker-compose-image.yaml = Docker\docker-compose-image.yaml
+		Docker\docker-compose-project.yaml = Docker\docker-compose-project.yaml
+		Docker\docker-compose.development-http.yaml = Docker\docker-compose.development-http.yaml
+		Docker\docker-compose.development-https.yaml = Docker\docker-compose.development-https.yaml
+		Docker\docker-compose.production.yaml = Docker\docker-compose.production.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
@@ -256,20 +256,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
 	ProjectSection(SolutionItems) = preProject
-		k8s-foxids-ingress-deployment.yaml = k8s-foxids-ingress-deployment.yaml
-		k8s-letsencrypt-issuer.yaml = k8s-letsencrypt-issuer.yaml
-		k8s-mongo-configmap.yaml = k8s-mongo-configmap.yaml
-		k8s-foxids-deployment.yaml = k8s-foxids-deployment.yaml
-		k8s-mongo-deployment.yaml = k8s-mongo-deployment.yaml
-		k8s-mongo-secret.yaml = k8s-mongo-secret.yaml
-		k8s-mongo-pv-dockerdesktop.yaml = k8s-mongo-pv-dockerdesktop.yaml
-		k8s-mongo-pvc-dynamic.yaml = k8s-mongo-pvc-dynamic.yaml
-		k8s-mongo-pvc-dockerdesktop.yaml = k8s-mongo-pvc-dockerdesktop.yaml
-		k8s-redis-configmap.yaml = k8s-redis-configmap.yaml
-		k8s-redis-deployment.yaml = k8s-redis-deployment.yaml
-		k8s-redis-pv-dockerdesktop.yaml = k8s-redis-pv-dockerdesktop.yaml
-		k8s-redis-pvc-dockerdesktop.yaml = k8s-redis-pvc-dockerdesktop.yaml
-		k8s-redis-pvc-dynamic.yaml = k8s-redis-pvc-dynamic.yaml
+		Kubernetes\k8s-foxids-deployment.yaml = Kubernetes\k8s-foxids-deployment.yaml
+		Kubernetes\k8s-foxids-ingress-deployment.yaml = Kubernetes\k8s-foxids-ingress-deployment.yaml
+		Kubernetes\k8s-letsencrypt-issuer.yaml = Kubernetes\k8s-letsencrypt-issuer.yaml
+		Kubernetes\k8s-mongo-configmap.yaml = Kubernetes\k8s-mongo-configmap.yaml
+		Kubernetes\k8s-mongo-deployment.yaml = Kubernetes\k8s-mongo-deployment.yaml
+		Kubernetes\k8s-mongo-pv-dockerdesktop.yaml = Kubernetes\k8s-mongo-pv-dockerdesktop.yaml
+		Kubernetes\k8s-mongo-pvc-dockerdesktop.yaml = Kubernetes\k8s-mongo-pvc-dockerdesktop.yaml
+		Kubernetes\k8s-mongo-pvc-dynamic.yaml = Kubernetes\k8s-mongo-pvc-dynamic.yaml
+		Kubernetes\k8s-mongo-secret.yaml = Kubernetes\k8s-mongo-secret.yaml
+		Kubernetes\k8s-redis-configmap.yaml = Kubernetes\k8s-redis-configmap.yaml
+		Kubernetes\k8s-redis-deployment.yaml = Kubernetes\k8s-redis-deployment.yaml
+		Kubernetes\k8s-redis-pv-dockerdesktop.yaml = Kubernetes\k8s-redis-pv-dockerdesktop.yaml
+		Kubernetes\k8s-redis-pvc-dockerdesktop.yaml = Kubernetes\k8s-redis-pvc-dockerdesktop.yaml
+		Kubernetes\k8s-redis-pvc-dynamic.yaml = Kubernetes\k8s-redis-pvc-dynamic.yaml
 	EndProjectSection
 EndProject
 Global

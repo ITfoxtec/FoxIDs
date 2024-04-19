@@ -63,7 +63,10 @@ namespace FoxIDs.Infrastructure
                 }
                 else if (item is TraceTelemetry traceTelemetry)
                 {
-                    stdoutTelemetryLogger.LogTrace(traceTelemetry);
+                    if (!traceTelemetry.Message.StartsWith("AI:", StringComparison.Ordinal))
+                    {
+                        stdoutTelemetryLogger.LogTrace(traceTelemetry);
+                    }
                 }
                 else if (item is ExceptionTelemetry exceptionTelemetry)
                 {

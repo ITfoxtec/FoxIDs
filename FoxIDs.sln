@@ -256,6 +256,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
 	ProjectSection(SolutionItems) = preProject
+		k8s-foxids-ingress-deployment.yaml = k8s-foxids-ingress-deployment.yaml
+		k8s-letsencrypt-issuer.yaml = k8s-letsencrypt-issuer.yaml
 		k8s-mongo-configmap.yaml = k8s-mongo-configmap.yaml
 		k8s-foxids-deployment.yaml = k8s-foxids-deployment.yaml
 		k8s-mongo-deployment.yaml = k8s-mongo-deployment.yaml

@@ -16,19 +16,21 @@ spec:
     spec:
       containers:
         - name: foxids
-          image: foxids/foxids:latest
+          image: foxids:1.4.0.2
+          #image: foxids/foxids:latest
           ports:
             - containerPort: 80
           env:
-            - name: "ASPNETCORE_ENVIRONMENT"
-              value: "Development"
             - name: "ASPNETCORE_URLS"
               value: "http://+"
             #  value: "https://+;http://+"
             - name: "Settings__UseHttp"
               value: "true"
+            - name: "Settings__TrustProxySchemeHeader"
+              value: "true"
             - name: "Settings__FoxIDsEndpoint"
-              value: "http://localhost:8800"
+            #  value: "http://localhost:8800"
+              value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
@@ -80,23 +82,24 @@ spec:
     spec:
       containers:
         - name: foxids-control
-          image: foxids/foxids-control:latest
+          image: foxids-control:1.4.0.2
+         # image: foxids/foxids-control:latest
           ports:
             - containerPort: 80
           env:
-            - name: "ASPNETCORE_ENVIRONMENT"
-              value: "Development"
             - name: "ASPNETCORE_URLS"
               value: "http://+"
             #  value: "https://+;http://+"
             - name: "Settings__UseHttp"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
-              value: "http://localhost:8800"
+            #  value: "http://localhost:8800"
+              value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"
               value: "http://foxids:8800"
             - name: "Settings__FoxIDsControlEndpoint"
-              value: "http://localhost:8801"
+            #  value: "http://localhost:8801"
+              value: "https://control.itfoxtec.com" # change to your domain - control.my-domain.com
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
@@ -170,35 +173,3 @@ spec:
       protocol: TCP
       port: 8801
       targetPort: 80
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: http-ingress
-# spec:
-#   rules:
-#   - http:
-#       paths:
-#       - path: /
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: foxids
-#             port:
-#               number: 8800
-# ---
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: http-ingress
-# spec:
-#   rules:
-#   - http:
-#       paths:
-#       - path: /
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: foxids-control
-#             port:
-#               number: 8801

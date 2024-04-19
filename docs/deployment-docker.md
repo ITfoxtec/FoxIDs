@@ -7,11 +7,11 @@ docker volume create --driver local --opt type=none --opt device=C:\data\foxids-
 
 
 dev with http
-docker-compose -f docker-compose-project.yml -f docker-compose.development-http.yml up -d
-docker-compose -f docker-compose-image.yml -f docker-compose.development-http.yml up -d
+docker-compose -f docker-compose-project.yaml -f docker-compose.development-http.yaml up -d
+docker-compose -f docker-compose-image.yaml -f docker-compose.development-http.yaml up -d
 
 dev with https
-docker-compose -f docker-compose-project.yml -f docker-compose.development-https.yml up -d
+docker-compose -f docker-compose-project.yaml -f docker-compose.development-https.yaml up -d
 
 prod
-docker-compose -f docker-compose-image.yml -f docker-compose.production.yml up -d
+docker-compose -f docker-compose-image.yaml -f docker-compose.production.yaml up -d

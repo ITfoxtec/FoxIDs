@@ -16,7 +16,7 @@ namespace FoxIDs.Models.Config
         public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
-        /// Optionally only use HTTP in development environment and not HTTPS.
+        /// Optionally accept to use HTTP.
         /// </summary>
         public bool UseHttp { get; set; }
 

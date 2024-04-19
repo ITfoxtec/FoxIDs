@@ -40,7 +40,38 @@ kubectl apply -f k8s-mongo-configmap.yaml
 kubectl apply -f k8s-redis-deployment.yaml
 kubectl apply -f k8s-redis-configmap.yaml
 
-kubectl apply -f k8s-foxids-deployment.yml
+kubectl apply -f k8s-foxids-deployment.yaml
+
+HTTP / HTTPS
+Apply Ingress, the configuration require a Nginx controller. You can optionally change the configuration to use another controller.
+
+Install Ingress-Nginx controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+    Verify installation 
+    kubectl -n ingress-nginx get pod
+
+DNS recourts need to point to the two domains to enable the Let's Encrypt online validation.
+
+Install Cert-manager
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.0/cert-manager.yaml
+    Verify installation 
+    kubectl get pods --namespace cert-manager
+
+Consider to start with Let's Encrypt in staging to not hit the Let's Encrypt production rate limit.
+
+Add your email.
+
+Configure k8s-letsencrypt-issuer.yaml, with your email and to use stating or production
+kubectl apply -f k8s-letsencrypt-issuer.yaml
+    Verify certificate issuer
+    kubectl describe ClusterIssuer letsencrypt-staging
+    kubectl describe ClusterIssuer letsencrypt-production
+
+kubectl apply -f k8s-foxids-ingress-deployment.yaml
+
+Verify certificate
+    kubectl describe certificate letsencrypt-staging
+    kubectl describe certificate letsencrypt-production
 
 
 Consider to encapsilating the resources with a namespace

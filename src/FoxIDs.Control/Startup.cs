@@ -57,7 +57,7 @@ namespace FoxIDs
                 app.UseHsts();
             }
 
-            if (!CurrentEnvironment.IsDevelopment() || !settings.UseHttp)
+            if (!settings.UseHttp)
             {
                 app.UseHttpsRedirection();
             }

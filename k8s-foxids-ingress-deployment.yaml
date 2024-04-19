@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: foxids-ingress-http
+  annotations:
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   more_set_input_headers 'Host: $http_X-Forwarded-Host';
+   #production 
+    cert-manager.io/cluster-issuer: letsencrypt-production
+   #staging
+   # cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: id.itfoxtec.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: foxids
+            port:
+              number: 8800
+  - host: control.itfoxtec.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: foxids-control
+            port:
+              number: 8801
+  tls:
+    - hosts:
+      - id.itfoxtec.com
+      - control.itfoxtec.com
+     #production 
+      secretName: letsencrypt-production
+     #staging 
+     # secretName: letsencrypt-staging

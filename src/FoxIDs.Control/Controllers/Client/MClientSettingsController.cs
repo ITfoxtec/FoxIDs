@@ -31,7 +31,7 @@ namespace FoxIDs.Controllers.Client
             {
                 FoxIDsEndpoint = settings.FoxIDsEndpoint,
                 Version = version.ToString(2),
-                FullVersion = version.ToString(4),
+                FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
                 KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage)
             });

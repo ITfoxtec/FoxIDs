@@ -1,4 +1,9 @@
-Docker Desktop
+# Kubernetes
+
+Clone or download ...
+Navigate to the /Kubernetes folder
+
+Kubernetes i Docker Desktop
 Create persistent volume on host file system - not recommended for production
 
 Mongo

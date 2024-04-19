@@ -99,5 +99,3 @@ Consider backup
   
   Backup is supported in MongoDB Enterprise Kubernetes Operator
 
-
-HTTPS

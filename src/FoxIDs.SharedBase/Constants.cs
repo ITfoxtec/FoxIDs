@@ -60,6 +60,8 @@ namespace FoxIDs
 
             public const string ApiControllerPreMasterKey = "m";
             public const string ApiControllerPreTenantTrackKey = "t";
+
+            public const string ControlSiteName = "control";
         }
 
         public static class Logs

@@ -1,5 +1,15 @@
 # Kubernetes
 
+*****
+    The database is automatically seeded where the configured URLs is used. Therefor, you need to delete the database if the URLs are changed.  
+    You can either delete stop the database pod and delete the physical database folder or files. Or expose the database port and open the database in MongoDB Compress [download MongoDB Compass Download (GUI)](https://www.mongodb.com/try/download/compass) and delete the database.  
+    Thereafter, the FoxIDs Control pod needs to be restarted to initiate a new seed process.
+
+    Advanced option: The URLs can also be changed by hand din the database.
+*****
+
+
+
 Clone or download ...
 Navigate to the /Kubernetes folder
 
@@ -88,6 +98,10 @@ Consider to encapsilating the resources with a namespace
 
   Applay namespace on creation 
   kubectl apply -f xxx.yaml --namespace=test
+
+Consider Kubernetes Service Mesh
+    Skrive, overveje at benytte pga. sikkerhed, Kubernetes Service Mesh, tage noget tekst fra security delen
+    https://www.toptal.com/kubernetes/service-mesh-comparison 
 
 Consider MongoDB Operator
   MongoDB Community Kubernetes Operator (free)

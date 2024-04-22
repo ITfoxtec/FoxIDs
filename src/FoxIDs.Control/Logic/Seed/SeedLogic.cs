@@ -3,7 +3,6 @@ using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 
 namespace FoxIDs.Logic.Seed
@@ -14,14 +13,12 @@ namespace FoxIDs.Logic.Seed
         private static bool isSeeded = false;
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
-        private readonly IServiceProvider serviceProvider;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, IServiceProvider serviceProvider, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
-            this.serviceProvider = serviceProvider;
             this.masterTenantDocumentsSeedLogic = masterTenantDocumentsSeedLogic;
         }
 
@@ -39,11 +36,6 @@ namespace FoxIDs.Logic.Seed
                     isSeeded = true;
                     if (settings.MasterSeedEnabled)
                     {
-                        if (settings.Options.DataStorage == DataStorageOptions.CosmosDb)
-                        {
-                            await serviceProvider.GetService<CosmosDbSeedLogic>().SeedCosmosDbAsync();
-                        }
-
                         if (await masterTenantDocumentsSeedLogic.SeedAsync())
                         {
                             logger.Trace("Document container(s) seeded.");

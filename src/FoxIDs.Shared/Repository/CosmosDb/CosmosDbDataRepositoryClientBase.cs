@@ -9,8 +9,8 @@ namespace FoxIDs.Repository
     public abstract class CosmosDbDataRepositoryClientBase : IDisposable
     {
         private bool isDisposed = false;
-        private readonly Settings settings;
-        private readonly TelemetryLogger logger;
+        protected readonly Settings settings;
+        protected readonly TelemetryLogger logger;
         private readonly bool withTtlContainer;
         private readonly bool withBulkExecution;
 

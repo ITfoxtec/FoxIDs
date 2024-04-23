@@ -3,7 +3,7 @@ name: ci_main_docker
 on:
   push:
     branches:
-      - "main"
+      - "docker_dev"
 jobs:
   build:
     name: Build Docker image

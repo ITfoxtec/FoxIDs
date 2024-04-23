@@ -64,3 +64,21 @@ jobs:
           push: true
           tags: ${{ steps.meta-fc.outputs.tags }}
           labels: ${{ steps.meta-fc.outputs.labels }}
+
+      - name: Docker Hub Description FoxIDs
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
+          readme-filepath: ./Docker/README-FoxIDs-image.md
+          short-description: "FoxIDs is a Identity Services (IDS) supporting: login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0."
+
+      - name: Docker Hub Description FoxIDs.Control
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
+          readme-filepath: ./Docker/README-FoxIDs-Control-image.md
+          short-description: "FoxIDs is a Identity Services (IDS). FoxIDs Control is the admin site."

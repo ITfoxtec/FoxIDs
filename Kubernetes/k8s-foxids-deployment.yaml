@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: foxids
-          image: foxids/foxids:latest
+          image: foxids:1.4.2
+        #  image: foxids/foxids:latest
           ports:
             - containerPort: 80
           env:

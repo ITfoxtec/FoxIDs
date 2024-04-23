@@ -129,7 +129,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional logged out URL")]
         public string LoggedOutUrl { get; set; }
 
-        [Display(Name = "Absolute URLs")]
+        [Display(Name = "Absolute ACS URLs")]
         public bool DisableAbsoluteUrls { get; set; }
 
         [ValidateComplexType]

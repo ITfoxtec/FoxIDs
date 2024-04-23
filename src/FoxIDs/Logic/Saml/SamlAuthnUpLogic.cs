@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
@@ -115,6 +116,8 @@ namespace FoxIDs.Logic
             {
                 saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginEmailHint, Format = NameIdentifierFormats.Email.OriginalString } };
             }
+
+            saml2AuthnRequest.AssertionConsumerServiceUrl = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
 
             switch (samlUpSequenceData.LoginAction)
             {

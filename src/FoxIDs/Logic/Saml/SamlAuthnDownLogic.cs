@@ -160,7 +160,7 @@ namespace FoxIDs.Logic
 
             if (!party.Issuer.Equals(requestIssuer))
             {
-                throw new SamlRequestException($"Invalid issuer '{requestIssuer}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                throw new SamlRequestException($"Invalid request issuer '{requestIssuer}', expected issuer '{party.Issuer}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
             }
         }
 

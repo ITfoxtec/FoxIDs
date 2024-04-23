@@ -250,5 +250,22 @@ namespace FoxIDs.Logic
             yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/login_callback");
             yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/logout_callback");
         }
+
+        public async Task CreateDefaultTracksDocmentsAsync(string tenantName, TrackKeyTypes trackKeyTypes)
+        {
+            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, Constants.TrackDefaults.DefaultTrackTestName, trackKeyTypes);
+            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName, trackKeyTypes);
+        }
+
+        private async Task CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName, TrackKeyTypes keyType)
+        {
+            var mTrack = new Track
+            {
+                DisplayName = trackDisplayName,
+                Name = trackName?.ToLower()
+            };
+            await CreateTrackDocumentAsync(tenantName, mTrack, keyType);
+            await CreateLoginDocumentAsync(tenantName, mTrack.Name);
+        }
     }
 }

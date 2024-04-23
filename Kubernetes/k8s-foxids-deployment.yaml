@@ -25,6 +25,8 @@ spec:
             #  value: "https://+;http://+"
             - name: "Settings__UseHttp"
               value: "true"
+            - name: "Settings__TrustProxyHeaders"
+              value: "true"
             - name: "Settings__TrustProxySchemeHeader"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
@@ -81,7 +83,8 @@ spec:
     spec:
       containers:
         - name: foxids-control
-          image: foxids/foxids-control:latest
+          image: foxids-control:1.4.2
+          #image: foxids/foxids-control:latest
           ports:
             - containerPort: 80
           env:
@@ -98,6 +101,10 @@ spec:
             - name: "Settings__FoxIDsControlEndpoint"
             #  value: "http://localhost:8801"
               value: "https://control.itfoxtec.com" # change to your domain - control.my-domain.com
+            - name: "Settings__MasterSeedEnabled"
+              value: "true"
+            - name: "Settings__MainTenantSeedEnabled"
+              value: "true"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"

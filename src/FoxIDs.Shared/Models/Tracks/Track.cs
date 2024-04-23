@@ -70,33 +70,33 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "show_resource_id")]
         public bool ShowResourceId { get; set; }
 
-        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
+        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours. Default 2 hours.
         [JsonProperty(PropertyName = "sequence_lifetime")] 
-        public int SequenceLifetime { get; set; }
+        public int SequenceLifetime { get; set; } = Constants.TrackDefaults.DefaultSequenceLifetime;
 
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)] 
         [JsonProperty(PropertyName = "max_failing_logins")]
-        public int MaxFailingLogins { get; set; }
+        public int MaxFailingLogins { get; set; } = Constants.TrackDefaults.DefaultMaxFailingLogins;
 
         [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
         [JsonProperty(PropertyName = "failing_login_count_lifetime")]
-        public int FailingLoginCountLifetime { get; set; }
+        public int FailingLoginCountLifetime { get; set; } = Constants.TrackDefaults.DefaultFailingLoginCountLifetime;
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
         [JsonProperty(PropertyName = "failing_login_observation_period")]
-        public int FailingLoginObservationPeriod { get; set; }
+        public int FailingLoginObservationPeriod { get; set; } = Constants.TrackDefaults.DefaultFailingLoginObservationPeriod;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [JsonProperty(PropertyName = "password_length")]
-        public int PasswordLength { get; set; }
+        public int PasswordLength { get; set; } = Constants.TrackDefaults.DefaultPasswordLength;
 
         [Required]
         [JsonProperty(PropertyName = "check_password_complexity")]
-        public bool? CheckPasswordComplexity { get; set; }
+        public bool? CheckPasswordComplexity { get; set; } = true;
 
         [Required]
         [JsonProperty(PropertyName = "check_password_risk")]
-        public bool? CheckPasswordRisk { get; set; }
+        public bool? CheckPasswordRisk { get; set; } = true;
 
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]

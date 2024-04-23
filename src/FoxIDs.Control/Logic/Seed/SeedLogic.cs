@@ -14,12 +14,14 @@ namespace FoxIDs.Logic.Seed
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
+        private readonly MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
             this.masterTenantDocumentsSeedLogic = masterTenantDocumentsSeedLogic;
+            this.mainTenantDocumentsSeedLogic = mainTenantDocumentsSeedLogic;
         }
 
         public async Task SeedAsync()
@@ -38,7 +40,15 @@ namespace FoxIDs.Logic.Seed
                     {
                         if (await masterTenantDocumentsSeedLogic.SeedAsync())
                         {
-                            logger.Trace("Document container(s) seeded.");
+                            logger.Trace("Document container(s) seeded with master tenant.");
+                        }
+
+                        if (settings.MainTenantSeedEnabled)
+                        {
+                            if (await mainTenantDocumentsSeedLogic.SeedAsync())
+                            {
+                                logger.Trace("Document container(s) seeded with main tenant.");
+                            }
                         }
                     }
                 }

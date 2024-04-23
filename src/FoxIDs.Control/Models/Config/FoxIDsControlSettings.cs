@@ -23,6 +23,11 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public bool MasterSeedEnabled { get; set; }
 
+        /// <summary>
+        /// Seed main tenant if true. At the same time as master seed is carried out.
+        /// </summary>
+        public bool MainTenantSeedEnabled { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = base.Validate(validationContext).ToList();

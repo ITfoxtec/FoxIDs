@@ -34,6 +34,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
+            services.AddTransient<MainTenantDocumentsSeedLogic>();
 
             services.AddTransient<DownPartyAllowUpPartiesQueueLogic>();
 

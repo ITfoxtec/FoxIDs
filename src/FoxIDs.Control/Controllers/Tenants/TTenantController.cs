@@ -14,7 +14,6 @@ using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
@@ -118,8 +117,7 @@ namespace FoxIDs.Controllers
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
-                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
+                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name, plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -156,13 +154,6 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
-        }
-
-        private async Task CreateTrackDocumentAsync(string tenantName, string trackDisplayName, string trackName, TrackKeyTypes keyType)
-        {
-            var mTrack = mapper.Map<Track>(new Api.Track { DisplayName = trackDisplayName, Name = trackName?.ToLower() });
-            await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack, keyType);
-            await masterTenantLogic.CreateLoginDocumentAsync(tenantName, mTrack.Name);
         }
 
         /// <summary>

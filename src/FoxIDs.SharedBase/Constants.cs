@@ -58,10 +58,26 @@ namespace FoxIDs
             public const string MasterTenantName = "master";
             public const string MasterTrackName = "master";
 
+            public const string MainTenantName = "main";
+
             public const string ApiControllerPreMasterKey = "m";
             public const string ApiControllerPreTenantTrackKey = "t";
 
-            public const string ControlSiteName = "control";
+            public const string ControlSiteName = "control";            
+        }
+
+        public static class TrackDefaults
+        {
+            public const string DefaultTrackTestDisplayName = "Test";
+            public const string DefaultTrackTestName = "test";            
+            public const string DefaultTrackProductionDisplayName = "Production";
+            public const string DefaultTrackProductionName = "-";
+
+            public const int DefaultSequenceLifetime = 7200;
+            public const int DefaultMaxFailingLogins = 5;
+            public const int DefaultFailingLoginCountLifetime = 36000;
+            public const int DefaultFailingLoginObservationPeriod = 3600;
+            public const int DefaultPasswordLength = 6;
         }
 
         public static class Logs

@@ -46,8 +46,8 @@ namespace FoxIDs.Logic
                 return true;
             }
 
-            var oldHrdIssuers = oldUpParty.ReadIssuers != null ? string.Join(',', oldUpParty.ReadIssuers) : string.Empty;
-            var newHrdIssuers = newUpParty.ReadIssuers != null ? string.Join(',', newUpParty.ReadIssuers) : string.Empty;
+            var oldHrdIssuers = oldUpParty.Issuers != null ? string.Join(',', oldUpParty.Issuers) : string.Empty;
+            var newHrdIssuers = newUpParty.Issuers != null ? string.Join(',', newUpParty.Issuers) : string.Empty;
             if (oldHrdIssuers != newHrdIssuers) 
             {
                 return true;
@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
             {
                 Name = upParty.Name,
                 DisplayName = upParty.DisplayName,
-                Issuers = upParty.ReadIssuers,
+                Issuers = upParty.Issuers,
                 SpIssuer = upParty.SpIssuer,
                 HrdDisplayName = upParty.HrdDisplayName,
                 HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,

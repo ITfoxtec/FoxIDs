@@ -33,16 +33,39 @@ namespace FoxIDs.Models
             return await IdFormatAsync(idKey);
         }
 
-        [JsonIgnore]
-        public List<string> ReadIssuers => !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
-
+        // Support back words capability in CosmosDB - single issuer in SAML 2.0 up-parties
+        private bool hasSingleIssuer;
+        private List<string> issuers;
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
-        public virtual string Issuer { get; set; }
+        public string Issuer 
+        {
+            set
+            {
+                if (!value.IsNullOrWhiteSpace())
+                {
+                    hasSingleIssuer = true;
+                    issuers = new List<string> { value };
+                }
+            } 
+        }
 
         [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
-        public virtual List<string> Issuers { get; set; }
+        public virtual List<string> Issuers 
+        {
+            get 
+            {
+                return issuers;
+            }
+            set 
+            {
+                if (!hasSingleIssuer)
+                {
+                    issuers = value;
+                }
+            }
+        }
 
         /// <summary>
         /// SP issuer / audience

@@ -56,14 +56,6 @@ namespace FoxIDs.Models
         public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.Party.IssuerLength)]
-        [JsonProperty(PropertyName = "issuer")]
-        public override string Issuer { get; set; }
-
-        [JsonIgnore]
-        public override List<string> Issuers { get { return ReadIssuers; } set { throw new NotSupportedException(); } }
-
-        [Required]
         [JsonProperty(PropertyName = "authn_binding")]
         public SamlBinding AuthnBinding { get; set; }
 
@@ -131,6 +123,11 @@ namespace FoxIDs.Models
             if (baseResults.Count() > 0)
             {
                 results.AddRange(baseResults);
+            }
+
+            if (Issuers?.Count() != 1)
+            {
+                results.Add(new ValidationResult($"Exactly one issuer in the field {nameof(Issuers)} is required.", new[] { nameof(Issuers) }));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)

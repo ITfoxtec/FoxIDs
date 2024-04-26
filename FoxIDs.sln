@@ -91,7 +91,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\samples.md = docs\samples.md
 		docs\standard-support.md = docs\standard-support.md
 		docs\token-exchange.md = docs\token-exchange.md
-		docs\update.md = docs\update.md
 		docs\users.md = docs\users.md
 		docs\_sidebar.md = docs\_sidebar.md
 	EndProjectSection

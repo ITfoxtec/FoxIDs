@@ -22,7 +22,6 @@ spec:
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
-            #  value: "https://+;http://+"
             - name: "Settings__UseHttp"
               value: "true"
             - name: "Settings__TrustProxyHeaders"
@@ -30,15 +29,12 @@ spec:
             - name: "Settings__TrustProxySchemeHeader"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
-            #  value: "http://localhost:8800"
               value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
-            #  value: "MongoDb"
               value: "Redis"
             - name: "Settings__Options__DataCache"
-            #  value: "None"
               value: "Default"
             - name: MONGO_USERNAME
               valueFrom:
@@ -89,16 +85,13 @@ spec:
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
-            #  value: "https://+;http://+"
             - name: "Settings__UseHttp"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
-            #  value: "http://localhost:8800"
               value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"
               value: "http://foxids:8800"
             - name: "Settings__FoxIDsControlEndpoint"
-            #  value: "http://localhost:8801"
               value: "https://control.itfoxtec.com" # change to your domain - control.my-domain.com
             - name: "Settings__MasterSeedEnabled"
               value: "true"
@@ -107,10 +100,8 @@ spec:
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
-            #  value: "MongoDb"
               value: "Redis"
             - name: "Settings__Options__DataCache"
-            #  value: "None"
               value: "Default"
             - name: MONGO_USERNAME
               valueFrom:

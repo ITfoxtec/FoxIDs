@@ -1,5 +1,13 @@
 # Docker
 
+
+### Send emails with Sendgrid or SMTP
+FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email).
+
+The settings is added in the yaml file and decided by `__` like e.g. `Settings__Sendgrid__FromEmail`
+
+
+
 Clone or download ...
 Navigate to the /Docker folder
 

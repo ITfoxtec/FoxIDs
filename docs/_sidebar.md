@@ -19,9 +19,10 @@
   - [Languages](language.md)
 - [Deployment](deployment.md)
   - [Azure](deployment-azure.md)
+  - [Kubernetes](deployment-k8s.md)
+  - [Docker](deployment-docker.md)  
   - [Risk Passwords](risk-passwords.md)
   - [Reverse proxy](reverse-proxy.md)
-  - [Update](update.md)
   - [Monitoring](monitoring.md)
 - Topics
   - [Users](users.md)

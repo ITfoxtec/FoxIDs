@@ -37,7 +37,7 @@ namespace FoxIDs.Logic.Caches.Providers
         {
             var id = GetId(key);
             var cachItem = new CacheTtlData { Id = id, PartitionId = CachePartitionId, Data = value, TimeToLive = lifetime };
-            await db.SetAsync(cachItem.Id, cachItem, cachItem.PartitionId);
+            await db.SetAsync(cachItem.Id, cachItem, cachItem.PartitionId, cachItem.ExpireAt);
         }
 
         public async ValueTask SetFlagAsync(string key, int lifetime)
@@ -75,7 +75,7 @@ namespace FoxIDs.Logic.Caches.Providers
             if (lifetime.HasValue)
             {
                 var cachItem = new CacheTtlData { Id = id, PartitionId = CachePartitionId, Data = number.ToString(), TimeToLive = lifetime.Value };
-                await db.SetAsync(cachItem.Id, cachItem, cachItem.PartitionId);
+                await db.SetAsync(cachItem.Id, cachItem, cachItem.PartitionId, cachItem.ExpireAt);
             }
             else
             {

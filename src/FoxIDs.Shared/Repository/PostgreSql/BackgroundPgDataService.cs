@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,13 +26,13 @@ namespace FoxIDs.Repository
         {
             do
             {
-                await DoWorkAsync(stoppingToken);
+                await DoWorkAsync();
                 await Task.Delay(settings.FileData.BackgroundServiceWaitPeriod = 1000, stoppingToken);
             }
             while (!stoppingToken.IsCancellationRequested);
         }
 
-        private async Task DoWorkAsync(CancellationToken stoppingToken)
+        private async Task DoWorkAsync()
         {
             try
             {
@@ -43,9 +44,14 @@ namespace FoxIDs.Repository
                         scopedLogger.Event("Start to process PostgreSQL data.");
 
                         var pgTenantDataRepository = scope.ServiceProvider.GetRequiredService<PgTenantDataRepository>();
-                        await pgTenantDataRepository.RemoveAllExpired(stoppingToken);
+                        await pgTenantDataRepository.RemoveAllExpiredAsync();
 
-                        scopedLogger.Event("Done processing PostgreSQL data.");
+                        scopedLogger.Event("Done processing tenant PostgreSQL data.");
+
+                        var postgreSqlCacheProvider = scope.ServiceProvider.GetRequiredService<PostgreSqlCacheProvider>();
+                        await postgreSqlCacheProvider.RemoveAllExpiredAsync();
+
+                        scopedLogger.Event("Done processing cache PostgreSQL data.");
                     }
                     catch (Exception ex)
                     {

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Wololo.PgKeyValueDB;
 
@@ -130,7 +129,7 @@ namespace FoxIDs.Repository
 
             //TODO fail if the ID do not exists
             //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            await db.SetAsync(item.Id, item, item.PartitionId);
+            await db.SetAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
         }
 
         public override async ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
@@ -175,7 +174,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task RemoveAllExpired(CancellationToken stoppingToken)
+        public async Task RemoveAllExpiredAsync()
         {
             _ = await db.RemoveAllExpiredAsync();
         }

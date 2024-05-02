@@ -142,6 +142,8 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
             var partitionId = id.IdToTenantPartitionId();
+            //TODO fail if the ID do not exists
+            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             await db.RemoveAsync(id, partitionId);
         }
 

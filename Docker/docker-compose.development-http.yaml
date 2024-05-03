@@ -19,9 +19,9 @@ services:
       - Settings:FoxIDsControlEndpoint=http://localhost:8801 
     ports:
       - 8801:80
-  # mongodb:
+  # mongodb: # optionally expose MongoDB on port 27017
   #   ports:
   #     - 27017:27017
-  # redis:
+  # redis: # optionally expose Redis on port 6379
   #   ports:
   #     - 6379:6379

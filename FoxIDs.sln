@@ -59,8 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\control.md = docs\control.md
 		docs\custom-domain.md = docs\custom-domain.md
 		docs\customization.md = docs\customization.md
-		docs\deployment-docker.md = docs\deployment-docker.md
 		docs\deployment-azure.md = docs\deployment-azure.md
+		docs\deployment-docker.md = docs\deployment-docker.md
 		docs\deployment-k8s.md = docs\deployment-k8s.md
 		docs\deployment.md = docs\deployment.md
 		docs\development.md = docs\development.md
@@ -242,7 +242,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{93A3AF
 		Docker\docker-compose-project.yaml = Docker\docker-compose-project.yaml
 		Docker\docker-compose.development-http.yaml = Docker\docker-compose.development-http.yaml
 		Docker\docker-compose.development-https.yaml = Docker\docker-compose.development-https.yaml
-		Docker\docker-compose.production.yaml = Docker\docker-compose.production.yaml
 		Docker\README-FoxIDs-Control-image.md = Docker\README-FoxIDs-Control-image.md
 		Docker\README-FoxIDs-image.md = Docker\README-FoxIDs-image.md
 	EndProjectSection

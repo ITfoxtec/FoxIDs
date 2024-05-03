@@ -32,4 +32,4 @@ services:
     image: redis:latest
 volumes:
     foxids-data:
-    #    external: true
+    #    external: true    # uncomment if data is saved in the host file system

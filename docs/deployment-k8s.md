@@ -1,12 +1,14 @@
 # Kubernetes
 
-Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.  
+Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.
 
-This is a description of how to make a default deployment and some considerations. It is expected that you will need to customize the yaml files to suit your needs, preferences and environment.
+This is a description of how to make a default [deployment](#deployment), [login](#first-login) for the first time and some [considerations](#considerations). It is expected that you will need to customize the yaml files to suit your needs, preferences and environment.
 
 Pre requirements:
 - You have a Kubernetes cluster or Docker Desktop with Kubernetes enabled. 
 - You have basic knowledge about Kubernetes.
+
+> This is a list of [useful commands](#useful-commands) in the end of this description.
 
 This deployment include:
 
@@ -21,7 +23,7 @@ This deployment include:
 The deployment is carried out in the described order.
 
 ### Get ready
-Clone the [git repository](https://github.com/ITfoxtec/FoxIDs) or download as ZIP. The K8s yaml configuration files is in `./Kubernetes` folder.  
+Clone the [git repository](https://github.com/ITfoxtec/FoxIDs) or download as ZIP. The K8s yaml configuration files is in the `./Kubernetes` folder.  
 Open a console and navigate to the `./Kubernetes` folder.
 
 ### Persistent volumes 

@@ -21,13 +21,12 @@ The Azure ARM deployment include:
 > There is only Internet access to App services, every thing else is encapsulated.
 
 ### Send emails with Sendgrid or SMTP
-FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email).
+FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email.md).
 
 ### First login and admin users
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
 
-> The default admin user is `admin@foxids.com` with password `FirstAccess!` (you are required to change the password on first login)  
-> *Please wait a few minutes before logging in after the deployment is complete to allow the initial seed to finish.*
+The default admin user is `admin@foxids.com` with password `FirstAccess!` (you are required to change the password on first login)  
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 

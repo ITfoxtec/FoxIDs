@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: id.itfoxtec.com
+  - host: id.itfoxtec.com   # change to your domain -  id.my-domain.com
     http:
       paths:
       - path: /
@@ -34,8 +34,8 @@ spec:
               number: 8801
   tls:
     - hosts:
-      - id.itfoxtec.com
-      - control.itfoxtec.com
+      - id.itfoxtec.com   # change to your domain -  id.my-domain.com
+      - control.itfoxtec.com  # change to your domain -  control.my-domain.com
      #production 
       secretName: letsencrypt-production
      #staging 

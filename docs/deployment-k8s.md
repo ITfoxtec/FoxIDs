@@ -142,44 +142,67 @@ Create the two FoxIDs websites
 kubectl apply -f k8s-foxids-deployment.yaml
 ```
 
-
-
-
-- 
-- 
-//TODO
-
-
-HTTP / HTTPS
-Apply Ingress, the configuration require a Nginx controller. You can optionally change the configuration to use another controller.
+The configuration require a Nginx controller. You can optionally change the configuration to use another controller.
 
 Install Ingress-Nginx controller
+```cmd
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
-    Verify installation 
-    kubectl -n ingress-nginx get pod
+```
+Optionally verify Ingress-Nginx installation 
+```cmd
+kubectl -n ingress-nginx get pod
+```
 
-DNS recourts need to point to the two domains to enable the Let's Encrypt online validation.
+> DNS records to the two domains need to point to the installation IP address to enable the Let's Encrypt online validation.
 
 Install Cert-manager
+```cmd
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.0/cert-manager.yaml
-    Verify installation 
-    kubectl get pods --namespace cert-manager
+```
+Optionally verify Cert-manager installation 
+```cmd
+kubectl get pods --namespace cert-manager
+```
 
-Consider to start with Let's Encrypt in staging to not hit the Let's Encrypt production rate limit.
+> Consider to start with Let's Encrypt in staging to avoid hitting the Let's Encrypt production rate limit (staging certificates is not trusted by the browser).
 
-Add your email.
+Add your email in the `k8s-letsencrypt-issuer.yaml` file. Optionally select to use stating or production in the `k8s-letsencrypt-issuer.yaml` and `k8s-foxids-ingress-deployment.yaml` files, default configured for production.
 
-Configure k8s-letsencrypt-issuer.yaml, with your email and to use stating or production
+Configure Let's Encrypt
+```cmd
 kubectl apply -f k8s-letsencrypt-issuer.yaml
-    Verify certificate issuer
-    kubectl describe ClusterIssuer letsencrypt-staging
-    kubectl describe ClusterIssuer letsencrypt-production
+```
 
+Optionally verify certificate issuer
+```cmd
+kubectl describe ClusterIssuer letsencrypt-production
+#staging 
+# kubectl describe ClusterIssuer letsencrypt-staging
+```
+
+The `k8s-foxids-ingress-deployment.yaml` file is configured with the domains:
+
+- The FoxIDs site domain `id.itfoxtec.com` (two places in the file) is change to your domain - `id.my-domain.com`
+- The FoxIDs Control site domain `control.itfoxtec.com` is change to your domain - `control.my-domain.com`
+
+Add ingress with the domains and bound to the related certificates
+```cmd
 kubectl apply -f k8s-foxids-ingress-deployment.yaml
+```
 
-Verify certificate
-    kubectl describe certificate letsencrypt-staging
-    kubectl describe certificate letsencrypt-production
+Optionally verify the certificate
+```cmd
+kubectl describe certificate letsencrypt-production
+#staging 
+# kubectl describe certificate letsencrypt-staging
+```
+
+## First login
+Open your FoxIDs Control site domain in a browser. It should retired to the FoxIDs site where you login with the default admin user `admin@foxids.com` and password `FirstAccess!` (you are required to change the password on first login).  
+You are then redirected back to the FoxIDs Control site in the `master` tenant. You can add more tenants in the master tenant and e.g., configure admin users.
+
+Then click on the `main` tenant and authenticate once again with the same default admin user email and password (the default admin user is the same for both the `master` tenant and the `main` tenant, but it is two different users).  
+You are now logged into the `main` tenant and can start to configure your [applications and authentication methods](connections.md).
 
 ### Seed data
 The database is automatically seeded based on the configured domains. Therefor, you need to delete the database if the domains are changed.  
@@ -189,7 +212,7 @@ Thereafter, the FoxIDs Control pod needs to be restarted to initiate a new seed 
 
 Advanced option: The domains can also be changed by hand din the database.
 
-### Considerations
+## Considerations
 This section lists some deployment considerations.
 
 **Namespace**  
@@ -214,18 +237,7 @@ kubectl apply -f xxx.yaml --namespace=test
 Consider [Kubernetes Service Mesh](https://www.toptal.com/kubernetes/service-mesh-comparison) to achieve a zero-trust architecture. Wher the internal trafic is securet with mutual TLS (mTLS) encryption.
 
 **Log**  
-Consider how to handle logs and collect logs from the containers written to `stdout`.
-
-
-
-
-
-- 
-- 
-//TODO
-
-[Logging Architecture](https://kubernetes.io/docs/concepts/cluster-administration/logging/)
-
+All logs from FoxIDs including errors, trace and envents is written to `stdout`. Consider how to handle [application logs](https://kubernetes.io/docs/concepts/cluster-administration/logging/) and collect logs from the containers.
 
 **MongoDB Operator**  
 Consider MongoDB Operator if you need multiple instances of MongoDB.
@@ -247,7 +259,7 @@ Consider if backup of the MongoDB data is required and at which level, here thre
 2. [Backup with a Kubernetes Cron Job](https://medium.com/@shashwatmahar12/kubernetes-install-mongodb-from-helm-cron-job-to-backup-mongodb-replica-set-5fd8df51fe93).
 3. Backup is supported in MongoDB Enterprise Kubernetes Operator.
 
-### Useful commands
+## Useful commands
 This is a list of commands which may be useful during deployment to view details and to make deployment changes.
 
 Create pod

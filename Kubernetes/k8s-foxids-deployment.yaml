@@ -29,7 +29,7 @@ spec:
             - name: "Settings__TrustProxySchemeHeader"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
-              value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
+              value: "https://id.itfoxtec.com" # change to your domain - https://id.my-domain.com
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
@@ -88,11 +88,11 @@ spec:
             - name: "Settings__UseHttp"
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
-              value: "https://id.itfoxtec.com" # change to your domain - id.my-domain.com
+              value: "https://id.itfoxtec.com" # change to your domain -  https://id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"
               value: "http://foxids:8800"
             - name: "Settings__FoxIDsControlEndpoint"
-              value: "https://control.itfoxtec.com" # change to your domain - control.my-domain.com
+              value: "https://control.itfoxtec.com" # change to your domain -  https://control.my-domain.com
             - name: "Settings__MasterSeedEnabled"
               value: "true"
             - name: "Settings__MainTenantSeedEnabled"

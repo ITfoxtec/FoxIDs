@@ -18,6 +18,8 @@ This deployment include:
 - Redis cache holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks. Deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
 - Logs are written to `stdout` where the logs can be picked up by Docker.
 
+> Optionally use PostgreSql instead of MongoDB and optionally opt out Redis and save the cache in the database (MongoDB or PostgreSql). Without a Redis cache you need to select `None` as data cache.
+
 ## Deployment
 
 The deployment is carried out in the described order.
@@ -39,8 +41,9 @@ OR, create a `volume` for MongoDB which is managed by Docker.
 docker volume create foxids-data
 ```
  
-### FoxIDs websites
-The two FoxIDs websites is configured with either images from Docker Hub or images generated from code with `Dockerfile` files. And opssible configured to use either only HTTP or both HTTP/HTTPS with a development certificate.
+### Deploy containers
+The two FoxIDs websites is configured with either images from Docker Hub or images generated from code with `Dockerfile` files. And optional configured to use either only HTTP or both HTTP/HTTPS with a development certificate.  
+The official MongoDB and Redis images is pulled from Docker Hub.
 
 **Email provider**  
 You can optionally configure a global email provider or later configure [email providers](email) per environment. FoxIDs supports sending emails with SendGrid and SMTP.
@@ -64,25 +67,73 @@ This example show how to add Outlook / Microsoft 365 with SMTP:
 ```
 
 **Deploy**  
-Create the two FoxIDs websites
+Create the deployment, select one of the three following ways:
 
-//TODO
-
-
-
-dev with http
-docker-compose -f docker-compose-project.yaml -f docker-compose.development-http.yaml up -d
+1) All based on images from Docker Hub and with HTTP
+```yaml
 docker-compose -f docker-compose-image.yaml -f docker-compose.development-http.yaml up -d
+```
 
-dev with https
+2) Partial based on images generated from code with `Dockerfile` files and with HTTP
+```yaml
+docker-compose -f docker-compose-project.yaml -f docker-compose.development-http.yaml up -d
+```
+
+3) Partial based on images generated from code with `Dockerfile` files and with HTTP/HTTPS - require the development certificate to be present.
+```yaml
 docker-compose -f docker-compose-project.yaml -f docker-compose.development-https.yaml up -d
-
-
-
-
-
-
-
+```
 
 ## Useful commands
 This is a list of commands which may be useful during deployment to view details and to make deployment changes.
+
+Tear down the deployment
+```cmd
+docker-compose -f docker-compose-image.yaml -f docker-compose.development-http.yaml down
+# or
+docker-compose -f docker-compose-project.yaml -f docker-compose.development-http.yaml down
+# or
+docker-compose -f docker-compose-project.yaml -f docker-compose.development-https.yaml down
+```
+
+Build image with `Dockerfile` file
+```cmd
+docker build -f ./src/foxids/Dockerfile . -t foxids:x.x.x    # x.x.x is the version
+# or
+docker build -f ./src/foxids.control/Dockerfile . -t foxids-control:x.x.x    # x.x.x is the version
+```
+
+Stop container
+```cmd
+docker stop xxx
+```
+
+Remove container
+```cmd
+docker rm xxx
+```
+
+Remove image
+```cmd
+docker rmi xxx
+```
+
+List volumes
+```cmd
+docker volume ls
+```
+
+Remove volume
+```cmd
+docker volume rm xxx
+```
+
+Remove all unused volumes
+```cmd
+docker volume prune
+```
+
+Show logs in container
+```cmd
+Docker logs xxx
+```

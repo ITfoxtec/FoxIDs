@@ -18,6 +18,8 @@ This deployment include:
 - Redis cache holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks. Deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
 - Logs are written to `stdout` where the logs can be picked up by Kubernetes.
 
+> Optionally use PostgreSql instead of MongoDB and optionally opt out Redis and save the cache in the database (MongoDB or PostgreSql). Without a Redis cache you need to select `None` as data cache.
+
 ## Deployment
 
 The deployment is carried out in the described order.
@@ -260,6 +262,11 @@ Consider if backup of the MongoDB data is required and at which level, here thre
 1. Backup the persistent volume physical data store.
 2. [Backup with a Kubernetes Cron Job](https://medium.com/@shashwatmahar12/kubernetes-install-mongodb-from-helm-cron-job-to-backup-mongodb-replica-set-5fd8df51fe93).
 3. Backup is supported in MongoDB Enterprise Kubernetes Operator.
+
+## Update
+FoxIDs is updated by updating each image to a new version, the two FoxIDs images is backwards compatible. First update the [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) image and then the [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general) image.
+
+It should likewise be possible to update the [MongoDB](https://hub.docker.com/_/mongo) image and [Redis](https://hub.docker.com/_/redis) images with data in persistent volumes. 
 
 ## Useful commands
 This is a list of commands which may be useful during deployment to view details and to make deployment changes.

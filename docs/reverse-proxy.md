@@ -23,6 +23,13 @@ Disable Session affinity and optionally configure WAF policies.
 ### Cloudflare
 Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). [Restrict access](#restrict-access) by requiring the `X-FoxIDs-Secret` HTTP header.
 
+### Azure Application Gateway
+Azure Application Gateway can rewrite all domains if configured. 
+The `X-FoxIDs-Secret` HTTP header can optionally be added to [restrict access](#restrict-access) (recommended depended on the infrastructure).
+
+Optionally configure a rewrite rule to both requiring a secret and sending a secret in a `X-FoxIDs-Secret` HTTP header. You could require a `X-FoxIDs-Secret` HTTP header if you have a reverse proxy in front of the Azure Application Gateway.  
+If requiring a secret, add a custom HTTPS health probe with the `X-FoxIDs-Secret` query parameter to the path `/?x-foxids-secret=xxx` equals to the secret.
+
 ### IIS ARR Proxy
 Internet Information Services (IIS) Application Request Routing (ARR) Proxy require a Windows server. ARR Proxy rewrite domains with a rewrite rule. 
 The `X-FoxIDs-Secret` HTTP header can optionally be added to [restrict access](#restrict-access) (recommended depended on the infrastructure).

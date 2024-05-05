@@ -38,16 +38,25 @@ namespace FoxIDs.Infrastructure.Hosting
         private bool Secret(HttpContext context)
         {
             var settings = context.RequestServices.GetService<FoxIDsSettings>();
+            if (settings.TrustProxyHeaders)
+            {
+                return true;
+            }
+
             if (!settings.ProxySecret.IsNullOrEmpty())
             {
                 string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];
+                if (secretHeader.IsNullOrEmpty())
+                {
+                    secretHeader = context.Request.Query["X-FoxIDs-Secret"];
+                }
                 if (!settings.ProxySecret.Equals(secretHeader, StringComparison.Ordinal))
                 {
-                    throw new Exception("Proxy secret in 'X-FoxIDs-Secret' header not accepted.");
+                    throw new Exception("Proxy secret in 'X-FoxIDs-Secret' header or query not accepted.");
                 }
                 return true;
             }
-            return settings.TrustProxyHeaders;
+            return false;
         }
 
         private string ReadHostFromHeader(HttpContext context)

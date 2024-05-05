@@ -37,6 +37,11 @@ namespace FoxIDs.Infrastructure.Hosting
         private bool Secret(HttpContext context)
         {
             var settings = context.RequestServices.GetService<FoxIDsSettings>();
+            if (settings.TrustProxyHeaders)
+            {
+                return true;
+            }
+
             if (!settings.ProxySecret.IsNullOrEmpty())
             {
                 string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];
@@ -46,7 +51,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 return true;
             }
-            return settings.TrustProxyHeaders;
+            return false;
         }
 
         private string ReadHostFromHeader(HttpContext context)

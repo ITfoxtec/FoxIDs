@@ -30,7 +30,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetSetAsync<T>(partitionId);
+                var dataItems = await db.GetHashSetAsync<T>(partitionId);
                 var lambda = whereQuery.Compile();
                 return dataItems.Where(d => lambda(d)).Count();
             }
@@ -93,7 +93,7 @@ namespace FoxIDs.Repository
         {
             //TODO pagination
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = await db.GetSetAsync<T>(partitionId, pageSize);
+            var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
             paginationToken = null;
             if (whereQuery == null)
             {
@@ -113,9 +113,17 @@ namespace FoxIDs.Repository
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            //TODO fail if the ID already exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.Conflict };
-            await UpdateAsync(item);
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetTenantPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            if (!await db.CreateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+            }
         }
 
         public override async ValueTask UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
@@ -127,14 +135,22 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            //TODO fail if the ID do not exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            await db.SetAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
+            if(!await db.UpdateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+            }
         }
 
         public override async ValueTask SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
         {
-            await UpdateAsync(item);
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetTenantPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            await db.UpsertAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
         }
 
         public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
@@ -142,9 +158,11 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
             var partitionId = id.IdToTenantPartitionId();
-            //TODO fail if the ID do not exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            await db.RemoveAsync(id, partitionId);
+            if(!await db.RemoveAsync(id, partitionId))
+            {
+                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+
+            }
         }
 
         //public override ValueTask DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
@@ -165,7 +183,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetSetAsync<T>(partitionId);
+                var dataItems = await db.GetHashSetAsync<T>(partitionId);
                 var lambda = whereQuery.Compile();
                 var deleteItems = dataItems.Where(d => lambda(d));
                 foreach (var item in deleteItems)

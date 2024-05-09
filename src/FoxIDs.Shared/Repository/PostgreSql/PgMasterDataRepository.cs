@@ -28,7 +28,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetSetAsync<T>(partitionId);
+                var dataItems = await db.GetHashSetAsync<T>(partitionId);
                 var lambda = whereQuery.Compile();
                 return dataItems.Where(d => lambda(d)).Count();
             }
@@ -54,7 +54,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = IdToMasterPartitionId<T>();
-            var dataItems = await db.GetSetAsync<T>(partitionId, pageSize);
+            var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
             if (whereQuery == null)
             {
                 var items = dataItems.ToList();
@@ -73,9 +73,17 @@ namespace FoxIDs.Repository
 
         public override async ValueTask CreateAsync<T>(T item)
         {
-            //TODO fail if the ID already exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.Conflict };
-            await UpdateAsync(item);
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            if (!await db.CreateAsync(item.Id, item, item.PartitionId))
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+            }
         }
 
         public override async ValueTask UpdateAsync<T>(T item)
@@ -87,14 +95,22 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            //TODO fail if the ID do not exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            await db.SetAsync(item.Id, item, item.PartitionId);
+            if(!await db.UpdateAsync(item.Id, item, item.PartitionId))
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+            }
         }
 
         public override async ValueTask SaveAsync<T>(T item)
         {
-            await UpdateAsync(item);
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            await db.UpsertAsync(item.Id, item, item.PartitionId);
         }
 
         public override async ValueTask DeleteAsync<T>(T item)
@@ -133,9 +149,11 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            //TODO fail if the ID do not exists
-            //  throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            await db.RemoveAsync(id, partitionId);
+
+            if(!await db.RemoveAsync(id, partitionId))
+            {
+                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
         }
 
         public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)

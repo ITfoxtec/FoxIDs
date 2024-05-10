@@ -3,7 +3,7 @@ name: ci_main_docker
 on:
   push:
     branches:
-      - "main"
+      - "main-ci-test"
 jobs:
   build:
     name: Build Docker image
@@ -72,7 +72,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
           readme-filepath: ./Docker/README-FoxIDs-image.md
-          short-description: "FoxIDs is a Identity Services (IDS) supporting: login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0."
+          short-description: "FoxIDs is an identity service (IDS) that supports login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0."
 
       - name: Docker Hub Description FoxIDs.Control
         uses: peter-evans/dockerhub-description@v4
@@ -81,4 +81,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
           readme-filepath: ./Docker/README-FoxIDs-Control-image.md
-          short-description: "FoxIDs is a Identity Services (IDS). FoxIDs Control is the admin site."
+          short-description: "FoxIDs Control is the admin site for the Identity Services FoxIDs."

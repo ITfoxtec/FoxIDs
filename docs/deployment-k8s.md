@@ -217,7 +217,10 @@ Thereafter, the FoxIDs Control pod needs to be restarted to initiate a new seed 
 Advanced option: The domains can also be changed by hand din the database.
 
 ## Considerations
-This section lists some deployment considerations.
+This section lists some deployment and security considerations.
+
+**Kubernetes Service Mesh**  
+It is recommended to use a [Kubernetes Service Mesh](https://www.toptal.com/kubernetes/service-mesh-comparison) to achieve a zero-trust architecture. Where the internal traffic is secured with mutual TLS (mTLS) encryption.
 
 **Namespace**  
 Consider encapsulating the resources with a namespace. The following commands are used to apply a namespace.
@@ -236,9 +239,6 @@ Apply namespace on pod creation
 ```cmd
 kubectl apply -f xxx.yaml --namespace=test
 ```
-
-**Kubernetes Service Mesh**  
-Consider [Kubernetes Service Mesh](https://www.toptal.com/kubernetes/service-mesh-comparison) to achieve a zero-trust architecture. Wher the internal trafic is securet with mutual TLS (mTLS) encryption.
 
 **Log**  
 All logs from FoxIDs including errors, trace and envents is written to `stdout`. Consider how to handle [application logs](https://kubernetes.io/docs/concepts/cluster-administration/logging/) and collect logs from the containers.
@@ -273,12 +273,12 @@ This is a list of commands which may be useful during deployment to view details
 
 Create pod
 ```cmd
-kubectl apply -f pod-xxx.yaml
+kubectl apply -f ks8-xxx.yaml
 ```
 
 Tear down pod
 ```cmd
-kubectl delete -f pod-xxx.yaml
+kubectl delete -f ks8-xxx.yaml
 ```
 
 List pods

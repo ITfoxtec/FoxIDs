@@ -3,8 +3,6 @@ kind: Ingress
 metadata:
   name: foxids-ingress-http
   annotations:
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   more_set_input_headers 'Host: $http_X-Forwarded-Host';
    #production 
     cert-manager.io/cluster-issuer: letsencrypt-production
    #staging

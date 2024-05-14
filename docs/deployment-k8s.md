@@ -120,7 +120,7 @@ The two FoxIDs websites is configured to use two domains that you create and man
 - The FoxIDs Control site domain `https://control.itfoxtec.com` is change to your domain - `control.my-domain.com`
 
 **Email provider**  
-You can optionally configure a global email provider or later configure [email providers](email) per environment. FoxIDs supports sending emails with SendGrid and SMTP.
+You can optionally configure a global email provider or later configure [email providers](email.md) per environment. FoxIDs supports sending emails with SendGrid and SMTP.
 
 The global email provider is configured in the `k8s-foxids-deployment.yaml` file on the `foxids` container/pod in the `env:` section.  
 This example show how to add Outlook / Microsoft 365 with SMTP:

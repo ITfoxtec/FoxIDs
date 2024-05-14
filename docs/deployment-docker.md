@@ -46,7 +46,7 @@ The two FoxIDs websites is configured with either images from Docker Hub or imag
 The official MongoDB and Redis images is pulled from Docker Hub.
 
 **Email provider**  
-You can optionally configure a global email provider or later configure [email providers](email) per environment. FoxIDs supports sending emails with SendGrid and SMTP.
+You can optionally configure a global email provider or later configure [email providers](email.md) per environment. FoxIDs supports sending emails with SendGrid and SMTP.
 
 The global email provider is configured in the `docker-compose-image.yaml` or the `docker-compose-project.yaml` file on the `foxids` service in the `environment:` section.  
 This example show how to add Outlook / Microsoft 365 with SMTP:

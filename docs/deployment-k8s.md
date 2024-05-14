@@ -177,13 +177,6 @@ Configure Let's Encrypt
 kubectl apply -f k8s-letsencrypt-issuer.yaml
 ```
 
-Optionally verify certificate issuer
-```cmd
-kubectl describe ClusterIssuer letsencrypt-production
-#staging 
-# kubectl describe ClusterIssuer letsencrypt-staging
-```
-
 The `k8s-foxids-ingress-deployment.yaml` file is configured with the domains:
 
 - The FoxIDs site domain `id.itfoxtec.com` (two places in the file) is change to your domain - `id.my-domain.com`
@@ -194,7 +187,14 @@ Add ingress with the domains and bound to the related certificates
 kubectl apply -f k8s-foxids-ingress-deployment.yaml
 ```
 
-Optionally verify the certificate
+Optionally verify certificate issuer
+```cmd
+kubectl describe ClusterIssuer letsencrypt-production
+#staging 
+# kubectl describe ClusterIssuer letsencrypt-staging
+```
+
+And optionally verify the certificate
 ```cmd
 kubectl describe certificate letsencrypt-production
 #staging 

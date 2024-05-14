@@ -22,7 +22,7 @@ jobs:
         id: meta-f
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
+          images: ${{ secrets.DOCKERHUB_ORG }}/foxids
           tags: |            
             type=raw,value=${{ steps.get-version.outputs.version }}
             type=raw,value=latest,enable=true
@@ -31,7 +31,7 @@ jobs:
         id: meta-fc
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
+          images: ${{ secrets.DOCKERHUB_ORG }}/foxids-control
           tags: |     
             type=raw,value=${{ steps.get-version.outputs.version }}
             type=raw,value=latest,enable=true
@@ -70,7 +70,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids
+          repository: ${{ secrets.DOCKERHUB_ORG }}/foxids
           readme-filepath: ./Docker/README-FoxIDs-image.md
           short-description: "FoxIDs is an identity service (IDS) that supports login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0."
 
@@ -79,6 +79,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/foxids-control
+          repository: ${{ secrets.DOCKERHUB_ORG }}/foxids-control
           readme-filepath: ./Docker/README-FoxIDs-Control-image.md
           short-description: "FoxIDs Control is the admin site for the Identity Services FoxIDs."

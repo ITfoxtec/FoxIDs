@@ -291,6 +291,11 @@ Get pod description
 kubectl describe pod xxx
 ```
 
+Get pod logs
+```cmd
+kubectl logs xxx
+```
+
 List deployments
 ```cmd
 kubectl get deployments

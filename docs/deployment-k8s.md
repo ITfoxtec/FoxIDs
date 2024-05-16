@@ -150,25 +150,27 @@ The configuration require a Nginx controller. You can optionally change the conf
 
 Install Ingress-Nginx controller
 ```cmd
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
 ```
 Optionally verify Ingress-Nginx installation 
 ```cmd
 kubectl -n ingress-nginx get pod
 ```
 
-> DNS records to the two domains need to point to the installation IP address to enable the Let's Encrypt online validation.
+> DNS records to the two domains need to point to the installation IP address to enable the Let's Encrypt online validation.  
+> The firewall needs to accept requests on port 80 and 443. Let's encrypt validates the domain ownership on port 80.
 
 Install Cert-manager
 ```cmd
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
 ```
 Optionally verify Cert-manager installation 
 ```cmd
 kubectl get pods --namespace cert-manager
 ```
 
-> Consider to start with Let's Encrypt in staging to avoid hitting the Let's Encrypt production rate limit (staging certificates is not trusted by the browser).
+> Consider to start with Let's Encrypt in staging to avoid hitting the Let's Encrypt production rate limit (staging certificates is not trusted by the browser).  
+> You might need to download the Let's encrypt TLS root certificate used in this URL https://acme-v02.api.letsencrypt.org/directory and add it to the trusted root certificate authority on the machine.
 
 Add your email in the `k8s-letsencrypt-issuer.yaml` file. Optionally select to use stating or production in the `k8s-letsencrypt-issuer.yaml` and `k8s-foxids-ingress-deployment.yaml` files, default configured for production.
 
@@ -192,6 +194,11 @@ Optionally verify certificate issuer
 kubectl describe ClusterIssuer letsencrypt-production
 #staging 
 # kubectl describe ClusterIssuer letsencrypt-staging
+```
+
+Optionally check if the certificate is ready (READY should be True)
+```cmd
+kubectl get certificate
 ```
 
 And optionally verify the certificate

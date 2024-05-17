@@ -104,13 +104,18 @@ namespace FoxIDs.Infrastructure
 
         public void Trace(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, string message, IDictionary<string, string> properties = null)
         {
+            if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Trace1."), logToScopeStream: false);
+
             try
             {
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Trace2."), logToScopeStream: false);
                         var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Trace3."), logToScopeStream: false);
                         telemetryLogger.Trace(message, properties: properties);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Trace4."), logToScopeStream: false);
                         break;
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");

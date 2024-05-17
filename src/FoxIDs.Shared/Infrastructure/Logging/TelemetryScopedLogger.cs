@@ -243,6 +243,7 @@ namespace FoxIDs.Infrastructure
             if(!isDisposed)
             {
                 Warning(new Exception("in dispose, start2"), logToScopeStream: false);
+                Warning(new Exception($"in dispose, start2, json '{Logging?.ToJson()}'"), logToScopeStream: false);
 
                 isDisposed = true;
                 if (Logging != null && traceMessages.Count > 0)

@@ -238,13 +238,21 @@ namespace FoxIDs.Infrastructure
         bool isDisposed = false;
         public void Dispose()
         {
+            Warning(new Exception("in dispose, start1"), logToScopeStream: false);
+
             if(!isDisposed)
             {
+                Warning(new Exception("in dispose, start2"), logToScopeStream: false);
+
                 isDisposed = true;
                 if (Logging != null && traceMessages.Count > 0)
                 {
+                    Warning(new Exception("in dispose, logging trace"), logToScopeStream: false);
+
                     if (Logging.ScopedLogger != null)
                     {
+                        Warning(new Exception("in dispose, scope logger"), logToScopeStream: false);
+
                         var scopedLogger = Logging.ScopedLogger;
                         var telemetryLoggertraceMessages = traceMessages.Where(m =>
                             (m.TraceType == TraceTypes.Info && scopedLogger.LogInfoTrace) ||
@@ -258,14 +266,21 @@ namespace FoxIDs.Infrastructure
 
                     if (Logging.ScopedStreamLoggers?.Count() > 0)
                     {
+                        Warning(new Exception("in dispose, StreamLoggers"), logToScopeStream: false);
+
                         foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers)
                         {
+                            Warning(new Exception($"in dispose, StreamLoggers item"), logToScopeStream: false);
+                            Warning(new Exception($"in dispose, StreamLoggers item, json '{scopedStreamLogger.ToJson()}'"), logToScopeStream: false);
+
                             var scopedStreamLoggertraceMessages = traceMessages.Where(m =>
                                 (m.TraceType == TraceTypes.Info && scopedStreamLogger.LogInfoTrace) ||
                                 (m.TraceType == TraceTypes.Claim && scopedStreamLogger.LogClaimTrace) ||
                                 (m.TraceType == TraceTypes.Message && scopedStreamLogger.LogMessageTrace));
                             if (scopedStreamLoggertraceMessages.Count() > 0)
                             {
+                                Warning(new Exception("in dispose, StreamLoggers item trace to log"), logToScopeStream: false);
+
                                 telemetryScopedStreamLogger.Trace(this, scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
                             }
                         }

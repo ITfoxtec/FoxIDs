@@ -25,7 +25,12 @@ namespace FoxIDs.Infrastructure
         }
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            GetTelemetryClient().TrackException(GetExceptionTelemetry(SeverityLevel.Warning, exception, message, properties, metrics));
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Warning, exception, message, properties, metrics));
+            if(flush)
+            {
+                telemetryClient.Flush();
+            }
         }
 
         public void Error(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
@@ -34,7 +39,12 @@ namespace FoxIDs.Infrastructure
         }
         public void Error(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            GetTelemetryClient().TrackException(GetExceptionTelemetry(SeverityLevel.Error, exception, message, properties, metrics));
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Error, exception, message, properties, metrics));
+            if (flush)
+            {
+                telemetryClient.Flush();
+            }
         }
 
         public void CriticalError(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
@@ -43,32 +53,52 @@ namespace FoxIDs.Infrastructure
         }
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            GetTelemetryClient().TrackException(GetExceptionTelemetry(SeverityLevel.Critical, exception, message, properties, metrics));
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Critical, exception, message, properties, metrics));
+            if (flush)
+            {
+                telemetryClient.Flush();
+            }
         }
 
         public void Event(string eventName, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            GetTelemetryClient().TrackEvent(eventName, properties, metrics);
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackEvent(eventName, properties, metrics);
+            if (flush)
+            {
+                telemetryClient.Flush();
+            }
         }
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            GetTelemetryClient().TrackTrace(message, properties);
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackTrace(message, properties);
+            if (flush)
+            {
+                telemetryClient.Flush();
+            }
         }
 
         public void Metric(string message, double value, IDictionary<string, string> properties = null)
         {
-            GetTelemetryClient().TrackMetric(message, value, properties);
+            (var telemetryClient, var flush) = GetTelemetryClient();
+            telemetryClient.TrackMetric(message, value, properties);
+            if (flush)
+            {
+                telemetryClient.Flush();
+            }
         }
 
-        private TelemetryClient GetTelemetryClient()
+        private (TelemetryClient, bool flush) GetTelemetryClient()
         {
             if (httpContextAccessor != null && RouteBinding?.TelemetryClient != null)
             {
-                return RouteBinding.TelemetryClient;
+                return (RouteBinding.TelemetryClient, false);
             }
             else
             {
-                return telemetryClient;
+                return (telemetryClient, true);
             }
         }
 

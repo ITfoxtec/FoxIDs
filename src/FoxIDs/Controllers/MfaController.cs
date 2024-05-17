@@ -19,18 +19,18 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly LoginPageLogic loginPageLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorLogic accountTwoFactorLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.loginPageLogic = loginPageLogic;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
                 }
 
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -90,7 +90,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -157,7 +157,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.RegisteredShowRecoveryCode}'.");
                 }
                 loginPageLogic.CheckUpParty(sequenceData);
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -168,7 +168,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
-                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretExternalName, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretOrExtName, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
             }
@@ -195,7 +195,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
                 }
 
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -224,7 +224,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
                 }
-                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
@@ -271,7 +271,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretExternalName, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretOrExtName, registerTwoFactor.AppCode);
 
                         var user = await accountLogic.GetUserAsync(sequenceData.Email);
                         var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });

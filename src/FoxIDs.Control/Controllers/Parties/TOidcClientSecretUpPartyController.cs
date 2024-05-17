@@ -14,7 +14,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOidcClientSecretUpPartyController : GenericOAuthClientSecretUpPartyController<OidcUpParty, OidcUpClient>
     {
-        public TOidcClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : base(logger, tenantRepository)
+        public TOidcClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository) : base(logger, tenantDataRepository)
         { }
 
         /// <summary>

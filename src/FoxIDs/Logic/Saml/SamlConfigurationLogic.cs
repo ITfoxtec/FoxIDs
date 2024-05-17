@@ -23,7 +23,7 @@ namespace FoxIDs.Logic
             var samlConfig = new FoxIDsSaml2Configuration();
             if (party != null)
             {
-                samlConfig.AllowedIssuer = party.Issuer;
+                samlConfig.AllowedIssuer = party.Issuers.First();
             }
 
             samlConfig.Issuer = !string.IsNullOrEmpty(party?.SpIssuer) ? party.SpIssuer : trackIssuerLogic.GetIssuer();

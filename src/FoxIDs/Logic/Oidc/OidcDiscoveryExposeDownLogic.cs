@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
     public class OidcDiscoveryExposeDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public OidcDiscoveryExposeDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryExposeDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackIssuerLogic = trackIssuerLogic;
         }
 
@@ -30,7 +30,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OpenID configuration request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<TParty>(partyId) : null;
+            var party = RouteBinding.DownParty != null ? await tenantDataRepository.GetAsync<TParty>(partyId) : null;
 
             var oidcDiscovery = new OidcDiscovery
             {

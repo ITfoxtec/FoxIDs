@@ -21,13 +21,13 @@ namespace FoxIDs.Controllers
         private const string dataType = Constants.Models.DataType.Track;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mTracks, _) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
-                    await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
                         (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.OrdinalIgnoreCase)));
                
                 var aTracks = new HashSet<Api.Track>(mTracks.Count());
@@ -54,9 +54,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aTracks);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Track).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.Track).Name, filterName);

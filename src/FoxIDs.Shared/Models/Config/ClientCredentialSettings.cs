@@ -3,7 +3,7 @@
 namespace FoxIDs.Models.Config
 {
     /// <summary>
-    /// Only used in development!
+    /// Only used in development to call Azure KeyVault and to query Azure Application Insights / Log Analytics workspace!
     /// </summary>
     public class ClientCredentialSettings
     {

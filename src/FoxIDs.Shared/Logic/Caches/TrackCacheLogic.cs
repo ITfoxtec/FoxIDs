@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -11,19 +12,19 @@ namespace FoxIDs.Logic
     public class TrackCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IDistributedCacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly IDataCacheProvider cacheProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TrackCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackCacheLogic(Settings settings, IDataCacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         public async Task InvalidateTrackCacheAsync(Track.IdKey idKey)
         {
-            var key = RadisTrackNameKey(idKey);
+            var key = CacheTrackNameKey(idKey);
             await cacheProvider.DeleteAsync(key);
         }
 
@@ -34,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<Track> GetTrackAsync(Track.IdKey idKey, bool required = true)
         {
-            var key = RadisTrackNameKey(idKey);
+            var key = CacheTrackNameKey(idKey);
 
             var trackAsString = await cacheProvider.GetAsync(key);
             if (!trackAsString.IsNullOrEmpty())
@@ -42,7 +43,7 @@ namespace FoxIDs.Logic
                 return trackAsString.ToObject<Track>();
             }
 
-            var track = await tenantRepository.GetAsync<Track>(await Track.IdFormatAsync(idKey), required: required);
+            var track = await tenantDataRepository.GetAsync<Track>(await Track.IdFormatAsync(idKey), required: required);
             if (track != null)
             {
                 await cacheProvider.SetAsync(key, track.ToJson(), settings.Cache.TrackLifetime);
@@ -55,7 +56,7 @@ namespace FoxIDs.Logic
             return await GetTrackAsync(GetTrackIdKey(trackName, tenantName), required);
         }
 
-        private string RadisTrackNameKey(Track.IdKey trackIdKey)
+        private string CacheTrackNameKey(Track.IdKey trackIdKey)
         {
             return $"track_cache_name_{trackIdKey.TenantName}_{trackIdKey.TrackName}";
         }

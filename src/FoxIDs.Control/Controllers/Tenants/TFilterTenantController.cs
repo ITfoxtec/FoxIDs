@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
@@ -22,13 +21,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -50,9 +49,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aTenants);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Tenant).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.Tenant).Name, filterName);
@@ -61,23 +60,23 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<(HashSet<Tenant> items, string continuationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
+        private ValueTask<(IReadOnlyCollection<Tenant> items, string paginationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>();
+                return tenantDataRepository.GetListAsync<Tenant>();
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
         }
     }

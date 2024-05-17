@@ -14,17 +14,17 @@ namespace FoxIDs.Logic
     public class OidcTokenDownLogic<TParty, TClient, TScope, TClaim> : OAuthTokenDownLogic<TParty, TClient, TScope, TClaim> where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
         private readonly OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, planUsageLogic, oidcJwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, oauthTokenExchangeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, planUsageLogic, oidcJwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, oauthTokenExchangeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planUsageLogic = planUsageLogic;
             this.oidcJwtDownLogic = oidcJwtDownLogic;
             this.oauthAuthCodeGrantDownLogic = oauthAuthCodeGrantDownLogic;
@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OIDC Token request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
                 throw new NotSupportedException("Application Client not configured.");
@@ -94,7 +94,6 @@ namespace FoxIDs.Logic
         protected override async Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             var authCodeGrant = await oauthAuthCodeGrantDownLogic.GetAndValidateAuthCodeGrantAsync(tokenRequest.Code, tokenRequest.RedirectUri, tokenRequest.ClientId);
-            Console.WriteLine($"authCodeGrant not null: {authCodeGrant != null}");
             if (validatePkce)
             {
                 await ValidatePkceAsync(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);

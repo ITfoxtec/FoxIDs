@@ -6,34 +6,37 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using System;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
+using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TMyTenantController :  ApiController
     {
+        private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TMyTenantController(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -46,12 +49,12 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var MTenant = await tenantRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+                var MTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
@@ -71,7 +74,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTenant = await tenantRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
@@ -86,7 +89,7 @@ namespace FoxIDs.Controllers
 
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = false;
-                await tenantRepository.UpdateAsync(mTenant);
+                await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
@@ -96,9 +99,9 @@ namespace FoxIDs.Controllers
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
@@ -121,20 +124,21 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name };
-                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
-                    await tenantRepository.DeleteAsync<Track>(mTrack.Id);
+                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
-                    if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
+                    if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
-                        await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                        await serviceProvider.GetService<ExternalKeyLogic>().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
-                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
+                await tenantDataRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
@@ -144,9 +148,9 @@ namespace FoxIDs.Controllers
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete my '{typeof(Api.Tenant).Name}'.");
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);

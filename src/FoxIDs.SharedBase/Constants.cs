@@ -58,8 +58,26 @@ namespace FoxIDs
             public const string MasterTenantName = "master";
             public const string MasterTrackName = "master";
 
+            public const string MainTenantName = "main";
+
             public const string ApiControllerPreMasterKey = "m";
             public const string ApiControllerPreTenantTrackKey = "t";
+
+            public const string ControlSiteName = "control";            
+        }
+
+        public static class TrackDefaults
+        {
+            public const string DefaultTrackTestDisplayName = "Test";
+            public const string DefaultTrackTestName = "test";            
+            public const string DefaultTrackProductionDisplayName = "Production";
+            public const string DefaultTrackProductionName = "-";
+
+            public const int DefaultSequenceLifetime = 7200;
+            public const int DefaultMaxFailingLogins = 5;
+            public const int DefaultFailingLoginCountLifetime = 36000;
+            public const int DefaultFailingLoginObservationPeriod = 3600;
+            public const int DefaultPasswordLength = 6;
         }
 
         public static class Logs
@@ -123,10 +141,15 @@ namespace FoxIDs
             public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
+            public const int ListPageSize = 50;
+
             public static class DataType
             {
+                public const string Master = "master";
+
                 public const string Tenant = "tenant";
                 public const string Track = "track";
+                public const string Party = "party";
                 public const string UpParty = "party:up";
                 public const string DownParty = "party:down";
                 public const string User = "user";
@@ -136,6 +159,9 @@ namespace FoxIDs
                 public const string RefreshTokenGrant = "rtgrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
+
+                // data type used for cache
+                public const string Cache = "cache";
             }
 
             public static class Master
@@ -383,6 +409,7 @@ namespace FoxIDs
                 public static class Grant
                 {
                     public const int IdLength = 220;
+                    public const string IdRegExPattern = @"^[\w:\-_]*$";
                     public const int ClaimsMin = 1;
                     public const int ClaimsMax = 1000;
                 }

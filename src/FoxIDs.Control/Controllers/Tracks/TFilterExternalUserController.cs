@@ -21,13 +21,13 @@ namespace FoxIDs.Controllers
         private const string dataType = Constants.Models.DataType.ExternalUser;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterExternalUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mExternalUsers, _) = filterValue.IsNullOrWhiteSpace() ? 
-                    await tenantRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
-                    await tenantRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
+                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
                         (u.LinkClaimValue.Contains(filterValue, StringComparison.OrdinalIgnoreCase) || u.UserId.Contains(filterValue, StringComparison.OrdinalIgnoreCase)));
 
                 var aExternalUsers = new HashSet<Api.ExternalUser>(mExternalUsers.Count());
@@ -54,9 +54,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aExternalUsers);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by filter value '{filterValue}'.");
                     return NotFound(typeof(Api.ExternalUser).Name, filterValue);

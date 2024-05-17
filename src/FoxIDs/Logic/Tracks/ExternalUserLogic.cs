@@ -16,15 +16,15 @@ namespace FoxIDs.Logic
     public class ExternalUserLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly ClaimsDownLogic claimsDownLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
 
-        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimsDownLogic claimsDownLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalUserLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimsDownLogic claimsDownLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Validating external user, link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
             if (!linkClaimValue.IsNullOrWhiteSpace())
             {
-                var externalUser = await tenantRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), required: false);
+                var externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), required: false);
                 if (externalUser != null)
                 {
                     if (!externalUser.DisableAccount)
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
                 Claims = transformedClaims.ToClaimAndValues()
             };
 
-            await tenantRepository.CreateAsync(externalUser);
+            await tenantDataRepository.CreateAsync(externalUser);
             logger.ScopeTrace(() => $"External user created, with user id '{externalUser.UserId}'.");
 
             var externalUserClaims = GetExternalUserClaim(upParty, externalUser);

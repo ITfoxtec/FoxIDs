@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using FoxIDs.Logic;
 using System.Security.Claims;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using ITfoxtec.Identity;
 using System;
 using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
@@ -21,20 +21,20 @@ namespace FoxIDs.Controllers
     public class TUserController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
-        private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic) : base(logger)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
-            this.externalSecretLogic = externalSecretLogic;
         }
 
         /// <summary>
@@ -50,12 +50,12 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.User).Name, email);
@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     if (plan.Users.IsLimited)
                     {
                         Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
-                        var count = await tenantRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
+                        var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
                         // included + one master user
                         if (count > plan.Users.Included)
                         {
@@ -126,9 +126,9 @@ namespace FoxIDs.Controllers
                 ModelState.TryAddModelError(nameof(createUserRequest.Password), aex.Message);
                 return BadRequest(ModelState, aex);
             }            
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.User).Name}' by email '{createUserRequest.Email}'.");
                     return Conflict(typeof(Api.User).Name, createUserRequest.Email, nameof(createUserRequest.Email));
@@ -160,7 +160,7 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = user.EmailVerified;
@@ -172,7 +172,7 @@ namespace FoxIDs.Controllers
                     {
                         try
                         {
-                            await externalSecretLogic.DeleteExternalSecretAsync(mUser.TwoFactorAppSecretExternalName);
+                            await serviceProvider.GetService<ExternalSecretLogic>().DeleteExternalSecretAsync(mUser.TwoFactorAppSecretExternalName);
                         }
                         catch (Exception ex)
                         {
@@ -180,19 +180,20 @@ namespace FoxIDs.Controllers
                         }
                     }
 
+                    mUser.TwoFactorAppSecret = null;
                     mUser.TwoFactorAppSecretExternalName = null;
                     mUser.TwoFactorAppRecoveryCode = null;
                 }
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
                 var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
-                await tenantRepository.UpdateAsync(mUser);
+                await tenantDataRepository.UpdateAsync(mUser);
 
                 return Ok(mapper.Map<Api.User>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserRequest).Name}' by email '{user.Email}'.");
                     return NotFound(typeof(Api.UserRequest).Name, user.Email, nameof(user.Email));
@@ -214,12 +215,12 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.User).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.User).Name, email);

@@ -10,20 +10,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Logic.Caches.Providers;
 
 namespace FoxIDs.Logic
 {
     public class TrackKeyLogic : LogicSequenceBase
     {
-        private readonly IDistributedCacheProvider cacheProvider;
-        private readonly ITenantRepository tenantRepository;
-        private readonly ExternalKeyLogic externalKeyLogic;
+        private readonly IServiceProvider serviceProvider;
+        private readonly ICacheProvider cacheProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public TrackKeyLogic(IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(IServiceProvider serviceProvider, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.serviceProvider = serviceProvider;
             this.cacheProvider = cacheProvider;
-            this.tenantRepository = tenantRepository;
-            this.externalKeyLogic = externalKeyLogic;
+            this.tenantDataRepository = tenantDataRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         public async Task<SecurityKey> GetPrimarySecurityKeyAsync(RouteTrackKey trackKey)
@@ -93,7 +96,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey) => externalKeyLogic.GetExternalRSAKey(trackKey, trackKey.PrimaryKey);
+        private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey) => GetExternalKeyLogic().GetExternalRSAKey(trackKey, trackKey.PrimaryKey);
 
         private async Task ValidatePrimaryTrackKeyAsync(RouteTrackKey trackKey)
         {
@@ -106,13 +109,16 @@ namespace FoxIDs.Logic
             {
                 if (RouteBinding.TrackName == Constants.Routes.MasterTrackName && RouteBinding.Key.Type != TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
-                    var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                    var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                    var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
                     if (RouteBinding.Key.Type == TrackKeyTypes.Contained)
                     {
                         var ContainedCertificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                         mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };
-                        await tenantRepository.UpdateAsync(mTrack);
+                        await tenantDataRepository.UpdateAsync(mTrack);
+
+                        await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                         throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary environment key certificate has been created, please try one more time.", ex);
                     }
@@ -120,8 +126,10 @@ namespace FoxIDs.Logic
                     {
                         mTrack.Key.Type = TrackKeyTypes.KeyVaultRenewSelfSigned;
                         mTrack.Key.Keys = null;
-                        mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
-                        await tenantRepository.UpdateAsync(mTrack);
+                        mTrack.Key.ExternalName = await GetExternalKeyLogic().CreateExternalKeyAsync(mTrack);
+                        await tenantDataRepository.UpdateAsync(mTrack);
+
+                        await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                         throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary external environment key certificate is under construction in Key Vault, it is ready in a little while.", ex);
                     }
@@ -175,7 +183,7 @@ namespace FoxIDs.Logic
 
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
-            var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
+            var key = CacheTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
 
             var trackKeyExternalValue = await cacheProvider.GetAsync(key);
             if (!trackKeyExternalValue.IsNullOrEmpty())
@@ -183,7 +191,7 @@ namespace FoxIDs.Logic
                 return trackKeyExternalValue.ToObject<TrackKeyExternal>();
             }
 
-            var trackKeyExternal = await externalKeyLogic.LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
+            var trackKeyExternal = await GetExternalKeyLogic().LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
             if (trackKeyExternal != null)
             {
                 await cacheProvider.SetAsync(key, trackKeyExternal.ToJson(), track.KeyExternalCacheLifetime);
@@ -191,9 +199,11 @@ namespace FoxIDs.Logic
             return trackKeyExternal;
         }
 
-        private string RadisTrackKeyExternalKey(string tenantName, string trackName, string name)
+        private string CacheTrackKeyExternalKey(string tenantName, string trackName, string name)
         {
             return $"track_key_ext_{tenantName}_{trackName}_{name}";
         }
+
+        private ExternalKeyLogic GetExternalKeyLogic() => serviceProvider.GetService<ExternalKeyLogic>();
     }
 }

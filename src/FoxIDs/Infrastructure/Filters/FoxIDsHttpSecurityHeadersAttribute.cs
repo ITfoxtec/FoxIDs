@@ -25,7 +25,7 @@ namespace FoxIDs.Infrastructure.Filters
             private List<string> allowIframeOnDomains;
             private readonly IServiceProvider serviceProvider;
 
-            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env) : base(logger, env)
+            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment environment) : base(logger, environment)
             {
                 this.serviceProvider = serviceProvider;
             }
@@ -82,53 +82,53 @@ namespace FoxIDs.Infrastructure.Filters
                 }
             }
 
-            protected override string CspImgSrc()
+            protected override string CspImgSrc(HttpContext httpContext)
             {
                 if (allowImgSrcDomains == null || allowImgSrcDomains.Count() < 1)
                 {
-                    return base.CspImgSrc();
+                    return base.CspImgSrc(httpContext);
                 }
                 else
                 {
-                    return $"img-src 'self' data: 'unsafe-inline' {allowImgSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
+                    return $"img-src 'self' data: 'unsafe-inline' {allowImgSrcDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList()};";
                 }
             }
 
-            protected override string CspFormAction()
+            protected override string CspFormAction(HttpContext httpContext)
             {
                 if (allowFormActionOnDomains == null || allowFormActionOnDomains.Count() < 1)
                 {
-                    return base.CspFormAction();
+                    return base.CspFormAction(httpContext);
                 }
                 else
                 {
-                    var formActionOnDomains = allowFormActionOnDomains.Where(d => d == "*").Any() ? "*" : allowFormActionOnDomains.Select(d => d.DomainToOrigin()).ToSpaceList();
+                    var formActionOnDomains = allowFormActionOnDomains.Where(d => d == "*").Any() ? "*" : allowFormActionOnDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList();
                     return $"form-action 'self' {formActionOnDomains};";
                 }
             }
 
-            protected override string CspFrameSrc()
+            protected override string CspFrameSrc(HttpContext httpContext)
             {
                 if (allowFrameSrcDomains == null || allowFrameSrcDomains.Count() < 1)
                 {
-                    return base.CspFrameSrc();
+                    return base.CspFrameSrc(httpContext);
                 }
                 else
                 {
-                    var frameSrcDomains = allowFrameSrcDomains.Where(d => d == "*").Any() ? "*" : allowFrameSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList();
+                    var frameSrcDomains = allowFrameSrcDomains.Where(d => d == "*").Any() ? "*" : allowFrameSrcDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList();
                     return $"frame-src {frameSrcDomains};";
                 }
             }
 
-            protected override string CspFrameAncestors()
+            protected override string CspFrameAncestors(HttpContext httpContext)
             {
                 if (allowIframeOnDomains == null || allowIframeOnDomains.Count() < 1)
                 {
-                    return base.CspFrameAncestors();
+                    return base.CspFrameAncestors(httpContext);
                 }
                 else
                 {
-                    return $"frame-ancestors 'self' {allowIframeOnDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
+                    return $"frame-ancestors 'self' {allowIframeOnDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList()};";
                 }
             }
         }

@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TMyUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TMyUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.MyUser).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.MyUser).Name, email);
@@ -73,15 +73,15 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 mUser.ChangePassword = user.ChangePassword;
-                await tenantRepository.UpdateAsync(mUser);
+                await tenantDataRepository.UpdateAsync(mUser);
 
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.MyUser).Name}' by email '{email}'.");
                     return NotFound(typeof(Api.MyUser).Name, email, nameof(email));

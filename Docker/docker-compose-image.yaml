@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  foxids:
+    image: foxids/foxids:latest
+    environment:
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=Redis 
+      - Settings:Options:DataCache=Default
+      - Settings:MongoDb:ConnectionString=mongodb://mongodb:27017
+      - Settings:RedisCache:ConnectionString=redis:6379
+    depends_on: 
+      - mongodb
+      - redis
+  foxids-control:
+    image: foxids/foxids-control:latest
+    environment:
+      - Settings:Options:DataStorage=MongoDb
+      - Settings:Options:Cache=Redis
+      - Settings:Options:DataCache=Default
+      - Settings:MongoDb:ConnectionString=mongodb://mongodb:27017
+      - Settings:RedisCache:ConnectionString=redis:6379
+    depends_on: 
+      - foxids
+      - mongodb
+      - redis
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - foxids-data:/data/db
+  redis:
+    image: redis:latest
+volumes:
+    foxids-data:
+    #    external: true    # uncomment if data is saved in the host file system

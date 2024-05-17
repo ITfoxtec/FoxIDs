@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
@@ -28,7 +29,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
@@ -40,11 +41,11 @@ namespace FoxIDs.Logic
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly PlanUsageLogic planUsageLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
@@ -65,7 +66,7 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
@@ -91,7 +92,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
             await samlMetadataReadUpLogic.CheckMetadataAndUpdateUpPartyAsync(party);
 
             switch (party.AuthnBinding.RequestBinding)
@@ -115,6 +116,8 @@ namespace FoxIDs.Logic
             {
                 saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginEmailHint, Format = NameIdentifierFormats.Email.OriginalString } };
             }
+
+            saml2AuthnRequest.AssertionConsumerServiceUrl = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
 
             switch (samlUpSequenceData.LoginAction)
             {
@@ -164,7 +167,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
             var samlHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);
             if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
@@ -314,7 +317,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthnResponsePostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
-            var party = await tenantRepository.GetAsync<SamlUpParty>(externalUserSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(externalUserSequenceData.UpPartyId);
 
             try
             {
@@ -511,7 +514,7 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSignatureValidationCertificates: true);
 

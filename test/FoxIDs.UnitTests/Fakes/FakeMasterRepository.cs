@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using FoxIDs.Repository;
+﻿using FoxIDs.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -7,64 +6,64 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.UnitTests.Mocks
 {
-    public class FakeMasterRepository : IMasterRepository
+    public class FakeMasterRepository : MasterDataRepositoryBase
     {
-        public Task<bool> ExistsAsync<T>(string id) where T : MasterDocument
+        public override ValueTask<bool> ExistsAsync<T>(string id)
         {
             if (id == "prisk:@master:3357229DDDC9963302283F4D4863A74F310C9E80") // Password: !QAZ2wsx
             {
-                return Task.FromResult(true);
+                return ValueTask.FromResult(true);
             }
 
-            return Task.FromResult(false);
+            return ValueTask.FromResult(false);
         }
 
-        public Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        public override ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
+        public override ValueTask<T> GetAsync<T>(string id, bool required = true)
         {
             throw new NotImplementedException();
         }
 
-        public Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : MasterDocument
+        public override ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = 10)
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateAsync<T>(T item) where T : MasterDocument
+        public override ValueTask CreateAsync<T>(T item)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync<T>(T item) where T : MasterDocument
+        public override ValueTask UpdateAsync<T>(T item)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveAsync<T>(T item) where T : MasterDocument
+        public override ValueTask SaveAsync<T>(T item)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(string id) where T : MasterDocument
+        public override ValueTask DeleteAsync<T>(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync<T>(T item) where T : MasterDocument
+        public override ValueTask DeleteAsync<T>(T item)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        public override ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        public override ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
         {
             throw new NotImplementedException();
         }

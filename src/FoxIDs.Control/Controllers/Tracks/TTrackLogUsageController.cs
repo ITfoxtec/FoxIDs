@@ -5,16 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
+using System;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Usage)]
     public class TTrackLogUsageController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly UsageLogLogic usageLogLogic;
 
-        public TTrackLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
+        public TTrackLogUsageController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
         {
+            this.settings = settings;
             this.usageLogLogic = usageLogLogic;
         }
 
@@ -27,6 +31,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.UsageLogResponse>> GetTrackLogUsage(Api.UsageLogRequest logRequest)
         {
+            if (settings.Options.Log != LogOptions.ApplicationInsights)
+            {
+                throw new Exception("ApplicationInsights option not enabled.");
+            }
+
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
             var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);

@@ -15,16 +15,16 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData
             {
@@ -62,7 +62,7 @@ namespace FoxIDs.Logic
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
-            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(oidcUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(oidcUpSequenceData.UpPartyId);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToDownTrackName);

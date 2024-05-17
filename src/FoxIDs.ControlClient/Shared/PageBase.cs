@@ -3,7 +3,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using System;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Shared
 {
@@ -16,15 +15,7 @@ namespace FoxIDs.Client.Shared
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Inject]
-        public TrackSelectedLogic TrackSelectedLogic { get; set; }
-
-        [Inject]
-        public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
-
-        protected override async Task OnInitializedAsync()
-        {
-            await ControlClientSettingLogic.InitLoadAsync();
-        }
+        public TrackSelectedLogic TrackSelectedLogic { get; set; }       
 
         void IDisposable.Dispose()
         {

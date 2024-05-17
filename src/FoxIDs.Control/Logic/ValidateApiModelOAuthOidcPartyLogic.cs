@@ -17,10 +17,10 @@ namespace FoxIDs.Logic
     public class ValidateApiModelOAuthOidcPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantDataRepository tenantService;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantService, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
@@ -269,9 +269,9 @@ namespace FoxIDs.Logic
                                 }
                             }
                         }
-                        catch (CosmosDataException ex)
+                        catch (FoxIDsDataException ex)
                         {
-                            if (ex.StatusCode == HttpStatusCode.NotFound)
+                            if (ex.StatusCode == DataStatusCode.NotFound)
                             {
                                 isValid = false;
                                 var errorMessage = $"Resource scope application registration resource '{resourceScope.Resource}' not found.";

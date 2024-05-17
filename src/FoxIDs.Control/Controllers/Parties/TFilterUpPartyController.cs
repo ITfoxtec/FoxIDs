@@ -21,13 +21,13 @@ namespace FoxIDs.Controllers
         private const string dataType = Constants.Models.DataType.UpParty;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace FoxIDs.Controllers
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
-                    await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
+                    await tenantDataRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
                         (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
              
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
@@ -55,9 +55,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aUpPartys);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.UpParty).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.UpParty).Name, filterName);

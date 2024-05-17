@@ -18,15 +18,15 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
         }
@@ -127,10 +127,10 @@ namespace FoxIDs.Logic
                 case PartyTypes.Login:
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.Oidc:
-                    var oidcUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
+                    var oidcUpParty = await tenantDataRepository.GetAsync<UpParty>(partyId);
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.Saml2:
-                    var samlUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
+                    var samlUpParty = await tenantDataRepository.GetAsync<UpParty>(partyId);
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.TrackLink:
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);

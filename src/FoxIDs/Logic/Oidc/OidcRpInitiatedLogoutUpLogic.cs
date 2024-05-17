@@ -19,18 +19,18 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<OidcUpParty>(partyId);
 
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
             ValidatePartyLogoutSupport(party);
 
@@ -129,7 +129,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, OIDC End session response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             return await EndSessionResponseAsync(party);

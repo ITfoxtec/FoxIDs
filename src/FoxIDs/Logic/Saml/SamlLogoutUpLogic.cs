@@ -22,7 +22,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
@@ -31,11 +31,11 @@ namespace FoxIDs.Logic
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
@@ -86,7 +86,7 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("SAML up post logout redirect required.");
             }
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
             switch (party.LogoutBinding.RequestBinding)
@@ -189,7 +189,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, SAML Logout response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
             if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
@@ -340,7 +340,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
             if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
@@ -445,7 +445,7 @@ namespace FoxIDs.Logic
                 throw new Exception("Invalid authentication method id.");
             }
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
             return await SingleLogoutRequestAsync(party, sequenceData);
         }
 
@@ -455,7 +455,7 @@ namespace FoxIDs.Logic
         {
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
             ValidatePartyLogoutSupport(party);
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);            

@@ -21,13 +21,13 @@ namespace FoxIDs.Controllers
         private const string dataType = Constants.Models.DataType.User;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TFilterUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mUsers, _) = filterEmail.IsNullOrWhiteSpace() ? 
-                    await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
-                    await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
+                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
                         u.Email.Contains(filterEmail, StringComparison.OrdinalIgnoreCase));
               
                 var aUsers = new HashSet<Api.User>(mUsers.Count());
@@ -54,9 +54,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aUsers);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by filter email '{filterEmail}'.");
                     return NotFound(typeof(Api.User).Name, filterEmail);

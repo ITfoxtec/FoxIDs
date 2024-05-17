@@ -4,25 +4,25 @@
 
 FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
-FoxIDs is designed as a container with multi-tenant support. Your tenant holds your environments which correspond to your environments (prod, QA, test, dev) and other elements. 
-Each environment is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
-Connections to external Identity Provider is configured as [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
-The users [login](login.md) experience is configured as an authentication method.
+FoxIDs is designed as a container with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](howto-environmentlink-foxids.md) the environments.  
+Each environment is an Identity Provider with a [user repository](users.md) and a unique [certificate](certificates.md). 
+An environment is connected to external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
+The environment is configured as IdP for applications and APIs with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
+The user's [login](login.md) experience is configured and optionally [customized](customization.md).
 
 > Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`
 
 FoxIDs consist of two services:
 
-- The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
-- The configuration service FoxIDs Control is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
+- FoxIDs - identity service. The service handles user login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
+- [FoxIDs Control](control.md), which is used to configure FoxIDs in a user interface or by calling an API.
 
-FoxIDs can be deployed and used by a single company or deployed as a shared cloud container and used by multiple organisations. 
-You can select to use a shared cloud or a private cloud setup.
+Hosting:
 
 - FoxIDs SaaS is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
 FoxIDs.com is hosted in Europe and mainly in Microsoft Azure Holland, Netherlands.
-- You can [deploy](deployment.md) FoxIDs as your own private cloud on Microsoft Azure.
+- You can [deploy](deployment.md) FoxIDs with a [Azure-Hosted](deployment-azure.md) or [Self-Hosted](deployment-k8s.md) setup.
 
 > For more information please see the [get started](get-started.md) guide.
 

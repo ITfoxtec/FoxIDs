@@ -46,6 +46,8 @@
                         {
                             <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" Focus="true" />
 
+                            <div class="info-text">An external user can be connected to the authentication methods: OpenID Connect, SAML 2.0 or Environment Link.</div>
+
                             <ValidationMessage For="@(() => externalUser.Form.Model.UpPartyName)" />
                             @if (@externalUser.Form.Model.UpPartyName.IsNullOrWhiteSpace())
                             {

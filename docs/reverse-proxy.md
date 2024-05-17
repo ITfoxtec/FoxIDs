@@ -9,40 +9,7 @@ The FoxIDs service support [custom domains](custom-domain.md) which is handled w
 > OR  
 > If not behind a reverse proxy FoxIDs support [custom domains](custom-domain.md) by reading the HTTP request domain and using the domain as a custom domain if the `Setting:RequestDomainAsCustomDomain` setting is set to `true`.
 
-## Restrict access
-Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
-The access restriction is activated by adding a secret with the name `Settings--ProxySecret` in Key Vault.
-
-1. Grant your IP address access through the Key Vault firewall
-![Configure reverse proxy secret - firewall](images/configure-reverse-proxy-secret-firewall.png)
-
-2. Grant your user List and Set permissions in Access policies.
-![Configure reverse proxy secret - permissions](images/configure-reverse-proxy-secret-permissions.png)
-
-3. Add the `Settings--ProxySecret` secret
-![Configure reverse proxy secret](images/configure-reverse-proxy-secret.png)
-
-4. After successfully configuration, remove you IP address and permissions.
-
-> The sites needs to be restarted to read the secret.
-
-After the reverse proxy secret has been configured in Key Vault the reverse proxy needs to add the `X-FoxIDs-Secret` HTTP header in all backed calls to FoxIDs to get access.
-
-## Read HTTP headers
-FoxIDs service support reading the client IP address in the following prioritized HTTP headers:
-
- 1. `CF-Connecting-IP`
- 2. `X-Azure-ClientIP`
- 3. `X-Forwarded-For`
-
-FoxIDs service support reading the [custom domain](custom-domain.md) (host name) exposed on the revers proxy in the following prioritized HTTP headers:
-
- 1. `X-ORIGINAL-HOST`
- 2. `X-Forwarded-Host`
-
-> The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header.
-
-## Supported and tested reverse proxies
+## Reverse proxies
 FoxIDs generally support all reverse proxies. The following reverse proxies is tested to work with FoxIDs.
  
 ### Azure Front Door
@@ -50,21 +17,22 @@ Azure Front Door can be configured as a reverse proxy. Azure Front Door rewrite 
 
 > Do NOT enable caching. The `Accept-Language` header is not forwarded if caching is enabled. The header is required by FoxIDs to support cultures.
 
-Configuration:
-- Add a Azure Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service
-- In the Networking section of the App Services. Enable access restriction to only allow traffic from Azure Front Door
-- Optionally add a Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service test slots
-- Restrict access to the App Services test slots
-- Add the `Settings:TrustProxyHeaders` setting with the value `true` and select Deployment slot setting in the FoxIDs App Service configuration to support [custom domains](custom-domain.md) (optionally also add the setting in the test slot)
-- Disable Session affinity
-- Optionally configure WAF policies
+Add a Azure Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service. [Restrict access](#restrict-access) by requiring the `X-FoxIDs-Secret` HTTP header.  
+Disable Session affinity and optionally configure WAF policies.
 
 ### Cloudflare
-Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). The `X-FoxIDs-Secret` HTTP header should be added.
+Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). [Restrict access](#restrict-access) by requiring the `X-FoxIDs-Secret` HTTP header.
+
+### Azure Application Gateway
+Azure Application Gateway can rewrite all domains if configured. 
+The `X-FoxIDs-Secret` HTTP header can optionally be added to [restrict access](#restrict-access) (recommended depended on the infrastructure).
+
+Optionally configure a rewrite rule to both requiring a secret and sending a secret in a `X-FoxIDs-Secret` HTTP header. You could require a `X-FoxIDs-Secret` HTTP header if you have a reverse proxy in front of the Azure Application Gateway.  
+If requiring a secret, add a custom HTTPS health probe with the `X-FoxIDs-Secret` query parameter to the path `/?x-foxids-secret=xxx` equals to the secret.
 
 ### IIS ARR Proxy
 Internet Information Services (IIS) Application Request Routing (ARR) Proxy require a Windows server. ARR Proxy rewrite domains with a rewrite rule. 
-The `X-FoxIDs-Secret` HTTP header can optionally be added (recommended depended on the infrastructure) but is required to support [custom domain](custom-domain.md).
+The `X-FoxIDs-Secret` HTTP header can optionally be added to [restrict access](#restrict-access) (recommended depended on the infrastructure).
 
 An accept all external exposed domains rule can be configured. This example is a global rule, rules can also be added to websites.  
 Optionally both requiring (`secret1`) and sending (`secret2`) in a `X-FoxIDs-Secret` HTTP header. You could require a `X-FoxIDs-Secret` HTTP header if you have a reverse proxy in front of the ARR Proxy.
@@ -82,3 +50,28 @@ Optionally both requiring (`secret1`) and sending (`secret2`) in a `X-FoxIDs-Sec
             </serverVariables>
         </rule>
     </globalRules>
+
+## Read HTTP headers
+FoxIDs service support reading the client IP address in the following prioritized HTTP headers:
+
+ 1. `CF-Connecting-IP`
+ 2. `X-Azure-ClientIP`
+ 3. `X-Forwarded-For`
+
+FoxIDs service support reading the [custom domain](custom-domain.md) (host name) exposed on the revers proxy in the following prioritized HTTP headers:
+
+ 1. `X-ORIGINAL-HOST`
+ 2. `X-Forwarded-Host`
+
+> The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings:TrustProxyHeaders` setting is set to `true`.
+
+FoxIDs service support to read the HTTP/HTTPS scheme if the `Settings:TrustProxySchemeHeader` setting is set to `true`. In the following prioritized HTTP headers:
+
+ 1. `X-Forwarded-Scheme`
+ 2. `X-Forwarded-Proto`
+
+ ## Restrict access
+Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
+The access restriction is activated by adding the `Settings:ProxySecret` setting with the secret.
+
+The sites needs to be restarted to read the settings change.

@@ -14,11 +14,11 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class MRiskPasswordTestController : ApiController
     {
-        private readonly IMasterRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MRiskPasswordTestController(TelemetryScopedLogger logger, IMasterRepository masterRepository) : base(logger)
+        public MRiskPasswordTestController(TelemetryScopedLogger logger, IMasterDataRepository masterDataRepository) : base(logger)
         {
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
         /// <summary>
@@ -35,12 +35,12 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(password, nameof(password))) return BadRequest(ModelState);
 
                 var passwordSha1Hash = password.Sha1Hash();
-                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
+                var mRiskPassword = await masterDataRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
                 return Ok(true);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     return Ok(false);
                 }

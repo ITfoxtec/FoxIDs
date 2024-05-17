@@ -9,7 +9,7 @@ namespace FoxIDs.Logic
 
         public string GetIssuer()
         {
-            var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack();
+            var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack(useConfig: true);
             return $"{issuerWithoutSlash}/";
         }
     }

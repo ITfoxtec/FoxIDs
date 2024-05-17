@@ -17,14 +17,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackResourceSettingController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackResourceSettingController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -39,12 +39,12 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 return new Api.ResourceSettings { ShowResourceId = mTrack.ShowResourceId };
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);
@@ -67,20 +67,20 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(resourceSettings)) return BadRequest(ModelState);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 if(mTrack.ShowResourceId != resourceSettings.ShowResourceId)
                 {
                     mTrack.ShowResourceId = resourceSettings.ShowResourceId;
-                    await tenantRepository.UpdateAsync(mTrack);
+                    await tenantDataRepository.UpdateAsync(mTrack);
 
                     await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
 
                 return Ok(resourceSettings);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Save {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);

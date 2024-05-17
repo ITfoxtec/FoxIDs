@@ -5,6 +5,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace FoxIDs.Infrastructure
 {
@@ -30,6 +31,7 @@ namespace FoxIDs.Infrastructure
             if(flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
 
@@ -44,6 +46,7 @@ namespace FoxIDs.Infrastructure
             if (flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
 
@@ -58,6 +61,7 @@ namespace FoxIDs.Infrastructure
             if (flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
 
@@ -68,6 +72,7 @@ namespace FoxIDs.Infrastructure
             if (flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
         public void Trace(string message, IDictionary<string, string> properties = null)
@@ -77,6 +82,7 @@ namespace FoxIDs.Infrastructure
             if (flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
 
@@ -87,6 +93,7 @@ namespace FoxIDs.Infrastructure
             if (flush)
             {
                 telemetryClient.Flush();
+                Thread.Sleep(5000);
             }
         }
 

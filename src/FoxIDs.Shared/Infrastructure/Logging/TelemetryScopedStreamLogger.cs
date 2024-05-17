@@ -3,7 +3,6 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace FoxIDs.Infrastructure
 {
@@ -181,7 +180,6 @@ namespace FoxIDs.Infrastructure
             }
             telemetryClient.TrackTrace("test trace, created");
             telemetryClient.Flush();
-            Thread.Sleep(5000);
             return new TelemetryLogger(telemetryClient);
         }
     }

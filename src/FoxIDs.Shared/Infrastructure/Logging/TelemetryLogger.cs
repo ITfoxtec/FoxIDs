@@ -52,7 +52,7 @@ namespace FoxIDs.Infrastructure
         }
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            GetTelemetryClient().TrackTrace(message, SeverityLevel.Verbose, properties);
+            GetTelemetryClient().TrackTrace(message, properties);
         }
 
         public void Metric(string message, double value, IDictionary<string, string> properties = null)

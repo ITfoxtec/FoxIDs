@@ -155,6 +155,8 @@ namespace FoxIDs.Infrastructure
             }
 
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = scopeStreamLogger.ApplicationInsightsSettings.ConnectionString });
+
+            telemetryClient.TrackTrace("test trace, created");
             return new TelemetryLogger(telemetryClient);
         }
     }

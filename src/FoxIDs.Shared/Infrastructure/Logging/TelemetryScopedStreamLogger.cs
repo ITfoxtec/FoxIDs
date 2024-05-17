@@ -15,13 +15,18 @@ namespace FoxIDs.Infrastructure
         }
         public void Warning(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
+            if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Warning1."), logToScopeStream: false);
+
             try
             {
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Warning2."), logToScopeStream: false);
                         var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Warning3."), logToScopeStream: false);
                         telemetryLogger.Warning(exception, message, properties: properties, metrics: metrics);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger Warning4."), logToScopeStream: false);
                         break;
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
@@ -67,13 +72,18 @@ namespace FoxIDs.Infrastructure
         }
         public void CriticalError(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
+            if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger CriticalError1."), logToScopeStream: false);
+
             try
             {
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger CriticalError2."), logToScopeStream: false);
                         var telemetryLogger = GetTelemetryLogger(scopeStreamLogger);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger CriticalError3."), logToScopeStream: false);
                         telemetryLogger.CriticalError(exception, message, properties: properties, metrics: metrics);
+                        if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(new Exception("Test StreamLogger CriticalError4."), logToScopeStream: false);
                         break;
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");

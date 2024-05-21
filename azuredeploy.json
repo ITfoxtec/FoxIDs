@@ -306,6 +306,7 @@
       "apiVersion": "2021-03-01",
       "name": "[variables('foxidsDefaultName')]",
       "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
@@ -318,9 +319,7 @@
         "name": "[variables('foxidsDefaultName')]",
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "webSocketsEnabled": false
+          "alwaysOn": true
         },
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
@@ -333,6 +332,7 @@
       "apiVersion": "2021-03-01",
       "name": "[variables('foxidsControlSiteName')]",
       "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
@@ -345,9 +345,7 @@
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
-          "alwaysOn": true,
-          "webSocketsEnabled": false
+          "alwaysOn": true
         },
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
@@ -360,6 +358,7 @@
       "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsDefaultName'), '/test')]",
       "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]"
@@ -371,9 +370,7 @@
       "properties": {
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": false,
-          "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
         },
         "reserved": false,
@@ -387,6 +384,7 @@
       "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test')]",
       "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]"
@@ -398,9 +396,7 @@
       "properties": {
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": false,
-          "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
         },
         "reserved": false,
@@ -420,7 +416,13 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v8.0",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+          }
+        ],
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:Options:Log": "ApplicationInsights",
         "Settings:Options:DataStorage": "CosmosDb",
@@ -444,7 +446,13 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v8.0",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+          }
+        ],
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
@@ -471,9 +479,15 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v8.0",
-        "PROJECT": "src/FoxIDs/FoxIDs.csproj",
-        "SCM_BUILD_ARGS": "-p:Configuration=Release",
+        "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids:latest",
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+          }
+        ],
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:Options:Log": "ApplicationInsights",
         "Settings:Options:DataStorage": "CosmosDb",
@@ -498,9 +512,15 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v8.0",
-        "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
-        "SCM_BUILD_ARGS": "-p:Configuration=Release",
+        "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids-control:latest",
+        "managedPipelineMode": "Integrated",
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": true
+          }
+        ],
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",

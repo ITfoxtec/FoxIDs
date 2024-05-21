@@ -1,12 +1,11 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8800
+EXPOSE 8400
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-#ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
 COPY ["src/FoxIDs/FoxIDs.csproj", "FoxIDs/"]
 COPY ["src/FoxIDs.Shared/FoxIDs.Shared.csproj", "FoxIDs.Shared/"]
@@ -18,7 +17,6 @@ RUN dotnet build "FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-#ARG BUILD_CONFIGURATION=Debug
 RUN dotnet publish "FoxIDs.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

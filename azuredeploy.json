@@ -369,7 +369,6 @@
       },
       "properties": {
         "siteConfig": {
-          "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids:latest",
           "ftpsState": "Disabled",
           "alwaysOn": false,
           "autoSwapSlotName": "production"
@@ -396,7 +395,6 @@
       },
       "properties": {
         "siteConfig": {
-          "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids-control:latest",
           "ftpsState": "Disabled",
           "alwaysOn": false,
           "autoSwapSlotName": "production"

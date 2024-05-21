@@ -6,10 +6,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+;http://+
       - https_port=44330
-      - Settings:FoxIDsEndpoint=https://localhost:44330
+      - Settings:FoxIDsEndpoint=https://localhost:8400
     ports:
-      - 8800:80
-      - 44330:443
+      - 8800:8800
+      - 8400:8400
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -18,12 +18,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+;http://+
       - https_port=44331
-      - Settings:FoxIDsEndpoint=https://localhost:44330
+      - Settings:FoxIDsEndpoint=https://localhost:8400
       - Settings:FoxIDsBackendEndpoint=https://foxids
-      - Settings:FoxIDsControlEndpoint=https://localhost:44331
+      - Settings:FoxIDsControlEndpoint=https://localhost:8401
     ports:
-      - 8801:80
-      - 44331:443
+      - 8801:8800
+      - 8401:8400
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

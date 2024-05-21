@@ -18,7 +18,7 @@ spec:
         - name: foxids
           image: foxids/foxids:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 8800
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
@@ -81,7 +81,7 @@ spec:
         - name: foxids-control
           image: foxids/foxids-control:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 8800
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
@@ -90,7 +90,7 @@ spec:
             - name: "Settings__FoxIDsEndpoint"
               value: "https://id.itfoxtec.com" # change to your domain -  https://id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"
-              value: "http://foxids:8000"
+              value: "http://foxids:8810"
             - name: "Settings__FoxIDsControlEndpoint"
               value: "https://control.itfoxtec.com" # change to your domain -  https://control.my-domain.com
             - name: "Settings__MasterSeedEnabled"
@@ -138,8 +138,8 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8810
+      targetPort: 8800
 ---
 apiVersion: v1
 kind: Service
@@ -153,7 +153,7 @@ spec:
     - name: http
       protocol: TCP
       port: 8800
-      targetPort: 8000
+      targetPort: 8800
 ---
 apiVersion: v1
 kind: Service
@@ -167,4 +167,4 @@ spec:
     - name: http
       protocol: TCP
       port: 8801
-      targetPort: 8000
+      targetPort: 8800

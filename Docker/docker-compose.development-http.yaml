@@ -8,7 +8,7 @@ services:
       - Settings:UseHttp=true
       - Settings:FoxIDsEndpoint=http://localhost:8800    
     ports:
-      - 8800:80
+      - 8800:8800
   foxids-control:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  
@@ -18,7 +18,7 @@ services:
       - Settings:FoxIDsBackendEndpoint=http://foxids
       - Settings:FoxIDsControlEndpoint=http://localhost:8801 
     ports:
-      - 8801:80
+      - 8801:8800
   # mongodb: # optionally expose MongoDB on port 27017
   #   ports:
   #     - 27017:27017

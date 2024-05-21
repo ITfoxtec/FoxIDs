@@ -303,7 +303,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[variables('foxidsDefaultName')]",
       "location": "[resourceGroup().location]",
       "kind": "app,linux,container",
@@ -329,7 +329,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[variables('foxidsControlSiteName')]",
       "location": "[resourceGroup().location]",
       "kind": "app,linux,container",
@@ -355,7 +355,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsDefaultName'), '/test')]",
       "location": "[resourceGroup().location]",
       "kind": "app,linux,container",
@@ -369,6 +369,7 @@
       },
       "properties": {
         "siteConfig": {
+          "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids:latest",
           "ftpsState": "Disabled",
           "alwaysOn": false,
           "autoSwapSlotName": "production"
@@ -381,7 +382,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test')]",
       "location": "[resourceGroup().location]",
       "kind": "app,linux,container",
@@ -395,6 +396,7 @@
       },
       "properties": {
         "siteConfig": {
+          "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids-control:latest",
           "ftpsState": "Disabled",
           "alwaysOn": false,
           "autoSwapSlotName": "production"
@@ -407,7 +409,7 @@
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsDefaultName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
@@ -417,21 +419,21 @@
       ],
       "properties": {
 
-        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings:Options:Log": "ApplicationInsights",
-        "Settings:Options:DataStorage": "CosmosDb",
-        "Settings:Options:KeyStorage": "KeyVault",
-        "Settings:Options:Cache": "Redis",
-        "Settings:Options:DataCache": "Default",
-        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]"
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Redis",
+        "Settings__Options__DataCache": "Default",
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__Sendgrid__FromEmail": "[parameters('sendgridFromEmail')]"
       }
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -440,23 +442,23 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
-        "Settings:Options:Log": "ApplicationInsights",
-        "Settings:Options:DataStorage": "CosmosDb",
-        "Settings:Options:KeyStorage": "KeyVault",
-        "Settings:Options:Cache": "Redis",
-        "Settings:Options:DataCache": "Default",
-        "Settings:MasterSeedEnabled": false,
-        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Redis",
+        "Settings__Options__DataCache": "Default",
+        "Settings__MasterSeedEnabled": false,
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
       }
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsDefaultName'), '/test/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
@@ -468,21 +470,21 @@
       "properties": {
         "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids:latest",
         "managedPipelineMode": "Integrated",
-        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings:Options:Log": "ApplicationInsights",
-        "Settings:Options:DataStorage": "CosmosDb",
-        "Settings:Options:KeyStorage": "KeyVault",
-        "Settings:Options:Cache": "Redis",
-        "Settings:Options:DataCache": "Default",
-        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]"
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Redis",
+        "Settings__Options__DataCache": "Default",
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__Sendgrid__FromEmail": "[parameters('sendgridFromEmail')]"
       }
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -494,80 +496,41 @@
       "properties": {
         "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids-control:latest",
         "managedPipelineMode": "Integrated",
-        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
-        "Settings:Options:Log": "ApplicationInsights",
-        "Settings:Options:DataStorage": "CosmosDb",
-        "Settings:Options:KeyStorage": "KeyVault",
-        "Settings:Options:Cache": "Redis",
-        "Settings:Options:DataCache": "Default",
-        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Redis",
+        "Settings__Options__DataCache": "Default",
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
       }
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsDefaultName'), '/slotconfignames')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:Options:Log", "Settings:Options:DataStorage", "Settings:Options:KeyStorage", "Settings:Options:Cache", "Settings:Options:DataCache", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
       }
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/slotconfignames')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "Settings:Options:Log", "Settings:Options:DataStorage", "Settings:Options:KeyStorage", "Settings:Options:Cache", "Settings:Options:DataCache", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2021-02-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/test/web')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'slotconfignames')]",
-        "[resourceId('Microsoft.Web/sites/slots', variables('foxidsDefaultName'), 'test')]",
-        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsDefaultName'), 'test', 'appsettings')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--CosmosDb--PrimaryKey')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--RedisCache--ConnectionString')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--Sendgrid--ApiKey')]"
-      ],
-      "properties": {
-        "repoUrl": "[parameters('repoURL')]",
-        "branch": "[parameters('branch')]",
-        "IsManualIntegration": true
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2021-02-01",
-      "name": "[concat(variables('foxidsControlSiteName'), '/test/web')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
-        "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'slotconfignames')]",
-        "[resourceId('Microsoft.Web/sites/slots', variables('foxidsControlSiteName'), 'test')]",
-        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsControlSiteName'), 'test', 'appsettings')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--CosmosDb--PrimaryKey')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--RedisCache--ConnectionString')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--Sendgrid--ApiKey')]",
-        "[resourceId('Microsoft.Web/sites/slots/sourcecontrols', variables('foxidsDefaultName'), 'test', 'web')]"
-      ],
-      "properties": {
-        "repoUrl": "[parameters('repoURL')]",
-        "branch": "[parameters('branch')]",
-        "IsManualIntegration": true
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId" ]
       }
     },
     {

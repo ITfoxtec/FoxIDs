@@ -416,13 +416,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": true
-          }
-        ],
+
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:Options:Log": "ApplicationInsights",
         "Settings:Options:DataStorage": "CosmosDb",
@@ -446,13 +440,6 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": true
-          }
-        ],
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
@@ -481,13 +468,6 @@
       "properties": {
         "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids:latest",
         "managedPipelineMode": "Integrated",
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": true
-          }
-        ],
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:Options:Log": "ApplicationInsights",
         "Settings:Options:DataStorage": "CosmosDb",
@@ -514,13 +494,6 @@
       "properties": {
         "linuxFxVersion": "DOCKER|index.docker.io/foxids/foxids-control:latest",
         "managedPipelineMode": "Integrated",
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": true
-          }
-        ],
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",

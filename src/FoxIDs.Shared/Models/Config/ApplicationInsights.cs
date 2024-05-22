@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.Config
 {
-    public class ApplicationInsightsSettings
+    public class ApplicationInsights
     {
         [Required]
         public string ConnectionString { get; set; }

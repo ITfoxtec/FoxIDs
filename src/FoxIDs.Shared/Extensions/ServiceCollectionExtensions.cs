@@ -15,17 +15,20 @@ namespace Microsoft.Extensions.DependencyInjection
             return settings;
         }
 
-        public static T BindConfig<T>(this IConfiguration configuration, string key) where T : class, new()
+        public static T BindConfig<T>(this IConfiguration configuration, string key, bool validate = true) where T : class, new()
         {
             var settings = new T();
             configuration.Bind(key, settings);
-            try
+            if (validate)
             {
-                settings.ValidateObjectAsync().GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidConfigException(typeof(T).Name, ex);
+                try
+                {
+                    settings.ValidateObjectAsync().GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidConfigException(typeof(T).Name, ex);
+                } 
             }
 
             return settings;

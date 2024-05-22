@@ -24,7 +24,7 @@ namespace FoxIDs
                 {
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        var settings = config.Build().BindConfig<Settings>(nameof(Settings));
+                        var settings = config.Build().BindConfig<Settings>(nameof(Settings), validate: false);
                         if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
                         {
                             config.AddAzureKeyVault(new Uri(settings.KeyVault.EndpointUri), new DefaultAzureCredential());
@@ -37,10 +37,11 @@ namespace FoxIDs
                     // Remove all loggers like console, debug, event source etc.
                     logging.ClearProviders();
 
-                    var settings = context.Configuration.BindConfig<Settings>(nameof(Settings));
-                    if (settings.Options.Log == LogOptions.ApplicationInsights)
+                    var settings = context.Configuration.BindConfig<Settings>(nameof(Settings), validate: false);
+                    var appInsightsSettings = context.Configuration.BindConfig<ApplicationInsights>(nameof(ApplicationInsights), validate: false);
+                    if (settings.Options.Log == LogOptions.ApplicationInsights && !string.IsNullOrWhiteSpace(appInsightsSettings.ConnectionString))
                     {
-                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = settings.ApplicationInsights.ConnectionString, options => { });
+                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = appInsightsSettings.ConnectionString, options => { });
                         return;
                     }
                 });

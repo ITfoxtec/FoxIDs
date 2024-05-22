@@ -546,7 +546,7 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings__RedisCache__ConnectionString')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--RedisCache--ConnectionString')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
         "[concat('Microsoft.Cache/Redis/', variables('foxidsDefaultName'))]"
@@ -558,7 +558,7 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings__CosmosDb__PrimaryKey')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--CosmosDb--PrimaryKey')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
@@ -570,7 +570,7 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings__Sendgrid__ApiKey')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--Sendgrid--ApiKey')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],

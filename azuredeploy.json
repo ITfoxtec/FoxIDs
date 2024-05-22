@@ -412,7 +412,6 @@
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
         "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "WEBSITES_PORT": "8000",
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
         "Settings__TrustProxyHeaders": true,
@@ -442,7 +441,6 @@
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
         "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "WEBSITES_PORT": "8000",
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
         "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
@@ -472,7 +470,6 @@
       "properties": {
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
         "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "WEBSITES_PORT": "8000",
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
         "Settings__TrustProxyHeaders": true,
@@ -503,7 +500,6 @@
       "properties": {
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
         "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "WEBSITES_PORT": "8000",
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
         "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
@@ -528,7 +524,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "ASPNETCORE_URLS", "Settings__UseHttp", "Settings__TrustProxyHeaders", "Settings__TrustProxySchemeHeader", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
+        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "ASPNETCORE_URLS", "Settings__UseHttp", "Settings__TrustProxyHeaders", "Settings__TrustProxySchemeHeader", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
       }
     },
     {
@@ -540,7 +536,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "ASPNETCORE_URLS", "Settings__UseHttp", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId", "Settings__MasterSeedEnabled" ]
+        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "ASPNETCORE_URLS", "Settings__UseHttp", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId", "Settings__MasterSeedEnabled" ]
       }
     },
     {

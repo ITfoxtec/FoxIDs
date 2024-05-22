@@ -16,6 +16,12 @@ namespace FoxIDs.Models.Config
         public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
+        /// Application insights settings
+        /// </summary>
+        [ValidateComplexType]
+        public ApplicationInsightsSettings ApplicationInsights { get; set; }
+
+        /// <summary>
         /// Optionally accept to use HTTP.
         /// </summary>
         public bool UseHttp { get; set; }
@@ -124,6 +130,14 @@ namespace FoxIDs.Models.Config
                 if (RedisCache == null)
                 {
                     results.Add(new ValidationResult($"The field {nameof(RedisCache)} is required if {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(RedisCache) }));
+                }
+            }
+
+            if (Options.Log == LogOptions.ApplicationInsights)
+            {
+                if (ApplicationInsights == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(ApplicationInsights)} is required if {nameof(Options.Log)} is {Options.Log}.", new[] { nameof(ApplicationInsights) }));
                 }
             }
 

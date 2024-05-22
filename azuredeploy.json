@@ -528,7 +528,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "Settings__UseHttp", "Settings__TrustProxyHeaders", "Settings__TrustProxySchemeHeader", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
+        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "ASPNETCORE_URLS", "Settings__UseHttp", "Settings__TrustProxyHeaders", "Settings__TrustProxySchemeHeader", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
       }
     },
     {
@@ -540,13 +540,13 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "Settings__UseHttp", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId", "Settings__MasterSeedEnabled" ]
+        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "WEBSITES_PORT", "ASPNETCORE_URLS", "Settings__UseHttp", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId", "Settings__MasterSeedEnabled" ]
       }
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings--RedisCache--ConnectionString')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings__RedisCache__ConnectionString')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
         "[concat('Microsoft.Cache/Redis/', variables('foxidsDefaultName'))]"
@@ -558,7 +558,7 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings--CosmosDb--PrimaryKey')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings__CosmosDb__PrimaryKey')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
@@ -570,7 +570,7 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings--Sendgrid--ApiKey')]",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings__Sendgrid__ApiKey')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],

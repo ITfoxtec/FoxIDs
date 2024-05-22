@@ -10,6 +10,13 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static T BindConfig<T>(this IServiceCollection services, IConfiguration configuration, string key) where T : class, new()
         {
+            var settings = configuration.BindConfig<T>(key);
+            services.AddSingleton(settings);
+            return settings;
+        }
+
+        public static T BindConfig<T>(this IConfiguration configuration, string key) where T : class, new()
+        {
             var settings = new T();
             configuration.Bind(key, settings);
             try
@@ -18,10 +25,9 @@ namespace Microsoft.Extensions.DependencyInjection
             }
             catch (Exception ex)
             {
-                throw new InvalidConfigException(typeof(T).Name, ex); 
+                throw new InvalidConfigException(typeof(T).Name, ex);
             }
 
-            services.AddSingleton(settings);
             return settings;
         }
     }

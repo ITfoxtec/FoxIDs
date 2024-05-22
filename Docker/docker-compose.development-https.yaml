@@ -8,8 +8,8 @@ services:
       - https_port=8400
       - Settings:FoxIDsEndpoint=https://localhost:8400
     ports:
-      - 8800:8000
-      - 8400:8400
+      - 8800:80
+      - 8400:443
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -22,8 +22,8 @@ services:
       - Settings:FoxIDsBackendEndpoint=https://foxids
       - Settings:FoxIDsControlEndpoint=https://localhost:8401
     ports:
-      - 8801:8000
-      - 8401:8400
+      - 8801:80
+      - 8401:443
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

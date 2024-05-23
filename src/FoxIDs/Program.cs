@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace FoxIDs
@@ -21,13 +22,12 @@ namespace FoxIDs
                 .ConfigureKestrel(options => options.AddServerHeader = false)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    var builtConfig = config.Build();
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        var keyStorageOption = builtConfig["Settings:Options:KeyStorage"];
-                        if (string.IsNullOrWhiteSpace(keyStorageOption) || keyStorageOption.Equals(KeyStorageOptions.KeyVault.ToString(), StringComparison.Ordinal))
+                        var settings = config.Build().BindConfig<Settings>(nameof(Settings), validate: false);
+                        if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
                         {
-                            config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
+                            config.AddAzureKeyVault(new Uri(settings.KeyVault.EndpointUri), new DefaultAzureCredential());
                         }
                     }
                 })
@@ -37,15 +37,12 @@ namespace FoxIDs
                     // Remove all loggers like console, debug, event source etc.
                     logging.ClearProviders();
 
-                    var logOption = context.Configuration["Settings:Options:Log"];
-                    if (string.IsNullOrWhiteSpace(logOption) || logOption.Equals(LogOptions.ApplicationInsights.ToString(), StringComparison.Ordinal))
+                    var settings = context.Configuration.BindConfig<Settings>(nameof(Settings), validate: false);
+                    var appInsightsSettings = context.Configuration.BindConfig<ApplicationInsights>(nameof(ApplicationInsights), validate: false);
+                    if (settings.Options.Log == LogOptions.ApplicationInsights && !string.IsNullOrWhiteSpace(appInsightsSettings.ConnectionString))
                     {
-                        var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
-                        if (!string.IsNullOrWhiteSpace(connectionString))
-                        {
-                            logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
-                            return;
-                        }
+                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = appInsightsSettings.ConnectionString, options => { });
+                        return;
                     }
                 });
     }

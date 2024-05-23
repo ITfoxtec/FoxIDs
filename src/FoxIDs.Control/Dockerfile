@@ -6,7 +6,6 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-#ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
 COPY ["src/FoxIDs.Control/FoxIDs.Control.csproj", "FoxIDs.Control/"]
 COPY ["src/FoxIDs.ControlClient/FoxIDs.ControlClient.csproj", "FoxIDs.ControlClient/"]
@@ -20,7 +19,6 @@ RUN dotnet build "FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-#ARG BUILD_CONFIGURATION=Debug
 RUN dotnet publish "FoxIDs.Control.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

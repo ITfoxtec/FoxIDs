@@ -2,13 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "prefixName": {
-      "defaultValue": "foxids",
-      "type": "string",
-      "metadata": {
-        "description": "Prefix of resource names."
-      }
-    },
     "appServicePlanSize": {
       "defaultValue": "P1V2",
       "allowedValues": [
@@ -76,9 +69,10 @@
     }
   },
   "variables": {
+    "prefixName": "foxids",
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
-    "foxidsDefaultName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
-    "foxidsControlSiteName": "[toLower(concat(parameters('prefixName'), 'control', variables('suffix')))]",
+    "foxidsDefaultName": "[toLower(concat(variables('prefixName'), variables('suffix')))]",
+    "foxidsControlSiteName": "[toLower(concat(variables('prefixName'), 'control', variables('suffix')))]",
     "foxidsSiteEndpoint": "[concat('https://', variables('foxidsDefaultName'), '.azurewebsites.net')]",
     "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]",
     "privateEndpointLog": "[concat(variables('foxidsDefaultName'), '-log')]",

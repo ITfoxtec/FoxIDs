@@ -204,6 +204,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\language-french.png = docs\images\language-french.png
 		docs\images\language-german.png = docs\images\language-german.png
 		docs\images\language-spanish.png = docs\images\language-spanish.png
+		docs\images\main-tenant.png = docs\images\main-tenant.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\search-logs.png = docs\images\search-logs.png

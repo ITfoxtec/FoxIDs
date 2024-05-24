@@ -35,7 +35,7 @@ namespace FoxIDs.Infrastructure.Hosting
             await next.Invoke(context);
         }
 
-        private bool Secret(HttpContext context)
+        private bool TrustProxyHeaders(HttpContext context)
         {
             var settings = context.RequestServices.GetService<FoxIDsSettings>();
             if (settings.TrustProxyHeaders)
@@ -61,7 +61,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private string ReadHostFromHeader(HttpContext context)
         {
-            var trustProxyHeaders = Secret(context);
+            var trustProxyHeaders = TrustProxyHeaders(context);
             if (trustProxyHeaders)
             {
                 string hostHeader = context.Request.Headers["X-ORIGINAL-HOST"];

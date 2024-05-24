@@ -334,60 +334,6 @@
       }
     },
     {
-      "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/test')]",
-      "location": "[resourceGroup().location]",
-      "kind": "app,linux,container",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
-        "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]"
-      ],
-      "kind": "app",
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "properties": {
-        "siteConfig": {
-          "linuxFxVersion": "DOCKER|foxids/foxids:latest",
-          "ftpsState": "Disabled",
-          "alwaysOn": true
-        },
-        "reserved": false,
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
-        "reserved": true,
-        "clientAffinityEnabled": false,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsControlSiteName'), '/test')]",
-      "location": "[resourceGroup().location]",
-      "kind": "app,linux,container",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
-        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]"
-      ],
-      "kind": "app",
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "properties": {
-        "siteConfig": {
-          "linuxFxVersion": "DOCKER|foxids/foxids-control:latest",
-          "ftpsState": "Disabled",
-          "alwaysOn": true
-        },
-        "reserved": false,
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
-        "reserved": true,
-        "clientAffinityEnabled": false,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
-      }
-    },
-    {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2023-01-01",
       "name": "[concat(variables('foxidsDefaultName'), '/appsettings')]",
@@ -404,7 +350,6 @@
         "DOCKER_ENABLE_CI": true,
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
-        "Settings__TrustProxyHeaders": true,
         "Settings__TrustProxySchemeHeader": true,
         "Settings__Options__Log": "ApplicationInsights",
         "Settings__Options__DataStorage": "CosmosDb",
@@ -445,90 +390,6 @@
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/test/appsettings')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Web/sites/slots', variables('foxidsDefaultName'), 'test')]",
-        "[resourceId('microsoft.insights/components/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
-        "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "ASPNETCORE_URLS": "http://+",
-        "Settings__UseHttp": true,
-        "Settings__TrustProxyHeaders": true,
-        "Settings__TrustProxySchemeHeader": true,
-        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings__Options__Log": "ApplicationInsights",
-        "Settings__Options__DataStorage": "CosmosDb",
-        "Settings__Options__KeyStorage": "KeyVault",
-        "Settings__Options__Cache": "Redis",
-        "Settings__Options__DataCache": "Default",
-        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings__Sendgrid__FromEmail": "[parameters('sendgridFromEmail')]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsControlSiteName'), '/test/appsettings')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
-        "[resourceId('Microsoft.Web/sites/slots', variables('foxidsControlSiteName'), 'test')]",
-        "[resourceId('microsoft.insights/components/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
-        "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
-        "ASPNETCORE_URLS": "http://+",
-        "Settings__UseHttp": true,
-        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
-        "Settings__Options__Log": "ApplicationInsights",
-        "Settings__Options__DataStorage": "CosmosDb",
-        "Settings__Options__KeyStorage": "KeyVault",
-        "Settings__Options__Cache": "Redis",
-        "Settings__Options__DataCache": "Default",
-        "Settings__MasterSeedEnabled": true,
-        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/slotconfignames')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
-      ],
-      "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "DOCKER_ENABLE_CI", "ASPNETCORE_URLS", "Settings__UseHttp", "Settings__TrustProxyHeaders", "Settings__TrustProxySchemeHeader", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__Sendgrid__FromEmail" ]
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2023-01-01",
-      "name": "[concat(variables('foxidsControlSiteName'), '/slotconfignames')]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
-        "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
-      ],
-      "properties": {
-        "appSettingNames": [ "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "DOCKER_REGISTRY_SERVER_URL", "DOCKER_ENABLE_CI", "ASPNETCORE_URLS", "Settings__UseHttp", "ApplicationInsights__ConnectionString", "Settings__FoxIDsEndpoint", "Settings__FoxIDsControlEndpoint", "Settings__Options__Log", "Settings__Options__DataStorage", "Settings__Options__KeyStorage", "Settings__Options__Cache", "Settings__Options__DataCache", "Settings__MasterSeedEnabled", "Settings__CosmosDb__EndpointUri", "Settings__KeyVault__EndpointUri", "Settings__ApplicationInsights__WorkspaceId", "Settings__MasterSeedEnabled" ]
       }
     },
     {

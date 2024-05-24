@@ -1,13 +1,13 @@
-﻿# Azure Deployment
+﻿# Azure Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
-FoxIDs is deployed in a resource group e.g., named `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
+FoxIDs is deployed in the resource group `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
-The Azure ARM deployment include:
+The Azure container deployment include:
 
-- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
+- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same Linux App Service plan and the App Services has both a production and test slot. 
 - FoxIDs is deployed to the two App Services test slots from the `main` branch with Kudu. [Updates](#update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
 - Cosmos DB. Contain all data including tenants, environments and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.

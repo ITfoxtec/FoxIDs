@@ -442,6 +442,7 @@
         "Settings__Options__Cache": "Redis",
         "Settings__Options__DataCache": "Default",
         "Settings__MasterSeedEnabled": true,
+        "Settings__MainTenantSeedEnabled": true,
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
@@ -502,6 +503,7 @@
         "Settings__Options__Cache": "Redis",
         "Settings__Options__DataCache": "Default",
         "Settings__MasterSeedEnabled": true,
+        "Settings__MainTenantSeedEnabled": true,
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"

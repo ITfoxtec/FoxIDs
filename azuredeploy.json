@@ -624,15 +624,6 @@
               "privateLinkServiceNetworkPolicies": "Enabled"
             },
             "type": "Microsoft.Network/virtualNetworks/subnets"
-          },
-          {
-            "name": "subnet-cache",
-            "properties": {
-              "addressPrefix": "10.1.2.0/24",
-              "privateEndpointNetworkPolicies": "Disabled",
-              "privateLinkServiceNetworkPolicies": "Enabled"
-            },
-            "type": "Microsoft.Network/virtualNetworks/subnets"
           }
         ]
       }
@@ -684,20 +675,6 @@
       ],
       "properties": {
         "addressPrefix": "10.1.1.0/24",
-        "privateEndpointNetworkPolicies": "Disabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2022-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/subnet-cache')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
-      ],
-      "properties": {
-        "addressPrefix": "10.1.2.0/24",
         "privateEndpointNetworkPolicies": "Disabled",
         "privateLinkServiceNetworkPolicies": "Enabled"
       }

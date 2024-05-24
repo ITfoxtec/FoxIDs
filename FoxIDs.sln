@@ -204,6 +204,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\language-french.png = docs\images\language-french.png
 		docs\images\language-german.png = docs\images\language-german.png
 		docs\images\language-spanish.png = docs\images\language-spanish.png
+		docs\images\main-tenant.png = docs\images\main-tenant.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\search-logs.png = docs\images\search-logs.png
@@ -254,6 +255,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
+		.github\workflows\ci_qa_docker.yaml = .github\workflows\ci_qa_docker.yaml
+		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"

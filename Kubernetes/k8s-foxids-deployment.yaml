@@ -18,7 +18,7 @@ spec:
         - name: foxids
           image: foxids/foxids:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 80
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
@@ -81,7 +81,7 @@ spec:
         - name: foxids-control
           image: foxids/foxids-control:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 80
           env:
             - name: "ASPNETCORE_URLS"
               value: "http://+"
@@ -139,7 +139,7 @@ spec:
     - name: http
       protocol: TCP
       port: 8000
-      targetPort: 8000
+      targetPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -153,7 +153,7 @@ spec:
     - name: http
       protocol: TCP
       port: 8800
-      targetPort: 8000
+      targetPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -167,4 +167,4 @@ spec:
     - name: http
       protocol: TCP
       port: 8801
-      targetPort: 8000
+      targetPort: 80

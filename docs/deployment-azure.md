@@ -1,24 +1,21 @@
-﻿# Azure Deployment
+﻿# Azure Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
-FoxIDs is deployed in a resource group e.g., named `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
+FoxIDs is deployed in the resource group `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
-The Azure ARM deployment include:
+The Azure container deployment include:
 
-- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
-- FoxIDs is deployed to the two App Services test slots from the `main` branch with Kudu. [Updates](#update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
+- Two App Services one for the FoxIDs site and one for the FoxIDs Control site (Client and API). Both App Services is hosted in the same Linux App Service plan. 
+- FoxIDs is deployed with Docker containers from [Docker Hub](https://hub.docker.com/u/foxids) and both App Services is configured with continuous deployment.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
 - Cosmos DB. Contain all data including tenants, environments and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
-- Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.
-- Application Insights and Log Analytics workspace. Logs are send to Application Insights and queries in Log Analytics workspace.
+- Redis cache. Holds sequences (e.g., login and logout sequences), data cache to improve performance and handle counters to secure against various attacks.
+- Application Insights and Log Analytics workspace. Logs are send to Application Insights and queried in Log Analytics workspace.
 - VLAN with subnets.
   - Subnet for App services, Cosmos DB and Key Vault. 
   - Subnet with Private Link to Redis.
-  - Subnet with Azure Monitor Private Link Scope (AMPLS) to Application Insights and Log Analytics workspace. To see logs in the Azure Portal, change the setting to accept public networks.
-
-> There is only Internet access to App services, every thing else is encapsulated.
 
 ### Send emails with Sendgrid or SMTP
 FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email.md).
@@ -30,34 +27,39 @@ The default admin user is `admin@foxids.com` with password `FirstAccess!` (you a
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
-Create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
+Optionally navigate to the `Users` tab and create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
 
 ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
-> You should generally not change the application registrations and authentication methods configuration or add applications in the master tenant, unless you are sure about what you are doing.
+> You should generally not change the application registrations and authentication methods configuration in the master tenant, unless you are sure about what you are doing.
 
-### Troubleshooting deployent errors
+## Create main tenant
+Create a `main` tenant for your environments.
 
-**Key Vault soft deleted**
-If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
-In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
+> Consider [custom domains](#custom-domains) before creating the `main` tenant.
 
-The solution is to delete (purge) the old Key Vault, which will release the name.
+Click `New Tenant` and create the `main` tenant.
 
+![FoxIDs Control Client - main tenant](images/main-tenant.png)
 
+Log in to the `main` tenant where you can start to configure your [applications and authentication methods](connections.md).
 
-## Custom primary domains
+## Custom domains
 
-The FoxIDs service and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](reverse-proxy.md)
+Custom domains is configured with custom primary domains and a custom domain on main tenant.
+
+### Custom primary domains
+
+The FoxIDs and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](reverse-proxy.md)
 
 > Important: change the primary domain before adding tenants.
 
 Domains:
 
-- FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://id.somedomain.com`  
-- FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com`
+- The FoxIDs sites default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://id.somedomain.com`  
+- The FoxIDs Control sites default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com`
 
-The FoxIDs site support one primary domain and multiple [custom domains](custom-domain.md) which are connected to tenants, where the FoxIDs Control site only support one primary domain.
+The FoxIDs site support one primary domain and multiple [custom domains](custom-domain.md) which are connected to tenants other then the master tenant. The FoxIDs Control site only support one primary domain.
 
 Configure new primary custom domains:
 
@@ -71,19 +73,28 @@ Configure new primary custom domains:
 2) The custom primary domains is configured on each App Service or by using a [reverse proxy](reverse-proxy.md). 
 Depending on the reverse proxy your are using you might be required to also configure the domains on each App Service:
 
-   - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab by clicking the `Add custom domain` link.
+   - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service under the `Custom domains` tab by clicking the `Add custom domain` link.
    - If configured on reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
 
-3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Configuration` tab and `Applications settings` sub tab: 
+3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Environment variables` tab: 
 
-   - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
+   - The setting `Settings__FoxIDsEndpoint` is changed to the FoxIDs sites new primary custom domain.
 
-4) And configure the FoxIDs service and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
+4) And configure the FoxIDs service and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Environment variables` tab: 
 
-   - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
-   - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
+   - The setting `Settings__FoxIDsEndpoint` is changed to the FoxIDs sites new primary custom domain.
+   - The setting `Settings__FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
-> Yo can achieve a shorter and prettier URL where the tenant element is removed from the URL. By creating a `main` tenant where the custom primary domain configured on the FoxIDs service is configured as the [custom domain](custom-domain.md).
+### Custom domain on main tenant
+You can achieve a shorter and prettier URL where the tenant element is removed from the URL. By configuring the FoxIDs site custom primary domain on the [main tenant](#create-main-tenant) as a [custom domain](custom-domain.md).
+
+Custom domains is supported if the FoxIDs site is behind a [reverse proxy](reverse-proxy.md) that can do domain rewrite.  
+Or alternatively, FoxIDs support custom domains by reading the HTTP request domain and using the domain as a custom domain if the `Setting__RequestDomainAsCustomDomain` setting is set to `true`. 
+The FoxIDs App Service need to be configured with the custom domain in this case.
+
+The domain is configured on the `main` tenant and marked as verified in the master tenant.
+
+![Configure reverse proxy secret](images/configure-tenant-custom-domain-environment.png)
 
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a reverse proxy. 
@@ -107,7 +118,7 @@ Configuration:
 ### Restrict access
 Optionally restrict access if you are using another reverse proxy then Azure Front Door.
 
-Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
+Both the FoxIDs and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
 The access restriction is activated by adding a secret with the name `Settings--ProxySecret` in Key Vault.
 
 1. Grant your IP address access through the Key Vault firewall
@@ -139,16 +150,10 @@ Configuration to enable test with production data:
 
 An alternative default page can be configured for the FoxIDs site using the `Settings:WebsiteUrl` setting. If configured a full URL is required like e.g., `https://www.foxidsxxxx.com`.
 
-## Update
-FoxIDs is updated by updating the two test slots of the App Services FoxIDs and FoxIDs Control. Updates is picked up from the [main branch](https://github.com/ITfoxtec/FoxIDs) in GitHub with Kudu.
+## Troubleshooting deployment errors
 
-1. Open the [Azure portal](https://portal.azure.com/) and navigate to the FoxIDs resource group.
-2. First navigate to the FoxIDs App Services test slots `foxidsxxxxxxxx/test`. 
-3. Click Deployment Center and click Sync (this initiate the deployment sequence). You can follow the deployment progress on the Logs tab.
-4. Then wait for it to update and automatically promoted the new version from the test slots to the production slots. 
-2. Then navigate to the FoxIDs Control App Services test slots `foxidscontrolxxxxxxxx/test`. 
-3. Click Deployment Center and click Sync. You can follow the deployment progress on the Logs tab.
-4. Then wait for it to update and automatically promoted the new version from the test slots to the production slots. 
-5. That is it you are done. You can see the exact version number by hovering the version number at the bottom of the page of both the FoxIDs and FoxIDs Control sites.
+### Key Vault soft deleted
+If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
+In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
 
-> It is possible to change the automatically promoted from the test slots to the production slots to manually initiated.
+The solution is to delete (purge) the old Key Vault, which will release the name.

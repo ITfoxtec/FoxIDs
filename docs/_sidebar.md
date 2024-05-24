@@ -18,7 +18,7 @@
   - [Custom domain](custom-domain.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)
-  - [Azure](deployment-azure.md)
+  - [Azure Container](deployment-azure.md)
   - [Kubernetes](deployment-k8s.md)
   - [Docker](deployment-docker.md)  
   - [Risk Passwords](risk-passwords.md)

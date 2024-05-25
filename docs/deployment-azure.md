@@ -17,6 +17,8 @@ The Azure container deployment include:
   - Subnet for App services, Cosmos DB and Key Vault. 
   - Subnet with Private Link to Redis.
 
+> Another alternative option is to deploy FoxIDs with [Kubernetes (K8s)](deployment-k8s.md) in Azure Kubernetes Service (AKS).
+
 ### Send emails with Sendgrid or SMTP
 FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email.md).
 

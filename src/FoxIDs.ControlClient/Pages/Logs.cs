@@ -39,11 +39,6 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            if (clientSettings.LogOption != LogOptions.ApplicationInsights)
-            {
-                throw new Exception("ApplicationInsights option not enabled.");
-            }
-
             logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             logSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logsettings";
             await base.OnInitializedAsync();

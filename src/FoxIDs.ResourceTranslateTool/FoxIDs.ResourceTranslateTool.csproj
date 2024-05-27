@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="DeepL.net" Version="1.9.0" />
-    <PackageReference Include="Google.Cloud.Translate.V3" Version="3.6.0" />
+    <PackageReference Include="Google.Cloud.Translate.V3" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>

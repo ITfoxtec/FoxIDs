@@ -1,10 +1,10 @@
 **FoxIDs is a Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
-> Developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.
+> Hosted in Azure West Europe (Netherlands) and Sweden Central / Ownership and data in Europe.
 
 FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
-FoxIDs is designed as a container with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](howto-environmentlink-foxids.md) the environments.  
+FoxIDs is designed as service with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](howto-environmentlink-foxids.md) the environments.  
 Each environment is an Identity Provider with a [user repository](users.md) and a unique [certificate](certificates.md). 
 An environment is connected to external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
 The environment is configured as IdP for applications and APIs with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
@@ -20,9 +20,9 @@ FoxIDs consist of two services:
 
 Hosting:
 
-- FoxIDs SaaS is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
-FoxIDs.com is hosted in Europe and mainly in Microsoft Azure Holland, Netherlands.
-- You can [deploy](deployment.md) FoxIDs with a [Azure-Hosted](deployment-azure.md) or [Self-Hosted](deployment-k8s.md) setup.
+- FoxIDs SaaS is available at [FoxIDs.com](https://www.foxids.com/action/createtenant) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
+FoxIDs.com is hosted in Azure West Europe (Netherlands) and Sweden Central.
+- You can [deploy](deployment.md) FoxIDs anywhere using Docker or Kubernetes (K8s).
 
 > For more information please see the [get started](get-started.md) guide.
 

@@ -13,9 +13,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public override async Task Invoke(HttpContext context)
         {
-            var clientIpIsLoopback = ClientIp(context);
-            if (!clientIpIsLoopback)
+            if (!IsLoopback(context))
             {
+                ReadClientIp(context);
                 ReadSchemeFromHeader(context);
                 var host = ReadHostFromHeader(context);
                 if (!host.IsNullOrWhiteSpace())

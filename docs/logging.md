@@ -2,7 +2,7 @@
 
 FoxIDs default log errors and events including the time and the client IP address. 
 
-The two supported log options `Settings:Options:Log` is:
+The two supported log options `Settings__Options:Log` is:
 
 - `Stdout` which logs to the console output. This log options are used for Deploy / Kubernetes (k8s) deployment.
 - `ApplicationInsights` which sends logs to [Application Insights](#application-insights) and the logs can subsequently be view in FoxIDs Control.

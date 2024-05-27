@@ -1,24 +1,15 @@
 # Get started
-FoxIDs is available at [FoxIDs.com](https://foxids.com) or you can [deploy](deployment.md) FoxIDs in your Microsoft Azure tenant as your own private cloud.
+FoxIDs is available at [FoxIDs.com](https://www.foxids.com/action/createtenant) or you can [deploy](deployment.md) FoxIDs anywhere yourself.
 
-#### FoxIDs.com 
-[FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
-
-a. [Register on FoxIDs.com](https://foxids.com/action/createtenant), where you get access to your one FoxIDs tenant. The tenant will hold your organizations entire security service.  
-You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) in the `master` environment to authorize external admin users.
-
----
-
-#### FoxIDs Private Cloud
-You can deploy FoxIDs as your own private cloud in your Microsoft Azure tenant.
-
-a. [Deploy](deployment.md) FoxIDs in your Microsoft Azure tenant.
-b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) to authorize external admin users.
-c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` environment. 
-You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` environment to the new tenants `master` environment to authorize admin users from the `master` tenant.
-
+> **FoxIDs as a Service (SaaS)**  
+> FoxIDs.com is hosted in Azure West Europe (Netherlands) and Sweden Central as an Identity Services (IDS).
+>   
+> [Register on FoxIDs.com](https://www.foxids.com/action/createtenant), where you get access to your one FoxIDs tenant.  
+> 
+> ---
+> 
+> **Self-Hosted**  
+> You can [deploy](deployment.md) FoxIDs anywhere using Docker or Kubernetes (K8s).
 
 ## 1) First login
 You are presented with a list of your environments when you login.

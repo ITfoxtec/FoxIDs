@@ -17,6 +17,8 @@ The Azure container deployment include:
   - Subnet for App services, Cosmos DB and Key Vault. 
   - Subnet with Private Link to Redis.
 
+> Another alternative option is to deploy FoxIDs with [Kubernetes (K8s)](deployment-k8s.md) in Azure Kubernetes Service (AKS).
+
 ### Send emails with Sendgrid or SMTP
 FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email.md).
 
@@ -50,7 +52,7 @@ Custom domains is configured with custom primary domains and a custom domain on 
 
 ### Custom primary domains
 
-The FoxIDs and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](reverse-proxy.md)
+The FoxIDs and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](#reverse-proxy).
 
 > Important: change the primary domain before adding tenants.
 
@@ -70,11 +72,11 @@ Configure new primary custom domains:
 
    > If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration must be carried out in each tenant.
 
-2) The custom primary domains is configured on each App Service or by using a [reverse proxy](reverse-proxy.md). 
+2) The custom primary domains is configured on each App Service or by using a reverse proxy. 
 Depending on the reverse proxy your are using you might be required to also configure the domains on each App Service:
 
    - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service under the `Custom domains` tab by clicking the `Add custom domain` link.
-   - If configured on reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
+   - If configured on reverse proxy: the custom primary domains are exposed through the reverse proxy.
 
 3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Environment variables` tab: 
 
@@ -88,7 +90,7 @@ Depending on the reverse proxy your are using you might be required to also conf
 ### Custom domain on main tenant
 You can achieve a shorter and prettier URL where the tenant element is removed from the URL. By configuring the FoxIDs site custom primary domain on the [main tenant](#create-main-tenant) as a [custom domain](custom-domain.md).
 
-Custom domains is supported if the FoxIDs site is behind a [reverse proxy](reverse-proxy.md) that can do domain rewrite.  
+Custom domains is supported if the FoxIDs site is behind a [reverse proxy](#reverse-proxy) that can do domain rewrite.  
 Or alternatively, FoxIDs support custom domains by reading the HTTP request domain and using the domain as a custom domain if the `Setting__RequestDomainAsCustomDomain` setting is set to `true`. 
 The FoxIDs App Service need to be configured with the custom domain in this case.
 
@@ -102,20 +104,20 @@ It is recommended to place both the FoxIDs Azure App service and the FoxIDs Cont
 ### Azure Front Door
 Azure Front Door can be configured as a reverse proxy. Azure Front Door rewrite domains by default. 
 
-Optionally select an alternative [reverse proxy](reverse-proxy.md#reverse-proxies).
-
 > Do NOT enable caching. The `Accept-Language` header is not forwarded if caching is enabled. The header is required by FoxIDs to support cultures.
 
 Configuration:
 - Add a Azure Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service
 - In the Networking section of the App Services. Enable access restriction to only allow traffic from Azure Front Door
-- Optionally add a Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service test slots
-- Restrict access to the App Services test slots
-- Add the `Settings:TrustProxyHeaders` setting with the value `true` and select Deployment slot setting in the FoxIDs App Service configuration to support [custom domains](custom-domain.md) (optionally also add the setting in the test slot)
+- Add the `Settings__TrustProxyHeaders` setting with the value `true` in the FoxIDs App Service `Environment variables` 
 - Disable Session affinity
 - Optionally configure WAF policies
 
-### Restrict access
+### Alternative reverse proxy
+
+You can optionally select an alternative [reverse proxy](reverse-proxy.md#reverse-proxies).
+
+**Restrict access**  
 Optionally restrict access if you are using another reverse proxy then Azure Front Door.
 
 Both the FoxIDs and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
@@ -132,23 +134,13 @@ The access restriction is activated by adding a secret with the name `Settings--
 
 4. After successfully configuration, remove you IP address and permissions.
 
-> The sites needs to be restarted to read the secret.
+> The App Services needs to be restarted to read the secret.
 
 After the reverse proxy secret has been configured in Key Vault the reverse proxy needs to add the `X-FoxIDs-Secret` HTTP header in all backed calls to FoxIDs to get access.
 
-## Enable test slots for testing
-Both the FoxIDs App Service and FoxIDs Control App service contains test slots used for [updating](#update) the sites without downtime.
-
-It is possible to do preliminary test in the test slots against the production data or create a new dataset for testing. 
-
-Configuration to enable test with production data:
-- In Key Vault. Grant the FoxIDs App Service and FoxIDs Control App service test slots access to call Key Vault with the same rights as the FoxIDs App Service and FoxIDs Control App service existing rights.
-- In Log Analytics workspace. Grant the FoxIDs App Service and FoxIDs Control App service test slots read access.
-- You can optionally add the two test slots behind a [reverse proxy](reverse-proxy.md) or restrict access otherwise
-
 ## Specify default page
 
-An alternative default page can be configured for the FoxIDs site using the `Settings:WebsiteUrl` setting. If configured a full URL is required like e.g., `https://www.foxidsxxxx.com`.
+An alternative default page can be configured for the FoxIDs site using the `Settings__WebsiteUrl` setting with e.g. the value `https://www.foxidsxxxx.com` in the FoxIDs App Service `Environment variables`.
 
 ## Troubleshooting deployment errors
 

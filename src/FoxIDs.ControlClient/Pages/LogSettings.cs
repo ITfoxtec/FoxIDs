@@ -42,11 +42,8 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            if (clientSettings.LogOption == LogOptions.ApplicationInsights)
-            {
-                logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
-                logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
-            }
+            logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
+            logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

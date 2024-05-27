@@ -7,7 +7,7 @@ Each FoxIDs tenant can be configured with a custom domain. A tenant connected to
 
 The custom domain can be configured with [Control Client](control.md#foxids-control-client) in your tenants master environment under the Settings tab and the Tenant settings sub tab. 
 
-![Configure reverse proxy secret](images/configure-tenant-custom-domain-my-environment.png)
+![Configure custom domain](images/configure-tenant-custom-domain-my-environment.png)
 
 > When a new custom domain is added it needs to be verified. 
 > After verification the domain is enabled in all environments in the tenant.
@@ -28,7 +28,7 @@ Steps:
  5. After successfully verification your domain become active.
 
 ## Your own private cloud
-All custom domains on all tenants can be configured with [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api) in the master tenant. 
+Custom domains can be configured on tenants in the master tenant using the [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api). 
 Where also the domain can be marked as verified at the same time. 
 
 ![Configure reverse proxy secret](images/configure-tenant-custom-domain-environment.png)

@@ -16,12 +16,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public virtual async Task Invoke(HttpContext context)
         {
-            ClientIp(context);
+            ReadClientIp(context);
 
             await next.Invoke(context);
         }
 
-        protected bool ClientIp(HttpContext context)
+        protected bool IsLoopback(HttpContext context)
+        {
+            return IPAddress.IsLoopback(context.Connection?.RemoteIpAddress);
+        }
+
+        protected void ReadClientIp(HttpContext context)
         {
             string ipHeader = context.Request.Headers["CF-Connecting-IP"];
             if (ipHeader.IsNullOrWhiteSpace())
@@ -40,8 +45,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     context.Connection.RemoteIpAddress = ipAddress;
                 }
             }
-
-            return IPAddress.IsLoopback(context.Connection.RemoteIpAddress);
         }
     }
 }

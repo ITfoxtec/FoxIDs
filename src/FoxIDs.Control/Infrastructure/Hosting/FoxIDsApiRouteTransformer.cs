@@ -19,10 +19,10 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected override async Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, bool useCustomDomain, RouteValueDictionary values, string[] route)
         {
-            if (route.Length == 1 && route[0].Equals(Constants.Routes.HealthPageName, StringComparison.InvariantCultureIgnoreCase))
+            if (route.Length == 1 && route[0].Equals(Constants.Routes.HealthController, StringComparison.InvariantCultureIgnoreCase))
             {
                 values[Constants.Routes.RouteControllerKey] = Constants.Routes.DefaultSiteController;
-                values[Constants.Routes.RouteActionKey] = Constants.Routes.HealthPageName;
+                values[Constants.Routes.RouteActionKey] = Constants.Routes.HealthController;
             }
             else if (route.Length >= 2 && route.Length <= 4)
             {

@@ -13,7 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public override async Task Invoke(HttpContext context)
         {
-            if (!IsHealthCheckOrLoopback(context))
+            if (!(IsHealthCheck(context) || IsLoopback(context)))
             {
                 ReadClientIp(context);
                 ReadSchemeFromHeader(context);
@@ -34,6 +34,16 @@ namespace FoxIDs.Infrastructure.Hosting
 
             await next.Invoke(context);
         }
+
+        protected override bool IsHealthCheck(HttpContext context)
+        {
+            if (context.Request?.Path == "/" || $"/{Constants.Routes.HealthController}".Equals(context.Request?.Path, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         private bool TrustProxyHeaders(HttpContext context)
         {

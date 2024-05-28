@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
                 tenant.Name = tenant.Name.ToLower();
                 tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
-                if (tenant.Name == Constants.Routes.ControlSiteName || tenant.Name == Constants.Routes.HealthPageName)
+                if (tenant.Name == Constants.Routes.ControlSiteName || tenant.Name == Constants.Routes.HealthController)
                 {
                     throw new FoxIDsDataException($"A tenant can not have the name '{tenant.Name}'.") { StatusCode = DataStatusCode.Conflict };
                 }

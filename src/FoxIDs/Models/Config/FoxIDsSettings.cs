@@ -80,11 +80,6 @@ namespace FoxIDs.Models.Config
         public int HrdUpPartiesMaxCount { get; set; } = 5;
 
         /// <summary>
-        /// Optional proxy secret. Validating the HTTP header "X-FoxIDs-Secret" if not empty.
-        /// </summary>
-        public string ProxySecret { get; set; }
-
-        /// <summary>
         /// Optional trust proxy headers. Default false. Trust and accept headers received without requiring a proxy secret.
         /// </summary>
         public bool TrustProxyHeaders { get; set; }

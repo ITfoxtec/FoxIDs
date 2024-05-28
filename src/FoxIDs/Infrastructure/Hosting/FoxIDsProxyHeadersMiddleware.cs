@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
-    public class ProxyHeadersMiddleware : ProxyClientIpHeadersMiddleware
+    public class FoxIDsProxyHeadersMiddleware : ProxyHeadersMiddleware
     {
-        public ProxyHeadersMiddleware(RequestDelegate next) : base(next) { }    
+        public FoxIDsProxyHeadersMiddleware(RequestDelegate next) : base(next) { }    
 
         public override async Task Invoke(HttpContext context)
         {
-            if (!IsLoopback(context))
+            if (!IsHealthCheckOrLoopback(context))
             {
                 ReadClientIp(context);
                 ReadSchemeFromHeader(context);
@@ -43,20 +43,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 return true;
             }
 
-            if (!settings.ProxySecret.IsNullOrEmpty())
-            {
-                string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];
-                if (secretHeader.IsNullOrEmpty())
-                {
-                    secretHeader = context.Request.Query["X-FoxIDs-Secret"];
-                }
-                if (!settings.ProxySecret.Equals(secretHeader, StringComparison.Ordinal))
-                {
-                    throw new Exception("Proxy secret in 'X-FoxIDs-Secret' header or query not accepted.");
-                }
-                return true;
-            }
-            return false;
+            return ValidateProxySecret(context, settings);
         }
 
         private string ReadHostFromHeader(HttpContext context)

@@ -86,9 +86,9 @@ namespace FoxIDs.Controllers
                 tenant.Name = tenant.Name.ToLower();
                 tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
-                if (tenant.Name == Constants.Routes.ControlSiteName)
+                if (tenant.Name == Constants.Routes.ControlSiteName || tenant.Name == Constants.Routes.HealthPageName)
                 {
-                    throw new FoxIDsDataException($"A tenant can not have the name '{Constants.Routes.ControlSiteName}'.") { StatusCode = DataStatusCode.Conflict };
+                    throw new FoxIDsDataException($"A tenant can not have the name '{tenant.Name}'.") { StatusCode = DataStatusCode.Conflict };
                 }
 
                 (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);

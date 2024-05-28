@@ -82,9 +82,9 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
                 track.Name = await GetTrackNameAsync(track.Name);
 
-                if (track.Name == Constants.Routes.ControlSiteName)
+                if (track.Name == Constants.Routes.ControlSiteName || track.Name == Constants.Routes.HealthPageName)
                 {
-                    throw new FoxIDsDataException($"A track can not have the name '{Constants.Routes.ControlSiteName}'.") { StatusCode = DataStatusCode.Conflict };
+                    throw new FoxIDsDataException($"A track can not have the name '{track.Name}'.") { StatusCode = DataStatusCode.Conflict };
                 }
 
                 if (!RouteBinding.PlanName.IsNullOrEmpty())

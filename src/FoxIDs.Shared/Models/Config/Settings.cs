@@ -75,6 +75,11 @@ namespace FoxIDs.Models.Config
         [Required]
         public OptionsSettings Options { get; set; } = new OptionsSettings();
 
+        /// <summary>
+        /// Optional proxy secret. Validating the HTTP header "X-FoxIDs-Secret" if not empty.
+        /// </summary>
+        public string ProxySecret { get; set; }
+
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

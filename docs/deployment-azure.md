@@ -1,4 +1,4 @@
-﻿# Azure Container
+﻿# Azure App Service Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
 FoxIDs is deployed in the resource group `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.

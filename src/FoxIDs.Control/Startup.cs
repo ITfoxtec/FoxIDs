@@ -62,7 +62,7 @@ namespace FoxIDs
                 app.UseHttpsRedirection();
             }
 
-            app.UseProxyClientIpMiddleware();
+            app.UseProxyMiddleware();
             app.UseEnLocalization();
             app.UseApiSwagger();
 
@@ -101,7 +101,7 @@ namespace FoxIDs
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapFallbackToController("Index", "W");
+                endpoints.MapFallbackToController(Constants.Routes.DefaultAction, Constants.Routes.DefaultSiteController);
             });
         }
     }

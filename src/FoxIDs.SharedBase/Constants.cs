@@ -60,11 +60,14 @@ namespace FoxIDs
 
             public const string MainTenantName = "main";
 
+            public const string ApiPath = "api";
+
             public const string ApiControllerPreMasterKey = "m";
             public const string ApiControllerPreTenantTrackKey = "t";
 
             public const string ControlSiteName = "control";
-            public const string HealthPageName = "health";
+
+            public const string HealthController = "health";
         }
 
         public static class TrackDefaults

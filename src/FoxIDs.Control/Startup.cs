@@ -66,7 +66,7 @@ namespace FoxIDs
             app.UseEnLocalization();
             app.UseApiSwagger();
 
-            app.Map("/api", app =>
+            app.Map($"/{Constants.Routes.ApiPath}", app =>
             {
                 app.UseApiExceptionMiddleware();
                 app.UseApiRouteBindingMiddleware();

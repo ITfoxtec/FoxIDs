@@ -18,7 +18,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
-            if (route.Length >= 1 && route[0].Equals(Constants.Routes.HealthPageName, StringComparison.InvariantCultureIgnoreCase))
+            if (route.Length >= 1 && route[0].Equals(Constants.Routes.HealthController, StringComparison.InvariantCultureIgnoreCase))
             {
                 return null;
             }

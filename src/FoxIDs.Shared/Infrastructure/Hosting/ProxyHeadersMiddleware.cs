@@ -19,7 +19,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public virtual async Task Invoke(HttpContext context)
         {
-            if (!IsHealthCheckOrLoopback(context))
+            if (!(IsHealthCheck(context) || IsLoopback(context)))
             {
                 ReadClientIp(context);
                 _ = ValidateProxySecret(context);
@@ -28,12 +28,17 @@ namespace FoxIDs.Infrastructure.Hosting
             await next.Invoke(context);
         }
 
-        protected bool IsHealthCheckOrLoopback(HttpContext context)
+        protected virtual bool IsHealthCheck(HttpContext context)
         {
-            if (context.Request?.Path == "/" || $"/{Constants.Routes.HealthPageName}".Equals(context.Request?.Path, StringComparison.OrdinalIgnoreCase))
+            if (context.Request?.Path == "/" || $"/{Constants.Routes.ApiPath}/{Constants.Routes.HealthController}".Equals(context.Request?.Path, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
+            return false;
+        }
+
+        protected bool IsLoopback(HttpContext context)
+        {
             if (context.Connection?.RemoteIpAddress != null)
             {
                 return IPAddress.IsLoopback(context.Connection.RemoteIpAddress);

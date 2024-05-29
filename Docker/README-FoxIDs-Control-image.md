@@ -4,7 +4,7 @@ and services like Microsoft, Google and Facebook, etc.
 
 FoxIDs consist of two services:
 
-- FoxIDs - identity service (the [FoxIDs image](https://hub.docker.com/r/foxids/foxids)). The service handles user login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
+- [FoxIDs](https://www.foxids.com/docs/connections) - identity service (the [FoxIDs image](https://hub.docker.com/r/foxids/foxids)), which handles user log in, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
 - [FoxIDs Control](https://www.foxids.com/docs/control) (this image), which is used to configure FoxIDs in a user interface or by calling an API.
 
 **Please go to the [FoxIDs image](https://hub.docker.com/r/foxids/foxids) for documentation.**

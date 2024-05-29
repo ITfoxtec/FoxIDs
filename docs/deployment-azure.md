@@ -1,7 +1,7 @@
 ﻿# Azure App Service Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
-FoxIDs is deployed in the resource group `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
+FoxIDs is deployed in the resource group `FoxIDs` (optional name) where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
@@ -11,7 +11,7 @@ The Azure container deployment include:
 - FoxIDs is deployed with Docker containers from [Docker Hub](https://hub.docker.com/u/foxids) and both App Services is configured with continuous deployment.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
 - Cosmos DB. Contain all data including tenants, environments and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
-- Redis cache. Holds sequences (e.g., login and logout sequences), data cache to improve performance and handle counters to secure against various attacks.
+- Redis cache. Holds sequences (e.g., login and logout), data cache to improve performance and handle counters to secure authentication against various attacks.
 - Application Insights and Log Analytics workspace. Logs are send to Application Insights and queried in Log Analytics workspace.
 - VLAN with subnets.
   - Subnet for App services, Cosmos DB and Key Vault. 
@@ -29,11 +29,12 @@ The default admin user is `admin@foxids.com` with password `FirstAccess!` (you a
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
-Optionally navigate to the `Users` tab and create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
+Optionally navigate to the `Users` tab and create more admin users and grant the users the admin `role` with the value `foxids:tenant.admin`.
 
 ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
-> You should generally not change the application registrations and authentication methods configuration in the master tenant, unless you are sure about what you are doing.
+You should generally not change the application registrations and authentication methods configuration in the master tenant, unless you are sure about what you are doing. 
+Instead, continue with the next step to create a `main` tenant.
 
 ## Create main tenant
 Create a `main` tenant for your environments.
@@ -91,7 +92,7 @@ Depending on the reverse proxy your are using you might be required to also conf
 You can achieve a shorter and prettier URL where the tenant element is removed from the URL. By configuring the FoxIDs site custom primary domain on the [main tenant](#create-main-tenant) as a [custom domain](custom-domain.md).
 
 Custom domains is supported if the FoxIDs site is behind a [reverse proxy](#reverse-proxy) that can do domain rewrite.  
-Or alternatively, FoxIDs support custom domains by reading the HTTP request domain and using the domain as a custom domain if the `Setting__RequestDomainAsCustomDomain` setting is set to `true`. 
+Or alternatively, FoxIDs support custom domains by reading the HTTP request domain and using the domain as a custom domain if the `Setting__RequestDomainAsCustomDomain` setting is set to `true` in the FoxIDs App Service `Environment variables`. 
 The FoxIDs App Service need to be configured with the custom domain in this case.
 
 The domain is configured on the `main` tenant and marked as verified in the master tenant.

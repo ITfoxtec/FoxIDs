@@ -5,7 +5,7 @@
 
 > Hosted in Azure Europe / Ownership and data in Europe.
 
-FoxIDs is both an [authentication](https://www.foxids.com/docs/login) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](https://www.foxids.com/docs/oidc) to [SAML 2.0](https://www.foxids.com/docs/saml-2.0).
+FoxIDs is both an [authentication](https://www.foxids.com/docs/login) platform and a security broker where FoxIDs support [converting](https://www.foxids.com/docs/bridge) from OpenID Connect 1.0 to SAML 2.0.
 
 FoxIDs is designed as service with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](https://www.foxids.com/docs/howto-environmentlink-foxids) the environments.  
 Each environment is an Identity Provider with a [user repository](https://www.foxids.com/docs/users) and a unique [certificate](https://www.foxids.com/docs/certificates). 

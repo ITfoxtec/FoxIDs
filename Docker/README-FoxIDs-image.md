@@ -4,7 +4,7 @@ and services like Microsoft, Google and Facebook, etc.
 
 FoxIDs holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](https://www.foxids.com/docs/howto-environmentlink-foxids) the environments. 
 Each environment is an Identity Provider with a [user repository](https://www.foxids.com/docs/users) and a unique [certificate](https://www.foxids.com/docs/certificates). 
-An environment is connected to external Identity Provider with [OpenID Connect 1.0](https://www.foxids.com/docs/auth-method-oidc) or [SAML 2.0](https://www.foxids.com/docs/auth-method-saml-2.0). 
+An environment can be connected to external Identity Provider with [OpenID Connect 1.0](https://www.foxids.com/docs/auth-method-oidc) or [SAML 2.0](https://www.foxids.com/docs/auth-method-saml-2.0). 
 The environment is configured as the IdP for applications and APIs with [OAuth 2.0](https://www.foxids.com/docs/app-reg-oauth-2.0), [OpenID Connect 1.0](https://www.foxids.com/docs/app-reg-oidc) or 
 [SAML 2.0](https://www.foxids.com/docs/app-reg-saml-2.0).  
 The user's [log in](https://www.foxids.com/docs/login) experience is configured and optionally [customized](https://www.foxids.com/docs/customization).

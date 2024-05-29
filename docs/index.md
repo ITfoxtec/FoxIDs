@@ -6,7 +6,7 @@ FoxIDs is both an [authentication](login.md) platform and a security broker wher
 
 FoxIDs is designed as service with multi-tenant support. Your tenant holds your environments (prod, QA, test, dev or corporate, external-idp, app-a, app-b) and possible [interconnect](howto-environmentlink-foxids.md) the environments.  
 Each environment is an Identity Provider with a [user repository](users.md) and a unique [certificate](certificates.md). 
-An environment is connected to external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
+An environment can be connected to external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
 The environment is configured as the IdP for applications and APIs with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
 The user's [log in](login.md) experience is configured and optionally [customized](customization.md).
 
@@ -15,7 +15,7 @@ The user's [log in](login.md) experience is configured and optionally [customize
 
 FoxIDs consist of two services:
 
-- FoxIDs - identity service. The service handles user login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
+- [FoxIDs](connections.md) - identity service, which handles user log in, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.
 - [FoxIDs Control](control.md), which is used to configure FoxIDs in a user interface or by calling an API.
 
 Hosting:

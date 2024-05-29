@@ -90,7 +90,7 @@ spec:
             - name: "Settings__FoxIDsEndpoint"
               value: "https://id.itfoxtec.com" # change to your domain -  https://id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"
-              value: "http://foxids:8000"
+              value: "http://foxids:8800"
             - name: "Settings__FoxIDsControlEndpoint"
               value: "https://control.itfoxtec.com" # change to your domain -  https://control.my-domain.com
             - name: "Settings__MasterSeedEnabled"
@@ -127,19 +127,6 @@ spec:
                   key: database_url
             - name: "Settings__RedisCache__ConnectionString"
               value: "$(REDIS_SERVER):6379"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: foxids-service
-spec:
-  selector:
-    app: foxids
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8000
-      targetPort: 80
 ---
 apiVersion: v1
 kind: Service

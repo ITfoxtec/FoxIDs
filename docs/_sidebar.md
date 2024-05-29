@@ -5,7 +5,7 @@
   - [Authentication methods](howto-connect.md#how-to-connect-authentication-methods)
 - [Development](development.md)
   - [.NET Samples](samples.md)
-- [SAML 2.0 bridge](bridge.md)
+- [SAML / OpenID Connect bridge](bridge.md)
 - [Connections](connections.md)
   - [Login & HRD & 2FA/MFA](login.md)
   - [OpenID Connect](oidc.md)

@@ -1,4 +1,4 @@
-# SAML 2.0 bridge
+# SAML 2.0 / OpenID Connect bridge
 
 By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 

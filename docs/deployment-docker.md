@@ -2,7 +2,7 @@
 
 Deploy FoxIDs in Docker Desktop on a dev or test machine.
 
-This is a description of how to make a default [deployment](#deployment) and [login](#first-login) for the first time.
+This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login).
 
 Pre requirements:
 - You have Docker Desktop installed. 
@@ -15,10 +15,10 @@ This deployment include:
 - Two websites one for FoxIDs and one for the FoxIDs Control (Client and API) in two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general) or generated from code with `Dockerfile` files.
 - The two websites is exposed on two different ports.
 - MongoDB is a NoSQL database and contains all data including tenants, environments and users. Deployed with the [official MongoDB](https://hub.docker.com/_/mongo) Docker image.
-- Redis cache holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks. Deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
+- Redis cache holds sequences (e.g., login and logout), data cache to improve performance and handle counters to secure authentication against various attacks. Deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
 - Logs are written to `stdout` where the logs can be picked up by Docker.
 
-> Optionally use PostgreSql instead of MongoDB and optionally opt out Redis and save the cache in the database (MongoDB or PostgreSql). Without a Redis cache you need to select `None` as data cache.
+> Optionally use PostgreSql instead of MongoDB and optionally opt out Redis and save cache data in the database (MongoDB or PostgreSql). Without a Redis cache you need to select `None` as data cache.
 
 ## Deployment
 
@@ -42,7 +42,7 @@ docker volume create foxids-data
 ```
  
 ### Deploy containers
-The two FoxIDs websites is configured with either images from Docker Hub or images generated from code with `Dockerfile` files. And optional configured to use either only HTTP or both HTTP/HTTPS with a development certificate.  
+The two FoxIDs websites is configured with either images from [Docker Hub](https://hub.docker.com/u/foxids) or images generated from code with `Dockerfile` files. And optional configured to use either only HTTP or both HTTP/HTTPS with a development certificate.  
 The official MongoDB and Redis images is pulled from Docker Hub.
 
 **Email provider**  
@@ -61,7 +61,7 @@ This example show how to add Outlook / Microsoft 365 with SMTP:
 - name: "Settings__Smtp__Port"
     value: "587"
 - name: "Settings__Smtp__Username"
-    value: "my@email-address.org"
+    value: "my@email-address.com"
 - name: "Settings__Smtp__Password"
     value: "xxxxxxx"
 ```
@@ -83,6 +83,13 @@ docker-compose -f docker-compose-project.yaml -f docker-compose.development-http
 ```yaml
 docker-compose -f docker-compose-project.yaml -f docker-compose.development-https.yaml up -d
 ```
+
+## First login
+Open your FoxIDs Control site (<a href="http://localhost:8801" target="_blank">http://localhost:8801</a> or <a href="https://localhost:8401" target="_blank">https://localhost:8401</a>) in a browser. It should redirect to the FoxIDs site where you login with the default admin user `admin@foxids.com` and password `FirstAccess!` (you are required to change the password on first login).  
+You are then redirected back to the FoxIDs Control site in the `master` tenant. You can add more tenants in the master tenant and e.g., configure admin users.
+
+Then click on the `main` tenant and authenticate once again with the same default admin user email and password (the default admin user email and password is the same for both the `master` tenant and the `main` tenant, but it is two different users).  
+You are now logged into the `main` tenant and can start to configure your [applications and authentication methods](connections.md).
 
 ## Useful commands
 This is a list of commands which may be useful during deployment to view details and to make deployment changes.

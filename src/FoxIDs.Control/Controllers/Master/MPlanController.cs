@@ -21,16 +21,16 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
-        private readonly IMasterRepository masterRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
+        private readonly IMasterDataRepository masterDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, PlanCacheLogic planCacheLogic) : base(logger)
+        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
-            this.masterRepository = masterRepository;
+            this.tenantDataRepository = tenantDataRepository;
+            this.masterDataRepository = masterDataRepository;
             this.planCacheLogic = planCacheLogic;
         }
 
@@ -48,13 +48,13 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mPlan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(name));
+                var mPlan = await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(name));
 
                 return Ok(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Plan).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Plan).Name, name);
@@ -78,15 +78,15 @@ namespace FoxIDs.Controllers
                 plan.Name = plan.Name.ToLower();
 
                 var mPlan = mapper.Map<Plan>(plan);
-                await masterRepository.CreateAsync(mPlan);
+                await masterDataRepository.CreateAsync(mPlan);
 
                 await planCacheLogic.InvalidatePlanCacheAsync(plan.Name);
 
                 return Created(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Plan).Name}' by name '{plan.Name}'.");
                     return Conflict(typeof(Api.Plan).Name, plan.Name, nameof(plan.Name));
@@ -110,15 +110,15 @@ namespace FoxIDs.Controllers
                 plan.Name = plan.Name.ToLower();
 
                 var mPlan = mapper.Map<Plan>(plan);
-                await masterRepository.UpdateAsync(mPlan);
+                await masterDataRepository.UpdateAsync(mPlan);
 
                 await planCacheLogic.InvalidatePlanCacheAsync(plan.Name);
 
                 return Ok(mapper.Map<Api.Plan>(mPlan));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Plan).Name}' by name '{plan.Name}'.");
                     return NotFound(typeof(Api.Plan).Name, plan.Name, nameof(plan.Name));
@@ -142,15 +142,15 @@ namespace FoxIDs.Controllers
 
                 if (!await ValidatePlanNotUsedAsync(name)) return BadRequest(ModelState);
 
-                await masterRepository.DeleteAsync<Plan>(await Plan.IdFormatAsync(name));
+                await masterDataRepository.DeleteAsync<Plan>(await Plan.IdFormatAsync(name));
 
                 await planCacheLogic.InvalidatePlanCacheAsync(name);
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Plan).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Plan).Name, name);
@@ -161,7 +161,7 @@ namespace FoxIDs.Controllers
 
         private async Task<bool> ValidatePlanNotUsedAsync(string planName)
         {
-            (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.DataType.Equals("tenant") && t.PlanName.Equals(planName), maxItemCount: 1);
+            (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.DataType.Equals(Constants.Models.DataType.Tenant) && t.PlanName.Equals(planName), pageSize: 1);
             if (tenants.Count() > 0)
             {
                 try

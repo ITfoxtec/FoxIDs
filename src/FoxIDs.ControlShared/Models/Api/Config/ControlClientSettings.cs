@@ -6,5 +6,9 @@
 
         public string Version { get; set; }
         public string FullVersion { get; set; }
+
+        public LogOptions LogOption { get; set; }
+
+        public KeyStorageOptions KeyStorageOption { get; set; } 
     }
 }

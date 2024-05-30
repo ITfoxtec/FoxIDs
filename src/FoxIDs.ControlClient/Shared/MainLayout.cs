@@ -56,6 +56,9 @@ namespace FoxIDs.Client.Shared
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Inject]
+        public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
+
+        [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
@@ -78,6 +81,7 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnInitializedAsync()
         {
+            await ControlClientSettingLogic.InitLoadAsync();
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;

@@ -24,19 +24,19 @@ namespace FoxIDs.Models.Api
         public string DisplayName { get; set; }
 
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours. Default 2 hours.
-        public int SequenceLifetime { get; set; } = 7200;
+        public int SequenceLifetime { get; set; } = Constants.TrackDefaults.DefaultSequenceLifetime;
 
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
-        public int MaxFailingLogins { get; set; } = 5;
+        public int MaxFailingLogins { get; set; } = Constants.TrackDefaults.DefaultMaxFailingLogins;
 
         [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
-        public int FailingLoginCountLifetime { get; set; } = 36000;
+        public int FailingLoginCountLifetime { get; set; } = Constants.TrackDefaults.DefaultFailingLoginCountLifetime;
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
-        public int FailingLoginObservationPeriod { get; set; } = 3600;
+        public int FailingLoginObservationPeriod { get; set; } = Constants.TrackDefaults.DefaultFailingLoginObservationPeriod;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
-        public int PasswordLength { get; set; } = 6;
+        public int PasswordLength { get; set; } = Constants.TrackDefaults.DefaultPasswordLength;
 
         [Required]
         public bool? CheckPasswordComplexity { get; set; } = true;

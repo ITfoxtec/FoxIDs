@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs", "src\FoxIDs\FoxIDs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}"
 	ProjectSection(SolutionItems) = preProject
-		azuredeploy.json = azuredeploy.json
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -60,6 +59,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\control.md = docs\control.md
 		docs\custom-domain.md = docs\custom-domain.md
 		docs\customization.md = docs\customization.md
+		docs\deployment-azure.md = docs\deployment-azure.md
+		docs\deployment-docker.md = docs\deployment-docker.md
+		docs\deployment-k8s.md = docs\deployment-k8s.md
 		docs\deployment.md = docs\deployment.md
 		docs\development.md = docs\development.md
 		docs\email.md = docs\email.md
@@ -69,6 +71,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\get-started.md = docs\get-started.md
 		docs\gs-context-handler.md = docs\gs-context-handler.md
 		docs\gs-nemlogin.md = docs\gs-nemlogin.md
+		docs\health.md = docs\health.md
 		docs\howto-connect.md = docs\howto-connect.md
 		docs\howto-environmentlink-foxids.md = docs\howto-environmentlink-foxids.md
 		docs\howto-oidc-foxids.md = docs\howto-oidc-foxids.md
@@ -77,18 +80,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\language.md = docs\language.md
 		docs\logging.md = docs\logging.md
 		docs\login.md = docs\login.md
-		docs\monitoring.md = docs\monitoring.md
 		docs\name-title-icon-css.md = docs\name-title-icon-css.md
 		docs\oauth-2.0.md = docs\oauth-2.0.md
 		docs\oidc.md = docs\oidc.md
 		docs\plan.md = docs\plan.md
 		docs\README.md = docs\README.md
 		docs\reverse-proxy.md = docs\reverse-proxy.md
+		docs\risk-passwords.md = docs\risk-passwords.md
 		docs\saml-2.0.md = docs\saml-2.0.md
 		docs\samples.md = docs\samples.md
 		docs\standard-support.md = docs\standard-support.md
 		docs\token-exchange.md = docs\token-exchange.md
-		docs\update.md = docs\update.md
 		docs\users.md = docs\users.md
 		docs\_sidebar.md = docs\_sidebar.md
 	EndProjectSection
@@ -153,17 +155,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\connections-oidc.svg = docs\images\connections-oidc.svg
 		docs\images\connections-saml.svg = docs\images\connections-saml.svg
 		docs\images\connections.vsdx = docs\images\connections.vsdx
-		docs\images\development-foxids-db.png = docs\images\development-foxids-db.png
-		docs\images\development-foxids-key-vault.png = docs\images\development-foxids-key-vault.png
 		docs\images\environments.vsdx = docs\images\environments.vsdx
 		docs\images\example-claim-transform-name-to-given_name-family_name.png = docs\images\example-claim-transform-name-to-given_name-family_name.png
 		docs\images\example-claim-transform-remove-post-auth-method-name.png = docs\images\example-claim-transform-remove-post-auth-method-name.png
 		docs\images\faq-pass-through-all-claims-app-reg.png = docs\images\faq-pass-through-all-claims-app-reg.png
 		docs\images\faq-pass-through-all-claims-auth-method.png = docs\images\faq-pass-through-all-claims-auth-method.png
-		docs\images\get-started-app.png = docs\images\get-started-app.png
 		docs\images\get-started-first-access.png = docs\images\get-started-first-access.png
 		docs\images\get-started-login.png = docs\images\get-started-login.png
-		docs\images\get-started-test-user-new.png = docs\images\get-started-test-user-new.png
+		docs\images\get-started-new-app-reg-conf.png = docs\images\get-started-new-app-reg-conf.png
+		docs\images\get-started-new-app-reg-done.png = docs\images\get-started-new-app-reg-done.png
+		docs\images\get-started-new-app-reg.png = docs\images\get-started-new-app-reg.png
 		docs\images\get-started-test-user.png = docs\images\get-started-test-user.png
 		docs\images\how-to-connect.svg = docs\images\how-to-connect.svg
 		docs\images\how-to-context-handler-environment-link.svg = docs\images\how-to-context-handler-environment-link.svg
@@ -204,6 +205,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\language-french.png = docs\images\language-french.png
 		docs\images\language-german.png = docs\images\language-german.png
 		docs\images\language-spanish.png = docs\images\language-spanish.png
+		docs\images\main-tenant.png = docs\images\main-tenant.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\search-logs.png = docs\images\search-logs.png
@@ -235,6 +237,46 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateTool", "src\FoxIDs.ResourceTranslateTool\FoxIDs.ResourceTranslateTool.csproj", "{B63EC694-505A-4730-92B7-6827B8E61A6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1}"
+	ProjectSection(SolutionItems) = preProject
+		Docker\docker-compose-image.yaml = Docker\docker-compose-image.yaml
+		Docker\docker-compose-project.yaml = Docker\docker-compose-project.yaml
+		Docker\docker-compose.development-http.yaml = Docker\docker-compose.development-http.yaml
+		Docker\docker-compose.development-https.yaml = Docker\docker-compose.development-https.yaml
+		Docker\README-FoxIDs-Control-image.md = Docker\README-FoxIDs-Control-image.md
+		Docker\README-FoxIDs-image.md = Docker\README-FoxIDs-image.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
+	ProjectSection(SolutionItems) = preProject
+		azuredeploy.json = azuredeploy.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
+		.github\workflows\ci_qa_docker.yaml = .github\workflows\ci_qa_docker.yaml
+		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes\k8s-foxids-deployment.yaml = Kubernetes\k8s-foxids-deployment.yaml
+		Kubernetes\k8s-foxids-ingress-deployment.yaml = Kubernetes\k8s-foxids-ingress-deployment.yaml
+		Kubernetes\k8s-letsencrypt-issuer.yaml = Kubernetes\k8s-letsencrypt-issuer.yaml
+		Kubernetes\k8s-mongo-configmap.yaml = Kubernetes\k8s-mongo-configmap.yaml
+		Kubernetes\k8s-mongo-deployment.yaml = Kubernetes\k8s-mongo-deployment.yaml
+		Kubernetes\k8s-mongo-pv-dockerdesktop.yaml = Kubernetes\k8s-mongo-pv-dockerdesktop.yaml
+		Kubernetes\k8s-mongo-pvc-dockerdesktop.yaml = Kubernetes\k8s-mongo-pvc-dockerdesktop.yaml
+		Kubernetes\k8s-mongo-pvc-dynamic.yaml = Kubernetes\k8s-mongo-pvc-dynamic.yaml
+		Kubernetes\k8s-mongo-secret.yaml = Kubernetes\k8s-mongo-secret.yaml
+		Kubernetes\k8s-redis-configmap.yaml = Kubernetes\k8s-redis-configmap.yaml
+		Kubernetes\k8s-redis-deployment.yaml = Kubernetes\k8s-redis-deployment.yaml
+		Kubernetes\k8s-redis-pv-dockerdesktop.yaml = Kubernetes\k8s-redis-pv-dockerdesktop.yaml
+		Kubernetes\k8s-redis-pvc-dockerdesktop.yaml = Kubernetes\k8s-redis-pvc-dockerdesktop.yaml
+		Kubernetes\k8s-redis-pvc-dynamic.yaml = Kubernetes\k8s-redis-pvc-dynamic.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -298,6 +340,10 @@ Global
 		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 		{B63EC694-505A-4730-92B7-6827B8E61A6E} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{376A9D7A-D64B-4526-8EFC-D21A3B77612B} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

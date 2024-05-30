@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         /// <summary>
@@ -44,12 +44,12 @@ namespace FoxIDs.Controllers
 
                 var userHashId = await User.Identity.Name.HashIdStringAsync();
 
-                var mUserControlProfile = await tenantRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
+                var mUserControlProfile = await tenantDataRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
@@ -76,13 +76,13 @@ namespace FoxIDs.Controllers
 
                 var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfile);
                 mUserControlProfile.Id = await UserControlProfile.IdFormatAsync(RouteBinding, await User.Identity.Name.HashIdStringAsync());
-                await tenantRepository.SaveAsync(mUserControlProfile);
+                await tenantDataRepository.SaveAsync(mUserControlProfile);
 
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
@@ -107,12 +107,12 @@ namespace FoxIDs.Controllers
 
                 var userHashId = await User.Identity.Name.HashIdStringAsync();
 
-                _ = await tenantRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
+                await tenantDataRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
                     return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);

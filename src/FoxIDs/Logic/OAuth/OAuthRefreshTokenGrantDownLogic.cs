@@ -15,13 +15,13 @@ namespace FoxIDs.Logic
     public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
@@ -81,12 +81,12 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
+            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
-            var grantCount = await tenantRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.SessionId == sessionId);
+            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.SessionId == sessionId);
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted, Session ID '{sessionId}'.");
@@ -123,11 +123,11 @@ namespace FoxIDs.Logic
             var id = await RefreshTokenGrant.IdFormatAsync(grantIdKey);
             if (refreshToken.StartsWith('u'))
             {
-                return await tenantRepository.GetAsync<RefreshTokenGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
+                return await tenantDataRepository.GetAsync<RefreshTokenGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
             }
             else if (refreshToken.StartsWith('t'))
             {
-                return await tenantRepository.GetAsync<RefreshTokenTtlGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
+                return await tenantDataRepository.GetAsync<RefreshTokenTtlGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
             }
             else
             {
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
             grant.SessionId = claims.Where(c => c.Claim == JwtClaimTypes.SessionId).Select(c => c.Values.FirstOrDefault()).FirstOrDefault();
 
             await grant.SetIdAsync(new RefreshTokenGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, RefreshToken = refreshToken });
-            await tenantRepository.SaveAsync(grant);
+            await tenantDataRepository.SaveAsync(grant);
 
             return grant;
         }

@@ -68,10 +68,10 @@ namespace FoxIDs
 
         private static bool TryValidateObjectRecursive(object data, List<ValidationResult> results)
         {
-            return TryValidateObjectRecursive(data, results, new HashSet<object>());
+            return TryValidateObjectRecursive(data, results, new List<object>());
         }
 
-        private static bool TryValidateObjectRecursive(object data, List<ValidationResult> results, ISet<object> validatedObjects)
+        private static bool TryValidateObjectRecursive(object data, List<ValidationResult> results, List<object> validatedObjects)
         {
             // stop infinite loops
             if (validatedObjects.Contains(data))

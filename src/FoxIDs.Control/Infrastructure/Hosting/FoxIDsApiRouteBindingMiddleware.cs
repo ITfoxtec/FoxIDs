@@ -18,28 +18,35 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
-            var trackIdKey = new Track.IdKey();
-            trackIdKey.TrackName = Constants.Routes.MasterTrackName;
-
-            if (route.Length >= 2 && route[0].Equals(Constants.Routes.MasterApiName, StringComparison.InvariantCultureIgnoreCase) && route[1].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
+            if (route.Length >= 1 && route[0].Equals(Constants.Routes.HealthController, StringComparison.InvariantCultureIgnoreCase))
             {
-                trackIdKey.TenantName = Constants.Routes.MasterTenantName;
-            }
-            else if (route.Length >= 2 && route[1].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
-            {
-                trackIdKey.TenantName = route[0].ToLower();
-            }
-            else if (route.Length >= 3 && route[2].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
-            {
-                trackIdKey.TenantName = route[0].ToLower();
-                trackIdKey.TrackName = route[1].ToLower();
+                return null;
             }
             else
             {
-                throw new NotSupportedException($"FoxIDs API route '{string.Join('/', route)}' not supported.");
-            }
+                var trackIdKey = new Track.IdKey();
+                trackIdKey.TrackName = Constants.Routes.MasterTrackName;
 
-            return trackIdKey;
+                if (route.Length >= 2 && route[0].Equals(Constants.Routes.MasterApiName, StringComparison.InvariantCultureIgnoreCase) && route[1].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
+                {
+                    trackIdKey.TenantName = Constants.Routes.MasterTenantName;
+                }
+                else if (route.Length >= 2 && route[1].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
+                {
+                    trackIdKey.TenantName = route[0].ToLower();
+                }
+                else if (route.Length >= 3 && route[2].StartsWith(Constants.Routes.PreApikey, StringComparison.InvariantCulture))
+                {
+                    trackIdKey.TenantName = route[0].ToLower();
+                    trackIdKey.TrackName = route[1].ToLower();
+                }
+                else
+                {
+                    throw new NotSupportedException($"FoxIDs API route '{string.Join('/', route)}' not supported.");
+                }
+
+                return trackIdKey;
+            }
         }
 
         protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)

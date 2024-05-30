@@ -13,28 +13,32 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly Settings settings;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
 
-        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantDataRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.masterTenantLogic = masterTenantLogic;
         }
 
-        public async Task SeedAsync()
+        public async Task<bool> SeedAsync()
         {
             try
             {
-                await CreateAndValidateMasterTenantDocumentAsync();
+                if (!await CreateAndValidateMasterTenantDocumentAsync())
+                {
+                    return false;
+                }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName, TrackKeyTypes.KeyVaultRenewSelfSigned);
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName, settings.Options.KeyStorage == KeyStorageOptions.KeyVault ? TrackKeyTypes.KeyVaultRenewSelfSigned : TrackKeyTypes.Contained);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MasterTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MasterTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MasterTenantName, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(Constants.Routes.MasterTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
+                return true;
             }
             catch (Exception ex)
             {
@@ -43,24 +47,19 @@ namespace FoxIDs.Logic.Seed
             }
         }
 
-        private async Task CreateAndValidateMasterTenantDocumentAsync()
+        private async Task<bool> CreateAndValidateMasterTenantDocumentAsync()
         {
             var masterTenant = new Tenant();
             await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = Constants.Routes.MasterTenantName });
 
-            try
+            var tenant = await tenantDataRepository.GetAsync<Tenant>(masterTenant.Id, required: false);
+            if (tenant != null)
             {
-                _ = await tenantRepository.GetAsync<Tenant>(masterTenant.Id);
-            }
-            catch (CosmosDataException ex)
-            {
-                if (ex.StatusCode != HttpStatusCode.NotFound)
-                {
-                    throw new Exception($"{masterTenant.Id} document exists.");
-                }
+                return false;
             }
 
-            await tenantRepository.CreateAsync(masterTenant);
+            await tenantDataRepository.CreateAsync(masterTenant);
+            return true;
         }
     }
 }

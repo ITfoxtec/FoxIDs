@@ -27,15 +27,15 @@ If both a SendGrid and SMTP email provider is configured the SendGrid email prov
 
 Configuring SendGrid with the application setting names:
 
-- Settings:Sendgrid:FromEmail
-- Settings:Sendgrid:ApiKey
+- `Settings__Sendgrid:FromEmail`
+- `Settings__Sendgrid:ApiKey`
 
 Configuring SMTP with the application setting names:
 
-- Settings:Smtp:FromEmail
-- Settings:Smtp:Host
-- Settings:Smtp:Port
-- Settings:Smtp:Username
-- Settings:Smtp:Password
+- `Settings__Smtp:FromEmail`
+- `Settings__Smtp:Host`
+- `Settings__Smtp:Port`
+- `Settings__Smtp:Username`
+- `Settings__Smtp:Password`
 
 The SMTP connection is required to be SSL/TLS.

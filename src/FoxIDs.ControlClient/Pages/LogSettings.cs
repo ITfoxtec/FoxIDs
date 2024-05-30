@@ -1,6 +1,7 @@
 ﻿using Blazored.Toast.Services;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -23,6 +24,9 @@ namespace FoxIDs.Client.Pages
         private GeneralLogSettingsViewModel generalLogSettings = new GeneralLogSettingsViewModel();
         private string logSreamSettingsListError;
         private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
+
+        [Inject]
+        public ClientSettings clientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }

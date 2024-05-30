@@ -18,14 +18,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackSendEmailController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackSendEmailController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -40,16 +40,16 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 if(mTrack.SendEmail == null)
                 {
                     return NoContent();
                 }
                 return Ok(mapper.Map<Api.SendEmail>(mTrack.SendEmail));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", RouteBinding.TrackName);
@@ -72,18 +72,18 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(sendEmail)) return BadRequest(ModelState);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
                 mTrack.SendEmail = mapper.Map<SendEmail>(sendEmail);
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.SendEmail>(mTrack.SendEmail));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));
@@ -102,18 +102,18 @@ namespace FoxIDs.Controllers
             try
             {
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
                 mTrack.SendEmail = null;
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));

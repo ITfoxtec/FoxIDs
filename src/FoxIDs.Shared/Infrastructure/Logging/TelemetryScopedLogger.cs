@@ -22,12 +22,12 @@ namespace FoxIDs.Infrastructure
             this.telemetryLogger = telemetryLogger;
             this.telemetryScopedProperties = telemetryScopedProperties;
             this.telemetryScopedStreamLogger = telemetryScopedStreamLogger;
-            this.httpContextAccessor = httpContextAccessor;       
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public Models.Logging Logging
         {
-            get 
+            get
             {
                 if (logging != null)
                 {
@@ -156,7 +156,7 @@ namespace FoxIDs.Infrastructure
                 {
                     telemetryScopedStreamLogger.Event(this, scopedStreamLogger, eventName, allProperties, metrics);
                 }
-            }                        
+            }
         }
 
         public void ScopeTrace(Func<string> message, IDictionary<string, string> scopeProperties = null, bool triggerEvent = false, TraceTypes traceType = TraceTypes.Info)
@@ -186,7 +186,7 @@ namespace FoxIDs.Infrastructure
             var saveScoped = Logging?.ScopedLogger?.LogMetric == true;
             var saveScopedStream = Logging?.ScopedStreamLoggers?.Where(l => l.LogMetric).Any() == true;
 
-            if (saveScoped || saveScopedStream) 
+            if (saveScoped || saveScopedStream)
             {
                 var messageData = new MetricMessage();
                 metric(messageData);
@@ -238,7 +238,7 @@ namespace FoxIDs.Infrastructure
         bool isDisposed = false;
         public void Dispose()
         {
-            if(!isDisposed)
+            if (!isDisposed)
             {
                 isDisposed = true;
                 if (Logging != null && traceMessages.Count > 0)

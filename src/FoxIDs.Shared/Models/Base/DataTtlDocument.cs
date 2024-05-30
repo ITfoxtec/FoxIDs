@@ -1,12 +1,18 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public abstract class DataTtlDocument : DataDocument, IDataTtlDocument
+    public class DataTtlDocument : DataDocument, IDataTtlDocument
     {
         [Required]
         [JsonProperty(PropertyName = "ttl")]
         public int TimeToLive { get; set; }
+
+        [JsonProperty(PropertyName = "expire_at")]
+        public DateTime ExpireAt { get { return DateTime.UtcNow.AddSeconds(TimeToLive); } set { } }
+
+        public override string Id { get; set; }
     }
 }

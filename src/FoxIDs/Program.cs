@@ -1,9 +1,11 @@
 ﻿using Azure.Identity;
+using FoxIDs.Models.Config;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace FoxIDs
@@ -20,28 +22,28 @@ namespace FoxIDs
                 .ConfigureKestrel(options => options.AddServerHeader = false)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    var builtConfig = config.Build();
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
+                        var settings = config.Build().BindConfig<Settings>(nameof(Settings), validate: false);
+                        if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+                        {
+                            config.AddAzureKeyVault(new Uri(settings.KeyVault.EndpointUri), new DefaultAzureCredential());
+                        }
                     }
                 })
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;                
-                    if (string.IsNullOrWhiteSpace(connectionString))
+                    // Remove all loggers like console, debug, event source etc.
+                    logging.ClearProviders();
+
+                    var settings = context.Configuration.BindConfig<Settings>(nameof(Settings), validate: false);
+                    var appInsightsSettings = context.Configuration.BindConfig<ApplicationInsights>(nameof(ApplicationInsights), validate: false);
+                    if (settings.Options.Log == LogOptions.ApplicationInsights && !string.IsNullOrWhiteSpace(appInsightsSettings.ConnectionString))
                     {
+                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = appInsightsSettings.ConnectionString, options => { });
                         return;
                     }
-
-                    // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
-                    if (!context.HostingEnvironment.IsDevelopment())
-                    {
-                        logging.ClearProviders();
-                    }
-
-                    logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
                 });
     }
 }

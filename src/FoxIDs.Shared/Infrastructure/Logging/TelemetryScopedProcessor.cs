@@ -1,20 +1,31 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Infrastructure.Logging;
+using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Linq;
 
 namespace FoxIDs.Infrastructure
 {
     public class TelemetryScopedProcessor : ITelemetryProcessor
     {
+        private readonly Settings settings;
+        private readonly IWebHostEnvironment environment;
+        private readonly StdoutTelemetryLogger stdoutTelemetryLogger;
         private readonly ITelemetryProcessor next;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public TelemetryScopedProcessor(ITelemetryProcessor next, IHttpContextAccessor httpContextAccessor)
+        public TelemetryScopedProcessor(Settings settings, IWebHostEnvironment environment, StdoutTelemetryLogger stdoutTelemetryLogger, ITelemetryProcessor next, IHttpContextAccessor httpContextAccessor)
         {
+            this.settings = settings;
+            this.environment = environment;
+            this.stdoutTelemetryLogger = stdoutTelemetryLogger;
             this.next = next;
             this.httpContextAccessor = httpContextAccessor;
         }
@@ -44,34 +55,68 @@ namespace FoxIDs.Infrastructure
                 }
             }
 
-            if (item is ExceptionTelemetry exceptionTelemetry)
+            if (environment.IsDevelopment() || settings.Options.Log == LogOptions.Stdout)
             {
-                if (!exceptionTelemetry.Properties.ContainsKey(Constants.Logs.LoggingHandledKey))
+                if (item is EventTelemetry eventTelemetry)
                 {
-                    if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
+                    stdoutTelemetryLogger.LogInformation(eventTelemetry);
+                }
+                else if (item is TraceTelemetry traceTelemetry)
+                {
+                    if (!traceTelemetry.Message.StartsWith("AI:", StringComparison.Ordinal))
                     {
-                        var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
-                        if (routeBinding != null)
+                        stdoutTelemetryLogger.LogTrace(traceTelemetry);
+                    }
+                }
+                else if (item is ExceptionTelemetry exceptionTelemetry)
+                {
+                    switch (exceptionTelemetry.SeverityLevel)
+                    {
+                        case SeverityLevel.Warning:
+                            stdoutTelemetryLogger.LogWarning(exceptionTelemetry);
+                            break;
+                        case SeverityLevel.Critical:
+                            stdoutTelemetryLogger.LogCritical(exceptionTelemetry);
+                            break;
+                        case SeverityLevel.Error:
+                        default:
+                            stdoutTelemetryLogger.LogError(exceptionTelemetry);
+                            break;
+                    }
+                }
+            }
+            
+            if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                if (item is ExceptionTelemetry exceptionTelemetry)
+                {
+                    if (!exceptionTelemetry.Properties.ContainsKey(Constants.Logs.LoggingHandledKey))
+                    {
+                        if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
                         {
-                            var telemetryScopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                            var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
+                            var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
+                            if (routeBinding != null)
+                            {
+                                var telemetryScopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                                var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
 
-                            ProcessScopeStreamLogs(exceptionTelemetry, routeBinding, telemetryScopedLogger, telemetryScopedProperties);
+                                ProcessScopeStreamLogs(exceptionTelemetry, routeBinding, telemetryScopedLogger, telemetryScopedProperties);
 
-                            if (exceptionTelemetry.SeverityLevel == SeverityLevel.Warning)
-                            {
-                                telemetryScopedLogger.Warning(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
-                            }
-                            else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
-                            {
-                                telemetryScopedLogger.Error(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
-                            }
-                            else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
-                            {
-                                telemetryScopedLogger.CriticalError(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
+                                if (exceptionTelemetry.SeverityLevel == SeverityLevel.Warning)
+                                {
+                                    telemetryScopedLogger.Warning(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                                    return;
+                                }
+                                else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
+                                {
+                                    telemetryScopedLogger.Error(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                                    return;
+                                }
+                                else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
+                                {
+                                    telemetryScopedLogger.CriticalError(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                                    return;
+                                }
                             }
                         }
                     }

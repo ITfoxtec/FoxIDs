@@ -12,9 +12,9 @@ namespace FoxIDs.Logic
     public class ValidateApiModelExternalUserLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantDataRepository tenantService;
 
-        public ValidateApiModelExternalUserLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelExternalUserLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;

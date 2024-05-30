@@ -8,21 +8,24 @@ namespace FoxIDs
 {
     public static class HttpContextExtensions
     {
-        public static string GetHost(this HttpContext context, bool addTrailingSlash = true)
+        public static string GetHost(this HttpContext context, bool addTrailingSlash = true, bool useConfig = false)
         {
-            var routeBinding = context.GetRouteBinding();
-            if (routeBinding != null && !routeBinding.UseCustomDomain)
+            if (useConfig)
             {
-                var settings = context.RequestServices.GetService<Settings>();
-                if (settings != null)
+                var routeBinding = context.GetRouteBinding();
+                if (routeBinding != null && !routeBinding.UseCustomDomain)
                 {
-                    if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
+                    var settings = context.RequestServices.GetService<Settings>();
+                    if (settings != null)
                     {
-                        return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
-                    }
-                    if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
-                    {
-                        return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
+                        if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
+                        {
+                            return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
+                        }
+                        if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
+                        {
+                            return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
+                        }
                     }
                 }
             }

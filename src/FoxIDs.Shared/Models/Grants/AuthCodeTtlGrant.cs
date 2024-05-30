@@ -20,7 +20,7 @@ namespace FoxIDs.Models
 
         [Required]
         [MaxLength(Constants.Models.OAuthDownParty.Grant.IdLength)]
-        [RegularExpression(@"^[\w:\-_]*$")]
+        [RegularExpression(Constants.Models.OAuthDownParty.Grant.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 

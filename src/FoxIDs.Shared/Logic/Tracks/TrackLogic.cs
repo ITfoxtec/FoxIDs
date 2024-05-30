@@ -2,6 +2,7 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,15 +11,15 @@ namespace FoxIDs.Logic
 {
     public  class TrackLogic : LogicBase
     {
-        private readonly ITenantRepository tenantRepository;
-        private readonly ExternalKeyLogic externalKeyLogic;
+        private readonly IServiceProvider serviceProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.tenantRepository = tenantRepository;
-            this.externalKeyLogic = externalKeyLogic;
+            this.serviceProvider = serviceProvider;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
         }
@@ -27,7 +28,7 @@ namespace FoxIDs.Logic
         {
             if (keyType == TrackKeyTypes.Contained)
             {
-                var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
+                var certificate = await (tenantName ?? RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
                 mTrack.Key = new TrackKey()
                 {
                     Type = keyType,
@@ -39,7 +40,7 @@ namespace FoxIDs.Logic
                 mTrack.Key = new TrackKey()
                 {
                     Type = keyType,
-                    ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
+                    ExternalName = await serviceProvider.GetService<ExternalKeyLogic>().CreateExternalKeyAsync(mTrack, tenantName, trackName)
                 };
             }
             else
@@ -47,7 +48,7 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Track key type '{keyType}' not supported.");
             }
 
-            await tenantRepository.CreateAsync(mTrack);
+            await tenantDataRepository.CreateAsync(mTrack);
 
             await trackCacheLogic.InvalidateTrackCacheAsync(trackName ?? RouteBinding.TrackName, tenantName ?? RouteBinding.TenantName);
         }
@@ -67,7 +68,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);
 
-            await tenantRepository.CreateAsync(mLoginUpParty);
+            await tenantDataRepository.CreateAsync(mLoginUpParty);
 
             await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
         }

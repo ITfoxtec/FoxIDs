@@ -1,76 +1,47 @@
 # Get started
-FoxIDs is available at [FoxIDs.com](https://foxids.com) or you can [deploy](deployment.md) FoxIDs in your Microsoft Azure tenant as your own private cloud.
+FoxIDs is available online at [FoxIDs.com](https://www.foxids.com/action/createtenant) or you can [deploy](deployment.md) FoxIDs anywhere yourself.
 
-#### FoxIDs.com 
-[FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
-
-a. [Register on FoxIDs.com](https://foxids.com/action/createtenant), where you get access to your one FoxIDs tenant. The tenant will hold your organizations entire security service.  
-You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) in the `master` environment to authorize external admin users.
-
----
-
-#### FoxIDs Private Cloud
-You can deploy FoxIDs as your own private cloud in your Microsoft Azure tenant.
-
-a. [Deploy](deployment.md) FoxIDs in your Microsoft Azure tenant.
-b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) to authorize external admin users.
-c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` environment. 
-You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` environment to the new tenants `master` environment to authorize admin users from the `master` tenant.
-
+> **FoxIDs as a Service (SaaS)**  
+> FoxIDs.com is hosted in Azure Europe as an Identity Services (IDS).
+>   
+> [Register on FoxIDs.com](https://www.foxids.com/action/createtenant), where you get access to your one FoxIDs tenant.  
+> 
+> ---
+> 
+> **Self-Hosted**  
+> You can [deploy](deployment.md) FoxIDs anywhere using Docker or Kubernetes (K8s).
 
 ## 1) First login
-You are presented with a list of your environments when you login.
+
+Open the FoxIDs Control admin portal and log in. You are now in the test environment where no applications have been configured yet.
 
 ![FoxIDs first login](images/get-started-first-access.png)
 
-The default environments in a tenant:
+You can select another environment, create a new environment or start building in the test environment.
 
-- `master` is the environment responsible for access to the tenant and the subsequently environments.  
-The [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api) is configured in the `master` environment and admin users is added to the `master` environment. 
-You should normally not add applications in the `master` environment.
-- `-` (dash) is the production environment holding your organizations production security service
-- `test` is a environment meant for testing. You probably need more environments for dev, test QA etc.
+## 2) Configure your first application
+Let's configure the first OpenID Connect application and log in with a test user.  
+You can optionally start by taking a look at the [sample applications](samples.md) which also can be [configured](samples.md#configure-samples-in-foxids-environment) in the you test environment. 
 
-You can add and delete environments as you wish including deleting the default `-` (dash) and `test` tasks.
+Click `New registration` to configure your OpenID Connect application and select the type of application.
 
-## 2) Run the first application
-You can e.g. start by configuring the first application in the `test` environment, add [test user(s)](get-started.md#add-test-users) and login.
+![New app registration](images/get-started-new-app-reg.png)
 
-You can either configure [your own application](get-started.md#configure-your-own-application) or configure the samples and run a [sample application](get-started.md#sample-application).
+I'll select Web Application, and then fill in the `Name` and base URL as the `Redirect URI`
 
-> Add a test user to be able to login!
+![New app registration configuration](images/get-started-new-app-reg-conf.png)
 
-### Add test user(s)
-Select the `test` environment and go to the `Users` tab to create a test user(s).
+Click `Register` to save the application configuration. Copy the `Authority`, `Client ID` and `Client secret` and optionally the `scopes`.
 
-![Test user](images/get-started-test-user.png)
+![New app registration done](images/get-started-new-app-reg-done.png)
 
-Then click `Create User`, fill out the page and click `Create`.
+Configure your application with the `Authority`, `Client ID` and `Client secret`.  
+You are presented with a detailed configuration view then you close the pop-up. If needed you can find the OpenID Connect (OIDC) Discovery endpoint and do configuration changes.
 
-![Create test user](images/get-started-test-user-new.png)
+Open you application and start the login flow. You are then redirected to the FoxIDs login prompt where you can create a new test user.
 
-### Default login UI
-In the `test` environment go to the `Authentication methods` tab where you find the default [login](login.md) authentication method which handles the user login and logout.
+![Create test user](images/get-started-test-user.png)
 
-![Login authentication method](images/get-started-login.png)
+And log in
 
-
-### Configure your own application 
-In the `test` environment go to the `Applications` tab to configure your application. 
-
-A web based applications (client / relaying party) can be configured with [OpenID Connect](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md).
-
-![Application registration](images/get-started-app.png)
-
-> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#auth-method---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
-
-
-### Sample application
-The [sample applications](samples.md) can be found in the [samples repository](https://github.com/ITfoxtec/FoxIDs.Samples).
-
-The samples contains a configuration [seed tool](samples.md#configure-the-sample-seed-tool) which is used to configure all the samples in the `test` environment or another environment.
-
-After successfully configuring the samples a good starting point is the [AspNetCoreOidcAuthCodeAllUpPartiesSample](samples.md#aspnetcoreoidcauthcodealluppartiessample) web application.  
-You need to update the tenant and environment configuration in the `appsettings.json` config file and thereafter the sample should work.
+![Login](images/get-started-login.png)

@@ -1,22 +1,20 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Http;
 using System;
 using Microsoft.IdentityModel.Tokens;
 using ITfoxtec.Identity;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
     public class ClientKeySecretLogic<TClient> : LogicSequenceBase where TClient : OAuthUpClient
     {
-        private readonly FoxIDsSettings settings;
-        private readonly ExternalKeyLogic externalKeyLogic;
+        private readonly IServiceProvider serviceProvider;
 
-        public ClientKeySecretLogic(FoxIDsSettings settings, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClientKeySecretLogic(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.settings = settings;
-            this.externalKeyLogic = externalKeyLogic;
+            this.serviceProvider = serviceProvider;
         }
 
         public SecurityKey GetClientKey(TClient client)
@@ -30,7 +28,18 @@ namespace FoxIDs.Logic
             var certificate = clientKey.PublicKey.ToX509Certificate();
             certificate.ValidateCertificate($"Client (client id '{client.ClientId}') key");
 
-            return externalKeyLogic.GetExternalRSAKey(clientKey).ToSecurityKey(clientKey.PublicKey.Kid);
+            if (clientKey.Type == ClientKeyTypes.Contained)
+            {
+                return clientKey.Key.ToSecurityKey();
+            }
+            else if (clientKey.Type == ClientKeyTypes.KeyVaultImport)
+            {
+                return serviceProvider.GetService<ExternalKeyLogic>().GetExternalRSAKey(clientKey).ToSecurityKey(clientKey.PublicKey.Kid);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 }

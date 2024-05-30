@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
@@ -34,11 +34,11 @@ namespace FoxIDs.Logic
         private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
 
@@ -172,7 +172,7 @@ namespace FoxIDs.Logic
         {
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true);
@@ -241,7 +241,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             if (!ValidatePartySingleLogoutSupport(party))
             {
                 return await singleLogoutDownLogic.HandleSingleLogoutAsync(sequenceData);
@@ -314,7 +314,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, SAML Single Logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
             if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
             {

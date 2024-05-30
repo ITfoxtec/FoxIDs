@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly PlanUsageLogic planUsageLogic;
@@ -40,11 +40,11 @@ namespace FoxIDs.Logic
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.oidcJwtUpLogic = oidcJwtUpLogic;
             this.sequenceLogic = sequenceLogic;
             this.planUsageLogic = planUsageLogic;
@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(partyId);
 
             var oidcUpSequenceData = new OidcUpSequenceData
             {
@@ -93,7 +93,7 @@ namespace FoxIDs.Logic
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
-            var party = await tenantRepository.GetAsync<TParty>(oidcUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
@@ -187,7 +187,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             (var formOrQueryDictionary, var onlyAcceptGetResponseWithError) = GetFormOrQueryDictionary(party);
@@ -292,7 +292,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
-            var party = await tenantRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
 
             try
             {
@@ -421,7 +421,7 @@ namespace FoxIDs.Logic
 
             request.Content = new FormUrlEncodedContent(requestDictionary);
 
-            using var response = await httpClientFactory.CreateClient(nameof(HttpClient)).SendAsync(request);
+            using var response = await httpClientFactory.CreateClient().SendAsync(request);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

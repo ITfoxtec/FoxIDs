@@ -18,14 +18,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackKeyContainedSwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackKeyContainedSwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -56,7 +56,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyTypes.Contained)
@@ -79,15 +79,15 @@ namespace FoxIDs.Controllers
                 mTrack.Key.Keys[1] = mTrack.Key.Keys[0];
                 mTrack.Key.Keys[0] = tempSecondaryKey;
 
-                await tenantRepository.UpdateAsync(mTrack);
+                await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Swap Environment key contained '{typeof(Api.TrackKeyItemContainedSwap).Name}' by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContainedSwap).Name, RouteBinding.TrackName);

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  foxids:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+
+      - https_port=8400
+      - Settings:FoxIDsEndpoint=https://localhost:8400
+    ports:
+      - 8800:80
+      - 8400:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  foxids-control:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+
+      - https_port=8401
+      - Settings:FoxIDsEndpoint=https://localhost:8400
+      - Settings:FoxIDsBackendEndpoint=https://foxids
+      - Settings:FoxIDsControlEndpoint=https://localhost:8401
+    ports:
+      - 8801:80
+      - 8401:443
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  # mongodb: # optionally expose MongoDB on port 27017
+  #   ports:
+  #     - 27017:27017
+  # redis: # optionally expose Redis on port 6379
+  #   ports:
+  #     - 6379:6379

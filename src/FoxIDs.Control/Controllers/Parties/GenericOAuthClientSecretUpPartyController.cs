@@ -18,12 +18,12 @@ namespace FoxIDs.Controllers
     public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
+        private readonly ITenantDataRepository tenantDataRepository;
 
-        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : base(logger)
+        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
-            this.tenantRepository = tenantRepository;
+            this.tenantDataRepository = tenantDataRepository;
         }
 
         protected async Task<ActionResult<Api.OAuthClientSecretSingleResponse>> Get(string partyName)
@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (!string.IsNullOrWhiteSpace(oauthUpParty?.Client?.ClientSecret))
                 {
                     return Ok(new Api.OAuthClientSecretSingleResponse
@@ -46,9 +46,9 @@ namespace FoxIDs.Controllers
                     return Ok(new Api.OAuthClientSecretSingleResponse());
                 }
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(TParty).Name}' client key by name '{partyName}'.");
                     return NotFound(typeof(TParty).Name, partyName);
@@ -64,20 +64,20 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
                 secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && secretRequest.Secret.IsNullOrEmpty())
                 {
                     throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = secretRequest.Secret;
-                await tenantRepository.UpdateAsync(oauthUpParty);
+                await tenantDataRepository.UpdateAsync(oauthUpParty);
 
                 return Created(new Api.OAuthUpParty { Name = secretRequest.PartyName });
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.Conflict)
+                if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create client key on client '{typeof(TParty).Name}' by name '{secretRequest.PartyName}'.");
                     return Conflict(typeof(TParty).Name, secretRequest.PartyName, nameof(secretRequest.PartyName));
@@ -93,20 +93,20 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
                 var partyName = name?.ToLower();
-                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt)
                 {
                     throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = null;
-                await tenantRepository.UpdateAsync(oauthUpParty);
+                await tenantDataRepository.UpdateAsync(oauthUpParty);
 
                 return NoContent();
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete client secret from client '{typeof(TParty).Name}' by name '{name}'.");
                     return NotFound(typeof(TParty).Name, name);

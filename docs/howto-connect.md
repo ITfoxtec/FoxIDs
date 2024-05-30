@@ -1,6 +1,6 @@
 ﻿# How to connect
 
-FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](connections.md#authentication-method)
+FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. External IdPs is connected with an [authentication methods](connections.md#authentication-method).
 
 By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.

@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -23,6 +24,9 @@ namespace FoxIDs.Client.Pages
         private LogResponseViewModel logResponse;
         private string logUsagesHref;
         private string logSettingsHref;
+
+        [Inject]
+        public ClientSettings clientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }

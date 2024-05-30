@@ -1,0 +1,157 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foxids-deployment
+  labels:
+    app: foxids
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foxids
+  template:
+    metadata:
+      labels:
+        app: foxids
+    spec:
+      containers:
+        - name: foxids
+          image: foxids/foxids:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: "ASPNETCORE_URLS"
+              value: "http://+"
+            - name: "Settings__UseHttp"
+              value: "true"
+            - name: "Settings__TrustProxyHeaders"
+              value: "true"
+            - name: "Settings__TrustProxySchemeHeader"
+              value: "true"
+            - name: "Settings__FoxIDsEndpoint"
+              value: "https://id.itfoxtec.com" # change to your domain - https://id.my-domain.com
+            - name: "Settings__Options__DataStorage"
+              value: "MongoDb"
+            - name: "Settings__Options__Cache"
+              value: "Redis"
+            - name: "Settings__Options__DataCache"
+              value: "Default"
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-username
+            - name: MONGO_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+            - name: MONGO_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: database_url
+            - name: "Settings__MongoDb__ConnectionString"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
+            - name: REDIS_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: redis-configmap
+                  key: database_url
+            - name: "Settings__RedisCache__ConnectionString"
+              value: "$(REDIS_SERVER):6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foxids-control-deployment
+  labels:
+    app: foxids-control
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foxids-control
+  template:
+    metadata:
+      labels:
+        app: foxids-control
+    spec:
+      containers:
+        - name: foxids-control
+          image: foxids/foxids-control:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: "ASPNETCORE_URLS"
+              value: "http://+"
+            - name: "Settings__UseHttp"
+              value: "true"
+            - name: "Settings__FoxIDsEndpoint"
+              value: "https://id.itfoxtec.com" # change to your domain -  https://id.my-domain.com
+            - name: "Settings__FoxIDsBackendEndpoint"
+              value: "http://foxids:8800"
+            - name: "Settings__FoxIDsControlEndpoint"
+              value: "https://control.itfoxtec.com" # change to your domain -  https://control.my-domain.com
+            - name: "Settings__MasterSeedEnabled"
+              value: "true"
+            - name: "Settings__MainTenantSeedEnabled"
+              value: "true"
+            - name: "Settings__Options__DataStorage"
+              value: "MongoDb"
+            - name: "Settings__Options__Cache"
+              value: "Redis"
+            - name: "Settings__Options__DataCache"
+              value: "Default"
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-username
+            - name: MONGO_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+            - name: MONGO_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: database_url
+            - name: "Settings__MongoDb__ConnectionString"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
+            - name: REDIS_SERVER
+              valueFrom: 
+                configMapKeyRef:
+                  name: redis-configmap
+                  key: database_url
+            - name: "Settings__RedisCache__ConnectionString"
+              value: "$(REDIS_SERVER):6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foxids
+spec:
+  selector:
+    app: foxids
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8800
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: foxids-control
+spec:
+  selector:
+    app: foxids-control
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8801
+      targetPort: 80

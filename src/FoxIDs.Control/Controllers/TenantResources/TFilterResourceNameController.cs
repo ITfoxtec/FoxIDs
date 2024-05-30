@@ -44,9 +44,9 @@ namespace FoxIDs.Controllers
                 var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
                 return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Id)));
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(ResourceEnvelope).Name}'.");
                     return NotFound(typeof(ResourceEnvelope).Name, "master");

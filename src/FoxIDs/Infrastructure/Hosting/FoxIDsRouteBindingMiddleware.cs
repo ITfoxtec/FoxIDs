@@ -52,6 +52,10 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 return null;
             }
+            else if (route.Length >= 1 && route[0].Equals(Constants.Routes.HealthController, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
             else if (route.Length >= 1 && route[0].Equals(Constants.Routes.DefaultSiteController, StringComparison.InvariantCultureIgnoreCase))
             {
                 return null;

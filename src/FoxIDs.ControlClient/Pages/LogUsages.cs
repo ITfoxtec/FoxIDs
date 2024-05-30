@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -30,6 +31,9 @@ namespace FoxIDs.Client.Pages
         public List<string> IncludeTypeItems { get; set; }
 
         [Inject]
+        public ClientSettings clientSettings { get; set; }
+
+        [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
@@ -47,7 +51,6 @@ namespace FoxIDs.Client.Pages
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
         private bool IsMasterTrack => TrackSelectedLogic.IsTrackSelected && Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
-
 
         protected override async Task OnInitializedAsync()
         {

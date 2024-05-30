@@ -39,10 +39,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [ListLength(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
-        [JsonProperty(PropertyName = "issuers")]
-        public override List<string> Issuers { get; set; }
-
         [ListLength(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
@@ -79,6 +75,11 @@ namespace FoxIDs.Models
             if (baseResults.Count() > 0)
             {
                 results.AddRange(baseResults);
+            }
+
+            if (!(Issuers?.Count() > 0))
+            {
+                results.Add(new ValidationResult($"At least one issuer in the field {nameof(Issuers)} is required.", new[] { nameof(Issuers) }));
             }
 
             var clientResults = Client.ValidateFromParty(DisableUserAuthenticationTrust);

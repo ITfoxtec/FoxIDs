@@ -5,7 +5,6 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using ITfoxtec.Identity;
@@ -22,13 +21,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterRepository masterRepository;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public MFilterPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
+        public MFilterPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterRepository = masterRepository;
+            this.masterDataRepository = masterDataRepository;
         }
 
 
@@ -51,9 +50,9 @@ namespace FoxIDs.Controllers
                 }
                 return Ok(aPlans);
             }
-            catch (CosmosDataException ex)
+            catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.Plan).Name}' by filter name '{filterName}'.");
                     return NotFound(typeof(Api.Plan).Name, filterName);
@@ -62,15 +61,15 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<HashSet<Plan>> GetFilterPlanInternalAsync(string filterName)
+        private ValueTask<IReadOnlyCollection<Plan>> GetFilterPlanInternalAsync(string filterName)
         {
             if (filterName.IsNullOrWhiteSpace())
             {
-                return masterRepository.GetListAsync<Plan>();
+                return masterDataRepository.GetListAsync<Plan>();
             }
             else
             {
-                return masterRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName));
+                return masterDataRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName));
             }
         }
     }

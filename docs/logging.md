@@ -1,8 +1,19 @@
 # Logging
 
-FoxIDs default log errors and events including the time and the client IP address. The logs are sent to Application Insights which is part of the FoxIDs cloud instance.
+FoxIDs default log errors and events including the time and the client IP address. 
 
-## Usage
+The two supported log options `Settings__Options:Log` is:
+
+- `Stdout` which logs to the console output. This log options are used for Deploy / Kubernetes (k8s) deployment.
+- `ApplicationInsights` which sends logs to [Application Insights](#application-insights) and the logs can subsequently be view in FoxIDs Control.
+
+The [log settings](#log-settings) and [log stream](#log-stream) are available for both log options.
+
+## Application Insights
+
+The logs are sent to Application Insights which is part of the FoxIDs cloud deployment.
+
+### Usage
 
 FoxIDs usage can be searched in [FoxIDs Control Client and API](control.md).  
 
@@ -14,8 +25,7 @@ This screen dump shows the usage view in a environment.
 
 ![Search usage logs](images/search-usage-logs.png)
 
-
-## Logs
+### Logs
 
 Logs can be searched in [FoxIDs Control Client and API](control.md).
 

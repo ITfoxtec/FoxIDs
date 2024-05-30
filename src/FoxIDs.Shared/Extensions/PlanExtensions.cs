@@ -7,9 +7,9 @@ namespace FoxIDs
         /// <summary>
         /// Get the default supported key type.
         /// </summary>
-        public static TrackKeyTypes GetKeyType(this Plan plan)
+        public static TrackKeyTypes GetKeyType(this Plan plan, bool keyVaultOptionEnabled)
         {
-            if (plan != null && !plan.EnableKeyVault)
+            if (!keyVaultOptionEnabled || (plan != null && !plan.EnableKeyVault))
             {
                 return TrackKeyTypes.Contained;
             }

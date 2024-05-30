@@ -39,7 +39,7 @@ namespace FoxIDs.Models.Sequences
         public TwoFactorAppSequenceStates TwoFactorAppState { get; set; }
 
         [JsonProperty(PropertyName = "fse")]
-        public string TwoFactorAppSecretExternalName { get; set; }
+        public string TwoFactorAppSecretOrExtName { get; set; }
 
         [JsonProperty(PropertyName = "fns")]
         public string TwoFactorAppNewSecret { get; set; }

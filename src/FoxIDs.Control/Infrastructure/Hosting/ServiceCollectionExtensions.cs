@@ -153,7 +153,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
-                    BearerFormat = "JWT"
+                    BearerFormat = "JWT"              
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {

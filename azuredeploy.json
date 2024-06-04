@@ -379,6 +379,7 @@
         "DOCKER_ENABLE_CI": true,
         "ASPNETCORE_URLS": "http://+",
         "Settings__UseHttp": true,
+        "Settings__TrustProxySchemeHeader": true,
         "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings__Options__Log": "ApplicationInsights",

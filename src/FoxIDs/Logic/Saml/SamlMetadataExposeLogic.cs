@@ -210,7 +210,7 @@ namespace FoxIDs.Logic
         {
             if(!Uri.TryCreate(metadataOrganization.OrganizationUrl, new UriCreationOptions(), out var organizationUrl))
             {
-                what then?
+                //what then?
             }
 
             return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, organizationUrl);

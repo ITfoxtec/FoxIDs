@@ -87,6 +87,8 @@ spec:
               value: "http://+"
             - name: "Settings__UseHttp"
               value: "true"
+            - name: "Settings__TrustProxySchemeHeader"
+              value: "true"
             - name: "Settings__FoxIDsEndpoint"
               value: "https://id.itfoxtec.com" # change to your domain -  https://id.my-domain.com
             - name: "Settings__FoxIDsBackendEndpoint"

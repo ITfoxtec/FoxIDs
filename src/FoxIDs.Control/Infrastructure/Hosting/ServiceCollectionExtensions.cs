@@ -153,7 +153,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
-                    BearerFormat = "JWT"
+                    BearerFormat = "JWT"              
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -170,9 +170,24 @@ namespace FoxIDs.Infrastructure.Hosting
                     }
                 });
 
-                c.TagActionsBy(s => new[]
-                {
+                c.TagActionsBy(s =>
+                [
                     GetTagActionsBy(s.ActionDescriptor as ControllerActionDescriptor)
+                ]);
+
+                c.OrderActionsBy((ad) => 
+                {
+                    var controllerActionDescriptor = ad.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor != null)
+                    {
+                        if(controllerActionDescriptor.ControllerName.Equals(Constants.Routes.HealthController, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // order health check last
+                            return $"z {controllerActionDescriptor.ControllerName}";
+                        }
+                        return controllerActionDescriptor.ControllerName;
+                    }
+                    return null; 
                 });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -205,13 +220,17 @@ namespace FoxIDs.Infrastructure.Hosting
         private static string GetTagActionsBy(ControllerActionDescriptor controllerActionDescriptor)
         {
             var controllerName = controllerActionDescriptor.ControllerName.ToLower();
-            if (controllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey))
+            if (controllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey, StringComparison.OrdinalIgnoreCase))
             {
                 return $"master {controllerName.Substring(1)}";
             }
-            else if (controllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey))
+            else if (controllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey, StringComparison.OrdinalIgnoreCase))
             {
                 return $"tenant {controllerName.Substring(1)}";
+            }
+            else if (controllerName.Equals(Constants.Routes.HealthController, StringComparison.OrdinalIgnoreCase))
+            {
+                return controllerName;
             }
             else
             {

@@ -208,12 +208,7 @@ namespace FoxIDs.Logic
 
         private Organization GetOrganization(SamlMetadataOrganization metadataOrganization)
         {
-            if(!Uri.TryCreate(metadataOrganization.OrganizationUrl, new UriCreationOptions(), out var organizationUrl))
-            {
-                //what then?
-            }
-
-            return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, organizationUrl);
+            return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, metadataOrganization.OrganizationUrl);
         }
 
         private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)

@@ -20,7 +20,7 @@ namespace FoxIDs.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        public async Task<IActionResult> OpenidConfiguration()
+        public async Task<IActionResult> OpenidConfigurationAsync()
         {
             try
             {
@@ -28,10 +28,10 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty?.Type)
                 {
                     case PartyTypes.OAuth2:
-                        return Json(await serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().OpenidConfiguration(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
+                        return Json(await serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().OpenidConfigurationAsync(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
                     case PartyTypes.Oidc:
                     case null:
-                        return Json(await serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
+                        return Json(await serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfigurationAsync(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
 
                     default:
                         throw new NotSupportedException($"Connection type '{RouteBinding.DownParty?.Type}' not supported.");

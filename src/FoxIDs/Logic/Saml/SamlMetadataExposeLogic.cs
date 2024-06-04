@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
                 var attributeConsumingServices = new List<AttributeConsumingService>();
                 foreach(var aItem in party.MetadataAttributeConsumingServices)
                 {
-                    var attributeConsumingService = new AttributeConsumingService { ServiceName = new ServiceName(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
+                    var attributeConsumingService = new AttributeConsumingService { ServiceName = new LocalizedNameType(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
                     attributeConsumingService.RequestedAttributes = aItem.RequestedAttributes.Select(ra => string.IsNullOrEmpty(ra.NameFormat) ? new RequestedAttribute(ra.Name, ra.IsRequired) : new RequestedAttribute(ra.Name, ra.IsRequired, ra.NameFormat));
                     attributeConsumingServices.Add(attributeConsumingService);
                 }
@@ -208,7 +208,12 @@ namespace FoxIDs.Logic
 
         private Organization GetOrganization(SamlMetadataOrganization metadataOrganization)
         {
-            return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, metadataOrganization.OrganizationUrl);
+            if(!Uri.TryCreate(metadataOrganization.OrganizationUrl, new UriCreationOptions(), out var organizationUrl))
+            {
+                what then?
+            }
+
+            return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, organizationUrl);
         }
 
         private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)

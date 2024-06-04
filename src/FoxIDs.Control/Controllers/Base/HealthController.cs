@@ -2,10 +2,11 @@
 
 namespace FoxIDs.Controllers
 {
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [Route(Constants.Routes.HealthController)]
     public class HealthController : Controller
     {
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet]
         public IActionResult Index()
         {
             return Ok();

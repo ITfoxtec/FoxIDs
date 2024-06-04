@@ -82,29 +82,5 @@ namespace FoxIDs.Infrastructure.Hosting
 
             return string.Empty;
         }
-
-        private void ReadSchemeFromHeader(HttpContext context)
-        {
-            var settings = context.RequestServices.GetService<FoxIDsSettings>();
-            if (settings.TrustProxySchemeHeader)
-            {
-                string schemeHeader = context.Request.Headers["X-Forwarded-Scheme"];
-                if (schemeHeader.IsNullOrWhiteSpace())
-                {
-                    schemeHeader = context.Request.Headers["X-Forwarded-Proto"];
-                }
-                if (!schemeHeader.IsNullOrWhiteSpace())
-                {
-                    if (schemeHeader.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
-                    {
-                        context.Request.Scheme = Uri.UriSchemeHttp;
-                    }
-                    else if(schemeHeader.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
-                    {
-                        context.Request.Scheme = Uri.UriSchemeHttps;
-                    }
-                }
-            }
-        }
     }
 }

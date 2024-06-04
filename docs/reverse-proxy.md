@@ -57,7 +57,7 @@ The FoxIDs site support reading the [custom domain](custom-domain.md) (host name
 
 > The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings__TrustProxyHeaders` setting is set to `true`.
 
-The FoxIDs site support to read the HTTP/HTTPS scheme if the `Settings__TrustProxySchemeHeader` setting is set to `true`. In the following HTTP headers in order of priority:
+The FoxIDs site and FoxIDs Control site support to read the HTTP/HTTPS scheme if the `Settings__TrustProxySchemeHeader` setting is set to `true`. In the following HTTP headers in order of priority:
 
  1. `X-Forwarded-Scheme`
  2. `X-Forwarded-Proto`

@@ -80,6 +80,11 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public string ProxySecret { get; set; }
 
+        /// <summary>
+        /// Optional trust proxy scheme header (HTTP/HTTPS). Default false.
+        /// </summary>
+        public bool TrustProxySchemeHeader { get; set; }
+
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

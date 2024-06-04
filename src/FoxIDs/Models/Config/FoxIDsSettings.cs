@@ -85,11 +85,6 @@ namespace FoxIDs.Models.Config
         public bool TrustProxyHeaders { get; set; }
 
         /// <summary>
-        /// Optional trust proxy scheme header (HTTP/HTTPS). Default false.
-        /// </summary>
-        public bool TrustProxySchemeHeader { get; set; }
-
-        /// <summary>
         /// Read the HTTP request domain and use it as custom domain if configured on a tenant.
         /// </summary>
         public bool RequestDomainAsCustomDomain { get; set; }

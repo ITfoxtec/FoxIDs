@@ -59,6 +59,17 @@ namespace FoxIDs.Logic
                     key.X5tS256 = null;
                 }
             }
+
+            if (party.Authority.Equals("https://facebook.com/", StringComparison.OrdinalIgnoreCase) || party.Authority.Equals("https://www.facebook.com/", StringComparison.OrdinalIgnoreCase))
+            {
+                CorrectFacebookOidcDiscoveryToSupportCode(party.Client);
+            }
+        }
+
+        private void CorrectFacebookOidcDiscoveryToSupportCode(MClient client)
+        {
+            client.TokenUrl = "https://graph.facebook.com/v2.8/oauth/access_token";
+            client.ResponseType = IdentityConstants.ResponseTypes.Code;
         }
 
         private async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)

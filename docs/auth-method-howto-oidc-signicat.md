@@ -1,4 +1,4 @@
-﻿# Connect Signicat with OpenID Connect authentication method
+﻿# Connect Signicat as authentication method
 
 FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
 
@@ -24,7 +24,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  5. Click Create
  6. Copy the Client ID
 
-**2 - Then create an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then create an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
  2. Add the Signicat Express test authority `https://login-test.signicat.io` in the Authority field

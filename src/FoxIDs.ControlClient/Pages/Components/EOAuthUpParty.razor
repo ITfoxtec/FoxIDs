@@ -4,7 +4,7 @@
     var oauthUpParty = UpParty as GeneralOAuthUpPartyViewModel;
 }
 
-<PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(m => OAuthUpPartyViewModelAfterInit(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
+<PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(async m => await OAuthUpPartyViewModelAfterInitAsync(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
     <div class="modal-header">
         <div>
             OAuth 2.0

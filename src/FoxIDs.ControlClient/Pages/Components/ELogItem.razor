@@ -31,13 +31,16 @@
                                 }
                             </div>
                             <div class="col-1 text-right">
-                                @if (detailItem.ShowDetails)
+                                @if (detailItem.Details != null) 
                                 {
-                                    <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => detailItem.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => detailItem.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                                    @if (detailItem.ShowDetails)
+                                    {
+                                        <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => detailItem.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => detailItem.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                                    }
                                 }
                             </div>
                         </div>

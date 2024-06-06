@@ -4,7 +4,7 @@
     var loginUpParty = UpParty as GeneralLoginUpPartyViewModel;
 }
 
-<PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="LoginUpPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
+<PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
         <div>
             User login UI

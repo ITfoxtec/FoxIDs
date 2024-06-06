@@ -114,10 +114,11 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void SamlUpPartyViewModelAfterInit(GeneralSamlUpPartyViewModel samlUpParty, SamlUpPartyViewModel model)
+        private async Task SamlUpPartyViewModelAfterInitAsync(GeneralSamlUpPartyViewModel samlUpParty, SamlUpPartyViewModel model)
         {
             if (samlUpParty.CreateMode)
             {
+                model.Name = await UpPartyService.GetNewPartyNameAsync();
                 if (samlUpParty.TokenExchange)
                 {
                     model.DisableUserAuthenticationTrust = true;

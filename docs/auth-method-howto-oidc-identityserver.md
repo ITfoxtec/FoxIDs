@@ -1,4 +1,4 @@
-﻿# Connect IdentityServer with OpenID Connect authentication method
+﻿# Connect IdentityServer as authentication method
 
 FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 
@@ -11,11 +11,11 @@ It is possible to connect an [IdentityServer client](#configure-identityserver-c
 > Take a look at the IdentityServer sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication methods` tab.
 
-## Configure IdentityServer client
+## Configure IdentityServer
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
 
@@ -51,7 +51,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
 
-**3 - Go back to the FoxIDs authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)

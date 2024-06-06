@@ -45,7 +45,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<TrackLogic>();
 
             services.AddTransient<LogAnalyticsWorkspaceProvider>();   
-            services.AddTransient<UsageLogLogic>();            
+            services.AddTransient<UsageLogLogic>();
+
+            services.AddTransient<PartyLogic>();
 
             services.AddTransient<ValidateModelGenericPartyLogic>();
             services.AddTransient<ValidateModelOAuthOidcPartyLogic>();

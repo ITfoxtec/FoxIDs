@@ -63,8 +63,13 @@ namespace FoxIDs.Client.Pages.Components
             });           
         }
 
-        private void LoginUpPartyViewModelAfterInit(LoginUpPartyViewModel model)
+        private async Task LoginUpPartyViewModelAfterInitAsync(GeneralLoginUpPartyViewModel loginParty, LoginUpPartyViewModel model)
         {
+            if (loginParty.CreateMode)
+            {
+                model.Name = await UpPartyService.GetNewPartyNameAsync();
+            }
+
             if (model.TwoFactorAppName.IsNullOrWhiteSpace())
             {
                 model.TwoFactorAppName = TenantName;

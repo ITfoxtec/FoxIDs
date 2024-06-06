@@ -232,6 +232,10 @@ namespace FoxIDs.Client.Pages
                     {
                         afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.UrlToOrigin() };
                     }
+                    if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative && (newDownPartyOidcForm.Model.RedirectUri.StartsWith("http://") || newDownPartyOidcForm.Model.RedirectUri.StartsWith("https://")))
+                    {
+                        afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.UrlToOrigin() };
+                    }
                 });
 
                 var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);

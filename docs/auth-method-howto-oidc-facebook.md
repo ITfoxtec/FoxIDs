@@ -29,15 +29,15 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  5. Probably select **No, I'm not building a game**
  6. Click on **Next**
  7. Fill in the required details
- 8. Click on **Create app**
  ![App details on Facebook](images/howto-oidc-facebook-app-details.png)
+ 8. Click on **Create app**
  
  9. Enter your Facebook password and the app is created 
  10. Click **Customize adding a Facebook Login button**
  11. Click **Go to settings**
  12. Add the FoxIDs **Redirect URL** from before in the **Valid OAuth Redirect URIs** field
- 13. Click **Save changes** in the bottom right corner
  ![Rediredt URL on Facebook](images/howto-oidc-facebook-redirect-url.png)
+ 13. Click **Save changes** in the bottom right corner
  
  14. In the Permissions section click **Add** next to **email** permission, which change the status to **Ready for testing**.
  ![Email permission on Facebook](images/howto-oidc-facebook-email.png)
@@ -61,7 +61,6 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  9. Disable the **Front channel logout** switch
  10. Disable the **Front channel logout session required** switch
  ![Configuration in FoxIDs](images/howto-oidc-facebook-config.png)
-
  11. Click **Create**
 
 That's it, you are done.

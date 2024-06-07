@@ -114,10 +114,11 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void OAuthUpPartyViewModelAfterInit(GeneralOAuthUpPartyViewModel oauthUpParty, OAuthUpPartyViewModel model)
+        private async Task OAuthUpPartyViewModelAfterInitAsync(GeneralOAuthUpPartyViewModel oauthUpParty, OAuthUpPartyViewModel model)
         {
             if (oauthUpParty.CreateMode)
             {
+                model.Name = await UpPartyService.GetNewPartyNameAsync();
                 if (oauthUpParty.TokenExchange)
                 {
                     model.DisableUserAuthenticationTrust = true;

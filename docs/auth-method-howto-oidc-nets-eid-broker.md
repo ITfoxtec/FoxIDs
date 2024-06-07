@@ -1,4 +1,4 @@
-﻿# Connect Nets eID Broker with OpenID Connect authentication method
+﻿# Connect Nets eID Broker as authentication method
 
 FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
 
@@ -19,7 +19,7 @@ Her you can find all needed to register a client with Nets eID Broker.
 
 This connection use OpenID Connect Authorization Code flow with PKCE, which is the recommended OpenID Connect flow.
 
-**Create an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**Create an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Add the name
 2. Add the Nets eID Broker demo authority `https://pp.netseidbroker.dk/op` in the Authority field
@@ -64,7 +64,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  16. Click the Advanced tab
  17. Set PKCE to Active
   
-**2 - Then create an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then create an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Add the name
 2. Add the Nets eID Broker demo authority `https://netseidbroker.dk/op` in the Authority field

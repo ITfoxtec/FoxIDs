@@ -144,10 +144,11 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void OidcUpPartyViewModelAfterInit(GeneralOidcUpPartyViewModel oidcUpParty, OidcUpPartyViewModel model)
+        private async Task OidcUpPartyViewModelAfterInitAsync(GeneralOidcUpPartyViewModel oidcUpParty, OidcUpPartyViewModel model)
         {
             if (oidcUpParty.CreateMode)
             {
+                model.Name = await UpPartyService.GetNewPartyNameAsync();
                 model.Client = new OidcUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
             }

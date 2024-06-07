@@ -4,7 +4,7 @@
     var oidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
 }
 
-<PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(m => OidcUpPartyViewModelAfterInit(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
+<PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(async m => await OidcUpPartyViewModelAfterInitAsync(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
     <div class="modal-header">
         <div>
             OpenID Connect

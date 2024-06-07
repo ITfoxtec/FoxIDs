@@ -31,6 +31,14 @@ namespace FoxIDs.Logic
                 party.Issuers = new List<string> { oidcDiscovery.Issuer };
             }
             party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
+
+            if (party.Authority.StartsWith("https://facebook.com", StringComparison.OrdinalIgnoreCase) 
+                || party.Authority.StartsWith("https://www.facebook.com", StringComparison.OrdinalIgnoreCase)
+                || party.Authority.StartsWith("https://limited.facebook.com", StringComparison.OrdinalIgnoreCase))
+            {
+                CorrectFacebookOidcDiscoveryAddTokenEndpoint(oidcDiscovery);
+            }
+
             if (!oidcDiscovery.TokenEndpoint.IsNullOrEmpty())
             {
                 party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;                
@@ -59,6 +67,11 @@ namespace FoxIDs.Logic
                     key.X5tS256 = null;
                 }
             }
+        }
+
+        private void CorrectFacebookOidcDiscoveryAddTokenEndpoint(OidcDiscovery oidcDiscovery)
+        {
+            oidcDiscovery.TokenEndpoint = "https://graph.facebook.com/v2.8/oauth/access_token";
         }
 
         private async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)

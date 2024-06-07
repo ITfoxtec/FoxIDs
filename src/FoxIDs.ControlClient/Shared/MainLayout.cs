@@ -181,6 +181,7 @@ namespace FoxIDs.Client.Shared
                 createTrackWorking = true;
                 var track = createTrackForm.Model.Map<Track>();
                 var trackResponse = await TrackService.CreateTrackAsync(track);
+                createTrackForm.Model.Name = trackResponse.Name;
                 createTrackDone = true;
                 createTrackReceipt.Add("Environment created.");
                 createTrackReceipt.Add("User repository created.");

@@ -8,6 +8,7 @@ namespace FoxIDs.Client.Services
 {
     public class UpPartyService : BaseService
     {
+        private const string newPartyNameApiUri = "api/{tenant}/{track}/!newpartyname";
         private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
         private const string oauthApiUri = "api/{tenant}/{track}/!oauthupparty";
@@ -20,6 +21,8 @@ namespace FoxIDs.Client.Services
 
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
+
+        public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri, true.ToString(), parmName: "isUpParty"))?.Name;
 
         public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);
 

@@ -1,4 +1,4 @@
-# Connect NemLog-in with SAML 2.0 authentication method
+# Connect NemLog-in as authentication method
 
 You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 

@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
             this.trackIssuerLogic = trackIssuerLogic;
         }
 
-        public async Task<OidcDiscovery> OpenidConfiguration(string partyId)
+        public async Task<OidcDiscovery> OpenidConfigurationAsync(string partyId)
         {
             logger.ScopeTrace(() => "AppReg, OpenID configuration request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
                 FrontchannelLogoutSessionSupported = true,
                 TokenEndpointAuthMethodsSupported = new[] { IdentityConstants.TokenEndpointAuthMethods.ClientSecretPost, IdentityConstants.TokenEndpointAuthMethods.ClientSecretBasic, IdentityConstants.TokenEndpointAuthMethods.PrivateKeyJwt },
                 TokenEndpointAuthSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 }
-        };
+            };
 
             if (party?.Client != null)
             {
@@ -81,7 +81,6 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
-            var nowLocal = DateTime.Now;
             if (!RouteBinding.Key.PrimaryKey.ExternalKeyIsNotReady)
             {
                 jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey().AddSignatureUse());

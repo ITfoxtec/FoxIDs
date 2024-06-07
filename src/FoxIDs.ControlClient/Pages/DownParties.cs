@@ -174,6 +174,11 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.OAuthClientType = oauthClientType;
         }
 
+        private async Task OnNewDownPartyOidcModalAfterInitAsync(NewDownPartyOidcViewModel model)
+        {
+            model.Name = await DownPartyService.GetNewPartyNameAsync();
+        }
+
         private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOidcViewModel> newDownPartyOidcForm, EditContext editContext)
         {
 
@@ -232,6 +237,10 @@ namespace FoxIDs.Client.Pages
                     {
                         afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.UrlToOrigin() };
                     }
+                    if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative && (newDownPartyOidcForm.Model.RedirectUri.StartsWith("http://") || newDownPartyOidcForm.Model.RedirectUri.StartsWith("https://")))
+                    {
+                        afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.UrlToOrigin() };
+                    }
                 });
 
                 var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
@@ -274,6 +283,11 @@ namespace FoxIDs.Client.Pages
             {
                 newDownPartyViewModel.CreateWorking = false;
             }
+        }
+
+        private async Task OnNewDownPartyOAuthClientModalAfterInitAsync(NewDownPartyOAuthClientViewModel model)
+        {
+            model.Name = await DownPartyService.GetNewPartyNameAsync();
         }
 
         private async Task OnNewDownPartyOAuthClientModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthClientViewModel> newDownPartyOAuthClientForm, EditContext editContext)
@@ -327,6 +341,11 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task OnNewDownPartyOAuthResourceModalAfterInitAsync(NewDownPartyOAuthResourceViewModel model)
+        {
+            model.Name = await DownPartyService.GetNewPartyNameAsync();
+        }
+
         private async Task OnNewDownPartyOAuthResourceModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthResourceViewModel> newDownPartyOAuthResourceForm, EditContext editContext)
         {
             try
@@ -375,6 +394,11 @@ namespace FoxIDs.Client.Pages
             {
                 newDownPartyViewModel.CreateWorking = false;
             }
+        }
+
+        private async Task OnNewDownPartySamlModalAfterInitAsync(NewDownPartySamlViewModel model)
+        {
+            model.Name = await DownPartyService.GetNewPartyNameAsync();
         }
 
         private async Task OnNewDownPartySamlModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartySamlViewModel> newDownPartySamlForm, EditContext editContext)

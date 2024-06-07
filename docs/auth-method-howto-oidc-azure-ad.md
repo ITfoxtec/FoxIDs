@@ -1,6 +1,6 @@
-﻿# Connect Microsoft Entra ID (Azure AD) with OpenID Connect authentication method
+﻿# Connect Microsoft Entra ID as authentication method
 
-FoxIDs can be connected to Microsoft Entra ID with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
+FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
 
 It is possible to connect both a [single tenant](#configure-single-tenant) and [multitenant](#configure-multitenant) Microsoft Entra ID App as an authentication method on FoxIDs using OpenID Connect.
 A more complex case is to [read claims form the access token](#read-claims-from-access-token).
@@ -14,7 +14,7 @@ If you configure [App roles](#app-roles) they are returned in the `roles` claim.
 
 This chapter describes how to configure a Microsoft Entra ID single tenant connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
  2. Select show advanced settings
@@ -38,7 +38,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  9. Copy the client secret value (not the secret ID)
  10. Go to the Token configuration tab and click Add optional claims. Then select ID (for adding claims to the ID token) and select `email`, `family_name`, `given_name`, `ipaddr`, `preferred_username` and click Add twice. 
 
-**3 - Go back to the FoxIDs authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the authority, which is `https://login.microsoftonline.com/{Microsoft Entra ID tenant ID}/v2.0` (e.g., `https://login.microsoftonline.com/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/v2.0`)
  2. Add the Microsoft Entra ID, client ID as a custom SP client ID
@@ -65,7 +65,7 @@ The multitenant configuration differs slightly form the single tenant configurat
 
  1. During the App creation select multitenant
 
-**2 - The FoxIDs authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - The FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the authority `https://login.microsoftonline.com/common/v2.0`
  2. Select edit issuer

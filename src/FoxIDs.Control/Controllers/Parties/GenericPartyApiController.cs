@@ -3,13 +3,11 @@ using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using System;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
-using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
@@ -23,17 +21,19 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly PartyLogic partyLogic;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateModelGenericPartyLogic validateModelGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.partyLogic = partyLogic;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
             this.downPartyAllowUpPartiesQueueLogic = downPartyAllowUpPartiesQueueLogic;
@@ -301,21 +301,11 @@ namespace FoxIDs.Controllers
             return await tenantDataRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
         }
 
-        private async Task<string> GetPartyNameAsync(string name = null, int count = 0)
+        private async Task<string> GetPartyNameAsync(string name)
         {
             if (name.IsNullOrWhiteSpace())
             {
-                name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
-                if (count < 3)
-                {
-                    var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name), required: false);
-                    if (mParty != null)
-                    {
-                        count++;
-                        return await GetPartyNameAsync(count: count);
-                    }
-                }
-                return name;
+                return await partyLogic.GeneratePartyNameAsync(IsUpParty());
             }
             else
             {

@@ -1,4 +1,4 @@
-# Connect Microsoft AD FS with SAML 2.0 authentication method
+# Connect Microsoft AD FS as authentication method
 
 FoxIDs can be connected to AD FS with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
  

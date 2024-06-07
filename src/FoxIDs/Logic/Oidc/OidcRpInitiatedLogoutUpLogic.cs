@@ -71,14 +71,6 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
-            ValidatePartyLogoutSupport(party);
-
-            var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
-            var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
-            {
-                PostLogoutRedirectUri = postLogoutRedirectUrl,
-                State = await sequenceLogic.CreateExternalSequenceIdAsync()
-            };
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
@@ -98,18 +90,33 @@ namespace FoxIDs.Logic
                 logger.Warning(ex);
             }
 
-            rpInitiatedLogoutRequest.IdTokenHint = session.IdToken;
-
             oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
             oidcUpSequenceData.SessionClaims = session.Claims;
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
-            logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
+            try
+            {
+                ValidatePartyLogoutSupport(party);
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+                return await EndSessionResponseInternalAsync(party);
+            }
+
             securityHeaderLogic.AddFormActionAllowAll();
 
+            var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
+            var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
+            {
+                PostLogoutRedirectUri = postLogoutRedirectUrl,
+                State = await sequenceLogic.CreateExternalSequenceIdAsync(),
+                IdTokenHint = session.IdToken
+            };
+            logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
             logger.ScopeTrace(() => $"AuthMethod, End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace(() => "AuthMethod, Sending OIDC End session request.", triggerEvent: true);
@@ -144,8 +151,13 @@ namespace FoxIDs.Logic
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
             logger.ScopeTrace(() => "AuthMethod, Successful OIDC End session response.", triggerEvent: true);
+            return await EndSessionResponseInternalAsync(party);
+        }
+
+        private async Task<IActionResult> EndSessionResponseInternalAsync(OidcUpParty party)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
 
             if (party.DisableSingleLogout)
             {

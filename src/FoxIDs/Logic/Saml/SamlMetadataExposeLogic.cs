@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
                 var attributeConsumingServices = new List<AttributeConsumingService>();
                 foreach(var aItem in party.MetadataAttributeConsumingServices)
                 {
-                    var attributeConsumingService = new AttributeConsumingService { ServiceName = new ServiceName(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
+                    var attributeConsumingService = new AttributeConsumingService { ServiceName = new LocalizedNameType(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
                     attributeConsumingService.RequestedAttributes = aItem.RequestedAttributes.Select(ra => string.IsNullOrEmpty(ra.NameFormat) ? new RequestedAttribute(ra.Name, ra.IsRequired) : new RequestedAttribute(ra.Name, ra.IsRequired, ra.NameFormat));
                     attributeConsumingServices.Add(attributeConsumingService);
                 }

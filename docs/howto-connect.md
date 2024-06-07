@@ -41,6 +41,7 @@ How to guides:
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
+- Connect [Google](auth-method-howto-oidc-google.md)
 - Connect [Facebook](auth-method-howto-oidc-facebook.md)
 - Connect [Signicat](auth-method-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)

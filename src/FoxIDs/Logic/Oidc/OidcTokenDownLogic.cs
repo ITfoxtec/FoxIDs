@@ -65,20 +65,24 @@ namespace FoxIDs.Logic
                         var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
                         ValidateAuthCodeRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !validatePkce);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.AuthorizationCode);
                         return await AuthorizationCodeGrantAsync(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !party.Client.RequirePkce);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.RefreshToken);
                         return await RefreshTokenGrantAsync(party.Client, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
                         logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.TokenExchange);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
 
                     default:
@@ -121,8 +125,6 @@ namespace FoxIDs.Logic
                 {
                     tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
                 }
-
-                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.AuthorizationCode);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OIDC Token response.", triggerEvent: true);
@@ -172,8 +174,6 @@ namespace FoxIDs.Logic
                 {
                     tokenResponse.RefreshToken = newRefreshToken;
                 }
-
-                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.RefreshToken);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OIDC Token response.", triggerEvent: true);

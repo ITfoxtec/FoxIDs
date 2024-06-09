@@ -11,6 +11,8 @@ namespace FoxIDs.Models
         [EnumMember(Value = "client_credentials")]
         ClientCredentials = 20,
         [EnumMember(Value = "token_exchange")]
-        TokenExchange = 30
+        TokenExchange = 30,
+        [EnumMember(Value = "user_info")]
+        UserInfo = 100
     }
 }

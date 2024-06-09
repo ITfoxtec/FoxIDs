@@ -7,7 +7,7 @@
             Create authentication methods with <DocsLink Page="auth-method-oidc">OpenID Connect</DocsLink> or <DocsLink Page="auth-method-saml-2.0">SAML 2.0</DocsLink> to external identity providers.
             And configure user <DocsLink Page="login">log in and MFA</DocsLink>.
             <br />
-            More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 bridge</DocsLink> | <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
+            More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 bridge</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
         </div>
         <div class="pb-2">
             <button type="button" class="btn btn-primary" @onclick="ShowNewUpParty">
@@ -26,7 +26,7 @@
             {
                 @foreach (var upParty in upParties)
                 {
-                    <li class="list-group-item @(upParty.Edit ? "active" : string.Empty)">
+                    <li class="list-group-item @(upParty.Edit ? "active" : "d-flex justify-content-between align-items-center")">
                         @if (!upParty.Error.IsNullOrWhiteSpace())
                         {
                             <div class="alert alert-danger" role="alert">
@@ -37,29 +37,32 @@
                         {
                             if (upParty.Type == PartyTypes.Login)
                             {
-                                <ELoginUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <ELoginUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                             else if (upParty.Type == PartyTypes.OAuth2)
                             {
-                                <EOAuthUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <EOAuthUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                             else if (upParty.Type == PartyTypes.Oidc)
                             {
-                                <EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                             else if (upParty.Type == PartyTypes.Saml2)
                             {
-                                <ESamlUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <ESamlUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                             else if (upParty.Type == PartyTypes.TrackLink)
                             {
-                                <ETrackLinkUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <ETrackLinkUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                         }
                         else
                         {
                             <button class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
                                 @UpPartyInfoText(upParty)
+                            </button> 
+                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(() => InitAndShowTestUpParty(upParty))">
+                                Test method
                             </button>
                         }
                     </li>
@@ -75,7 +78,7 @@
 
 @if (newUpPartyModal != null)
 {
-    <Modal @ref="newUpPartyModal.Modal" Title="New method">
+    <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
         <div class="modal-body">
             <div class="d-flex">
                 <div class="mr-auto"><h6>@newUpPartyModal.AppTitle</h6></div>
@@ -251,6 +254,28 @@
             {
                 throw new Exception("New up-party type and selection not supported.");
             }
+        </div>
+    </Modal>
+}
+
+@if (testUpPartyModal != null)
+{
+    <Modal @ref="testUpPartyModal.Modal" Title="Test Authentication Method">
+        <div class="modal-body">
+            <h6>Test @UpPartyInfoText(testUpPartyModal)</h6>
+            <div class="pt-4 text-center">
+                <a class="btn btn-primary" target="_blank" href="@testUpPartyModal.TestUrl" @onclick="@(() => testUpPartyModal.Modal.Hide())">Start the test</a>
+            </div>
+            <div class="font-italic text-center">
+                The test is lunched in a new browser tab.
+            </div>
+            <div class="pt-5">
+                <FFieldTextClipboard @bind-Value="testUpPartyModal.TestUrl" For="@(() => testUpPartyModal.TestUrl)" />
+            </div>
+            <div class="d-flex modal-footer px-0 pb-0 mt-4">
+                <div class="mr-auto"></div>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => testUpPartyModal.Modal.Hide())">Close</button>
+            </div>
         </div>
     </Modal>
 }

@@ -180,6 +180,9 @@
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
+            <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await OnTestUpParty.InvokeAsync(oauthUpParty))">
+                Test method
+            </button>
         }
         @if (!oauthUpParty.Form.Model.IsManual)
         {

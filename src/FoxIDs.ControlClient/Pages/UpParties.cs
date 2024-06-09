@@ -19,6 +19,7 @@ namespace FoxIDs.Client.Pages
     public partial class UpParties
     {
         private NewUpPartyViewModel newUpPartyModal;
+        private TestUpPartyViewModel testUpPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
 
@@ -44,6 +45,7 @@ namespace FoxIDs.Client.Pages
         {
             await base.OnInitializedAsync();
             newUpPartyModal = new NewUpPartyViewModel();
+            testUpPartyModal = new TestUpPartyViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -183,7 +185,7 @@ namespace FoxIDs.Client.Pages
             await InvokeAsync(StateHasChanged);
         }
 
-        private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
+        private string UpPartyInfoText(UpParty upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
@@ -205,7 +207,7 @@ namespace FoxIDs.Client.Pages
             {
                 return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
-            throw new NotSupportedException();
+            throw new NotSupportedException($"Type '{upParty.Type}'.");
         }
 
         private void ShowNewUpParty()
@@ -227,6 +229,17 @@ namespace FoxIDs.Client.Pages
                 ShowCreateUpParty(type.Value, tokenExchange);
                 newUpPartyModal.Modal.Hide();
             }
+        }
+
+        private void InitAndShowTestUpParty(GeneralUpPartyViewModel upParty)
+        {
+            testUpPartyModal.Name = upParty.Name;
+            testUpPartyModal.DisplayName = upParty.DisplayName;
+            testUpPartyModal.Type = upParty.Type;
+
+
+
+            testUpPartyModal.Modal.Show();
         }
 
         private void ShowSelectTrack(NewUpPartyEnvironmentLinkViewModel newUpPartyEnvironmentLinkViewModel)

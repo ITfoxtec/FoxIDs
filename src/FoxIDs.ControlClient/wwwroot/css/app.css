@@ -111,7 +111,7 @@ h4 {
     }
 
 /*Navbar*/
-.navbar.navbar-main {
+.navbar.navbar-main, .navbar.navbar-main-static {
     border-bottom: 2px solid #fc7e01;
     background-color: #ffffff !important;
 }

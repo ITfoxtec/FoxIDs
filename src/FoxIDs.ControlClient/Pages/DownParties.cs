@@ -207,7 +207,7 @@ namespace FoxIDs.Client.Pages
                     {
                         RedirectUris = new List<string> { newDownPartyOidcForm.Model.RedirectUri },
                         DisableAbsoluteUris = newDownPartyOidcForm.Model.DisableAbsoluteUris,
-                        ResponseTypes = new List<string> { "code" },
+                        ResponseTypes = new List<string> { ResponseTypes.Code },
                         RequirePkce = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,
                         DisableClientCredentialsGrant = true,
                         DisableClientAsTokenExchangeActor = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,

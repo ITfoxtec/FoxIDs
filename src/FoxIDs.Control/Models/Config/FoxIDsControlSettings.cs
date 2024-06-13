@@ -28,6 +28,12 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public bool MainTenantSeedEnabled { get; set; }
 
+        /// <summary>
+        /// Down-party test lifetime in seconds. Default 1 hour.
+        /// </summary>
+        [Required]
+        public int DownPartyTestLifetime { get; set; } = 3600; // 1 hour
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = base.Validate(validationContext).ToList();

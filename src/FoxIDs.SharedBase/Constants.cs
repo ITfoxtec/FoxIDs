@@ -398,6 +398,8 @@ namespace FoxIDs
 
                 public const int AllowUpPartyNamesMin = 0;
                 public const int AllowUpPartyNamesMax = 200;
+
+                public const int UrlLengthMax = 10240;
             }
 
             public static class OAuthDownParty
@@ -466,6 +468,12 @@ namespace FoxIDs
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
                 }
+            }
+
+            public static class OidcDownPartyTest
+            {
+                public const int UpPartyNamesMin = 1;
+                public const int ClaimsMin = 1;
             }
 
             public static class TrackLinkDownParty

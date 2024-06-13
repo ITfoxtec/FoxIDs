@@ -50,8 +50,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
 

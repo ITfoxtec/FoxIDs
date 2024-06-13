@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -50,20 +51,36 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
+        /// <summary>
+        /// Is test.
+        /// </summary>
+        public bool IsTest { get; set; }
+
+        /// <summary>
+        /// Test URL
+        /// </summary>
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        public string TestUrl { get; set; }
+
+        /// <summary>
+        /// Test expiration time.
+        /// </summary>
+        public DateTime ExpireAt { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             if (Client != null && AllowUpPartyNames?.Count <= 0)
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the Client is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the Client is defined.", [nameof(Client), nameof(AllowUpPartyNames)]));
             }
             if (Client == null && Resource == null)
             {
-                results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
+                results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", [nameof(Client), nameof(Resource)]));
             }
             return results;
         }

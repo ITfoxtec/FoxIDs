@@ -33,6 +33,9 @@ namespace FoxIDs.Client.Pages
         public TrackService TrackService { get; set; }
 
         [Inject]
+        public HelpersService HelpersService { get; set; }
+
+        [Inject]
         public UpPartyService UpPartyService { get; set; }
 
         [Inject]
@@ -231,13 +234,20 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void InitAndShowTestUpParty(GeneralUpPartyViewModel upParty)
+        private async void InitAndShowTestUpParty(GeneralUpPartyViewModel upParty)
         {
             testUpPartyModal.Name = upParty.Name;
             testUpPartyModal.DisplayName = upParty.DisplayName;
             testUpPartyModal.Type = upParty.Type;
+         
+            var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
+            {
+                UpPartyNames = new List<string> { upParty.Name },
+                RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+            });
 
-
+            testUpPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
+            testUpPartyModal.ExpireAt = downPartyTestStartResponse.ExpireAt;
 
             testUpPartyModal.Modal.Show();
         }

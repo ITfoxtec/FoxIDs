@@ -1,0 +1,16 @@
+﻿@page "/{tenantName}/applications/test"
+@layout HeaderLayout
+
+
+@if (error.IsNullOrEmpty())
+{
+    
+}
+else
+{
+    <h3>The test application failed!</h3>
+
+    <div class="m-3 alert alert-danger" role="alert">
+        @error
+    </div>
+}

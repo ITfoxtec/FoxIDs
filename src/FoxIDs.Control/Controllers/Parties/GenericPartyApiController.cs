@@ -166,7 +166,7 @@ namespace FoxIDs.Controllers
                     if(tempMParty.IsTest)
                     {
                         var tempMPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(mParty.Id);
-                        tempMPartyTest.TimeToLive = settings.DownPartyTestLifetime;
+                        tempMPartyTest.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
                     }
                 }
                 else if (mParty is OAuthDownParty mOAuthDownParty)

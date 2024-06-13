@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using FoxIDs.Repository;
 using FoxIDs.Models;
+using System;
 
 namespace FoxIDs.Logic
 {
@@ -28,6 +29,13 @@ namespace FoxIDs.Logic
                 }
             }
             return name;
+        }
+
+        public async Task DeleteExporedDownParties()
+        {
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+            var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            await tenantDataRepository.DeleteListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(Constants.Models.DataType.DownParty) && p.TestExpireAt < now);
         }
     }
 }

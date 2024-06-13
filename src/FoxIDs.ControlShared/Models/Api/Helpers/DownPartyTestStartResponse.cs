@@ -10,8 +10,8 @@ namespace FoxIDs.Models.Api
         public string TestUrl { get; set; }
 
         /// <summary>
-        /// Test expiration time.
+        /// Test expiration time in Unix time seconds.
         /// </summary>
-        public DateTime ExpireAt { get; set; }
+        public long ExpireAt { get; set; }
     }
 }

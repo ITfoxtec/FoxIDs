@@ -16,6 +16,5 @@ namespace FoxIDs.Client.Services
         public async Task<JwkWithCertificateInfo> ReadCertificateAsync(CertificateAndPassword certificateAndPassword) => await PostResponseAsync<CertificateAndPassword, JwkWithCertificateInfo>(readCertificateApiUri, certificateAndPassword);
 
         public async Task<DownPartyTestStartResponse> StartDownPartyTestAsync(DownPartyTestStartRequest downPartyTestStartRequest) => await PostResponseAsync<DownPartyTestStartRequest, DownPartyTestStartResponse>(downPartyTestApiUri, downPartyTestStartRequest);
-        public async Task<DownPartyTestResultResponse> DownPartyTestResultAsync(DownPartyTestResultRequest downPartyTestResultRequest) => await PutResponseAsync<DownPartyTestResultRequest, DownPartyTestResultResponse>(downPartyTestApiUri, downPartyTestResultRequest);
     }
 }

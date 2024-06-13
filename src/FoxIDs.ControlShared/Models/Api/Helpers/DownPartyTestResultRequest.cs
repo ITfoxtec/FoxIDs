@@ -11,11 +11,6 @@ namespace FoxIDs.Models.Api
         public string State { get; set; }
 
         [Required]
-        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
-        [Display(Name = "Nonce")]
-        public string Nonce { get; set; }
-
-        [Required]
         [MaxLength(IdentityConstants.MessageLength.CodeMax)]
         [Display(Name = "Code")]
         public string Code { get; set; }

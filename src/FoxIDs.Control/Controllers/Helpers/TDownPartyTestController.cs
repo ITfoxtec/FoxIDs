@@ -28,8 +28,7 @@ using AutoMapper;
 namespace FoxIDs.Controllers
 {
     public class TDownPartyTestController : ApiController
-    {
-        private const char stateSplitKey = ':';
+    {        
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -66,6 +65,8 @@ namespace FoxIDs.Controllers
         {
             if (!await ModelState.TryValidateObjectAsync(testUpPartyRequest)) return BadRequest(ModelState);
 
+            await partyLogic.DeleteExporedDownParties();
+
             var partyName = await partyLogic.GeneratePartyNameAsync(false);
 
             try
@@ -81,7 +82,7 @@ namespace FoxIDs.Controllers
                     RedirectUri = testUpPartyRequest.RedirectUri,
                     Scope = DefaultOidcScopes.OpenId,
                     Nonce = RandomGenerator.GenerateNonce(),
-                    State = $"{partyName}{stateSplitKey}{CreateProtector(partyName).Protect(secret)}"
+                    State = $"{RouteBinding.TrackName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{partyName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{CreateProtector(partyName).Protect(secret)}"
                 };
 
                 var codeChallengeRequest = new CodeChallengeSecret
@@ -91,28 +92,30 @@ namespace FoxIDs.Controllers
                 };
 
                 var requestDictionary = authenticationRequest.ToDictionary().AddToDictionary(codeChallengeRequest);
-                var testUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.Authorize) , requestDictionary);
+                var testUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.Authorize), requestDictionary);
 
                 var mParty = new OidcDownPartyTest
                 {
                     Id = await DownParty.IdFormatAsync(RouteBinding, partyName),
+                    Name = partyName,
+                    DisplayName = $"Test application - {partyName}",
                     IsTest = true,
                     TestUrl = testUrl,
+                    TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
                     Nonce = authenticationRequest.Nonce,
-                    CodeVerifier = codeVerifier,
-                    Name = await partyLogic.GeneratePartyNameAsync(false),
+                    CodeVerifier = codeVerifier,                    
                     AllowUpParties = testUpPartyRequest.UpPartyNames.Select(pName => new UpPartyLink { Name = pName }).ToList(),
                     Client = new OidcDownClient
                     {
                         RedirectUris = new List<string> { authenticationRequest.RedirectUri },
                         ResponseTypes = new List<string> { authenticationRequest.ResponseType },
+                        ClientAuthenticationMethod = Models.ClientAuthenticationMethods.ClientSecretPost,
                         RequirePkce = true,
                         Claims = testUpPartyRequest.Claims.Select(c => new OidcDownClaim { Claim = c }).ToList(),
                         ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = partyName } },
                         DisableClientCredentialsGrant = true,
                         DisableTokenExchangeGrant = true,
                     },
-                    TimeToLive = settings.DownPartyTestLifetime
                 };
 
                 var oauthClientSecret = new OAuthClientSecret();
@@ -126,7 +129,7 @@ namespace FoxIDs.Controllers
                 return Ok(new Api.DownPartyTestStartResponse
                 {
                     TestUrl = testUrl,
-                    ExpireAt = mParty.ExpireAt,
+                    ExpireAt = mParty.TestExpireAt,
                 });
             }
             catch (ValidationException)
@@ -154,21 +157,27 @@ namespace FoxIDs.Controllers
         {
             if (!await ModelState.TryValidateObjectAsync(testUpPartyRequest)) return BadRequest(ModelState);
 
-            var stateSplit = testUpPartyRequest.State.Split(stateSplitKey);
-            if (stateSplit.Length != 2)
+            var stateSplit = testUpPartyRequest.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
+            if (stateSplit.Length != 3)
             {
                 throw new Exception("Invalid state format.");
             }
+            var trackName = stateSplit[0];
+            if (!RouteBinding.TrackName.Equals(trackName, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid state track.");
+            }
 
-            var partyName = stateSplit[0];
+            var partyName = stateSplit[1];
+            var clientSecret = CreateProtector(partyName).Unprotect(stateSplit[2]);
+
+            await partyLogic.DeleteExporedDownParties();
 
             try
             {
-                var secret = CreateProtector(partyName).Unprotect(stateSplit[1]);
-
                 var mParty = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, partyName));
 
-                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, mParty.Nonce, testUpPartyRequest.Code);
+                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testUpPartyRequest.Code);
 
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {
@@ -183,6 +192,12 @@ namespace FoxIDs.Controllers
             {
                 throw;
             }
+            catch (ResponseErrorException rex)
+            {
+                logger.Warning(rex, $"Response error, Update '{typeof(OidcDownPartyTest).Name}' by name '{partyName}'.");
+                ModelState.AddModelError(string.Empty, rex.Message);
+                return BadRequest(ModelState);
+            }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
@@ -195,7 +210,7 @@ namespace FoxIDs.Controllers
         }
         private string GetAuthority(string partyName) => UrlCombine.Combine(settings.FoxIDsEndpoint, RouteBinding.TenantName, RouteBinding.TrackName, $"{partyName}(*)");
 
-        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string nonce, string code)
+        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)
         {
             var tokenRequest = new TokenRequest
             {
@@ -205,6 +220,11 @@ namespace FoxIDs.Controllers
                 RedirectUri = mParty.Client.RedirectUris.First(),
             };
 
+            var clientCredentials = new ClientCredentials
+            {
+                ClientSecret = clientSecret,
+            };
+
             var codeVerifierSecret = new CodeVerifierSecret
             {
                 CodeVerifier = mParty.CodeVerifier,
@@ -212,7 +232,7 @@ namespace FoxIDs.Controllers
 
             (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(GetAuthority(mParty.Name));
 
-            var requestDictionary = tokenRequest.ToDictionary().AddToDictionary(codeVerifierSecret);
+            var requestDictionary = tokenRequest.ToDictionary().AddToDictionary(clientCredentials).AddToDictionary(codeVerifierSecret);
 
             var request = new HttpRequestMessage(HttpMethod.Post, oidcDiscovery.TokenEndpoint);
             request.Content = new FormUrlEncodedContent(requestDictionary);
@@ -244,14 +264,11 @@ namespace FoxIDs.Controllers
 
                     return (tokenResponse, idTokenPrincipal, JwtHandler.ReadTokenClaims(tokenResponse.AccessToken));
 
-                case HttpStatusCode.BadRequest:
+                default:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
                     tokenResponseBadRequest.Validate(true);
-                    throw new Exception($"Error login call back, Bad request. StatusCode={response.StatusCode}");
-
-                default:
-                    throw new Exception($"Error login call back, Status Code not expected. StatusCode={response.StatusCode}");
+                    throw new Exception($"Error login call back, unexpected status code. StatusCode={response.StatusCode}");
             }
         }
 

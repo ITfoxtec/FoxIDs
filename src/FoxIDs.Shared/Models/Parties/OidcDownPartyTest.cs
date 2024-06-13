@@ -1,12 +1,11 @@
 ﻿using ITfoxtec.Identity;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 
 namespace FoxIDs.Models
 {
-    public class OidcDownPartyTest : OidcDownParty<OidcDownClient, OidcDownScope, OidcDownClaim>, IDataTtlDocument
+    public class OidcDownPartyTest : OidcDownParty<OidcDownClient, OidcDownScope, OidcDownClaim>
     {
         [MaxLength(IdentityConstants.MessageLength.CodeVerifierMax)]
         [JsonProperty(PropertyName = "code_verifier")]
@@ -15,12 +14,5 @@ namespace FoxIDs.Models
         [MaxLength(IdentityConstants.MessageLength.NonceMax)]
         [JsonProperty(PropertyName = "nonce")]
         public string Nonce { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "ttl")]
-        public int TimeToLive { get; set; }
-
-        [JsonProperty(PropertyName = "expire_at")]
-        public DateTime ExpireAt { get { return DateTime.UtcNow.AddSeconds(TimeToLive); } set { } }
     }
 }

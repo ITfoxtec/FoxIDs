@@ -247,7 +247,7 @@ namespace FoxIDs.Client.Pages
             });
 
             testUpPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
-            testUpPartyModal.ExpireAt = downPartyTestStartResponse.ExpireAt;
+            testUpPartyModal.ExpireAt = DateTimeOffset.FromUnixTimeSeconds(downPartyTestStartResponse.ExpireAt).LocalDateTime;
 
             testUpPartyModal.Modal.Show();
         }

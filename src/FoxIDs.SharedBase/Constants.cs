@@ -472,6 +472,8 @@ namespace FoxIDs
 
             public static class OidcDownPartyTest
             {
+                public const char StateSplitKey = ':';
+
                 public const int UpPartyNamesMin = 1;
                 public const int ClaimsMin = 1;
             }

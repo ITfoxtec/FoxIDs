@@ -24,5 +24,9 @@ namespace FoxIDs.Models.Api
         [MaxLength(IdentityConstants.MessageLength.TokenMax)]
         [Display(Name = "Access token")]
         public string AccessToken { get; set; }
+
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        [Display(Name = "End session URL")]
+        public string EndSessionUrl { get; set; }
     }
 }

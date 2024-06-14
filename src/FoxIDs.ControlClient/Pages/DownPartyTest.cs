@@ -11,6 +11,7 @@ using FoxIDs.Client.Services;
 using FoxIDs.Models.Api;
 using FoxIDs.Infrastructure;
 using Microsoft.JSInterop;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
@@ -18,6 +19,7 @@ namespace FoxIDs.Client.Pages
     {
         private string error;
         private DownPartyTestResultResponse response;
+        private bool loggedOut;
         private ElementReference submitIdTokenButton;
         private ElementReference submitAccessTokenButton;
 
@@ -45,22 +47,29 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var responseQuery = GetResponseQuery(navigationManager.Uri);
-                var authenticationResponse = responseQuery.ToObject<AuthenticationResponse>();
-                authenticationResponse.Validate();
-                if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
-
-                var stateSplit = authenticationResponse.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
-                if (stateSplit.Length != 3)
+                if (responseQuery.Count() > 0)
                 {
-                    throw new Exception("Invalid state format.");
+                    var authenticationResponse = responseQuery.ToObject<AuthenticationResponse>();
+                    authenticationResponse.Validate();
+                    if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
+
+                    var stateSplit = authenticationResponse.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
+                    if (stateSplit.Length != 3)
+                    {
+                        throw new Exception("Invalid state format.");
+                    }
+                    var trackName = stateSplit[0];
+
+                    response = await HelpersNoAccessTokenService.DownPartyTestResultAsync(new DownPartyTestResultRequest
+                    {
+                        State = authenticationResponse.State,
+                        Code = authenticationResponse.Code,
+                    }, TenantName, trackName);
                 }
-                var trackName = stateSplit[0];
-
-                response = await HelpersNoAccessTokenService.DownPartyTestResultAsync(new DownPartyTestResultRequest
+                else
                 {
-                    State = authenticationResponse.State,
-                    Code = authenticationResponse.Code,
-                }, TenantName, trackName);
+                    loggedOut = true;
+                }
             }
             catch (ResponseErrorException rex)
             {

@@ -131,7 +131,7 @@ namespace FoxIDs.Controllers
                             new OidcDownScope { Scope = DefaultOidcScopes.Phone, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } }
                         },
                         DisableClientCredentialsGrant = true,
-                        DisableTokenExchangeGrant = true,
+                        DisableTokenExchangeGrant = true,                        
                     },
                 };
 
@@ -225,12 +225,21 @@ namespace FoxIDs.Controllers
 
                 (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testUpPartyRequest.Code);
 
+                var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
+                {
+                    IdTokenHint = tokenResponse.IdToken,
+                    PostLogoutRedirectUri = mParty.Client.RedirectUris.First(),
+                };
+                var requestDictionary = rpInitiatedLogoutRequest.ToDictionary();
+                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
+
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {
                     IdTokenClaims = mapper.Map<List<Api.ClaimAndValues>>(idTokenPrincipal.Claims.ToClaimAndValues()),
                     AccessTokenClaims = mapper.Map<List<Api.ClaimAndValues>>(accessTokenPrincipal.Claims.ToClaimAndValues()),
                     IdToken = tokenResponse.IdToken,
                     AccessToken = tokenResponse.AccessToken,
+                    EndSessionUrl = endSessionUrl
                 };
                 return Ok(testUpPartyResultResponse);
             }

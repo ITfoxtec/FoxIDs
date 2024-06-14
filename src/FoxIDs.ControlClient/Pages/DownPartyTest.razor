@@ -5,7 +5,14 @@
 {
     @if (response != null)
     {
-        <h3>Test application result</h3>
+        <div class="d-flex">
+            <div class="mr-auto">
+                <h3>Test application result</h3>
+            </div>
+            <div>
+                <a class="btn btn-link" href="@response.EndSessionUrl">Log off</a>
+            </div>
+        </div>
 
         <h5 class="pt-4 pb-3">ID Token</h5>
 
@@ -75,6 +82,12 @@
             <input type="hidden" name="jwt" value="@response.AccessToken" />
             <input type="submit" value="submit" @ref="submitAccessTokenButton" />
         </form>
+    }
+    else if (loggedOut)
+    {
+        <h3>Test application</h3>
+
+        <div class="pt-4">You are logged off!</div>
     }
 }
 else

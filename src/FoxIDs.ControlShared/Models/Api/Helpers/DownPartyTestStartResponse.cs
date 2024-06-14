@@ -16,6 +16,7 @@ namespace FoxIDs.Models.Api
         public string DisplayName { get; set; }
 
         [Required]
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
         [Display(Name = "Test URL")]
         public string TestUrl { get; set; }
 

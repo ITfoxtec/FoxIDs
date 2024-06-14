@@ -377,7 +377,7 @@
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
             <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await OnTestUpParty.InvokeAsync(oidcUpParty))">
-                Test method
+                Test authentication
             </button>
         }
         @if (!oidcUpParty.Form.Model.IsManual)

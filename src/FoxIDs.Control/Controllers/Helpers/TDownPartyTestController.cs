@@ -98,7 +98,6 @@ namespace FoxIDs.Controllers
                 {
                     Id = await DownParty.IdFormatAsync(RouteBinding, partyName),
                     Name = partyName,
-                    DisplayName = $"Test application - {partyName}",
                     IsTest = true,
                     TestUrl = testUrl,
                     TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
@@ -142,6 +141,8 @@ namespace FoxIDs.Controllers
 
                 if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testUpPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
 
+                mParty.DisplayName = $"Test application [{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]";
+
                 await tenantDataRepository.CreateAsync(mParty);
 
                 return Ok(new Api.DownPartyTestStartResponse
@@ -163,6 +164,31 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private string GetUpPartyDisplayName(UpPartyLink upParty)
+        {
+            if (upParty.Type == PartyTypes.Login)
+            {
+                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User login UI)";
+            }
+            else if (upParty.Type == PartyTypes.OAuth2)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
+            }
+            else if (upParty.Type == PartyTypes.Oidc)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
+            }
+            else if (upParty.Type == PartyTypes.Saml2)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
+            }
+            else if (upParty.Type == PartyTypes.TrackLink)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
+            }
+            throw new NotSupportedException($"Type '{upParty.Type}'.");
         }
 
         /// <summary>

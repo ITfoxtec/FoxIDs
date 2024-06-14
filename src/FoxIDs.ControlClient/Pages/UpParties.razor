@@ -11,7 +11,7 @@
         </div>
         <div class="pb-2">
             <button type="button" class="btn btn-primary" @onclick="ShowNewUpParty">
-                <span class="oi oi-plus" aria-hidden="true"></span> New method
+                <span class="oi oi-plus" aria-hidden="true"></span> New authentication
             </button>
         </div>
     </div>
@@ -41,7 +41,7 @@
                             }
                             else if (upParty.Type == PartyTypes.OAuth2)
                             {
-                                <EOAuthUpParty OnStateHasChanged="OnStateHasChangedAsync" OnTestUpParty="InitAndShowTestUpParty" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                                <EOAuthUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                             }
                             else if (upParty.Type == PartyTypes.Oidc)
                             {
@@ -60,10 +60,13 @@
                         {
                             <button class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
                                 @UpPartyInfoText(upParty)
-                            </button> 
-                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(() => InitAndShowTestUpParty(upParty))">
-                                Test method
                             </button>
+                            @if (upParty.Type != PartyTypes.OAuth2)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(() => InitAndShowTestUpParty(upParty))">
+                                    Test authentication
+                                </button>
+                            }
                         }
                     </li>
                 }
@@ -263,8 +266,14 @@
     <Modal @ref="testUpPartyModal.Modal" Title="Test Authentication Method">
         <div class="modal-body">
             <h6>Test @UpPartyInfoText(testUpPartyModal)</h6>
+            @if (!testUpPartyModal.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @testUpPartyModal.Error
+                </div>
+            }
             <div class="pt-4 text-center">
-                <a class="btn btn-primary" target="_blank" href="@testUpPartyModal.TestUrl">Start the test</a>
+                <a class="btn btn-primary @(testUpPartyModal.TestUrl.IsNullOrEmpty() ? "disabled" : "")" target="_blank" href="@testUpPartyModal.TestUrl">Start the test</a>
             </div>
             <div class="font-italic text-center">
                 The test is lunched in a new browser tab.
@@ -272,8 +281,8 @@
             <div class="pt-5 text-break">
                 <FFieldTextClipboard @bind-Value="testUpPartyModal.TestUrl" For="@(() => testUpPartyModal.TestUrl)" />
             </div>
-            <div class="pt-3 font-italic">
-                The test application is valid for until @testUpPartyModal.ExpireAt.ToLocalTime().ToShortTimeString().
+            <div class="pt-2 font-italic">
+                The test application is valid for until @testUpPartyModal.ExpireAt.
             </div>
             <div class="d-flex modal-footer px-0 pb-0 mt-4">
                 <div class="mr-auto"></div>

@@ -384,7 +384,7 @@ namespace FoxIDs
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int DisplayNameLength = 100;
-                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+()\[\]{} ]*$";
                 public const int NoteLength = 200;
 
                 public const int IssuerLength = 300;

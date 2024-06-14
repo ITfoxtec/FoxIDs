@@ -236,20 +236,36 @@ namespace FoxIDs.Client.Pages
 
         private async void InitAndShowTestUpParty(GeneralUpPartyViewModel upParty)
         {
+            testUpPartyModal.Error = null;
+            testUpPartyModal.TestUrl = null;
+            testUpPartyModal.ExpireAt = null;
             testUpPartyModal.Name = upParty.Name;
             testUpPartyModal.DisplayName = upParty.DisplayName;
             testUpPartyModal.Type = upParty.Type;
-         
-            var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
-            {
-                UpPartyNames = new List<string> { upParty.Name },
-                RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
-            });
-
-            testUpPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
-            testUpPartyModal.ExpireAt = DateTimeOffset.FromUnixTimeSeconds(downPartyTestStartResponse.ExpireAt).LocalDateTime;
 
             testUpPartyModal.Modal.Show();
+
+            try
+            {
+                var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
+                {
+                    UpPartyNames = new List<string> { upParty.Name },
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                });
+
+                testUpPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
+                testUpPartyModal.ExpireAt = DateTimeOffset.FromUnixTimeSeconds(downPartyTestStartResponse.ExpireAt).LocalDateTime.ToShortTimeString();
+
+                StateHasChanged();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                testUpPartyModal.Error = ex.Message;
+            }
         }
 
         private void ShowSelectTrack(NewUpPartyEnvironmentLinkViewModel newUpPartyEnvironmentLinkViewModel)

@@ -9,10 +9,12 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         public Modal Modal;
 
+        public string Error { get; set; }
+
         [Display(Name = "Alternatively, start the test with this test URL")]
         public string TestUrl { get; set; }
 
-        public DateTime ExpireAt { get; set; }
+        public string ExpireAt { get; set; }
 
         public TestUpPartyViewModel() 
         {

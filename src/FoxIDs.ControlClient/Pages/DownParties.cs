@@ -22,7 +22,8 @@ namespace FoxIDs.Client.Pages
 {
     public partial class DownParties 
     {
-        private NewDownPartyViewModel newDownPartyModal;    
+        private NewDownPartyViewModel newDownPartyModal;
+        private DownPartyTestViewModel testDownPartyModal;
         private PageEditForm<FilterDownPartyViewModel> downPartyFilterForm;
         private List<GeneralDownPartyViewModel> downParties;
 
@@ -36,6 +37,12 @@ namespace FoxIDs.Client.Pages
         public MetadataLogic MetadataLogic { get; set; }
 
         [Inject]
+        public HelpersService HelpersService { get; set; }
+
+        [Inject]
+        public UpPartyService UpPartyService { get; set; }
+
+        [Inject]
         public DownPartyService DownPartyService { get; set; }
 
         [Parameter]
@@ -45,6 +52,7 @@ namespace FoxIDs.Client.Pages
         {
             await base.OnInitializedAsync();
             newDownPartyModal = new NewDownPartyViewModel();
+            testDownPartyModal = new DownPartyTestViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -123,6 +131,43 @@ namespace FoxIDs.Client.Pages
                 }
             }
             downParties = dps;
+        }
+
+        private async Task InitAndShowTestUpPartyAsync()
+        {
+            testDownPartyModal.Error = null;
+            testDownPartyModal.TestUrl = null;
+            testDownPartyModal.TestExpireAt = 0;
+
+            testDownPartyModal.Modal.Show();
+
+            try
+            {
+                var ups = await UpPartyService.FilterUpPartyAsync(null);
+                var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
+                {
+                    UpPartyNames = ups.Select(p => p.Name).Take(Constants.Models.DownParty.AllowUpPartyNamesMax).ToList(),
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                });
+
+                testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
+                testDownPartyModal.TestExpireAt = downPartyTestStartResponse.TestExpireAt;
+
+                var oidcDownParty = new GeneralOidcDownPartyViewModel(new DownParty { Type = PartyTypes.Oidc, Name = downPartyTestStartResponse.Name, DisplayName = downPartyTestStartResponse.DisplayName });
+                downParties.Add(oidcDownParty);
+                if (downParties.Count() <= 1)
+                {
+                    ShowUpdateDownParty(oidcDownParty);
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await(OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                testDownPartyModal.Error = ex.Message;
+            }
         }
 
         private void ShowUpdateDownParty(GeneralDownPartyViewModel downParty)
@@ -207,7 +252,7 @@ namespace FoxIDs.Client.Pages
                     {
                         RedirectUris = new List<string> { newDownPartyOidcForm.Model.RedirectUri },
                         DisableAbsoluteUris = newDownPartyOidcForm.Model.DisableAbsoluteUris,
-                        ResponseTypes = new List<string> { "code" },
+                        ResponseTypes = new List<string> { ResponseTypes.Code },
                         RequirePkce = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,
                         DisableClientCredentialsGrant = true,
                         DisableClientAsTokenExchangeActor = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,

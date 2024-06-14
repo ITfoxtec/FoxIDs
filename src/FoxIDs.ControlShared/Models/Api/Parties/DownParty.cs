@@ -15,5 +15,10 @@ namespace FoxIDs.Models.Api
 
         [Required]
         public PartyTypes Type { get; set; }
+
+        /// <summary>
+        /// Is test.
+        /// </summary>
+        public bool IsTest { get; set; }
     }
 }

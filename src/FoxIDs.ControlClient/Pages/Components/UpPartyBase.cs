@@ -41,6 +41,9 @@ namespace FoxIDs.Client.Pages.Components
         public EventCallback<GeneralUpPartyViewModel> OnStateHasChanged { get; set; }
 
         [Parameter]
+        public EventCallback<GeneralUpPartyViewModel> OnTestUpParty { get; set; }
+
+        [Parameter]
         public List<GeneralUpPartyViewModel> UpParties { get; set; }
 
         [Parameter]

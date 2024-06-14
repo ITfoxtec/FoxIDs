@@ -60,8 +60,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ValidateApiModelDynamicElementLogic>();
             services.AddTransient<ValidateApiModelExternalUserLogic>();
 
-            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadLogic>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
 

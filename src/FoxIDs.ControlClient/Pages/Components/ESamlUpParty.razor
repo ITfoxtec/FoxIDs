@@ -408,6 +408,9 @@
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
+            <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await OnTestUpParty.InvokeAsync(samlUpParty))">
+                Test authentication
+            </button>
         }
         <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>

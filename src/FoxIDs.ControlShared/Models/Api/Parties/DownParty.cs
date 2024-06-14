@@ -11,6 +11,7 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
         public string DisplayName { get; set; }
 
         [Required]

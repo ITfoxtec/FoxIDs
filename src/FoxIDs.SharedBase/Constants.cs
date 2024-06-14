@@ -731,12 +731,12 @@ namespace FoxIDs
 
         public static class OAuth
         {
-            public readonly static string[] DefaultResponseTypes = new string[] 
-            {
+            public readonly static string[] DefaultResponseTypes =
+            [
                 FoxI.IdentityConstants.ResponseTypes.Code, 
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token}", 
                 FoxI.IdentityConstants.ResponseTypes.Token
-            };
+            ];
 
             public static class ResponseErrors
             {
@@ -754,14 +754,14 @@ namespace FoxIDs
 
         public static class Oidc
         {
-            public readonly static string[] DefaultResponseTypes = new string[]
-            {
+            public readonly static string[] DefaultResponseTypes =
+            [
                 FoxI.IdentityConstants.ResponseTypes.Code,
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 FoxI.IdentityConstants.ResponseTypes.IdToken
-            };
+            ];
 
             public static class Acr
             {

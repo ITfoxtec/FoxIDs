@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
                     ResponseMode = testUpPartyRequest.ResponseMode,
                     ResponseType = ResponseTypes.Code,
                     RedirectUri = testUpPartyRequest.RedirectUri,
-                    Scope = DefaultOidcScopes.OpenId,
+                    Scope = new[] { DefaultOidcScopes.OpenId, DefaultOidcScopes.Profile, DefaultOidcScopes.Email, DefaultOidcScopes.Address, DefaultOidcScopes.Phone }.ToSpaceList(),
                     Nonce = RandomGenerator.GenerateNonce(),
                     State = $"{RouteBinding.TrackName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{partyName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{CreateProtector(partyName).Protect(secret)}"
                 };
@@ -113,6 +113,24 @@ namespace FoxIDs.Controllers
                         RequirePkce = true,
                         Claims = testUpPartyRequest.Claims.Select(c => new OidcDownClaim { Claim = c }).ToList(),
                         ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = partyName } },
+                        Scopes = new List<OidcDownScope>
+                        {
+                            new OidcDownScope { Scope = DefaultOidcScopes.OfflineAccess },
+                            new OidcDownScope
+                            {
+                                Scope = DefaultOidcScopes.Profile,
+                                VoluntaryClaims = new List<OidcDownClaim>
+                                {
+                                    new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true },
+                                    new OidcDownClaim { Claim = JwtClaimTypes.Nickname, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.PreferredUsername, InIdToken = false },
+                                    new OidcDownClaim { Claim = JwtClaimTypes.Birthdate, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Gender, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Picture, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Profile, InIdToken = false },
+                                    new OidcDownClaim { Claim = JwtClaimTypes.Website, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Locale, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.Zoneinfo, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.UpdatedAt, InIdToken = false }
+                                }
+                            },
+                            new OidcDownScope { Scope = DefaultOidcScopes.Email, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified, InIdToken = false } } },
+                            new OidcDownScope { Scope = DefaultOidcScopes.Address, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Address, InIdToken = true } } },
+                            new OidcDownScope { Scope = DefaultOidcScopes.Phone, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } }
+                        },
                         DisableClientCredentialsGrant = true,
                         DisableTokenExchangeGrant = true,
                     },
@@ -203,7 +221,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(OidcDownPartyTest).Name}' by name '{partyName}'.");
-                    return NotFound(typeof(OidcDownPartyTest).Name, partyName, nameof(OidcDownPartyTest.Name));
+                    return NotFound("Test application was not found, it has probably expired.");
                 }
                 throw;
             }

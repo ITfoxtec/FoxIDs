@@ -244,7 +244,8 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })))
                 .ForMember(d => d.IsTest, opt => opt.Ignore())
-                .ForMember(d => d.TestUrl, opt => opt.Ignore());
+                .ForMember(d => d.TestUrl, opt => opt.Ignore())
+                .ForMember(d => d.TestExpireAt, opt => opt.Ignore());
             CreateMap<OidcDownPartyTest, Api.OidcDownParty>()
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)));
 

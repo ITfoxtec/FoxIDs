@@ -1,10 +1,20 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
     public class DownPartyTestStartResponse
     {
+        /// <summary>
+        /// Test application name.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
+
         [Required]
         [Display(Name = "Test URL")]
         public string TestUrl { get; set; }
@@ -12,6 +22,6 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Test expiration time in Unix time seconds.
         /// </summary>
-        public long ExpireAt { get; set; }
+        public long TestExpireAt { get; set; }
     }
 }

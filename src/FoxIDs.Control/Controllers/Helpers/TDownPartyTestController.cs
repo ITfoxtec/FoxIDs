@@ -141,14 +141,16 @@ namespace FoxIDs.Controllers
 
                 if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testUpPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
 
-                mParty.DisplayName = $"Test application [{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]";
+                mParty.DisplayName = $"Test application{(mParty.AllowUpParties.Count() == 1 ? $" [{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : string.Empty)}";
 
                 await tenantDataRepository.CreateAsync(mParty);
 
                 return Ok(new Api.DownPartyTestStartResponse
                 {
+                    Name = mParty.Name,
+                    DisplayName = mParty.DisplayName,
                     TestUrl = testUrl,
-                    ExpireAt = mParty.TestExpireAt,
+                    TestExpireAt = mParty.TestExpireAt,
                 });
             }
             catch (ValidationException)

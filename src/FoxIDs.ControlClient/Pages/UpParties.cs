@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Pages
     public partial class UpParties
     {
         private NewUpPartyViewModel newUpPartyModal;
-        private TestUpPartyViewModel testUpPartyModal;
+        private DownPartyTestViewModel testDownPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
 
@@ -48,7 +48,7 @@ namespace FoxIDs.Client.Pages
         {
             await base.OnInitializedAsync();
             newUpPartyModal = new NewUpPartyViewModel();
-            testUpPartyModal = new TestUpPartyViewModel();
+            testDownPartyModal = new DownPartyTestViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -234,16 +234,14 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async void InitAndShowTestUpParty(GeneralUpPartyViewModel upParty)
+        private async Task InitAndShowTestUpPartyAsync(GeneralUpPartyViewModel upParty)
         {
-            testUpPartyModal.Error = null;
-            testUpPartyModal.TestUrl = null;
-            testUpPartyModal.ExpireAt = null;
-            testUpPartyModal.Name = upParty.Name;
-            testUpPartyModal.DisplayName = upParty.DisplayName;
-            testUpPartyModal.Type = upParty.Type;
+            testDownPartyModal.Error = null;
+            testDownPartyModal.TestUrl = null;
+            testDownPartyModal.TestExpireAt = 0;
+            testDownPartyModal.DisplayName = UpPartyInfoText(upParty);
 
-            testUpPartyModal.Modal.Show();
+            testDownPartyModal.Modal.Show();
 
             try
             {
@@ -253,8 +251,8 @@ namespace FoxIDs.Client.Pages
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 
-                testUpPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
-                testUpPartyModal.ExpireAt = DateTimeOffset.FromUnixTimeSeconds(downPartyTestStartResponse.ExpireAt).LocalDateTime.ToShortTimeString();
+                testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
+                testDownPartyModal.TestExpireAt = downPartyTestStartResponse.TestExpireAt;
 
                 StateHasChanged();
             }
@@ -264,7 +262,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                testUpPartyModal.Error = ex.Message;
+                testDownPartyModal.Error = ex.Message;
             }
         }
 

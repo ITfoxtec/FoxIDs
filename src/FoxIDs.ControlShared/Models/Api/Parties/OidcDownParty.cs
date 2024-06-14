@@ -65,7 +65,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Test expiration time.
         /// </summary>
-        public DateTime ExpireAt { get; set; }
+        public long TestExpireAt { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

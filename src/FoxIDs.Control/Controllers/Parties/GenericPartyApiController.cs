@@ -167,6 +167,18 @@ namespace FoxIDs.Controllers
                     {
                         var tempMPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(mParty.Id);
                         tempMPartyTest.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
+                        tempMPartyTest.DisplayName = mOidcDownParty.DisplayName;
+                        tempMPartyTest.Note = mOidcDownParty.Note;
+                        tempMPartyTest.AllowUpParties = mOidcDownParty.AllowUpParties;
+                        tempMPartyTest.Client.ResourceScopes = mOidcDownParty.Client.ResourceScopes;
+                        tempMPartyTest.Client.Scopes = mOidcDownParty.Client.Scopes;
+                        tempMPartyTest.Client.Claims = mOidcDownParty.Client.Claims;
+                        tempMPartyTest.ClaimTransforms = mOidcDownParty.ClaimTransforms;
+
+                        await tenantDataRepository.UpdateAsync(tempMPartyTest);
+                        await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
+
+                        return Ok(mapper.Map<AParty>(tempMPartyTest));
                     }
                 }
                 else if (mParty is OAuthDownParty mOAuthDownParty)

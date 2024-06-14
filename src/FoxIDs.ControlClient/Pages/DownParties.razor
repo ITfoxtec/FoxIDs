@@ -8,10 +8,31 @@
             <br />
             More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">OpenID Connect to SAML 2.0 bridge</DocsLink> | <DocsLink Page="token-exchange">Token exchange</DocsLink>
         </div>
-        <div class="pb-2">
-            <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
-                <span class="oi oi-plus" aria-hidden="true"></span> New application
-            </button>
+        <div class="pb-2 d-block d-lg-none d-xl-none">
+            <div class="row">
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
+                        <span class="oi oi-plus" aria-hidden="true"></span> New application
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 pt-2">
+                    <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await InitAndShowTestUpPartyAsync())">
+                        New test application
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="pb-2 d-none d-lg-block d-xl-block">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await InitAndShowTestUpPartyAsync())">
+                    New test application
+                </button>
+                <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
+                    <span class="oi oi-plus" aria-hidden="true"></span> New application
+                </button>
+            </div>
         </div>
     </div>
     <PageEditForm @ref="downPartyFilterForm" TModel="FilterDownPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
@@ -422,6 +443,40 @@
             {
                 throw new Exception("New down-party type and selection not supported.");
             }
+        </div>
+    </Modal>
+}
+
+@if (testDownPartyModal != null)
+{
+    <Modal @ref="testDownPartyModal.Modal" Title="Test Application">
+        <div class="modal-body">
+            <h6>Test Application for all Authentication Methods</h6>
+            @if (!testDownPartyModal.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @testDownPartyModal.Error
+                </div>
+            }
+            <div class="pt-4 text-center">
+                <a class="btn btn-primary @(testDownPartyModal.TestUrl.IsNullOrEmpty() ? "disabled" : "")" target="_blank" href="@testDownPartyModal.TestUrl">Start the test</a>
+            </div>
+            <div class="font-italic text-center">
+                The test is lunched in a new browser tab.
+            </div>
+            <div class="pt-5 text-break">
+                <FFieldTextClipboard @bind-Value="testDownPartyModal.TestUrl" For="@(() => testDownPartyModal.TestUrl)" />
+            </div>
+            @if (testDownPartyModal.TestExpireAt > 0)
+            {
+                <div class="pt-2 font-italic">
+                    The test application is valid until @DateTimeOffset.FromUnixTimeSeconds(testDownPartyModal.TestExpireAt).LocalDateTime.ToShortTimeString().
+                </div>
+            }
+            <div class="d-flex modal-footer px-0 pb-0 mt-4">
+                <div class="mr-auto"></div>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => testDownPartyModal.Modal.Hide())">Close</button>
+            </div>
         </div>
     </Modal>
 }

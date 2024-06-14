@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TestUpPartyViewModel : UpParty
+    public class DownPartyTestViewModel : DownParty
     {
         public Modal Modal;
 
@@ -14,9 +14,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Alternatively, start the test with this test URL")]
         public string TestUrl { get; set; }
 
-        public string ExpireAt { get; set; }
+        public long TestExpireAt { get; set; }
 
-        public TestUpPartyViewModel() 
+        public DownPartyTestViewModel() 
         {
             Type = PartyTypes.Login;
         }

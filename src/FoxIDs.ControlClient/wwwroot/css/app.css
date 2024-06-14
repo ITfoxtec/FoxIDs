@@ -491,6 +491,20 @@ img.logo {
         background-color: #fff !important;
     }
 
+.btn-outline-dark {
+    color: #343a40;
+    border-color: #343a40
+}
+
+    .btn-outline-dark:hover {
+        color: #343a40 !important;
+        background-color: #d3d6da !important;
+    }
+
+    .btn-outline-dark:not(:disabled):not(.disabled):active, .btn-outline-dark:not(:disabled):not(.disabled).active, .show > .btn-outline-dark.dropdown-toggle {
+        color: #343a40 !important;
+        background-color: #d3d6da !important;
+    }
 
 .toggle.btn-outline-secondary .toggle-handle {
     background-color: #6c757d !important;

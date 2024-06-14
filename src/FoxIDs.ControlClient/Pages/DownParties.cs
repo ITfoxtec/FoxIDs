@@ -136,6 +136,7 @@ namespace FoxIDs.Client.Pages
         private async Task InitAndShowTestUpPartyAsync()
         {
             testDownPartyModal.Error = null;
+            testDownPartyModal.DisplayName = null;
             testDownPartyModal.TestUrl = null;
             testDownPartyModal.TestExpireAt = 0;
 
@@ -150,6 +151,7 @@ namespace FoxIDs.Client.Pages
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 
+                testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;
                 testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
                 testDownPartyModal.TestExpireAt = downPartyTestStartResponse.TestExpireAt;
 

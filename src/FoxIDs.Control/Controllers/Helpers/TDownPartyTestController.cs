@@ -141,7 +141,7 @@ namespace FoxIDs.Controllers
 
                 if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testUpPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
 
-                mParty.DisplayName = $"Test application{(mParty.AllowUpParties.Count() == 1 ? $" [{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : string.Empty)}";
+                mParty.DisplayName = $"Test application {(mParty.AllowUpParties.Count() == 1 ? $"[{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : $"- {mParty.Name}")}";
 
                 await tenantDataRepository.CreateAsync(mParty);
 
@@ -235,6 +235,8 @@ namespace FoxIDs.Controllers
 
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {
+                    Name = mParty.Name,
+                    DisplayName = mParty.DisplayName,
                     IdTokenClaims = mapper.Map<List<Api.ClaimAndValues>>(idTokenPrincipal.Claims.ToClaimAndValues()),
                     AccessTokenClaims = mapper.Map<List<Api.ClaimAndValues>>(accessTokenPrincipal.Claims.ToClaimAndValues()),
                     IdToken = tokenResponse.IdToken,

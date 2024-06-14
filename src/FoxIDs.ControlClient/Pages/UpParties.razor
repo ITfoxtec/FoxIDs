@@ -265,7 +265,7 @@
 {
     <Modal @ref="testDownPartyModal.Modal" Title="Test Authentication Method">
         <div class="modal-body">
-            <h6>Test @testDownPartyModal.DisplayName</h6>
+            <FFieldText @bind-Value="testDownPartyModal.DisplayName" For="@(() => testDownPartyModal.DisplayName)" />
             @if (!testDownPartyModal.Error.IsNullOrWhiteSpace())
             {
                 <div class="alert alert-danger" role="alert">

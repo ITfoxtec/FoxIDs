@@ -7,6 +7,17 @@ namespace FoxIDs.Models.Api
 {
     public class DownPartyTestResultResponse
     {
+        /// <summary>
+        /// Test application name.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
+
         [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "ID token claims")]
         public List<ClaimAndValues> IdTokenClaims { get; set; }

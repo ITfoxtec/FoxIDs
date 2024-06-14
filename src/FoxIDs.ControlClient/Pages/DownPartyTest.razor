@@ -7,7 +7,7 @@
     {
         <div class="d-flex">
             <div class="mr-auto">
-                <h3>Test application result</h3>
+                <h3>@response.DisplayName</h3>
             </div>
             <div>
                 <a class="btn btn-link" href="@response.EndSessionUrl">Log off</a>
@@ -23,9 +23,9 @@
         <div class="form-group active-group active">
             <Label For="@(() => response.IdTokenClaims)" class="label-control" />
             <ul class="list-group">
-                @foreach (var claimAndValues in response.IdTokenClaims)
-                {
-                    <li class="list-group-item">
+                <li class="list-group-item">
+                    @foreach (var claimAndValues in response.IdTokenClaims)
+                    {
                         <div class="row">
                             <div class="col-12">
                                 <i>@claimAndValues.Claim</i>
@@ -35,8 +35,8 @@
                                 }
                             </div>
                         </div>
-                    </li>
-                }
+                    }
+            </li>
             </ul>
         </div>
 
@@ -53,9 +53,9 @@
         <div class="form-group active-group active">
             <Label For="@(() => response.AccessTokenClaims)" class="label-control" />
             <ul class="list-group">
-                @foreach (var claimAndValues in response.AccessTokenClaims)
-                {
-                    <li class="list-group-item">
+                <li class="list-group-item">
+                    @foreach (var claimAndValues in response.AccessTokenClaims)
+                    {
                         <div class="row">
                             <div class="col-12">
                                 <i>@claimAndValues.Claim</i>
@@ -65,8 +65,8 @@
                                 }
                             </div>
                         </div>
-                    </li>
-                }
+                    }
+                </li>
             </ul>
         </div>
 

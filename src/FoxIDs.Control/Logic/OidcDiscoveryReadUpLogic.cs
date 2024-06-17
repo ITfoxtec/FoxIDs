@@ -10,12 +10,12 @@ namespace FoxIDs.Logic
     public class OidcDiscoveryReadUpLogic<MParty, MClient> : LogicBase where MParty : OAuthUpParty<MClient> where MClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly OidcDiscoveryReadLogic<MParty, MClient> oidcDiscoveryReadLogic;
+        private readonly OidcDiscoveryReadModelLogic<MParty, MClient> oidcDiscoveryReadModelLogic;
 
-        public OidcDiscoveryReadUpLogic(TelemetryScopedLogger logger, OidcDiscoveryReadLogic<MParty, MClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(TelemetryScopedLogger logger, OidcDiscoveryReadModelLogic<MParty, MClient> oidcDiscoveryReadModelLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
+            this.oidcDiscoveryReadModelLogic = oidcDiscoveryReadModelLogic;
         }
 
         public async Task<bool> PopulateModelAsync(ModelStateDictionary modelState, MParty mp)
@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             {
                 if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    await oidcDiscoveryReadLogic.PopulateModelAsync(mp);
+                    await oidcDiscoveryReadModelLogic.PopulateModelAsync(mp);
 
                     if(mp.UpdateState == PartyUpdateStates.AutomaticStopped)
                     {

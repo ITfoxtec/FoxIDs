@@ -16,9 +16,9 @@ namespace FoxIDs.Client.Services
         protected readonly RouteBindingLogic routeBindingLogic;
         private readonly TrackSelectedLogic trackSelectedLogic;
 
-        public BaseService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic, bool secureService = true)
+        public BaseService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic, bool sendAccessToken = true)
         {
-            httpClient = httpClientFactory.CreateClient(secureService ? HttpClientSecureLogicalName : HttpClientLogicalName);
+            httpClient = httpClientFactory.CreateClient(sendAccessToken ? HttpClientSecureLogicalName : HttpClientLogicalName);
             this.routeBindingLogic = routeBindingLogic;
             this.trackSelectedLogic = trackSelectedLogic;
         }
@@ -39,10 +39,16 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
+        protected string GetApiUrl(string url, string tenantName, string trackName)
+        {
+            url = url.Replace("{tenant}", tenantName);            
+            return GetApiUrl(url, trackName);
+        }
+
         protected string GetApiUrl(string url, string trackName)
         {
             if (!trackName.IsNullOrWhiteSpace() && url.Contains("{track}"))
-            { 
+            {
                 url = url.Replace("{track}", trackName);
             }
             return url;

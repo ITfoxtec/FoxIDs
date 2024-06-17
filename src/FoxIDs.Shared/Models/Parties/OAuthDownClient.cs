@@ -56,19 +56,19 @@ namespace FoxIDs.Models
 
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)] 
         [JsonProperty(PropertyName = "authorization_code_lifetime")]
-        public int? AuthorizationCodeLifetime { get; set; }
+        public int? AuthorizationCodeLifetime { get; set; } = 30;
 
         [Range(Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax)]
         [JsonProperty(PropertyName = "access_token_lifetime")]
-        public int AccessTokenLifetime { get; set; }
+        public int AccessTokenLifetime { get; set; } = 3600;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
         [JsonProperty(PropertyName = "refresh_token_lifetime")]
-        public int? RefreshTokenLifetime { get; set; }
+        public int? RefreshTokenLifetime { get; set; } = 36000;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMax)]
         [JsonProperty(PropertyName = "refresh_token_absolute_lifetime")]
-        public int? RefreshTokenAbsoluteLifetime { get; set; }
+        public int? RefreshTokenAbsoluteLifetime { get; set; } = 86400;
 
         [JsonProperty(PropertyName = "refresh_token_use_one_time")]
         public bool? RefreshTokenUseOneTime { get; set; }

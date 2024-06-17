@@ -384,7 +384,7 @@ namespace FoxIDs
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int DisplayNameLength = 100;
-                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+()\[\]{} ]*$";
                 public const int NoteLength = 200;
 
                 public const int IssuerLength = 300;
@@ -398,6 +398,8 @@ namespace FoxIDs
 
                 public const int AllowUpPartyNamesMin = 0;
                 public const int AllowUpPartyNamesMax = 200;
+
+                public const int UrlLengthMax = 10240;
             }
 
             public static class OAuthDownParty
@@ -466,6 +468,14 @@ namespace FoxIDs
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
                 }
+            }
+
+            public static class OidcDownPartyTest
+            {
+                public const char StateSplitKey = ':';
+
+                public const int UpPartyNamesMin = 1;
+                public const int ClaimsMin = 1;
             }
 
             public static class TrackLinkDownParty
@@ -721,12 +731,12 @@ namespace FoxIDs
 
         public static class OAuth
         {
-            public readonly static string[] DefaultResponseTypes = new string[] 
-            {
+            public readonly static string[] DefaultResponseTypes =
+            [
                 FoxI.IdentityConstants.ResponseTypes.Code, 
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token}", 
                 FoxI.IdentityConstants.ResponseTypes.Token
-            };
+            ];
 
             public static class ResponseErrors
             {
@@ -744,14 +754,14 @@ namespace FoxIDs
 
         public static class Oidc
         {
-            public readonly static string[] DefaultResponseTypes = new string[]
-            {
+            public readonly static string[] DefaultResponseTypes =
+            [
                 FoxI.IdentityConstants.ResponseTypes.Code,
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 FoxI.IdentityConstants.ResponseTypes.IdToken
-            };
+            ];
 
             public static class Acr
             {

@@ -2,6 +2,10 @@
 
 FoxIDs can be connected to Facebook with OpenID Connect and authenticate users with Facebook login or Facebook Limited login.
 
+> You can test the Facebook login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Facebook`.  
+> Take a look at the Facebook sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication methods` tab.
+
 ## Configure Facebook
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and read the users claims from the ID token.
@@ -12,9 +16,8 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  2. Click **New method**
  3. Select **OpenID Provider**
  4. Add the **Name** e.g. Facebook
- 5. Add the Facebook **Authority**, you can either select to use Facebook login with the `https://www.facebook.com` authority or Facebook Limited login with the `https://limited.facebook.com` authority
- 
-![Read the redirect URLs](images/howto-oidc-facebook-readredirect.png)
+ 5. Add the Facebook **Authority**, you can either select to use Facebook login with the `https://www.facebook.com/` authority or Facebook Limited login with the `https://limited.facebook.com/` authority
+ ![Read the redirect URLs](images/howto-oidc-facebook-readredirect.png)
 
  6. Read the **Redirect URL** and save it for later
 
@@ -29,22 +32,22 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  5. Probably select **No, I'm not building a game**
  6. Click on **Next**
  7. Fill in the required details
- 8. Click on **Create app**
  ![App details on Facebook](images/howto-oidc-facebook-app-details.png)
+ 8. Click on **Create app**
  
  9. Enter your Facebook password and the app is created 
  10. Click **Customize adding a Facebook Login button**
  11. Click **Go to settings**
  12. Add the FoxIDs **Redirect URL** from before in the **Valid OAuth Redirect URIs** field
- 13. Click **Save changes** in the bottom right corner
  ![Rediredt URL on Facebook](images/howto-oidc-facebook-redirect-url.png)
+ 13. Click **Save changes** in the bottom right corner
  
  14. In the Permissions section click **Add** next to **email** permission, which change the status to **Ready for testing**.
  ![Email permission on Facebook](images/howto-oidc-facebook-email.png)
   
  15. Click **Go back** 
 
- 16. In the left navigation bar, click on **App settings** then select **Basic**
+ 16. In the left navigation bar, click **App settings** then select **Basic**
  17. Read the **App ID** and **App Secret** and save it for later
  18. Fill in the required details
  
@@ -53,7 +56,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  1. Click the **Advanced options** in the top right corner of this configuration section
  2. Disable the **Single logout** switch
  3. Add the **Optional custom SP client ID** from Facebook called **App ID**
- 4. Add the two scopes `email` and `public_profile`
+ 4. Add the two **scopes** `email` and `public_profile`
  5. Set the **Use PKCE** switch to **No**
  6. Add the **Client secret** from Facebook called **App Secret**
  7. Set the **Read claims from the ID token instead of the access token** switch to **Yes**
@@ -61,9 +64,8 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  9. Disable the **Front channel logout** switch
  10. Disable the **Front channel logout session required** switch
  ![Configuration in FoxIDs](images/howto-oidc-facebook-config.png)
-
  11. Click **Create**
 
 That's it, you are done.
  
-Your new Facebook authentication method can be selected as an allowed authentication method in a application registration.
+Your new Facebook authentication method can be selected as an allowed authentication method in an application registration.

@@ -268,8 +268,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();
-                
+                selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();                
             }
             catch (TokenUnavailableException)
             {

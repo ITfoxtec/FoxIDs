@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models;
+using FoxIDs.Models.Master;
 using ITfoxtec.Identity;
 
 namespace FoxIDs
@@ -30,6 +31,10 @@ namespace FoxIDs
             else if (id.StartsWith("prisk:"))
             {
                 return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+            else if (id.StartsWith($"{Constants.Models.DataType.DataProtection}:"))
+            {
+                return DataProtection.PartitionIdFormat(new MasterDocument.IdKey());
             }
             else
             {

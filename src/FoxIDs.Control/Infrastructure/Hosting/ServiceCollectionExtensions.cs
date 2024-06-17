@@ -113,11 +113,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
             }
 
-            if (settings.Options.Cache == CacheOptions.Redis)
-            {
-                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString));
-            }
-
             services.AddApiSwagger();
             services.AddAutoMapper();
 

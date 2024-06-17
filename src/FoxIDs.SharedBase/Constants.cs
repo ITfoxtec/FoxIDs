@@ -163,6 +163,7 @@ namespace FoxIDs
                 public const string RefreshTokenGrant = "rtgrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
+                public const string DataProtection = "datap";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -205,6 +206,15 @@ namespace FoxIDs
                 public const int CountMin = 1;
                 public const int PasswordSha1HashLength = 40;
                 public const string PasswordSha1HashRegExPattern = @"^[A-F0-9]*$";
+            }
+
+            public static class DataProtection
+            {
+                public const int IdLength = 70;
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
+                public const int NameLength = 40;
+                public const string NameRegExPattern = @"^[a-z0-9\-]*$";
+                public const int KeyDataLength = 4000;
             }
 
             public static class SecretHash

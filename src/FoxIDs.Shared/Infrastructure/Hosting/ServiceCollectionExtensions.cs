@@ -164,12 +164,12 @@ namespace FoxIDs.Infrastructure.Hosting
             else if(settings.Options.Cache == CacheOptions.File)
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(settings.FileData.DataPath, "keys")));
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(settings.FileData.DataPath, "data", "keys")));
             }
             else
             {
                 services.AddDataProtection()
-                    .PersistKeysToCacheNotRedis(settings.Options.Cache, "data_protection_keys");
+                    .PersistKeysToGeneralRepository();
             }
 
             return services;

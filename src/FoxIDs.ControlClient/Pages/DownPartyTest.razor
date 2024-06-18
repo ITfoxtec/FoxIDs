@@ -1,0 +1,100 @@
+﻿@page "/{tenantName}/applications/test"
+@layout HeaderLayout
+
+@if (error.IsNullOrEmpty())
+{
+    @if (response != null)
+    {
+        <div class="d-flex">
+            <div class="mr-auto">
+                <h3>@response.DisplayName</h3>
+            </div>
+            <div>
+                <a class="btn btn-link" href="@response.EndSessionUrl">Log off</a>
+            </div>
+        </div>
+
+        <h5 class="pt-4 pb-3">ID Token</h5>
+
+        <div class="pb-3">
+            <button type="button" class="btn btn-link text-nowrap" @onclick="@(async () => await DecodeIdTokenAsync())">Decode ID Token <i class="bi bi-box-arrow-up-right"></i></button>
+        </div>
+
+        <div class="form-group active-group active">
+            <Label For="@(() => response.IdTokenClaims)" class="label-control" />
+            <ul class="list-group">
+                <li class="list-group-item">
+                    @foreach (var claimAndValues in response.IdTokenClaims)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <i>@claimAndValues.Claim</i>
+                                @foreach (var value in claimAndValues.Values)
+                                {
+                                    <div style="padding-left: 10px">Value: @value</div>
+                                }
+                            </div>
+                        </div>
+                    }
+            </li>
+            </ul>
+        </div>
+
+        <div class="pt-3 text-break">
+            <FFieldTextClipboard @bind-Value="response.IdToken" For="@(() => response.IdToken)" />
+        </div>
+
+        <h5 class="pt-4 pb-3">Access Token</h5>
+
+        <div class="pb-3">
+            <button type="button" class="btn btn-link text-nowrap" @onclick="@(async () => await DecodeAccessTokenAsync())">Decode Access Token <i class="bi bi-box-arrow-up-right"></i></button>
+        </div>
+
+        <div class="form-group active-group active">
+            <Label For="@(() => response.AccessTokenClaims)" class="label-control" />
+            <ul class="list-group">
+                <li class="list-group-item">
+                    @foreach (var claimAndValues in response.AccessTokenClaims)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <i>@claimAndValues.Claim</i>
+                                @foreach (var value in claimAndValues.Values)
+                                {
+                                    <div style="padding-left: 10px">Value: @value</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </li>
+            </ul>
+        </div>
+
+        <div class="pt-3 text-break">
+            <FFieldTextClipboard @bind-Value="response.AccessToken" For="@(() => response.AccessToken)" />
+        </div>
+
+        <form method="post" action="https://www.foxids.com/tools/jwt" target="_blank" style="display:none">
+            <input type="hidden" name="jwt" value="@response.IdToken" />
+            <input type="submit" value="submit" @ref="submitIdTokenButton" />
+        </form>
+        <form method="post" action="https://www.foxids.com/tools/jwt" target="_blank" style="display:none">
+            <input type="hidden" name="jwt" value="@response.AccessToken" />
+            <input type="submit" value="submit" @ref="submitAccessTokenButton" />
+        </form>
+    }
+    else if (loggedOut)
+    {
+        <h3>Test application</h3>
+
+        <div class="pt-4">You are logged off!</div>
+    }
+}
+else
+{
+    <h3>Test application failed!</h3>
+
+    <div class="m-3 alert alert-danger" role="alert">
+        @error
+    </div>
+}

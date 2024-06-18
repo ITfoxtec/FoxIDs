@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
@@ -42,7 +43,19 @@ namespace FoxIDs.Models
         public List<UpPartyLink> AllowUpParties { get; set; }
 
         [JsonProperty(PropertyName = "restrict_form_action")]
-        public bool RestrictFormAction { get; set; }        
+        public bool RestrictFormAction { get; set; }
+
+        #region TestApp
+        [JsonProperty(PropertyName = "is_test")]
+        public bool IsTest { get; set; }
+
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        [JsonProperty(PropertyName = "test_url")]
+        public string TestUrl { get; set; }
+
+        [JsonProperty(PropertyName = "test_expire_at")]
+        public long TestExpireAt { get; set; }
+        #endregion
 
         public async Task SetIdAsync(IdKey idKey)
         {

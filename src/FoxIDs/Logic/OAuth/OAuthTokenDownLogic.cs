@@ -8,15 +8,12 @@ using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FoxIDs.Logic
 {
@@ -73,12 +70,14 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
                         logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.TokenExchange);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
 
                     default:
@@ -386,8 +385,6 @@ namespace FoxIDs.Logic
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
                 tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
-
-                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);

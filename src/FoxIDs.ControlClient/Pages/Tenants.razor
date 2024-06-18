@@ -12,7 +12,7 @@
         {
             @foreach (var tenant in tenants)
             {
-                <li class="list-group-item @(tenant.Edit ? "active" : string.Empty)">
+                <li class="list-group-item @(tenant.Edit ? "active" : "d-flex justify-content-between align-items-center")">
                     @if (!tenant.Error.IsNullOrWhiteSpace())
                     {
                         <div class="alert alert-danger" role="alert">

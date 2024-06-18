@@ -31,6 +31,10 @@ namespace FoxIDs
             {
                 return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
             }
+            else if (id.StartsWith($"{Constants.Models.DataType.DataProtection}:"))
+            {
+                return DataProtection.PartitionIdFormat(new MasterDocument.IdKey());
+            }
             else
             {
                 return MasterDocument.PartitionIdFormat(new MasterDocument.IdKey());

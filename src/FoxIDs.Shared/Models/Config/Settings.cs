@@ -89,7 +89,7 @@ namespace FoxIDs.Models.Config
         {
             var results = new List<ValidationResult>();
 
-            if (Options.DataStorage == DataStorageOptions.File)
+            if (Options.DataStorage == DataStorageOptions.File || Options.Cache == CacheOptions.File)
             {
                 if (FileData == null)
                 {

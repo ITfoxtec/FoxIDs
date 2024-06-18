@@ -11,9 +11,15 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
         public string DisplayName { get; set; }
 
         [Required]
         public PartyTypes Type { get; set; }
+
+        /// <summary>
+        /// Is test.
+        /// </summary>
+        public bool IsTest { get; set; }
     }
 }

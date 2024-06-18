@@ -12,7 +12,7 @@
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
+        <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" />
         @if (trackLinkDownParty.ShowAdvanced)
         {
             <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />

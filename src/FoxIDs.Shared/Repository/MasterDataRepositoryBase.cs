@@ -30,11 +30,14 @@ namespace FoxIDs.Repository
             {
                 return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
             }
+            else if (typeof(T) == typeof(DataProtection))
+            {
+                return DataProtection.PartitionIdFormat(new MasterDocument.IdKey());
+            }
             else
             {
                 return MasterDocument.PartitionIdFormat(new MasterDocument.IdKey());
             }
-
         }
     }
 }

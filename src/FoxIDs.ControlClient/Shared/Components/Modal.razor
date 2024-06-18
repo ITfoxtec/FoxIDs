@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-md modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">@Title</h5>
+                <h5 class="modal-title">@Title <small class="font-italic">@SubTitle</small></h5>
                 @if (!DisableClose) {
                     <button type="button" class="close" title="Close" @onclick="@(() => Hide())" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -28,6 +28,9 @@
 
     [Parameter]
     public string Title { get; set; }
+
+    [Parameter]
+    public string SubTitle { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

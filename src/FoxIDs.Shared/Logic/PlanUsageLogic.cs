@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
 
         public void LogTokenRequestEvent(UsageLogTokenTypes tokenType)
         {
-            var addRating = GetLogAddRating();
+            var addRating = GetLogAddRating(tokenType);
             logger.Event($"Usage {UsageLogTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
         }
 
@@ -44,54 +44,57 @@ namespace FoxIDs.Logic
             logger.Event($"Usage {planUsageType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, planUsageType.ToString() } });
         }
 
-        private double GetLogAddRating()
+        private double GetLogAddRating(UsageLogTokenTypes? tokenType = null)
         {
-            var scopedLogger = RouteBinding.Logging?.ScopedLogger;
             var rating = 0.0;
-            if (scopedLogger != null)
+            if (tokenType != UsageLogTokenTypes.UserInfo)
             {
-                if (scopedLogger.LogInfoTrace)
+                var scopedLogger = RouteBinding.Logging?.ScopedLogger;
+                if (scopedLogger != null)
                 {
-                    rating += 0.1;
+                    if (scopedLogger.LogInfoTrace)
+                    {
+                        rating += 0.1;
+                    }
+                    if (scopedLogger.LogClaimTrace)
+                    {
+                        rating += 0.4;
+                    }
+                    if (scopedLogger.LogMessageTrace)
+                    {
+                        rating += 0.5;
+                    }
+                    if (scopedLogger.LogMetric)
+                    {
+                        rating += 0.01;
+                    }
                 }
-                if (scopedLogger.LogClaimTrace)
-                {
-                    rating += 0.4;
-                }
-                if (scopedLogger.LogMessageTrace)
-                {
-                    rating += 0.5;
-                }
-                if (scopedLogger.LogMetric)
-                {
-                    rating += 0.01;
-                }
-            }
 
-            var scopedStreamLoggers = RouteBinding.Logging?.ScopedStreamLoggers;
-            if (scopedStreamLoggers?.Count() > 0)
-            {
-                foreach (var scopedStreamLogger in scopedStreamLoggers)
+                var scopedStreamLoggers = RouteBinding.Logging?.ScopedStreamLoggers;
+                if (scopedStreamLoggers?.Count() > 0)
                 {
-                    rating += 0.2;
+                    foreach (var scopedStreamLogger in scopedStreamLoggers)
+                    {
+                        rating += 0.2;
 
-                    if (scopedStreamLogger.LogInfoTrace)
-                    {
-                        rating += 0.005;
+                        if (scopedStreamLogger.LogInfoTrace)
+                        {
+                            rating += 0.005;
+                        }
+                        if (scopedStreamLogger.LogClaimTrace)
+                        {
+                            rating += 0.02;
+                        }
+                        if (scopedStreamLogger.LogMessageTrace)
+                        {
+                            rating += 0.02;
+                        }
+                        if (scopedStreamLogger.LogMetric)
+                        {
+                            rating += 0.001;
+                        }
                     }
-                    if (scopedStreamLogger.LogClaimTrace)
-                    {
-                        rating += 0.02;
-                    }
-                    if (scopedStreamLogger.LogMessageTrace)
-                    {
-                        rating += 0.02;
-                    }
-                    if (scopedStreamLogger.LogMetric)
-                    {
-                        rating += 0.001;
-                    }
-                } 
+                }
             }
 
             return Math.Round(rating, 1);

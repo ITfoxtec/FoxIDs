@@ -111,7 +111,7 @@ h4 {
     }
 
 /*Navbar*/
-.navbar.navbar-main {
+.navbar.navbar-main, .navbar.navbar-main-static {
     border-bottom: 2px solid #fc7e01;
     background-color: #ffffff !important;
 }
@@ -491,6 +491,20 @@ img.logo {
         background-color: #fff !important;
     }
 
+.btn-outline-dark {
+    border-color: #767a7e !important;
+}
+
+    .btn-outline-dark:hover {
+        color: #343a40 !important;
+        background-color: #d3d6da !important;
+        border-color: #767a7e !important;
+    }
+
+    .btn-outline-dark:not(:disabled):not(.disabled):active, .btn-outline-dark:not(:disabled):not(.disabled).active, .show > .btn-outline-dark.dropdown-toggle {
+        color: #343a40 !important;
+        background-color: #d3d6da !important;
+    }
 
 .toggle.btn-outline-secondary .toggle-handle {
     background-color: #6c757d !important;

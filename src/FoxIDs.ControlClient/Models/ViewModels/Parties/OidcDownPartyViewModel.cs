@@ -59,6 +59,22 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Allow CORS origins")]
         public List<string> AllowCorsOrigins { get; set; }
 
+        /// <summary>
+        /// Is test.
+        /// </summary>
+        public bool IsTest { get; set; }
+
+        /// <summary>
+        /// Test URL
+        /// </summary>
+        [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        public string TestUrl { get; set; }
+
+        /// <summary>
+        /// Test expiration time.
+        /// </summary>
+        public long TestExpireAt { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

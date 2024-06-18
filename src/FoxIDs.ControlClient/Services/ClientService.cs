@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Services
     {
         private const string clientConfigApiUri = "api/@master/!clientsettings";
 
-        public ClientService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic, false)
+        public ClientService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic, sendAccessToken: false)
         { }
 
         public async Task<ControlClientSettings> GetControlClientSettingsAsync() => await GetAsync<ControlClientSettings>(clientConfigApiUri);

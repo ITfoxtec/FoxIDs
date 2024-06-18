@@ -60,8 +60,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ValidateApiModelDynamicElementLogic>();
             services.AddTransient<ValidateApiModelExternalUserLogic>();
 
-            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadLogic>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
 
@@ -110,11 +111,6 @@ namespace FoxIDs.Infrastructure.Hosting
                         return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
                     });
                 }
-            }
-
-            if (settings.Options.Cache == CacheOptions.Redis)
-            {
-                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString));
             }
 
             services.AddApiSwagger();

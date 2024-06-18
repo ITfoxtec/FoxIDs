@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AutoMapper;
 using FoxIDs.Logic;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
@@ -19,7 +20,7 @@ namespace FoxIDs.Controllers
         private readonly ValidateModelOAuthOidcPartyLogic validateModelOAuthOidcPartyLogic;
         private readonly OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient> oidcDiscoveryReadUpLogic;
 
-        public TOidcUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelOAuthOidcPartyLogic validateApiModelOAuthOidcPartyLogic, ValidateModelOAuthOidcPartyLogic validateModelOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient> oidcDiscoveryReadUpLogic) : base(logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
+        public TOidcUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelOAuthOidcPartyLogic validateApiModelOAuthOidcPartyLogic, ValidateModelOAuthOidcPartyLogic validateModelOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient> oidcDiscoveryReadUpLogic) : base(settings, logger, mapper, tenantDataRepository, partyLogic, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
         {
             this.validateApiModelOAuthOidcPartyLogic = validateApiModelOAuthOidcPartyLogic;
             this.validateModelOAuthOidcPartyLogic = validateModelOAuthOidcPartyLogic;

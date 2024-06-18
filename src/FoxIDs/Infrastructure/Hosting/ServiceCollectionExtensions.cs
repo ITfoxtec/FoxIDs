@@ -7,13 +7,11 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
-using StackExchange.Redis;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -50,8 +48,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
-            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadModelLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
 
@@ -149,12 +147,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (settings.Options.Cache == CacheOptions.Redis)
             {
-                var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
-                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
-
-                services.AddDataProtection()
-                    .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
-
                 services.AddStackExchangeRedisCache(options =>
                 {
                     options.Configuration = settings.RedisCache.ConnectionString;

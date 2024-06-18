@@ -19,6 +19,7 @@ namespace FoxIDs.Client.Pages
     public partial class UpParties
     {
         private NewUpPartyViewModel newUpPartyModal;
+        private DownPartyTestViewModel testDownPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
 
@@ -30,6 +31,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public TrackService TrackService { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public UpPartyService UpPartyService { get; set; }
@@ -44,6 +48,7 @@ namespace FoxIDs.Client.Pages
         {
             await base.OnInitializedAsync();
             newUpPartyModal = new NewUpPartyViewModel();
+            testDownPartyModal = new DownPartyTestViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -183,7 +188,7 @@ namespace FoxIDs.Client.Pages
             await InvokeAsync(StateHasChanged);
         }
 
-        private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
+        private string UpPartyInfoText(UpParty upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
@@ -205,7 +210,7 @@ namespace FoxIDs.Client.Pages
             {
                 return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
-            throw new NotSupportedException();
+            throw new NotSupportedException($"Type '{upParty.Type}'.");
         }
 
         private void ShowNewUpParty()
@@ -226,6 +231,39 @@ namespace FoxIDs.Client.Pages
             {
                 ShowCreateUpParty(type.Value, tokenExchange);
                 newUpPartyModal.Modal.Hide();
+            }
+        }
+
+        private async Task InitAndShowTestUpPartyAsync(GeneralUpPartyViewModel upParty)
+        {
+            testDownPartyModal.Error = null;
+            testDownPartyModal.DisplayName = null;
+            testDownPartyModal.TestUrl = null;
+            testDownPartyModal.TestExpireAt = 0;
+
+            testDownPartyModal.Modal.Show();
+
+            try
+            {
+                var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
+                {
+                    UpPartyNames = new List<string> { upParty.Name },
+                    RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
+                });
+
+                testDownPartyModal.DisplayName = downPartyTestStartResponse.DisplayName;
+                testDownPartyModal.TestUrl = downPartyTestStartResponse.TestUrl;
+                testDownPartyModal.TestExpireAt = downPartyTestStartResponse.TestExpireAt;
+
+                StateHasChanged();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                testDownPartyModal.Error = ex.Message;
             }
         }
 

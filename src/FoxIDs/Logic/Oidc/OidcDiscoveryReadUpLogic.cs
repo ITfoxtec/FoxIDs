@@ -15,15 +15,15 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ICacheProvider cacheProvider;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic;
+        private readonly OidcDiscoveryReadModelLogic<TParty, TClient> oidcDiscoveryReadModelLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, OidcDiscoveryReadModelLogic<TParty, TClient> oidcDiscoveryReadModelLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.cacheProvider = cacheProvider;
             this.tenantDataRepository = tenantDataRepository;
-            this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
+            this.oidcDiscoveryReadModelLogic = oidcDiscoveryReadModelLogic;
         }
 
         public async Task CheckOidcDiscoveryAndUpdatePartyAsync(TParty party)
@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    await oidcDiscoveryReadLogic.PopulateModelAsync(party);
+                    await oidcDiscoveryReadModelLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {

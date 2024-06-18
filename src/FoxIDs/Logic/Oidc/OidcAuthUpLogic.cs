@@ -64,6 +64,8 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
+            planUsageLogic.LogLoginEvent(PartyTypes.Oidc);
+
             await loginRequest.ValidateObjectAsync();
 
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
@@ -637,11 +639,6 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
-
-                if (error.IsNullOrEmpty())
-                {
-                    planUsageLogic.LogLoginEvent(PartyTypes.Oidc);
-                }
 
                 switch (sequenceData.DownPartyLink.Type)
                 {

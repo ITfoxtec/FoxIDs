@@ -16,7 +16,6 @@ using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
 using System;
 using System.Net.Http;
-using System.IO;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -161,13 +160,9 @@ namespace FoxIDs.Infrastructure.Hosting
                 services.AddDataProtection()
                     .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
             }
-            else if(settings.Options.Cache == CacheOptions.File)
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(settings.FileData.DataPath, "data", "keys")));
-            }
             else
             {
+                // Otherwise save data protection keys in the configured DataStorage using IMasterDataRepository.
                 services.AddDataProtection()
                     .PersistKeysToGeneralRepository();
             }

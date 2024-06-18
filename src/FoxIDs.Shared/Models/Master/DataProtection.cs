@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Models.Master
+namespace FoxIDs.Models
 {
     public class DataProtection : MasterDocument
     {

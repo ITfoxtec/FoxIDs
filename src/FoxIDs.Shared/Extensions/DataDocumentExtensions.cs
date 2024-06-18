@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Models.Master;
 using ITfoxtec.Identity;
 
 namespace FoxIDs

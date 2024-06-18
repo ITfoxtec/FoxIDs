@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models.Master;
+﻿using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.DependencyInjection;

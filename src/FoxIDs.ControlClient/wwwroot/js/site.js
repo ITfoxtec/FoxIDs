@@ -41,3 +41,7 @@
     setInterval(browserValueCheck, 100);
 
 })();
+
+function triggerClick(elt) {
+    elt.click();
+}

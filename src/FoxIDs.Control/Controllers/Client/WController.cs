@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using System.Globalization;
 using System.Reflection;
 using System;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers.Client
 {
@@ -29,26 +30,23 @@ namespace FoxIDs.Controllers.Client
             {
                 var file = currentEnvironment.WebRootFileProvider.GetFileInfo("index.html");
                 indexFile = System.IO.File.ReadAllText(file.PhysicalPath);
-                indexFile = indexFile.Replace("{version}", GetBuildDate().ToString("yyyyMMddHHmmss"));
-                indexFile = indexFile.Replace("{min}", currentEnvironment.IsDevelopment() ? string.Empty : ".min");
+                indexFile = indexFile.Replace("{version}", GetBuildDate());
             }
             return Content(indexFile, "text/html");
         }
 
-        private static DateTime GetBuildDate()
+        private static string GetBuildDate()
         {
-            const string BuildVersionMetadataPrefix = "+build";
-
             var attribute = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             if (!string.IsNullOrWhiteSpace(attribute?.InformationalVersion))
             {
-                var index = attribute.InformationalVersion.IndexOf(BuildVersionMetadataPrefix);
-                if (index > 0)
+                var versionSplit = attribute.InformationalVersion.Split('+');
+                if (versionSplit?.Length >= 1)
                 {
-                    var dateTimeValue = attribute.InformationalVersion.Substring(index + BuildVersionMetadataPrefix.Length);
-                    if (DateTime.TryParseExact(dateTimeValue, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+                    var version = versionSplit[0];
+                    if (!version.IsNullOrEmpty())
                     {
-                        return result;
+                        return version;
                     }
                 }
             }

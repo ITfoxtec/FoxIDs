@@ -16,12 +16,14 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, PlanUsageLogic planUsageLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
+            this.planUsageLogic = planUsageLogic;
             this.oidcJwtDownLogic = oidcJwtDownLogic;
         }
 
@@ -34,6 +36,8 @@ namespace FoxIDs.Logic
             try
             {
                 var claims = await GetAccessTokenClaims();
+
+                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.UserInfo);
 
                 if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
                 {

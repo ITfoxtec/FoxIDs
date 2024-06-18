@@ -9,6 +9,7 @@ using System;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
@@ -18,6 +19,7 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
@@ -28,8 +30,9 @@ namespace FoxIDs.Controllers
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateModelGenericPartyLogic validateModelGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
+        public GenericPartyApiController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
@@ -49,6 +52,15 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
+                if (mParty is DownParty mDownParty)
+                {
+                    if (mDownParty.IsTest)
+                    {
+                        var mDownPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, name));
+                        var arDownPartyTest = mapper.Map<Api.OidcDownParty>(mDownPartyTest);
+                        return base.Ok(arDownPartyTest);
+                    }
+                }
                 return base.Ok(ModelToApiMap(mParty));
             }
             catch (FoxIDsDataException ex)
@@ -150,6 +162,24 @@ namespace FoxIDs.Controllers
                     {
                         mOidcDownParty.Client.Secrets = tempMParty.Client.Secrets;
                     }
+
+                    if(tempMParty.IsTest)
+                    {
+                        var tempMPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(mParty.Id);
+                        tempMPartyTest.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
+                        tempMPartyTest.DisplayName = mOidcDownParty.DisplayName;
+                        tempMPartyTest.Note = mOidcDownParty.Note;
+                        tempMPartyTest.AllowUpParties = mOidcDownParty.AllowUpParties;
+                        tempMPartyTest.Client.ResourceScopes = mOidcDownParty.Client.ResourceScopes;
+                        tempMPartyTest.Client.Scopes = mOidcDownParty.Client.Scopes;
+                        tempMPartyTest.Client.Claims = mOidcDownParty.Client.Claims;
+                        tempMPartyTest.ClaimTransforms = mOidcDownParty.ClaimTransforms;
+
+                        await tenantDataRepository.UpdateAsync(tempMPartyTest);
+                        await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
+
+                        return Ok(mapper.Map<AParty>(tempMPartyTest));
+                    }
                 }
                 else if (mParty is OAuthDownParty mOAuthDownParty)
                 {
@@ -246,24 +276,29 @@ namespace FoxIDs.Controllers
             var arParty = mapper.Map<AParty>(mParty);
             if (arParty is Api.OidcUpParty arOidcUpParty)
             {
-                if (arOidcUpParty.Client?.ClientSecret != null)
-                {
-                    if (arOidcUpParty.Client.ClientSecret.Length > 20)
-                    {
-                        arOidcUpParty.Client.ClientSecret = arOidcUpParty.Client.ClientSecret.Substring(0, 3);
-                    }
-                }
+                OidcUpPartyMapSecret(arOidcUpParty);
             }
             return arParty;
         }
 
+        private void OidcUpPartyMapSecret(Api.OidcUpParty arOidcUpParty)
+        {
+            if (arOidcUpParty.Client?.ClientSecret != null)
+            {
+                if (arOidcUpParty.Client.ClientSecret.Length > 20)
+                {
+                    arOidcUpParty.Client.ClientSecret = arOidcUpParty.Client.ClientSecret.Substring(0, 3);
+                }
+            }
+        }
+
         private bool IsUpParty()
         {
-            if (EqualsBaseType(0, typeof(MParty), (typeof(UpParty))))
+            if (EqualsBaseType(0, typeof(MParty), typeof(UpParty)))
             {
                 return true;
             }
-            else if (EqualsBaseType(0, typeof(MParty), (typeof(DownParty))))
+            else if (EqualsBaseType(0, typeof(MParty), typeof(DownParty)))
             {
                 return false;
             }

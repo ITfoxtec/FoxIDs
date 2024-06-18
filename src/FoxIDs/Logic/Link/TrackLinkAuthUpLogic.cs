@@ -49,6 +49,8 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
+            planUsageLogic.LogLoginEvent(PartyTypes.TrackLink);
+
             await loginRequest.ValidateObjectAsync();
 
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
@@ -168,11 +170,6 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthResponseDownAsync(TrackLinkUpSequenceData sequenceData, List<Claim> claims, string error, string errorDescription)
         {
-            if (error.IsNullOrEmpty())
-            {
-                planUsageLogic.LogLoginEvent(PartyTypes.TrackLink);
-            }
-
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

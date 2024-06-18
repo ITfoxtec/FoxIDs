@@ -6,12 +6,12 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -22,12 +22,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly PartyLogic partyLogic;
 
-        public TFilterDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TFilterDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.partyLogic = partyLogic;
         }
 
         /// <summary>
@@ -39,6 +41,8 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)
         {
+            await partyLogic.DeleteExporedDownParties();
+
             try
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Models;
 using System.Collections.Generic;
-using System;
 
 namespace FoxIDs.Logic
 {
@@ -42,15 +41,15 @@ namespace FoxIDs.Logic
                 JwksUri = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
                 FrontchannelLogoutSupported = true,
                 FrontchannelLogoutSessionSupported = true,
-                TokenEndpointAuthMethodsSupported = new[] { IdentityConstants.TokenEndpointAuthMethods.ClientSecretPost, IdentityConstants.TokenEndpointAuthMethods.ClientSecretBasic, IdentityConstants.TokenEndpointAuthMethods.PrivateKeyJwt },
-                TokenEndpointAuthSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 }
+                TokenEndpointAuthMethodsSupported = [IdentityConstants.TokenEndpointAuthMethods.ClientSecretPost, IdentityConstants.TokenEndpointAuthMethods.ClientSecretBasic, IdentityConstants.TokenEndpointAuthMethods.PrivateKeyJwt],
+                TokenEndpointAuthSigningAlgValuesSupported = [IdentityConstants.Algorithms.Asymmetric.RS256]
             };
 
             if (party?.Client != null)
             {
-                oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
-                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/ };
-                oidcDiscovery.IdTokenSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 };
+                oidcDiscovery.ResponseModesSupported = [IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost];
+                oidcDiscovery.SubjectTypesSupported = [IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/];
+                oidcDiscovery.IdTokenSigningAlgValuesSupported = [IdentityConstants.Algorithms.Asymmetric.RS256];
                 oidcDiscovery.ResponseTypesSupported = party.Client.ResponseTypes;
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported.ConcatOnce(party.Client.Scopes?.Select(s => s.Scope));
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken)
@@ -58,18 +57,18 @@ namespace FoxIDs.Logic
 
                 if(party?.Client.RequirePkce == true)
                 {
-                    oidcDiscovery.CodeChallengeMethodsSupported = new[] { IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256 };
+                    oidcDiscovery.CodeChallengeMethodsSupported = [IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256];
                 }
             }
             else
             {
-                oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
-                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/ };
-                oidcDiscovery.IdTokenSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 };
-                oidcDiscovery.ResponseTypesSupported = new[] { IdentityConstants.ResponseTypes.Code };
+                oidcDiscovery.ResponseModesSupported = [IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost];
+                oidcDiscovery.SubjectTypesSupported = [IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/];
+                oidcDiscovery.IdTokenSigningAlgValuesSupported = [IdentityConstants.Algorithms.Asymmetric.RS256];
+                oidcDiscovery.ResponseTypesSupported = [IdentityConstants.ResponseTypes.Code];
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported;
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken);
-                oidcDiscovery.CodeChallengeMethodsSupported = new[] { IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256 };
+                oidcDiscovery.CodeChallengeMethodsSupported = [IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256];
             }
 
             return oidcDiscovery;

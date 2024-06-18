@@ -154,13 +154,17 @@ namespace FoxIDs.Repository
         private string GetDataType<T>() where T : MasterDocument
         {
             var type = typeof(T);
-            if (type == typeof(RiskPassword))
+            if (type == typeof(Plan))
+            {
+                return Constants.Models.DataType.Plan;
+            }
+            else if(type == typeof(RiskPassword))
             {
                 return Constants.Models.DataType.RiskPassword;
             }
-            else if (type == typeof(Plan))
+            else if (type == typeof(DataProtection))
             {
-                return Constants.Models.DataType.Plan;
+                return Constants.Models.DataType.DataProtection;
             }
             else
             {

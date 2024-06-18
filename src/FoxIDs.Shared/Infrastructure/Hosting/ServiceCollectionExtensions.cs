@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using MongoDB.Driver;
+using StackExchange.Redis;
+using Microsoft.AspNetCore.DataProtection;
 using System;
 using System.Net.Http;
 
@@ -149,6 +151,21 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
+
+            if (settings.Options.Cache == CacheOptions.Redis)
+            {
+                var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
+                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
+                services.AddDataProtection()
+                    .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
+            }
+            else
+            {
+                // Otherwise save data protection keys in the configured DataStorage using IMasterDataRepository.
+                services.AddDataProtection()
+                    .PersistKeysToGeneralRepository();
+            }
 
             return services;
         }

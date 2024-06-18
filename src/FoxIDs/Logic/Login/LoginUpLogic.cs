@@ -39,6 +39,8 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
+            planUsageLogic.LogLoginEvent(PartyTypes.Login);
+
             if (!isAutoRedirect)
             {
                 await loginRequest.ValidateObjectAsync();
@@ -51,7 +53,7 @@ namespace FoxIDs.Logic
                 DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
-                ToUpParties = new [] { new HrdUpPartySequenceData { Name = partyLink.Name } },
+                ToUpParties = [new HrdUpPartySequenceData { Name = partyLink.Name }],
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
@@ -175,8 +177,6 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
-
-            planUsageLogic.LogLoginEvent(PartyTypes.Login);
 
             switch (sequenceData.DownPartyLink.Type)
             {

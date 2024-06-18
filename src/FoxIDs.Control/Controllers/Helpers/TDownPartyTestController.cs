@@ -225,8 +225,7 @@ namespace FoxIDs.Controllers
             {
                 var mParty = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, partyName));
 
-                var authority = await GetAuthorityAsync(partyName);
-                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, authority, clientSecret, mParty.Nonce, testUpPartyRequest.Code);
+                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testUpPartyRequest.Code);
 
                 var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
                 {
@@ -234,7 +233,7 @@ namespace FoxIDs.Controllers
                     PostLogoutRedirectUri = mParty.Client.RedirectUris.First(),
                 };
                 var requestDictionary = rpInitiatedLogoutRequest.ToDictionary();
-                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(authority, Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
+                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(await GetAuthorityAsync(partyName), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
 
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {
@@ -268,8 +267,7 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-
-        private async Task<string> GetAuthorityAsync(string partyName)
+        private async Task<string> GetAuthorityAsync(string partyName, bool backendCall = false)
         {
             var routeBinding = RouteBinding;
             var urlItems = new List<string>();
@@ -281,10 +279,10 @@ namespace FoxIDs.Controllers
             urlItems.Add(routeBinding.TrackName);
             urlItems.Add($"{partyName}(*)");
 
-            return UrlCombine.Combine(settings.FoxIDsEndpoint, urlItems.ToArray());
+            return UrlCombine.Combine(!backendCall || settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace() ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint, urlItems.ToArray());
         }
 
-        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string authority, string clientSecret, string nonce, string code)
+        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)
         {
             var tokenRequest = new TokenRequest
             {
@@ -304,7 +302,7 @@ namespace FoxIDs.Controllers
                 CodeVerifier = mParty.CodeVerifier,
             };
 
-            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(authority);
+            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(await GetAuthorityAsync(mParty.Name, backendCall: true));
 
             var requestDictionary = tokenRequest.ToDictionary().AddToDictionary(clientCredentials).AddToDictionary(codeVerifierSecret);
 

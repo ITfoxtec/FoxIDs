@@ -47,14 +47,14 @@ namespace FoxIDs.Models
 
         #region TestApp
         [JsonProperty(PropertyName = "is_test")]
-        public bool IsTest { get; set; }
+        public bool? IsTest { get; set; }
 
         [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
         [JsonProperty(PropertyName = "test_url")]
         public string TestUrl { get; set; }
 
         [JsonProperty(PropertyName = "test_expire_at")]
-        public long TestExpireAt { get; set; }
+        public long? TestExpireAt { get; set; }
         #endregion
 
         public async Task SetIdAsync(IdKey idKey)

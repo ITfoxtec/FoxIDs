@@ -150,7 +150,7 @@ namespace FoxIDs.Controllers
                     Name = mParty.Name,
                     DisplayName = mParty.DisplayName,
                     TestUrl = testUrl,
-                    TestExpireAt = mParty.TestExpireAt,
+                    TestExpireAt = mParty.TestExpireAt.Value,
                 });
             }
             catch (ValidationException)

@@ -269,17 +269,19 @@ namespace FoxIDs.Controllers
         }
         private async Task<string> GetAuthorityAsync(string partyName, bool backendCall = false)
         {
+            var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
+
             var routeBinding = RouteBinding;
             var urlItems = new List<string>();
             var tenant = await tenantCacheLogic.GetTenantAsync(routeBinding.TenantName);
-            if (!(!tenant.CustomDomain.IsNullOrEmpty() && tenant.CustomDomainVerified))
+            if (useBackendCall || !(!tenant.CustomDomain.IsNullOrEmpty() && tenant.CustomDomainVerified))
             {
                 urlItems.Add(routeBinding.TenantName);
             }
             urlItems.Add(routeBinding.TrackName);
             urlItems.Add($"{partyName}(*)");
 
-            return UrlCombine.Combine(!backendCall || settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace() ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint, urlItems.ToArray());
+            return UrlCombine.Combine(!useBackendCall ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint, urlItems.ToArray());
         }
 
         private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)

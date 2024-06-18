@@ -265,7 +265,19 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-        private string GetAuthority(string partyName) => UrlCombine.Combine(settings.FoxIDsEndpoint, RouteBinding.TenantName, RouteBinding.TrackName, $"{partyName}(*)");
+        private string GetAuthority(string partyName)
+        {
+            var urlItems = new List<string>();
+            var routeBinding = RouteBinding;
+            if (!routeBinding.UseCustomDomain)
+            {
+                urlItems.Add(routeBinding.TenantName);
+            }
+            urlItems.Add(routeBinding.TrackName);
+            urlItems.Add($"{partyName}(*)");
+
+            return UrlCombine.Combine(settings.FoxIDsEndpoint, urlItems.ToArray());
+        }
 
         private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)
         {

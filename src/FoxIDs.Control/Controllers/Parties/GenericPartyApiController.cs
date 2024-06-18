@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
                 var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
                 if (mParty is DownParty mDownParty)
                 {
-                    if (mDownParty.IsTest)
+                    if (mDownParty.IsTest == true)
                     {
                         var mDownPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, name));
                         var arDownPartyTest = mapper.Map<Api.OidcDownParty>(mDownPartyTest);
@@ -163,7 +163,7 @@ namespace FoxIDs.Controllers
                         mOidcDownParty.Client.Secrets = tempMParty.Client.Secrets;
                     }
 
-                    if(tempMParty.IsTest)
+                    if(tempMParty.IsTest == true)
                     {
                         var tempMPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(mParty.Id);
                         tempMPartyTest.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();

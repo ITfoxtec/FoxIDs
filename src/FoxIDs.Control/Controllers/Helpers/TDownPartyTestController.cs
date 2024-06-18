@@ -33,7 +33,6 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly TenantCacheLogic tenantCacheLogic;
         private readonly PartyLogic partyLogic;
         private readonly IDataProtectionProvider dataProtection;
         private readonly ValidateModelGenericPartyLogic validateModelGenericPartyLogic;
@@ -41,13 +40,12 @@ namespace FoxIDs.Controllers
         private readonly OidcDiscoveryReadLogic oidcDiscoveryReadLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TDownPartyTestController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TenantCacheLogic tenantCacheLogic, PartyLogic partyLogic, IDataProtectionProvider dataProtection, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, SecretHashLogic secretHashLogic, OidcDiscoveryReadLogic oidcDiscoveryReadLogic, IHttpClientFactory httpClientFactory) : base(logger)
+        public TDownPartyTestController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic, IDataProtectionProvider dataProtection, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, SecretHashLogic secretHashLogic, OidcDiscoveryReadLogic oidcDiscoveryReadLogic, IHttpClientFactory httpClientFactory) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
-            this.tenantCacheLogic = tenantCacheLogic;
             this.partyLogic = partyLogic;
             this.dataProtection = dataProtection;
             this.validateModelGenericPartyLogic = validateModelGenericPartyLogic;
@@ -94,7 +92,7 @@ namespace FoxIDs.Controllers
                 };
 
                 var requestDictionary = authenticationRequest.ToDictionary().AddToDictionary(codeChallengeRequest);
-                var testUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(await GetAuthorityAsync(partyName), Constants.Routes.OAuthController, Constants.Endpoints.Authorize), requestDictionary);
+                var testUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.Authorize), requestDictionary);
 
                 var mParty = new OidcDownPartyTest
                 {
@@ -233,7 +231,7 @@ namespace FoxIDs.Controllers
                     PostLogoutRedirectUri = mParty.Client.RedirectUris.First(),
                 };
                 var requestDictionary = rpInitiatedLogoutRequest.ToDictionary();
-                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(await GetAuthorityAsync(partyName), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
+                var endSessionUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.EndSession), requestDictionary);
 
                 var testUpPartyResultResponse = new Api.DownPartyTestResultResponse
                 {
@@ -267,14 +265,13 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-        private async Task<string> GetAuthorityAsync(string partyName, bool backendCall = false)
+        private string GetAuthority(string partyName, bool backendCall = false)
         {
             var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
 
             var routeBinding = RouteBinding;
             var urlItems = new List<string>();
-            var tenant = await tenantCacheLogic.GetTenantAsync(routeBinding.TenantName);
-            if (useBackendCall || !(!tenant.CustomDomain.IsNullOrEmpty() && tenant.CustomDomainVerified))
+            if (useBackendCall || !(!routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified))
             {
                 urlItems.Add(routeBinding.TenantName);
             }
@@ -304,7 +301,7 @@ namespace FoxIDs.Controllers
                 CodeVerifier = mParty.CodeVerifier,
             };
 
-            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(await GetAuthorityAsync(mParty.Name, backendCall: true));
+            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(GetAuthority(mParty.Name, backendCall: true));
 
             var requestDictionary = tokenRequest.ToDictionary().AddToDictionary(clientCredentials).AddToDictionary(codeVerifierSecret);
 

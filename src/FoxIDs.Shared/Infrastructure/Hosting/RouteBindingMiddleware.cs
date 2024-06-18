@@ -109,6 +109,8 @@ namespace FoxIDs.Infrastructure.Hosting
             var routeBinding = new RouteBinding
             {
                 UseCustomDomain = useCustomDomain,
+                CustomDomain = tenant.CustomDomain,
+                CustomDomainVerified = tenant.CustomDomainVerified,
                 RouteUrl = $"{(!useCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 PlanName = plan?.Name,
                 TenantName = trackIdKey.TenantName,

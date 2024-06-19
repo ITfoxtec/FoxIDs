@@ -267,18 +267,19 @@ namespace FoxIDs.Controllers
         }
         private string GetAuthority(string partyName, bool backendCall = false)
         {
-            var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
-
             var routeBinding = RouteBinding;
+            var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
+            var hasValidCustomDomain = !routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified;
+
             var urlItems = new List<string>();
-            if (useBackendCall || !(!routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified))
+            if (useBackendCall || !hasValidCustomDomain)
             {
                 urlItems.Add(routeBinding.TenantName);
             }
             urlItems.Add(routeBinding.TrackName);
             urlItems.Add($"{partyName}(*)");
 
-            return UrlCombine.Combine(!useBackendCall ? settings.FoxIDsEndpoint : settings.FoxIDsBackendEndpoint, urlItems.ToArray());
+            return UrlCombine.Combine(useBackendCall ? settings.FoxIDsBackendEndpoint : (hasValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint), urlItems.ToArray());
         }
 
         private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)

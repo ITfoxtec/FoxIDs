@@ -57,13 +57,13 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Start new down-party test.
         /// </summary>
-        /// <param name="TestUpPartyStartRequest">Down-party test start request.</param>
+        /// <param name="testDownPartyRequest">Down-party test start request.</param>
         /// <returns>Down-party test.</returns>
         [ProducesResponseType(typeof(Api.DownPartyTestStartResponse), StatusCodes.Status200OK)]
         [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
-        public async Task<ActionResult<Api.DownPartyTestStartResponse>> PostDownPartyTest([FromBody] Api.DownPartyTestStartRequest testUpPartyRequest)
+        public async Task<ActionResult<Api.DownPartyTestStartResponse>> PostDownPartyTest([FromBody] Api.DownPartyTestStartRequest testDownPartyRequest)
         {
-            if (!await ModelState.TryValidateObjectAsync(testUpPartyRequest)) return BadRequest(ModelState);
+            if (!await ModelState.TryValidateObjectAsync(testDownPartyRequest)) return BadRequest(ModelState);
 
             await partyLogic.DeleteExporedDownParties();
 
@@ -77,9 +77,9 @@ namespace FoxIDs.Controllers
                 var authenticationRequest = new AuthenticationRequest
                 {
                     ClientId = partyName,
-                    ResponseMode = testUpPartyRequest.ResponseMode,
+                    ResponseMode = testDownPartyRequest.ResponseMode,
                     ResponseType = ResponseTypes.Code,
-                    RedirectUri = testUpPartyRequest.RedirectUri,
+                    RedirectUri = testDownPartyRequest.RedirectUri,
                     Scope = new[] { DefaultOidcScopes.OpenId, DefaultOidcScopes.Profile, DefaultOidcScopes.Email, DefaultOidcScopes.Address, DefaultOidcScopes.Phone }.ToSpaceList(),
                     Nonce = RandomGenerator.GenerateNonce(),
                     State = $"{RouteBinding.TrackName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{partyName}{Constants.Models.OidcDownPartyTest.StateSplitKey}{CreateProtector(partyName).Protect(secret)}"
@@ -103,14 +103,14 @@ namespace FoxIDs.Controllers
                     TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
                     Nonce = authenticationRequest.Nonce,
                     CodeVerifier = codeVerifier,                    
-                    AllowUpParties = testUpPartyRequest.UpPartyNames.Select(pName => new UpPartyLink { Name = pName }).ToList(),
+                    AllowUpParties = testDownPartyRequest.UpPartyNames.Select(pName => new UpPartyLink { Name = pName }).ToList(),
                     Client = new OidcDownClient
                     {
                         RedirectUris = new List<string> { authenticationRequest.RedirectUri },
                         ResponseTypes = new List<string> { authenticationRequest.ResponseType },
                         ClientAuthenticationMethod = Models.ClientAuthenticationMethods.ClientSecretPost,
                         RequirePkce = true,
-                        Claims = testUpPartyRequest.Claims.Select(c => new OidcDownClaim { Claim = c }).ToList(),
+                        Claims = testDownPartyRequest.Claims.Select(c => new OidcDownClaim { Claim = c }).ToList(),
                         ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = partyName } },
                         Scopes = new List<OidcDownScope>
                         {
@@ -139,7 +139,7 @@ namespace FoxIDs.Controllers
                 await secretHashLogic.AddSecretHashAsync(oauthClientSecret, secret);
                 mParty.Client.Secrets = [oauthClientSecret];
 
-                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testUpPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
+                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testDownPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
 
                 mParty.DisplayName = $"Test application {(mParty.AllowUpParties.Count() == 1 ? $"[{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : $"- {mParty.Name}")}";
 
@@ -196,14 +196,14 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get the down-party test result.
         /// </summary>
-        /// <param name="TestUpPartyResultRequest">Down-party test result request.</param>
+        /// <param name="testDownPartyRequest">Down-party test result request.</param>
         /// <returns>Down-party test.</returns>
         [ProducesResponseType(typeof(Api.DownPartyTestResultResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Api.DownPartyTestResultResponse>> PutDownPartyTest([FromBody] Api.DownPartyTestResultRequest testUpPartyRequest)
+        public async Task<ActionResult<Api.DownPartyTestResultResponse>> PutDownPartyTest([FromBody] Api.DownPartyTestResultRequest testDownPartyRequest)
         {
-            if (!await ModelState.TryValidateObjectAsync(testUpPartyRequest)) return BadRequest(ModelState);
+            if (!await ModelState.TryValidateObjectAsync(testDownPartyRequest)) return BadRequest(ModelState);
 
-            var stateSplit = testUpPartyRequest.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
+            var stateSplit = testDownPartyRequest.State.Split(Constants.Models.OidcDownPartyTest.StateSplitKey);
             if (stateSplit.Length != 3)
             {
                 throw new Exception("Invalid state format.");
@@ -223,7 +223,7 @@ namespace FoxIDs.Controllers
             {
                 var mParty = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, partyName));
 
-                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testUpPartyRequest.Code);
+                (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testDownPartyRequest.Code);
 
                 var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
                 {
@@ -269,17 +269,18 @@ namespace FoxIDs.Controllers
         {
             var routeBinding = RouteBinding;
             var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
-            var hasValidCustomDomain = !routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified;
+            var useValidCustomDomain = !routeBinding.TrackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase) && 
+                !routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified;
 
             var urlItems = new List<string>();
-            if (useBackendCall || !hasValidCustomDomain)
+            if (useBackendCall || !useValidCustomDomain)
             {
                 urlItems.Add(routeBinding.TenantName);
             }
             urlItems.Add(routeBinding.TrackName);
             urlItems.Add($"{partyName}(*)");
 
-            return UrlCombine.Combine(useBackendCall ? settings.FoxIDsBackendEndpoint : (hasValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint), urlItems.ToArray());
+            return UrlCombine.Combine(useBackendCall ? settings.FoxIDsBackendEndpoint : (useValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint), urlItems.ToArray());
         }
 
         private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)

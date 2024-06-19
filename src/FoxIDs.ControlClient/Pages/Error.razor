@@ -1,0 +1,36 @@
+﻿@page "/-/error"
+@using FoxIDs.Models
+@layout HeaderLayout
+@inject IJSRuntime JSRuntime
+
+<div class="error-page">
+    <p>
+        <h2 class="text-danger">Error</h2>
+        <h4 class="text-danger">An error has occurred. Please try again.</h4>
+    </p>
+
+    @if (errorInfo != null)
+    {
+        <p>
+            Time: <code>@DateTimeOffset.FromUnixTimeSeconds(errorInfo.CreateTime).ToLocalTime()</code><br />
+            Request ID: <code>@errorInfo.RequestId</code><br />
+            <span>Technical error:</span><br />
+            <code>@errorInfo.TechnicalError</code>
+        </p>
+    }
+</div>
+
+@code {
+    private ErrorInfo errorInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        errorInfo = await ReadErrorAsync();
+    }
+
+    private async ValueTask<ErrorInfo> ReadErrorAsync()
+    {
+        var error = await JSRuntime.InvokeAsync<string>("readError");
+        return error.ToObject<ErrorInfo>();
+    }
+}

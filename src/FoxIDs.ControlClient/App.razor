@@ -1,23 +1,52 @@
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (!context.User.Identity.IsAuthenticated)
-                    {
-                        <TenantOidcRedirectToLogin />
-                    }
-                    else
-                    {
-                        <p>You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
+            @if (error.IsNullOrWhiteSpace())
+            {
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        @if (!context.User.Identity.IsAuthenticated)
+                        {
+                            <TenantOidcRedirectToLogin />
+                        }
+                        else
+                        {
+                            <p>You are not authorized to access this resource.</p>
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            }
+            else
+            {
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(HeaderLayout)">
+                </AuthorizeRouteView>
+            }
         </Found>
         <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
+            <LayoutView Layout="@typeof(HeaderLayout)">
                 <p>Sorry, there's nothing at this address.</p>
             </LayoutView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    private string error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        error = await ReadErrorAsync();
+        @if (!error.IsNullOrWhiteSpace())
+        {
+            NavigationManager.NavigateTo("-/error");
+        }
+    }
+
+    private ValueTask<string> ReadErrorAsync()
+    {
+        return JSRuntime.InvokeAsync<string>("readError");
+    }
+}

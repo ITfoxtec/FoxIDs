@@ -1,7 +1,7 @@
 ﻿@page "/-/error"
 @using FoxIDs.Models
 @layout HeaderLayout
-@inject IJSRuntime JSRuntime
+@inject ServerErrorLogic serverErrorLogic
 
 <div class="error-page">
     <p>
@@ -25,12 +25,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        errorInfo = await ReadErrorAsync();
-    }
-
-    private async ValueTask<ErrorInfo> ReadErrorAsync()
-    {
-        var error = await JSRuntime.InvokeAsync<string>("readError");
-        return error.ToObject<ErrorInfo>();
+        errorInfo = await serverErrorLogic.ReadErrorAsync();
     }
 }

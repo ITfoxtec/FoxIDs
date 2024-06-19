@@ -1,10 +1,10 @@
-@inject IJSRuntime JSRuntime
+@inject ServerErrorLogic serverErrorLogic
 @inject NavigationManager NavigationManager
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            @if (error.IsNullOrWhiteSpace())
+            @if (!hasError)
             {
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                     <NotAuthorized>
@@ -34,19 +34,14 @@
 </CascadingAuthenticationState>
 
 @code {
-    private string error;
+    private bool hasError;
 
     protected override async Task OnInitializedAsync()
     {
-        error = await ReadErrorAsync();
-        @if (!error.IsNullOrWhiteSpace())
+        hasError = await serverErrorLogic.HasErrorAsync();
+        @if (hasError)
         {
             NavigationManager.NavigateTo("-/error");
         }
-    }
-
-    private ValueTask<string> ReadErrorAsync()
-    {
-        return JSRuntime.InvokeAsync<string>("readError");
     }
 }

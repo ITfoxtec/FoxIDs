@@ -48,11 +48,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app, Settings settings)
         {
-            if (CurrentEnvironment.IsDevelopment())
-            {
-                app.UseWebAssemblyDebugging();
-            }
-            else
+            if (!CurrentEnvironment.IsDevelopment())
             {
                 app.UseHsts();
             }
@@ -89,6 +85,7 @@ namespace FoxIDs
                 });
             });
 
+            app.UseExceptionHandler($"/{Constants.Routes.DefaultSiteController}/{Constants.Routes.ErrorAction}");
             if (CurrentEnvironment.IsDevelopment())
             {
                 app.UseWebAssemblyDebugging();
@@ -101,7 +98,7 @@ namespace FoxIDs
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapFallbackToController(Constants.Routes.DefaultAction, Constants.Routes.DefaultSiteController);
+                endpoints.MapDynamicControllerRoute<FoxIDsClientRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
             });
         }
     }

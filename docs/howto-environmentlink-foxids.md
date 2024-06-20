@@ -13,34 +13,23 @@ Environment links support login, logout and single logout and it is possible to 
 
 ## Configure integration
 
-The following describes how to connect two environments called `env_x` and `env_y`. The environment `env_x` will be enabled to login with `env_y` as an authentication method.
+The following describes how to connect two environments called `Environment X` and `Environment Y`. The environment `Environment X` will be enabled to login with `Environment Y` as an authentication method.
 
-**1 - Start in the `env_x` environment by creating the Environment Link in [FoxIDs Control Client](control.md#foxids-control-client)**
+**Select in the `Environment X` environment in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the **Authentication Methods** tab
 2. Click **New authentication**
 3. Select **Show advanced**  
-4. Select **Environment Link** 
-3. Add the name e.g., `env_x to env_y` 
-4. Add the `env_y` environment name
-5. Add the application registration name in the `env_y` environment e.g., `env_x-connection` 
+4. Select **Environment Link**     
+   ![Select Environment Link authentication method](images/howto-environmentlink-foxids-auth-method-select.png)
+
+5. Add the name e.g., `Environment X to Y` 
+4. Select the `Environment Y` environment
+   ![Select Environment Link authentication method](images/howto-environmentlink-foxids-auth-method-y-select.png)
 6. Click Create
-
-![Create Environment Link authentication method](images/howto-environmentlink-foxids-auth-method.png)
-
-**2 - Then go to the `env_y` environment and create a Environment Link in [FoxIDs Control Client](control.md#foxids-control-client)**
-
-1. Select the Applications tab
-2. Click Create application registration and then Environment Link
-3. Add the name e.g., `env_x-connection` 
-4. Add the `env_x` environment name
-5. Add the authentication method name in the `env_x` environment e.g., `env_y-connection` 
-6. Select which authentication methods in the `env_y` environment the user is allowed to use for authentication
-6. Click Create
-
-![Create Environment Link application registration](images/howto-environmentlink-foxids-app-reg.png)
 
 That's it, you are done. 
 
-> Your new authentication method `env_y-connection` can now be selected as an allowed authentication method in the application registrations in you `env_x` environment.  
-> The application registrations in you `env_x` environment can read the claims from your `env_y-connection` authentication method. 
+Your new authentication method `Environment X to Y` can now be selected as an allowed authentication method in the application registrations in you `Environment X` environment.  
+
+You can find the application registration `Environment X to Y` in the `Environment Y` environment where authentication method(s) can be selected.

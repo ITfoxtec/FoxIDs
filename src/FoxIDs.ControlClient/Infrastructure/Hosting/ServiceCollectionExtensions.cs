@@ -30,6 +30,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<TrackSelectedLogic>();
             services.AddScoped<MetadataLogic>();
             services.AddScoped<ClipboardLogic>();
+            services.AddScoped<ServerErrorLogic>();
 
             return services;
         }

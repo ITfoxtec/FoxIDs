@@ -13,7 +13,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 **1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Navigate to the **Authentication Methods** tab
- 2. Click **New method**
+ 2. Click **New authentication**
  3. Select **OpenID Provider**
  4. Add the **Name** e.g. Facebook
  5. Add the Facebook **Authority**, you can either select to use Facebook login with the `https://www.facebook.com/` authority or Facebook Limited login with the `https://limited.facebook.com/` authority

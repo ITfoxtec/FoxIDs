@@ -71,6 +71,9 @@ namespace FoxIDs.Client.Shared
         public TrackSelectedLogic TrackSelectedLogic { get; set; }
 
         [Inject]
+        public ServerErrorLogic ServerErrorLogic { get; set; }
+
+        [Inject]
         public TenantService TenantService { get; set; }
 
         [Inject]
@@ -81,29 +84,35 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnInitializedAsync()
         {
-            await ControlClientSettingLogic.InitLoadAsync();
-            await RouteBindingLogic.InitRouteBindingAsync();
+            if (!await ServerErrorLogic.HasErrorAsync())
+            {
+                await ControlClientSettingLogic.InitLoadAsync();
+                await RouteBindingLogic.InitRouteBindingAsync();
+            }
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;
         }
 
         protected override async Task OnParametersSetAsync()
         {
-            var user = (await authenticationStateTask).User;
-            if (user.Identity.IsAuthenticated)
+            if (!await ServerErrorLogic.HasErrorAsync())
             {
-                await LoadAndSelectTracAsync();
-                myProfileClaims = user.Claims;
-                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethodType && c.Value == Constants.DefaultLogin.Name).Any() &&
-                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethod && c.Value == Constants.DefaultLogin.Name).Any() &&
-                    user.Claims.Where(c => c.Type == JwtClaimTypes.Email).Any())
+                var user = (await authenticationStateTask).User;
+                if (user.Identity.IsAuthenticated)
                 {
-                    myProfileMasterMasterLogin = true;
+                    await LoadAndSelectTracAsync();
+                    myProfileClaims = user.Claims;
+                    if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethodType && c.Value == Constants.DefaultLogin.Name).Any() &&
+                        user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethod && c.Value == Constants.DefaultLogin.Name).Any() &&
+                        user.Claims.Where(c => c.Type == JwtClaimTypes.Email).Any())
+                    {
+                        myProfileMasterMasterLogin = true;
+                    }
                 }
-            }
-            else if(notAccessModal != null)
-            {
-                notAccessModal.Show();
+                else if (notAccessModal != null)
+                {
+                    notAccessModal.Show();
+                }
             }
             await base.OnParametersSetAsync();
         }

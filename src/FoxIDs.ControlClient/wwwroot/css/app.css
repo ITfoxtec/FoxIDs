@@ -11,6 +11,10 @@ a {
         color: #d87513;
     }
 
+code {
+    color: #212529 !important;
+}
+
 .btn-link {
     color: #df8935;
 }
@@ -724,3 +728,7 @@ img.logo {
         opacity: 0;
         cursor: pointer;
     }
+
+.error-page h4 {
+    font-weight: 500;
+}

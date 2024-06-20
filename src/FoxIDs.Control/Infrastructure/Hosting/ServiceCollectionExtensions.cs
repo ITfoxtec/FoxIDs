@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using StackExchange.Redis;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -94,6 +93,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSharedInfrastructure(settings, environment);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
+            services.AddScoped<FoxIDsClientRouteTransformer>();
 
             services.AddSingleton<BackgroundQueue>();
             services.AddHostedService<BackgroundQueueService>();

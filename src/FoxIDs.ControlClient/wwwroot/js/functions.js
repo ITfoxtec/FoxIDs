@@ -6,3 +6,7 @@
     link.click();
     document.body.removeChild(link);
 }
+
+function readError() {
+    return document.getElementById('error').textContent;    
+}

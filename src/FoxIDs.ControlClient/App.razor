@@ -1,23 +1,47 @@
+@inject ServerErrorLogic serverErrorLogic
+@inject NavigationManager NavigationManager
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (!context.User.Identity.IsAuthenticated)
-                    {
-                        <TenantOidcRedirectToLogin />
-                    }
-                    else
-                    {
-                        <p>You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
+            @if (!hasError)
+            {
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        @if (!context.User.Identity.IsAuthenticated)
+                        {
+                            <TenantOidcRedirectToLogin />
+                        }
+                        else
+                        {
+                            <p>You are not authorized to access this resource.</p>
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            }
+            else
+            {
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(HeaderLayout)">
+                </AuthorizeRouteView>
+            }
         </Found>
         <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
+            <LayoutView Layout="@typeof(HeaderLayout)">
                 <p>Sorry, there's nothing at this address.</p>
             </LayoutView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    private bool hasError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hasError = await serverErrorLogic.HasErrorAsync();
+        @if (hasError)
+        {
+            NavigationManager.NavigateTo("-/error");
+        }
+    }
+}

@@ -26,7 +26,7 @@ namespace FoxIDs
             public const string DefaultAction = "index";
             public const string DefaultSiteController = "w";
             public const string ErrorController = "error";
-            public const string DefaultClientController = "client";
+            public const string ErrorAction = "error";
 
             public const string OidcDiscoveryAction = "OpenidConfiguration";
             public const string OidcDiscoveryKeyAction = "Keys";

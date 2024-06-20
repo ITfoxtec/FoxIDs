@@ -32,7 +32,13 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
-            if (route.Length >= 1)
+            if (route.Length == 2 &&
+                route[route.Length - 2].Equals(Constants.Routes.DefaultSiteController, StringComparison.InvariantCultureIgnoreCase) && 
+                route[route.Length - 1].Equals(Constants.Routes.ErrorAction, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
+            else if (route.Length >= 1)
             {
                 return new Track.IdKey
                 {
@@ -44,6 +50,6 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 throw new NotSupportedException($"FoxIDs client route '{string.Join('/', route)}' not supported.");
             }
-        }       
+        }
     }
 }

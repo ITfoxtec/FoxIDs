@@ -7,7 +7,7 @@ FoxIDs OAuth 2.0 application registration enable you to connect an APIs as [OAut
 ## OAuth 2.0 Resource
 An API is configured as a OAuth 2.0 application registration resource.
 
-- Click New registration and then OAuth 2.0 - Resource (API)
+- Click New application and then OAuth 2.0 - Resource (API)
 - Specify resource (API) name in application registration name.
 - Specify one or more scopes.
 
@@ -18,7 +18,7 @@ A client can subsequently be given access by configuring [resource and scopes](a
 ## Client Credentials Grant
 An application using Client Credentials Grant could be a backend service secured by a client id and secret or key.
 
-- Click New registration and then OAuth 2.0 - Client Credentials Grant
+- Click New application and then OAuth 2.0 - Client Credentials Grant
 - Specify client name in application registration name.
 - Specify client authentication method, default `client secret post`
     - A secret is default generated

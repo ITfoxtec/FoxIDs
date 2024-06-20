@@ -23,7 +23,7 @@ You can select another environment, create a new environment or start building i
 Let's configure the first OpenID Connect application and log in with a test user.  
 You can optionally start by taking a look at the [sample applications](samples.md) which also can be [configured](samples.md#configure-samples-in-foxids-environment) in the you test environment. 
 
-Click `New registration` to configure your OpenID Connect application and select the type of application.
+Click `New application` to configure your OpenID Connect application and select the type of application.
 
 ![New app registration](images/get-started-new-app-reg.png)
 

@@ -63,7 +63,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 **1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Authentication methods tab
-2. Click Create authentication method and then SAML 2.0
+2. Click New authentication and then SAML 2.0
 3. Add the name
 4. Select show advanced settings
 5. Select the dot URL binding pattern

@@ -46,13 +46,11 @@ Context Handler requires all requests (authn and logout) to be signed with real 
 
 A OCES3 certificate is valid for three years. After that, it must be updated manually.
 
-> If the `.P12` file fails to load, you can convert it to a `.PFX` file with the [FoxIDs.ConvertCertificateTool](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.ConvertCertificateTool).
-
 Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) a [separate environment](#separate-environment) to be used for Context Handler as [Identity Provider](#configuring-context-handler-as-identity-provider) or [test Relying Party](#configuring-context-handler-as-test-relying-party)
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
-4. Then click on the primary certificate, then write the password and upload the `.P12` or `.PFX` OCES3 certificate 
+4. Then click on the primary certificate, then write the password and upload the `.P12` OCES3 certificate 
 
 ![Add OCES3 certificate](images/howto-saml-context-handler-certificate.png)
 

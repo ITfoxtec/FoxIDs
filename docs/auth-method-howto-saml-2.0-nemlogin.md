@@ -41,8 +41,6 @@ NemLog-in requires all requests (authn and logout) from the Relying Party (RP) t
 OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
 You will need separate FoxIDs environments to handle the test and production environments respectively. The environments can optionally be combined in an app environment with [environment links](howto-environmentlink-foxids.md).
 
-> If the `.P12` file fails to load in FoxIDs, you can convert it to a `.PFX` file with the [FoxIDs.ConvertCertificateTool](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.ConvertCertificateTool).
-
 Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the environment to be used for NemLog-in
 2. Select the Certificates tab
@@ -50,7 +48,7 @@ Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-co
 
 ![Change container type](images/howto-saml-nemlogin3-certificate-container-type.png)
 
-4. Then click on the primary certificate, then write the password and upload the `.P12` / `.PFX`  OCES3 certificate 
+4. Then click on the primary certificate, then write the password and upload the `.P12`  OCES3 certificate 
 
 ![Add OCES3 certificate](images/howto-saml-nemlogin3-certificate.png)
 

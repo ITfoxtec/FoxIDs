@@ -1,7 +1,8 @@
-# Connect to Context Handler with SAML 2.0
+﻿# Connect to Context Handler with SAML 2.0
 
-FoxIDs can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). 
-Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
+FoxIDs can be connected to Context Handler with a [SAML 2.0 authentication method](auth-method-saml-2.0.md).
+
+> Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation, in Danish called **Fælleskommunal Adgangsstyring**.
 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 

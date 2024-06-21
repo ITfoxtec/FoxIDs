@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Logic
     {
         private readonly IJSRuntime jsRuntime;
         private bool isLoaded = false;
-        private string error;
+        private string errorCache;
 
         public ServerErrorLogic(IJSRuntime jsRuntime)
         {
@@ -18,23 +18,24 @@ namespace FoxIDs.Client.Logic
 
         public async ValueTask<bool> HasErrorAsync()
         {
-            await LoadErrorInternalAsync();
+            var error = await LoadErrorInternalAsync();
             return !error.IsNullOrEmpty();
         }
 
         public async ValueTask<ErrorInfo> ReadErrorAsync()
         {
-            await LoadErrorInternalAsync();
+            var error = await LoadErrorInternalAsync();
             return error?.ToObject<ErrorInfo>();
         }
 
-        private async ValueTask LoadErrorInternalAsync()
+        private async ValueTask<string> LoadErrorInternalAsync()
         {
             if(!isLoaded)
             {
-                error = await jsRuntime.InvokeAsync<string>("readError");
+                errorCache = await jsRuntime.InvokeAsync<string>("readError");
                 isLoaded = true;
             }
+            return errorCache;
         }
     }
 }

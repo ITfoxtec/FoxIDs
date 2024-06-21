@@ -24,7 +24,7 @@ Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 
-- Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
+- Connect test IdP on [Context Handler (Danish identity broker, DK name: Fælleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-test-relying-party)
 
 ## How to connect authentication methods
 
@@ -55,7 +55,7 @@ How to guides:
 - Connect [PingIdentity / PingOne](auth-method-howto-saml-2.0-pingone.md)
 - Connect [Microsoft AD FS](auth-method-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in (Danish IdP)](auth-method-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
+- Connect [Context Handler (Danish identity broker, DK name: Fælleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md)
 
 ## Connect FoxIDs environments
 

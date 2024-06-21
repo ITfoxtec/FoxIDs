@@ -194,10 +194,11 @@ namespace FoxIDs.Client.Pages
             claims.Remove(claimAndValues);
         }
 
-        private void ShowSelectUpParty(ExternalUserViewModel externalUserViewModel)
+        private void ShowSelectUpParty(GeneralExternalUserViewModel generalExternalUser)
         {
-            externalUserViewModel.UpPartyName = null;
-            externalUserViewModel.UpPartyDisplayName = null;
+            generalExternalUser.Form.ClearError();
+            generalExternalUser.Form.Model.UpPartyName = null;
+            generalExternalUser.Form.Model.UpPartyDisplayName = null;
         }
 
         private async Task LoadUpPartiesAsync(string filterName = null, bool force = false)

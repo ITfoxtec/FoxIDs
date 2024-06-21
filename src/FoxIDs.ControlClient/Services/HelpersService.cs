@@ -7,7 +7,7 @@ namespace FoxIDs.Client.Services
 {
     public class HelpersService : BaseService
     {
-        private const string readCertificateApiUri = "pi/{tenant}/{track}/!readcertificate";
+        private const string readCertificateApiUri = "api/{tenant}/{track}/!readcertificate";
         private const string downPartyTestApiUri = "api/{tenant}/{track}/!downpartytest";
 
         public HelpersService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)

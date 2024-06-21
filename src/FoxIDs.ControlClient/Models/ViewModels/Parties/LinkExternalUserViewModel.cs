@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [Display(Name = "Link claim")]
-        public string LinkClaimType { get; set; }
+        public string LinkClaimType { get; set; } = JwtClaimTypes.Subject;
 
         [Display(Name = "Overwrite revived claims")]
         public bool OverwriteClaims { get; set; }
@@ -38,11 +38,11 @@ namespace FoxIDs.Client.Models.ViewModels
             var results = new List<ValidationResult>();
             if ((AutoCreateUser || RequireUser) && LinkClaimType.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The link claim type is required.", new[] { nameof(LinkClaimType) }));
+                results.Add(new ValidationResult($"The link claim type is required.", [nameof(LinkClaimType)]));
             }
             if (AutoCreateUser && RequireUser)
             {
-                results.Add(new ValidationResult($"Both the Automatically create/provision and the Require user can not be enabled at the same time.", new[] { nameof(AutoCreateUser), nameof(RequireUser) }));
+                results.Add(new ValidationResult($"Both the Automatically create/provision and the Require user can not be enabled at the same time.", [nameof(AutoCreateUser), nameof(RequireUser)]));
             }
             return results;
         }

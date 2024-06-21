@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -14,7 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Link claim")]
+        [Display(Name = "Link claim type")]
         public string LinkClaimType { get; set; }
 
         [Display(Name = "Overwrite revived claims")]

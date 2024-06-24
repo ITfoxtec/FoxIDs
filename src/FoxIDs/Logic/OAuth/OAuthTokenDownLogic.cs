@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
         {
             if (client.DisableClientCredentialsGrant)
             {
-                throw new OAuthRequestException($"Client credentials grant is disabled for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                throw new OAuthRequestException($"Client credentials grant is disabled for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
 
             tokenRequest.Validate();

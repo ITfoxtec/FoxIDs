@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -99,20 +98,10 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException($"Invalid redirect URI '{tokenRequest.RedirectUri}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
-
-            if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new OAuthRequestException($"Invalid client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-            }
         }
         protected void ValidateRefreshTokenRequest(TClient client, TokenRequest tokenRequest)
         {
             tokenRequest.Validate();
-
-            if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new OAuthRequestException($"Invalid client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-            }
         }
         protected void ValidateClientCredentialsRequest(TClient client, TokenRequest tokenRequest)
         {
@@ -122,18 +111,6 @@ namespace FoxIDs.Logic
             }
 
             tokenRequest.Validate();
-
-            if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost || (client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && !tokenRequest.ClientId.IsNullOrWhiteSpace()))
-            {
-                if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
-                {
-                    if (tokenRequest.ClientId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenRequest.ClientId), tokenRequest.GetTypeName());
-                }
-                if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    throw new OAuthRequestException($"Invalid client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-                }
-            }
 
             if (!tokenRequest.Scope.IsNullOrEmpty())
             {
@@ -146,15 +123,25 @@ namespace FoxIDs.Logic
             }
         }
 
+        private void ValidateClientId(TClient client, TokenRequest tokenRequest)
+        {
+            if (tokenRequest.ClientId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenRequest.ClientId), tokenRequest.GetTypeName());
+
+            if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new OAuthRequestException($"Invalid client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+            }
+        }
+
         protected async Task ValidateClientAuthenticationAsync(TClient client, TokenRequest tokenRequest, IHeaderDictionary headers, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
         {
             if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic) 
             {
-                await ValidateClientSecretBasicAsync(client, headers, clientAuthenticationRequired);
+                await ValidateClientSecretBasicAsync(client, tokenRequest, headers, clientAuthenticationRequired);
             }
             else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
             {
-                await ValidateClientSecretPostAsync(client, tokenRequest, formDictionary, clientAuthenticationRequired);
+                await ValidateClientSecretPostAsync(client, tokenRequest, headers, formDictionary, clientAuthenticationRequired);
             }
             else if(client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
@@ -166,26 +153,15 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task ValidateClientSecretBasicAsync(TClient client, IHeaderDictionary headers, bool clientAuthenticationRequired = true)
+        private async Task ValidateClientSecretBasicAsync(TClient client, TokenRequest tokenRequest, IHeaderDictionary headers, bool clientAuthenticationRequired = true)
         {
             if (!clientAuthenticationRequired && !(client.Secrets?.Count() > 0))
             {
+                ValidateClientId(client, tokenRequest);
                 return;
             }
 
-            var clientId = string.Empty;
-            var clientSecret = string.Empty;
-            var bearerHeader = headers.GetAuthorizationHeaderBearer();
-            if (!bearerHeader.IsNullOrEmpty())
-            {
-                var bearerHeaderSplit = bearerHeader.Base64Decode()?.Split(':');
-                if (bearerHeaderSplit?.Count() == 2)
-                {
-                    clientId = WebUtility.UrlDecode(bearerHeaderSplit[0]);
-                    clientSecret = WebUtility.UrlDecode(bearerHeaderSplit[1]);
-                }
-            }
-
+            (var clientId, var clientSecret) = headers.GetAuthorizationHeaderBasic();
             logger.ScopeTrace(() => $"AppReg, Client credentials basic '{new { ClientId = clientId, ClientSecret = $"{(clientSecret?.Length > 10 ? clientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
@@ -212,24 +188,35 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task ValidateClientSecretPostAsync(TClient client, TokenRequest tokenRequest, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
+        private async Task ValidateClientSecretPostAsync(TClient client, TokenRequest tokenRequest, IHeaderDictionary headers, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
         {
             if (!clientAuthenticationRequired && !(client.Secrets?.Count() > 0))
             {
+                ValidateClientId(client, tokenRequest);
                 return;
             }
 
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
             logger.ScopeTrace(() => $"AppReg, Client credentials post '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            try
-            {
-                clientCredentials.Validate();
 
-                await ValidateClientSecretAsync(client, clientCredentials.ClientSecret, clientAuthenticationRequired);
-            }
-            catch (Exception ex)
+            if (clientCredentials.ClientSecret.IsNullOrWhiteSpace() && !headers.GetAuthorizationHeader(IdentityConstants.BasicAuthentication.Basic).IsNullOrEmpty())
             {
-                throw new OAuthRequestException($"Client authentication, client secret post. {ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = ex is OAuthRequestException oare ? oare.Error : IdentityConstants.ResponseErrors.AccessDenied };
+                logger.ScopeTrace(() => "AppReg, Default to use Client credentials basic.");
+                await ValidateClientSecretBasicAsync(client, tokenRequest, headers, clientAuthenticationRequired);
+            }
+            else
+            {
+                try
+                {
+                    ValidateClientId(client, tokenRequest);
+                    clientCredentials.Validate();
+
+                    await ValidateClientSecretAsync(client, clientCredentials.ClientSecret, clientAuthenticationRequired);
+                }
+                catch (Exception ex)
+                {
+                    throw new OAuthRequestException($"Client authentication, client secret post. {ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = ex is OAuthRequestException oare ? oare.Error : IdentityConstants.ResponseErrors.AccessDenied };
+                }
             }
         }
 
@@ -237,6 +224,7 @@ namespace FoxIDs.Logic
         {
             if (!clientAuthenticationRequired && !(client.ClientKeys?.Count() > 0))
             {
+                ValidateClientId(client, tokenRequest);
                 return;
             }
 
@@ -244,6 +232,10 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AppReg, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
+                if(!tokenRequest.ClientId.IsNullOrWhiteSpace())
+                {
+                    ValidateClientId(client, tokenRequest);
+                }
                 clientAssertionCredentials.Validate();
 
                 if (clientAssertionCredentials.ClientAssertionType != IdentityConstants.ClientAssertionTypes.JwtBearer)

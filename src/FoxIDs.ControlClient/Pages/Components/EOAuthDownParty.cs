@@ -341,7 +341,7 @@ namespace FoxIDs.Client.Pages.Components
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
                         var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwkWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.Kid.Equals(jwkWithCertificateInfo.Kid, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalOAuthDownParty.Form.SetFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys), "Client certificates has duplicates.");
                             return;

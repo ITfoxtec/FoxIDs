@@ -172,6 +172,13 @@ namespace FoxIDs.Client.Pages
                 trackLinkUpParty.Edit = true;
                 upParties.Add(trackLinkUpParty);
             }
+            else if (type == PartyTypes.ExternalLogin)
+            {
+                var extLoginUpParty = new GeneralExternalLoginUpPartyViewModel();
+                extLoginUpParty.CreateMode = true;
+                extLoginUpParty.Edit = true;
+                upParties.Add(extLoginUpParty);
+            }
         }
 
         private void ShowUpdateUpParty(GeneralUpPartyViewModel upParty)
@@ -209,6 +216,10 @@ namespace FoxIDs.Client.Pages
             else if (upParty.Type == PartyTypes.TrackLink)
             {
                 return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
+            }
+            else if (upParty.Type == PartyTypes.ExternalLogin)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (External Login)";
             }
             throw new NotSupportedException($"Type '{upParty.Type}'.");
         }

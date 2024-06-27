@@ -15,6 +15,6 @@ namespace FoxIDs.Models
         [EnumMember(Value = "track_link")]
         TrackLink = 100,
         [EnumMember(Value = "ext_login")]
-        ExtLogin = 200
+        ExternalLogin = 200
     }
 }

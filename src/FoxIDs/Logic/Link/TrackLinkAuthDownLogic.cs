@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequest(party, keySequenceData));
-                    case PartyTypes.ExtLogin:
+                    case PartyTypes.ExternalLogin:
                         return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
 
                     default:

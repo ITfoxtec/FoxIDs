@@ -267,6 +267,50 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        public void ShowExternalLoginTab(GeneralExternalLoginUpPartyViewModel upParty, ExternalLoginTabTypes externalLoginTabTypes)
+        {
+            switch (externalLoginTabTypes)
+            {
+                case ExternalLoginTabTypes.ExternalLogin:
+                    upParty.ShowExternalLoginTab = true;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case ExternalLoginTabTypes.ClaimsTransform:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = true;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case ExternalLoginTabTypes.LinkExternalUser:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case ExternalLoginTabTypes.Session:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowSessionTab = true;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case ExternalLoginTabTypes.Hrd:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         public async Task UpPartyCancelAsync(GeneralUpPartyViewModel upParty)
         {
             if (upParty.CreateMode)

@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, sessionId));
                 case PartyTypes.TrackLink:
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
-                case PartyTypes.ExtLogin:
+                case PartyTypes.ExternalLogin:
                     return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutRedirect(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
 
                 default:

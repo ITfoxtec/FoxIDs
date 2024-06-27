@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
-                    case PartyTypes.ExtLogin:
+                    case PartyTypes.ExternalLogin:
                         return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     default:
                         throw new NotSupportedException($"Connection type '{autoSelectedUpParty.Type}' not supported.");

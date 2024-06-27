@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
-            planUsageLogic.LogLoginEvent(PartyTypes.ExtLogin);
+            planUsageLogic.LogLoginEvent(PartyTypes.ExternalLogin);
 
             await loginRequest.ValidateObjectAsync();
 

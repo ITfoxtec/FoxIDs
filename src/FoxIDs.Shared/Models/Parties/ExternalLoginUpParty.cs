@@ -14,7 +14,7 @@ namespace FoxIDs.Models
     {
         public ExternalLoginUpParty()
         {
-            Type = PartyTypes.ExtAuth;
+            Type = PartyTypes.ExtLogin;
         }
 
         [Required]

@@ -224,6 +224,169 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Cancel external login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start logout.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+                var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+
+                var session = await sessionLogic.GetSessionAsync(extLoginUpParty);
+                if (session == null)
+                {
+                    return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout);
+                }
+
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                {
+                    throw new Exception("Requested session ID do not match Login authentication method session ID.");
+                }
+
+                if (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
+                {
+                    logger.ScopeTrace(() => "Show logout consent dialog.");
+                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Title = extLoginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = extLoginUpParty.IconUrl, Css = extLoginUpParty.Css });
+                }
+                else
+                {
+                    _ = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
+                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout, session);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout(LogoutViewModel logout)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+                var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+
+                Func<IActionResult> viewError = () =>
+                {
+                    logout.SequenceString = SequenceString;
+                    logout.Title = extLoginUpParty.Title ?? RouteBinding.DisplayName;
+                    logout.IconUrl = extLoginUpParty.IconUrl;
+                    logout.Css = extLoginUpParty.Css;
+                    return View(nameof(Logout), logout);
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    return viewError();
+                }
+
+                logger.ScopeTrace(() => "Logout post.");
+
+                if (logout.LogoutChoice == LogoutChoice.Logout)
+                {
+                    var session = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    return await LogoutResponse(extLoginUpParty, sequenceData, logout.LogoutChoice, session);
+                }
+                else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
+                {
+                    logger.ScopeTrace(() => "Logout response without logging out.");
+                    return await LogoutResponse(extLoginUpParty, sequenceData, logout.LogoutChoice);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid logout choice.");
+                }
+
+                return viewError();
+
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+
+        private async Task<IActionResult> LogoutResponse(ExternalLoginUpParty loginUpParty, ExternalLoginUpSequenceData sequenceData, LogoutChoice logoutChoice, SessionLoginUpPartyCookie session = null)
+        {
+            if (logoutChoice == LogoutChoice.Logout)
+            {
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.SessionId);
+
+                if (loginUpParty.DisableSingleLogout)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    return await LogoutDoneAsync(loginUpParty, sequenceData);
+                }
+                else
+                {
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, sequenceData.DownPartyLink, session?.DownPartyLinks, session?.Claims);
+                    if (doSingleLogout)
+                    {
+                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                        return await LogoutDoneAsync(loginUpParty, sequenceData);
+                    }
+                }
+            }
+            else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                if (sequenceData.PostLogoutRedirect)
+                {
+                    return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                }
+                else
+                {
+                    logger.ScopeTrace(() => "Show logged in dialog.");
+                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<IActionResult> SingleLogoutDone()
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
+            loginPageLogic.CheckUpParty(sequenceData);
+            return await LogoutDoneAsync(null, sequenceData);
+        }
+
+        private async Task<IActionResult> LogoutDoneAsync(ExternalLoginUpParty loginUpParty, ExternalLoginUpSequenceData sequenceData)
+        {
+            if (sequenceData.PostLogoutRedirect)
+            {
+                return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
+            }
+            else
+            {
+                loginUpParty = loginUpParty ?? await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                logger.ScopeTrace(() => "Show external logged out dialog.");
+                return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+            }
+        }
     }
 
 }

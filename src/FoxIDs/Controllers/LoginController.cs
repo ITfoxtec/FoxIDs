@@ -34,7 +34,6 @@ namespace FoxIDs.Controllers
         private readonly DynamicElementLogic dynamicElementLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private int emailPasswordIndex;
 
         public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
@@ -182,7 +181,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var email, var redirectAction) = await loginPageLogic.CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -361,7 +360,7 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (var validSession, var email, var redirectAction) = await loginPageLogic.CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -385,6 +384,23 @@ namespace FoxIDs.Controllers
                 DisableChangeEmail = sequenceData.DoSessionUserRequireLogin,
                 Email = sequenceData.Email,
             });
+        }
+
+        public async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        {
+            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
+            var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, upParty, sequenceData));
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
+            {
+                return (validSession, user?.Email, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+            }
+
+            if (sequenceData.LoginAction == LoginAction.ReadSession)
+            {
+                return (validSession, user?.Email, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+            }
+
+            return (validSession, user?.Email, null);
         }
 
         private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)

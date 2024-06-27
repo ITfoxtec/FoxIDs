@@ -216,40 +216,6 @@ namespace FoxIDs.Logic
             return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(claims);
         }
 
-        public async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
-        {
-            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, GetDownPartyLink(upParty, sequenceData));
-            var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, GetRequereMfa(user, upParty, sequenceData));
-            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
-            {
-                return (validSession, user?.Email, await LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
-            }
-
-            if (sequenceData.LoginAction == LoginAction.ReadSession)
-            {
-                return (validSession, user?.Email, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
-            }
-
-            return (validSession, user?.Email, null);
-        }
-
-        public async Task<(bool validSession, IActionResult actionResult)> CheckExternalSessionReturnRedirectAction(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty upParty)
-        {
-            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty, GetDownPartyLink(upParty, sequenceData));
-            var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session);
-            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
-            {
-                return (validSession, await LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
-            }
-
-            if (sequenceData.LoginAction == LoginAction.ReadSession)
-            {
-                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
-            }
-
-            return (validSession, null);
-        }
-
         public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
         {
             if (session == null) return false;

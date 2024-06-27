@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure;
@@ -14,7 +13,6 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoxIDs.Controllers
@@ -34,7 +32,6 @@ namespace FoxIDs.Controllers
         private readonly DynamicElementLogic dynamicElementLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private int emailPasswordIndex;
 
         public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalAccountLogic externalAccountLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
@@ -64,7 +61,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
 
-                (var validSession, var redirectAction) = await loginPageLogic.CheckExternalSessionReturnRedirectAction(sequenceData, extLoginUpParty);
+                (var validSession, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, extLoginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -102,8 +99,25 @@ namespace FoxIDs.Controllers
             {
                 throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
-        }    
-        
+        }
+
+        public async Task<(bool validSession, IActionResult actionResult)> CheckSessionReturnRedirectAction(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty upParty)
+        {
+            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
+            var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
+            {
+                return (validSession, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+            }
+
+            if (sequenceData.LoginAction == LoginAction.ReadSession)
+            {
+                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+            }
+
+            return (validSession, null);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(ExternalLoginResponseViewModel extLogin)

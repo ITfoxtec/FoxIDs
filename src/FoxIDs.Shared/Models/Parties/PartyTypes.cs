@@ -13,6 +13,8 @@ namespace FoxIDs.Models
         [EnumMember(Value = "saml2")]
         Saml2 = 40,
         [EnumMember(Value = "track_link")]
-        TrackLink = 100
+        TrackLink = 100,
+        [EnumMember(Value = "ext_auth")]
+        ExtAuth = 200
     }
 }

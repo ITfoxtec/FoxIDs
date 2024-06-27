@@ -23,24 +23,24 @@ namespace FoxIDs.Repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<TMessage> GetAsync(UpParty party, bool delete = false, bool tryGet = false)
+        public Task<TMessage> GetAsync(IUpParty party, bool delete = false, bool tryGet = false)
         {
             return Task.FromResult(Get(party, delete, tryGet));
         }
 
-        public Task SaveAsync(UpParty party, TMessage message, DateTimeOffset? persistentCookieExpires)
+        public Task SaveAsync(IUpParty party, TMessage message, DateTimeOffset? persistentCookieExpires)
         {
             Save(party, message, persistentCookieExpires);
             return Task.FromResult(0);
         }
 
-        public Task DeleteAsync(UpParty party, bool tryDelete = false)
+        public Task DeleteAsync(IUpParty party, bool tryDelete = false)
         {
             Delete(party, tryDelete);
             return Task.FromResult(0);
         }
 
-        private TMessage Get(UpParty party, bool delete, bool tryGet = false)
+        private TMessage Get(IUpParty party, bool delete, bool tryGet = false)
         {
             var routeBinding = GetRouteBinding();
             if (tryGet && RouteBindingDoNotExists(routeBinding)) return null;
@@ -80,7 +80,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        private void Save(UpParty party, TMessage message, DateTimeOffset? persistentCookieExpires)
+        private void Save(IUpParty party, TMessage message, DateTimeOffset? persistentCookieExpires)
         {
             var routeBinding = GetRouteBinding();
             CheckRouteBinding(routeBinding);
@@ -110,7 +110,7 @@ namespace FoxIDs.Repository
                 cookieOptions);
         }
 
-        private void Delete(UpParty party, bool tryDelete = false)
+        private void Delete(IUpParty party, bool tryDelete = false)
         {
             var routeBinding = GetRouteBinding();
             if (tryDelete && RouteBindingDoNotExists(routeBinding)) return;
@@ -139,7 +139,7 @@ namespace FoxIDs.Repository
             return false;
         }
 
-        private void DeleteByName(RouteBinding routeBinding, UpParty party, string name)
+        private void DeleteByName(RouteBinding routeBinding, IUpParty party, string name)
         {
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 name,
@@ -155,7 +155,7 @@ namespace FoxIDs.Repository
                 });
         }
 
-        private string GetPath(RouteBinding routeBinding, UpParty party)
+        private string GetPath(RouteBinding routeBinding, IUpParty party)
         {
             return $"{(!routeBinding.UseCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}/{routeBinding.UpParty.Name.ToUpPartyBinding(party.PartyBindingPattern)}";
         }

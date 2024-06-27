@@ -13,6 +13,7 @@ using FoxIDs.Models.Session;
 using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
@@ -20,19 +21,19 @@ namespace FoxIDs.Logic
     {
         private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
-        private readonly LoginUpLogic loginUpLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
-            this.loginUpLogic = loginUpLogic;
         }
 
         public void CheckUpParty(UpSequenceData sequenceData)
@@ -49,13 +50,13 @@ namespace FoxIDs.Logic
             }
         }
 
-        public bool GetRequereMfa(User user, LoginUpParty loginUpParty, LoginUpSequenceData sequenceData)
+        public bool GetRequereMfa(User user, LoginUpParty upParty, ILoginUpSequenceDataBase sequenceData)
         {
             if (user.RequireMultiFactor)
             {
                 return true;
             }
-            else if (loginUpParty.RequireTwoFactor)
+            else if (upParty.RequireTwoFactor)
             {
                 return true;
             }
@@ -67,15 +68,15 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        public DownPartySessionLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
+        public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
-        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromEmailVerificationStep)
+        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromEmailVerificationStep) 
         {
-            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user);
+            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.Id);
 
             sequenceData.Email = user.Email;
             sequenceData.EmailVerified = user.EmailVerified;
-            sequenceData.AuthMethods = authMethods ?? new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
+            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.EmailVerified)
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -120,6 +121,17 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<IActionResult> ExternalLoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, List<Claim> claims)
+        {
+            var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
+            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
+
+            sequenceData.Claims = claims.ToClaimAndValues();
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+
+            return await ExternalLoginResponseAsync(extLoginUpParty, GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData.AuthMethods, session: session);
+        }
+
         private bool RegisterTwoFactor(User user)
         {
             if (settings.Options.KeyStorage == KeyStorageOptions.None)
@@ -136,22 +148,27 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user)
+        private async Task<SessionLoginUpPartyCookie> GetSessionAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty)
         {
             if (sequenceData.LoginAction == LoginAction.RequireLogin)
             {
                 return null;
             }
 
-            var session = await sessionLogic.GetSessionAsync(loginUpParty);
-            if (session != null && user.UserId != session.UserId)
+            return await sessionLogic.GetSessionAsync(upParty);
+        }
+
+        private async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty, string userId)
+        {
+            var session = await GetSessionAsync(sequenceData, upParty);
+            if (session != null && userId != session.UserId)
             {
                 logger.ScopeTrace(() => "Authenticated user and session user do not match.");
                 // TODO invalid user login
                 throw new NotImplementedException("Authenticated user and session user do not match.");
             }
 
-            if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
+            if (!sequenceData.UserId.IsNullOrEmpty() && userId != sequenceData.UserId)
             {
                 logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
                 // TODO invalid user login
@@ -161,30 +178,119 @@ namespace FoxIDs.Logic
             return session;
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, User user, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session, acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(loginUpParty, user, authTime, authMethods, sessionId, acrClaims);
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
+                claims = await GetClaimsAsync(upParty, user, authTime, authMethods, sessionId, acrClaims);
+                await sessionLogic.CreateSessionAsync(upParty, newDownPartyLink, authTime, claims);
             }
 
-            return await loginUpLogic.LoginResponseAsync(claims);
+            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(claims);
         }
 
-        public async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        private async Task<IActionResult> ExternalLoginResponseAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
+            var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            List<Claim> claims;
+            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session, acrClaims))
             {
-                return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
+                claims = session.Claims.ToClaimList();
+            }
+            else
+            {
+                var sessionId = RandomGenerator.Generate(24);
+                claims = await GetExternalClaimsAsync(upParty, userClaims, authTime, authMethods, sessionId, acrClaims);
+                await sessionLogic.CreateSessionAsync(upParty, newDownPartyLink, authTime, claims);
+            }
+
+            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(claims);
+        }
+
+        public async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        {
+            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, GetDownPartyLink(upParty, sequenceData));
+            var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, GetRequereMfa(user, upParty, sequenceData));
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
+            {
+                return (validSession, user?.Email, await LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+            }
+
+            if (sequenceData.LoginAction == LoginAction.ReadSession)
+            {
+                return (validSession, user?.Email, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+            }
+
+            return (validSession, user?.Email, null);
+        }
+
+        public async Task<(bool validSession, IActionResult actionResult)> CheckExternalSessionReturnRedirectAction(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty upParty)
+        {
+            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty, GetDownPartyLink(upParty, sequenceData));
+            var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session);
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
+            {
+                return (validSession, await LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+            }
+
+            if (sequenceData.LoginAction == LoginAction.ReadSession)
+            {
+                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+            }
+
+            return (validSession, null);
+        }
+
+        public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
+        {
+            if (session == null) return false;
+
+            if (sequenceData.MaxAge.HasValue && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - session.CreateTime > sequenceData.MaxAge.Value)
+            {
+                logger.ScopeTrace(() => $"Session max age not accepted, Max age '{sequenceData.MaxAge}', Session created '{session.CreateTime}'.");
+                return false;
+            }
+
+            if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
+            {
+                logger.ScopeTrace(() => $"Session user '{session.UserId}' and requested user '{sequenceData.UserId}' do not match.");
+                return false;
+            }
+
+            if (requereMfa && !(session.Claims?.Where(c => c.Claim == JwtClaimTypes.Amr && c.Values.Where(v => v == IdentityConstants.AuthenticationMethodReferenceValues.Mfa).Any())?.Count() > 0))
+            {
+                logger.ScopeTrace(() => "Session does not meet the MFA requirement.");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<IActionResult> LoginResponseUpdateSessionAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        {
+            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session))
+            {
+                if (upParty is LoginUpParty)
+                {
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
+                }
+                else if (upParty is ExternalLoginUpParty)
+                {
+                    return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
             }
             else
             {
@@ -192,7 +298,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(UpParty upParty, User user, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -206,18 +312,42 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
             claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
-            claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, upParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, upParty.Type.GetPartyTypeValue());
+            claims.AddClaim(Constants.JwtClaimTypes.UpParty, upParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, upParty.Type.GetPartyTypeValue());
             if (user.Claims?.Count() > 0)
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
             logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var transformedClaims = await claimTransformLogic.Transform((upParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return transformedClaims;
+        }
+
+        private async Task<List<Claim>> GetExternalClaimsAsync(UpParty upParty, IEnumerable<Claim> userClaims, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
+        {
+            var claims = userClaims.Where(c => c.Type != JwtClaimTypes.SessionId &&
+                c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
+                c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
+            
+            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
+            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
+            if (acrClaims?.Count() > 0)
+            {
+                claims.AddRange(acrClaims);
+            }
+            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, upParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, upParty.Type.GetPartyTypeValue());
+            claims.AddClaim(Constants.JwtClaimTypes.UpParty, upParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, upParty.Type.GetPartyTypeValue());
+            logger.ScopeTrace(() => $"AuthMethod, External login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            var transformedClaims = await claimTransformLogic.Transform((upParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            logger.ScopeTrace(() => $"AuthMethod, External login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return transformedClaims;
         }
 

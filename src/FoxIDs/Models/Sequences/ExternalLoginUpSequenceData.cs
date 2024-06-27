@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class LoginUpSequenceData : UpSequenceData, ILoginUpSequenceDataBase
+    public class ExternalLoginUpSequenceData : UpSequenceData, ILoginUpSequenceDataBase
     {
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
@@ -20,14 +20,8 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
 
-        [JsonProperty(PropertyName = "ev")]
-        public bool EmailVerified { get; set; }
-
-        [JsonProperty(PropertyName = "tui")]
-        public IEnumerable<HrdUpPartySequenceData> ToUpParties { get; set; }
-
-        [JsonProperty(PropertyName = "li")]
-        public bool DoLoginIdentifierStep { get; set; }
+        [JsonProperty(PropertyName = "c")]
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
 
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }

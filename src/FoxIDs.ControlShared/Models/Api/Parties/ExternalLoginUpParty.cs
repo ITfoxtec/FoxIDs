@@ -6,7 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackLinkUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    /// <summary>
+    /// External authentication.
+    /// </summary>
+    public class ExternalLoginUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
@@ -19,52 +22,46 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
 
-        [Required]
-        [MaxLength(Constants.Models.Track.NameLength)]
-        [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        public string ToDownTrackName { get; set; }
+        [Required] 
+        [Display(Name = "Auth type")]
+        public ExternalLoginTypes AuthType { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        public string ToDownPartyName { get; set; }
+        [Display(Name = "Username type")]
+        public ExternalLoginUsernameTypes UsernameType { get; set; }
 
-        [ListLength(Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin, Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax, Constants.Models.Party.NameLength, Constants.Models.TrackLinkDownParty.SelectedUpPartiesNameRegExPattern)]
-        public List<string> SelectedUpParties { get; set; }
+        [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
+        [Display(Name = "API URL")]
+        public string ApiUrl { get; set; }
+
+        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [Display(Name = "Secret")]
+        public string Secret { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         public List<string> Claims { get; set; }
-
-        [Display(Name = "Pipe the external ID.")]
-        public bool PipeExternalId { get; set; }
 
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
-        /// Default 10 hours.
+        /// Browser title.
         /// </summary>
-        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
-        public int SessionLifetime { get; set; } = 36000;
+        [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        [RegularExpression(Constants.Models.LoginUpParty.TitleRegExPattern)]
+        public string Title { get; set; }
 
         /// <summary>
-        /// Default 24 hours.
+        /// Icon URL.
         /// </summary>
-        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
-        public int SessionAbsoluteLifetime { get; set; } = 86400;
+        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
+        public string IconUrl { get; set; }
 
         /// <summary>
-        /// Default 0 minutes.
+        /// CSS style.
         /// </summary>
-        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
-        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
-
-        /// <summary>
-        /// Default false.
-        /// </summary>
-        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
-
-        public bool DisableSingleLogout { get; set; }
+        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
+        public string Css { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) domains.
@@ -101,6 +98,17 @@ namespace FoxIDs.Models.Api
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
+            }
+            if (AuthType == ExternalLoginTypes.Api)
+            {
+                if (ApiUrl.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{ApiUrl}' is required.", [nameof(ApiUrl)]));
+                }
+                if (Secret.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{Secret}' is required.", [nameof(Secret)]));
+                }
             }
             return results;
         }

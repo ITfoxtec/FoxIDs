@@ -33,6 +33,7 @@ namespace FoxIDs
             public const string OidcDiscoveryController = "OpenIDConfig";
             
             public const string LoginController = "login";
+            public const string ExtLoginController = "extlogin";
             public const string ActionController = "action";
             public const string MfaController = "mfa";
             public const string ExtController = "ext";
@@ -344,6 +345,12 @@ namespace FoxIDs
                 public const int LinkClaimValueHashLength = 50;
             }
 
+            public static class UserLoginExt
+            {
+                public const int UsernameLength = 60;
+            }
+
+
             public static class DynamicElements
             {
                 public const int ElementsMin = 0;
@@ -620,6 +627,11 @@ namespace FoxIDs
                     public const int SingleLogoutUrlLength = 500;
                     public const int LoggedOutUrlLength = 500;
                 }
+            }
+
+            public static class ApiAuthUpParty
+            {
+                public const int ApiUrlLength = 500;
             }
         }
 

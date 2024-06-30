@@ -99,6 +99,7 @@ namespace FoxIDs.Client.Pages.Components
                 if(generalExtLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)
                 {
                     generalExtLoginUpParty.Form.Model.HrdDomains = null;
+                    generalExtLoginUpParty.Form.Model.HrdShowButtonWithDomain = false;
                 }
 
                 if (generalExtLoginUpParty.CreateMode)

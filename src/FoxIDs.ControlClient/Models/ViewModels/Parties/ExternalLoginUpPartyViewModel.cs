@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -55,24 +54,24 @@ namespace FoxIDs.Client.Models.ViewModels
         public ExternalLoginTypes ExternalLoginType { get; set; } = ExternalLoginTypes.Api;
 
         [Required]
-        [JsonProperty(PropertyName = "username_type")]
+        [Display(Name = "External login type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; } = ExternalLoginUsernameTypes.Email;
 
         [Required]
         [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
-        [JsonProperty(PropertyName = "api_url")]
+        [Display(Name = "API URL")]
         public string ApiUrl { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [JsonProperty(PropertyName = "secret")]
+        [Display(Name = "API Secret")]
         public string Secret { get; set; }
 
         /// <summary>
         /// Default false.
         /// </summary>
         [Required]
-        [Display(Name = "Cancel login")]
+        [Display(Name = "Users can cancel login")]
         public bool EnableCancelLogin { get; set; } = false;
 
         /// <summary>

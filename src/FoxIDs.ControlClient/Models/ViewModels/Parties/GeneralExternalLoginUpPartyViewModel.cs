@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class GeneralExternalLoginUpPartyViewModel : GeneralUpPartyViewModel
     {
-        public GeneralExternalLoginUpPartyViewModel() : base(PartyTypes.Login)
+        public GeneralExternalLoginUpPartyViewModel() : base(PartyTypes.ExternalLogin)
         { }
 
         public GeneralExternalLoginUpPartyViewModel(UpParty upParty) : base(upParty)

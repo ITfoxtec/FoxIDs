@@ -439,6 +439,10 @@
     {
       "name": "Code",
       "id": 104
+    },
+    {
+      "name": "Username",
+      "id": 105
     }
   ],
   "resources": [
@@ -14343,6 +14347,141 @@
         {
           "culture": "uk",
           "value": "Код",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Потребителско име",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d'usuari",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Uživatelské jméno",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brugernavn",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Benutzername",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Όνομα χρήστη",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Username",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutajanimi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käyttäjätunnus",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Korisničko ime",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notendanafn",
+          "edit_level": 30
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur",
+          "edit_level": 40
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Vartotojo vardas",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lietotājvārds",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Brukernavn",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruikersnaam",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nazwa użytkownika",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume utilizator",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Používateľské meno",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabniško ime",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Användarnamn",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kullanıcı Adı",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Ім'я користувача",
           "edit_level": 40
         }
       ]

@@ -128,6 +128,10 @@ namespace FoxIDs.Client.Pages
                 {
                     ups.Add(new GeneralTrackLinkUpPartyViewModel(dp));
                 }
+                else if (dp.Type == PartyTypes.ExternalLogin)
+                {
+                    ups.Add(new GeneralExternalLoginUpPartyViewModel(dp));
+                }
             }
             upParties = ups;
         }

@@ -49,14 +49,14 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> ExtLogin()
         {
             try
             {
                 logger.ScopeTrace(() => "Start external login.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
@@ -120,12 +120,12 @@ namespace FoxIDs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(ExternalLoginResponseViewModel extLogin)
+        public async Task<IActionResult> ExtLogin(ExternalLoginResponseViewModel extLogin)
         {
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
@@ -230,7 +230,7 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => "Cancel external login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
             }
             catch (Exception ex)
@@ -247,7 +247,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start logout.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
@@ -288,7 +288,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
@@ -382,7 +382,7 @@ namespace FoxIDs.Controllers
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
-            loginPageLogic.CheckUpParty(sequenceData);
+            loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
             return await LogoutDoneAsync(null, sequenceData);
         }
 

@@ -13,9 +13,9 @@
     </div>
     <div class="modal-body">
         <div class="info-text">
-            <DocsLink Page="users">Users</DocsLink> can authenticate with the environment's user store or choose another authentication method. The user interface is customizable.
+            <DocsLink Page="users">Users</DocsLink> can authenticate with an external user store. This is achieved by FoxIDs calling an external custom API. 
             <br />
-            The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
+            The user interface is customizable.
         </div>
         @if (extLoginUpParty.CreateMode)
         {
@@ -94,15 +94,15 @@
         <div class="tab-content pt-3">
             @if (extLoginUpParty.ShowExternalLoginTab)
             {
-                <FInputToggle @bind-Value="extLoginUpParty.Form.Model.EnableCancelLogin" For="@(() => extLoginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
-
-                <FInputText @bind-Value="extLoginUpParty.Form.Model.ApiUrl" For="@(() => extLoginUpParty.Form.Model.ApiUrl)" />
-                <FInputText @bind-Value="extLoginUpParty.Form.Model.Secret" For="@(() => extLoginUpParty.Form.Model.Secret)" />
-
                 <FInputSelect @bind-Value="extLoginUpParty.Form.Model.UsernameType" For="@(() => extLoginUpParty.Form.Model.UsernameType)">
                     <option value="@ExternalLoginUsernameTypes.Email">Email</option>
                     <option value="@ExternalLoginUsernameTypes.Text">Text</option>
                 </FInputSelect>
+
+                <FInputText @bind-Value="extLoginUpParty.Form.Model.ApiUrl" For="@(() => extLoginUpParty.Form.Model.ApiUrl)" />
+                <FInputText @bind-Value="extLoginUpParty.Form.Model.Secret" For="@(() => extLoginUpParty.Form.Model.Secret)" />
+
+                <FInputToggle @bind-Value="extLoginUpParty.Form.Model.EnableCancelLogin" For="@(() => extLoginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
 
                 @if (extLoginUpParty.ShowAdvanced)
                 {    
@@ -132,7 +132,7 @@
             }
             else if (extLoginUpParty.ShowHrdTab)
             {
-                <UpPartyHrd Model="extLoginUpParty.Form.Model" />
+                <UpPartyHrd Model="extLoginUpParty.Form.Model" HideDomains="@(extLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)" />
             }
         </div>
     </div>

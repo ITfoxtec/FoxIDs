@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             this.claimTransformLogic = claimTransformLogic;
         }
 
-        public void CheckUpParty(UpSequenceData sequenceData)
+        public void CheckUpParty(UpSequenceData sequenceData, PartyTypes partyType = PartyTypes.Login)
         {
             if (!sequenceData.UpPartyId.Equals(RouteBinding.UpParty.Id, StringComparison.Ordinal))
             {
@@ -44,9 +44,9 @@ namespace FoxIDs.Logic
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            if (RouteBinding.UpParty.Type != PartyTypes.Login)
+            if (RouteBinding.UpParty.Type != partyType)
             {
-                throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
+                throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported, expecting '{partyType}'.");
             }
         }
 

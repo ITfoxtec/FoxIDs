@@ -71,6 +71,73 @@ namespace FoxIDs
             public const string HealthController = "health";
         }
 
+        public static class Endpoints
+        {
+            public const string Logout = "logout";
+            public const string SingleLogoutDone = "singlelogoutdone";
+            public const string CancelLogin = "cancellogin";
+            public const string CreateUser = "createuser";
+            public const string ChangePassword = "changepassword";
+            public const string ResetPassword = "resetpassword";
+            public const string EmailConfirmation = "emailconfirmation";
+            public const string RegisterTwoFactor = "regtwofactor";
+            public const string TwoFactor = "twofactor";
+
+            public const string Authorize = "authorize";
+            public const string AuthorizationResponse = "authorizationresponse";
+            public const string Token = "token";
+            public const string UserInfo = "userinfo";
+            public const string EndSession = "endsession";
+            public const string EndSessionResponse = "endsessionresponse";
+            public const string FrontChannelLogout = "frontchannellogout";
+            public const string FrontChannelLogoutDone = "frontchannellogoutdone";
+
+            public const string SamlAuthn = "authn";
+            public const string SamlLogout = "logout";
+            public const string SamlAcs = "acs";
+            public const string SamlSingleLogout = "singlelogout";
+            public const string SamlLoggedOut = "loggedout";
+            public const string SamlIdPMetadata = "idpmetadata";
+            public const string SamlSPMetadata = "spmetadata";
+
+            public const string TrackLinkAuthRequest = "authrequest";
+            public const string TrackLinkAuthResponse = "authresponse";
+            public const string TrackLinkRpLogoutRequest = "rplogoutrequest";
+            public const string TrackLinkRpLogoutResponse = "rplogoutresponse";
+
+            public static class UpJump
+            {
+                public const string AuthenticationRequest = "authenticationrequest";
+                public const string EndSessionRequest = "endsessionrequest";
+
+                public const string AuthnRequest = "authnrequest";
+                public const string LogoutRequest = "logoutrequest";
+                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";
+
+                public const string TrackLinkRpLogoutRequestJump = "rplogoutrequestjump";
+            }
+        }
+
+        public static class Sequence
+        {
+            public const string Object = "sequence_object";
+            public const string String = "sequence_string";
+            public const string Start = "sequence_start";
+            public const string Valid = "sequence_valid";
+
+            public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
+        }
+
+        public static class SecurityHeader
+        {
+            public const string ImgSrcDomains = "img_src_domains";
+            public const string FormActionDomains = "form_action_domains";
+            public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
+            public const string FrameSrcDomains = "frame_src_domains";
+            public const string FrameSrcDomainsAllowAll = "frame_src_domains_allow_all";
+            public const string FrameAllowIframeOnDomains = "frame_allow_iframe_on_domains";
+        }
+
         public static class TrackDefaults
         {
             public const string DefaultTrackTestDisplayName = "Test";
@@ -681,73 +748,6 @@ namespace FoxIDs
                 public const string Log = ":log";
                 public const string User = ":user";
                 public const string Party = ":party";
-            }
-        }
-
-        public static class Sequence
-        {
-            public const string Object = "sequence_object";
-            public const string String = "sequence_string";
-            public const string Start = "sequence_start";
-            public const string Valid = "sequence_valid";
-
-            public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
-        }
-
-        public static class SecurityHeader
-        {            
-            public const string ImgSrcDomains = "img_src_domains";
-            public const string FormActionDomains = "form_action_domains";
-            public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
-            public const string FrameSrcDomains = "frame_src_domains";
-            public const string FrameSrcDomainsAllowAll = "frame_src_domains_allow_all";            
-            public const string FrameAllowIframeOnDomains = "frame_allow_iframe_on_domains";            
-        }
-
-        public static class Endpoints
-        {
-            public const string Logout = "logout";
-            public const string SingleLogoutDone = "singlelogoutdone";            
-            public const string CancelLogin = "cancellogin";
-            public const string CreateUser = "createuser";
-            public const string ChangePassword = "changepassword";
-            public const string ResetPassword = "resetpassword";
-            public const string EmailConfirmation = "emailconfirmation";
-            public const string RegisterTwoFactor = "regtwofactor";
-            public const string TwoFactor = "twofactor";
-
-            public const string Authorize = "authorize";
-            public const string AuthorizationResponse = "authorizationresponse";
-            public const string Token = "token";
-            public const string UserInfo = "userinfo";
-            public const string EndSession = "endsession";
-            public const string EndSessionResponse = "endsessionresponse";
-            public const string FrontChannelLogout = "frontchannellogout";
-            public const string FrontChannelLogoutDone = "frontchannellogoutdone";
-
-            public const string SamlAuthn = "authn";
-            public const string SamlLogout = "logout";
-            public const string SamlAcs = "acs";
-            public const string SamlSingleLogout = "singlelogout";
-            public const string SamlLoggedOut = "loggedout";
-            public const string SamlIdPMetadata = "idpmetadata";
-            public const string SamlSPMetadata = "spmetadata";
-
-            public const string TrackLinkAuthRequest = "authrequest";
-            public const string TrackLinkAuthResponse = "authresponse";
-            public const string TrackLinkRpLogoutRequest = "rplogoutrequest";
-            public const string TrackLinkRpLogoutResponse = "rplogoutresponse";
-
-            public static class UpJump
-            {
-                public const string AuthenticationRequest = "authenticationrequest";
-                public const string EndSessionRequest = "endsessionrequest";
-
-                public const string AuthnRequest = "authnrequest";
-                public const string LogoutRequest = "logoutrequest";
-                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";
-
-                public const string TrackLinkRpLogoutRequestJump = "rplogoutrequestjump";
             }
         }
 

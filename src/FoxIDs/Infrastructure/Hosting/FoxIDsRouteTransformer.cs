@@ -161,7 +161,7 @@ namespace FoxIDs.Infrastructure.Hosting
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
                 scopedLogger.SetScopeProperty(Constants.Logs.SequenceCulture, sequence.Culture);
-                return localizationLogic.GetSupportedCulture(new[] { sequence.Culture }, routeBinding);
+                return localizationLogic.GetSupportedCulture([sequence.Culture], routeBinding);
             }
             else
             {

@@ -13,7 +13,6 @@ namespace FoxIDs.Models.ViewModels
         [Display(Name = "Username")]
         [Required]
         [MaxLength(Constants.Models.UserLoginExt.UsernameLength)]
-        [EmailAddress]
         public string Username { get; set; }
 
         [Display(Name = "Password")]

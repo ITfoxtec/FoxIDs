@@ -51,8 +51,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool DisableSingleLogout { get; set; }
 
         [Required]
-        [Display(Name = "Auth type")]
-        public ExternalLoginTypes AuthType { get; set; } = ExternalLoginTypes.Api;
+        [Display(Name = "External login type")]
+        public ExternalLoginTypes ExternalLoginType { get; set; } = ExternalLoginTypes.Api;
 
         [Required]
         [JsonProperty(PropertyName = "username_type")]

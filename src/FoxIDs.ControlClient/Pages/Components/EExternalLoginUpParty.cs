@@ -96,6 +96,11 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 }
 
+                if(generalExtLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)
+                {
+                    generalExtLoginUpParty.Form.Model.HrdDomains = null;
+                }
+
                 if (generalExtLoginUpParty.CreateMode)
                 {
                     var extLoginUpPartyResult = await UpPartyService.CreateExternalLoginUpPartyAsync(generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>

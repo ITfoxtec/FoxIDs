@@ -18,8 +18,8 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [JsonProperty(PropertyName = "auth_type")]
-        public ExternalLoginTypes AuthType { get; set; }
+        [JsonProperty(PropertyName = "external_login_type")]
+        public ExternalLoginTypes ExternalLoginType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "username_type")]
@@ -71,15 +71,23 @@ namespace FoxIDs.Models
                 results.AddRange(baseResults);
             }
 
-            if (AuthType == ExternalLoginTypes.Api)
+            if (ExternalLoginType == ExternalLoginTypes.Api)
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{ApiUrl}' is required.", [nameof(ApiUrl)]));
+                    results.Add(new ValidationResult($"The field '{ApiUrl}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                 }
                 if (Secret.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{Secret}' is required.", [nameof(Secret)]));
+                    results.Add(new ValidationResult($"The field '{Secret}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(Secret), nameof(ExternalLoginType)]));
+                }
+            }
+
+            if (UsernameType == ExternalLoginUsernameTypes.Text)
+            {
+                if(HrdDomains?.Count() > 0)
+                {
+                    results.Add(new ValidationResult($"HRD domains in the field '{HrdDomains}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
                 }
             }
             return results;

@@ -3,6 +3,7 @@ using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -23,8 +24,8 @@ namespace FoxIDs.Models.Api
         public string Note { get; set; }
 
         [Required] 
-        [Display(Name = "Auth type")]
-        public ExternalLoginTypes AuthType { get; set; }
+        [Display(Name = "External login type")]
+        public ExternalLoginTypes ExternalLoginType { get; set; }
 
         [Required]
         [Display(Name = "Username type")]
@@ -99,7 +100,7 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
-            if (AuthType == ExternalLoginTypes.Api)
+            if (ExternalLoginType == ExternalLoginTypes.Api)
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {
@@ -108,6 +109,14 @@ namespace FoxIDs.Models.Api
                 if (Secret.IsNullOrWhiteSpace())
                 {
                     results.Add(new ValidationResult($"The field '{Secret}' is required.", [nameof(Secret)]));
+                }
+            }
+
+            if (UsernameType == ExternalLoginUsernameTypes.Text)
+            {
+                if (HrdDomains?.Count() > 0)
+                {
+                    results.Add(new ValidationResult($"HRD domains in the field '{HrdDomains}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
                 }
             }
             return results;

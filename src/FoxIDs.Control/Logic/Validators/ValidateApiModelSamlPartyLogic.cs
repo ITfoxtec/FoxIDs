@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
             {
                 if (keys != null)
                 {
-                    var anyDuplicate = keys.GroupBy(x => x.X5t).Any(g => g.Count() > 1);
+                    var anyDuplicate = keys.GroupBy(x => x.Kid).Any(g => g.Count() > 1);
                     if (anyDuplicate)
                     {
                         throw new ValidationException("Signature validation keys (certificates) has duplicates.");

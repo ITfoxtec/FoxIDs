@@ -141,6 +141,10 @@ namespace FoxIDs.Client.Shared.Components
             {
                 return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
+            else if (upParty.Type == PartyTypes.ExternalLogin)
+            {
+                return $"{upParty.DisplayName ?? upParty.Name} (External Login)";
+            }
             throw new NotSupportedException();
         }
     }

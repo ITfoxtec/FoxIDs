@@ -1,0 +1,69 @@
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using FoxIDs.Models.Logic;
+using FoxIDs.Models.Sequences;
+
+namespace FoxIDs.Logic
+{
+    public class ExternalLogoutUpLogic : LogicSequenceBase
+    {
+        private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
+        private readonly SequenceLogic sequenceLogic;
+
+        public ExternalLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        {
+            this.logger = logger;
+            this.serviceProvider = serviceProvider;
+            this.sequenceLogic = sequenceLogic;
+        }
+
+        public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest)
+        {
+            logger.ScopeTrace(() => "AppReg, External Login redirect.");
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+
+            await logoutRequest.ValidateObjectAsync();
+
+            await sequenceLogic.SetUiUpPartyIdAsync(partyId);
+            await sequenceLogic.SaveSequenceDataAsync(new ExternalLoginUpSequenceData
+            {
+                DownPartyLink = logoutRequest.DownPartyLink,
+                UpPartyId = partyId,
+                SessionId = logoutRequest.SessionId,
+                RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
+                PostLogoutRedirect = logoutRequest.PostLogoutRedirect
+            });
+
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.ExtLoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+        }
+
+        public async Task<IActionResult> LogoutResponseAsync(ExternalLoginUpSequenceData sequenceData)
+        {
+            logger.ScopeTrace(() => "AppReg, External Login response.");
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+
+            logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+            switch (sequenceData.DownPartyLink.Type)
+            {
+                case PartyTypes.OAuth2:
+                    throw new NotImplementedException();
+                case PartyTypes.Oidc:
+                    return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
+                case PartyTypes.Saml2:
+                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, sessionIndex: sequenceData.SessionId);
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id);
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+}

@@ -31,7 +31,7 @@ How to configure an external SAML 2.0 Identity Provider (IdP).
 The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 Where the configuration is created with the external IdP metadata.
 
-> More configuration options become available by clicking `Show advanced settings`.
+> More configuration options become available by clicking `Show advanced`.
 
 ![Configure SAML 2.0](images/configure-saml-auth-method.png)
 

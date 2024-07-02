@@ -2,7 +2,6 @@
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Session;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace FoxIDs.Logic
             this.settings = settings;
         }
 
-        protected bool SessionEnabled(UpParty upParty)
+        protected bool SessionEnabled(IUpParty upParty)
         {
             return upParty.SessionLifetime > 0 || upParty.PersistentSessionAbsoluteLifetime > 0 || upParty.PersistentSessionLifetimeUnlimited;
         }
@@ -43,7 +42,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected DateTimeOffset? GetPersistentCookieExpires(UpParty upParty, long created)
+        protected DateTimeOffset? GetPersistentCookieExpires(IUpParty upParty, long created)
         {
             if (upParty.PersistentSessionLifetimeUnlimited)
             {
@@ -59,7 +58,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected bool SessionValid(CookieMessage session, UpParty upParty)
+        protected bool SessionValid(CookieMessage session, IUpParty upParty)
         {
             return SessionValid(session, upParty.SessionLifetime, upParty.SessionAbsoluteLifetime, upParty.PersistentSessionAbsoluteLifetime, upParty.PersistentSessionLifetimeUnlimited);
         }

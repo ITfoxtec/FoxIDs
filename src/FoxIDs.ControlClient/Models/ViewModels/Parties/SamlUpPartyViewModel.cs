@@ -87,7 +87,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default NoCheck.
         /// </summary>
         [Required]
-        [Display(Name = "Revocation mode")]
+        [Display(Name = "Certificate revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [MaxLength(Constants.Models.Party.IssuerLength)]

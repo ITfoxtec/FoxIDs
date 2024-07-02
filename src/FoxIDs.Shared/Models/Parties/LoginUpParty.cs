@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class LoginUpParty : UpParty, IUiLoginUpParty
+    public class LoginUpParty : UpParty, IOAuthClaimTransforms, IUiLoginUpParty
     {
         public LoginUpParty()
         {

@@ -31,7 +31,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  3. Copy the three URLs: `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL`
  4. In the scopes list add `profile`
  5. Add the Signicat Express secret in the Client secret field
- 6. Select show advanced settings
+ 6. Select show advanced
  7. Add the Signicat Express client id in the Optional customer SP client ID field
  8. Click create
 

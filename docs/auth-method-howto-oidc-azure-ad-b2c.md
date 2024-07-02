@@ -9,7 +9,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 **1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
- 2. Select show advanced settings
+ 2. Select show advanced
  3. Select tildes URL binding pattern
 
 ![Read the redirect URLs](images/howto-oidc-azuread-readredirect.png)

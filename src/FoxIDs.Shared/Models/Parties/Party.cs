@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class Party : PartyDataElement, IDataDocument
+    public class Party : PartyDataElement, IDataDocument, IParty
     {
         [Required]
         [MaxLength(Constants.Models.DocumentPartitionIdLength)]

@@ -16,11 +16,12 @@ The DK privilege can both be configured in a SAML 2.0 authentication method and 
 
 Configure the DK privilege claim transformer on SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client):
 
-1. Select the Claim transform tab
-1. Click Add claim transform and click DK XML privilege to JSON. 
-1. Then again, click Add claim transform and click Match claim. 
-2. Select to remove the original privilege claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` from the claims pipeline.
-3. Click update
+1. Select the **Claim transform** tab
+2. Click **Add claim transform** and click **DK XML privilege to JSON**
+3. Click **Add claim transform** and click **Match claim**
+4. As **Action** select **Remove claim**, to remove the original privilege claim from the claims pipeline
+5. In the **Remove claim** add `https://data.gov.dk/model/core/eid/privilegesIntermediate` 
+6. Click **Update**
 
 ![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 

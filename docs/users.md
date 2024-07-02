@@ -3,7 +3,7 @@ Users are saved in the environment's user repository. To achieve multiple user s
 
 There are two different types of users:
 - [Internal users](#internal-users) which are authenticated using the [login](login.md) authentication method.
-- [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The user is authenticated in an external Identity Provider using an authenticated method: OpenID Connect, SAML 2.0 or Environment Link.
+- [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The user is authenticated in an external Identity Provider using an authenticated method: OpenID Connect, SAML 2.0, Environment Link or External Login.
 
 ## Internal users
 Internal users can be authenticated in all [login](login.md) authentication methods in an environment, making is possible to [customize](customization.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.

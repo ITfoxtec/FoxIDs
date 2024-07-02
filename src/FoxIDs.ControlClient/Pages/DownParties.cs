@@ -203,6 +203,10 @@ namespace FoxIDs.Client.Pages
             {
                 return $"{downParty.DisplayName ?? downParty.Name} (Environment Link)";
             }
+            else if (downParty.Type == PartyTypes.ExternalLogin)
+            {
+                return $"{downParty.DisplayName ?? downParty.Name} (External Login)";
+            }
 
             throw new NotSupportedException();
         }

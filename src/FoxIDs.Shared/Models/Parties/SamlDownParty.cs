@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Models
 {
-    public class SamlDownParty : DownParty, IValidatableObject
+    public class SamlDownParty : DownParty, ISamlClaimTransforms, IValidatableObject
     {
         public SamlDownParty()
         {

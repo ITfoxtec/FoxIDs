@@ -1,9 +1,20 @@
-﻿<FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
-<FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />
+﻿@if (!HideDomains)
+{
+    <FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
+    <FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />
+}
+else
+{
+    Model.HrdDomains = null;
+    Model.HrdShowButtonWithDomain = false;
+}
 <FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
 <FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
 
 @code {
     [Parameter]
     public IUpPartyHrd Model { get; set; }
+
+    [Parameter]
+    public bool HideDomains { get; set; }
 }

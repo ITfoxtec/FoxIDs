@@ -47,7 +47,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 
  **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Click the **Advanced options** in the top right corner of this configuration section
+ 1. Click the **Show advanced** in the top right corner of this configuration section
  2. Disable the **Single logout** switch
  3. Add the **Optional custom SP client ID** from Google called **Client ID**
  4. Add the two **scopes** `email` and `public`

@@ -58,7 +58,7 @@ How to configure your application as an SAML 2.0 Relying Party (RP).
 
 The following screen shot show the basic FoxIDs SAML 2.0 application registration configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
-> More configuration options become available by clicking `Show advanced settings`.
+> More configuration options become available by clicking `Show advanced`.
 
 ![Configure SAML 2.0](images/configure-saml-app-reg.png)
 

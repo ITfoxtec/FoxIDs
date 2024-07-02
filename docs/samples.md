@@ -224,7 +224,7 @@ Create a sample seed tool OAuth 2.0 client in the [FoxIDs Control Client](contro
 2. Set the client id to `sample_seed`.
 3. Remember the client secret.
 4. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
-5. Click show advanced settings. 
+5. Click show advanced. 
 6. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will granted the client the administrator role. 
 
 The sample seed tool client is thereby granted access to update to the tenant.

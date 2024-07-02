@@ -23,7 +23,7 @@ An application using Client Credentials Grant could be a backend service secured
 - Specify client authentication method, default `client secret post`
     - A secret is default generated
     - Optionally change to another client authentication method
-      - Select show advanced settings
+      - Select show advanced
       - Select client authentication method: `client secret basic` or `private key JWT`
       - If `private key JWT` is selected, upload a client certificate (pfx file)
 - Optionally grant the client access to call the `party-api2` resource (API) with the `read1` and `read2` scopes.

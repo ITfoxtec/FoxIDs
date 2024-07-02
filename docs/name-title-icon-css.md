@@ -18,7 +18,7 @@ The FoxIDs user interface can be customized per [login authentication method](lo
 
 Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
- 1. Select show advanced settings
+ 1. Select show advanced
  4. Add the browser title text
  4. Add the browser icon URL from an external site, supported image formats: ico, png, gif, jpeg and webp
  2. Add the CSS to the CSS field, if necessary drag the field bigger

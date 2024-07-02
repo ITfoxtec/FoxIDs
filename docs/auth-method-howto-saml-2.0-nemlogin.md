@@ -63,7 +63,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 1. Select the Authentication methods tab
 2. Click New authentication and then SAML 2.0
 3. Add the name
-4. Select show advanced settings
+4. Select show advanced
 5. Select the dot URL binding pattern
 6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
 7. Go back to the SAML tab
@@ -92,7 +92,8 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
- 12. In production only! Set the certificate revocation mode to `Online` and optionally the validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure.
+ 12. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+     Set the Certificate revocation mode to `Online`
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 

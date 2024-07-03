@@ -125,7 +125,37 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 > To configure production you need to upload a test report, have it approved and then repeat the FoxIDs and NemLog-in configuration.
 
- **3) - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3) - Optionally - Configure MitID app-switch to mobile app [FoxIDs Control Client](control.md#foxids-control-client)**
+
+ *Optionally, configure MitID app-switch if you are using NemLog-in / MitID in a mobile app.*
+
+- You can find more information in [NemLog-in Integration with NemLog-in3](https://cms.nemlog-in.dk/media/jhmbnulm/integration-with-nemlog-in.pdf) chapter 9.6 and 9.7.
+
+NemLog-in support mobile app-switch using either Universal Links on iOS or App Links on Android, based on a return URL which is handed to NemLog-in in a SAML 2.0 extension as part of the authn (login) request.
+
+The return URL is the URL for your mobile app and the return URL is used to app-switch back to your mobile app from the MitID app after authentication.
+
+The return URL is configured as XML, if the return URL for your Android app is `https://myapp.page.link/zyx`  
+The SAML 2.0 authn request extension XML is:
+
+```XML
+<nl:AppSwitch xmlns:nl="https://data.gov.dk/eid/saml/extensions">
+  <nl:Platform>Android</nl:Platform>
+  <nl:ReturnURL>https://myapp.page.link/zyx</nl:ReturnURL>
+</nl:AppSwitch>
+```
+
+Select show advanced settings and add the extension XML in **Authn request extensions XML** and click **Update**  
+
+![NemLog-in SAML 2.0 authn request extension XM](images/howto-saml-nemlogin3-auth-req-ext.png)
+
+You can only configure one SAML 2.0 extension per authentication method in FoxIDs, therefor you might need to configure multiple authentication method for NemLog-in. 
+One authentication method for your web site without a SAML 2.0 extension, and one authentication method for each of the supported mobile app platforms.
+
+> As of now iOS do not require a return URL to do app-switch. But this can change over time!  
+> Therefor, you currently only need two authentication methods one for your web site without a redirect URL and one for your Android app with a redirect URL.
+
+ **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 *Optionally, if you are using the privilege claim.*
 
@@ -137,7 +167,7 @@ Furthermore, it makes the tokens readable.
 
 ![NemLog-in SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
- **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **5) - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  FoxIDs internally converts SAML 2.0 clams to JWT claims. NemLog-in / OIOSAML3 defines a set of SAML 2.0 claims where JWT mappings need to be added.
 

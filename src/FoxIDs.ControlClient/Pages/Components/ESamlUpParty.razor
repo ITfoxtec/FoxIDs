@@ -335,6 +335,7 @@
                         </FInputSelect>
                         </div>
                         <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
+                        <FInputText @bind-Value="samlUpParty.Form.Model.AuthnRequestExtensionsXml" For="@(() => samlUpParty.Form.Model.AuthnRequestExtensionsXml)" />
                     }
                     <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
                         <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>

@@ -153,7 +153,7 @@ You can only configure one SAML 2.0 extension per authentication method in FoxID
 One authentication method for your web site without a SAML 2.0 extension, and one authentication method for each of the supported mobile app platforms.
 
 > As of now iOS do not require a return URL to do app-switch. But this can change over time!  
-> Therefor, you currently only need two authentication methods one for your web site without a redirect URL and one for your Android app with a redirect URL.
+> Therefor, you currently only need two authentication methods; one for your web site and iOS app without a redirect URL and one for your Android app with a redirect URL.
 
  **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
 

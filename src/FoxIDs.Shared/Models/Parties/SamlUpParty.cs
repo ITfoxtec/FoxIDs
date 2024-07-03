@@ -91,6 +91,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_context_class_refs")]
         public List<string> AuthnContextClassReferences { get; set; }
 
+        [MaxLength(Constants.Models.SamlParty.Up.AuthnRequestExtensionsXmlLength)]
+        [JsonProperty(PropertyName = "authn_request_extensions_xml")]
+        public string AuthnRequestExtensionsXml { get; set; }
+
         [JsonProperty(PropertyName = "metadata_add_logout_response_location")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 

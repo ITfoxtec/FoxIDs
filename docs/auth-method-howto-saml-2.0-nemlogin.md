@@ -125,7 +125,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 > To configure production you need to upload a test report, have it approved and then repeat the FoxIDs and NemLog-in configuration.
 
- **3) - Optionally - Configure MitID app-switch to mobile app [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3) - Optionally - Configure MitID app-switch to mobile app in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  *Optionally, configure MitID app-switch if you are using NemLog-in / MitID in a mobile app.*
 

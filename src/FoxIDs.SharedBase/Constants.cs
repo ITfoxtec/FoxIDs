@@ -605,6 +605,8 @@ namespace FoxIDs
 
                     public const int AuthnContextClassReferencesMin = 0;
                     public const int AuthnContextClassReferencesMax = 20;
+
+                    public const int AuthnRequestExtensionsXmlLength = 1000;
                 }
 
                 public static class Down

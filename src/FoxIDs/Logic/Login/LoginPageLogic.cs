@@ -121,12 +121,13 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> ExternalLoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, List<Claim> claims)
+        public async Task<IActionResult> ExternalLoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
         {
             var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
             var session = await ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
 
             sequenceData.Claims = claims.ToClaimAndValues();
+            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
             return await ExternalLoginResponseAsync(extLoginUpParty, GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData.AuthMethods, session: session);

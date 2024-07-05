@@ -443,6 +443,10 @@
     {
       "name": "Username",
       "id": 105
+    },
+    {
+      "name": "Wrong username or password",
+      "id": 106
     }
   ],
   "resources": [
@@ -14405,6 +14409,11 @@
           "edit_level": 40
         },
         {
+          "culture": "fr",
+          "value": "Nom d'utilisateur",
+          "edit_level": 40
+        },
+        {
           "culture": "hr",
           "value": "Korisničko ime",
           "edit_level": 30
@@ -14413,11 +14422,6 @@
           "culture": "is",
           "value": "Notendanafn",
           "edit_level": 30
-        },
-        {
-          "culture": "fr",
-          "value": "Nom d'utilisateur",
-          "edit_level": 40
         },
         {
           "culture": "it",
@@ -14482,6 +14486,141 @@
         {
           "culture": "uk",
           "value": "Ім'я користувача",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешно потребителско име или парола",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d'usuari o contrasenya incorrectes",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné uživatelské jméno nebo heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert brugernavn eller adgangskode",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falscher Benutzername oder falsches Passwort",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος όνομα χρήστη ή κωδικός πρόσβασης",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong username or password",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario o contraseña incorrectos",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale kasutajanimi või parool",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä käyttäjätunnus tai salasana",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur ou mot de passe incorrect",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešno korisničko ime ili lozinka",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt notendanafn eða lykilorð",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente o password errati",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas naudotojo vardas arba slaptažodis",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs lietotājvārds vai parole",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil brukernavn eller passord",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerde gebruikersnaam of wachtwoord",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowa nazwa użytkownika lub hasło",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador ou palavra-passe errados",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume de utilizator sau parolă greșite",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne používateľské meno alebo heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačno uporabniško ime ali geslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel användarnamn eller lösenord",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış kullanıcı adı veya şifre",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильне ім'я користувача або пароль",
           "edit_level": 40
         }
       ]

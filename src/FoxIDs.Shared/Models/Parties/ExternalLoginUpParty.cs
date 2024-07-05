@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -77,6 +78,14 @@ namespace FoxIDs.Models
                 {
                     results.Add(new ValidationResult($"The field '{ApiUrl}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                 }
+                else
+                {
+                    if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to be HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                    }
+                }
+
                 if (Secret.IsNullOrWhiteSpace())
                 {
                     results.Add(new ValidationResult($"The field '{Secret}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(Secret), nameof(ExternalLoginType)]));

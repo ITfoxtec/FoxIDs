@@ -180,7 +180,7 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace(() => "Password post.");
+                logger.ScopeTrace(() => "Username and password post.");
 
                 try
                 {
@@ -190,13 +190,8 @@ namespace FoxIDs.Controllers
                         ExternalLoginUsernameTypes.Text => extLogin.Username,
                         _ => throw new NotSupportedException()
                     };
-                    var claims = await externalAccountLogic.ValidateUser(username, extLogin.Password);
+                    var claims = await externalAccountLogic.ValidateUserAsync(extLoginUpParty, username, extLogin.Password);
                     return await loginPageLogic.ExternalLoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
-                }
-                catch (ChangePasswordException cpex)
-                {
-                    logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
-                    throw new NotSupportedException("Change password not supported for external login.", cpex);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -205,10 +200,16 @@ namespace FoxIDs.Controllers
                 }
                 catch (AccountException aex)
                 {
-                    if (aex is InvalidPasswordException || aex is UserNotExistsException)
+                    if (aex is InvalidUsernameOrPasswordException)
                     {
                         logger.ScopeTrace(() => aex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
+                        var wrongErrorText = extLoginUpParty.UsernameType switch
+                        {
+                            ExternalLoginUsernameTypes.Email => "Wrong email or password",
+                            ExternalLoginUsernameTypes.Text => "Wrong username or password",
+                            _ => throw new NotSupportedException()
+                        };
+                        ModelState.AddModelError(string.Empty,  localizer[wrongErrorText]);
                     }
                     else
                     {

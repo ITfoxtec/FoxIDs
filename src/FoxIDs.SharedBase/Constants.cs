@@ -753,6 +753,15 @@ namespace FoxIDs
             }
         }
 
+        public static class ExternalLogin
+        {
+            public static class Api
+            {
+                public const string Authentication = "authentication";
+                public const string ApiId = "external_login";
+            }
+        }
+
         public static class OAuth
         {
             public readonly static string[] DefaultResponseTypes =

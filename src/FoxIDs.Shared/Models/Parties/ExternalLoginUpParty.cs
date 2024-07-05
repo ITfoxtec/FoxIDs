@@ -40,7 +40,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
+        public LoginUpPartyLogoutConsents LogoutConsent { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
@@ -82,7 +82,7 @@ namespace FoxIDs.Models
                 {
                     if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to be HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                     }
                 }
 

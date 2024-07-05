@@ -39,6 +39,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Secret")]
         public string Secret { get; set; }
 
+        [Display(Name = "Enable cancel login")]
+        public bool EnableCancelLogin { get; set; } = false;
+
+        [Display(Name = "Logout consent")]
+        public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
+
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         public List<string> Claims { get; set; }
 
@@ -110,7 +116,7 @@ namespace FoxIDs.Models.Api
                 {
                     if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to be HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                     }
                 }
 

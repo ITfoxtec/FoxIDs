@@ -264,7 +264,7 @@ namespace FoxIDs.Controllers
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
 
-                if (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
+                if (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsents.Always || (extLoginUpParty.LogoutConsent == LoginUpPartyLogoutConsents.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace(() => "Show logout consent dialog.");
                     return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Title = extLoginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = extLoginUpParty.IconUrl, Css = extLoginUpParty.Css });

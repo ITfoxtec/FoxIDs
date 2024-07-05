@@ -106,6 +106,11 @@
 
                 @if (extLoginUpParty.ShowAdvanced)
                 {    
+                    <FInputSelect @bind-Value="extLoginUpParty.Form.Model.LogoutConsent" For="@(() => extLoginUpParty.Form.Model.LogoutConsent)">
+                        <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
+                        <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
+                        <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
+                    </FInputSelect>
                     <FInputToggle @bind-Value="extLoginUpParty.Form.Model.DisableSingleLogout" For="@(() => extLoginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
                     <FInputText @bind-Value="extLoginUpParty.Form.Model.Title" For="@(() => extLoginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="extLoginUpParty.Form.Model.IconUrl" For="@(() => extLoginUpParty.Form.Model.IconUrl)" />

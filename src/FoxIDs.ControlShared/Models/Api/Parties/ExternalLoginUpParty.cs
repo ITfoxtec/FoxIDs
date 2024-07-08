@@ -135,19 +135,14 @@ namespace FoxIDs.Models.Api
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{ApiUrl}' is required.", [nameof(ApiUrl)]));
+                    results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required.", [nameof(ApiUrl)]));
                 }
                 else
                 {
                     if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                        results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                     }
-                }
-
-                if (Secret.IsNullOrWhiteSpace())
-                {
-                    results.Add(new ValidationResult($"The field '{Secret}' is required.", [nameof(Secret)]));
                 }
             }
 
@@ -155,7 +150,7 @@ namespace FoxIDs.Models.Api
             {
                 if (HrdDomains?.Count() > 0)
                 {
-                    results.Add(new ValidationResult($"HRD domains in the field '{HrdDomains}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
+                    results.Add(new ValidationResult($"HRD domains in the field '{nameof(HrdDomains)}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
                 }
             }
             return results;

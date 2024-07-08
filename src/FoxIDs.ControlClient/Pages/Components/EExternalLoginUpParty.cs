@@ -52,6 +52,11 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.DisplayName = afterMap.Name;
                 }
 
+                if (afterMap.Secret != null)
+                {
+                    afterMap.Secret = afterMap.SecretLoaded = afterMap.Secret.Length == 3 ? $"{afterMap.Secret}..." : afterMap.Secret;
+                }
+
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -102,19 +107,21 @@ namespace FoxIDs.Client.Pages.Components
                     generalExtLoginUpParty.Form.Model.HrdShowButtonWithDomain = false;
                 }
 
+                var extLoginUpParty = generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>
+                {
+                    if (afterMap.ClaimTransforms?.Count() > 0)
+                    {
+                        int order = 1;
+                        foreach (var claimTransform in afterMap.ClaimTransforms)
+                        {
+                            claimTransform.Order = order++;
+                        }
+                    }
+                });
+
                 if (generalExtLoginUpParty.CreateMode)
                 {
-                    var extLoginUpPartyResult = await UpPartyService.CreateExternalLoginUpPartyAsync(generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>
-                    {
-                        if (afterMap.ClaimTransforms?.Count() > 0)
-                        {
-                            int order = 1;
-                            foreach (var claimTransform in afterMap.ClaimTransforms)
-                            {
-                                claimTransform.Order = order++;
-                            }
-                        }
-                    }));
+                    var extLoginUpPartyResult = await UpPartyService.CreateExternalLoginUpPartyAsync(extLoginUpParty);
                     generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
                     generalExtLoginUpParty.CreateMode = false;
                     toastService.ShowSuccess("External login application created.");
@@ -123,20 +130,29 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
-                    var loginUpParty = await UpPartyService.UpdateExternalLoginUpPartyAsync(generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>
+                    var deleteSecret = false;
+                    if (extLoginUpParty.Secret != generalExtLoginUpParty.Form.Model.SecretLoaded)
                     {
-                        if (afterMap.ClaimTransforms?.Count() > 0)
+                        if (string.IsNullOrWhiteSpace(extLoginUpParty.Secret))
                         {
-                            int order = 1;
-                            foreach (var claimTransform in afterMap.ClaimTransforms)
-                            {
-                                claimTransform.Order = order++;
-                            }
+                            deleteSecret = true;
                         }
-                    }));
-                    generalExtLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
+                        else
+                        {
+                            await UpPartyService.UpdateExternalLoginSecretUpPartyAsync(new ExternalLoginSecretRequest { PartyName = UpParty.Name, Secret = extLoginUpParty.Secret });
+                        }
+                        extLoginUpParty.Secret = null;
+                    }
+
+                    var extLoginUpPartyResult = await UpPartyService.UpdateExternalLoginUpPartyAsync(extLoginUpParty);
+                    if (deleteSecret)
+                    {
+                        await UpPartyService.DeleteExternalLoginSecretUpPartyAsync(UpParty.Name);
+                        extLoginUpPartyResult.Secret = null;
+                    }
+                    generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
                     toastService.ShowSuccess("External login application updated.");
-                    generalExtLoginUpParty.DisplayName = loginUpParty.DisplayName;
+                    generalExtLoginUpParty.DisplayName = extLoginUpPartyResult.DisplayName;
                 }
             }
             catch (FoxIDsApiException ex)

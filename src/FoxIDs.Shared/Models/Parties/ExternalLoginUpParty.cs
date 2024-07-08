@@ -76,19 +76,19 @@ namespace FoxIDs.Models
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{ApiUrl}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                    results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                 }
                 else
                 {
                     if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new ValidationResult($"The field '{ApiUrl}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
+                        results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                     }
                 }
 
                 if (Secret.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{Secret}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(Secret), nameof(ExternalLoginType)]));
+                    results.Add(new ValidationResult($"The field '{nameof(Secret)}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(Secret), nameof(ExternalLoginType)]));
                 }
             }
 
@@ -96,7 +96,7 @@ namespace FoxIDs.Models
             {
                 if(HrdDomains?.Count() > 0)
                 {
-                    results.Add(new ValidationResult($"HRD domains in the field '{HrdDomains}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
+                    results.Add(new ValidationResult($"HRD domains in the field '{nameof(HrdDomains)}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
                 }
             }
             return results;

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OIDC import client secret for authentication method API.
+    /// OIDC client secret for authentication method API.
     /// </summary>
     public class TOidcClientSecretUpPartyController : GenericOAuthClientSecretUpPartyController<OidcUpParty, OidcUpClient>
     {

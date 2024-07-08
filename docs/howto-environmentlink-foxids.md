@@ -1,4 +1,4 @@
-# Connect two environments with Environment Link
+# Environment Link
 
 FoxIDs environments in the same tenant can be connected with environment links. An Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
 

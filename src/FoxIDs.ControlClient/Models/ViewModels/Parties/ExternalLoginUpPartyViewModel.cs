@@ -54,7 +54,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public ExternalLoginTypes ExternalLoginType { get; set; } = ExternalLoginTypes.Api;
 
         [Required]
-        [Display(Name = "External login type")]
+        [Display(Name = "Username type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; } = ExternalLoginUsernameTypes.Email;
 
         [Required]
@@ -66,6 +66,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "API Secret")]
         public string Secret { get; set; }
+        public string SecretLoaded { get; set; }
 
         /// <summary>
         /// Default false.

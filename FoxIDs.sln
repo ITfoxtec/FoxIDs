@@ -67,6 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\deployment.md = docs\deployment.md
 		docs\development.md = docs\development.md
 		docs\email.md = docs\email.md
+		docs\external-login.md = docs\external-login.md
 		docs\faq.md = docs\faq.md
 		docs\foxids-dev.md = docs\foxids-dev.md
 		docs\foxids-inside.md = docs\foxids-inside.md

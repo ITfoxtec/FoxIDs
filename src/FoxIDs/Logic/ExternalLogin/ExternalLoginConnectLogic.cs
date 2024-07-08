@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
 
                     return authenticationResponse.Claims?.Select(c => new Claim(c.Type, c.Value))?.ToList();
 
-                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.Forbidden:
                     logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response, Status code={response.StatusCode}. Response '{response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}'.", traceType: TraceTypes.Message);
 
                     throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}'.");

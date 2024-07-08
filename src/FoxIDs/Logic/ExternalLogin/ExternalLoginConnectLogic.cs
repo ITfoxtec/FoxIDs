@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
@@ -17,13 +16,13 @@ using Ext = FoxIDs.Models.ExternalLogin;
 
 namespace FoxIDs.Logic
 {
-    public class ExternalAccountLogic : LogicSequenceBase
+    public class ExternalLoginConnectLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public ExternalAccountLogic(TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalLoginConnectLogic(TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.httpClientFactory = httpClientFactory;
@@ -38,39 +37,20 @@ namespace FoxIDs.Logic
                 _ => throw new NotSupportedException()
             };
 
-            claims = claims ?? new List<Claim>();
-            claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
-                c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
-                c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
-            claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
-
-            var subject = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
-
-            if (subject.IsNullOrEmpty())
+            claims = claims ?? new List<Claim>();           
+            logger.ScopeTrace(() => $"AuthMethod, External login, received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
             {
-                subject = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
+                var email = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
+                claims.AddClaim(JwtClaimTypes.Subject, !email.IsNullOrEmpty() ? email: username);
             }
-
-            if (!subject.IsNullOrEmpty())
-            {
-                claims = claims.Where(c => c.Type != JwtClaimTypes.Subject).ToList();
-                claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
-            }
-            else
-            {
-                claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{username}"));
-            }
-
             return claims;
         }
 
         private async Task<List<Claim>> ValidateUserApiAsync(ExternalLoginUpParty extLoginUpParty, string username, string password)
         {
             var authenticationApiUrl = UrlCombine.Combine(extLoginUpParty.ApiUrl, Constants.ExternalLogin.Api.Authentication);
-            logger.ScopeTrace(() => $"External login, Authentication API request, URL '{authenticationApiUrl}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request, URL '{authenticationApiUrl}'.", traceType: TraceTypes.Message);
 
             var authRequest = new Ext.AuthenticationRequest
             {
@@ -78,10 +58,10 @@ namespace FoxIDs.Logic
                 Username = username,
                 Password = password
             };
-            logger.ScopeTrace(() => $"External login, Authentication API request '{authRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{authRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             var httpClient = httpClientFactory.CreateClient();
-            logger.ScopeTrace(() => $"External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? extLoginUpParty.Secret.Substring(0, 3) : string.Empty)}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? extLoginUpParty.Secret.Substring(0, 3) : string.Empty)}'.", traceType: TraceTypes.Message);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
@@ -92,21 +72,21 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var authenticationResponse = result.ToObject<Ext.AuthenticationResponse>();
-                    logger.ScopeTrace(() => $"External login, Authentication API response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
                     await failingLoginLogic.ResetFailingLoginCountAsync(username, isExternalLogin: true);
-                    logger.ScopeTrace(() => $"External login, User '{username}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
+                    logger.ScopeTrace(() => $"AuthMethod, External login, User '{username}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
 
                     return authenticationResponse.Claims?.Select(c => new Claim(c.Type, c.Value))?.ToList();
 
                 case HttpStatusCode.Unauthorized:
-                    logger.ScopeTrace(() => $"External login, Authentication API response, Status code={response.StatusCode}. Response '{response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response, Status code={response.StatusCode}. Response '{response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}'.", traceType: TraceTypes.Message);
 
                     throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}'.");
 
                 default:
                     var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"External login, Authentication API response, Status code={response.StatusCode}. Response '{resultUnexpectedStatus}'.");
+                    throw new Exception($"AuthMethod, External login, Authentication API response, Status code={response.StatusCode}. Response '{resultUnexpectedStatus}'.");
             }
         }
     }

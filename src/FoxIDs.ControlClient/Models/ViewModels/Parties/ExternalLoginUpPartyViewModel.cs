@@ -74,6 +74,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Users can cancel login")]
         public bool EnableCancelLogin { get; set; } = false;
 
+        [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
+        [Display(Name = "Forward claims (use * to carried all claims forward)")]
+        public List<string> Claims { get; set; } = new List<string>(["*"]);
+
         /// <summary>
         /// Claim transforms.
         /// </summary>

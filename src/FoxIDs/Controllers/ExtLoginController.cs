@@ -24,16 +24,16 @@ namespace FoxIDs.Controllers
         private readonly IServiceProvider serviceProvider;
         private readonly IStringLocalizer localizer;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly LoginPageLogic loginPageLogic;
+        private readonly ExternalLoginPageLogic loginPageLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly ExternalAccountLogic externalAccountLogic;
+        private readonly ExternalLoginConnectLogic externalLoginConnectLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalAccountLogic externalAccountLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.externalAccountLogic = externalAccountLogic;
+            this.externalLoginConnectLogic = externalLoginConnectLogic;
             this.dynamicElementLogic = dynamicElementLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
@@ -190,8 +190,8 @@ namespace FoxIDs.Controllers
                         ExternalLoginUsernameTypes.Text => extLogin.Username,
                         _ => throw new NotSupportedException()
                     };
-                    var claims = await externalAccountLogic.ValidateUserAsync(extLoginUpParty, username, extLogin.Password);
-                    return await loginPageLogic.ExternalLoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
+                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, username, extLogin.Password);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

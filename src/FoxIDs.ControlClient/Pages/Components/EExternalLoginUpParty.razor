@@ -72,11 +72,11 @@
             <li class="nav-item">
                 @if (extLoginUpParty.ShowSessionTab)
                 {
-                    <a class="nav-link active">Logout Session</a>
+                    <a class="nav-link active">User Session</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.Session))">Logout Session</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.Session))">User Session</button>
                 }
             </li>
             <li class="nav-item">
@@ -103,6 +103,7 @@
                 <FInputText @bind-Value="extLoginUpParty.Form.Model.Secret" For="@(() => extLoginUpParty.Form.Model.Secret)" />
 
                 <FInputToggle @bind-Value="extLoginUpParty.Form.Model.EnableCancelLogin" For="@(() => extLoginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
+                <FInputTextList @bind-ValueList="extLoginUpParty.Form.Model.Claims" For="@(() => extLoginUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
 
                 @if (extLoginUpParty.ShowAdvanced)
                 {    

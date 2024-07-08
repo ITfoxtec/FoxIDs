@@ -71,6 +71,31 @@ namespace FoxIDs.Models.Api
         public string Css { get; set; }
 
         /// <summary>
+        /// Default 10 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int SessionLifetime { get; set; } = 36000;
+
+        /// <summary>
+        /// Default 24 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
+        public int SessionAbsoluteLifetime { get; set; } = 86400;
+
+        /// <summary>
+        /// Default 0 minutes.
+        /// </summary>
+        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
+        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
+
+        /// <summary>
+        /// Default false.
+        /// </summary>
+        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+
+        public bool DisableSingleLogout { get; set; }
+
+        /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]

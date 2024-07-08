@@ -50,13 +50,13 @@ namespace FoxIDs.Logic
             }
         }
 
-        public bool GetRequereMfa(User user, LoginUpParty upParty, ILoginUpSequenceDataBase sequenceData)
+        public bool GetRequereMfa(User user, LoginUpParty loginUpParty, ILoginUpSequenceDataBase sequenceData)
         {
             if (user.RequireMultiFactor)
             {
                 return true;
             }
-            else if (upParty.RequireTwoFactor)
+            else if (loginUpParty.RequireTwoFactor)
             {
                 return true;
             }
@@ -121,18 +121,6 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> ExternalLoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
-        {
-            var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
-            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
-
-            sequenceData.Claims = claims.ToClaimAndValues();
-            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-
-            return await ExternalLoginResponseAsync(extLoginUpParty, GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData.AuthMethods, session: session);
-        }
-
         private bool RegisterTwoFactor(User user)
         {
             if (settings.Options.KeyStorage == KeyStorageOptions.None)
@@ -159,7 +147,7 @@ namespace FoxIDs.Logic
             return await sessionLogic.GetSessionAsync(upParty);
         }
 
-        private async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty, string userId)
+        public async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty, string userId)
         {
             var session = await GetSessionAsync(sequenceData, upParty);
             if (session != null && userId != session.UserId)
@@ -179,42 +167,23 @@ namespace FoxIDs.Logic
             return session;
         }
 
-        private async Task<IActionResult> LoginResponseAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, User user, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session, acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(upParty, user, authTime, authMethods, sessionId, acrClaims);
-                await sessionLogic.CreateSessionAsync(upParty, newDownPartyLink, authTime, claims);
+                claims = await GetClaimsAsync(loginUpParty, user, authTime, authMethods, sessionId, acrClaims);
+                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
             }
 
             return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(claims);
-        }
-
-        private async Task<IActionResult> ExternalLoginResponseAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
-        {
-            var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session, acrClaims))
-            {
-                claims = session.Claims.ToClaimList();
-            }
-            else
-            {
-                var sessionId = RandomGenerator.Generate(24);
-                claims = await GetExternalClaimsAsync(upParty, userClaims, authTime, authMethods, sessionId, acrClaims);
-                await sessionLogic.CreateSessionAsync(upParty, newDownPartyLink, authTime, claims);
-            }
-
-            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(claims);
         }
 
         public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
@@ -242,22 +211,11 @@ namespace FoxIDs.Logic
             return true;
         }
 
-        public async Task<IActionResult> LoginResponseUpdateSessionAsync(UpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        public async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
         {
-            if (session != null && await sessionLogic.UpdateSessionAsync(upParty, newDownPartyLink, session))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
             {
-                if (upParty is LoginUpParty)
-                {
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
-                }
-                else if (upParty is ExternalLoginUpParty)
-                {
-                    return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
             }
             else
             {
@@ -265,7 +223,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(UpParty upParty, User user, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, User user, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -279,42 +237,18 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
             claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, upParty.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, upParty.Type.GetPartyTypeValue());
-            claims.AddClaim(Constants.JwtClaimTypes.UpParty, upParty.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, upParty.Type.GetPartyTypeValue());
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, loginUpParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, loginUpParty.Type.GetPartyTypeValue());
+            claims.AddClaim(Constants.JwtClaimTypes.UpParty, loginUpParty.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, loginUpParty.Type.GetPartyTypeValue());
             if (user.Claims?.Count() > 0)
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
             logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.Transform((upParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var transformedClaims = await claimTransformLogic.Transform((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
-        }
-
-        private async Task<List<Claim>> GetExternalClaimsAsync(UpParty upParty, IEnumerable<Claim> userClaims, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
-        {
-            var claims = userClaims.Where(c => c.Type != JwtClaimTypes.SessionId &&
-                c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
-                c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
-            
-            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
-            if (acrClaims?.Count() > 0)
-            {
-                claims.AddRange(acrClaims);
-            }
-            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, upParty.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, upParty.Type.GetPartyTypeValue());
-            claims.AddClaim(Constants.JwtClaimTypes.UpParty, upParty.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, upParty.Type.GetPartyTypeValue());
-            logger.ScopeTrace(() => $"AuthMethod, External login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-            var transformedClaims = await claimTransformLogic.Transform((upParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"AuthMethod, External login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return transformedClaims;
         }
 

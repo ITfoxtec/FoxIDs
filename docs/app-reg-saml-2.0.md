@@ -45,7 +45,7 @@ The `AuthnContextClassRef` property can be set in the `Login` method in `SamlCon
         return binding.Bind(saml2AuthnRequest).ToActionResult();
     }
 
-See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and [SamlController.cs line 104](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreSamlSample/Controllers/SamlController.cs#L104).
+See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and [SamlController.cs line 104](https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/AspNetCoreSamlSample/Controllers/SamlController.cs#L105).
 
 ## Configuration
 How to configure your application as an SAML 2.0 Relying Party (RP).

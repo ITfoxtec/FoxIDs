@@ -49,7 +49,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
         }
     };
 
-*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
 **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -92,7 +92,7 @@ If you want to read claims from the access token you need to add an API resource
 
 You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
 
-*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
 **2 - Then go to [FoxIDs Control Client](control.md#foxids-control-client)**
 

@@ -42,7 +42,7 @@ The `AcrValues` parameter can be set in the `OnRedirectToIdentityProvider` event
         return Task.FromResult(string.Empty);
     };
 
-See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L141).
+See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L138).
 
 ## Configuration
 How to configure your application as a OpenID Connect application registration Relaying Party (RP) / client.

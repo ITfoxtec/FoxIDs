@@ -11,7 +11,11 @@ FoxIDs can be connected to Context Handler with a [SAML 2.0 authentication metho
 By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
 
-In test, a FoxIDs environment can be configured as a [test Identity Provider for Context Handler](#configuring-test-identity-provider-for-context-handler) with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users.
+In test, you can log in with the FoxIDs test IdP.
+
+![Select FoxIDs test IdP](images/how-to-context-handler-foxids-idp.png)
+
+Or configure a FoxIDs environment as a [test Identity Provider for Context Handler](#configuring-test-identity-provider-for-context-handler) with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users.
 
 ![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 

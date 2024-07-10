@@ -44,13 +44,17 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
     -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
     -  [AspNetCoreApiOAuthTwoIdPsSample](#aspnetcoreapioauthtwoidpssample)
 
-- ASP.NET Core - OpenID Connect - authentication method - IdP
+- ASP.NET Core - OpenID Connect - authentication method
 
     -  [IdentityServerOidcOpSample](#identityserveroidcopsample)
 
-- ASP.NET Core - SAML 2.0 - authentication method - IdP
+- ASP.NET Core - SAML 2.0 - authentication method
   
     -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
+
+- ASP.NET Core - External login API - authentication method
+  
+    -  [ExternalLoginApiSample](#externalloginapisample)
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
@@ -179,9 +183,9 @@ The sample API can be called by changing comment out code in the [NetCoreClientC
 
 Local development domain and port: `https://localhost:44350`
 
-## Identity Provider sample applications
+## Authentication methods samples
 
-The Identity Provider samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
+The authentication methods samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
 
 ### AspNetCoreSamlIdPSample
 
@@ -196,6 +200,13 @@ Local development domain and port: `https://localhost:44342`
 Identity Server ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/IdentityServerOidcOpSample)) implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) connected as a OpenID Connect authentication method in FoxIDs.
 
 Local development domain and port: `https://localhost:44346`
+
+### ExternalLoginApiSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample)) application implementing an external login API which is connected as a external login authentication method in FoxIDs.
+
+Local development domain and port: `https://localhost:44352`
+
 
 ## Configure samples in FoxIDs environment
 

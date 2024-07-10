@@ -9,14 +9,14 @@ using System.Linq;
 namespace FoxIDs.Models
 {
     /// <summary>
-    /// OAuth 2.0 authentication method.
+    /// OAuth 2.0 authorization method.
     /// </summary>
     public class OAuthUpParty : OAuthUpParty<OAuthUpClient> { }
 
     /// <summary>
-    /// OAuth 2.0 authentication method.
+    /// OAuth 2.0 authorization method.
     /// </summary>
-    public class OAuthUpParty<TClient> : ExternalUserUpParty, IValidatableObject where TClient : OAuthUpClient
+    public class OAuthUpParty<TClient> : ExternalUserUpParty, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
     {
         public OAuthUpParty()
         {

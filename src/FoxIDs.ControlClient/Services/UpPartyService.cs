@@ -18,6 +18,8 @@ namespace FoxIDs.Client.Services
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
         private const string samlReadMetadataApiUri = "api/{tenant}/{track}/!samluppartyreadmetadata";
         private const string trackLinkApiUri = "api/{tenant}/{track}/!tracklinkupparty";
+        private const string externalLoginApiUri = "api/{tenant}/{track}/!externalloginupparty";
+        private const string externalLoginSecretApiUri = "api/{tenant}/{track}/!externalloginsecretupparty";
 
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -60,5 +62,14 @@ namespace FoxIDs.Client.Services
         public async Task<TrackLinkUpParty> CreateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PostResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
         public async Task<TrackLinkUpParty> UpdateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PutResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
         public async Task DeleteTrackLinkUpPartyAsync(string name, string trackName = null) => await DeleteAsync(GetApiUrl(trackLinkApiUri, trackName), name);
+
+        public async Task<ExternalLoginUpParty> GetExternalLoginUpPartyAsync(string name) => await GetAsync<ExternalLoginUpParty>(externalLoginApiUri, name);
+        public async Task<ExternalLoginUpParty> CreateExternalLoginUpPartyAsync(ExternalLoginUpParty party) => await PostResponseAsync<ExternalLoginUpParty, ExternalLoginUpParty>(externalLoginApiUri, party);
+        public async Task<ExternalLoginUpParty> UpdateExternalLoginUpPartyAsync(ExternalLoginUpParty party) => await PutResponseAsync<ExternalLoginUpParty, ExternalLoginUpParty>(externalLoginApiUri, party);
+        public async Task DeleteExternalLoginUpPartyAsync(string name) => await DeleteAsync(externalLoginApiUri, name);
+
+        public async Task<ExternalLoginSecretResponse> GetExternalLoginSecretUpPartyAsync(string partyName) => await GetAsync<ExternalLoginSecretResponse>(externalLoginSecretApiUri, partyName, parmName: nameof(partyName));
+        public async Task<ExternalLoginSecretResponse> UpdateExternalLoginSecretUpPartyAsync(ExternalLoginSecretRequest secretRequest) => await PutResponseAsync<ExternalLoginSecretRequest, ExternalLoginSecretResponse>(externalLoginSecretApiUri, secretRequest);
+        public async Task DeleteExternalLoginSecretUpPartyAsync(string name) => await DeleteAsync(externalLoginSecretApiUri, name, parmName: nameof(name));
     }
 }

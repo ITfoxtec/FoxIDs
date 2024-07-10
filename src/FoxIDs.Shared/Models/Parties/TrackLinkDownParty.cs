@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkDownParty : DownParty
+    public class TrackLinkDownParty : DownParty, IOAuthClaimTransforms
     {
         public TrackLinkDownParty()
         {

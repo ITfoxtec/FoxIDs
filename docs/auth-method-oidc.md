@@ -23,7 +23,7 @@ How to configure external OpenID Provider (OP) as an authority.
 
 The following screen shot show the basic FoxIDs OpenID Connect authentication method configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
-> More configuration options become available by clicking `Show advanced settings`.
+> More configuration options become available by clicking `Show advanced`.
 
 ![Configure OpenID Connect](images/configure-oidc-auth-method.png)
 

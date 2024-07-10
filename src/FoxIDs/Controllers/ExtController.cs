@@ -5,11 +5,9 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Microsoft.Identity.Client;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -124,6 +122,8 @@ namespace FoxIDs.Controllers
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
+                    case PartyTypes.ExternalLogin:
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
                     default:
                         throw new NotSupportedException();
                 }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class LoginUpParty : UpParty, IUiLoginUpParty
+    public class LoginUpParty : UpParty, IOAuthClaimTransforms, IUiLoginUpParty
     {
         public LoginUpParty()
         {
@@ -26,7 +26,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
+        public LoginUpPartyLogoutConsents LogoutConsent { get; set; }
 
         /// <summary>
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 

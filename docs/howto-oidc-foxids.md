@@ -29,7 +29,7 @@ The client is a confidential client using Authorization Code Flow and PKCE.
 
 1. Specify client name in application registration name.
 2. Select allowed authentication methods. E.g. `login` or some other authentication method.
-3. Select show advanced settings.
+3. Select show advanced.
 4. Specify redirect URI read in your authentication method.
 5. Specify post logout redirect URI read in your authentication method.
 6. Specify front channel logout URI read in your authentication method.

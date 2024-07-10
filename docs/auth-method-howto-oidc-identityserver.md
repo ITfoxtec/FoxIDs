@@ -49,14 +49,14 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
         }
     };
 
-*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
 **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)
  3. Add the IdentityServer client's client secret value as the client secret
- 4. Select show advanced settings
+ 4. Select show advanced
  5. Select use claims from ID token
  6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
  7. Click create
@@ -92,7 +92,7 @@ If you want to read claims from the access token you need to add an API resource
 
 You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
 
-*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
 **2 - Then go to [FoxIDs Control Client](control.md#foxids-control-client)**
 

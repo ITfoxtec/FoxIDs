@@ -73,5 +73,5 @@ It is e.g., possible to generate client code with NSwag:
 - Generate code with NSwagStudio https://github.com/RicoSuter/NSwag/wiki/NSwagStudio. Microsoft description https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag?view=aspnetcore-2.2&tabs=visual-studio#generate-code-with-nswagstudio.
 - Automatically generating API clients on build with NSwag https://blog.sanderaernouts.com/autogenerate-api-client-with-nswag
 
-> You can find a code sample in [FoxIDs.SampleSeedTool](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/tools/FoxIDs.SampleSeedTool) which automatically generating an API clients on build. When the [GenerateCode](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/tools/FoxIDs.SampleSeedTool/FoxIDs.SampleSeedTool.csproj#L9C17-L9C22) is true in the project file.
+> You can find a code sample in [FoxIDs.SampleSeedTool](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/tools/FoxIDs.SampleSeedTool) which automatically generating an API clients on build. When the [GenerateCode](https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/tools/FoxIDs.SampleSeedTool/FoxIDs.SampleSeedTool.csproj#L9C17-L9C22) is true in the project file.
 

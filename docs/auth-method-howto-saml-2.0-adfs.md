@@ -23,7 +23,7 @@ The following screen shot show the basic FoxIDs SAML 2.0 authentication method c
 
 ![Configure SAML 2.0 AD FS authentication method](images/configure-saml-adfs-auth-method.png)
 
-> More configuration options become available by clicking `Show advanced settings`.
+> More configuration options become available by clicking `Show advanced`.
 
 **2 - Then go to the AD FS and create the Relying Party (RP)**
 

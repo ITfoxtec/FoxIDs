@@ -28,7 +28,7 @@ Hosting:
 ## Source code available 
 
 The FoxIDs source code is available at the [GitHub repository](https://github.com/ITfoxtec/FoxIDs). 
-The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all the right to install and use FoxIDs for non-production. The license grant small companies including, personal projects and non-profit educational institutions the right to install and use FoxIDs in production.
+The [license](https://github.com/ITfoxtec/FoxIDs/blob/main/LICENSE) grant all the right to install and use FoxIDs for non-production. The license grant small companies including, personal projects and non-profit educational institutions the right to install and use FoxIDs in production.
 
 ## Selection by URL
 The [structure](foxids-inside.md#structure) of FoxIDs separates the different tenants, environments and [connections](connections.md) which is selected with URL elements. 

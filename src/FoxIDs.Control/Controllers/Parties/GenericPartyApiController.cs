@@ -191,9 +191,14 @@ namespace FoxIDs.Controllers
                 }
                 else if (mParty is OidcUpParty mOidcUpParty)
                 {
-                    var tempMParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
-                    mOidcUpParty.Client.ClientSecret = tempMParty.Client.ClientSecret;
-                    mOidcUpParty.Client.ClientKeys = tempMParty.Client.ClientKeys;
+                    var tempMOidcUpPartyParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
+                    mOidcUpParty.Client.ClientSecret = tempMOidcUpPartyParty.Client.ClientSecret;
+                    mOidcUpParty.Client.ClientKeys = tempMOidcUpPartyParty.Client.ClientKeys;
+                }
+                else if (mParty is ExternalLoginUpParty mExtLoginUpParty)
+                {
+                    var tempMExtLoginParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
+                    mExtLoginUpParty.Secret = tempMExtLoginParty.Secret;
                 }
 
                 if (mParty is SamlDownParty samlDownParty && samlDownParty.Issuer.IsNullOrWhiteSpace())
@@ -273,21 +278,36 @@ namespace FoxIDs.Controllers
 
         private AParty ModelToApiMap(MParty mParty)
         {
-            var arParty = mapper.Map<AParty>(mParty);
-            if (arParty is Api.OidcUpParty arOidcUpParty)
+            var apiParty = mapper.Map<AParty>(mParty);
+            if (apiParty is Api.OidcUpParty apiOidcUpParty)
             {
-                OidcUpPartyMapSecret(arOidcUpParty);
+                OidcUpPartyMapSecret(apiOidcUpParty);
             }
-            return arParty;
+            else if (apiParty is Api.ExternalLoginUpParty apiExtLoginUpParty)
+            {
+                ExternalLoginUpPartyMapSecret(apiExtLoginUpParty);
+            }
+            return apiParty;
         }
 
-        private void OidcUpPartyMapSecret(Api.OidcUpParty arOidcUpParty)
+        private void OidcUpPartyMapSecret(Api.OidcUpParty apiOidcUpParty)
         {
-            if (arOidcUpParty.Client?.ClientSecret != null)
+            if (apiOidcUpParty.Client?.ClientSecret != null)
             {
-                if (arOidcUpParty.Client.ClientSecret.Length > 20)
+                if (apiOidcUpParty.Client.ClientSecret.Length > 20)
                 {
-                    arOidcUpParty.Client.ClientSecret = arOidcUpParty.Client.ClientSecret.Substring(0, 3);
+                    apiOidcUpParty.Client.ClientSecret = apiOidcUpParty.Client.ClientSecret.Substring(0, 3);
+                }
+            }
+        }
+
+        private void ExternalLoginUpPartyMapSecret(Api.ExternalLoginUpParty apiExtLoginUpParty)
+        {
+            if (apiExtLoginUpParty.Secret != null)
+            {
+                if (apiExtLoginUpParty.Secret.Length > 20)
+                {
+                    apiExtLoginUpParty.Secret = apiExtLoginUpParty.Secret.Substring(0, 3);
                 }
             }
         }

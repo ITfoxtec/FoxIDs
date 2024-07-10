@@ -41,8 +41,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, External login, received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
             {
-                var email = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
-                claims.AddClaim(JwtClaimTypes.Subject, !email.IsNullOrEmpty() ? email: username);
+                claims.AddClaim(JwtClaimTypes.Subject, username);
+            }
+            if (party.UsernameType == ExternalLoginUsernameTypes.Email && !claims.Any(c => c.Type == JwtClaimTypes.Email))
+            {
+                claims.AddClaim(JwtClaimTypes.Email, username);
             }
             return claims;
         }

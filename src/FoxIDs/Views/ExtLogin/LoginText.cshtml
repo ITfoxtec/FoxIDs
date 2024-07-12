@@ -26,7 +26,7 @@
                 <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
-                    <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    <a href="../@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                 }
             </div>
         </form>

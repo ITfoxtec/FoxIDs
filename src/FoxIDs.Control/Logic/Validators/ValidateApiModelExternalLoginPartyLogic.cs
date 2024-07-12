@@ -1,0 +1,24 @@
+﻿using FoxIDs.Infrastructure;
+using Api = FoxIDs.Models.Api;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace FoxIDs.Logic
+{
+    public class ValidateApiModelExternalLoginPartyLogic : LogicBase
+    {
+        private readonly TelemetryScopedLogger logger;
+        private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
+
+        public ValidateApiModelExternalLoginPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        {
+            this.logger = logger;
+            this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
+        }
+
+        public bool ValidateApiModel(ModelStateDictionary modelState, Api.ExternalLoginUpParty party)
+        {
+            return validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements);
+        }
+    }
+}

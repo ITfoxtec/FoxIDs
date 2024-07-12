@@ -87,7 +87,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default NoCheck.
         /// </summary>
         [Required]
-        [Display(Name = "Revocation mode")]
+        [Display(Name = "Certificate revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [MaxLength(Constants.Models.Party.IssuerLength)]
@@ -163,6 +163,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Optional Authn context class references")]
         public List<string> AuthnContextClassReferences { get; set; } = new List<string>();
+
+        [Display(Name = "Optional Authn request extensions XML")]
+        public string AuthnRequestExtensionsXml { get; set; }
 
         [Display(Name = "Add logout response location URL in metadata")]
         public bool MetadataAddLogoutResponseLocation { get; set; }

@@ -17,7 +17,7 @@ This chapter describes how to configure a Microsoft Entra ID single tenant conne
 **1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
- 2. Select show advanced settings
+ 2. Select show advanced
  3. Select tildes URL binding pattern
 
 ![Read the redirect URLs](images/howto-oidc-azuread-readredirect.png)
@@ -44,7 +44,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  2. Add the Microsoft Entra ID, client ID as a custom SP client ID
  3. Add the `profile` and `email` scopes (possible other or more scopes)
  4. Add the Microsoft Entra ID, client secret value as the client secret
-    - Optionally, select show advanced settings, change the client authentication method to `private key JWT` and upload the client certificate
+    - Optionally, select show advanced, change the client authentication method to `private key JWT` and upload the client certificate
  5. Select use claims from ID token
  6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Microsoft Entra ID access token to application registrations.  
  It is possible to see the claims returned from the Microsoft Entra ID app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the revived JWTs
@@ -83,7 +83,7 @@ If you want to read claims from the access token you need to add one more Micros
 
 **2 - Then go to [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select show advanced settings
+1. Select show advanced
 2. Select edit issuer
 3. Add the access token issuer `https://sts.windows.net/{Microsoft Entra ID tenant ID}/` (e.g., `https://sts.windows.net/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/`), where you add the Microsoft Entra ID tenant ID
 4. Add the resource app scope as a scope in the FoxIDs authentication method client

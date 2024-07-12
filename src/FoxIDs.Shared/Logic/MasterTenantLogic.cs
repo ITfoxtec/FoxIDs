@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
                 SessionLifetime = 36000, // 10 hours
                 SessionAbsoluteLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
+                LogoutConsent = LoginUpPartyLogoutConsents.IfRequired
             };
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
                 EnableCancelLogin = false,
                 SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
+                LogoutConsent = LoginUpPartyLogoutConsents.IfRequired
             };
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);

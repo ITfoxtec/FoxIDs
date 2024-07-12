@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class LoginUpSequenceData : UpSequenceData
+    public class LoginUpSequenceData : UpSequenceData, ILoginUpSequenceDataBase
     {
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }

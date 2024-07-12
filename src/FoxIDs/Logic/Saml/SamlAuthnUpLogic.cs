@@ -143,6 +143,20 @@ namespace FoxIDs.Logic
                 };
             }
 
+            if (!party.AuthnRequestExtensionsXml.IsNullOrWhiteSpace())
+            {
+                try
+                {
+                    var extensionsElement = System.Xml.Linq.XElement.Parse(party.AuthnRequestExtensionsXml);
+                    saml2AuthnRequest.Extensions = new Extensions();
+                    saml2AuthnRequest.Extensions.Element.Add(extensionsElement);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Unable to parse and add extensions XML. A valid XML string is required.");
+                }            
+            }
+
             binding.Bind(saml2AuthnRequest);
             logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");

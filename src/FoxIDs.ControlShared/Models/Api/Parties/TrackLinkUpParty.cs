@@ -100,7 +100,7 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             return results;
         }

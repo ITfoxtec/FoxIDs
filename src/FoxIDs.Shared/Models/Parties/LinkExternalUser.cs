@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class LinkExternalUser : IValidatableObject
+    public class LinkExternalUser : IOAuthClaimTransforms, IValidatableObject
     {
         /// <summary>
         /// Automatic creation / provisioning of users

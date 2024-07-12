@@ -1,4 +1,4 @@
-# Login, Home Realm Discovery (HRD) and 2FA / MFA
+# Login, Home Realm Discovery and MFA
 FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customization.md).
 
 A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users.md#internal-users) with the same user repository.
@@ -78,6 +78,6 @@ The login authentication method interface can be [customized with custom title, 
 You can change the claims the login authentication method pass on with [claim transforms](claim-transform.md).
 
 ### All login configurations
-All login configurations are available after clicking show advanced settings.
+All login configurations are available after clicking show advanced.
 
 ![Configure Login](images/configure-login-advanced.png)

@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum LoginUpPartyLogoutConsent
+    public enum LoginUpPartyLogoutConsents
     {
         [EnumMember(Value = "always")]
         Always,

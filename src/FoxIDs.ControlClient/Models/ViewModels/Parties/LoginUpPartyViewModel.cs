@@ -53,21 +53,21 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default false.
         /// </summary>
         [Required]
-        [Display(Name = "Cancel login")]
+        [Display(Name = "Users can cancel login")]
         public bool EnableCancelLogin { get; set; } = false;
 
         /// <summary>
         /// Default true.
         /// </summary>
         [Required]
-        [Display(Name = "Create user")]
+        [Display(Name = "Create new users")]
         public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
         /// Default true.
         /// </summary>
         [Required]
-        [Display(Name = "Reset password")]
+        [Display(Name = "Users can reset the password")]
         public bool DisableResetPassword { get; set; }
 
         /// <summary>

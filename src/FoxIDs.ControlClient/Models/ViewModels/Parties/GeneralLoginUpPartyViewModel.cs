@@ -5,9 +5,6 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class GeneralLoginUpPartyViewModel : GeneralUpPartyViewModel
     {
-        public const string DefaultCertificateFileStatus = "Drop certificate files here or click to select";
-        public const int CertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
-
         public GeneralLoginUpPartyViewModel() : base(PartyTypes.Login)
         { }
 

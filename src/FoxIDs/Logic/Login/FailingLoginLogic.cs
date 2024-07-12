@@ -19,52 +19,61 @@ namespace FoxIDs.Logic
             this.cacheProvider = cacheProvider;
         }
 
-        public async Task<long> IncreaseFailingLoginCountAsync(string email)
+        public async Task<long> IncreaseFailingLoginCountAsync(string username, bool isExternalLogin = false)
         {
-            var key = FailingLoginCountCacheKey(email);
-
+            var key = FailingLoginCountCacheKey(username, isExternalLogin);
             return await cacheProvider.IncrementNumberAsync(key, RouteBinding.FailingLoginCountLifetime);
         }
 
-        public async Task ResetFailingLoginCountAsync(string email)
+        public async Task ResetFailingLoginCountAsync(string username, bool isExternalLogin = false)
         {
-            await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(email));
+            await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(username, isExternalLogin));
         }
 
-        public async Task<long> VerifyFailingLoginCountAsync(string email)
+        public async Task<long> VerifyFailingLoginCountAsync(string username, bool isExternalLogin = false)
         {
-            var key = FailingLoginCountCacheKey(email);
+            var key = FailingLoginCountCacheKey(username, isExternalLogin);
 
-            if (await cacheProvider.ExistsAsync(FailingLoginLockedCacheKey(email)))
+            if (await cacheProvider.ExistsAsync(FailingLoginLockedCacheKey(username, isExternalLogin)))
             {
-                logger.ScopeTrace(() => $"User '{email}' locked by observation period.", triggerEvent: true);
-                throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
+                logger.ScopeTrace(() => $"{GetUserText(isExternalLogin)} '{username}' locked by observation period.", triggerEvent: true);
+                throw new UserObservationPeriodException($"{GetUserText(isExternalLogin)} '{username}' locked by observation period.");
             }
 
             var failingLoginCount = await cacheProvider.GetNumberAsync(key);
             if (failingLoginCount >= RouteBinding.MaxFailingLogins)
             {
-                await cacheProvider.SetFlagAsync(FailingLoginLockedCacheKey(email), RouteBinding.FailingLoginObservationPeriod);
+                await cacheProvider.SetFlagAsync(FailingLoginLockedCacheKey(username, isExternalLogin), RouteBinding.FailingLoginObservationPeriod);
                 await cacheProvider.DeleteAsync(key);
 
-                logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                throw new UserObservationPeriodException($"Observation period started for user '{email}'.");
+                logger.ScopeTrace(() => $"Observation period started for {GetUserText(isExternalLogin).ToLower()} '{username}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
+                throw new UserObservationPeriodException($"Observation period started for {GetUserText(isExternalLogin).ToLower()} '{username}'.");
             }
             return failingLoginCount;
+        }
+
+        private string GetUserText(bool isExternalLogin)
+        {
+            return isExternalLogin ? "External login user" : "User";
         }
 
         public Dictionary<string, string> FailingLoginCountDictonary(long failingLoginCount) =>
             failingLoginCount > 0 ? new Dictionary<string, string> { { Constants.Logs.FailingLoginCount, Convert.ToString(failingLoginCount) } } : null;
 
 
-        private string FailingLoginCountCacheKey(string email)
+        private string FailingLoginCountCacheKey(string username, bool isExternalLogin)
         {
-            return $"failing_login_count_{RouteBinding.TenantNameDotTrackName}_{email}";
+            return $"failing_login_count_{CacheSubKey(username, isExternalLogin)}";
         }
 
-        private string FailingLoginLockedCacheKey(string email)
+        private string FailingLoginLockedCacheKey(string username, bool isExternalLogin)
         {
-            return $"failing_login_locked_{RouteBinding.TenantNameDotTrackName}_{email}";
+            return $"failing_login_locked_{CacheSubKey(username, isExternalLogin)}";
+        }
+
+        private string CacheSubKey(string username, bool isExternalLogin)
+        {
+            return $"{RouteBinding.TenantNameDotTrackName}{(isExternalLogin ? "_external_login" : string.Empty)}_{username}";
         }
     }
 }

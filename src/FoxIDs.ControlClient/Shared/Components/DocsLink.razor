@@ -1,4 +1,6 @@
-﻿<a target="_blank" href="@LinkUrl()" class="docs-link text-nowrap @Class">@ChildContent<i class="bi bi-box-arrow-up-right"></i></a>
+﻿@inject NavigationManager NavigationManager
+
+<a target="_blank" href="@LinkUrl()" class="docs-link text-nowrap @Class">@ChildContent<i class="bi bi-box-arrow-up-right"></i></a>
 
 @code {
     [Parameter]
@@ -15,6 +17,7 @@
 
     private string LinkUrl()
     {
-        return $"https://www.foxids.com/link?p={Page}{(Fragment.IsNullOrWhiteSpace() ? string.Empty : $"&f={Fragment}")}";
+        var baseUrl = NavigationManager.BaseUri.StartsWith("https://localhost:", StringComparison.Ordinal) ? "https://localhost:44333" : "https://www.foxids.com";
+        return $"{baseUrl}/link?p={Page}{(Fragment.IsNullOrWhiteSpace() ? string.Empty : $"&f={Fragment}")}";
     }
 }

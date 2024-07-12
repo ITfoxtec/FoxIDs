@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkUpParty : ExternalUserUpParty
+    public class TrackLinkUpParty : ExternalUserUpParty, IOAuthClaimTransforms
     {
         public TrackLinkUpParty()
         {

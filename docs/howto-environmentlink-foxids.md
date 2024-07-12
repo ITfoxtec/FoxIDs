@@ -1,4 +1,4 @@
-# Connect two environments with Environment Link
+# Environment Link
 
 FoxIDs environments in the same tenant can be connected with environment links. An Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
 
@@ -23,7 +23,7 @@ The following describes how to connect two environments called `Environment X` a
 4. Select **Environment Link**     
    ![Select Environment Link authentication method](images/howto-environmentlink-foxids-auth-method-select.png)
 
-5. Add the name e.g., `Environment X to Y` 
+5. Add the **Name** e.g., `Environment X to Y` 
 4. Select the `Environment Y` environment
    ![Select Environment Link authentication method](images/howto-environmentlink-foxids-auth-method-y-select.png)
 6. Click Create

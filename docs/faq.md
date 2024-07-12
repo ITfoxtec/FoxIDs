@@ -4,7 +4,7 @@
 By default an authentication method should pass through all claims to the application registration if Forward Claims has a `*`.
 ![Authentication method default pass through all claims to the application registration](images/faq-pass-through-all-claims-auth-method.png)
 You can also make the application registration (in this case a OpenID Connect client) add all claims to the access token issued to the application (not default).  
-Navigating to the application registration then click Show advanced settings and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.
+Navigating to the application registration then click Show advanced and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.
 ![Make the application registration issue all claims](images/faq-pass-through-all-claims-app-reg.png)
 
 ##### Is it possible to avoid the "Pick an account" dialog?

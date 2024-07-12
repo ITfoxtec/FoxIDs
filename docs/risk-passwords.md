@@ -26,7 +26,7 @@ Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#fo
 3. Set the client id to `foxids_seed`.
 4. Remember the client secret.
 5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:master`.
-6. Click show advanced settings. 
+6. Click show advanced. 
 7. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will grant the client the administrator role. 
 
 ![FoxIDs Control Client - seed tool client](images/upload-risk-passwords-seed-client.png)

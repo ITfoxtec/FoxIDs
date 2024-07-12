@@ -67,7 +67,7 @@ namespace FoxIDs.Controllers
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && secretRequest.Secret.IsNullOrEmpty())
                 {
-                    throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
+                    throw new Exception($"Client secret is require if '{nameof(oauthUpParty.Client.ClientAuthenticationMethod)}' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = secretRequest.Secret;
@@ -96,7 +96,7 @@ namespace FoxIDs.Controllers
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthUpParty.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt)
                 {
-                    throw new Exception($"Client secret is require if 'ClientAuthenticationMethod' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
+                    throw new Exception($"Client secret is require if '{nameof(oauthUpParty.Client.ClientAuthenticationMethod)}' is different from '{ClientAuthenticationMethods.PrivateKeyJwt}'");
                 }
 
                 oauthUpParty.Client.ClientSecret = null;

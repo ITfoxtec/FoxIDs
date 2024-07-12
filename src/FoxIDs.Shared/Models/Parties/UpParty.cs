@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class UpParty : Party, IValidatableObject
+    public class UpParty : Party, IValidatableObject, IUpParty
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -38,7 +38,7 @@ namespace FoxIDs.Models
         private List<string> issuers;
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
-        public string Issuer 
+        public string Issuer
         {
             set
             {
@@ -47,18 +47,18 @@ namespace FoxIDs.Models
                     hasSingleIssuer = true;
                     issuers = new List<string> { value };
                 }
-            } 
+            }
         }
 
         [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
-        public virtual List<string> Issuers 
+        public virtual List<string> Issuers
         {
-            get 
+            get
             {
                 return issuers;
             }
-            set 
+            set
             {
                 if (!hasSingleIssuer)
                 {

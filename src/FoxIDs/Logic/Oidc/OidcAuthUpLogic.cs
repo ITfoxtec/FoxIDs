@@ -483,7 +483,7 @@ namespace FoxIDs.Logic
                 if (!client.ClientSecret.IsNullOrEmpty())
                 {
                     logger.ScopeTrace(() => $"AuthMethod, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
-                    request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, $"{WebUtility.UrlEncode(clientId)}:{WebUtility.UrlEncode(client.ClientSecret)}".Base64Encode());
+                    request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{clientId.OAuthUrlDencode()}:{client.ClientSecret.OAuthUrlDencode()}".Base64Encode());
                 }
             }
             else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)

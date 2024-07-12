@@ -44,13 +44,17 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
     -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
     -  [AspNetCoreApiOAuthTwoIdPsSample](#aspnetcoreapioauthtwoidpssample)
 
-- ASP.NET Core - OpenID Connect - authentication method - IdP
+- ASP.NET Core - OpenID Connect - authentication method
 
     -  [IdentityServerOidcOpSample](#identityserveroidcopsample)
 
-- ASP.NET Core - SAML 2.0 - authentication method - IdP
+- ASP.NET Core - SAML 2.0 - authentication method
   
     -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
+
+- ASP.NET Core - External login API - authentication method
+  
+    -  [ExternalLoginApiSample](#externalloginapisample)
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
@@ -60,7 +64,7 @@ The samples show different applications which trust FoxIDs as an IdP.
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all authentication methods.  
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all authentication methods.  
 
 You can test this [sample online](https://aspnetcoreoidcallupsample.itfoxtec.com/).
 
@@ -82,7 +86,7 @@ Local development domain and port: `https://localhost:44349`
 
 ### AspNetCoreOidcAuthorizationCodeSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthorizationCodeSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreOidcAuthorizationCodeSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
@@ -92,7 +96,7 @@ Local development domain and port: `https://localhost:44340`
 
 ### AspNetCoreOidcImplicitSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcImplicitSample)) application showing user login and logout with OpenID Connect (OIDC) using implicit flow as a service provider.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreOidcImplicitSample)) application showing user login and logout with OpenID Connect (OIDC) using implicit flow as a service provider.
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
@@ -100,7 +104,7 @@ Local development domain and port: `https://localhost:44341`
 
 ### AspNetCoreSamlSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreSamlSample)) application showing user login and logout with SAML 2.0 as a relying party.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreSamlSample)) application showing user login and logout with SAML 2.0 as a relying party.
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
@@ -110,25 +114,25 @@ Local development domain and port: `https://localhost:44343`
 
 ### NetCoreClientCredentialGrantConsoleSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/NetCoreClientCredentialGrantConsoleSample)) console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a secret (client authentication method client_secret_post).
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/NetCoreClientCredentialGrantConsoleSample)) console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a secret (client authentication method client_secret_post).
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
 ### NetCoreClientCredentialGrantAssertionConsoleSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/NetCoreClientCredentialGrantAssertionConsoleSample)) console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/NetCoreClientCredentialGrantAssertionConsoleSample)) console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
 ### NetFramework4.7ClientCredentialGrantAssertionConsoleSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/NetFramework4.7ClientCredentialGrantAssertionConsoleSample)) .NET Framework 4.7 console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/NetFramework4.7ClientCredentialGrantAssertionConsoleSample)) .NET Framework 4.7 console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
 ### BlazorBFFAspNetCoreOidcSample
 
-Sample (code link [client](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Client) and [server](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Server)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  
+Sample (code link [client](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/BlazorBFFAspNetOidcSample.Client) and [server](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/BlazorBFFAspNetOidcSample.Server)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  
 In a BFF architecture the backend handles OIDC, the tokens are never shared with the Blazor client. Instead a session based on an identity cookie secure the application after successfully user authentication.
 
 The sample show how to call the [API1 sample](#aspnetcoreapi1sample) from both the Blazor client through a backend API proxy which add the access token to the outgoing API call. 
@@ -137,7 +141,7 @@ Local development domain and port: `https://localhost:44348`
 
 ### BlazorOidcPkceSample
 
-Blazor sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorOidcPkceSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.
+Blazor sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/BlazorOidcPkceSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
@@ -145,7 +149,7 @@ Local development domain and port: `https://localhost:44345`
 
 ### BlazorServerOidcSample
 
-Blazor server sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorServerOidcSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.
+Blazor server sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/BlazorServerOidcSample)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
@@ -153,7 +157,7 @@ Local development domain and port: `https://localhost:44347`
 
 ### AspNetCoreApi1Sample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreApi1Sample)) API showing how to secure an API with an access token and how to restrict access by scopes.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreApi1Sample)) API showing how to secure an API with an access token and how to restrict access by scopes.
 
 You can call this [sample online](https://aspnetcoreoauthapi1sample.itfoxtec.com/).
 
@@ -163,7 +167,7 @@ Local development domain and port: `https://localhost:44344`
 
 ### AspNetCoreApi2Sample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreApi2Sample)) API showing how to secure an API with an access token and how to restrict access by a scope.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreApi2Sample)) API showing how to secure an API with an access token and how to restrict access by a scope.
 
 You can call this [sample online](https://aspnetcoreoauthapi2sample.itfoxtec.com/).
 
@@ -171,7 +175,7 @@ Local development domain and port: `https://localhost:44351`
 
 ### AspNetCoreApiOAuthTwoIdPsSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreApiOAuthTwoIdPsSample)) API showing how to create an API which can accept access tokens from two different IdPs. Each IdP - API relation can be configured with individual resource IDs and scopes.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreApiOAuthTwoIdPsSample)) API showing how to create an API which can accept access tokens from two different IdPs. Each IdP - API relation can be configured with individual resource IDs and scopes.
 
 This scenario occurs most often in a transitional period moving from one IdP to another IdP. Having APIs with dual IdP support the clients can be moved from one IdP to another IdP independent of the APIs.
 
@@ -179,13 +183,13 @@ The sample API can be called by changing comment out code in the [NetCoreClientC
 
 Local development domain and port: `https://localhost:44350`
 
-## Identity Provider sample applications
+## Authentication methods samples
 
-The Identity Provider samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
+The authentication methods samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
 
 ### AspNetCoreSamlIdPSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 authentication method in FoxIDs.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 authentication method in FoxIDs.
 
 You can test this [sample online](https://aspnetcoresamlidpsample.itfoxtec.com/).
 
@@ -193,9 +197,16 @@ Local development domain and port: `https://localhost:44342`
 
 ### IdentityServerOidcOpSample
 
-Identity Server ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/IdentityServerOidcOpSample)) implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) connected as a OpenID Connect authentication method in FoxIDs.
+Identity Server ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/IdentityServerOidcOpSample)) implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) connected as a OpenID Connect authentication method in FoxIDs.
 
 Local development domain and port: `https://localhost:44346`
+
+### ExternalLoginApiSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample)) application implementing an external login API which is connected as a external login authentication method in FoxIDs.
+
+Local development domain and port: `https://localhost:44352`
+
 
 ## Configure samples in FoxIDs environment
 
@@ -224,7 +235,7 @@ Create a sample seed tool OAuth 2.0 client in the [FoxIDs Control Client](contro
 2. Set the client id to `sample_seed`.
 3. Remember the client secret.
 4. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
-5. Click show advanced settings. 
+5. Click show advanced. 
 6. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will granted the client the administrator role. 
 
 The sample seed tool client is thereby granted access to update to the tenant.

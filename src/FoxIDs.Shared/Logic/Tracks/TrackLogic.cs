@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                 EnableCancelLogin = false,
                 SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
+                LogoutConsent = LoginUpPartyLogoutConsents.IfRequired
             };
             var partyIdKey = new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name };
             await mLoginUpParty.SetIdAsync(partyIdKey);

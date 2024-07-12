@@ -20,6 +20,8 @@ namespace FoxIDs
                     return "saml2";
                 case PartyTypes.TrackLink:
                     return "env_link";
+                case PartyTypes.ExternalLogin:
+                    return "ext_login";
                 default:
                     throw new NotSupportedException();
             }

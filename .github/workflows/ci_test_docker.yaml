@@ -50,6 +50,7 @@ jobs:
           file: ./src/FoxIDs/Dockerfile
           platforms: linux/amd64
           push: true
+          provenance: false
           tags: ${{ steps.meta-f.outputs.tags }}
           labels: ${{ steps.meta-f.outputs.labels }}
       -
@@ -60,6 +61,7 @@ jobs:
           file: ./src/FoxIDs.Control/Dockerfile
           platforms: linux/amd64
           push: true
+          provenance: false
           tags: ${{ steps.meta-fc.outputs.tags }}
           labels: ${{ steps.meta-fc.outputs.labels }}
 

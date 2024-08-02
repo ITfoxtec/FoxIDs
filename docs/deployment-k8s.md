@@ -176,6 +176,11 @@ kubectl get svc -n ingress-nginx ingress-nginx-controller
 > DNS records to the two domains need to point to the installations IP address to enable the Let's Encrypt online validation.  
 > The firewall needs to accept requests on port 80 and 443. Let's encrypt validates the domain ownership on port 80.
 
+Optionally scale the Ingress-Nginx controller 
+```cmd
+kubectl scale deployment ingress-nginx-controller -n ingress-nginx --replicas=2
+```
+
 Install Cert-manager with two commands
 ```cmd
 helm repo add jetstack https://charts.jetstack.io --force-update

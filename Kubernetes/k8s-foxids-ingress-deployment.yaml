@@ -3,12 +3,16 @@ kind: Ingress
 metadata:
   name: foxids-ingress-http
   annotations:
-   #production 
-    cert-manager.io/cluster-issuer: letsencrypt-production
-   #staging
-   # cert-manager.io/cluster-issuer: letsencrypt-staging
+   cert-manager.io/cluster-issuer: "letsencrypt-production" #production    
+   #cert-manager.io/cluster-issuer: "letsencrypt-staging" #staging
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+      - id.itfoxtec.com   # change to your domain -  id.my-domain.com
+      - control.itfoxtec.com  # change to your domain -  control.my-domain.com
+      secretName: letsencrypt-production-tls #production  
+      #secretName: letsencrypt-staging-tls #staging
   rules:
   - host: id.itfoxtec.com   # change to your domain -  id.my-domain.com
     http:
@@ -29,12 +33,4 @@ spec:
           service:
             name: foxids-control
             port:
-              number: 8801
-  tls:
-    - hosts:
-      - id.itfoxtec.com   # change to your domain -  id.my-domain.com
-      - control.itfoxtec.com  # change to your domain -  control.my-domain.com
-     #production 
-      secretName: letsencrypt-production
-     #staging 
-     # secretName: letsencrypt-staging
+              number: 8800

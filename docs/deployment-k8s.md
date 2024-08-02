@@ -7,6 +7,9 @@ This is a description of how to make a default [deployment](#deployment), [log i
 Pre requirements:
 - You have a Kubernetes cluster or Docker Desktop with Kubernetes enabled. 
 - You have basic knowledge about Kubernetes.
+- You have `kubectl` installer on your workstation.
+- You have [Helm](https://docs.helm.sh/) installer on your workstation and your cluster.  
+  Install Helm on windows with this CMD command `winget install Helm.Helm` 
 
 > This is a list of [useful commands](#useful-commands) in the end of this description.
 
@@ -69,6 +72,14 @@ Create `persistent volume claim` for Redis
 kubectl apply -f k8s-redis-pvc-dynamic.yaml
 ```
 
+### Namespace
+This guide generally uses the namespace `foxids`, consider changing the namespace to suit your kubernetes environment.
+
+Create namespace
+```cmd
+kubectl create namespace foxids
+```
+
 ### MongoDB
 Change the username and password for MongoDB in `k8s-mongo-secret.yaml`. The username and password is base64 encoded.
 
@@ -86,30 +97,30 @@ echo -n "the text" | base64
 
 Add the MongoDB secret
 ```cmd
-kubectl apply -f k8s-mongo-secret.yaml
+kubectl apply -f k8s-mongo-secret.yaml -n foxids
 ```
 
 Create MongoDB  
 *Optionally expose MongoDB on port 27017 by uncomment the `LoadBalancer`*
 ```cmd
-kubectl apply -f k8s-mongo-deployment.yaml
+kubectl apply -f k8s-mongo-deployment.yaml -n foxids
 ```
 
 Add a `ConfigMap` for the MongoDB service
 ```cmd
-kubectl apply -f k8s-mongo-configmap.yaml
+kubectl apply -f k8s-mongo-configmap.yaml -n foxids
 ```
 
 ### Redis
 
 Create Redis  
 ```cmd
-kubectl apply -f k8s-redis-deployment.yaml
+kubectl apply -f k8s-redis-deployment.yaml -n foxids
 ```
 
 Add a `ConfigMap` for the Redis service
 ```cmd
-kubectl apply -f k8s-redis-configmap.yaml
+kubectl apply -f k8s-redis-configmap.yaml -n foxids
 ```
 
 ### FoxIDs websites
@@ -143,70 +154,80 @@ This example show how to add Outlook / Microsoft 365 with SMTP:
 **Deploy**  
 Create the two FoxIDs websites
 ```cmd
-kubectl apply -f k8s-foxids-deployment.yaml
+kubectl apply -f k8s-foxids-deployment.yaml -n foxids
 ```
 
 The configuration require a Nginx controller. You can optionally change the configuration to use another controller.
 
-Install Ingress-Nginx controller
+Install Ingress-Nginx controller with two commands
 ```cmd
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx --force-update
+helm -n ingress-nginx install ingress-nginx ingress-nginx/ingress-nginx --create-namespace
 ```
 Optionally verify Ingress-Nginx installation 
 ```cmd
-kubectl -n ingress-nginx get pod
+kubectl get pod -n ingress-nginx
+```
+If you try again in a few minutes you should get an EXTERNAL-IP
+```cmd
+kubectl get svc -n ingress-nginx ingress-nginx-controller
 ```
 
 > DNS records to the two domains need to point to the installations IP address to enable the Let's Encrypt online validation.  
 > The firewall needs to accept requests on port 80 and 443. Let's encrypt validates the domain ownership on port 80.
 
-Install Cert-manager
+Install Cert-manager with two commands
 ```cmd
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
+helm repo add jetstack https://charts.jetstack.io --force-update
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set crds.enabled=true
 ```
 Optionally verify Cert-manager installation 
 ```cmd
-kubectl get pods --namespace cert-manager
+kubectl get pods -n cert-manager
 ```
 
-> You might need to download the Let's encrypt TLS root certificate used in this URL https://acme-v02.api.letsencrypt.org/directory and add it to the trusted root certificate authority on the machine.
-
-Add your email in the `k8s-letsencrypt-issuer.yaml` file. Optionally select to use stating or production in the `k8s-letsencrypt-issuer.yaml` and `k8s-foxids-ingress-deployment.yaml` files, default configured for production.
-
-> Consider to start with Let's Encrypt in staging to avoid hitting the Let's Encrypt production rate limit (staging certificates is not trusted by the browser).  
+Add your email in the `k8s-letsencrypt-issuer.yaml` (two places) file.
 
 Configure Let's Encrypt
 ```cmd
-kubectl apply -f k8s-letsencrypt-issuer.yaml
+kubectl apply -f k8s-letsencrypt-issuer.yaml -n foxids
 ```
 
 The `k8s-foxids-ingress-deployment.yaml` file is configured with the domains:
 
 - The FoxIDs site domain `id.itfoxtec.com` (two places in the file) is change to your domain - `id.my-domain.com`
-- The FoxIDs Control site domain `control.itfoxtec.com` is change to your domain - `control.my-domain.com`
+- The FoxIDs Control site domain `control.itfoxtec.com` (two places in the file) is change to your domain - `control.my-domain.com`
+
+> Consider to start with Let's Encrypt in staging to avoid hitting the Let's Encrypt production rate limit (staging certificates is not trusted by the browser).  
+> Optionally select to use stating or production in the `k8s-foxids-ingress-deployment.yaml` file, default configured for production.
 
 Add ingress with certificate bound domains
 ```cmd
-kubectl apply -f k8s-foxids-ingress-deployment.yaml
+kubectl apply -f k8s-foxids-ingress-deployment.yaml -n foxids
+```
+
+Optionally verify Ingress
+```cmd
+kubectl get ingress -n foxids
 ```
 
 Optionally verify certificate issuer
 ```cmd
-kubectl describe ClusterIssuer letsencrypt-production
+kubectl describe ClusterIssuer letsencrypt-production -n foxids
 #staging 
-# kubectl describe ClusterIssuer letsencrypt-staging
+# kubectl describe ClusterIssuer letsencrypt-staging -n foxids
 ```
 
 Optionally check if the certificate is ready (READY should be True)
 ```cmd
-kubectl get certificate
+kubectl get certificate -n foxids
 ```
 
 And optionally verify the certificate
 ```cmd
-kubectl describe certificate letsencrypt-production
+kubectl describe certificate letsencrypt-production -n foxids
 #staging 
-# kubectl describe certificate letsencrypt-staging
+# kubectl describe certificate letsencrypt-staging -n foxids
 ```
 
 ## First login
@@ -231,7 +252,7 @@ This section lists some deployment and security considerations.
 It is recommended to use a [Kubernetes Service Mesh](https://www.toptal.com/kubernetes/service-mesh-comparison) to achieve a zero-trust architecture. Where the internal traffic is secured with mutual TLS (mTLS) and encryption.
 
 **Namespace**  
-Consider encapsulating the resources with a namespace. The following commands are used to apply a namespace.
+This guide generally uses the namespace `foxids`, consider changing the namespace to suit your kubernetes environment.
 
 Create namespace
 ```cmd

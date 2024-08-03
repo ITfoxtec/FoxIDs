@@ -1,5 +1,5 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata: 
   name: letsencrypt-staging 
 spec:
@@ -14,7 +14,7 @@ spec:
             class: nginx
 ---
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata: 
   name: letsencrypt-production 
 spec:

@@ -77,7 +77,7 @@ namespace FoxIDs.Controllers
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
 
-                if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault && (mTrackKey.Type == TrackKeyTypes.KeyVaultRenewSelfSigned || mTrackKey.Type == TrackKeyTypes.KeyVaultImport))
+                if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault && mTrackKey.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
                     throw new Exception("KeyVault option not enabled.");
                 }
@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
                             mTrack.Key.ExternalName = await GetExternalKeyLogic().CreateExternalKeyAsync(mTrack);
                             break;
 
-                        case TrackKeyTypes.KeyVaultImport:
+                        case TrackKeyTypes.ContainedRenewSelfSigned:
                         default:
                             throw new Exception($"Track key type not supported '{mTrackKey.Type}'.");
                     }

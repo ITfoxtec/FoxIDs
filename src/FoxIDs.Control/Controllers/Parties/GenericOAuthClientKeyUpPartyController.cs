@@ -111,14 +111,6 @@ namespace FoxIDs.Controllers
                     clientKey.Key = jwt;
                     clientKey.PublicKey = jwt.GetPublicKey();
                 }
-                else if (settings.Options.KeyStorage == KeyStorageOptions.None)
-                {
-                    (var externalName, var publicCertificate, var externalId) = await GetExternalKeyLogic().ImportExternalKeyAsync(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, upPartyName: keyRequest.PartyName);
-                    clientKey.Type = ClientKeyTypes.KeyVaultImport;
-                    clientKey.ExternalName = externalName;
-                    clientKey.ExternalId = externalId;
-                    clientKey.PublicKey = new X509Certificate2(publicCertificate).ToFTJsonWebKey();
-                }
                 else
                 {
                     throw new NotSupportedException();
@@ -172,10 +164,6 @@ namespace FoxIDs.Controllers
                 {
                     oauthUpParty.Client.ClientKeys.Remove(key);
                     await tenantDataRepository.UpdateAsync(oauthUpParty);
-                    if (key.Type == ClientKeyTypes.KeyVaultImport)
-                    {
-                        await GetExternalKeyLogic().DeleteExternalKeyAsync(externalName);
-                    }
                 }
 
                 return NoContent();

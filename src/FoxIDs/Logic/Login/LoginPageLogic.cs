@@ -129,17 +129,20 @@ namespace FoxIDs.Logic
 
         private bool RegisterTwoFactor(User user)
         {
-            if (settings.Options.KeyStorage == KeyStorageOptions.None)
+            if (user.TwoFactorAppSecret.IsNullOrEmpty())
             {
-                return user.TwoFactorAppSecret.IsNullOrEmpty();
-            }
-            else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
-            {
-                return user.TwoFactorAppSecretExternalName.IsNullOrEmpty();
+                if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+                {
+                    return user.TwoFactorAppSecretExternalName.IsNullOrEmpty();
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
-                throw new NotSupportedException();
+                return false;
             }
         }
 

@@ -14,6 +14,7 @@ using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Repository;
 
 namespace FoxIDs.Logic
 {
@@ -98,17 +99,22 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    if (settings.Options.KeyStorage == KeyStorageOptions.None)
+                    if (!user.TwoFactorAppSecret.IsNullOrWhiteSpace())
                     {
-                        sequenceData.TwoFactorAppSecretOrExtName = user.TwoFactorAppSecret;
+                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
                     }
                     else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
                     {
-                        sequenceData.TwoFactorAppSecretOrExtName = user.TwoFactorAppSecretExternalName;
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
+                        var externalSecretLogic = serviceProvider.GetService<ExternalSecretLogic>();
+                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret = await externalSecretLogic.GetExternalSecretAsync(user.TwoFactorAppSecretExternalName);
+                        if (sequenceData.TwoFactorAppSecret.IsNullOrWhiteSpace())
+                        {
+                            throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(user.TwoFactorAppSecretExternalName)} '{user.TwoFactorAppSecretExternalName}'.");
+                        }
+                        await externalSecretLogic.DeleteExternalSecretAsync(user.TwoFactorAppSecretExternalName);
+                        user.TwoFactorAppSecretExternalName = null;
+                        var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
+                        await tenantDataRepository.SaveAsync(user);
                     }
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);

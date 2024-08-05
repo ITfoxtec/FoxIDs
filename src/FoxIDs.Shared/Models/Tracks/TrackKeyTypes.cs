@@ -10,5 +10,7 @@ namespace FoxIDs.Models
         KeyVaultRenewSelfSigned = 1,
         [EnumMember(Value = "key_vault_upload")]
         KeyVaultImport = 2,
+        [EnumMember(Value = "contained_renew_self_signed")]
+        ContainedRenewSelfSigned = 10
     }
 }

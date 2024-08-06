@@ -14,18 +14,26 @@ namespace FoxIDs
     {
         public static string GetCertificateSubject(this (string tenantName, string trackName) subjectData)
         {
-            return $"CN={subjectData.tenantName}{(subjectData.trackName.Equals("-", StringComparison.Ordinal) ? string.Empty : $"-{subjectData.trackName}")}, O=FoxIDs";
+            return $"CN=FoxIDs - {subjectData.tenantName}{(subjectData.trackName.Equals("-", StringComparison.Ordinal) ? string.Empty : $"-{subjectData.trackName}")}, O=FoxIDs";
         }
 
-        public static Task<X509Certificate2> CreateSelfSignedCertificateBySubjectAsync(this RouteBinding routeBinding)
+        public static Task<CertificateItem> CreateSelfSignedCertificateBySubjectAsync(this RouteBinding routeBinding, int expiryInMonths = 36)
         {
-            return (routeBinding.TenantName, routeBinding.TrackName).CreateSelfSignedCertificateBySubjectAsync();
+            return (routeBinding.TenantName, routeBinding.TrackName).CreateSelfSignedCertificateBySubjectAsync(expiryInMonths);
         }
 
-        public static Task<X509Certificate2> CreateSelfSignedCertificateBySubjectAsync(this (string tenantName, string trackName) subjectData)
+        public static async Task<CertificateItem> CreateSelfSignedCertificateBySubjectAsync(this (string tenantName, string trackName) subjectData, int expiryInMonths = 36)
         {
             var subject = (subjectData.tenantName, subjectData.trackName).GetCertificateSubject();
-            return subject.CreateSelfSignedCertificateAsync(expiry: TimeSpan.FromDays(365.0 * 3));
+            var now = DateTimeOffset.UtcNow;
+            var notBefore = now.AddSeconds(-5);
+            var notAfter = now.AddMonths(expiryInMonths);
+            return new CertificateItem
+            {
+                Certificate = await subject.CreateSelfSignedCertificateAsync(notBefore, notAfter),
+                NotBefore = notBefore.ToUnixTimeSeconds(),
+                NotAfter = notAfter.ToUnixTimeSeconds()
+            };
         }
 
         public static bool IsValidateCertificate(this X509Certificate2 certificate)

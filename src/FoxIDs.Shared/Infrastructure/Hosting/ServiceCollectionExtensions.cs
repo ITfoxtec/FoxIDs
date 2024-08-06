@@ -24,6 +24,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddSharedLogic(this IServiceCollection services, Settings settings)
         {
             services.AddTransient<PlanUsageLogic>();
+            services.AddTransient<ContainedKeyLogic>();
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

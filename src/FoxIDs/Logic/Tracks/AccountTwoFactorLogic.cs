@@ -71,27 +71,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task ValidateTwoFactorByExternalSecretAsync(string email, string secretOrExtName, string appCode)
-        {
-            email = email?.ToLowerInvariant();
-            if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
-            {
-                secretOrExtName = await GetExternalSecretLogic().GetExternalSecretAsync(secretOrExtName);
-                if (secretOrExtName.IsNullOrWhiteSpace())
-                {
-                    throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(secretOrExtName)} '{secretOrExtName}'.");
-                }
-            }
-
-            await ValidateTwoFactorBySecretAsync(email, secretOrExtName, appCode);
-        }
-
         public string CreateRecoveryCode()
         {
             return Base32Encoding.ToString(RandomGenerator.GenerateBytes(secretAndRecoveryCodeLength)).TrimEnd('=');
         }
 
-        public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string secretOrExtName, string twoFactorAppRecoveryCode)
+        public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string twoFactorAppRecoveryCode)
         {
             email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
@@ -102,25 +87,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to set two-factor app secret.");
             }          
 
-            if (settings.Options.KeyStorage == KeyStorageOptions.None) 
-            {
-                user.TwoFactorAppSecret = newSecret;
-            }
-            else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
-            {
-                if (!secretOrExtName.IsNullOrEmpty())
-                {
-                    user.TwoFactorAppSecretExternalName = await GetExternalSecretLogic().SetExternalSecretByExternalNameAsync(secretOrExtName, newSecret);
-                }
-                else
-                {
-                    user.TwoFactorAppSecretExternalName = await GetExternalSecretLogic().SetExternalSecretByNameAsync(secretName, newSecret);
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            user.TwoFactorAppSecret = newSecret;
 
             var recoveryCode = new TwoFactorAppRecoveryCode();
             await secretHashLogic.AddSecretHashAsync(recoveryCode, twoFactorAppRecoveryCode);
@@ -163,6 +130,6 @@ namespace FoxIDs.Logic
             }
         }
 
-        private ExternalSecretLogic GetExternalSecretLogic() => serviceProvider.GetService<ExternalSecretLogic>();
+        
     }
 }

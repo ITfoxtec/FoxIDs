@@ -1,8 +1,11 @@
-﻿namespace FoxIDs.Models.Api
+﻿using System;
+
+namespace FoxIDs.Models.Api
 {
     public enum ClientKeyTypes
     {
-        KeyVaultSelfSigned = 10,
+        Contained = 0,
+        [Obsolete("KeyVault is phased out.")]
         KeyVaultImport = 20,
     }
 }

@@ -1,9 +1,12 @@
-﻿namespace FoxIDs.Models.Api
+﻿using System;
+
+namespace FoxIDs.Models.Api
 {
     public enum TrackKeyTypes
     {
         Contained = 0,
+        [Obsolete("KeyVault is phased out.")]
         KeyVaultRenewSelfSigned = 1,
-        KeyVaultImport = 2,
+        ContainedRenewSelfSigned = 10
     }
 }

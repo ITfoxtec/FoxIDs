@@ -43,17 +43,17 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "key")]
         public TrackKey Key { get; set; }
 
-        [Range(Constants.Models.Track.KeyExternalValidityInMonthsMin, Constants.Models.Track.KeyExternalValidityInMonthsMax)]
-        [JsonProperty(PropertyName = "key_external_validity_in_months")]
-        public int KeyExternalValidityInMonths { get; set; } = 3;
+        [Range(Constants.Models.Track.KeyValidityInMonthsMin, Constants.Models.Track.KeyValidityInMonthsMax)]
+        [JsonProperty(PropertyName = "key_validity_in_months")]
+        public int KeyValidityInMonths { get; set; } = 3;
 
-        [Range(Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMin, Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMax)]
-        [JsonProperty(PropertyName = "key_external_auto_renew_days_before_expiry")]
-        public int KeyExternalAutoRenewDaysBeforeExpiry { get; set; } = 10;
+        [Range(Constants.Models.Track.KeyAutoRenewDaysBeforeExpiryMin, Constants.Models.Track.KeyAutoRenewDaysBeforeExpiryMax)]
+        [JsonProperty(PropertyName = "key_auto_renew_days_before_expiry")]
+        public int KeyAutoRenewDaysBeforeExpiry { get; set; } = 10;
 
-        [Range(Constants.Models.Track.KeyExternalPrimaryAfterDaysMin, Constants.Models.Track.KeyExternalPrimaryAfterDaysMax)]
-        [JsonProperty(PropertyName = "key_external_primary_after_days")]
-        public int KeyExternalPrimaryAfterDays { get; set; } = 5;
+        [Range(Constants.Models.Track.KeyPrimaryAfterDaysMin, Constants.Models.Track.KeyPrimaryAfterDaysMax)]
+        [JsonProperty(PropertyName = "key_primary_after_days")]
+        public int KeyPrimaryAfterDays { get; set; } = 5;
 
         [Range(Constants.Models.Track.KeyExternalCacheLifetimeMin, Constants.Models.Track.KeyExternalCacheLifetimeMax)]
         [JsonProperty(PropertyName = "key_external_cache_lifetime")]

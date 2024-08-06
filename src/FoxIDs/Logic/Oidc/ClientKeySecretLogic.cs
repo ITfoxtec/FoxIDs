@@ -4,18 +4,13 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using ITfoxtec.Identity;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
     public class ClientKeySecretLogic<TClient> : LogicSequenceBase where TClient : OAuthUpClient
     {
-        private readonly IServiceProvider serviceProvider;
-
-        public ClientKeySecretLogic(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        {
-            this.serviceProvider = serviceProvider;
-        }
+        public ClientKeySecretLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        { }
 
         public SecurityKey GetClientKey(TClient client)
         {
@@ -31,10 +26,6 @@ namespace FoxIDs.Logic
             if (clientKey.Type == ClientKeyTypes.Contained)
             {
                 return clientKey.Key.ToSecurityKey();
-            }
-            else if (clientKey.Type == ClientKeyTypes.KeyVaultImport)
-            {
-                return serviceProvider.GetService<ExternalKeyLogic>().GetExternalRSAKey(clientKey).ToSecurityKey(clientKey.PublicKey.Kid);
             }
             else
             {

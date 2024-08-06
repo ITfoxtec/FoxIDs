@@ -8,8 +8,6 @@ using AutoMapper;
 using System.Collections.Generic;
 using FoxIDs.Logic;
 using Microsoft.AspNetCore.Http;
-using System;
-using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
@@ -18,7 +16,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOidcClientKeyUpPartyController : GenericOAuthClientKeyUpPartyController<OidcUpParty, OidcUpClient>
     {
-        public TOidcClientKeyUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(settings, logger, serviceProvider, mapper, tenantDataRepository, planCacheLogic)
+        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger, mapper, tenantDataRepository, planCacheLogic)
         { }
 
         /// <summary>

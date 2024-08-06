@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity;
 using FoxIDs.Logic;
@@ -117,8 +116,8 @@ namespace FoxIDs.Controllers
 
                 if (trackKeyRequest.CreateSelfSigned)
                 {
-                    var certificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
-                    mTrackKey.Key = await certificate.ToFTJsonWebKeyAsync(true);
+                    var certificateItem = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
+                    mTrackKey.Key = await certificateItem.Certificate.ToFTJsonWebKeyAsync(true);
                 }
 
                 if (trackKeyRequest.IsPrimary)

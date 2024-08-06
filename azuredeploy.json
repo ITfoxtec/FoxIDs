@@ -42,6 +42,17 @@
         "description": "The pricing tier of the App Service plan."
       }
     },
+    "keyVaultSkuName": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Specifies whether the key vault is a standard vault or a premium vault."
+      }
+    },
     "sendgridFromEmail": {
       "type": "string",
       "defaultValue": "",
@@ -166,6 +177,87 @@
           "maxfragmentationmemory-reserved": "30",
           "maxmemory-delta": "30"
         }
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2022-07-01",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+        "[resourceId('Microsoft.Web/sites', variables('foxidsDefaultName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]"
+      ],
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "[parameters('keyVaultSkuName')]"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": [
+            {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+              "ignoreMissingVnetServiceEndpoint": false
+            }
+          ]
+        },
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsDefaultName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Decrypt",
+                "Sign"
+              ],
+              "secrets": [
+                "get",
+                "List",
+                "Set"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Create"
+              ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List"
+              ],
+              "secrets": [
+                "get",
+                "List",
+                "Set",
+                "Delete"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Create",
+                "Delete",
+                "Import",
+                "Update"
+              ]
+            }
+          }
+        ],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
+        "enableSoftDelete": true
       }
     },
     {
@@ -298,6 +390,41 @@
       }
     },
     {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--RedisCache--ConnectionString')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.Cache/Redis/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "value": "[concat(variables('foxidsDefaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName')), '2015-08-01').primaryKey)]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--CosmosDb--PrimaryKey')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('foxidsDefaultName')), '2015-11-06').primaryMasterKey]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--Sendgrid--ApiKey')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "value": "[parameters('sendgridApiKey')]"
+      }
+    },
+    {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2018-09-01-preview",
       "name": "[guid(uniqueString(variables('foxidsDefaultName'), 'read', variables('foxidsControlSiteName')))]",
@@ -334,6 +461,12 @@
                   "locations": [
                     "[resourceGroup().location]"
                   ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[resourceGroup().location]"
+                  ]
                 }
               ],
               "privateEndpointNetworkPolicies": "Disabled",
@@ -365,6 +498,12 @@
         "serviceEndpoints": [
           {
             "service": "Microsoft.AzureCosmosDB",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          },
+          {
+            "service": "Microsoft.KeyVault",
             "locations": [
               "[resourceGroup().location]"
             ]

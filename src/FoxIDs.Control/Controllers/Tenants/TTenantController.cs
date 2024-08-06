@@ -111,13 +111,13 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name, plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault));
+                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }

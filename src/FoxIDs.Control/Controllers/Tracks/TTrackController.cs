@@ -102,7 +102,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var mTrack = mapper.Map<Track>(track);
-                await trackLogic.CreateTrackDocumentAsync(mTrack, await GetKeyTypeAsync());
+                await trackLogic.CreateTrackDocumentAsync(mTrack);
                 await trackLogic.CreateLoginDocumentAsync(mTrack);
 
                 return Created(mapper.Map<Api.Track>(mTrack));
@@ -116,21 +116,6 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
-        }
-
-        private async Task<TrackKeyTypes> GetKeyTypeAsync()
-        {
-            if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault)
-            {
-                return TrackKeyTypes.Contained;
-            }
-
-            Plan plan = null;
-            if (!RouteBinding.PlanName.IsNullOrEmpty())
-            {            
-                plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);                
-            }
-            return plan.GetKeyType(settings.Options.KeyStorage == KeyStorageOptions.KeyVault);
         }
 
         /// <summary>

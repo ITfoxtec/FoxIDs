@@ -3,7 +3,7 @@
 
 <div class="d-flex">
     <div class="info-text mr-auto pt-0">
-        The primary certificate is the environments and thus the Identity Provider's unique <DocsLink Page="certificates">certificate</DocsLink>. The are different certificate container types to choose from.
+        The primary certificate is the environments and thus the Identity Provider's unique <DocsLink Page="certificates">certificate</DocsLink>. The are two different certificate container types to choose from.
     </div>
     <div class="pb-2">
         <div class="btn-group" role="group">
@@ -100,7 +100,7 @@
                                 }
                                 @if (certificate.Form.Model.Key == null)
                                 {
-                                    <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateSelfSignedCertificateAsync(certificate))">Create self-signed certificate</button>
+                                    <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateSelfSignedCertificateAsync(certificate))">Create new self-signed certificate</button>
                                 }
                                 else
                                 {
@@ -143,7 +143,7 @@
         <div class="card bg-light">
             <div class="card-body">
                 <div><strong>Renewed self-signed certificates</strong></div>
-                <div>The self-signed certificates is automatically renewed.</div>
+                <div>Automatically renewed with 3 month validity period. Renewed 10 days before expiration and promoted to primary certificate 5 days before expiration.</div>
             </div>
         </div>
     }
@@ -180,18 +180,36 @@
         }
 
         <div class="mb-3 alert alert-warning" role="alert">
-            If you change the container type the current certificates is deleted and the current signing certificate is changed.
+            Changing the container type will change the current certificate, which may cause downtime until the applications and trusted SAML 2.0 identity providers are updated to use the new certificate.
         </div>
 
         <div class="card bg-light">
             <div class="card-body">
-                <div><strong>Contained certificates</strong></div>
+                <div><strong>Renewed self-signed certificates</strong></div>
                 <div>
                     <ul>
-                        <li>Certificates stored in Cosmos DB including private key.</li>
-                        <li>Self-signed certificates created by FoxIDs or upload your one certificates.</li>
-                        <li>Not automatically renewed.</li>
-                        <li>No cost per signing.</li>
+                        <li>Automatically created self-signed certificates.</li>
+                        <li>Automatically renewed with 3 month validity period. Renewed 10 days before expiration and promoted to primary certificate 5 days before expiration.</li>
+                    </ul>
+                </div>
+                @if (trackKey?.Type == TrackKeyTypes.ContainedRenewSelfSigned)
+                {
+                    <div><i>Current container type.</i></div>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.ContainedRenewSelfSigned))">Change to this container type</button>
+                }
+            </div>
+        </div>
+
+        <div class="card bg-light">
+            <div class="card-body">
+                <div><strong>Self-signed or your certificates</strong></div>
+                <div>
+                    <ul>
+                        <li>Automatically created self-signed certificates or upload your one certificates.</li>
+                        <li>NOT automatically renewed.</li>
                     </ul>
                 </div>
                 @if (trackKey?.Type == TrackKeyTypes.Contained)
@@ -200,46 +218,11 @@
                 }
                 else
                 {
-                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.Contained))">Change container type</button>
+                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.Contained))">Change to this container type</button>
                 }
             </div>
         </div>
 
-
-        <div class="card bg-light">
-            <div class="card-body">
-                <div><strong>Key Vault renewed self-signed certificates</strong></div>
-                <div>
-                    <ul>
-                        <li>Certificates stored in Key Vault and private key not exportable.</li>
-                        <li>Self-signed certificates created by Key Vault.</li>
-                        <li>Automatically renewed with 3 month validity period. Renewed 10 days before expiration and promoted to primary certificate 5 days before expiration.</li>
-                        <li>Cost per signing.</li>
-                    </ul>
-                </div>
-                @if (trackKey?.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
-                {
-                    <div><i>Current container type.</i></div>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.KeyVaultRenewSelfSigned))">Change container type</button>
-                }
-            </div>
-        </div>
-
-        <div class="card bg-light">
-            <div class="card-body">
-                <div><strong>Key Vault upload your one certificate (not supported, to be implemented)</strong></div>
-                <div>
-                    <ul>
-                        <li>Certificates stored in Key Vault and private key not exportable.</li>
-                        <li>Not automatically renewed.</li>
-                        <li>Cost per signing.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" @onclick="@(() => changeContainerTypeModal.Hide())">Cancel</button>

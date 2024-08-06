@@ -13,7 +13,6 @@ using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using FoxIDs.Infrastructure.Security;
-using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Config;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,16 +26,14 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public GenericOAuthClientKeyUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
+        public GenericOAuthClientKeyUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
-            this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
@@ -178,7 +175,5 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-
-        private ExternalKeyLogic GetExternalKeyLogic() => serviceProvider.GetService<ExternalKeyLogic>();
     }
 }

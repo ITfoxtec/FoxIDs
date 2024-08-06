@@ -103,7 +103,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
             }
 
-            var track = await GetTrackAsync(trackIdKey, useCustomDomain);
+            var track = await GetTrackAsync(scopedLogger, requestServices, trackIdKey, useCustomDomain);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
@@ -136,9 +136,9 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private static async Task<Tenant> GetTenantAsync(IServiceProvider requestServices, bool useCustomDomain, string customDomain, string tenantName)
+        private static async Task<Tenant> GetTenantAsync(IServiceProvider serviceProvider, bool useCustomDomain, string customDomain, string tenantName)
         {
-            var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();
+            var tenantCacheLogic = serviceProvider.GetService<TenantCacheLogic>();
             if (useCustomDomain)
             {
                 return await tenantCacheLogic.GetTenantByCustomDomainAsync(customDomain);
@@ -149,21 +149,33 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<Plan> GetPlanAsync(IServiceProvider requestServices, string planName)
+        private async Task<Plan> GetPlanAsync(IServiceProvider serviceProvider, string planName)
         {
             if (planName.IsNullOrEmpty())
             {
                 return null;
             }
-            var planCacheLogic = requestServices.GetService<PlanCacheLogic>();
+            var planCacheLogic = serviceProvider.GetService<PlanCacheLogic>();
             return await planCacheLogic.GetPlanAsync(planName, required: false);
         }
 
-        private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool useCustomDomain)
+        private async Task<Track> GetTrackAsync(TelemetryScopedLogger scopedLogger, IServiceProvider serviceProvider, Track.IdKey idKey, bool useCustomDomain)
         {
             try
             {
-                return await trackCacheLogic.GetTrackAsync(idKey);
+                var track = await trackCacheLogic.GetTrackAsync(idKey);
+                if(track.Key.Type == TrackKeyTypes.ContainedRenewSelfSigned)
+                {
+                    var containedKeyLogic = serviceProvider.GetService<ContainedKeyLogic>();
+                    track = await containedKeyLogic.RenewCertificateAsync(idKey, track);
+
+                }
+                else if (track.Key.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
+                {
+                    var externalKeyLogic = serviceProvider.GetService<ExternalKeyLogic>();
+                    track = await externalKeyLogic.PhasedOutExternalKeyAsync(scopedLogger, idKey, track);
+                }
+                return track;
             }
             catch (Exception ex)
             {

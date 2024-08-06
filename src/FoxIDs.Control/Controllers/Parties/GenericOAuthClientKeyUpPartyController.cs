@@ -13,7 +13,6 @@ using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using FoxIDs.Infrastructure.Security;
-using FoxIDs.Models.Config;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Controllers
@@ -24,15 +23,13 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericOAuthClientKeyUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
-        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public GenericOAuthClientKeyUpPartyController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
+        public GenericOAuthClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
-            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
@@ -90,28 +87,24 @@ namespace FoxIDs.Controllers
 
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 
-                var clientKey = new ClientKey();
-                if(settings.Options.KeyStorage == KeyStorageOptions.None)
+                var certificate = keyRequest.Password.IsNullOrWhiteSpace() switch
                 {
-                    var certificate = keyRequest.Password.IsNullOrWhiteSpace() switch
-                    {
-                        true => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
-                        false => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
-                    };
-                    if (!keyRequest.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)
-                    {
-                        throw new ValidationException("Unable to read the certificates private key. E.g, try to convert the certificate and save the certificate with 'TripleDES-SHA1'.");
-                    }
-                    var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
-                    clientKey.Type = ClientKeyTypes.Contained;
-                    clientKey.ExternalName = Guid.NewGuid().ToString();
-                    clientKey.Key = jwt;
-                    clientKey.PublicKey = jwt.GetPublicKey();
-                }
-                else
+                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
+                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
+                };
+                if (!keyRequest.Password.IsNullOrWhiteSpace() && !certificate.HasPrivateKey)
                 {
-                    throw new NotSupportedException();
+                    throw new ValidationException("Unable to read the certificates private key. E.g, try to convert the certificate and save the certificate with 'TripleDES-SHA1'.");
                 }
+
+                var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
+                var clientKey = new ClientKey
+                {
+                    Type = ClientKeyTypes.Contained,
+                    ExternalName = Guid.NewGuid().ToString(),
+                    Key = jwt,
+                    PublicKey = jwt.GetPublicKey()
+                };
 
                 var secondaryKey = oauthUpParty.Client.ClientKeys?.Count() > 1 ? oauthUpParty.Client.ClientKeys[2] : null;
                 oauthUpParty.Client.ClientKeys = new List<ClientKey>

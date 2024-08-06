@@ -16,6 +16,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using FoxIDs.Repository;
 using FoxIDs.Logic.Caches.Providers;
+using Azure.Security.KeyVault.Secrets;
 
 namespace FoxIDs.Logic
 {
@@ -42,11 +43,6 @@ namespace FoxIDs.Logic
             await certificateClient.StartDeleteCertificateAsync(externalName);
         }
 
-        public RSA GetExternalRSAKey(ClientKey clientKey)
-        {
-            return GetExternalRSAKey(clientKey.ExternalName, clientKey.ExternalId, clientKey.PublicKey);
-        }
-
         public RSA GetExternalRSAKey(RouteTrackKey trackKey, RouteTrackKeyItem keyItem)
         {
             return GetExternalRSAKey(trackKey.ExternalName, keyItem.ExternalId, keyItem.Key);
@@ -55,6 +51,18 @@ namespace FoxIDs.Logic
         private RSA GetExternalRSAKey(string externalName, string externalId, JsonWebKey publicKey)
         {
             return RSAFactory.Create(tokenCredential, new Uri(UrlCombine.Combine(settings.KeyVault.EndpointUri, "keys", externalName, externalId)), new Azure.Security.KeyVault.Keys.JsonWebKey(publicKey.ToRsa()));
+        }
+
+        public async Task<JsonWebKey> GetExternalKeyAsync(ClientKey clientKey)
+        {
+            var secretClient = new SecretClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
+            KeyVaultSecret keyVaultSecret = secretClient.GetSecret(clientKey.ExternalName);
+            var certificate = new X509Certificate2(Convert.FromBase64String(keyVaultSecret.Value), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+            if (certificate == null)
+            {
+                throw new Exception($"External client key certificate '{clientKey.ExternalName}' from Key Vault is null.");
+            }
+            return await certificate.ToFTJsonWebKeyAsync(true);
         }
 
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
@@ -212,6 +220,22 @@ namespace FoxIDs.Logic
         {
             var newCertificateItem = await (idKey.TenantName, idKey.TrackName).CreateSelfSignedCertificateBySubjectAsync(track.KeyValidityInMonths);
             return await newCertificateItem.ToTrackKeyItemAsync(true);
+        }
+
+        public async Task PhasedOutExternalClientKeyAsync<TParty, TClient>(TParty party) where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+        {
+            foreach (var clientKey in party.Client.ClientKeys) 
+            {
+                if(clientKey.Type == ClientKeyTypes.KeyVaultImport)
+                {
+                    clientKey.Type = ClientKeyTypes.Contained;
+                    clientKey.Key = await GetExternalKeyAsync(clientKey);
+                    clientKey.ExternalId = null;
+
+                    await tenantDataRepository.UpdateAsync(party);
+                    await DeleteExternalKeyAsync(clientKey.ExternalName);
+                }
+            }
         }
     }
 }

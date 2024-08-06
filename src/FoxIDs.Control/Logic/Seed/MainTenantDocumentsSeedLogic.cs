@@ -33,13 +33,13 @@ namespace FoxIDs.Logic.Seed
                     return false;
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MainTenantName, TrackKeyType);
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MainTenantName);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MainTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MainTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MainTenantName, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(Constants.Routes.MainTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
 
-                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(Constants.Routes.MainTenantName, TrackKeyType);
+                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(Constants.Routes.MainTenantName);
                 return true;
             }
             catch (Exception ex)
@@ -48,8 +48,6 @@ namespace FoxIDs.Logic.Seed
                 throw;
             }
         }
-
-        private TrackKeyTypes TrackKeyType => settings.Options.KeyStorage == KeyStorageOptions.KeyVault ? TrackKeyTypes.KeyVaultRenewSelfSigned : TrackKeyTypes.Contained;
 
         private async Task<bool> CreateAndValidateMainTenantDocumentAsync(string foxIDsEndpoint)
         {

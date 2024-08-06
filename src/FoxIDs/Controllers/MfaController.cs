@@ -168,7 +168,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
-                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretOrExtName, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
             }
@@ -271,7 +271,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretOrExtName, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
 
                         var user = await accountLogic.GetUserAsync(sequenceData.Email);
                         var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });

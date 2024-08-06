@@ -322,7 +322,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
 
                     oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
                     {

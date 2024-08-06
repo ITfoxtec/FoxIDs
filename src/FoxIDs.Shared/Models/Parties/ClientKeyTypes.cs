@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace FoxIDs.Models
 {
@@ -6,6 +7,7 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "contained")]
         Contained = 0,
+        [Obsolete("KeyVault is phased out.")]
         [EnumMember(Value = "key_vault_upload")]
         KeyVaultImport = 20,
     }

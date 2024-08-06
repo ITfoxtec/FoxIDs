@@ -31,12 +31,12 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (Type == ClientKeyTypes.KeyVaultImport && ExternalId.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(ExternalId)} is required for key type '{Type}'.", new[] { nameof(ExternalId) }));
+                results.Add(new ValidationResult($"The field {nameof(ExternalId)} is required for key type '{Type}'.", [nameof(ExternalId)]));
             }           
 
             if (Type == ClientKeyTypes.Contained && Key == null)
             {
-                results.Add(new ValidationResult($"The field {nameof(Key)} is required for key type '{Type}'.", new[] { nameof(Key) }));
+                results.Add(new ValidationResult($"The field {nameof(Key)} is required for key type '{Type}'.", [nameof(Key)]));
             }
 
             return results;

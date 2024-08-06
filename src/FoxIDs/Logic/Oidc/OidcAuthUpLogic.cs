@@ -210,6 +210,11 @@ namespace FoxIDs.Logic
                 throw;
             }
 
+            if(party.Client.ClientKeys?.Where(ck => ck.Type == ClientKeyTypes.KeyVaultImport).Count() > 0)
+            {
+                await serviceProvider.GetService<ExternalKeyLogic>().PhasedOutExternalClientKeyAsync<TParty, TClient>(party);
+            }
+
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
             {

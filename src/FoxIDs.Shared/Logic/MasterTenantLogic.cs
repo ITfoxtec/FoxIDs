@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
-        public async Task CreateMasterTrackDocumentAsync(string tenantName, TrackKeyTypes keyType)
+        public async Task CreateMasterTrackDocumentAsync(string tenantName)
         {
             tenantName = tenantName?.ToLower();
             var trackName = Constants.Routes.MasterTrackName;
@@ -47,16 +47,16 @@ namespace FoxIDs.Logic
             };
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = trackName });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, keyType, tenantName, trackName);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, trackName);
         }
 
-        public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack, TrackKeyTypes keyType)
+        public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
         {
             tenantName = tenantName?.ToLower();
 
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = mTrack.Name });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, keyType, tenantName, mTrack.Name);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, mTrack.Name);
         }
 
         public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)
@@ -251,20 +251,20 @@ namespace FoxIDs.Logic
             yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/logout_callback");
         }
 
-        public async Task CreateDefaultTracksDocmentsAsync(string tenantName, TrackKeyTypes trackKeyTypes)
+        public async Task CreateDefaultTracksDocmentsAsync(string tenantName)
         {
-            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, Constants.TrackDefaults.DefaultTrackTestName, trackKeyTypes);
-            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName, trackKeyTypes);
+            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, Constants.TrackDefaults.DefaultTrackTestName);
+            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName);
         }
 
-        private async Task CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName, TrackKeyTypes keyType)
+        private async Task CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName)
         {
             var mTrack = new Track
             {
                 DisplayName = trackDisplayName,
                 Name = trackName?.ToLower()
             };
-            await CreateTrackDocumentAsync(tenantName, mTrack, keyType);
+            await CreateTrackDocumentAsync(tenantName, mTrack);
             await CreateLoginDocumentAsync(tenantName, mTrack.Name);
         }
     }

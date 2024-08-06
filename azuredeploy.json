@@ -340,8 +340,7 @@
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
         "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
@@ -353,12 +352,11 @@
         "Settings__TrustProxySchemeHeader": true,
         "Settings__Options__Log": "ApplicationInsights",
         "Settings__Options__DataStorage": "CosmosDb",
-        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__KeyStorage": "None",
         "Settings__Options__Cache": "Redis",
         "Settings__Options__DataCache": "Default",
         "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__Sendgrid__FromEmail": "[parameters('sendgridFromEmail')]"
       }
     },
@@ -369,8 +367,7 @@
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
         "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
@@ -384,12 +381,11 @@
         "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings__Options__Log": "ApplicationInsights",
         "Settings__Options__DataStorage": "CosmosDb",
-        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__KeyStorage": "None",
         "Settings__Options__Cache": "Redis",
         "Settings__Options__DataCache": "Default",
         "Settings__MasterSeedEnabled": true,
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
-        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
       }
     },

@@ -24,17 +24,15 @@ namespace FoxIDs.Controllers
         private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
-            this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -77,51 +75,40 @@ namespace FoxIDs.Controllers
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
 
-                if (settings.Options.KeyStorage != KeyStorageOptions.KeyVault && (mTrackKey.Type == TrackKeyTypes.KeyVaultRenewSelfSigned || mTrackKey.Type == TrackKeyTypes.KeyVaultImport))
+                if (mTrackKey.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
-                    throw new Exception("KeyVault option not enabled.");
-                }
-
-                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyTypes.Contained)
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableKeyVault)
-                    {
-                        throw new Exception($"Key Vault is not supported in the '{plan.Name}' plan.");
-                    }
+                    throw new Exception("KeyVault is phased out.");
                 }
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 if (mTrack.Key.Type != mTrackKey.Type)
                 {
-                    switch (mTrackKey.Type)
+                    if (mTrack.Key.Type == TrackKeyTypes.Contained || mTrack.Key.Type == TrackKeyTypes.ContainedRenewSelfSigned)
                     {
-                        case TrackKeyTypes.Contained:
-                            mTrack.Key.Type = mTrackKey.Type;
-                            var certificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
-                            mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } };
-                            if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
-                            {
-                                await GetExternalKeyLogic().DeleteExternalKeyAsync(mTrack.Key.ExternalName);
-                                mTrack.Key.ExternalName = null;
-                            }
-                            break;
+                        mTrack.Key.Type = mTrackKey.Type;
+                        var certificate = mTrack.Key.Type == TrackKeyTypes.Contained ? await RouteBinding.CreateSelfSignedCertificateBySubjectAsync() : await RouteBinding.CreateSelfSignedCertificateBySubjectAsync(mTrack.KeyValidityInMonths);
+                        mTrack.Key.Keys = new List<TrackKeyItem>
+                        {
+                            await certificate.ToTrackKeyItemAsync(true)
+                        };
 
-                        case TrackKeyTypes.KeyVaultRenewSelfSigned:
-                            mTrack.Key.Type = mTrackKey.Type;
-                            mTrack.Key.Keys = null;
-                            mTrack.Key.ExternalName = await GetExternalKeyLogic().CreateExternalKeyAsync(mTrack);
-                            break;
+                        var externalName = mTrack.Key.ExternalName;
+                        mTrack.Key.ExternalName = null;
 
-                        case TrackKeyTypes.KeyVaultImport:
-                        default:
-                            throw new Exception($"Track key type not supported '{mTrackKey.Type}'.");
+                        await tenantDataRepository.UpdateAsync(mTrack);
+                        await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
+
+                        if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !externalName.IsNullOrWhiteSpace())
+                        {
+                            var externalKeyLogic = serviceProvider.GetService<ExternalKeyLogic>();
+                            await externalKeyLogic.DeleteExternalKeyAsync(externalName);                            
+                        }
                     }
-
-                    await tenantDataRepository.UpdateAsync(mTrack);
-
-                    await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
+                    else
+                    {
+                        throw new NotSupportedException($"Track key type '{mTrack.Key.Type}' not supported.");
+                    }
                 }
 
                 return Ok(mapper.Map<Api.TrackKey>(mTrack.Key));
@@ -136,7 +123,5 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-
-        private ExternalKeyLogic GetExternalKeyLogic() => serviceProvider.GetService<ExternalKeyLogic>();
     }
 }

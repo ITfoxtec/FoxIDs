@@ -339,12 +339,12 @@ namespace FoxIDs
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;
 
-                public const int KeyExternalValidityInMonthsMin = 1;
-                public const int KeyExternalValidityInMonthsMax = 12;
-                public const int KeyExternalAutoRenewDaysBeforeExpiryMin = 4;
-                public const int KeyExternalAutoRenewDaysBeforeExpiryMax = 30;
-                public const int KeyExternalPrimaryAfterDaysMin = 2;
-                public const int KeyExternalPrimaryAfterDaysMax = 20;
+                public const int KeyValidityInMonthsMin = 1;
+                public const int KeyValidityInMonthsMax = 12;
+                public const int KeyAutoRenewDaysBeforeExpiryMin = 4;
+                public const int KeyAutoRenewDaysBeforeExpiryMax = 30;
+                public const int KeyPrimaryAfterDaysMin = 2;
+                public const int KeyPrimaryAfterDaysMax = 20;
                 public const int KeyExternalCacheLifetimeMin = 3600;
                 public const int KeyExternalCacheLifetimeMax = 86400;
 

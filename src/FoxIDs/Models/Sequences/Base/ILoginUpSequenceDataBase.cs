@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models.Sequences;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
@@ -12,7 +11,7 @@ namespace FoxIDs.Models.Sequences
         IEnumerable<string> Acr { get; set; }
         IEnumerable<string> AuthMethods { get; set; }
         TwoFactorAppSequenceStates TwoFactorAppState { get; set; }
-        string TwoFactorAppSecretOrExtName { get; set; }
+        string TwoFactorAppSecret { get; set; }
         string TwoFactorAppNewSecret { get; set; }
         string TwoFactorAppRecoveryCode { get; set; }
     }

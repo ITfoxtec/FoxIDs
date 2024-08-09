@@ -3,15 +3,16 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Http;
+using MimeKit;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Net.Mail;
 using System.Net.Mime;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -30,7 +31,7 @@ namespace FoxIDs.Logic
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SendEmailAsync(MailAddress toEmail, EmailContent emailContent, string fromName = null)
+        public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent, string fromName = null)
         {
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
@@ -107,13 +108,13 @@ namespace FoxIDs.Logic
             return body;
         }
 
-        private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body)
+        private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailboxAddress toEmail, string subject, string body)
         {
             Debug.WriteLine($"HTML: '{body}'");
 
             var mail = new SendGridMessage();
             mail.From = emailSettings.FromName.IsNullOrWhiteSpace() ? new EmailAddress(emailSettings.FromEmail) : new EmailAddress(emailSettings.FromEmail, emailSettings.FromName);
-            mail.AddTo(toEmail.Address, toEmail.DisplayName);
+            mail.AddTo(toEmail.Address, toEmail.Name);
             mail.Subject = subject;
             mail.AddContent(MediaTypeNames.Text.Html, body);
 
@@ -131,23 +132,21 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task SendEmailWithSmtpAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body)
+        private async Task SendEmailWithSmtpAsync(SendEmail emailSettings, MailboxAddress toEmail, string subject, string body)
         {
             try
             {
-                var mail = new MailMessage();
-                mail.From = emailSettings.FromName.IsNullOrWhiteSpace() ? new MailAddress(emailSettings.FromEmail) : new MailAddress(emailSettings.FromEmail, emailSettings.FromName);
-                mail.To.Add(new MailAddress(toEmail.Address, toEmail.DisplayName, Encoding.UTF8));
-                mail.Subject = subject;
-                mail.SubjectEncoding = Encoding.UTF8;
-                mail.Body = body;
-                mail.IsBodyHtml = true;
-                mail.BodyEncoding = Encoding.UTF8;
+                var message = new MimeMessage();
+                message.From.Add(emailSettings.FromName.IsNullOrWhiteSpace() ? new MailboxAddress(emailSettings.FromEmail, emailSettings.FromEmail) : new MailboxAddress(emailSettings.FromName, emailSettings.FromEmail));
+                message.To.Add(toEmail);
+                message.Subject = subject;
+                message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
-                using var client = new SmtpClient(emailSettings.SmtpHost, emailSettings.SmtpPort);
-                client.EnableSsl = true;
-                client.Credentials = new NetworkCredential(emailSettings.SmtpUsername, emailSettings.SmtpPassword);
-                await client.SendMailAsync(mail);
+                using var client = new SmtpClient();
+                client.Connect(emailSettings.SmtpHost, emailSettings.SmtpPort, SecureSocketOptions.Auto);
+                client.Authenticate(emailSettings.SmtpUsername, emailSettings.SmtpPassword);
+                await client.SendAsync(message);
+                client.Disconnect(true);
 
                 logger.Event($"Email send to '{toEmail.Address}'.");
                 logger.ScopeTrace(() => $"Email with subject '{subject}' send to '{toEmail.Address}'.");

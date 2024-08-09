@@ -9,9 +9,9 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
+using MimeKit;
 using System;
 using System.Collections.Generic;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -115,7 +115,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to send {logText} confirmation code.");
             }
 
-            await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)), emailContent(confirmationCode), fromName: RouteBinding.DisplayName);
+            await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), emailContent(confirmationCode), fromName: RouteBinding.DisplayName);
 
             logger.ScopeTrace(() => $"Email with {logText} confirmation code send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
         }

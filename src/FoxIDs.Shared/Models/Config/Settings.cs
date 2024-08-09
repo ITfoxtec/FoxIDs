@@ -21,10 +21,16 @@ namespace FoxIDs.Models.Config
         public bool UseHttp { get; set; }
 
         /// <summary>
+        /// OpenSearch configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public OpenSearchSettings OpenSearch { get; set; }
+
+        /// <summary>
         /// File data configuration.
         /// </summary>
         [ValidateComplexType]
-        public FileDataSettings FileData { get; set; } = new FileDataSettings();
+        public FileDataSettings FileData { get; set; }
 
         /// <summary>
         /// Cosmos DB configuration.
@@ -89,11 +95,19 @@ namespace FoxIDs.Models.Config
         {
             var results = new List<ValidationResult>();
 
+            if (Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                if (OpenSearch == null)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(OpenSearch)} is required if {nameof(Options.Log)} is {Options.Log}.", [nameof(OpenSearch)]));
+                }
+            }
+
             if (Options.DataStorage == DataStorageOptions.File || Options.Cache == CacheOptions.File)
             {
                 if (FileData == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(FileData) }));
+                    results.Add(new ValidationResult($"The field {nameof(FileData)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", [nameof(FileData)]));
                 }
             }
 
@@ -101,7 +115,7 @@ namespace FoxIDs.Models.Config
             {
                 if (CosmosDb == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", new[] { nameof(CosmosDb) }));
+                    results.Add(new ValidationResult($"The field {nameof(CosmosDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage}.", [nameof(CosmosDb)]));
                 }
             }
             
@@ -109,7 +123,7 @@ namespace FoxIDs.Models.Config
             {
                 if (MongoDb == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(MongoDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(MongoDb) }));
+                    results.Add(new ValidationResult($"The field {nameof(MongoDb)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", [nameof(MongoDb)]));
                 }
             }
             
@@ -117,7 +131,7 @@ namespace FoxIDs.Models.Config
             {
                 if (PostgreSql == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(PostgreSql)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(PostgreSql) }));
+                    results.Add(new ValidationResult($"The field {nameof(PostgreSql)} is required if {nameof(Options.DataStorage)} is {Options.DataStorage} or {nameof(Options.Cache)} is {Options.Cache}.", [nameof(PostgreSql)]));
                 }
             }
 
@@ -125,7 +139,7 @@ namespace FoxIDs.Models.Config
             {
                 if (KeyVault == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(KeyVault)} is required if {nameof(Options.KeyStorage)} is {Options.KeyStorage}.", new[] { nameof(KeyVault) }));
+                    results.Add(new ValidationResult($"The field {nameof(KeyVault)} is required if {nameof(Options.KeyStorage)} is {Options.KeyStorage}.", [nameof(KeyVault)]));
                 }
             }
 
@@ -133,7 +147,7 @@ namespace FoxIDs.Models.Config
             {
                 if (RedisCache == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(RedisCache)} is required if {nameof(Options.Cache)} is {Options.Cache}.", new[] { nameof(RedisCache) }));
+                    results.Add(new ValidationResult($"The field {nameof(RedisCache)} is required if {nameof(Options.Cache)} is {Options.Cache}.", [nameof(RedisCache)]));
                 }
             }
 

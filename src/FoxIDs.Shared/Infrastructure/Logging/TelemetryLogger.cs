@@ -35,7 +35,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().Warning(exception, message, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -56,7 +56,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().Error(exception, message, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -77,7 +77,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().CriticalError(exception, message, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().Event(eventName, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -111,7 +111,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().Trace(message, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -128,7 +128,7 @@ namespace FoxIDs.Infrastructure
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-
+                GetOpenSearchTelemetryLogger().Metric(metricName, value, properties);
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
@@ -152,6 +152,11 @@ namespace FoxIDs.Infrastructure
         private StdoutTelemetryLogger GetStdoutTelemetryLogger()
         {
             return serviceProvider.GetService<StdoutTelemetryLogger>();
+        }
+
+        private OpenSearchTelemetryLogger GetOpenSearchTelemetryLogger()
+        {
+            return serviceProvider.GetService<OpenSearchTelemetryLogger>();
         }
 
         private TelemetryClient GetApplicationInsightsTelemetryClient()

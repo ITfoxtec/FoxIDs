@@ -61,6 +61,6 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public int? PlanLogItemLifetimeMonths { get; set; }
+        public int? PlanLogLifetimeMonths { get; set; }
     }
 }

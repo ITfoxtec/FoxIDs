@@ -59,6 +59,6 @@ namespace FoxIDs.Models.Api
 
         [Range(Constants.Models.Logging.ItemLifetimeMonthsMin, Constants.Models.Logging.ItemLifetimeMonthsMax)]
         [Display(Name = "Log lifetime in months")]
-        public int? LogItemLifetimeMonths { get; set; }
+        public int? LogLifetimeMonths { get; set; }
     }
 }

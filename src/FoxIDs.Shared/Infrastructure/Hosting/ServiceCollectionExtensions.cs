@@ -16,6 +16,9 @@ using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
 using System;
 using System.Net.Http;
+using OpenSearch.Client;
+using System.Linq;
+using OpenSearch.Net;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -137,6 +140,18 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
             services.AddScoped<TelemetryScopedProperties>();
+            if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                if (settings.OpenSearch.Nodes.Count == 1)
+                {
+                    services.AddSingleton(new OpenSearchClient(settings.OpenSearch.Nodes.First()));
+                }
+                else
+                {
+                    services.AddSingleton(new OpenSearchClient(new ConnectionSettings(new StaticConnectionPool(settings.OpenSearch.Nodes))));
+                }
+                services.AddSingleton<OpenSearchTelemetryLogger>();
+            }
 
             services.AddHttpContextAccessor();
             var httpClientBuilder = services.AddHttpClient(Options.DefaultName, options => 

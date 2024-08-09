@@ -1,11 +1,13 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Hosting;
+﻿using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenSearch.Client;
 
 namespace FoxIDs
 {
@@ -22,13 +24,16 @@ namespace FoxIDs
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
-            services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
-
             var settings = services.BindConfig<FoxIDsSettings>(Configuration, nameof(Settings));
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
-            
+
+            if(settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                var appInsightsSettings = Configuration.BindConfig<ApplicationInsights>(nameof(ApplicationInsights), validate: false);
+                services.AddSingleton(new TelemetryClient(new TelemetryConfiguration { ConnectionString = appInsightsSettings.ConnectionString }));
+            }
+
             services.AddInfrastructure(settings, CurrentEnvironment);
             services.AddRepository(settings);
             services.AddLogic(settings);
@@ -40,6 +45,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app, Settings settings)
         {
+            app.UseErrorLoggingMiddleware();
             app.UseExceptionHandler($"/{Constants.Routes.ErrorController}/{Constants.Routes.DefaultAction}");
 
             if (!CurrentEnvironment.IsDevelopment())

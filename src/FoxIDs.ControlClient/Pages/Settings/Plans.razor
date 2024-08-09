@@ -130,8 +130,7 @@
                             </li>
                         </ul>
 
-                        <FInputText @bind-Value="plan.Form.Model.ApplicationInsightsConnectionString" For="@(() => plan.Form.Model.ApplicationInsightsConnectionString)" />
-                        <FInputText @bind-Value="plan.Form.Model.LogAnalyticsWorkspaceId" For="@(() => plan.Form.Model.LogAnalyticsWorkspaceId)" />
+                        <FInputNumberN @bind-Value="plan.Form.Model.LogItemLifetimeMonths" For="@(() => plan.Form.Model.LogItemLifetimeMonths)" />
                     </div>
                     @if (!plan.CreateMode && plan.DeleteAcknowledge)
                     {

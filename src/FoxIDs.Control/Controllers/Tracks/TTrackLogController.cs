@@ -213,14 +213,7 @@ namespace FoxIDs.Controllers
 
         private string GetLogAnalyticsWorkspaceId()
         {
-            if (!string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
-            {
-                return RouteBinding.LogAnalyticsWorkspaceId;
-            }
-            else
-            {
-                return settings.ApplicationInsights.WorkspaceId;
-            }
+            return settings.ApplicationInsights.WorkspaceId;
         }
 
         private async Task<bool> LoadExceptionsAsync(List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)

@@ -9,14 +9,14 @@ namespace FoxIDs.Infrastructure.Logging
 {
     public class StdoutTelemetryLogger
     {
-        private readonly ILogger<TelemetryScopedProcessor> logger;
+        private readonly ILogger<StdoutTelemetryLogger> logger;
 
         public StdoutTelemetryLogger()
         {
             logger = GetLogger();
         }
 
-        public void LogInformation(EventTelemetry eventTelemetry)
+        public void LogEvent(EventTelemetry eventTelemetry)
         {
             logger.LogInformation(GetEventTelemetryLogString(eventTelemetry));
         }
@@ -24,6 +24,11 @@ namespace FoxIDs.Infrastructure.Logging
         public void LogTrace(TraceTelemetry traceTelemetry)
         {
             logger.LogTrace(GetTraceTelemetryLogString(traceTelemetry));
+        }
+
+        public void LogMetric(MetricTelemetry metricTelemetry)
+        {
+            logger.LogInformation(GetMetricTelemetryLogString(metricTelemetry));
         }
 
         public void LogWarning(ExceptionTelemetry exceptionTelemetry)
@@ -41,14 +46,26 @@ namespace FoxIDs.Infrastructure.Logging
             logger.LogCritical(GetExceptionTelemetryLogString(exceptionTelemetry));
         }
 
+        private string GetExceptionTelemetryLogString(ExceptionTelemetry exceptionTelemetry)
+        {
+            var log = new List<string>
+            {
+                exceptionTelemetry.Message
+            };
+            if (exceptionTelemetry.Exception != null)
+            {
+                log.Add(exceptionTelemetry.Exception.ToString());
+            }
+            return string.Join(Environment.NewLine, AddTelemetry(log, exceptionTelemetry));
+        }
+
         private string GetEventTelemetryLogString(EventTelemetry eventTelemetry)
         {
             var log = new List<string>
             {
                 eventTelemetry.Name
             };
-            log = AddTelemetry(log, eventTelemetry);
-            return string.Join(Environment.NewLine, log);
+            return string.Join(Environment.NewLine, AddTelemetry(log, eventTelemetry));
         }
 
         private string GetTraceTelemetryLogString(TraceTelemetry traceTelemetry)
@@ -57,23 +74,17 @@ namespace FoxIDs.Infrastructure.Logging
             {
                 traceTelemetry.Message
             };
-            log = AddTelemetry(log, traceTelemetry);
-            return string.Join(Environment.NewLine, log);
+            return string.Join(Environment.NewLine, AddTelemetry(log, traceTelemetry));
         }
 
-        private string GetExceptionTelemetryLogString(ExceptionTelemetry exceptionTelemetry)
+        private string GetMetricTelemetryLogString(MetricTelemetry metricTelemetry)
         {
-            var log = new List<string>();
-            if (exceptionTelemetry.Exception == null)
+            var log = new List<string>
             {
-                log.Add(exceptionTelemetry.Message);
-            }
-            else
-            {
-                log.Add(exceptionTelemetry.Exception.ToString());
-            }
-            log = AddTelemetry(log, exceptionTelemetry);
-            return string.Join(Environment.NewLine, log);
+                $"Name: {metricTelemetry.Name}",
+                $"Value: {metricTelemetry.Sum}"
+            };
+            return string.Join(Environment.NewLine, AddTelemetry(log, metricTelemetry));
         }
 
         private List<string> AddTelemetry(List<string> log, ITelemetry eventTelemetry)
@@ -90,7 +101,7 @@ namespace FoxIDs.Infrastructure.Logging
             return log;
         }
 
-        private ILogger<TelemetryScopedProcessor> GetLogger()
+        private ILogger<StdoutTelemetryLogger> GetLogger()
         {
             var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -98,7 +109,7 @@ namespace FoxIDs.Infrastructure.Logging
                 .AddFilter((f) => true)
                 .AddConsole();
             });
-            return loggerFactory.CreateLogger<TelemetryScopedProcessor>();
+            return loggerFactory.CreateLogger<StdoutTelemetryLogger>();
         }
     }
 }

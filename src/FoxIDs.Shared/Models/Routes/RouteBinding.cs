@@ -61,8 +61,6 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public TelemetryClient TelemetryClient { get; set; }
-
-        public string LogAnalyticsWorkspaceId { get; set; }
+        public int? PlanLogItemLifetimeMonths { get; set; }
     }
 }

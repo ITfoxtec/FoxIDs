@@ -324,16 +324,9 @@ namespace FoxIDs.Logic
             return new QueryTimeRange(startDate, endDate);
         }
 
-        private string GetLogAnalyticsWorkspaceId(bool isMasterTenant)
+        private string GetLogAnalyticsWorkspaceId()
         {
-            if (!isMasterTenant && !string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
-            {
-                return RouteBinding.LogAnalyticsWorkspaceId;
-            }
-            else
-            {
-                return settings.ApplicationInsights.WorkspaceId;
-            }
+            return settings.ApplicationInsights.WorkspaceId;
         }
 
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
@@ -351,7 +344,7 @@ namespace FoxIDs.Logic
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
             var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant);
-            Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMasterTenant), eventsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
         }

@@ -17,6 +17,7 @@ spec:
       containers:
         - name: foxids
           image: foxids/foxids:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8800
           env:
@@ -80,6 +81,7 @@ spec:
       containers:
         - name: foxids-control
           image: foxids/foxids-control:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8800
           env:

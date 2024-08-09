@@ -154,32 +154,36 @@ namespace FoxIDs
 
         public static class Logs
         {
-            public const string TenantName = "f_TenantName";
-            public const string TrackName = "f_TrackName";
-            public const string GrantType = "f_GrantType";
-            public const string Domain = "f_Domain";
-            public const string UserAgent = "f_UserAgent";
-            public const string UpPartyId = "f_UpPartyId";
-            public const string UpPartyClientId = "f_UpPartyClientId";
-            public const string UpPartyStatus = "f_UpPartyStatus";
-            public const string DownPartyId = "f_DownPartyId";
-            public const string DownPartyClientId = "f_DownPartyClientId";
-            public const string SequenceId = "f_SequenceId";
-            public const string ExternalSequenceId = "f_ExternalSequenceId";
-            public const string AccountAction = "f_AccountAction";
-            public const string SequenceCulture = "f_SequenceCulture";
-            public const string Issuer = "f_Issuer";
-            public const string Status = "f_Status";
-            public const string SessionId = "f_SessionId";
-            public const string ExternalSessionId = "f_ExternalSessionId";
-            public const string UserId = "f_UserId";
-            public const string Email = "f_Email";
-            public const string Type = "f_Type";
-            public const string FailingLoginCount = "f_FailingLoginCount";
-            public const string UsageType = "f_UsageType";
-            public const string UsageLoginType = "f_UsageLoginType";
-            public const string UsageTokenType = "f_UsageTokenType";
-            public const string UsageAddRating = "f_UsageAddRating";
+            public const string MachineName = "MachineName";
+            public const string ClientIP = "ClientIP";
+            public const string Domain = "Domain";
+            public const string UserAgent = "UserAgent";
+            public const string RequestId = "RequestId";
+            public const string RequestPath = "RequestPath";
+            public const string TenantName = "TenantName";
+            public const string TrackName = "TrackName";
+            public const string GrantType = "GrantType";
+            public const string UpPartyId = "UpPartyId";
+            public const string UpPartyClientId = "UpPartyClientId";
+            public const string UpPartyStatus = "UpPartyStatus";
+            public const string DownPartyId = "DownPartyId";
+            public const string DownPartyClientId = "DownPartyClientId";
+            public const string SequenceId = "SequenceId";
+            public const string ExternalSequenceId = "ExternalSequenceId";
+            public const string AccountAction = "AccountAction";
+            public const string SequenceCulture = "SequenceCulture";
+            public const string Issuer = "Issuer";
+            public const string Status = "Status";
+            public const string SessionId = "SessionId";
+            public const string ExternalSessionId = "ExternalSessionId";
+            public const string UserId = "UserId";
+            public const string Email = "Email";
+            public const string Type = "Type";
+            public const string FailingLoginCount = "FailingLoginCount";
+            public const string UsageType = "UsageType";
+            public const string UsageLoginType = "UsageLoginType";
+            public const string UsageTokenType = "UsageTokenType";
+            public const string UsageAddRating = "UsageAddRating";
 
             public static class Results
             {

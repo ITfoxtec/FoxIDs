@@ -1,8 +1,6 @@
 ﻿using FoxIDs.Infrastructure.Logging;
 using FoxIDs.Models.Config;
-using ITfoxtec.Identity;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,33 +28,9 @@ namespace FoxIDs.Infrastructure
         }
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            var exceptionTelemetry = GetApplicationInsightsExceptionTelemetry(SeverityLevel.Warning, exception, message, properties);
             if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
             {
-                GetStdoutTelemetryLogger().LogWarning(exceptionTelemetry);
-            }
-
-            if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
-            {
-
-            }
-            else if (settings.Options.Log == LogOptions.ApplicationInsights)
-            {
-                GetApplicationInsightsTelemetryClient().TrackException(exceptionTelemetry);
-            }
-        }
-
-
-        public void Error(Exception exception, IDictionary<string, string> properties = null)
-        {
-            Error(exception, null, properties);
-        }
-        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
-        {
-            var exceptionTelemetry = GetApplicationInsightsExceptionTelemetry(SeverityLevel.Error, exception, message, properties);
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
-            {
-                GetStdoutTelemetryLogger().LogError(exceptionTelemetry);
+                GetStdoutTelemetryLogger().Warning(exception, message, properties);
             }
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
@@ -65,7 +39,28 @@ namespace FoxIDs.Infrastructure
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
-                GetApplicationInsightsTelemetryClient().TrackException(exceptionTelemetry);
+                GetApplicationInsightsTelemetryLogger().Warning(exception, message, properties);
+            }
+        }
+
+        public void Error(Exception exception, IDictionary<string, string> properties = null)
+        {
+            Error(exception, null, properties);
+        }
+        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
+        {
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            {
+                GetStdoutTelemetryLogger().Error(exception, message, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Error(exception, message, properties);
             }
         }
 
@@ -75,10 +70,9 @@ namespace FoxIDs.Infrastructure
         }
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            var exceptionTelemetry = GetApplicationInsightsExceptionTelemetry(SeverityLevel.Critical, exception, message, properties);
             if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
             {
-                GetStdoutTelemetryLogger().LogCritical(exceptionTelemetry);
+                GetStdoutTelemetryLogger().CriticalError(exception, message, properties);
             }
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
@@ -87,16 +81,15 @@ namespace FoxIDs.Infrastructure
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
-                GetApplicationInsightsTelemetryClient().TrackException(exceptionTelemetry);
+                GetApplicationInsightsTelemetryLogger().CriticalError(exception, message, properties);
             }
         }
 
         public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            var eventTelemetry = GetApplicationInsightsEventTelemetry(eventName, properties);
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
             {
-                GetStdoutTelemetryLogger().LogEvent(eventTelemetry);
+                GetStdoutTelemetryLogger().Event(eventName, properties);
             }
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
@@ -105,16 +98,15 @@ namespace FoxIDs.Infrastructure
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
-                GetApplicationInsightsTelemetryClient().TrackEvent(eventTelemetry);
+                GetApplicationInsightsTelemetryLogger().Event(eventName, properties);
             }
         }
 
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            var traceTelemetry = GetApplicationInsightsTraceTelemetry(message, properties);
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
             {
-                GetStdoutTelemetryLogger().LogTrace(traceTelemetry);
+                GetStdoutTelemetryLogger().Trace(message, properties);
             }
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
@@ -123,16 +115,15 @@ namespace FoxIDs.Infrastructure
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
-                GetApplicationInsightsTelemetryClient().TrackTrace(traceTelemetry);
+                GetApplicationInsightsTelemetryLogger().Trace(message, properties);
             }
         }
 
         public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            var metricTelemetry = GetApplicationInsightsMetricTelemetry(metricName, value, properties);
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
             {
-                GetStdoutTelemetryLogger().LogMetric(metricTelemetry);
+                GetStdoutTelemetryLogger().Metric(metricName, value, properties);
             }
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
@@ -141,10 +132,9 @@ namespace FoxIDs.Infrastructure
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
-                GetApplicationInsightsTelemetryClient().TrackMetric(metricTelemetry);
+                GetApplicationInsightsTelemetryLogger().Metric(metricName, value, properties);
             }
         }
-
 
         private bool IsDevelopment()
         {
@@ -176,72 +166,9 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private static ExceptionTelemetry GetApplicationInsightsExceptionTelemetry(SeverityLevel severityLevel, Exception exception, string message, IDictionary<string, string> properties)
+        private ApplicationInsightsTelemetryLogger GetApplicationInsightsTelemetryLogger()
         {
-            var exceptionTelemetry = new ExceptionTelemetry(exception)
-            {
-                SeverityLevel = severityLevel,
-            };
-
-            if (!message.IsNullOrEmpty())
-            {
-                exceptionTelemetry.Message = $"{message} --> {exception.Message}";
-            }
-            
-            if (properties != null)
-            {
-                foreach (var prop in properties)
-                {
-                    exceptionTelemetry.Properties.Add(prop);
-                }
-            }            
-
-            return exceptionTelemetry;
-        }
-
-        private static EventTelemetry GetApplicationInsightsEventTelemetry(string eventName, IDictionary<string, string> properties)
-        {
-            var eventTelemetry = new EventTelemetry(eventName);
-
-            if (properties != null)
-            {
-                foreach (var prop in properties)
-                {
-                    eventTelemetry.Properties.Add(prop);
-                }
-            }
-
-            return eventTelemetry;
-        }
-
-        private static TraceTelemetry GetApplicationInsightsTraceTelemetry(string message, IDictionary<string, string> properties)
-        {
-            var traceTelemetry = new TraceTelemetry(message);
-
-            if (properties != null)
-            {
-                foreach (var prop in properties)
-                {
-                    traceTelemetry.Properties.Add(prop);
-                }
-            }
-
-            return traceTelemetry;
-        }
-      
-        private static MetricTelemetry GetApplicationInsightsMetricTelemetry(string metricName, double value, IDictionary<string, string> properties)
-        {
-            var metricTelemetry = new MetricTelemetry() { Name = metricName, Sum = value };
-
-            if (properties != null)
-            {
-                foreach (var prop in properties)
-                {
-                    metricTelemetry.Properties.Add(prop);
-                }
-            }
-
-            return metricTelemetry;
+            return new ApplicationInsightsTelemetryLogger(GetApplicationInsightsTelemetryClient());
         }
     }
 }

@@ -11,9 +11,9 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseErrorLoggingMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseLoggingMiddleware(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<ErrorLoggingMiddleware>();
+            return app.UseMiddleware<LoggingMiddleware>();
         }
 
         public static IApplicationBuilder UseStaticFilesCacheControl(this IApplicationBuilder app, IWebHostEnvironment environment)

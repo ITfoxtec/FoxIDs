@@ -52,7 +52,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app, Settings settings)
         {
-            app.UseErrorLoggingMiddleware();
+            app.UseLoggingMiddleware();
 
             if (!CurrentEnvironment.IsDevelopment())
             {

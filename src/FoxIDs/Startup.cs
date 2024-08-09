@@ -45,7 +45,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app, Settings settings)
         {
-            app.UseErrorLoggingMiddleware();
+            app.UseLoggingMiddleware();
             app.UseExceptionHandler($"/{Constants.Routes.ErrorController}/{Constants.Routes.DefaultAction}");
 
             if (!CurrentEnvironment.IsDevelopment())

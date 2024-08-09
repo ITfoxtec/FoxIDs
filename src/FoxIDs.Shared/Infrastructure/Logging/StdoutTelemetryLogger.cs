@@ -1,8 +1,6 @@
-﻿using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
-using Microsoft.ApplicationInsights.Channel;
 using ITfoxtec.Identity;
 
 namespace FoxIDs.Infrastructure.Logging
@@ -16,87 +14,88 @@ namespace FoxIDs.Infrastructure.Logging
             logger = GetLogger();
         }
 
-        public void LogEvent(EventTelemetry eventTelemetry)
+        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            logger.LogInformation(GetEventTelemetryLogString(eventTelemetry));
+            logger.LogWarning(GetExceptionTelemetryLogString(exception, message, properties));
         }
 
-        public void LogTrace(TraceTelemetry traceTelemetry)
+        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            logger.LogTrace(GetTraceTelemetryLogString(traceTelemetry));
+            logger.LogError(GetExceptionTelemetryLogString(exception, message, properties));
         }
 
-        public void LogMetric(MetricTelemetry metricTelemetry)
+        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            logger.LogInformation(GetMetricTelemetryLogString(metricTelemetry));
+            logger.LogCritical(GetExceptionTelemetryLogString(exception, message, properties));
         }
 
-        public void LogWarning(ExceptionTelemetry exceptionTelemetry)
+        public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            logger.LogWarning(GetExceptionTelemetryLogString(exceptionTelemetry));
+            logger.LogInformation(GetEventTelemetryLogString(eventName, properties));
         }
 
-        public void LogError(ExceptionTelemetry exceptionTelemetry)
+        public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            logger.LogError(GetExceptionTelemetryLogString(exceptionTelemetry));
+            logger.LogTrace(GetTraceTelemetryLogString(message, properties));
         }
 
-        public void LogCritical(ExceptionTelemetry exceptionTelemetry)
+        public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            logger.LogCritical(GetExceptionTelemetryLogString(exceptionTelemetry));
+            logger.LogInformation(GetMetricTelemetryLogString(metricName, value, properties));
         }
 
-        private string GetExceptionTelemetryLogString(ExceptionTelemetry exceptionTelemetry)
+        private string GetExceptionTelemetryLogString(Exception exception, string message, IDictionary<string, string> properties)
         {
-            var log = new List<string>
+            var log = InitLogString();
+            if (!message.IsNullOrWhiteSpace())
             {
-                exceptionTelemetry.Message
-            };
-            if (exceptionTelemetry.Exception != null)
-            {
-                log.Add(exceptionTelemetry.Exception.ToString());
+                log.Add(message);
             }
-            return string.Join(Environment.NewLine, AddTelemetry(log, exceptionTelemetry));
+            if (exception != null)
+            {
+                log.Add(exception.ToString());
+            }
+            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
         }
 
-        private string GetEventTelemetryLogString(EventTelemetry eventTelemetry)
+        private string GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
         {
-            var log = new List<string>
+            var log = InitLogString();
+            log.Add(eventName);
+            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
+        }
+
+        private string GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
+        {
+            var log = InitLogString();
+            log.Add(message);
+            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
+        }
+
+        private string GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
+        {
+            var log = InitLogString();
+            log.Add(metricName);
+            log.Add($"Value: {value}");
+            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
+        }
+
+        private List<string> InitLogString()
+        {
+            return new List<string>
             {
-                eventTelemetry.Name
+                $"Timestamps: {DateTimeOffset.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}"
             };
-            return string.Join(Environment.NewLine, AddTelemetry(log, eventTelemetry));
         }
 
-        private string GetTraceTelemetryLogString(TraceTelemetry traceTelemetry)
+        private List<string> AddPropertiesTelemetryLogString(List<string> log, IDictionary<string, string> properties)
         {
-            var log = new List<string>
+            if (properties?.Count > 0)
             {
-                traceTelemetry.Message
-            };
-            return string.Join(Environment.NewLine, AddTelemetry(log, traceTelemetry));
-        }
-
-        private string GetMetricTelemetryLogString(MetricTelemetry metricTelemetry)
-        {
-            var log = new List<string>
-            {
-                $"Name: {metricTelemetry.Name}",
-                $"Value: {metricTelemetry.Sum}"
-            };
-            return string.Join(Environment.NewLine, AddTelemetry(log, metricTelemetry));
-        }
-
-        private List<string> AddTelemetry(List<string> log, ITelemetry eventTelemetry)
-        {
-            log.Add($"Timestamps: {eventTelemetry.Timestamp.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}");
-            log.Add($"RoleInstance: {eventTelemetry.Context?.Cloud?.RoleInstance}");
-            log.Add($"OperationName: {eventTelemetry.Context?.Operation?.Name}");
-            log.Add($"ClientIP: {eventTelemetry.Context?.Location?.Ip}");
-
-            if (eventTelemetry is ISupportProperties supportProperties)
-            {
-                log.Add($"Properties: {supportProperties.Properties?.ToJson()}");
+                foreach (var property in properties)
+                {
+                    log.Add($"{property.Key}: {property.Value}");
+                }
             }
             return log;
         }

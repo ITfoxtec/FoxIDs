@@ -1,78 +1,76 @@
-﻿//using ITfoxtec.Identity;
-//using Microsoft.ApplicationInsights;
-//using Microsoft.ApplicationInsights.DataContracts;
-//using System;
-//using System.Collections.Generic;
+﻿using ITfoxtec.Identity;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using System;
+using System.Collections.Generic;
 
-//namespace FoxIDs.Infrastructure
-//{
-//    public class ApplicationInsightsTelemetryLogger
-//    {
-//        private readonly TelemetryClient telemetryClient;
+namespace FoxIDs.Infrastructure
+{
+    public class ApplicationInsightsTelemetryLogger
+    {
+        private readonly TelemetryClient telemetryClient;
 
-//        public ApplicationInsightsTelemetryLogger(TelemetryClient telemetryClient)
-//        {
-//            this.telemetryClient = telemetryClient;
-//        }
+        public ApplicationInsightsTelemetryLogger(TelemetryClient telemetryClient)
+        {
+            this.telemetryClient = telemetryClient;
+        }
 
-//        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Warning, exception, message, properties));
-//            telemetryClient.Flush();
-//        }
+        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Warning, exception, message, properties));
+            telemetryClient.Flush();
+        }
 
-//        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Error, exception, message, properties));
-//            telemetryClient.Flush();
-//        }
+        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Error, exception, message, properties));
+            telemetryClient.Flush();
+        }
 
-//        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Critical, exception, message, properties));
-//            telemetryClient.Flush();
-//        }
+        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackException(GetApplicationInsightsExceptionTelemetry(SeverityLevel.Critical, exception, message, properties));
+            telemetryClient.Flush();
+        }
 
-//        public void Event(string eventName, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackEvent(eventName, properties);
-//            telemetryClient.Flush();
-//        }
-//        public void Trace(string message, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackTrace(message, properties);
-//            telemetryClient.Flush();
-//        }
+        public void Event(string eventName, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackEvent(eventName, properties);
+            telemetryClient.Flush();
+        }
+        public void Trace(string message, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackTrace(message, properties);
+            telemetryClient.Flush();
+        }
 
-//        public void Metric(string message, double value, IDictionary<string, string> properties = null)
-//        {
-//            telemetryClient.TrackMetric(message, value, properties);
-//            telemetryClient.Flush();
-//        }
+        public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackMetric(metricName, value, properties);
+            telemetryClient.Flush();
+        }
 
-//        private static ExceptionTelemetry GetApplicationInsightsExceptionTelemetry(SeverityLevel severityLevel, Exception exception, string message, IDictionary<string, string> properties)
-//        {
-//            var exceptionTelemetry = new ExceptionTelemetry(exception)
-//            {
-//                SeverityLevel = severityLevel,
-//            };
+        private static ExceptionTelemetry GetApplicationInsightsExceptionTelemetry(SeverityLevel severityLevel, Exception exception, string message, IDictionary<string, string> properties)
+        {
+            var exceptionTelemetry = new ExceptionTelemetry(exception)
+            {
+                SeverityLevel = severityLevel,
+            };
 
-//            exceptionTelemetry.Properties.Add(Constants.Logs.LoggingHandledKey, true.ToString());
+            if (!message.IsNullOrEmpty())
+            {
+                exceptionTelemetry.Message = $"{message} --> {exception.Message}";
+            }
 
-//            if (!message.IsNullOrEmpty())
-//            {
-//                exceptionTelemetry.Message = $"{message} --> {exception.Message}";
-//            }
-            
-//            if (properties != null)
-//            {
-//                foreach (var prop in properties)
-//                {
-//                    exceptionTelemetry.Properties.Add(prop);
-//                }
-//            }            
+            if (properties != null)
+            {
+                foreach (var prop in properties)
+                {
+                    exceptionTelemetry.Properties.Add(prop);
+                }
+            }
 
-//            return exceptionTelemetry;
-//        }
-//    }
-//}
+            return exceptionTelemetry;
+        }
+    }
+}

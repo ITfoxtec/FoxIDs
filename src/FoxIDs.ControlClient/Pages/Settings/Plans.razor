@@ -130,7 +130,10 @@
                             </li>
                         </ul>
 
-                        <FInputNumberN @bind-Value="plan.Form.Model.LogLifetimeMonths" For="@(() => plan.Form.Model.LogLifetimeMonths)" />
+                        <FInputSelect @bind-Value="plan.Form.Model.LogLifetime" For="@(() => plan.Form.Model.LogLifetime)">
+                            <option value="@LogLifetimeOptions.Max30Days">30 days</option>
+                            <option value="@LogLifetimeOptions.Max180Days">180 days</option>
+                        </FInputSelect>
                     </div>
                     @if (!plan.CreateMode && plan.DeleteAcknowledge)
                     {

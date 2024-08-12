@@ -263,8 +263,6 @@ namespace FoxIDs
             {
                 public const int ScopedStreamLoggersMin = 0;
                 public const int ScopedStreamLoggersMax = 5;
-                public const int ItemLifetimeMonthsMin = 1;
-                public const int ItemLifetimeMonthsMax = 24;
                 public const string ApplicationInsightsConnectionStringRegExPattern = @"^[\w\-=.:;\/]*$";
                 public const int ApplicationInsightsConnectionStringLength = 4096;
                 public const int LogAnalyticsWorkspaceIdLength = 40;

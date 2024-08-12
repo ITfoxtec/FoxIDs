@@ -57,8 +57,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Control API updates per month")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [Range(Constants.Models.Logging.ItemLifetimeMonthsMin, Constants.Models.Logging.ItemLifetimeMonthsMax)]
-        [Display(Name = "Log lifetime in months")]
-        public int? LogLifetimeMonths { get; set; }
+        [JsonProperty(PropertyName = "log_lifetime")]
+        [Display(Name = "Log lifetime")]
+        public LogLifetimeOptions? LogLifetime { get; set; }
     }
 }

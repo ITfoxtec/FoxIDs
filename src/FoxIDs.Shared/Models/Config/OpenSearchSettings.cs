@@ -14,9 +14,9 @@ namespace FoxIDs.Models.Config
         public List<Uri> Nodes { get; set; }
 
         /// <summary>
-        /// Default log lifetime in months (default 6 months).
+        /// Default log lifetime.
         /// </summary>
         [Required]
-        public int LogLifetimeMonths { get; set; } = 6;
+        public LogLifetimeOptions LogLifetime { get; set; } = LogLifetimeOptions.Max180Days;
     }
 }

@@ -86,9 +86,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "control_api_upd_req")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [Range(Constants.Models.Logging.ItemLifetimeMonthsMin, Constants.Models.Logging.ItemLifetimeMonthsMax)]
-        [JsonProperty(PropertyName = "log_lifetime_months")]
-        public int? LogLifetimeMonths { get; set; }
+        [JsonProperty(PropertyName = "log_lifetime")]
+        public LogLifetimeOptions? LogLifetime { get; set; }
 
         public new class IdKey : MasterDocument.IdKey
         {

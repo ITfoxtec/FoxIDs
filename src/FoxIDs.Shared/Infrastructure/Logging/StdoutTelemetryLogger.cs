@@ -14,17 +14,17 @@ namespace FoxIDs.Infrastructure.Logging
             logger = GetLogger();
         }
 
-        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
+        public void Warning(Exception exception, string message = null, IDictionary<string, string> properties = null)
         {
             logger.LogWarning(GetExceptionTelemetryLogString(exception, message, properties));
         }
 
-        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
+        public void Error(Exception exception, string message = null, IDictionary<string, string> properties = null)
         {
             logger.LogError(GetExceptionTelemetryLogString(exception, message, properties));
         }
 
-        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
+        public void CriticalError(Exception exception, string message = null, IDictionary<string, string> properties = null)
         {
             logger.LogCritical(GetExceptionTelemetryLogString(exception, message, properties));
         }

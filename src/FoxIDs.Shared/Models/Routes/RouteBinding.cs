@@ -1,5 +1,4 @@
-﻿using Microsoft.ApplicationInsights;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
@@ -61,6 +60,6 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public int? PlanLogLifetimeMonths { get; set; }
+        public LogLifetimeOptions? PlanLogLifetime { get; set; }
     }
 }

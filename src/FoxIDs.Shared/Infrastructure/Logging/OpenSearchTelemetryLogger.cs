@@ -2,102 +2,163 @@
 using System;
 using ITfoxtec.Identity;
 using OpenSearch.Client;
+using Amazon.Runtime.Internal.Transform;
+using FoxIDs.Models.Config;
+using FoxIDs.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Infrastructure.Logging
 {
     public class OpenSearchTelemetryLogger
     {
+        private readonly Settings settings;
         private readonly OpenSearchClient openSearchClient;
+        private readonly StdoutTelemetryLogger stdoutTelemetryLogger;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public OpenSearchTelemetryLogger(OpenSearchClient openSearchClient)
+        public OpenSearchTelemetryLogger(Settings settings, OpenSearchClient openSearchClient, StdoutTelemetryLogger stdoutTelemetryLogger, IHttpContextAccessor httpContextAccessor)
         {
+            this.settings = settings;
             this.openSearchClient = openSearchClient;
+            this.stdoutTelemetryLogger = stdoutTelemetryLogger;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetExceptionTelemetryLogString(exception, message, properties), i => i.Index("Warning"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetExceptionTelemetryLogString(utcNow, exception, message, properties), "warning");
         }
 
         public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetExceptionTelemetryLogString(exception, message, properties), i => i.Index("Error"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetExceptionTelemetryLogString(utcNow, exception, message, properties), "error");
         }
 
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetExceptionTelemetryLogString(exception, message, properties), i => i.Index("CriticalError"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetExceptionTelemetryLogString(utcNow, exception, message, properties), "critical");
         }
 
         public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetEventTelemetryLogString(eventName, properties), i => i.Index("Event"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetEventTelemetryLogString(utcNow, eventName, properties), "event");
         }
 
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetTraceTelemetryLogString(message, properties), i => i.Index("Trace"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetTraceTelemetryLogString(utcNow, message, properties), "trace");
         }
 
         public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            openSearchClient.Index(GetMetricTelemetryLogString(metricName, value, properties), i => i.Index("Metric"));
+            var utcNow = DateTimeOffset.UtcNow;
+            Index(utcNow, GetMetricTelemetryLogString(utcNow, metricName, value, properties), "metric");
         }
 
-        private string GetExceptionTelemetryLogString(Exception exception, string message, IDictionary<string, string> properties)
+        private void Index(DateTimeOffset utcNow, IDictionary<string, string> document, string indexName)
         {
-            var log = InitLogString();
-            if (!message.IsNullOrWhiteSpace())
+            var response = openSearchClient.Index(document, i => i.Index(GetIndexName(utcNow, indexName)));
+            if(!response.IsValid)
             {
-                log.Add(message);
+                try
+                {
+                    throw new Exception($"OpenSearch log error, Index name '{indexName}'. {response.ServerError}");
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        stdoutTelemetryLogger.Error(ex);
+                    }
+                    catch 
+                    { }
+                }               
             }
-            if (exception != null)
+        }
+
+        private string GetIndexName(DateTimeOffset utcNow, string logIndexName)
+        {
+            var lifetime = GetLifetimeInDays(settings.OpenSearch.LogLifetime);
+
+            var routeBinding = httpContextAccessor.HttpContext.TryGetRouteBinding();
+            if (routeBinding?.PlanLogLifetime != null)
             {
-                log.Add(exception.ToString());
+                lifetime = GetLifetimeInDays(routeBinding.PlanLogLifetime.Value);
             }
-            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
+
+            return $"log-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
         }
 
-        private string GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
+        private int GetLifetimeInDays(LogLifetimeOptions logLifetime)
         {
-            var log = InitLogString();
-            log.Add(eventName);
-            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
-        }
-
-        private string GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
-        {
-            var log = InitLogString();
-            log.Add(message);
-            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
-        }
-
-        private string GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
-        {
-            var log = InitLogString();
-            log.Add(metricName);
-            log.Add($"Value: {value}");
-            return string.Join(Environment.NewLine, AddPropertiesTelemetryLogString(log, properties));
-        }
-
-        private List<string> InitLogString()
-        {
-            return new List<string>
+            return logLifetime switch
             {
-                $"Timestamps: {DateTimeOffset.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}"
+                LogLifetimeOptions.Max30Days => 30,
+                LogLifetimeOptions.Max180Days => 180,
+                _ => throw new NotSupportedException(),
             };
         }
 
-        private List<string> AddPropertiesTelemetryLogString(List<string> log, IDictionary<string, string> properties)
+        private IDictionary<string, string> GetExceptionTelemetryLogString(DateTimeOffset utcNow, Exception exception, string message, IDictionary<string, string> properties)
         {
-            if (properties?.Count > 0)
+            var log = new Dictionary<string, string>
             {
-                foreach (var property in properties)
-                {
-                    log.Add($"{property.Key}: {property.Value}");
-                }
+                InitLogString(utcNow)
+            };
+            if (!message.IsNullOrWhiteSpace())
+            {
+                log.Add("Message", message);
             }
-            return log;
+            if (exception != null)
+            {
+                log.Add("Exception", exception.ToString());
+            }
+
+            return log.ConcatOnce(properties);
+        }
+
+        private IDictionary<string, string> GetEventTelemetryLogString(DateTimeOffset utcNow, string eventName, IDictionary<string, string> properties)
+        {
+            var log = new Dictionary<string, string>
+            {
+                InitLogString(utcNow),
+                { "EventName", eventName }
+            };
+
+            return log.ConcatOnce(properties);
+        }
+
+        private IDictionary<string, string> GetTraceTelemetryLogString(DateTimeOffset utcNow, string message, IDictionary<string, string> properties)
+        {
+            var log = new Dictionary<string, string>
+            {
+                InitLogString(utcNow),
+                { "Message", message }
+            };
+
+            return log.ConcatOnce(properties);
+        }
+
+        private IDictionary<string, string> GetMetricTelemetryLogString(DateTimeOffset utcNow, string metricName, double value, IDictionary<string, string> properties)
+        {
+            var log = new Dictionary<string, string>
+            {
+                InitLogString(utcNow),
+                { "MetricName", metricName },
+                { "Value", value.ToString() }
+            };
+
+            return log.ConcatOnce(properties);
+        }
+
+        private KeyValuePair<string, string> InitLogString(DateTimeOffset utcNow)
+        {
+            return new KeyValuePair<string, string>("Timestamps", utcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
         }
     }
 }

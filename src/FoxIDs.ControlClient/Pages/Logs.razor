@@ -1,7 +1,7 @@
 ﻿@page "/{tenantName}/logs"
 @inherits PageBase
 
-@if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+@if (clientSettings.LogOption != LogOptions.Stdout)
 {
     <div class="pb-2">
         <div class="info-text pt-0">
@@ -22,9 +22,12 @@
     </ul>
 
     <div class="tab-content pt-4">
-        <div class="alert alert-info" role="alert">
-            The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
-        </div>
+        @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+        {
+            <div class="alert alert-info" role="alert">
+                The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
+            </div>
+        }
 
         @if (!logLoadError.IsNullOrWhiteSpace())
         {

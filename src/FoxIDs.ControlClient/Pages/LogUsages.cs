@@ -18,8 +18,8 @@ namespace FoxIDs.Client.Pages
     public partial class LogUsages
     {
         private static List<string> includeNotUserTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.KeyVaultManagedCertificate, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeMasterTrackAllTypeItems = new List<string> { UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.KeyVaultManagedCertificate, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeMasterTrackAllTypeItems = new List<string> { UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
         private static List<string> includeDefaultAllTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
 
         private string logLoadError;
@@ -150,12 +150,10 @@ namespace FoxIDs.Client.Pages
                 {
                     usageLogRequest.IncludeTenants = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tenants);
                     usageLogRequest.IncludeTracks = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tracks);
-                    usageLogRequest.IncludeKeyVaultManagedCertificates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.KeyVaultManagedCertificate);
                 }
                 else if (IsMasterTrack)
                 {
                     usageLogRequest.IncludeTracks = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tracks);
-                    usageLogRequest.IncludeKeyVaultManagedCertificates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.KeyVaultManagedCertificate);
                 }
                 usageLogRequest.IncludeUsers = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Users);
                 usageLogRequest.IncludeLogins = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Logins);
@@ -171,12 +169,10 @@ namespace FoxIDs.Client.Pages
                 {
                     usageLogRequest.IncludeTenants = true;
                     usageLogRequest.IncludeTracks = true;
-                    usageLogRequest.IncludeKeyVaultManagedCertificates = true;
                 }
                 else if (IsMasterTrack)
                 {
                     usageLogRequest.IncludeTracks = true;
-                    usageLogRequest.IncludeKeyVaultManagedCertificates = true;
                 }
                 usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeUsers = true;

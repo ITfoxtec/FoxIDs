@@ -154,6 +154,11 @@ namespace FoxIDs
 
         public static class Logs
         {
+            public const string Message = "Message";
+            public const string Exception = "Exception";
+            public const string EventName = "EventName";
+            public const string MetricName = "MetricName";
+            public const string Value = "Value";
             public const string MachineName = "MachineName";
             public const string ClientIP = "ClientIP";
             public const string Domain = "Domain";
@@ -203,6 +208,16 @@ namespace FoxIDs
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
                 public const string AppRoleInstance = "AppRoleInstance";
+            }
+
+            public static class IndexName
+            {
+                public const string Errors = "errors";
+                public const string Warnings = "warnings";
+                public const string CriticalErrors = "critical-errors";
+                public const string Events = "events";
+                public const string Traces = "traces";
+                public const string Metrics = "metrics";
             }
         }
 

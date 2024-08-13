@@ -144,7 +144,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 if (settings.OpenSearch.Nodes.Count == 1)
                 {
-                    services.AddSingleton(new OpenSearchClient(settings.OpenSearch.Nodes.First()));
+                    services.AddSingleton(new OpenSearchClient(new ConnectionSettings(new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()))));
                 }
                 else
                 {

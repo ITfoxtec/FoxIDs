@@ -146,7 +146,7 @@
                                 <TenantLiNavLink Href="certificates">
                                     Certificates
                                 </TenantLiNavLink>
-                                @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+                                @if (clientSettings.LogOption != LogOptions.Stdout)
                                 {
                                     <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
                                         Logs

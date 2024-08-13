@@ -41,9 +41,9 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
         {
-            if (settings.Options.Log != LogOptions.ApplicationInsights)
+            if (settings.Options.Log == LogOptions.Stdout)
             {
-                throw new Exception("ApplicationInsights option not enabled.");
+                throw new Exception("Not possible for Stdout.");
             }
 
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);

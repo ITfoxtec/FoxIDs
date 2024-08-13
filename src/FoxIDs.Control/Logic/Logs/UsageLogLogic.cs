@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
             switch (settings.Options.Log)
             {
                 case LogOptions.OpenSearchAndStdoutErrors:
-                    items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogs(logRequest, tenantName, trackName, isMasterTenant, items);
+                    items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogs(logRequest, tenantName, trackName, items);
                     break;
                 case LogOptions.ApplicationInsights:
                     items = await serviceProvider.GetService<UsageLogApplicationInsightsLogic>().QueryLogs(logRequest, tenantName, trackName, isMasterTenant, items);

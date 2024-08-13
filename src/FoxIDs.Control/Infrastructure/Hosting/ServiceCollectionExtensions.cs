@@ -46,11 +46,13 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<UsageLogLogic>();
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
+                services.AddSingleton<LogOpenSearchLogic>();
                 services.AddSingleton<UsageLogOpenSearchLogic>();
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
                 services.AddSingleton<LogAnalyticsWorkspaceProvider>();
+                services.AddSingleton<LogApplicationInsightsLogic>();
                 services.AddSingleton<UsageLogApplicationInsightsLogic>();
             }
 

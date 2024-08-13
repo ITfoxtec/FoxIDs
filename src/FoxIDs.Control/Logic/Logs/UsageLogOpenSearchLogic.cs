@@ -22,13 +22,13 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
-            var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
+            var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest);
 
             var userTypesAggregations = GetAggregations(aggregations, logRequest).OrderBy(a => a.aggregation.Date).ToList();
 
@@ -157,7 +157,7 @@ namespace FoxIDs.Logic
             return (start.DateTime, end.DateTime);
         }
 
-        private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
+        private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest)
         {
             if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
             {

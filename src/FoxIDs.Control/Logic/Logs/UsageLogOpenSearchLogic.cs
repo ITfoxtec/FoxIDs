@@ -187,6 +187,40 @@ namespace FoxIDs.Logic
 
             return response.Aggregations.Values.First() as FiltersAggregate;
         }
+        
+        private string GetIndexName(string logIndexName)
+        {
+            var lifetime = settings.OpenSearch.LogLifetime.GetLifetimeInDays();
+
+            if (RouteBinding?.PlanLogLifetime != null)
+            {
+                lifetime = RouteBinding.PlanLogLifetime.Value.GetLifetimeInDays();
+            }
+
+            return $"log-{lifetime}d-{logIndexName}*";
+        }
+
+        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
+        {
+            boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
+                                     .GreaterThanOrEquals(queryTimeRange.start)
+                                     .LessThanOrEquals(queryTimeRange.end)));
+
+            if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
+            {
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName));
+            }
+            else if (!tenantName.IsNullOrWhiteSpace())
+            {
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Exists(e => e.Field(f => f.TrackName)));
+            }
+            else if (!trackName.IsNullOrWhiteSpace())
+            {
+                boolQuery = boolQuery.Must(m => m.Exists(e => e.Field(f => f.TenantName)) && m.Term(t => t.TrackName, trackName));
+            }
+
+            return boolQuery;
+        }
 
         private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)
         {
@@ -214,28 +248,6 @@ namespace FoxIDs.Logic
             filters.Filter(usageType, q => q.Term(p => p.UsageType, usageType.ToLower()));
         }
 
-        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
-        {
-            boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
-                                     .GreaterThanOrEquals(queryTimeRange.start)
-                                     .LessThanOrEquals(queryTimeRange.end)));
-
-            if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName));
-            }
-            else if (!tenantName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Exists(e => e.Field(f => f.TrackName)));
-            }
-            else if (!trackName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Exists(e => e.Field(f => f.TenantName)) && m.Term(t => t.TrackName, trackName));
-            }
-
-            return boolQuery;
-        }
-
         private DateInterval GetDateInterval(Api.UsageLogSummarizeLevels usageLogSummarizeLevels)
         {
             switch (usageLogSummarizeLevels)
@@ -249,18 +261,6 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        private string GetIndexName(string logIndexName)
-        {
-            var lifetime = settings.OpenSearch.LogLifetime.GetLifetimeInDays();
-
-            if (RouteBinding?.PlanLogLifetime != null)
-            {
-                lifetime = RouteBinding.PlanLogLifetime.Value.GetLifetimeInDays();
-            }
-
-            return $"log-{lifetime}d-{logIndexName}*";
         }
     }
 }

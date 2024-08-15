@@ -16,7 +16,6 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
     public class TTrackLogController : ApiController
     {
-        private const int maxQueryLogItems = 200;
         private const int maxResponseLogItems = 300;
         private readonly FoxIDsControlSettings settings;
         private readonly IServiceProvider serviceProvider;
@@ -43,6 +42,15 @@ namespace FoxIDs.Controllers
 
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
+            if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                if (logRequest.QueryTraces && logRequest.QueryEvents)
+                {
+                    ModelState.AddModelError(nameof(logRequest.QueryTraces), $"The field {nameof(logRequest)}.{nameof(logRequest.QueryTraces)} and {nameof(logRequest)}.{nameof(logRequest.QueryEvents)} cannot be true at the same time.");
+                    return BadRequest(ModelState);
+                }
+            }
+
             if (!logRequest.Filter.IsNullOrEmpty())
             {
                 logRequest.Filter = logRequest.Filter.Trim();
@@ -60,9 +68,9 @@ namespace FoxIDs.Controllers
             switch (settings.Options.Log)
             {
                 case LogOptions.OpenSearchAndStdoutErrors:
-                    return Ok(await serviceProvider.GetService<LogOpenSearchLogic>().QueryLogs(logRequest, (start, end), maxQueryLogItems, maxResponseLogItems));
+                    return Ok(await serviceProvider.GetService<LogOpenSearchLogic>().QueryLogs(logRequest, (start.DateTime, end.DateTime), maxResponseLogItems));
                 case LogOptions.ApplicationInsights:
-                    return Ok(await serviceProvider.GetService<LogApplicationInsightsLogic>().QueryLogs(logRequest, new QueryTimeRange(start, end), maxQueryLogItems, maxResponseLogItems));
+                    return Ok(await serviceProvider.GetService<LogApplicationInsightsLogic>().QueryLogs(logRequest, new QueryTimeRange(start, end), maxResponseLogItems));
                 default:
                     throw new NotSupportedException();
             }

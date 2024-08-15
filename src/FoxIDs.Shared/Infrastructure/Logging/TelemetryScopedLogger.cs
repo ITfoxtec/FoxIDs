@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.Logging;
+﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -230,7 +230,7 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private IDictionary<string, string> ConcatOnceIfProperties(IDictionary<string, string> properties)
+        private IDictionary<string, string> ConcatOnceIfProperties(IDictionary<string, string> properties = null)
         {
             return properties == null ? telemetryScopedProperties.Properties : new Dictionary<string, string>(telemetryScopedProperties.Properties).ConcatOnce(properties);
         }
@@ -252,7 +252,7 @@ namespace FoxIDs.Infrastructure
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
                         if (telemetryLoggertraceMessages.Count() > 0)
                         {
-                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties());
                         }
                     }
 

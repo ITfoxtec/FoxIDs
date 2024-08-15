@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -17,12 +19,16 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext httpContext)
         {
+            var activity = new Activity("HttpRequest");
+            activity.Start();
+
             var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
             try
             {
                 if (scopedLogger != null)
                 {
                     scopedLogger.SetScopeProperty(Constants.Logs.MachineName, Environment.MachineName);
+                    scopedLogger.SetScopeProperty(Constants.Logs.OperationId, Activity.Current.TraceId.ToString());
                     scopedLogger.SetScopeProperty(Constants.Logs.RequestId, httpContext.TraceIdentifier);
                     scopedLogger.SetScopeProperty(Constants.Logs.RequestPath, httpContext.Request.Path);
                     scopedLogger.SetScopeProperty(Constants.Logs.UserAgent, httpContext.Request.Headers["User-Agent"].ToString());
@@ -41,6 +47,10 @@ namespace FoxIDs.Infrastructure.Hosting
                     var logger = httpContext.RequestServices.GetService<TelemetryLogger>();
                     logger.Error(ex);
                 }
+            }
+            finally
+            {
+                activity.Stop();
             }
         }
     }

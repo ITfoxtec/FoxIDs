@@ -123,6 +123,14 @@ namespace FoxIDs.Client.Pages
             return LogRequestViewModel.DefaultFromTime;
         }
 
+        private void LogRequestViewModelAfterInit(LogRequestViewModel model)
+        {
+            if(clientSettings.LogOption == LogOptions.ApplicationInsights)
+            {
+                model.DisableBothEventAndTrace = true;
+            }
+        }
+
         private async Task OnLogRequestValidSubmitAsync(EditContext editContext)
         {
             if (logRequestForm.Model.QueryTypes.Count() <= 0)

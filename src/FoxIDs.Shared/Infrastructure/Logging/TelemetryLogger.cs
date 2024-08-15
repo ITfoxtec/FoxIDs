@@ -28,7 +28,7 @@ namespace FoxIDs.Infrastructure
         }
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 GetStdoutTelemetryLogger().Warning(exception, message, properties);
             }
@@ -49,7 +49,7 @@ namespace FoxIDs.Infrastructure
         }
         public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 GetStdoutTelemetryLogger().Error(exception, message, properties);
             }
@@ -70,7 +70,7 @@ namespace FoxIDs.Infrastructure
         }
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 GetStdoutTelemetryLogger().CriticalError(exception, message, properties);
             }
@@ -87,7 +87,7 @@ namespace FoxIDs.Infrastructure
 
         public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout)
             {
                 GetStdoutTelemetryLogger().Event(eventName, properties);
             }
@@ -104,7 +104,7 @@ namespace FoxIDs.Infrastructure
 
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout)
             {
                 GetStdoutTelemetryLogger().Trace(message, properties);
             }
@@ -121,7 +121,7 @@ namespace FoxIDs.Infrastructure
 
         public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            if (settings.Options.Log == LogOptions.Stdout || IsDevelopment())
+            if (settings.Options.Log == LogOptions.Stdout)
             {
                 GetStdoutTelemetryLogger().Metric(metricName, value, properties);
             }
@@ -133,19 +133,6 @@ namespace FoxIDs.Infrastructure
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
                 GetApplicationInsightsTelemetryLogger().Metric(metricName, value, properties);
-            }
-        }
-
-        private bool IsDevelopment()
-        {
-            var environment = serviceProvider.GetService<IWebHostEnvironment>();
-            if (environment != null)
-            {
-                return environment.IsDevelopment();
-            }
-            else
-            {
-                return false;
             }
         }
 

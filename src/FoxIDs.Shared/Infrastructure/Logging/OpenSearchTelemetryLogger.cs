@@ -26,17 +26,17 @@ namespace FoxIDs.Infrastructure.Logging
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(exception, message, properties), Constants.Logs.IndexName.Warnings);
+            Index(GetExceptionTelemetryLogString(LogTypes.Warning, exception, message, properties), Constants.Logs.IndexName.Errors);
         }
 
         public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(exception, message, properties), Constants.Logs.IndexName.Errors);
+            Index(GetExceptionTelemetryLogString(LogTypes.Error, exception, message, properties), Constants.Logs.IndexName.Errors);
         }
 
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(exception, message, properties), Constants.Logs.IndexName.CriticalErrors);
+            Index(GetExceptionTelemetryLogString(LogTypes.CriticalError, exception, message, properties), Constants.Logs.IndexName.Errors);
         }
 
         public void Event(string eventName, IDictionary<string, string> properties = null)
@@ -54,11 +54,8 @@ namespace FoxIDs.Infrastructure.Logging
             Index(GetMetricTelemetryLogString(metricName, value, properties), Constants.Logs.IndexName.Metrics);
         }
 
-        private void Index(IDictionary<string, string> document, string indexName)
+        private void Index(OpenSearchLogItem logItem, string indexName)
         {
-            var json = JsonConvert.SerializeObject(document);
-            var logItem = json.ToObject<OpenSearchLogItem>();
-            logItem.Timestamp = DateTimeOffset.UtcNow;
             var response = openSearchClient.Index(logItem, i => i.Index(GetIndexName(logItem.Timestamp, indexName)));
             if (!response.IsValid)
             {
@@ -91,50 +88,61 @@ namespace FoxIDs.Infrastructure.Logging
             return $"log-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
         }        
 
-        private IDictionary<string, string> GetExceptionTelemetryLogString(Exception exception, string message, IDictionary<string, string> properties)
+        private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
         {
-            var log = new Dictionary<string, string>();
+            var logItem = CreateLogItem(logType, properties);
             if (!message.IsNullOrWhiteSpace())
             {
-                log.Add(Constants.Logs.Message, message);
+                logItem.Message = message;
             }
             if (exception != null)
             {
-                log.Add(Constants.Logs.Exception, exception.ToString());
+                logItem.Details = GetDetails(exception);
             }
-
-            return log.ConcatOnce(properties);
+            return logItem;           
         }
 
-        private IDictionary<string, string> GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
+        private IEnumerable<string> GetDetails(Exception exception)
         {
-            var log = new Dictionary<string, string>
+            yield return $"{exception.GetType().FullName}: {exception.Message}{Environment.NewLine}{exception.StackTrace}";
+            if (exception.InnerException != null)
             {
-                { Constants.Logs.EventName, eventName }
-            };
-
-            return log.ConcatOnce(properties);
+                foreach (var detail in GetDetails(exception.InnerException))
+                {
+                    yield return detail;
+                }
+            }
         }
 
-        private IDictionary<string, string> GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
+        private OpenSearchLogItem GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
         {
-            var log = new Dictionary<string, string>
-            {
-                { Constants.Logs.Message, message }
-            };
-
-            return log.ConcatOnce(properties);
+            var logItem = CreateLogItem(LogTypes.Event, properties);
+            logItem.Message = eventName;
+            return logItem;
         }
 
-        private IDictionary<string, string> GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
+        private OpenSearchLogItem GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
         {
-            var log = new Dictionary<string, string>
-            {
-                { Constants.Logs.MetricName, metricName },
-                { Constants.Logs.Value, value.ToString() }
-            };
+            var logItem = CreateLogItem(LogTypes.Trace, properties);
+            logItem.Message = message;
+            return logItem;
+        }
 
-            return log.ConcatOnce(properties);
+        private OpenSearchLogItem GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
+        {
+            var logItem = CreateLogItem(LogTypes.Metric, properties);
+            logItem.Message = metricName;
+            logItem.Value = value;
+            return logItem;
+        }
+
+        private OpenSearchLogItem CreateLogItem(LogTypes logType, IDictionary<string, string> properties)
+        {
+            var json = JsonConvert.SerializeObject(properties);
+            var logItem = json.ToObject<OpenSearchLogItem>();
+            logItem.LogType = logType.ToString();
+            logItem.Timestamp = DateTimeOffset.UtcNow;
+            return logItem;
         }
     }    
 }

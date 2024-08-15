@@ -9,6 +9,6 @@
         CriticalError = 30,
         Trace = 40,
         Event = 50,
-        Metrics = 60
+        Metric = 60
     }
 }

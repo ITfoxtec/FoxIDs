@@ -82,10 +82,12 @@ namespace FoxIDs.Infrastructure.Logging
 
         private List<string> InitLogString()
         {
-            return new List<string>
+            var log = new List<string>
             {
-                $"Timestamps: {DateTimeOffset.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}"
+                $"Timestamp: {DateTimeOffset.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")}",
+
             };
+            return log;
         }
 
         private List<string> AddPropertiesTelemetryLogString(List<string> log, IDictionary<string, string> properties)

@@ -8,6 +8,7 @@ using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using FoxIDs.Models;
 using OpenSearch.Client;
+using FoxIDs.Infrastructure.Hosting;
 
 namespace FoxIDs.Logic
 {
@@ -16,7 +17,7 @@ namespace FoxIDs.Logic
         private readonly FoxIDsControlSettings settings;
         private readonly OpenSearchClient openSearchClient;
 
-        public UsageLogOpenSearchLogic(FoxIDsControlSettings settings, OpenSearchClient openSearchClient, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageLogOpenSearchLogic(FoxIDsControlSettings settings, OpenSearchClientQueryLog openSearchClient, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.openSearchClient = openSearchClient;

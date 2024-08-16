@@ -56,22 +56,18 @@ namespace FoxIDs.Infrastructure.Logging
 
         private void Index(OpenSearchLogItem logItem, string indexName)
         {
-            var response = openSearchClient.Index(logItem, i => i.Index(GetIndexName(logItem.Timestamp, indexName)));
-            if (!response.IsValid)
+            try
+            {
+                openSearchClient.Index(logItem, i => i.Index(GetIndexName(logItem.Timestamp, indexName)));
+            }
+            catch (Exception ex)
             {
                 try
                 {
-                    throw new Exception($"OpenSearch log error, Index name '{indexName}'. {response.ServerError}");
+                    stdoutTelemetryLogger.Error(ex, $"OpenSearch log error, Index name '{indexName}'.");
                 }
-                catch (Exception ex)
-                {
-                    try
-                    {
-                        stdoutTelemetryLogger.Error(ex);
-                    }
-                    catch
-                    { }
-                }
+                catch
+                { }
             }
         }
 
@@ -138,11 +134,23 @@ namespace FoxIDs.Infrastructure.Logging
 
         private OpenSearchLogItem CreateLogItem(LogTypes logType, IDictionary<string, string> properties)
         {
-            var json = JsonConvert.SerializeObject(properties);
-            var logItem = json.ToObject<OpenSearchLogItem>();
+            var logItem = CreateLogItem(properties);
             logItem.LogType = logType.ToString();
             logItem.Timestamp = DateTimeOffset.UtcNow;
             return logItem;
+        }
+
+        private OpenSearchLogItem CreateLogItem(IDictionary<string, string> properties)
+        {
+            if(properties != null && properties.Count > 0)
+            {
+                var json = JsonConvert.SerializeObject(properties);
+                return json.ToObject<OpenSearchLogItem>();
+            }
+            else
+            {
+                return new OpenSearchLogItem();
+            }
         }
     }    
 }

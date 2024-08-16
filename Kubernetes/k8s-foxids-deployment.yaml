@@ -31,6 +31,8 @@ spec:
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
               value: "https://id.itfoxtec.com" # change to your domain - https://id.my-domain.com
+            - name: "Settings__Options__Log"
+              value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
@@ -101,6 +103,8 @@ spec:
               value: "true"
             - name: "Settings__MainTenantSeedEnabled"
               value: "true"
+            - name: "Settings__Options__Log"
+              value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"

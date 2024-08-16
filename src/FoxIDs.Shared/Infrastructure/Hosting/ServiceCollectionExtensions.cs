@@ -142,14 +142,12 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<TelemetryScopedProperties>();
             if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-                if (settings.OpenSearch.Nodes.Count == 1)
-                {
-                    services.AddSingleton(new OpenSearchClient(new ConnectionSettings(new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()))));
-                }
-                else
-                {
-                    services.AddSingleton(new OpenSearchClient(new ConnectionSettings(new StaticConnectionPool(settings.OpenSearch.Nodes))));
-                }
+                var openSearchSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
+                    .RequestTimeout(TimeSpan.FromSeconds(3))
+                    .MaxRetryTimeout(TimeSpan.FromSeconds(9))
+                    .ThrowExceptions();
+
+                services.AddSingleton(new OpenSearchClient(openSearchSettings));
                 services.AddSingleton<OpenSearchTelemetryLogger>();
             }
 

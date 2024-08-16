@@ -16,9 +16,12 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using OpenSearch.Client;
+using OpenSearch.Net;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -122,6 +125,16 @@ namespace FoxIDs.Infrastructure.Hosting
                         return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
                     });
                 }
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                var openSearchQueryLogSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
+                    .RequestTimeout(TimeSpan.FromSeconds(20))
+                    .MaxRetryTimeout(TimeSpan.FromSeconds(30))
+                    .ThrowExceptions();
+
+                services.AddSingleton(new OpenSearchClientQueryLog(openSearchQueryLogSettings));
             }
 
             services.AddApiSwagger();

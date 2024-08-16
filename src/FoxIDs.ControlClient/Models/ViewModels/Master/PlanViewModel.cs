@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class Plan : INameValue
+    public class PlanViewModel 
     {    
         [Required]
         [MaxLength(Constants.Models.Plan.NameLength)]
@@ -59,6 +59,6 @@ namespace FoxIDs.Models.Api
 
         [JsonProperty(PropertyName = "log_lifetime")]
         [Display(Name = "Log lifetime")]
-        public LogLifetimeOptions? LogLifetime { get; set; }
+        public LogLifetimeOptionsVievModel? LogLifetime { get; set; }
     }
 }

@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Diagnostics;
 using System;
 using FoxIDs.Repository;
 using FoxIDs.Models;
+using FoxIDs.Infrastructure;
+using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Controllers.Client
-{    
+{
     public class WController : Controller
     {
         private static string indexFile;
+        private readonly TelemetryScopedLogger logger;
         private readonly IWebHostEnvironment currentEnvironment;
 
-        public WController(IWebHostEnvironment environment)
+        public WController(TelemetryScopedLogger logger, IWebHostEnvironment environment)
         {
+            this.logger = logger;
             currentEnvironment = environment;
         }
 
@@ -29,7 +33,18 @@ namespace FoxIDs.Controllers.Client
         public IActionResult Error()
         {
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            return GetProcessedIndexFile(GetTechnicalError(exceptionHandlerPathFeature?.Error));
+            var exception = exceptionHandlerPathFeature?.Error;
+            LogException(exception);
+            return GetProcessedIndexFile(GetTechnicalError(exception));
+        }
+
+        private void LogException(Exception exception)
+        {
+            if (exception == null)
+            {
+                exception = new Exception("Unknown error");
+            }
+            logger.Error(exception);
         }
 
         private string GetTechnicalError(Exception exception)

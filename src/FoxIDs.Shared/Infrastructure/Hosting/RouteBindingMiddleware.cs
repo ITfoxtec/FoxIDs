@@ -6,10 +6,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Models;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights;
 using FoxIDs.Repository;
 using Microsoft.Azure.Cosmos;
 
@@ -28,7 +25,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
             try
             {
                 await SeedAsync(httpContext.RequestServices);
@@ -43,17 +39,13 @@ namespace FoxIDs.Infrastructure.Hosting
                     var trackIdKey = GetTrackIdKey(route, useCustomDomain);
                     if (trackIdKey != null)
                     {
+                        var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
                         var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, useCustomDomain, customDomain, GetPartyNameAndbinding(route, useCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
                     }
 
                     await next(httpContext);
                 }
-            }
-            catch (ValidationException vex)
-            {
-                scopedLogger.Error(vex, $"Failing route request path '{httpContext.Request.Path.Value}'.");
-                throw;
             }
             catch (Exception ex)
             {
@@ -117,23 +109,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
                 ShowResourceId = track.ShowResourceId,
-                TelemetryClient = GetTelmetryClient(plan?.ApplicationInsightsConnectionString),
-                LogAnalyticsWorkspaceId = plan?.LogAnalyticsWorkspaceId
+                PlanLogLifetime = plan?.LogLifetime,
             };
 
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
-        }
-
-        private TelemetryClient GetTelmetryClient(string applicationInsightsConnectionString)
-        {
-            if (!string.IsNullOrWhiteSpace(applicationInsightsConnectionString))
-            {
-                return new TelemetryClient(new TelemetryConfiguration { ConnectionString = applicationInsightsConnectionString });
-            }
-            else
-            {
-                return null;
-            }
         }
 
         private static async Task<Tenant> GetTenantAsync(IServiceProvider serviceProvider, bool useCustomDomain, string customDomain, string tenantName)

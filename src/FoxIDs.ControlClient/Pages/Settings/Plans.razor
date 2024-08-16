@@ -58,7 +58,7 @@
             }
             @if (plan.Edit)
             {
-                <PageEditForm @ref="plan.Form" TModel="Plan" OnAfterInit="@(m => PlanViewModelAfterInit(plan, m))" OnValidSubmit="@(async (editContext) => await OnEditPlanValidSubmitAsync(plan, editContext))">
+                <PageEditForm @ref="plan.Form" TModel="PlanViewModel" OnAfterInit="@(m => PlanViewModelAfterInit(plan, m))" OnValidSubmit="@(async (editContext) => await OnEditPlanValidSubmitAsync(plan, editContext))">
                     <div class="modal-header">
                         Plan
                     </div>
@@ -130,8 +130,11 @@
                             </li>
                         </ul>
 
-                        <FInputText @bind-Value="plan.Form.Model.ApplicationInsightsConnectionString" For="@(() => plan.Form.Model.ApplicationInsightsConnectionString)" />
-                        <FInputText @bind-Value="plan.Form.Model.LogAnalyticsWorkspaceId" For="@(() => plan.Form.Model.LogAnalyticsWorkspaceId)" />
+                        <FInputSelect @bind-Value="plan.Form.Model.LogLifetime" For="@(() => plan.Form.Model.LogLifetime)">
+                            <option value="@LogLifetimeOptionsVievModel.Null"></option>
+                            <option value="@LogLifetimeOptionsVievModel.Max30Days">30 days</option>
+                            <option value="@LogLifetimeOptionsVievModel.Max180Days">180 days</option>
+                        </FInputSelect>
                     </div>
                     @if (!plan.CreateMode && plan.DeleteAcknowledge)
                     {

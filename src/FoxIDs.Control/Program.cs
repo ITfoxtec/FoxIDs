@@ -36,14 +36,6 @@ namespace FoxIDs
                 {
                     // Remove all loggers like console, debug, event source etc.
                     logging.ClearProviders();
-
-                    var settings = context.Configuration.BindConfig<Settings>(nameof(Settings), validate: false);
-                    var appInsightsSettings = context.Configuration.BindConfig<ApplicationInsights>(nameof(ApplicationInsights), validate: false);
-                    if (settings.Options.Log == LogOptions.ApplicationInsights && !string.IsNullOrWhiteSpace(appInsightsSettings.ConnectionString))
-                    {
-                        logging.AddApplicationInsights(configuration => configuration.ConnectionString = appInsightsSettings.ConnectionString, options => { });
-                        return;
-                    }
                 });
     }
 }

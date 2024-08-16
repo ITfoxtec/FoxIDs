@@ -43,8 +43,18 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
 
-            services.AddTransient<LogAnalyticsWorkspaceProvider>();   
-            services.AddTransient<UsageLogLogic>();
+            services.AddSingleton<UsageLogLogic>();
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                services.AddSingleton<LogOpenSearchLogic>();
+                services.AddSingleton<UsageLogOpenSearchLogic>();
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                services.AddSingleton<LogAnalyticsWorkspaceProvider>();
+                services.AddSingleton<LogApplicationInsightsLogic>();
+                services.AddSingleton<UsageLogApplicationInsightsLogic>();
+            }
 
             services.AddTransient<PartyLogic>();
 

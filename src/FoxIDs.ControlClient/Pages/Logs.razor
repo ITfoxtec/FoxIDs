@@ -1,7 +1,7 @@
 ﻿@page "/{tenantName}/logs"
 @inherits PageBase
 
-@if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+@if (clientSettings.LogOption != LogOptions.Stdout)
 {
     <div class="pb-2">
         <div class="info-text pt-0">
@@ -22,9 +22,12 @@
     </ul>
 
     <div class="tab-content pt-4">
-        <div class="alert alert-info" role="alert">
-            The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
-        </div>
+        @if (clientSettings.LogOption == LogOptions.ApplicationInsights)
+        {
+            <div class="alert alert-info" role="alert">
+                The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
+            </div>
+        }
 
         @if (!logLoadError.IsNullOrWhiteSpace())
         {
@@ -33,7 +36,7 @@
             </div>
         }
 
-        <PageEditForm @ref="logRequestForm" TModel="LogRequestViewModel" OnValidSubmit="OnLogRequestValidSubmitAsync">
+        <PageEditForm @ref="logRequestForm" TModel="LogRequestViewModel" OnAfterInit="LogRequestViewModelAfterInit" OnValidSubmit="OnLogRequestValidSubmitAsync">
             <FInputText @bind-Value="logRequestForm.Model.FromTime" For="@(() => logRequestForm.Model.FromTime)" />
             <FInputSelect @bind-Value="logRequestForm.Model.TimeInterval" For="@(() => logRequestForm.Model.TimeInterval)">
                 <option value="@LogTimeIntervals.ThirtySeconds">30 seconds</option>
@@ -76,6 +79,7 @@
                         {
                             <div>
                                 <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
+                                <div>Sequence ID: @item.SequenceId</div>
 
                                 <ul class="list-group">
                                     @foreach (var sSubItem in item.SubItems)
@@ -85,10 +89,7 @@
                                             {
                                                 <div>
                                                     <div><b>@sSubItem.Type.ToString()</b> @sSubItem.Timestamp.TimeToString()</div>
-                                                    @if (sSubItem.Values.TryGetValue(Constants.Logs.Results.OperationName, out var operationName))
-                                                    {
-                                                        <div>@operationName</div>
-                                                    }
+                                                    <div>Operation ID: @sSubItem.OperationId</div>
 
                                                     <ul class="list-group">
                                                         @foreach (var oSubItem in sSubItem.SubItems)
@@ -113,10 +114,7 @@
                         {
                             <div>
                                 <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
-                                @if (item.Values.TryGetValue(Constants.Logs.Results.OperationName, out var operationName))
-                                {
-                                    <div>@operationName</div>
-                                }
+                                <div>Operation ID: @item.OperationId</div>
 
                                 <ul class="list-group">
                                     @foreach (var oSubItem in item.SubItems)

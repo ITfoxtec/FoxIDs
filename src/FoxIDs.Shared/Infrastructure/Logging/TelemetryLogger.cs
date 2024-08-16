@@ -1,8 +1,9 @@
-﻿using FoxIDs.Models;
-using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure.Logging;
+using FoxIDs.Models.Config;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 
@@ -10,131 +11,156 @@ namespace FoxIDs.Infrastructure
 {
     public class TelemetryLogger
     {
-        private readonly TelemetryClient telemetryClient;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly Settings settings;
+        private readonly IServiceProvider serviceProvider;
 
-        public TelemetryLogger(TelemetryClient telemetryClient, IHttpContextAccessor httpContextAccessor = null)
+        public TelemetryClient ApplicationInsightsTelemetryClient { private get; set; }
+
+        public TelemetryLogger(Settings settings, IServiceProvider serviceProvider)
         {
-            this.telemetryClient = telemetryClient;
-            this.httpContextAccessor = httpContextAccessor;
+            this.settings = settings;
+            this.serviceProvider = serviceProvider;
         }
 
-        public void Warning(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Warning(Exception exception, IDictionary<string, string> properties = null)
         {
-            Warning(exception, null, properties, metrics);
+            Warning(exception, null, properties);
         }
-        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Warning, exception, message, properties, metrics));
-            if(flush)
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().Warning(exception, message, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().Warning(exception, message, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Warning(exception, message, properties);
             }
         }
 
-        public void Error(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(Exception exception, IDictionary<string, string> properties = null)
         {
-            Error(exception, null, properties, metrics);
+            Error(exception, null, properties);
         }
-        public void Error(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Error, exception, message, properties, metrics));
-            if (flush)
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().Error(exception, message, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().Error(exception, message, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Error(exception, message, properties);
             }
         }
 
-        public void CriticalError(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(Exception exception, IDictionary<string, string> properties = null)
         {
-            CriticalError(exception, null, properties, metrics);
+            CriticalError(exception, null, properties);
         }
-        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackException(GetExceptionTelemetry(SeverityLevel.Critical, exception, message, properties, metrics));
-            if (flush)
+            if (settings.Options.Log == LogOptions.Stdout || settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().CriticalError(exception, message, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().CriticalError(exception, message, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().CriticalError(exception, message, properties);
             }
         }
 
-        public void Event(string eventName, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackEvent(eventName, properties, metrics);
-            if (flush)
+            if (settings.Options.Log == LogOptions.Stdout)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().Event(eventName, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().Event(eventName, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Event(eventName, properties);
             }
         }
+
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackTrace(message, properties);
-            if (flush)
+            if (settings.Options.Log == LogOptions.Stdout)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().Trace(message, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().Trace(message, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Trace(message, properties);
             }
         }
 
-        public void Metric(string message, double value, IDictionary<string, string> properties = null)
+        public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            (var telemetryClient, var flush) = GetTelemetryClient();
-            telemetryClient.TrackMetric(message, value, properties);
-            if (flush)
+            if (settings.Options.Log == LogOptions.Stdout)
             {
-                telemetryClient.Flush();
+                GetStdoutTelemetryLogger().Metric(metricName, value, properties);
+            }
+
+            if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                GetOpenSearchTelemetryLogger().Metric(metricName, value, properties);
+            }
+            else if (settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                GetApplicationInsightsTelemetryLogger().Metric(metricName, value, properties);
             }
         }
 
-        private (TelemetryClient, bool flush) GetTelemetryClient()
+        private StdoutTelemetryLogger GetStdoutTelemetryLogger()
         {
-            if (httpContextAccessor != null && RouteBinding?.TelemetryClient != null)
+            return serviceProvider.GetService<StdoutTelemetryLogger>();
+        }
+
+        private OpenSearchTelemetryLogger GetOpenSearchTelemetryLogger()
+        {
+            return serviceProvider.GetService<OpenSearchTelemetryLogger>();
+        }
+
+        private TelemetryClient GetApplicationInsightsTelemetryClient()
+        {
+            if(ApplicationInsightsTelemetryClient != null)
             {
-                return (RouteBinding.TelemetryClient, false);
+                return ApplicationInsightsTelemetryClient;
             }
             else
             {
-                return (telemetryClient, true);
+                return serviceProvider.GetService<TelemetryClient>();
             }
         }
 
-        private RouteBinding RouteBinding => httpContextAccessor?.HttpContext?.GetRouteBinding();
-
-        private static ExceptionTelemetry GetExceptionTelemetry(SeverityLevel severityLevel, Exception exception, string message, IDictionary<string, string> properties, IDictionary<string, double> metrics)
+        private ApplicationInsightsTelemetryLogger GetApplicationInsightsTelemetryLogger()
         {
-            var exceptionTelemetry = new ExceptionTelemetry(exception)
-            {
-                SeverityLevel = severityLevel,
-            };
-
-            exceptionTelemetry.Properties.Add(Constants.Logs.LoggingHandledKey, true.ToString());
-
-            if (!message.IsNullOrEmpty())
-            {
-                exceptionTelemetry.Message = $"{message} --> {exception.Message}";
-            }
-            
-            if (properties != null)
-            {
-                foreach (var prop in properties)
-                {
-                    exceptionTelemetry.Properties.Add(prop);
-                }
-            }
-            
-            if (metrics != null)
-            {
-                foreach (var metric in metrics)
-                {
-                    exceptionTelemetry.Metrics.Add(metric);
-                }
-            }
-
-            return exceptionTelemetry;
+            return new ApplicationInsightsTelemetryLogger(GetApplicationInsightsTelemetryClient());
         }
     }
 }

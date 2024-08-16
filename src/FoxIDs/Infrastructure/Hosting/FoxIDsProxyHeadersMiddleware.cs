@@ -32,6 +32,8 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
             }
 
+            SetScopeProperty(context);
+
             await next.Invoke(context);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Infrastructure
+﻿namespace FoxIDs.Models
 {
     public enum TraceTypes
     {

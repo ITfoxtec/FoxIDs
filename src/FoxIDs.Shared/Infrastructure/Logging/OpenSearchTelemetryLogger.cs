@@ -6,6 +6,8 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using OpenSearch.Net;
+using System.Net;
 
 namespace FoxIDs.Infrastructure.Logging
 {
@@ -22,6 +24,90 @@ namespace FoxIDs.Infrastructure.Logging
             this.openSearchClient = openSearchClient;
             this.stdoutTelemetryLogger = stdoutTelemetryLogger;
             this.httpContextAccessor = httpContextAccessor;
+            Init();
+        }
+
+        private void Init()
+        {
+            CreateIndexPolicy(LogLifetimeOptions.Max30Days);
+            CreateIndexPolicy(LogLifetimeOptions.Max180Days);
+        }
+
+        private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
+        {
+            var lifetime = (int)logLifetime;
+            var policyPath = $"_plugins/_ism/policies/log-{lifetime}d";
+            var indexPattern = $"log-{lifetime}d*";
+
+            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
+
+            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
+                    PostData.Serializable(new
+                    {
+                        policy = new
+                        {
+                            description = $"Index policy with a lifetime of {lifetime} days.",
+                            default_state = "write",
+                            states = new object[] {
+                                new {
+                                    name = "write",
+                                    transitions = new [] {
+                                        new {
+                                            state_name = "read",
+                                            conditions = new {
+                                                min_index_age = "1d"
+                                            }
+                                        }
+                                    }
+                                },
+                                new {
+                                    name = "read",
+                                    actions = new [] {
+                                        new {
+                                            read_only = new { },
+                                            retry = new {
+                                                count = 3,
+                                                backoff = "exponential",
+                                                delay = "1m"
+                                            }
+                                        }
+                                    },
+                                    transitions = new [] {
+                                        new {
+                                            state_name = "delete",
+                                            conditions = new {
+                                                min_index_age = "30d"
+                                            }
+                                        }
+                                    }
+                                },
+                                new {
+                                    name = "delete",
+                                    actions = new [] {
+                                        new {
+                                            delete = new { },
+                                            retry = new {
+                                                count = 3,
+                                                backoff = "exponential",
+                                                delay = "1m"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            ism_template = new[] {
+                                new {
+                                    index_patterns = new[] {
+                                        indexPattern
+                                    },
+                                    priority = 1
+                                }
+                            }
+                        }
+                    }));
+            }
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)

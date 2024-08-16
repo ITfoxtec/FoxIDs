@@ -272,7 +272,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Contains(f.Id, StringComparer.Ordinal));
+                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Where(id => id.Equals(f.Id, StringComparison.Ordinal)).Any());
             }
             catch (Exception ex)
             {

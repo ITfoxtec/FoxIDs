@@ -20,8 +20,8 @@ namespace FoxIDs.SeedTool
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
                 Console.WriteLine("Select seed action");
-                Console.WriteLine("P: Upload risk passwords");
-                Console.WriteLine("A: Delete all risk passwords");
+                Console.WriteLine("U: Upload risk passwords");
+                Console.WriteLine("D: Delete all risk passwords");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -29,10 +29,10 @@ namespace FoxIDs.SeedTool
 
                 switch (char.ToLower(key.KeyChar))
                 {
-                    case 'p':
+                    case 'u':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
-                    case 'a':
+                    case 'd':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
                         break;
 

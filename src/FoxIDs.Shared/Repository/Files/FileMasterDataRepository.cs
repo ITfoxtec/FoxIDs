@@ -27,7 +27,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             if (whereQuery == null)
             {
                 return await fileDataRepository.CountAsync(partitionId, GetDataType<T>());
@@ -52,7 +52,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize)).Select(i => i.DataJsonToObject<T>());
             if (whereQuery == null)
             {
@@ -149,6 +149,11 @@ namespace FoxIDs.Repository
                 var partitionId = id.IdToMasterPartitionId();
                 await fileDataRepository.DeleteAsync(id, partitionId);
             }
+        }
+
+        public override ValueTask DeleteBulkAsync<T>()
+        {
+            throw new NotSupportedException("Not supported by file repository.");
         }
 
         private string GetDataType<T>() where T : MasterDocument

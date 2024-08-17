@@ -21,7 +21,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             if (whereQuery == null)
             {
                 return (int) await db.CountAsync(partitionId);
@@ -53,7 +53,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
             if (whereQuery == null)
             {
@@ -154,6 +154,11 @@ namespace FoxIDs.Repository
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
+        }
+
+        public override ValueTask DeleteBulkAsync<T>()
+        {
+            throw new NotSupportedException("Not supported by PostgreSql.");
         }
 
         public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)

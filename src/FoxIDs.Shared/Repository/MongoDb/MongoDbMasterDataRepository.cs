@@ -29,7 +29,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
@@ -83,7 +83,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal);
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
@@ -273,6 +273,20 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
                 var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Where(id => id.Equals(f.Id, StringComparison.Ordinal)).Any());
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
+        }
+
+        public override async ValueTask DeleteBulkAsync<T>()
+        {
+            var partitionId = TypeToMasterPartitionId<T>();
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal));
             }
             catch (Exception ex)
             {

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
+using OpenSearch.Client;
 
 namespace FoxIDs.Controllers
 {
@@ -87,17 +88,24 @@ namespace FoxIDs.Controllers
         /// <param name="riskPasswordDelete">Risk passwords to delete.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete)
+        public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete = null)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var ids = new List<string>();
-            foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
+            if (riskPasswordDelete == null)
             {
-                ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
+                await masterDataRepository.DeleteBulkAsync<RiskPassword>();
             }
+            else
+            {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await masterDataRepository.DeleteBulkAsync<RiskPassword>(ids);
+                var ids = new List<string>();
+                foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
+                {
+                    ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
+                }
+
+                await masterDataRepository.DeleteBulkAsync<RiskPassword>(ids);
+            }
 
             return NoContent();
         }

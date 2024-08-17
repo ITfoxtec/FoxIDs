@@ -102,6 +102,12 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine($"All '{totalCount}' risk passwords deleted");
         }
 
+        public async Task DeleteAllInPartitionAsync()
+        {
+            Console.WriteLine("Delete all risk passwords");
+            await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
+            Console.WriteLine("All risk passwords deleted");
+        }
         private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordApiModel> riskPasswords)
         {
             var client = httpClientFactory.CreateClient();
@@ -120,15 +126,17 @@ namespace FoxIDs.SeedTool.SeedLogic
             return result.ToObject<List<RiskPasswordApiModel>>();   
         }
 
-        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs)
+        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs = null)
         {
-            var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
-
             var request = new HttpRequestMessage();
             request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
-            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
-            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-            request.Content = content;
+            if (passwordSha1Hashs != null)
+            {
+                var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
+                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
+                content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                request.Content = content;
+            }
             request.Method = new HttpMethod("DELETE");
             request.RequestUri = new Uri(PasswordRiskListApiEndpoint);
             var client = httpClientFactory.CreateClient();

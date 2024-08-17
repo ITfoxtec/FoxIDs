@@ -52,7 +52,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             var orderedQueryable = GetQueryAsync<T>(partitionId);
             var query = (whereQuery == null) ? orderedQueryable : orderedQueryable.Where(whereQuery);
 
@@ -123,7 +123,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
-            var partitionId = IdToMasterPartitionId<T>();
+            var partitionId = TypeToMasterPartitionId<T>();
             var query = GetQueryAsync<T>(partitionId, pageSize: pageSize);
             var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
@@ -370,6 +370,11 @@ namespace FoxIDs.Repository
             {
                 logger.Metric($"CosmosDB RU, @master - delete bulk count '{ids.Count}' type '{typeof(T)}'.", totalRU);
             }
+        }
+
+        public override ValueTask DeleteBulkAsync<T>()
+        {
+            throw new NotSupportedException("Not supported by CosmosDB.");
         }
 
         private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int pageSize = 1) where T : IDataDocument

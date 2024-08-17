@@ -23,5 +23,6 @@ namespace FoxIDs.Repository
 
         ValueTask DeleteAsync<T>(string id) where T : MasterDocument;
         ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
+        ValueTask DeleteBulkAsync<T>() where T : MasterDocument;
     }
 }

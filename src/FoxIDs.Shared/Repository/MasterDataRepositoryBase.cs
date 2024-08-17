@@ -19,8 +19,9 @@ namespace FoxIDs.Repository
         public abstract ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
         public abstract ValueTask DeleteAsync<T>(string id) where T : MasterDocument;
         public abstract ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
+        public abstract ValueTask DeleteBulkAsync<T>() where T : MasterDocument;
 
-        protected string IdToMasterPartitionId<T>() where T : MasterDocument
+        protected string TypeToMasterPartitionId<T>() where T : MasterDocument
         {
             if (typeof(T) == typeof(Plan))
             {

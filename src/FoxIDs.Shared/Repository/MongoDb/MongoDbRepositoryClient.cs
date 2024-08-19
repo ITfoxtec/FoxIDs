@@ -35,8 +35,11 @@ namespace FoxIDs.Repository
 
             if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
             {
+                _ = InitCollection<DataDocument>(database, settings.MongoDb.MasterCollectionName);
+                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
+
                 _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TtlTenantsCollectionName);
+                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
             }
             if (settings.Options.Cache == CacheOptions.MongoDb)
             {
@@ -65,11 +68,23 @@ namespace FoxIDs.Repository
                 }));
         }
 
+        public IMongoCollection<T> GetMasterCollection<T>(T item = default)
+        {
+            if (IsTtlDocument(item))
+            {
+                return GetCollection<T>(settings.MongoDb.MasterTtlCollectionName);
+            }
+            else
+            {
+                return GetCollection<T>(settings.MongoDb.MasterCollectionName);
+            }
+        }
+
         public IMongoCollection<T> GetTenantsCollection<T>(T item = default)
         {
             if (IsTtlDocument(item))
             {
-                return GetCollection<T>(settings.MongoDb.TtlTenantsCollectionName);
+                return GetCollection<T>(settings.MongoDb.TenantsTtlCollectionName);
             }
             else
             {

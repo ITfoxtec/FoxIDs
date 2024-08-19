@@ -67,5 +67,10 @@ namespace FoxIDs.UnitTests.Mocks
         {
             throw new NotImplementedException();
         }
+
+        public override ValueTask DeleteBulkAsync<T>()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

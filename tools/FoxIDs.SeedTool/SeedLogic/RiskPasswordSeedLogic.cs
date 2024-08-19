@@ -14,7 +14,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {
-        private const int maxRiskPasswordToUpload = 1000000; // 500000;
+        private const int maxRiskPasswordToUpload = 0; // 1000000; // 0 is unlimited
         private const int riskPasswordMoreThenBreachesCount = 100; // 1000;
         private const int uploadRiskPasswordBlockSize = 10000; // 1000;
         private readonly SeedSettings settings;
@@ -57,7 +57,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                             Console.Write(".");
                         }
 
-                        if (addCount >= maxRiskPasswordToUpload)
+                        if (maxRiskPasswordToUpload > 0 && addCount >= maxRiskPasswordToUpload)
                         {
                             await UploadAsync(riskPasswords);
                             break;

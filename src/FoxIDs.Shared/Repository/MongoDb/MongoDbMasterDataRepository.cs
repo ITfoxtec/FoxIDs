@@ -35,7 +35,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 return await collection.CountDocumentsAsync(filter);
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal);
                 var data = await collection.Find(filter).FirstOrDefaultAsync();
                 if (required && data == null)
@@ -89,7 +89,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 var items = await collection.Find(filter).Limit(pageSize).ToListAsync();
                 await items.ValidateObjectAsync();
                 return items;
@@ -111,7 +111,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 await collection.InsertOneAsync(item);
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal), item);
                 if (!result.IsAcknowledged || !(result.MatchedCount > 0))
                 {
@@ -159,7 +159,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal);
                 var data = await collection.Find(filter).FirstOrDefaultAsync();
                 if (data == null)
@@ -194,7 +194,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
+                var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.Ordinal) && f.Id.Equals(item.Id, StringComparison.Ordinal));
                 if (!result.IsAcknowledged || !(result.DeletedCount > 0))
                 {
@@ -227,7 +227,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection(firstItem);
+                var collection = mongoDbRepositoryClient.GetMasterCollection(firstItem);
                 await collection.InsertManyAsync(items);
             }
             catch (Exception ex)
@@ -244,7 +244,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal));
                 if (!result.IsAcknowledged || !(result.DeletedCount > 0))
                 {
@@ -271,7 +271,7 @@ namespace FoxIDs.Repository
 
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal) && ids.Where(id => id.Equals(f.Id, StringComparison.Ordinal)).Any());
             }
             catch (Exception ex)
@@ -285,7 +285,7 @@ namespace FoxIDs.Repository
             var partitionId = TypeToMasterPartitionId<T>();
             try
             {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
                 var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId, StringComparison.Ordinal));
             }
             catch (Exception ex)

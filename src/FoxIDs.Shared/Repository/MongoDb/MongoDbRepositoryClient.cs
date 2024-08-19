@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using OpenSearch.Client;
 using System;
 
 namespace FoxIDs.Repository
@@ -33,17 +34,21 @@ namespace FoxIDs.Repository
 
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
-            if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
+            var testCollection = database.GetCollection<DataDocument>(settings.MongoDb.TenantsCollectionName);
+            if (testCollection.CountDocuments(d => d.DataType == Constants.Models.DataType.Tenant) <= 0)
             {
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.MasterCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
+                if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
+                {
+                    _ = InitCollection<DataDocument>(database, settings.MongoDb.MasterCollectionName);
+                    InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
 
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
-            }
-            if (settings.Options.Cache == CacheOptions.MongoDb)
-            {
-                _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+                    _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
+                    InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
+                }
+                if (settings.Options.Cache == CacheOptions.MongoDb)
+                {
+                    _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+                }
             }
         }
 

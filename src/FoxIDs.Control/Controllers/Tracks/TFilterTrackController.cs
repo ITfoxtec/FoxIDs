@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 (var mTracks, _) = filterName.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
                     await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.OrdinalIgnoreCase)));
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)));
                
                 var aTracks = new HashSet<Api.Track>(mTracks.Count());
                 foreach(var mTrack in mTracks.OrderBy(t => t.Name))

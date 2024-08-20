@@ -88,5 +88,10 @@ namespace FoxIDs.Models.Config
         /// Read the HTTP request domain and use it as custom domain if configured on a tenant.
         /// </summary>
         public bool RequestDomainAsCustomDomain { get; set; }
+
+        /// <summary>
+        /// Add domain to ignore if revived in the proxy header. Used for the default domain if the domain is not attaches to a tenant but is used as the generic domain.
+        /// </summary>
+        public string IgnoreProxyHeaderDomain { get; set; }
     }
 }

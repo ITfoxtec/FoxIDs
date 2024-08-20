@@ -17,14 +17,14 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 ReadClientIp(context);
                 ReadSchemeFromHeader(context);
-                var host = ReadHostFromHeader(context);
+                var settings = context.RequestServices.GetService<FoxIDsSettings>();
+                var host = ReadHostFromHeader(context, settings);
                 if (!host.IsNullOrWhiteSpace())
                 {
                     context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
                 }
                 else
                 {
-                    var settings = context.RequestServices.GetService<FoxIDsSettings>();
                     if (settings.RequestDomainAsCustomDomain)
                     {
                         context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = context.Request.Host.Host;
@@ -58,7 +58,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return ValidateProxySecret(context, settings);
         }
 
-        private string ReadHostFromHeader(HttpContext context)
+        private string ReadHostFromHeader(HttpContext context, FoxIDsSettings settings)
         {
             var trustProxyHeaders = TrustProxyHeaders(context);
             if (trustProxyHeaders)
@@ -68,7 +68,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     hostHeader = context.Request.Headers["X-Forwarded-Host"];
                 }
-                if (!hostHeader.IsNullOrWhiteSpace())
+                if (!hostHeader.IsNullOrWhiteSpace() && (settings.IgnoreProxyHeaderDomain.IsNullOrEmpty() || !hostHeader.Equals(settings.IgnoreProxyHeaderDomain, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (context.Request.Host.Port.HasValue)
                     {

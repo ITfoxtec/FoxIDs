@@ -31,50 +31,53 @@ namespace FoxIDs.Logic
             List<Api.UsageLogItem> itemsPointer = items;
             var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest);
 
-            var userTypesAggregations = GetAggregations(aggregations, logRequest).OrderBy(a => a.aggregation.Date).ToList();
-
-            foreach ((var usageType, var bucketItem) in userTypesAggregations)
+            if (aggregations != null)
             {
-                if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
-                {
-                    var date = bucketItem.Date;
-                    if (date.Day != dayPointer)
-                    {
-                        dayPointer = date.Day;
-                        hourPointer = 0;
-                        var dayItem = new Api.UsageLogItem
-                        {
-                            Type = Api.UsageLogTypes.Day,
-                            Value = date.Day
-                        };
-                        dayItem.SubItems = itemsPointer = dayItemsPointer = new List<Api.UsageLogItem>();
-                        items.Add(dayItem);
-                    }
+                var userTypesAggregations = GetAggregations(aggregations, logRequest).OrderBy(a => a.aggregation.Date).ToList();
 
-                    if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
+                foreach ((var usageType, var bucketItem) in userTypesAggregations)
+                {
+                    if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
                     {
-                        var hour = date.Hour + logRequest.TimeOffset;
-                        if (hour != hourPointer)
+                        var date = bucketItem.Date;
+                        if (date.Day != dayPointer)
                         {
-                            hourPointer = hour;
-                            var hourItem = new Api.UsageLogItem
+                            dayPointer = date.Day;
+                            hourPointer = 0;
+                            var dayItem = new Api.UsageLogItem
                             {
-                                Type = Api.UsageLogTypes.Hour,
-                                Value = hour
+                                Type = Api.UsageLogTypes.Day,
+                                Value = date.Day
                             };
-                            hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
-                            dayItemsPointer.Add(hourItem);
+                            dayItem.SubItems = itemsPointer = dayItemsPointer = new List<Api.UsageLogItem>();
+                            items.Add(dayItem);
+                        }
+
+                        if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
+                        {
+                            var hour = date.Hour + logRequest.TimeOffset;
+                            if (hour != hourPointer)
+                            {
+                                hourPointer = hour;
+                                var hourItem = new Api.UsageLogItem
+                                {
+                                    Type = Api.UsageLogTypes.Hour,
+                                    Value = hour
+                                };
+                                hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
+                                dayItemsPointer.Add(hourItem);
+                            }
                         }
                     }
-                }
 
-                var logType = GetLogType(usageType);
-                var item = new Api.UsageLogItem
-                {
-                    Type = logType,
-                    Value = GetCount(bucketItem, logType),
-                };
-                itemsPointer.Add(item);
+                    var logType = GetLogType(usageType);
+                    var item = new Api.UsageLogItem
+                    {
+                        Type = logType,
+                        Value = GetCount(bucketItem, logType),
+                    };
+                    itemsPointer.Add(item);
+                }
             }
 
             return items;
@@ -186,7 +189,7 @@ namespace FoxIDs.Logic
                     ))
                 );
 
-            return response.Aggregations.Values.First() as FiltersAggregate;
+            return response.Aggregations.Values.FirstOrDefault() as FiltersAggregate;
         }
         
         private string GetIndexName(string logIndexName)

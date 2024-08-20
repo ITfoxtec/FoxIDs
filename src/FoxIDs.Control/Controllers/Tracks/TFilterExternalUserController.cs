@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 (var mExternalUsers, _) = filterValue.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
                     await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        (u.LinkClaimValue.Contains(filterValue, StringComparison.OrdinalIgnoreCase) || u.UserId.Contains(filterValue, StringComparison.OrdinalIgnoreCase)));
+                        (u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase) || u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)));
 
                 var aExternalUsers = new HashSet<Api.ExternalUser>(mExternalUsers.Count());
                 foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue))

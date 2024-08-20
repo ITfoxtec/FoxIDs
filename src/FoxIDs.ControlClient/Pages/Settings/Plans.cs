@@ -194,12 +194,14 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                if (generalPlan.Form.Model.LogLifetime == LogLifetimeOptionsVievModel.Null)
+                {
+                    generalPlan.Form.Model.LogLifetime = null;
+                }
+
                 var plan = generalPlan.Form.Model.Map<Plan>(afterMap: afterMap =>
                 {
-                    if (generalPlan.Form.Model.LogLifetime == LogLifetimeOptionsVievModel.Null)
-                    {
-                        afterMap.LogLifetime = null;
-                    }
+                
                 });
 
                 if (generalPlan.CreateMode)

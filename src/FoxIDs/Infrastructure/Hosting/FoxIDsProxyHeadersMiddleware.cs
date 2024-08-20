@@ -78,8 +78,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         context.Request.Host = new HostString(hostHeader);
                     }
+
+                    return hostHeader;
                 }
-                return hostHeader;
             }
 
             return string.Empty;

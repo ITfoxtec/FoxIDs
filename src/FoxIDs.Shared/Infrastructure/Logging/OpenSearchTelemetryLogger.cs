@@ -29,8 +29,36 @@ namespace FoxIDs.Infrastructure.Logging
 
         private void Init()
         {
+            AddMapping();
             CreateIndexPolicy(LogLifetimeOptions.Max30Days);
             CreateIndexPolicy(LogLifetimeOptions.Max180Days);
+        }
+
+        private void AddMapping()
+        {
+            var policyPath = "_index_template/keyword-template";
+
+            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
+            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
+                     PostData.Serializable(new
+                     {
+                         index_patterns = new[] { "log*" },
+                         template = new
+                         {
+                             mappings = new
+                             {
+                                 properties = new 
+                                 {
+                                    tenantName = new { type = "keyword" },
+                                    trackName = new { type = "keyword" }
+                                 }
+                             }
+                         }
+                     }));
+            }
+
         }
 
         private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
@@ -40,7 +68,6 @@ namespace FoxIDs.Infrastructure.Logging
             var indexPattern = $"log-{lifetime}d*";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
-
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
                 openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
@@ -50,45 +77,61 @@ namespace FoxIDs.Infrastructure.Logging
                         {
                             description = $"Index policy with a lifetime of {lifetime} days.",
                             default_state = "write",
-                            states = new object[] {
-                                new {
+                            states = new object[] 
+                            {
+                                new 
+                                {
                                     name = "write",
-                                    transitions = new [] {
-                                        new {
+                                    transitions = new [] 
+                                    {
+                                        new 
+                                        {
                                             state_name = "read",
-                                            conditions = new {
+                                            conditions = new 
+                                            {
                                                 min_index_age = "1d"
                                             }
                                         }
                                     }
                                 },
-                                new {
+                                new 
+                                {
                                     name = "read",
-                                    actions = new [] {
-                                        new {
+                                    actions = new [] 
+                                    {
+                                        new 
+                                        {
                                             read_only = new { },
-                                            retry = new {
+                                            retry = new 
+                                            {
                                                 count = 3,
                                                 backoff = "exponential",
                                                 delay = "1m"
                                             }
                                         }
                                     },
-                                    transitions = new [] {
-                                        new {
+                                    transitions = new [] 
+                                    {
+                                        new 
+                                        {
                                             state_name = "delete",
-                                            conditions = new {
+                                            conditions = new 
+                                            {
                                                 min_index_age = "30d"
                                             }
                                         }
                                     }
                                 },
-                                new {
+                                new 
+                                {
                                     name = "delete",
-                                    actions = new [] {
-                                        new {
+                                    actions = new []
+                                    {
+                                        new 
+                                        {
                                             delete = new { },
-                                            retry = new {
+                                            retry = new 
+                                            {
                                                 count = 3,
                                                 backoff = "exponential",
                                                 delay = "1m"
@@ -97,9 +140,12 @@ namespace FoxIDs.Infrastructure.Logging
                                     }
                                 }
                             },
-                            ism_template = new[] {
-                                new {
-                                    index_patterns = new[] {
+                            ism_template = new[] 
+                            {
+                                new 
+                                {
+                                    index_patterns = new[] 
+                                    {
                                         indexPattern
                                     },
                                     priority = 1

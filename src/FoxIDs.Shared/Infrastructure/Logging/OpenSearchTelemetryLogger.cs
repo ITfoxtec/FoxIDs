@@ -36,7 +36,7 @@ namespace FoxIDs.Infrastructure.Logging
 
         private void AddMapping()
         {
-            var policyPath = "_index_template/keyword-template";
+            var policyPath = $"_index_template/{Constants.Logs.LogName}-template";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)

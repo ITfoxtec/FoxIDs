@@ -154,6 +154,8 @@ namespace FoxIDs
 
         public static class Logs
         {
+            public const string LogName = "foxids-log";
+
             public const string Message = "Message";
             public const string Details = "Details";
             public const string Value = "Value";

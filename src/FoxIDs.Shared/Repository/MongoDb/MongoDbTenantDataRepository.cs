@@ -32,7 +32,7 @@ namespace FoxIDs.Repository
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
 
-            Expression<Func<T, bool>> filter = usePartitionId ? f => f.PartitionId.Equals(partitionId, StringComparison.CurrentCulture) : f => true;
+            Expression<Func<T, bool>> filter = usePartitionId ? f => f.PartitionId.Equals(partitionId) : f => true;
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
             try
             {
@@ -72,7 +72,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.CurrentCulture) && f.Id.Equals(id, StringComparison.CurrentCulture);
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId) && f.Id.Equals(id);
                 var data = delete ? await collection.FindOneAndDeleteAsync(filter) : await collection.Find(filter).FirstOrDefaultAsync();
                 if (required && data == null)
                 {
@@ -97,7 +97,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.CurrentCulture);
+            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
             try
@@ -166,7 +166,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
-                var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId, StringComparison.CurrentCulture) && f.Id.Equals(item.Id, StringComparison.CurrentCulture), item);
+                var result = await collection.ReplaceOneAsync(f => f.PartitionId.Equals(item.PartitionId) && f.Id.Equals(item.Id), item);
                 if (!result.IsAcknowledged || !(result.MatchedCount > 0))
                 {
                     throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
@@ -194,7 +194,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
-                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId, StringComparison.CurrentCulture) && f.Id.Equals(item.Id, StringComparison.CurrentCulture);
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId) && f.Id.Equals(item.Id);
                 var data = await collection.Find(filter).FirstOrDefaultAsync();
                 if (data == null)
                 {
@@ -228,7 +228,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId, StringComparison.CurrentCulture) && f.Id.Equals(id, StringComparison.CurrentCulture));
+                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && f.Id.Equals(id));
                 if (!result.IsAcknowledged || !(result.DeletedCount > 0))
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
@@ -250,7 +250,7 @@ namespace FoxIDs.Repository
             await idKey.ValidateObjectAsync();
 
             var partitionId = PartitionIdFormat<T>(idKey);
-            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId, StringComparison.CurrentCulture);
+            Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
 
             try

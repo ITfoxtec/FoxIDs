@@ -44,7 +44,7 @@ namespace FoxIDs.Infrastructure.Logging
                 openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
                      PostData.Serializable(new
                      {
-                         index_patterns = new[] { "log*" },
+                         index_patterns = new[] { $"{Constants.Logs.LogName}*" },
                          template = new
                          {
                              mappings = new
@@ -64,8 +64,8 @@ namespace FoxIDs.Infrastructure.Logging
         private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
         {
             var lifetime = (int)logLifetime;
-            var policyPath = $"_plugins/_ism/policies/log-{lifetime}d";
-            var indexPattern = $"log-{lifetime}d*";
+            var policyPath = $"_plugins/_ism/policies/{Constants.Logs.LogName}-{lifetime}d";
+            var indexPattern = $"{Constants.Logs.LogName}-{lifetime}d*";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -213,7 +213,7 @@ namespace FoxIDs.Infrastructure.Logging
                 lifetime = routeBinding.PlanLogLifetime.Value.GetLifetimeInDays();
             }
 
-            return $"log-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
+            return $"{Constants.Logs.LogName}-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
         }        
 
         private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)

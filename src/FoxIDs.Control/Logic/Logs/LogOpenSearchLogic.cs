@@ -246,7 +246,7 @@ namespace FoxIDs.Logic
                 lifetime = RouteBinding.PlanLogLifetime.Value.GetLifetimeInDays();
             }
 
-            return $"log-{lifetime}d*";
+            return $"{Constants.Logs.LogName}-{lifetime}d*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)

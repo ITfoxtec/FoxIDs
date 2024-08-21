@@ -14,7 +14,7 @@ namespace FoxIDs.Infrastructure
         private readonly TelemetryScopedProperties telemetryScopedProperties;
         private readonly TelemetryScopedStreamLogger telemetryScopedStreamLogger;
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly List<TraceMessage> traceMessages = new List<TraceMessage>();
+        private readonly List<TraceMessageItem> traceMessages = new List<TraceMessageItem>();
         private Models.Logging logging;
 
         public TelemetryScopedLogger(TelemetryLogger telemetryLogger, TelemetryScopedProperties telemetryScopedProperties, TelemetryScopedStreamLogger telemetryScopedStreamLogger, IHttpContextAccessor httpContextAccessor)
@@ -175,7 +175,7 @@ namespace FoxIDs.Infrastructure
             if (messageString != null)
             {
                 if (traceType == TraceTypes.Info && triggerEvent) Event(messageString);
-                if (save) traceMessages.Add(new TraceMessage { TraceType = traceType, Message = messageString });
+                if (save) traceMessages.Add(new TraceMessageItem { TraceType = traceType, Message = messageString });
             }
         }
 

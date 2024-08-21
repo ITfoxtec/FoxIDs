@@ -219,25 +219,30 @@ namespace FoxIDs.Infrastructure.Logging
         private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
         {
             var logItem = CreateLogItem(logType, properties);
+            var messageItems = new List<ErrorMessageItem>();
             if (!message.IsNullOrWhiteSpace())
             {
-                logItem.Message = message;
+                messageItems.Add(new ErrorMessageItem { Message = message });
             }
             if (exception != null)
             {
-                logItem.Details = GetDetails(exception);
+                messageItems.AddRange(GetErrorMessageItems(exception));
+            }
+            if(messageItems.Count > 0)
+            {
+                logItem.Message = messageItems.ToJson();
             }
             return logItem;           
         }
 
-        private IEnumerable<string> GetDetails(Exception exception)
+        private IEnumerable<ErrorMessageItem> GetErrorMessageItems(Exception exception)
         {
-            yield return $"{exception.GetType().FullName}: {exception.Message}{Environment.NewLine}{exception.StackTrace}";
+            yield return new ErrorMessageItem { Message = $"{exception.GetType().FullName}: {exception.Message}", StackTrace = exception.StackTrace?.Split(Environment.NewLine) };
             if (exception.InnerException != null)
             {
-                foreach (var detail in GetDetails(exception.InnerException))
+                foreach (var messageItem in GetErrorMessageItems(exception.InnerException))
                 {
-                    yield return detail;
+                    yield return messageItem;
                 }
             }
         }

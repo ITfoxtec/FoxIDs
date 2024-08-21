@@ -378,12 +378,12 @@ namespace FoxIDs.Logic
             {
                 item.Details = new List<Api.LogItemDetail>();
 
-                var logTraceMessage = message.ToObject<List<LogTraceMessage>>();
+                var logTraceMessage = message.ToObject<List<LogTraceMessageItem>>();
                 foreach (var messageItem in logTraceMessage)
                 {
                     var logItemDetail = new Api.LogItemDetail
                     {
-                        Name = messageItem.Message
+                        Name = messageItem.Message ?? messageItem.MessageOld,
                     };
                     item.Details.Add(logItemDetail);
                 }

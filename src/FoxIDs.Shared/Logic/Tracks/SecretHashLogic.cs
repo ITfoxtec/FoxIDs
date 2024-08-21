@@ -73,7 +73,7 @@ namespace FoxIDs.Logic
             var algoSplit = item.HashAlgorithm?.Split(':');
             if (algoSplit?.Count() != 2 || algoSplit[0] != defaultHashAlgorithm)
             {
-                throw new NotSupportedException($"Password hash algorithm '{item.HashAlgorithm}' not supported. Item '{item.ToJsonIndented()}'.");
+                throw new NotSupportedException($"Password hash algorithm '{item.HashAlgorithm}' not supported. Item '{item.ToJson()}'.");
             }
 
             return Convert.ToInt32(algoSplit[1]);

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using OpenSearch.Net;
 using System.Net;
+using System.Linq;
 
 namespace FoxIDs.Infrastructure.Logging
 {
@@ -237,7 +238,7 @@ namespace FoxIDs.Infrastructure.Logging
 
         private IEnumerable<ErrorMessageItem> GetErrorMessageItems(Exception exception)
         {
-            yield return new ErrorMessageItem { Message = $"{exception.GetType().FullName}: {exception.Message}", StackTrace = exception.StackTrace?.Split(Environment.NewLine) };
+            yield return new ErrorMessageItem { Message = $"{exception.GetType().FullName}: {exception.Message}", StackTrace = exception.StackTrace?.Split(Environment.NewLine)?.Select(s => s.Trim()) };
             if (exception.InnerException != null)
             {
                 foreach (var messageItem in GetErrorMessageItems(exception.InnerException))

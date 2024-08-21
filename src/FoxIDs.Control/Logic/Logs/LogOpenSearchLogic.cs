@@ -273,13 +273,8 @@ namespace FoxIDs.Logic
             boolQuery = boolQuery.Must(m => m
                 .Term(t => t.TenantName, RouteBinding.TenantName) && 
                     m.Term(t => t.TrackName, RouteBinding.TrackName) &&
-                    m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest))))
-                );
-
-            if (!logRequest.Filter.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m
-                    .MultiMatch(ma => ma.
+                    m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest)))) &&
+                    m.MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)
                             .Field(f => f.OperationId)
@@ -296,8 +291,7 @@ namespace FoxIDs.Logic
                             .Field(f => f.UserAgent)
                         )
                         .Query(logRequest.Filter))
-                    );
-            }
+                );
 
             return boolQuery;
         }

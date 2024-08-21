@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
                 {
                     var id = resourceEnvelope.Names.Max(n => n.Id) + 1;
                     resourceEnvelope.Names.Add(new ResourceName { Name = name, Id = id });
-                    resourceEnvelope.Resources.Add(new ResourceItem { Id = id, Items = new List<ResourceCultureItem>(new[] { new ResourceCultureItem { Culture = "en", Value = name, EditLevel = ResourceEditLevels.Human } }) });
+                    resourceEnvelope.Resources.Add(new ResourceItem { Id = id, Items = new List<ResourceCultureItem>([new ResourceCultureItem { Culture = "en", Value = name, EditLevel = ResourceEditLevels.Human }]) });
 
                     resourceEnvelope.ValidateObjectAsync().GetAwaiter().GetResult();
 

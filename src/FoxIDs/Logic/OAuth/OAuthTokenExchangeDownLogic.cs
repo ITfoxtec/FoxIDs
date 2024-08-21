@@ -97,7 +97,7 @@ namespace FoxIDs.Logic
                 var scopes = tokenExchangeRequest.Scope.ToSpaceList();
                 tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, transformedClaims, scopes, algorithm);
 
-                logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);
                 return new JsonResult(tokenExchangeResponse);
             }

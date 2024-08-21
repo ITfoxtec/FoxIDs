@@ -57,12 +57,12 @@ namespace FoxIDs.Logic
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
 
-            logger.ScopeTrace(() => $"Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Authentication request '{authenticationRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
             var codeChallengeSecret = party.Client.RequirePkce ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
             if (codeChallengeSecret != null)
             {
-                logger.ScopeTrace(() => $"CodeChallengeSecret '{codeChallengeSecret.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"CodeChallengeSecret '{codeChallengeSecret.ToJson()}'.", traceType: TraceTypes.Message);
             }
 
             try
@@ -345,12 +345,12 @@ namespace FoxIDs.Logic
                     authenticationResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
                 }
 
-                logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
                 var nameValueCollection = authenticationResponse.ToDictionary();
                 if (!sessionResponse.SessionState.IsNullOrWhiteSpace())
                 {
-                    logger.ScopeTrace(() => $"Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"Session response '{sessionResponse.ToJson()}'.", traceType: TraceTypes.Message);
                     nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
                 }
 
@@ -412,7 +412,7 @@ namespace FoxIDs.Logic
                 ErrorDescription = errorDescription,
             };
 
-            logger.ScopeTrace(() => $"Authentication error response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Authentication error response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect URI '{redirectUri}'.");

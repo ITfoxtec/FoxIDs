@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
@@ -8,7 +7,6 @@ namespace FoxIDs.Models
         public DateTimeOffset Timestamp { get; set; }
         public string LogType { get; set; }
         public string Message { get; set; }
-        public IEnumerable<string> Details { get; set; }
         public double Value { get; set; }
         public string MachineName { get; set; }
         public string ClientIP { get; set; }

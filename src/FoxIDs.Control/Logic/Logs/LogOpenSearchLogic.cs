@@ -130,70 +130,94 @@ namespace FoxIDs.Logic
         private Dictionary<string, string> GetValues(Api.LogItemTypes type, OpenSearchLogItem item)
         {
             var values = new Dictionary<string, string>();
-            if(type == Api.LogItemTypes.Trace)
+            if (type == Api.LogItemTypes.Event)
             {
-                values.Add(Constants.Logs.Results.Message, item.Message);
-            }
-            else if (type == Api.LogItemTypes.Event)
-            {
-                values.Add(Constants.Logs.Results.Name, item.Message);
+                AddValue(values, Constants.Logs.Results.Name, item.Message);
             }
             else if (type == Api.LogItemTypes.Metric)
             {
-                values.Add(Constants.Logs.Results.Name, item.Message);
-                values.Add(Constants.Logs.Results.Sum, item.Value.ToString());
+                AddValue(values, Constants.Logs.Results.Name, item.Message);
+                AddValue(values, Constants.Logs.Results.Sum, item.Value.ToString());
             }
-            values.Add(nameof(item.MachineName), item.MachineName);
-            values.Add(nameof(item.ClientIP), item.ClientIP);
-            values.Add(nameof(item.Domain), item.Domain);
-            values.Add(nameof(item.UserAgent), item.UserAgent);
-            values.Add(nameof(item.RequestId), item.RequestId);
-            values.Add(nameof(item.RequestPath), item.RequestPath);
-            values.Add(nameof(item.TenantName), item.TenantName);
-            values.Add(nameof(item.TrackName), item.TrackName);
-            values.Add(nameof(item.GrantType), item.GrantType);
-            values.Add(nameof(item.UpPartyId), item.UpPartyId);
-            values.Add(nameof(item.UpPartyClientId), item.UpPartyClientId);
-            values.Add(nameof(item.UpPartyStatus), item.UpPartyStatus);
-            values.Add(nameof(item.DownPartyId), item.DownPartyId);
-            values.Add(nameof(item.DownPartyClientId), item.DownPartyClientId);
-            values.Add(nameof(item.ExternalSequenceId), item.ExternalSequenceId);
-            values.Add(nameof(item.AccountAction), item.AccountAction);
-            values.Add(nameof(item.SequenceCulture), item.SequenceCulture);
-            values.Add(nameof(item.Issuer), item.Issuer);
-            values.Add(nameof(item.Status), item.Status);
-            values.Add(nameof(item.SessionId), item.SessionId);
-            values.Add(nameof(item.ExternalSessionId), item.ExternalSessionId);
-            values.Add(nameof(item.UserId), item.UserId);
-            values.Add(nameof(item.Email), item.Email);
-            values.Add(nameof(item.FailingLoginCount), item.FailingLoginCount.ToString());
+            AddValue(values, nameof(item.MachineName), item.MachineName);
+            AddValue(values, nameof(item.ClientIP), item.ClientIP);
+            AddValue(values, nameof(item.Domain), item.Domain);
+            AddValue(values, nameof(item.UserAgent), item.UserAgent);
+            AddValue(values, nameof(item.RequestId), item.RequestId);
+            AddValue(values, nameof(item.RequestPath), item.RequestPath);
+            AddValue(values, nameof(item.TenantName), item.TenantName);
+            AddValue(values, nameof(item.TrackName), item.TrackName);
+            AddValue(values, nameof(item.GrantType), item.GrantType);
+            AddValue(values, nameof(item.UpPartyId), item.UpPartyId);
+            AddValue(values, nameof(item.UpPartyClientId), item.UpPartyClientId);
+            AddValue(values, nameof(item.UpPartyStatus), item.UpPartyStatus);
+            AddValue(values, nameof(item.DownPartyId), item.DownPartyId);
+            AddValue(values, nameof(item.DownPartyClientId), item.DownPartyClientId);
+            AddValue(values, nameof(item.ExternalSequenceId), item.ExternalSequenceId);
+            AddValue(values, nameof(item.AccountAction), item.AccountAction);
+            AddValue(values, nameof(item.SequenceCulture), item.SequenceCulture);
+            AddValue(values, nameof(item.Issuer), item.Issuer);
+            AddValue(values, nameof(item.Status), item.Status);
+            AddValue(values, nameof(item.SessionId), item.SessionId);
+            AddValue(values, nameof(item.ExternalSessionId), item.ExternalSessionId);
+            AddValue(values, nameof(item.UserId), item.UserId);
+            AddValue(values, nameof(item.Email), item.Email);
+            AddValue(values, nameof(item.FailingLoginCount), item.FailingLoginCount.ToString());
             return values;
+        }
+
+        private void AddValue(Dictionary<string, string> values, string key, string value)
+        {
+            if (!value.IsNullOrWhiteSpace())
+            {
+                value = value.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : value;
+                values.Add(key, value);
+            }
         }
 
         private List<Api.LogItemDetail> GetDetails(Api.LogItemTypes type, OpenSearchLogItem item)
         {
-            if(type == Api.LogItemTypes.Warning || type == Api.LogItemTypes.Error || type == Api.LogItemTypes.CriticalError)
+            var logItemDetails = new List<Api.LogItemDetail>();
+            if (type == Api.LogItemTypes.Warning || type == Api.LogItemTypes.Error || type == Api.LogItemTypes.CriticalError)
             {
-                var logItemDetails = new List<Api.LogItemDetail>();
                 if (!item.Message.IsNullOrWhiteSpace())
                 {
-                    logItemDetails.Add(new Api.LogItemDetail { Name = item.Message });
-                }
-                foreach (var detail in item.Details)
-                {
-                    var subItems = detail.Split(Environment.NewLine);
-                    var logItemDetail = new Api.LogItemDetail { Name = subItems[0] };
-                    if (subItems.Length > 1)
+                    var logErrorMessageItems = item.Message.ToObject<List<LogErrorMessageItem>>();
+                    foreach (var logErrorMessageItem in logErrorMessageItems)
                     {
-                        logItemDetail.Details = subItems.Skip(1).ToList();
+                        var logItemDetail = new Api.LogItemDetail
+                        {
+                            Name = logErrorMessageItem.Message
+                        };
+                        logItemDetail.Details = logErrorMessageItem.StackTrace;
+                        logItemDetails.Add(logItemDetail);
                     }
-                    logItemDetails.Add(logItemDetail);
                 }
-
-                return logItemDetails;
+            }
+            else if (type == Api.LogItemTypes.Trace)
+            {
+                if (!item.Message.IsNullOrWhiteSpace())
+                {
+                    var logTraceMessageItems = item.Message.ToObject<List<LogTraceMessageItem>>();
+                    foreach (var logTraceMessageItem in logTraceMessageItems)
+                    {
+                        var logItemDetail = new Api.LogItemDetail
+                        {
+                            Name = logTraceMessageItem.Message
+                        };
+                        logItemDetails.Add(logItemDetail);
+                    }
+                }
             }
 
-            return null;           
+            if (logItemDetails.Count > 0)
+            {
+                return logItemDetails;
+            }
+            else 
+            {
+                return null;
+            }
         }
 
         private static void HandleSequenceInfo(Api.LogItem item, Api.LogItem sequenceItem)
@@ -258,7 +282,6 @@ namespace FoxIDs.Logic
                     .MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)
-                            .Field(f => f.Details)
                             .Field(f => f.OperationId)
                             .Field(f => f.RequestId)
                             .Field(f => f.RequestPath)

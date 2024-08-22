@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using OpenSearch.Net;
 using System.Net;
 using System.Linq;
+using static FoxIDs.Constants.Logs;
 
 namespace FoxIDs.Infrastructure.Logging
 {
@@ -30,9 +31,21 @@ namespace FoxIDs.Infrastructure.Logging
 
         private void Init()
         {
-            AddMapping();
-            CreateIndexPolicy(LogLifetimeOptions.Max30Days);
-            CreateIndexPolicy(LogLifetimeOptions.Max180Days);
+            try
+            {
+                AddMapping();
+                CreateIndexPolicy(LogLifetimeOptions.Max30Days);
+                CreateIndexPolicy(LogLifetimeOptions.Max180Days);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    stdoutTelemetryLogger.Error(ex, $"OpenSearch init error'.");
+                }
+                catch
+                { }
+            }
         }
 
         private void AddMapping()

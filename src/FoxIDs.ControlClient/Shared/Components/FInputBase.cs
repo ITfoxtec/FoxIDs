@@ -81,6 +81,22 @@ namespace FoxIDs.Client.Shared.Components
                     return false;
                 }
             }
+            else if (Nullable.GetUnderlyingType(typeof(TValue)).IsEnum)
+            {
+                try
+                {
+                    result = (TValue)Enum.Parse(Nullable.GetUnderlyingType(typeof(TValue)), value);
+                    validationErrorMessage = null;
+                    OnValueParsedAsync.Invoke(result);
+                    return true;
+                }
+                catch (ArgumentException)
+                {
+                    result = default;
+                    validationErrorMessage = $"Unable to pass '{value}' value to enum.";
+                    return false;
+                }
+            }
             else
             {
                 throw new NotImplementedException();

@@ -143,8 +143,8 @@ namespace FoxIDs.Infrastructure.Hosting
             if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 var openSearchSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
-                    .RequestTimeout(TimeSpan.FromSeconds(3))
-                    .MaxRetryTimeout(TimeSpan.FromSeconds(9))
+                    .RequestTimeout(TimeSpan.FromSeconds(2))
+                    .MaxRetryTimeout(TimeSpan.FromSeconds(4))
                     .ThrowExceptions();
 
                 services.AddSingleton(new OpenSearchClient(openSearchSettings));

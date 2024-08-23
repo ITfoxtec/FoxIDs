@@ -437,7 +437,7 @@ namespace FoxIDs
 
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;
-                public const int ValuesMax = 100;
+                public const int ValuesMax = 250;
 
                 /// <summary>
                 /// JWT and SAML claim value max length.

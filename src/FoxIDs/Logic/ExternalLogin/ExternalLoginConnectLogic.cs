@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
                 Username = username,
                 Password = password
             };
-            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{authRequest.ToJson()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{new { authRequest.UsernameType, authRequest.Username }.ToJson()}'.", traceType: TraceTypes.Message);
 
             var httpClient = httpClientFactory.CreateClient();
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? extLoginUpParty.Secret.Substring(0, 3) : string.Empty)}'.", traceType: TraceTypes.Message);

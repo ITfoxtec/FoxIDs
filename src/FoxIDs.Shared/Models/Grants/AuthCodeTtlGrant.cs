@@ -24,7 +24,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [ListLength(1, 1000)]
+        [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 

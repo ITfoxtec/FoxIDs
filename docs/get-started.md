@@ -1,7 +1,7 @@
 # Get started
 FoxIDs is available online at [FoxIDs.com](https://www.foxids.com/action/createtenant) or you can [deploy](deployment.md) FoxIDs anywhere yourself.
 
-> **FoxIDs as a Service (SaaS)**  
+> **FoxIDs cloud**  
 > FoxIDs.com is hosted in Europe as an Identity Services (IDS).
 >   
 > [Register on FoxIDs.com](https://www.foxids.com/action/createtenant), where you get access to your one FoxIDs tenant.  

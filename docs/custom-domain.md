@@ -14,8 +14,8 @@ The custom domain can be configured with [Control Client](control.md#foxids-cont
 
 Custom domains is not supported in the master tenant and master environments.
 
-## Service (SaaS) on FoxIDs.com
-Configuring a custom domain in your FoxIDs.com tenant.
+## FoxIDs Cloud
+Configuring a custom domain in your FoxIDs cloud tenant.
 
 > Only sub domains is supported as custom domains, like e.g., `id.some-domain.com`, `auth.some-domain.com`, `login.some-domain.com` or `id.zyx.some-domain.com`
 

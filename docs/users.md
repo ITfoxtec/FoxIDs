@@ -53,7 +53,8 @@ Current supported hash algorithm `P2HS512:10` which is defined as:
 Standard .NET liberals are used to calculate the hash.
 
 ## External users
-An external user is linked to one authentication method and can only be authenticated with that particular authentication method. External users can be linked to the authentication methods: OpenID Connect, SAML 2.0 or Environment Link.
+An external user is linked to one authentication method and can only be authenticated with that particular authentication method. External users can be linked to the authentication methods: OpenID Connect, SAML 2.0 or Environment Link.  
+It is optional to use external users, they are not created by default.
 
 All external user grouped under a authentication method is linked with the same claim type (e.g. the `sub` or `email` claim type) and the users are separated by unique claim values.
 

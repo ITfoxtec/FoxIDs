@@ -166,7 +166,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
 
-            if (settings.Options.Cache == CacheOptions.Redis)
+            if (settings.Options.DataStorage == DataStorageOptions.CosmosDb && settings.Options.Cache == CacheOptions.Redis)
             {
                 var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
                 services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);

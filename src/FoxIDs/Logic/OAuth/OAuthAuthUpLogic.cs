@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var userInfoResponse = result.ToObject<Dictionary<string, string>>();
-                    logger.ScopeTrace(() => $"AuthMethod, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, UserInfo response '{userInfoResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
                     var claims = userInfoResponse.Select(c => new Claim(c.Key, c.Value)).ToList();
                     if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.BadRequest:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var userInfoResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"AuthMethod, Bad userinfo response '{userInfoResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Bad userinfo response '{userInfoResponseBadRequest.ToJson()}'.", traceType: TraceTypes.Message);
                     try
                     {
                         userInfoResponseBadRequest.Validate(true);
@@ -154,7 +154,7 @@ namespace FoxIDs.Logic
                     {
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var userInfoResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"AuthMethod, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AuthMethod, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJson()}'.", traceType: TraceTypes.Message);
                         try
                         {
                             userInfoResponseUnexpectedStatus.Validate(true);

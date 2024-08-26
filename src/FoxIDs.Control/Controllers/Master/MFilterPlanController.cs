@@ -11,6 +11,7 @@ using ITfoxtec.Identity;
 using System.Linq;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -69,7 +70,7 @@ namespace FoxIDs.Controllers
             }
             else
             {
-                return masterDataRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName));
+                return masterDataRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

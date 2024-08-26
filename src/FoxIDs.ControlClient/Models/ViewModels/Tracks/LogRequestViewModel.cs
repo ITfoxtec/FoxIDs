@@ -21,13 +21,19 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public static DateTimeOffset DefaultFromTime => DateTimeOffset.Now.AddMinutes(-5);
 
+        public bool DisableBothEventAndTrace { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (QueryTypes.Contains(LogQueryTypes.Traces) && QueryTypes.Contains(LogQueryTypes.Events))
+            if (DisableBothEventAndTrace)
             {
-                results.Add(new ValidationResult($"Traces and events cannot be selected at the same time.", new[] { nameof(QueryTypes) }));
+                if (QueryTypes.Contains(LogQueryTypes.Traces) && QueryTypes.Contains(LogQueryTypes.Events))
+                {
+                    results.Add(new ValidationResult($"Traces and events cannot be selected at the same time.", new[] { nameof(QueryTypes) }));
+                }
             }
+
             return results;
         }
     }

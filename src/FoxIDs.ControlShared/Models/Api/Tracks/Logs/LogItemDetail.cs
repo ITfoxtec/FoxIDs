@@ -6,6 +6,6 @@ namespace FoxIDs.Models.Api
     {
         public string Name { get; set; }
 
-        public List<string> Details { get; set; }
+        public IEnumerable<string> Details { get; set; }
     }
 }

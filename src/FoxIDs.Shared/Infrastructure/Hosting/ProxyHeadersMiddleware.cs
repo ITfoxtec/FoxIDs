@@ -26,7 +26,16 @@ namespace FoxIDs.Infrastructure.Hosting
                 _ = ValidateProxySecret(context);
             }
 
+            SetScopeProperty(context);
+
             await next.Invoke(context);
+        }
+
+        protected void SetScopeProperty(HttpContext context)
+        {
+            var scopedLogger = context.RequestServices.GetService<TelemetryScopedLogger>();
+            scopedLogger.SetScopeProperty(Constants.Logs.Domain, context.Request.Host.ToUriComponent());
+            scopedLogger.SetScopeProperty(Constants.Logs.ClientIP, context.Connection.RemoteIpAddress.ToString());
         }
 
         protected virtual bool IsHealthCheck(HttpContext context)

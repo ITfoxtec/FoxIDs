@@ -91,7 +91,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 6. Select Show advanced
 7. Set **Logout response binding** to **Redirect**
 8. Configure a **Custom SP issuer**, the issuer can optionally start with `https://saml.` The issuer in this example is `https://saml.foxids.com/test-corp/context-handler-test/`
-9. Optionally set the **Certificate validation mode** to **Chain trust** if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+9. Optionally set the **Certificate validation mode** to **Chain trust** if the OCES3 root certificate is trusted on your platform
    Set the **Certificate revocation mode** to **Online** 
 10. Select Yes in **Add logout response location URL in metadata**
 11. Select Yes in **Include the encryption certificate in metadata**
@@ -206,7 +206,7 @@ The following claims is most often used:
   - `https://data.gov.dk/model/core/eid/privilegesIntermediate`
 
 21. Add the signing certificate from the metadata in **Signature validation certificate**
-22. Optionally the **Certificate validation mode** to **Chain trust** if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+22. Optionally the **Certificate validation mode** to **Chain trust** if the OCES3 root certificate is trusted on your platform
     Set the **Certificate revocation mode** to **Online** 
 23. Set **Authn response sign type** to **Sign assertion**
 24. Configure a **Custom IdP issuer**, the issuer can optionally start with `https://saml.` The issuer in this example `https://saml.foxids.com/test-corp/context-handler-test-idp/`

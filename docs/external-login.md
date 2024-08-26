@@ -1,6 +1,6 @@
 # External Login
 
-With external login you can authenticate users in an external user store using an [API call](#api). The API is called with a username and password, and the API then validate the username and password combination and return a response indicating success or failure.  
+With external login you can authenticate users in your existing user database with an [API call](#api). You implement the API which is called with a username and password, and the API then validate the username and password combination and return a response indicating success or failure.  
 You would use an external login authentication method if you have an existing user store to leverage the user store as a possible authentication method in FoxIDs. 
 After login it is possible to create [external users](users.md#external-users) and optionally show a dialog where the user e.g., can put in a name, email etc.
 
@@ -29,6 +29,8 @@ The API has a base URL and the functionality is divided into folders. Currently,
 *Other folders for changing passwords and creating new users will be added later.*
 
 If the base URL for the API is `https://somewhere.org/mystore` the URL for the `authentication` folder will be `https://somewhere.org/mystore/authentication`.
+
+> FoxIDs cloud call the API from the IP address `57.128.60.142`.
 
 ### Request
 The API call is secured with [HTTP Basic authentication scheme](https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1) where FoxIDs sends the ID `external_login` as the username and the configured secret as the password.

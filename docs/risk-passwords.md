@@ -8,9 +8,6 @@ Download the `SHA-1` pwned passwords in a single file from [haveibeenpwned.com/p
 
 > Be aware that it takes some time to upload all risk passwords.
 
-The risk passwords are uploaded as bulk. If you FoxIDs instance is installed in Azure, please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 4000 RU/s or higher) temporarily. 
-The throughput can be adjusted in Azure Cosmos DB --> Data Explorer --> Scale & Settings.
-
 You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
 
 ## Configure the Seed Tool

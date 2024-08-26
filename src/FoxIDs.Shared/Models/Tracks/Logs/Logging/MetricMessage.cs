@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Infrastructure.Logging
+﻿namespace FoxIDs.Models
 {
     public class MetricMessage
     {

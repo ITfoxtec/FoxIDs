@@ -55,7 +55,7 @@ namespace FoxIDs.Repository
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
                 }
 
-                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType)))
                 {
                     count++;
                 }
@@ -123,7 +123,7 @@ namespace FoxIDs.Repository
                     filePathSplit = filePathSplit[filePathSplit.Length - 1].Split('|');
                 }
 
-                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType)))
                 {
                     selectedFilePaths.Add(filePath);
                 }
@@ -211,7 +211,7 @@ namespace FoxIDs.Repository
             foreach (string filePath in Directory.GetFiles(GetDbPath()))
             {
                 var filePathSplit = filePath.Split(Path.DirectorySeparatorChar);
-                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType), StringComparison.Ordinal))
+                if (filePathSplit[filePathSplit.Length - 1].StartsWith(GetFilePartitionIdAndDataType(partitionId, dataType)))
                 {
                     File.Delete(filePath);
                     count++;
@@ -271,7 +271,7 @@ namespace FoxIDs.Repository
 
         private string GetPre(string id, string[] idSplit)
         {
-            if (id.StartsWith(Constants.Models.DataType.Party, StringComparison.Ordinal))
+            if (id.StartsWith(Constants.Models.DataType.Party))
             {
                 return $"{idSplit[0]}_{idSplit[1]}-";
             }
@@ -283,7 +283,7 @@ namespace FoxIDs.Repository
 
         private string GetPath(string[] idSplit)
         {            
-            if (idSplit[0].Equals(Constants.Models.DataType.Cache, StringComparison.Ordinal))
+            if (idSplit[0].Equals(Constants.Models.DataType.Cache))
             {
                 return GetCachePath();
             }

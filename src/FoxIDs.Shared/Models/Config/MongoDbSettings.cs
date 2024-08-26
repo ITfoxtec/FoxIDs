@@ -17,16 +17,28 @@ namespace FoxIDs.Models.Config
         public string DatabaseName { get; set; } = "FoxIDs";
 
         /// <summary>
+        /// Master Collection Name.
+        /// </summary>
+        [Required]
+        public string MasterCollectionName { get; set; } = "Master";
+
+        /// <summary>
+        /// Master Time-to-live (TTL) Collection Name.
+        /// </summary>
+        [Required]
+        public string MasterTtlCollectionName { get; set; } = "MasterTtl";
+
+        /// <summary>
         /// Tenants Collection Name.
         /// </summary>
         [Required]
         public string TenantsCollectionName { get; set; } = "Tenants";
 
         /// <summary>
-        /// Time-to-live (TTL) Tenants Collection Name.
+        /// Tenants Time-to-live (TTL) Collection Name.
         /// </summary>
         [Required]
-        public string TtlTenantsCollectionName { get; set; } = "TenantsTtl";
+        public string TenantsTtlCollectionName { get; set; } = "TenantsTtl";
 
         /// <summary>
         /// Cache Collection Name also supporting Time-to-live (TTL).

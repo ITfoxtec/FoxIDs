@@ -14,9 +14,9 @@ namespace FoxIDs.SeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {
-        private const int maxRiskPasswordToUpload = 500000;
-        private const int riskPasswordMoreThenBreachesCount = 1000;
-        private const int uploadRiskPasswordBlockSize = 1000;
+        private const int maxRiskPasswordToUpload = 0; // 1000000; // 0 is unlimited
+        private const int riskPasswordMoreThenBreachesCount = 100; // 1000;
+        private const int uploadRiskPasswordBlockSize = 10000; // 1000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -46,63 +46,38 @@ namespace FoxIDs.SeedTool.SeedLogic
                     readCount++;
                     if (breachesCount >= riskPasswordMoreThenBreachesCount)
                     {
-                        var index = riskPasswords.FindLastIndex(p => p.Count >= breachesCount);
-                        if (index < maxRiskPasswordToUpload)
+                        riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
+                        addCount++;
+                        if (addCount % 1000 == 0)
                         {
-                            if (riskPasswords.Where(p => p.PasswordSha1Hash == split[0]).Any())
-                            {
-                                Console.WriteLine($"{Environment.NewLine}Risk password SHA1 hash '{split[0]}' already read.");
-                            } 
-                            else
-                            {
-                                riskPasswords.Insert(index + 1, new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
-                                addCount++;
-                                if (addCount % 1000 == 0)
-                                {
-                                    Console.Write($"{Environment.NewLine}Risk passwords read '{readCount}'");
-                                }
-                                else if (addCount % 100 == 0)
-                                {
-                                    Console.Write(".");
-                                }
-                            }
+                            Console.Write($"{Environment.NewLine}Risk passwords read '{readCount}'");
+                        }
+                        else if (addCount % 100 == 0)
+                        {
+                            Console.Write(".");
                         }
 
-                        if (riskPasswords.Count() > maxRiskPasswordToUpload)
+                        if (maxRiskPasswordToUpload > 0 && addCount >= maxRiskPasswordToUpload)
                         {
-                            riskPasswords.RemoveAt(riskPasswords.Count() - 1);
+                            await UploadAsync(riskPasswords);
+                            break;
+                        }
+                        if (riskPasswords.Count() >= uploadRiskPasswordBlockSize)
+                        {
+                            await UploadAsync(riskPasswords);
+                            riskPasswords = new List<RiskPasswordApiModel>();
                         }
                     }
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}', total ready for upload '{riskPasswords.Count()}'");
-            await UploadAsync(riskPasswords);
-            Console.WriteLine("All risk passwords uploaded");
+            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}', total uploaded '{addCount}'");
         }
 
         private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords)
         {
-            var totalCount = 0;
-            var riskPasswordsBlock = new List<RiskPasswordApiModel>();
-            foreach(var riskPassword in riskPasswords)
-            {
-                riskPasswordsBlock.Add(riskPassword);
-                if (riskPasswordsBlock.Count >= uploadRiskPasswordBlockSize)
-                {
-                    totalCount += riskPasswordsBlock.Count;
-                    await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswordsBlock);
-                    Console.WriteLine($"Risk passwords uploaded '{totalCount}'");
-                    riskPasswordsBlock = new List<RiskPasswordApiModel>();
-                }
-            }            
-
-            if (riskPasswordsBlock.Count > 0)
-            {
-                totalCount += riskPasswordsBlock.Count;
-                Console.WriteLine($"Uploading the last risk passwords '{totalCount}'");
-                await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswordsBlock);
-            }
+            await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
+            Console.WriteLine($"{Environment.NewLine}Risk passwords uploaded '{riskPasswords.Count()}'");            
         }
 
         public async Task DeleteAllAsync()
@@ -127,6 +102,12 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine($"All '{totalCount}' risk passwords deleted");
         }
 
+        public async Task DeleteAllInPartitionAsync()
+        {
+            Console.WriteLine("Delete all risk passwords");
+            await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
+            Console.WriteLine("All risk passwords deleted");
+        }
         private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordApiModel> riskPasswords)
         {
             var client = httpClientFactory.CreateClient();
@@ -145,15 +126,17 @@ namespace FoxIDs.SeedTool.SeedLogic
             return result.ToObject<List<RiskPasswordApiModel>>();   
         }
 
-        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs)
+        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs = null)
         {
-            var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
-
             var request = new HttpRequestMessage();
             request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
-            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
-            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-            request.Content = content;
+            if (passwordSha1Hashs != null)
+            {
+                var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
+                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
+                content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                request.Content = content;
+            }
             request.Method = new HttpMethod("DELETE");
             request.RequestUri = new Uri(PasswordRiskListApiEndpoint);
             var client = httpClientFactory.CreateClient();

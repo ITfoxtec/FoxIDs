@@ -60,6 +60,10 @@ namespace FoxIDs.Controllers
                 logger.Error(exception);
                 return HandleOAuthTokenException(exception);
             }
+            else
+            {
+                LogException(exception);
+            }
 
             var sequenceException = FindException<SequenceException>(exception);
             var sequence = await ReadAndUseSequenceAsync(errorViewModel, exceptionHandlerPathFeature);
@@ -105,6 +109,15 @@ namespace FoxIDs.Controllers
                 errorViewModel.TechnicalErrors = exception.GetAllMessages();
             }
             return View(errorViewModel);
+        }
+
+        private void LogException(Exception exception)
+        {
+            if (exception == null)
+            {
+                exception = new Exception("Unknown error");
+            }
+            logger.Error(exception);
         }
 
         private async Task<Sequence> ReadAndUseSequenceAsync(ErrorViewModel errorViewModel, IExceptionHandlerPathFeature exceptionHandlerPathFeature)

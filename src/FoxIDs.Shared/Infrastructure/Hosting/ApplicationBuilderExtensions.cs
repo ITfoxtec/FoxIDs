@@ -11,6 +11,11 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ApplicationBuilderExtensions
     {
+        public static IApplicationBuilder UseLoggingMiddleware(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<LoggingMiddleware>();
+        }
+
         public static IApplicationBuilder UseStaticFilesCacheControl(this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             if (environment.IsDevelopment())
@@ -44,9 +49,9 @@ namespace FoxIDs.Infrastructure.Hosting
             var defaultCulture = new CultureInfo("en");
             var requestLocalizationOptions = new RequestLocalizationOptions
             {
-                RequestCultureProviders = new IRequestCultureProvider[] { new AcceptLanguageHeaderRequestCultureProvider() },
-                SupportedCultures = new[] { defaultCulture },
-                SupportedUICultures = new[] { defaultCulture },
+                RequestCultureProviders = [new AcceptLanguageHeaderRequestCultureProvider()],
+                SupportedCultures = [defaultCulture],
+                SupportedUICultures = [defaultCulture],
                 DefaultRequestCulture = new RequestCulture(defaultCulture),
 
             };

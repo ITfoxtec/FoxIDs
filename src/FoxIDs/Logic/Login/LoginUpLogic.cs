@@ -100,6 +100,8 @@ namespace FoxIDs.Logic
             }
             else
             {
+                planUsageLogic.LogLoginEvent(PartyTypes.Login);
+
                 await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
                 {
                     DownPartyLink = loginRequest.DownPartyLink,

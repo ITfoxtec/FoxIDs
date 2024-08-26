@@ -136,7 +136,7 @@ namespace FoxIDs.Client.Pages.Settings
             try
             {
                 var plan = await PlanService.GetPlanAsync(generalPlan.Name);
-                await generalPlan.Form.InitAsync(plan);
+                await generalPlan.Form.InitAsync(ToViewModel(plan));
             }
             catch (TokenUnavailableException)
             {
@@ -148,7 +148,19 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void PlanViewModelAfterInit(GeneralPlanViewModel generalPlan, Plan plan)
+        private PlanViewModel ToViewModel(Plan plan)
+        {
+            return plan.Map<PlanViewModel>(afterMap: afterMap =>
+            {
+                if (!afterMap.LogLifetime.HasValue)
+                {
+                    afterMap.LogLifetime = LogLifetimeOptionsVievModel.Null;
+                }
+            });
+        }
+
+
+        private void PlanViewModelAfterInit(GeneralPlanViewModel generalPlan, PlanViewModel plan)
         {
             if (generalPlan.CreateMode)
             {
@@ -158,7 +170,7 @@ namespace FoxIDs.Client.Pages.Settings
             plan.Logins = plan.Logins ?? new PlanItem();
             plan.TokenRequests = plan.TokenRequests ?? new PlanItem();
             plan.ControlApiGetRequests = plan.ControlApiGetRequests ?? new PlanItem();
-            plan.ControlApiUpdateRequests = plan.ControlApiUpdateRequests ?? new PlanItem();
+            plan.ControlApiUpdateRequests = plan.ControlApiUpdateRequests ?? new PlanItem();            
         }
 
         private string PlanInfoText(GeneralPlanViewModel generalPlan)
@@ -182,17 +194,27 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
+                if (generalPlan.Form.Model.LogLifetime == LogLifetimeOptionsVievModel.Null)
+                {
+                    generalPlan.Form.Model.LogLifetime = null;
+                }
+
+                var plan = generalPlan.Form.Model.Map<Plan>(afterMap: afterMap =>
+                {
+                
+                });
+
                 if (generalPlan.CreateMode)
                 {
-                    var planResult = await PlanService.CreatePlanAsync(generalPlan.Form.Model);
-                    generalPlan.Form.UpdateModel(planResult);
+                    var planResult = await PlanService.CreatePlanAsync(plan);
+                    generalPlan.Form.UpdateModel(ToViewModel(planResult));
                     generalPlan.CreateMode = false;
                     toastService.ShowSuccess("Plan created.");
                 }
                 else
                 {
-                    var planResult = await PlanService.UpdatePlanAsync(generalPlan.Form.Model);
-                    generalPlan.Form.UpdateModel(planResult);
+                    var planResult = await PlanService.UpdatePlanAsync(plan);
+                    generalPlan.Form.UpdateModel(ToViewModel(planResult));
                     toastService.ShowSuccess("Plan updated.");
                 }
 

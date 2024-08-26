@@ -80,13 +80,8 @@
     else if (Item.Type == LogItemTypes.Event)
     {
         <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name)</div>
-
-        @if (!Item.SequenceId.IsNullOrEmpty())
-        {
-            <div>SequenceId: @Item.SequenceId</div>
-        }
     }
-    else if (Item.Type == LogItemTypes.Metrics)
+    else if (Item.Type == LogItemTypes.Metric)
     {
         <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
 
@@ -97,11 +92,6 @@
         @if (Item.Values.TryGetValue(Constants.Logs.Results.Sum, out var metricsValue))
         {
             <div>Sum: @metricsValue</div>
-        }
-
-        @if (!Item.SequenceId.IsNullOrEmpty())
-        {
-            <div>SequenceId: @Item.SequenceId</div>
         }
     }
 </div>

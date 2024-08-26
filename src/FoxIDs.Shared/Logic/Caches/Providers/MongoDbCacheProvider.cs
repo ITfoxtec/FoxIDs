@@ -20,14 +20,14 @@ namespace FoxIDs.Logic.Caches.Providers
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            _ = await collection.DeleteOneAsync(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal));
+            _ = await collection.DeleteOneAsync(f => f.PartitionId.Equals(CachePartitionId) && f.Id.Equals(id));
         }
 
         public async ValueTask<bool> ExistsAsync(string key)
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId) && f.Id.Equals(id)).FirstOrDefaultAsync();
             return cachItem != null;
         }
 
@@ -35,7 +35,7 @@ namespace FoxIDs.Logic.Caches.Providers
         {
             var id = GetId(key);
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId) && f.Id.Equals(id)).FirstOrDefaultAsync();
             return cachItem?.Data;
         }
 
@@ -45,7 +45,7 @@ namespace FoxIDs.Logic.Caches.Providers
             var cachItem = new CacheTtlData { Id = id, PartitionId = CachePartitionId, Data = value, TimeToLive = lifetime };
 
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
-            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(cachItem.PartitionId, StringComparison.Ordinal) && f.Id.Equals(cachItem.Id, StringComparison.Ordinal);
+            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(cachItem.PartitionId) && f.Id.Equals(cachItem.Id);
             var data = await collection.Find(filter).FirstOrDefaultAsync();
             if (data == null)
             {
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic.Caches.Providers
 
         private async ValueTask<(long number, bool exists)> GetNumberInternalAsync(IMongoCollection<CacheData> collection, string id)
         {
-            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal)).FirstOrDefaultAsync();
+            var cachItem = await collection.Find(f => f.PartitionId.Equals(CachePartitionId) && f.Id.Equals(id)).FirstOrDefaultAsync();
             if (cachItem == null)
             {
                 return (0, false);
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic.Caches.Providers
             (var number, var exists) = await GetNumberInternalAsync(collection, id);
             number++;
 
-            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(CachePartitionId, StringComparison.Ordinal) && f.Id.Equals(id, StringComparison.Ordinal);
+            Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(CachePartitionId) && f.Id.Equals(id);
 
             if (lifetime.HasValue)
             {

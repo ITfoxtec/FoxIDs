@@ -11,7 +11,7 @@ Control Client is a Blazor WebAssembly (WASM) app.
 ### Tenant and master environment
 If you use [FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
 
-Otherwise if FoxIDs is [deployed](development.md) in your one Azure tenant you get access to the master tenant. In this case you firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
+Otherwise if you [deployed](development.md) FoxIDs (self-Hosted) you get access to the master tenant. In this case you firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
 
 ![Configure tenants](images/configure-tenant.png)
 

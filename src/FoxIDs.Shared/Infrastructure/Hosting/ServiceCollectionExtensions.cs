@@ -16,6 +16,9 @@ using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
 using System;
 using System.Net.Http;
+using OpenSearch.Client;
+using System.Linq;
+using OpenSearch.Net;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -38,20 +41,20 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 case CacheOptions.Memory:
                     services.AddSingleton<IMemoryCache, MemoryCache>();
-                    services.AddTransient<ICacheProvider, MemoryCacheProvider>();
+                    services.AddSingleton<ICacheProvider, MemoryCacheProvider>();
                     break;
                 case CacheOptions.File:
-                    services.AddTransient<ICacheProvider, FileCacheProvider>();
+                    services.AddSingleton<ICacheProvider, FileCacheProvider>();
                     break;
                 case CacheOptions.Redis:
-                    services.AddTransient<ICacheProvider, RedisCacheProvider>();
+                    services.AddSingleton<ICacheProvider, RedisCacheProvider>();
                     break;
                 case CacheOptions.MongoDb:
-                    services.AddTransient<ICacheProvider, MongoDbCacheProvider>();
+                    services.AddSingleton<ICacheProvider, MongoDbCacheProvider>();
                     break;
                 case CacheOptions.PostgreSql:
                     services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Cache);
-                    services.AddTransient<ICacheProvider, PostgreSqlCacheProvider>();
+                    services.AddSingleton<ICacheProvider, PostgreSqlCacheProvider>();
                     break;
                 default:
                     throw new NotSupportedException($"{nameof(settings.Options.Cache)} Cache option '{settings.Options.Cache}' not supported.");
@@ -69,11 +72,11 @@ namespace FoxIDs.Infrastructure.Hosting
                     throw new NotSupportedException($"{nameof(settings.Options.DataCache)} option '{settings.Options.DataCache}' not supported.");
             }
 
-            services.AddTransient<PlanCacheLogic>();
-            services.AddTransient<TenantCacheLogic>();
-            services.AddTransient<TrackCacheLogic>();
-            services.AddTransient<DownPartyCacheLogic>();
-            services.AddTransient<UpPartyCacheLogic>();
+            services.AddSingleton<PlanCacheLogic>();
+            services.AddSingleton<TenantCacheLogic>();
+            services.AddSingleton<TrackCacheLogic>();
+            services.AddSingleton<DownPartyCacheLogic>();
+            services.AddSingleton<UpPartyCacheLogic>();
 
             return services;
         }
@@ -137,6 +140,16 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
             services.AddScoped<TelemetryScopedProperties>();
+            if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                var openSearchSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
+                    .RequestTimeout(TimeSpan.FromSeconds(2))
+                    .MaxRetryTimeout(TimeSpan.FromSeconds(4))
+                    .ThrowExceptions();
+
+                services.AddSingleton(new OpenSearchClient(openSearchSettings));
+                services.AddSingleton<OpenSearchTelemetryLogger>();
+            }
 
             services.AddHttpContextAccessor();
             var httpClientBuilder = services.AddHttpClient(Options.DefaultName, options => 
@@ -153,7 +166,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
 
-            if (settings.Options.Cache == CacheOptions.Redis)
+            if (settings.Options.DataStorage == DataStorageOptions.CosmosDb && settings.Options.Cache == CacheOptions.Redis)
             {
                 var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
                 services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);

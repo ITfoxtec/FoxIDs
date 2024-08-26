@@ -1,14 +1,12 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Plan : MasterDocument, IValidatableObject
+    public class Plan : MasterDocument
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -88,27 +86,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "control_api_upd_req")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
-        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
-        [JsonProperty(PropertyName = "app_ins_con_string")]
-        public string ApplicationInsightsConnectionString { get; set; }
-
-        [MaxLength(Constants.Models.Logging.LogAnalyticsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Logging.LogAnalyticsWorkspaceIdRegExPattern)]
-        [JsonProperty(PropertyName = "log_analy_works_id")]
-        public string LogAnalyticsWorkspaceId { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-
-            if (!ApplicationInsightsConnectionString.IsNullOrEmpty() && LogAnalyticsWorkspaceId.IsNullOrEmpty() || ApplicationInsightsConnectionString.IsNullOrEmpty() && !LogAnalyticsWorkspaceId.IsNullOrEmpty())
-            {
-                results.Add(new ValidationResult($"Both the field {nameof(ApplicationInsightsConnectionString)} and the field {nameof(LogAnalyticsWorkspaceId)} is required if one of them is present.", new[] { nameof(ApplicationInsightsConnectionString), nameof(LogAnalyticsWorkspaceId) }));
-            }
-
-            return results;
-        }
+        [JsonProperty(PropertyName = "log_lifetime")]
+        public LogLifetimeOptions? LogLifetime { get; set; }
 
         public new class IdKey : MasterDocument.IdKey
         {

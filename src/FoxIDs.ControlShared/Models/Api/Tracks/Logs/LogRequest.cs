@@ -43,10 +43,6 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"The max time between {nameof(FromTime)} and {nameof(ToTime)} is 24 hours.", new[] { nameof(FromTime) }));
             }
-            if (QueryTraces && QueryEvents)
-            {
-                results.Add(new ValidationResult($"The field {nameof(QueryTraces)} and {nameof(QueryEvents)} cannot be true at the same time.", new[] { nameof(QueryTraces) }));
-            }
             return results;
         }
     }

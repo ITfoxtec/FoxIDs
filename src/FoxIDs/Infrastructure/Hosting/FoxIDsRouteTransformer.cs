@@ -124,11 +124,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private async Task HandleTenantRouteAsync(HttpContext httpContext, bool useCustomDomain, RouteValueDictionary values, string[] route)
         {
-            var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
-
-            scopedLogger.SetScopeProperty(Constants.Logs.Domain, httpContext.Request.Host.ToUriComponent());
-            scopedLogger.SetScopeProperty(Constants.Logs.UserAgent, httpContext.Request.Headers["User-Agent"].ToString());
-
             var routeAction = route[route.Length - 1];
             if (routeAction.StartsWith('_'))
             {
@@ -137,7 +132,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 values[Constants.Routes.RouteControllerKey] = routeController;
                 values[Constants.Routes.RouteActionKey] = subRoutAction;
 
-                await SetSequanceAndCulture(httpContext, scopedLogger, routeAction);
+                await SetSequanceAndCulture(httpContext, routeAction);
             }
             else
             {
@@ -147,19 +142,20 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected async Task SetSequanceAndCulture(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
+        protected async Task SetSequanceAndCulture(HttpContext httpContext, string routeAction)
         {
-            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, scopedLogger, routeAction);
+            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, routeAction);
             var requestCulture = new RequestCulture(culture);
             httpContext.Features.Set<IRequestCultureFeature>(new RequestCultureFeature(requestCulture, null));
         }
 
-        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
+        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, string routeAction)
         {
             var routeBinding = httpContext.GetRouteBinding();
             var sequence = await SetSequanceAsync(httpContext, routeAction);
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
+                var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
                 scopedLogger.SetScopeProperty(Constants.Logs.SequenceCulture, sequence.Culture);
                 return localizationLogic.GetSupportedCulture([sequence.Culture], routeBinding);
             }

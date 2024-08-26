@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
                 (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
                     await tenantDataRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
              
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
                 foreach(var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))

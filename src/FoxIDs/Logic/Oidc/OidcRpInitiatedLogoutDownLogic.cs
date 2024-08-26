@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
                 logger.Warning(ex);
             }
 
-            logger.ScopeTrace(() => $"end session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"end session request '{rpInitiatedLogoutRequest.ToJson()}'.", traceType: TraceTypes.Message);
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
@@ -218,7 +218,7 @@ namespace FoxIDs.Logic
                 State = sequenceData.State,
             };
 
-            logger.ScopeTrace(() => $"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"End session response '{rpInitiatedLogoutResponse.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");

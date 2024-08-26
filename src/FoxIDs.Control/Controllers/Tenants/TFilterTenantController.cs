@@ -68,15 +68,15 @@ namespace FoxIDs.Controllers
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
             else
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

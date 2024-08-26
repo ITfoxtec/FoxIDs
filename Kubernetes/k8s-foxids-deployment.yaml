@@ -17,6 +17,7 @@ spec:
       containers:
         - name: foxids
           image: foxids/foxids:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8800
           env:
@@ -30,6 +31,8 @@ spec:
               value: "true"
             - name: "Settings__FoxIDsEndpoint"
               value: "https://id.itfoxtec.com" # change to your domain - https://id.my-domain.com
+            - name: "Settings__Options__Log"
+              value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"
@@ -80,6 +83,7 @@ spec:
       containers:
         - name: foxids-control
           image: foxids/foxids-control:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8800
           env:
@@ -99,6 +103,8 @@ spec:
               value: "true"
             - name: "Settings__MainTenantSeedEnabled"
               value: "true"
+            - name: "Settings__Options__Log"
+              value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
             - name: "Settings__Options__Cache"

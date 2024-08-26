@@ -4,7 +4,6 @@
     {
         public const string Tenants = "Tenants";
         public const string Tracks = "Environments";   
-        public const string KeyVaultManagedCertificate = "Key Vault managed certificates";
         public const string Users = "Users";
         public const string Logins = "Logins";
         public const string TokenRequests = "Token requests";

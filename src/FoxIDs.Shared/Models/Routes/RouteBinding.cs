@@ -1,5 +1,4 @@
-﻿using Microsoft.ApplicationInsights;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
@@ -61,8 +60,6 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public TelemetryClient TelemetryClient { get; set; }
-
-        public string LogAnalyticsWorkspaceId { get; set; }
+        public LogLifetimeOptions? PlanLogLifetime { get; set; }
     }
 }

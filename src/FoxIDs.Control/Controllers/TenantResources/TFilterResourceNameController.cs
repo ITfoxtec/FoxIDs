@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
+                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
                 return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Id)));
             }
             catch (FoxIDsDataException ex)

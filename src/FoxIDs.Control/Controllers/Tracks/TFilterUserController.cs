@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 (var mUsers, _) = filterEmail.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
                     await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        u.Email.Contains(filterEmail, StringComparison.OrdinalIgnoreCase));
+                        u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase));
               
                 var aUsers = new HashSet<Api.User>(mUsers.Count());
                 foreach(var mUser in mUsers.OrderBy(t => t.Email))

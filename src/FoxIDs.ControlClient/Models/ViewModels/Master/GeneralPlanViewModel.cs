@@ -3,7 +3,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralPlanViewModel : Plan
+    public class GeneralPlanViewModel : PlanViewModel
     {
         public GeneralPlanViewModel()
         { }
@@ -23,6 +23,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string Error { get; set; }
 
-        public PageEditForm<Plan> Form { get; set; }
+        public PageEditForm<PlanViewModel> Form { get; set; }
     }
 }

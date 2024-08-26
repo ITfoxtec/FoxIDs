@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.Logging;
+﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,7 +14,7 @@ namespace FoxIDs.Infrastructure
         private readonly TelemetryScopedProperties telemetryScopedProperties;
         private readonly TelemetryScopedStreamLogger telemetryScopedStreamLogger;
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly List<TraceMessage> traceMessages = new List<TraceMessage>();
+        private readonly List<TraceMessageItem> traceMessages = new List<TraceMessageItem>();
         private Models.Logging logging;
 
         public TelemetryScopedLogger(TelemetryLogger telemetryLogger, TelemetryScopedProperties telemetryScopedProperties, TelemetryScopedStreamLogger telemetryScopedStreamLogger, IHttpContextAccessor httpContextAccessor)
@@ -56,105 +56,105 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.Warning(exception, allProperties, metrics);
+            telemetryLogger.Warning(exception, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(this, scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, allProperties);
                 }
             }
         }
 
-        public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.Warning(exception, message, allProperties, metrics);
+            telemetryLogger.Warning(exception, message, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(this, scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, message, allProperties);
                 }
             }
         }
 
-        public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.Error(exception, allProperties, metrics);
+            telemetryLogger.Error(exception, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(this, scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, allProperties);
                 }
             }
         }
-        public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.Error(exception, message, allProperties, metrics);
+            telemetryLogger.Error(exception, message, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(this, scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, message, allProperties);
                 }
             }
         }
 
-        public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.CriticalError(exception, allProperties, metrics);
+            telemetryLogger.CriticalError(exception, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(this, scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, allProperties);
                 }
             }
         }
-        public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.CriticalError(exception, message, allProperties, metrics);
+            telemetryLogger.CriticalError(exception, message, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(this, scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, message, allProperties);
                 }
             }
         }
 
-        public void Event(string eventName, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
+        public void Event(string eventName, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
-            telemetryLogger.Event(eventName, allProperties, metrics);
+            telemetryLogger.Event(eventName, allProperties);
 
-            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+            if (Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
                 {
-                    telemetryScopedStreamLogger.Event(this, scopedStreamLogger, eventName, allProperties, metrics);
+                    telemetryScopedStreamLogger.Event(scopedStreamLogger, eventName, allProperties);
                 }
             }
         }
@@ -175,11 +175,11 @@ namespace FoxIDs.Infrastructure
             if (messageString != null)
             {
                 if (traceType == TraceTypes.Info && triggerEvent) Event(messageString);
-                if (save) traceMessages.Add(new TraceMessage { TraceType = traceType, Message = messageString });
+                if (save) traceMessages.Add(new TraceMessageItem { TraceType = traceType, Message = messageString });
             }
         }
 
-        public void ScopeMetric(Action<MetricMessage> metric, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, bool logToScopeStream = true)
+        public void ScopeMetric(Action<MetricMessage> metric, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
 
@@ -197,11 +197,11 @@ namespace FoxIDs.Infrastructure
                     telemetryLogger.Metric(messageData.Message, messageData.Value, allProperties);
                 }
 
-                if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
+                if (Logging?.ScopedStreamLoggers?.Count > 0)
                 {
                     foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
                     {
-                        telemetryScopedStreamLogger.Metric(this, scopedStreamLogger, messageData.Message, messageData.Value, allProperties);
+                        telemetryScopedStreamLogger.Metric(scopedStreamLogger, messageData.Message, messageData.Value, allProperties);
                     }
                 }
             }
@@ -230,7 +230,7 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private IDictionary<string, string> ConcatOnceIfProperties(IDictionary<string, string> properties)
+        private IDictionary<string, string> ConcatOnceIfProperties(IDictionary<string, string> properties = null)
         {
             return properties == null ? telemetryScopedProperties.Properties : new Dictionary<string, string>(telemetryScopedProperties.Properties).ConcatOnce(properties);
         }
@@ -252,7 +252,7 @@ namespace FoxIDs.Infrastructure
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
                         if (telemetryLoggertraceMessages.Count() > 0)
                         {
-                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties());
                         }
                     }
 
@@ -266,7 +266,7 @@ namespace FoxIDs.Infrastructure
                                 (m.TraceType == TraceTypes.Message && scopedStreamLogger.LogMessageTrace));
                             if (scopedStreamLoggertraceMessages.Count() > 0)
                             {
-                                telemetryScopedStreamLogger.Trace(this, scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.Trace(scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
                             }
                         }
                     }

@@ -131,12 +131,12 @@ namespace FoxIDs.Models
 
             if (Issuers?.Count() != 1)
             {
-                results.Add(new ValidationResult($"Exactly one issuer in the field {nameof(Issuers)} is required.", new[] { nameof(Issuers) }));
+                results.Add(new ValidationResult($"Exactly one issuer in the field {nameof(Issuers)} is required.", [nameof(Issuers)]));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
             return results;
         }

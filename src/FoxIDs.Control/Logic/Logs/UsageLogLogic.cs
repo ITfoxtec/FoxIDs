@@ -147,7 +147,7 @@ namespace FoxIDs.Logic
             {
                 if (idKey.TenantName.IsNullOrWhiteSpace())
                 {
-                    return p => p.DataType.Equals("track");
+                    return p => p.DataType.Equals(Constants.Models.DataType.Track);
                 }
 
                 var id = await Track.IdFormatAsync(idKey);
@@ -179,10 +179,10 @@ namespace FoxIDs.Logic
         {
             if (!usePartitionId && !idKey.TenantName.IsNullOrWhiteSpace())
             {
-                return p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
+                return p => (p.DataType.Equals(Constants.Models.DataType.User) || p.DataType.Equals(Constants.Models.DataType.ExternalUser)) && p.PartitionId.StartsWith($"{idKey.TenantName}:");
             }
 
-            return p => p.DataType.Equals("user");
+            return p => p.DataType.Equals(Constants.Models.DataType.User) || p.DataType.Equals(Constants.Models.DataType.ExternalUser);
         }
 
         private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)

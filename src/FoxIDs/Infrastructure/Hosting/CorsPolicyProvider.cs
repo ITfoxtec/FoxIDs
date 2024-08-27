@@ -25,7 +25,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task<CorsPolicy> GetPolicyAsync(HttpContext context, string policyName)
         {
-            var origin = context.Request.Headers["Origin"].Where(o => o.StartsWith("http", StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var origin = context.Request.Headers["Origin"].FirstOrDefault();
             if(!origin.IsNullOrEmpty())
             {
                 var routeBinding = context.GetRouteBinding();

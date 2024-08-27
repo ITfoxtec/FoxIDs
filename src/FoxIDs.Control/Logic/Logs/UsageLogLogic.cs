@@ -141,13 +141,13 @@ namespace FoxIDs.Logic
         {
             if (usePartitionId)
             {
-                return null;
+                return p => !p.Id.EndsWith(Constants.Routes.MasterTrackName);
             }
             else
             {
                 if (idKey.TenantName.IsNullOrWhiteSpace())
                 {
-                    return p => p.DataType.Equals(Constants.Models.DataType.Track);
+                    return p => p.DataType.Equals(Constants.Models.DataType.Track) && !p.Id.EndsWith(Constants.Routes.MasterTrackName);
                 }
 
                 var id = await Track.IdFormatAsync(idKey);

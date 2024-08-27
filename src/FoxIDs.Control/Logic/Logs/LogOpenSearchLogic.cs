@@ -270,6 +270,8 @@ namespace FoxIDs.Logic
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
+            boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
+
             boolQuery = boolQuery.Must(m => m
                 .Term(t => t.TenantName, RouteBinding.TenantName) && 
                     m.Term(t => t.TrackName, RouteBinding.TrackName) &&

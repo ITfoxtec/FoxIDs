@@ -9,6 +9,7 @@ namespace FoxIDs.Models.ViewModels
         public DateTimeOffset CreateTime { get; set; }
 
         public string RequestId { get; set; }
+        public string OperationId { get; set; }
 
         public string ErrorTitle { get; set; }
         public string Error { get; set; }

@@ -131,7 +131,7 @@ namespace FoxIDs.Infrastructure.Logging
                                             state_name = "delete",
                                             conditions = new 
                                             {
-                                                min_index_age = "30d"
+                                                min_index_age = $"{lifetime + 1}d"
                                             }
                                         }
                                     }

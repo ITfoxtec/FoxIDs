@@ -76,15 +76,6 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
                 keyRequest.PartyName = keyRequest.PartyName?.ToLower();
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty())
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableKeyVault)
-                    {
-                        throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
-                    }
-                }
-
                 var oauthUpParty = await tenantDataRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 
                 var certificate = keyRequest.Password.IsNullOrWhiteSpace() switch

@@ -91,14 +91,6 @@ namespace FoxIDs.Controllers
                             throw new Exception($"Maximum number of users ({plan.Users.Included}) included in the '{plan.Name}' plan has been reached.");
                         }
                     }
-
-                    if (createUserRequest.RequireMultiFactor)
-                    {                        
-                        if (!plan.EnableKeyVault)
-                        {
-                            throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
-                        }
-                    }
                 }
 
                 var claims = new List<Claim>();
@@ -150,15 +142,6 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
                 user.Email = user.Email?.ToLower();
-
-                if (!RouteBinding.PlanName.IsNullOrEmpty() && user.RequireMultiFactor)
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableKeyVault)
-                    {
-                        throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
-                    }
-                }
 
                 var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
 

@@ -58,15 +58,6 @@ namespace FoxIDs.Logic
                 }
             }
 
-            if (!RouteBinding.PlanName.IsNullOrEmpty() && party.RequireTwoFactor)
-            {
-                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                if (!plan.EnableKeyVault)
-                {
-                    throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
-                }
-            }
-
             if (party.TwoFactorAppName.IsNullOrWhiteSpace())
             {
                 party.TwoFactorAppName = RouteBinding.TenantName;

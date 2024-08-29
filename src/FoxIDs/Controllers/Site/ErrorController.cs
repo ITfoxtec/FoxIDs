@@ -18,6 +18,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
+using System.Diagnostics;
 
 namespace FoxIDs.Controllers
 {
@@ -49,7 +50,8 @@ namespace FoxIDs.Controllers
             var errorViewModel = new ErrorViewModel
             {
                 CreateTime = DateTimeOffset.Now,
-                RequestId = HttpContext.TraceIdentifier
+                RequestId = HttpContext.TraceIdentifier,
+                OperationId = Activity.Current?.TraceId.ToString()
             };
 
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();

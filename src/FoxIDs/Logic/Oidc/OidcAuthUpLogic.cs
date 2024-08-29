@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace(() => $"AuthMethod, Authentication response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
-            if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
+            if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), $"The entire '{authenticationResponse.GetTypeName()}' message or the parameter is empty");
 
             OidcUpSequenceData sequenceData = null;
             try

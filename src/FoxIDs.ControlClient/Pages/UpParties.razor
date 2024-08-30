@@ -139,9 +139,9 @@
                             </div>
 
                             <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
-                                    <h5 class="py-2">Environment Link</h5>
-                                    <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
+                                    <h5 class="py-2">External login</h5>
+                                    <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
                                 </a>
                             </div>
 
@@ -153,9 +153,9 @@
                             </div>
 
                             <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
-                                    <h5 class="py-2">External login</h5>
-                                    <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
+                                    <h5 class="py-2">Environment Link</h5>
+                                    <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
                                 </a>
                             </div>
                         }

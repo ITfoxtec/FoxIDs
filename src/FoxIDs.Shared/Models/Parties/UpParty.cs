@@ -124,6 +124,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_token_exchange_trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
+        [JsonProperty(PropertyName = "profiles")]
+        public List<UpPartyProfile> Profiles { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
@@ -136,7 +139,20 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
-                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
+            }
+
+            if (Profiles?.Count() > 0)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
+                }
             }
             return results;
         }

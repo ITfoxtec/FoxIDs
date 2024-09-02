@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// External login.
     /// </summary>
-    public class ExternalLoginUpParty : ExternalUserUpParty, IOAuthClaimTransforms, IValidatableObject
+    public class ExternalLoginUpParty : UpPartyExternal, IOAuthClaimTransforms, IValidatableObject
     {
         public ExternalLoginUpParty()
         {

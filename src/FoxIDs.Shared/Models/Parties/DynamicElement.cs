@@ -24,7 +24,7 @@ namespace FoxIDs.Models
 
             if (!Required && (Type == DynamicElementTypes.EmailAndPassword))
             {
-                results.Add(new ValidationResult($"The field {nameof(Required)} must be true for dynamic element type '{Type}'.", new[] { nameof(Required) }));
+                results.Add(new ValidationResult($"The field {nameof(Required)} must be true for dynamic element type '{Type}'.", [nameof(Required)]));
             }
 
             return results;

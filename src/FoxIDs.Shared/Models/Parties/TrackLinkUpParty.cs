@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkUpParty : ExternalUserUpParty, IOAuthClaimTransforms
+    public class TrackLinkUpParty : UpPartyExternal, IOAuthClaimTransforms
     {
         public TrackLinkUpParty()
         {
@@ -38,5 +38,8 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "pipe_external_id")]
         public bool PipeExternalId { get; set; }
+
+        [JsonProperty(PropertyName = "profiles")]
+        public new List<TrackLinkUpPartyProfile> Profiles { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using System;
 
 namespace FoxIDs.Models
 {
-    public class SamlUpParty : ExternalUserUpParty, ISamlClaimTransforms, IValidatableObject
+    public class SamlUpParty : UpPartyExternal, ISamlClaimTransforms, IValidatableObject
     {
         public SamlUpParty()
         {
@@ -119,6 +119,9 @@ namespace FoxIDs.Models
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
+
+        [JsonProperty(PropertyName = "profiles")]
+        public new List<SamlUpPartyProfile> Profiles { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

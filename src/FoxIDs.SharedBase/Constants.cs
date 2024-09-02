@@ -481,6 +481,7 @@ namespace FoxIDs
             public static class Party
             {
                 public const int NameLength = 50;
+                public const int ProfileNameLength = 20;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";

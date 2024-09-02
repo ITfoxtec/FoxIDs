@@ -16,7 +16,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// OAuth 2.0 authorization method.
     /// </summary>
-    public class OAuthUpParty<TClient> : ExternalUserUpParty, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
+    public class OAuthUpParty<TClient> : UpPartyExternal, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
     {
         public OAuthUpParty()
         {
@@ -67,6 +67,9 @@ namespace FoxIDs.Models
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        [JsonProperty(PropertyName = "profiles")]
+        public new List<OAuthUpPartyProfile> Profiles { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

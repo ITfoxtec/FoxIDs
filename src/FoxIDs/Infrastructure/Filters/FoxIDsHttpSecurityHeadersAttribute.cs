@@ -102,8 +102,17 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    var formActionOnDomains = allowFormActionOnDomains.Where(d => d == "*").Any() ? "*" : allowFormActionOnDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList();
-                    return $"form-action 'self' {formActionOnDomains};";
+                    if(allowFormActionOnDomains.Where(d => d == "*").Any())
+                    {
+                        // Default disabled because Chrome/Safari block redirects and it is impossible to know about further redirects.
+                        // And do not send a "*" because it is not supported by all.
+                        return base.CspFormAction(httpContext);
+                    }
+                    else
+                    {
+                        var formActionOnDomains = allowFormActionOnDomains.Select(d => d.DomainToOrigin(httpContext.Request.Scheme)).ToSpaceList();
+                        return $"form-action 'self' {formActionOnDomains};";
+                    }
                 }
             }
 

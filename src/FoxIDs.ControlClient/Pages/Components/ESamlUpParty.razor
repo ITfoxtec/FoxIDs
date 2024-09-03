@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(async m => await SamlUpPartyViewModelAfterInitAsync(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header">
-        <div class="d-flex">
+        <div class="h5 d-flex">
             SAML 2.0
         </div>
         <div class="d-flex">
@@ -96,11 +96,11 @@
             <li class="nav-item">
                 @if (samlUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim Transform</a>
+                    <a class="nav-link active">Claim Transforms</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim Transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim Transforms</button>
                 }
             </li>
             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
@@ -108,21 +108,11 @@
                 <li class="nav-item">
                     @if (samlUpParty.ShowLinkExternalUserTab)
                     {
-                        <a class="nav-link active">Link External User</a>
+                        <a class="nav-link active">Link External Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Link External User</button>
-                    }
-                </li>
-                <li class="nav-item">
-                    @if (samlUpParty.ShowSessionTab)
-                    {
-                        <a class="nav-link active">Logout Session</a>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout Session</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Link External Users</button>
                     }
                 </li>
                 <li class="nav-item">
@@ -135,6 +125,29 @@
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
                     }
                 </li>
+                @if (UpParty.ShowAdvanced)
+                {
+                    <li class="nav-item">
+                        @if (samlUpParty.ShowProfileTab)
+                        {
+                            <a class="nav-link active">Profiles</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Profile))">Profiles</button>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (samlUpParty.ShowSessionTab)
+                        {
+                            <a class="nav-link active">Logout Session</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout Session</button>
+                        }
+                    </li>
+                }
             }
             else
             {

@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkDownPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />

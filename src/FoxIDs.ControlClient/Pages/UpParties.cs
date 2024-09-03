@@ -203,7 +203,7 @@ namespace FoxIDs.Client.Pages
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User login UI)";
+                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User Login UI)";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {

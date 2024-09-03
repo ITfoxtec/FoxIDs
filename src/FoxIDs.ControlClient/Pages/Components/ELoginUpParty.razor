@@ -6,8 +6,8 @@
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
-        <div>
-            User login UI
+        <div class="h5">
+            User Login UI
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>

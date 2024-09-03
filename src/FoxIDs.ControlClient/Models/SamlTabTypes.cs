@@ -5,7 +5,8 @@
         Saml,
         ClaimsTransform,
         LinkExternalUser,
-        Session,
-        Hrd
+        Hrd,
+        Profile,
+        Session
     }
 }

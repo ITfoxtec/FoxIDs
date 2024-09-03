@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(async m => await OidcUpPartyViewModelAfterInitAsync(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OpenID Connect
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
@@ -151,11 +151,11 @@
             <li class="nav-item">
                 @if (oidcUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim Transform</a>
+                    <a class="nav-link active">Claim Transforms</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim Transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim Transforms</button>
                 }
             </li>
             @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
@@ -163,21 +163,11 @@
                 <li class="nav-item">
                     @if (oidcUpParty.ShowLinkExternalUserTab)
                     {
-                        <a class="nav-link active">Link External User</a>
+                        <a class="nav-link active">Link External Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.LinkExternalUser))">Link External User</button>
-                    }
-                </li>
-                <li class="nav-item">
-                    @if (oidcUpParty.ShowSessionTab)
-                    {
-                        <a class="nav-link active">Logout Session</a>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout Session</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.LinkExternalUser))">Link External Users</button>
                     }
                 </li>
                 <li class="nav-item">
@@ -190,6 +180,29 @@
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Hrd))">Home Realm Discovery</button>
                     }
                 </li>
+                @if (UpParty.ShowAdvanced)
+                {
+                    <li class="nav-item">
+                        @if (oidcUpParty.ShowProfileTab)
+                        {
+                            <a class="nav-link active">Profiles</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Profile))">Profiles</button>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (oidcUpParty.ShowSessionTab)
+                        {
+                            <a class="nav-link active">Logout Session</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout Session</button>
+                        }
+                    </li>
+                }
             }
             else
             {

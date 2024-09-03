@@ -39,6 +39,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "pipe_external_id")]
         public bool PipeExternalId { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [JsonProperty(PropertyName = "profiles")]
         public new List<TrackLinkUpPartyProfile> Profiles { get; set; }
     }

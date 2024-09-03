@@ -68,6 +68,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [JsonProperty(PropertyName = "profiles")]
         public new List<OAuthUpPartyProfile> Profiles { get; set; }
 
@@ -82,7 +83,7 @@ namespace FoxIDs.Models
 
             if (!(Issuers?.Count() > 0))
             {
-                results.Add(new ValidationResult($"At least one issuer in the field {nameof(Issuers)} is required.", new[] { nameof(Issuers) }));
+                results.Add(new ValidationResult($"At least one issuer in the field {nameof(Issuers)} is required.", [nameof(Issuers)]));
             }
 
             var clientResults = Client.ValidateFromParty(DisableUserAuthenticationTrust);
@@ -95,7 +96,7 @@ namespace FoxIDs.Models
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}' if '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(OidcDiscoveryUpdateRate), nameof(UpdateState) }));
+                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}' if '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(OidcDiscoveryUpdateRate), nameof(UpdateState)]));
                 }
             }
             return results;

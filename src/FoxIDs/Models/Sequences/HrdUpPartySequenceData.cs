@@ -14,6 +14,12 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "dn")]
         public string DisplayName { get; set; }
 
+        [JsonProperty(PropertyName = "pn")]
+        public string ProfileName { get; set; }
+
+        [JsonProperty(PropertyName = "pdn")]
+        public string ProfileDisplayName { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "t")]
         public PartyTypes Type { get; set; }

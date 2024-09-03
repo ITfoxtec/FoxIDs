@@ -120,6 +120,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [JsonProperty(PropertyName = "profiles")]
         public new List<SamlUpPartyProfile> Profiles { get; set; }
 

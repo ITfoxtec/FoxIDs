@@ -124,7 +124,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_token_exchange_trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
-        [JsonProperty(PropertyName = "profiles")]
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [JsonIgnore]
         public List<UpPartyProfile> Profiles { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)

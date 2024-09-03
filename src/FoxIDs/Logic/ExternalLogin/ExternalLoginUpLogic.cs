@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Login);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
             }
 
             (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(extLoginUpParty, claims,
@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.ExternalLogin);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.ExternalLogin);
             }
 
             logger.ScopeTrace(() => $"AuthMethod, External Login, output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);

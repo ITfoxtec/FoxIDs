@@ -49,10 +49,10 @@ namespace FoxIDs.Logic
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData.AuthMethods, session: session);
+            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData, session: session);
         }
 
-        private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             List<Claim> claims;
             if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, newDownPartyLink, session, acrClaims))
@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
             {
                 var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(extLoginUpParty, userClaims, authTime, authMethods, sessionId, acrClaims);
+                claims = await GetClaimsAsync(extLoginUpParty, userClaims, authTime, sequenceData, sessionId, acrClaims);
 
                 await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, claims);
             }
@@ -85,23 +85,27 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> userClaims, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> userClaims, long authTime, ExternalLoginUpSequenceData sequenceData, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var subject = userClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
 
             var claims = userClaims.Where(c => c.Type != JwtClaimTypes.Subject && c.Type != JwtClaimTypes.SessionId &&
-                c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
+                c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
                 c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
 
             claims.AddClaim(JwtClaimTypes.Subject, $"{extLoginUpParty.Name}|{subject}");
             claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
+            claims.AddRange(sequenceData.AuthMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
             if (acrClaims?.Count() > 0)
             {
                 claims.AddRange(acrClaims);
             }
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, extLoginUpParty.Name);
+            if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+            {
+                claims.AddClaim(Constants.JwtClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
+            }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, extLoginUpParty.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, extLoginUpParty.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, extLoginUpParty.Type.GetPartyTypeValue());

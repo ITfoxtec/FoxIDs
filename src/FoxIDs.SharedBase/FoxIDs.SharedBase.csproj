@@ -11,8 +11,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="ITfoxtec.Identity" Version="2.10.0" />
-		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.11.3" />
+		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.12.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
+		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
 		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
 	</ItemGroup>
 

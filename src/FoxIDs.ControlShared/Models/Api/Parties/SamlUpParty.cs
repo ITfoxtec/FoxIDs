@@ -181,68 +181,85 @@ namespace FoxIDs.Models.Api
         [ValidateComplexType]
         public LinkExternalUser LinkExternalUser { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [Display(Name = "Profiles")]
+        public List<TrackLinkUpPartyProfile> Profiles { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
-                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
 
             if (AuthnResponseBinding == null)
             {
-                results.Add(new ValidationResult($"The {nameof(AuthnResponseBinding)} field is required.", new[] { nameof(AuthnResponseBinding) }));
+                results.Add(new ValidationResult($"The {nameof(AuthnResponseBinding)} field is required.", [nameof(AuthnResponseBinding)]));
             }
 
             if (UpdateState == PartyUpdateStates.Manual)
             {
                 if (Issuer.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Issuer) }));
+                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(Issuer)]));
                 }
                 if (AuthnUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(AuthnUrl)]));
                 }
                 if (AuthnRequestBinding == null)
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnRequestBinding) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(AuthnRequestBinding)]));
                 }
                 if (!LogoutUrl.IsNullOrWhiteSpace())
                 {
                     if (LogoutRequestBinding == null)
                     {
-                        results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", new[] { nameof(LogoutRequestBinding) }));
+                        results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", [nameof(LogoutRequestBinding)]));
                     }
                     if (LogoutResponseBinding == null)
                     {
-                        results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", new[] { nameof(LogoutResponseBinding) }));
+                        results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", [nameof(LogoutResponseBinding)]));
                     }
                 }
                 if (Keys?.Count < Constants.Models.SamlParty.Up.KeysMin)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Keys) }));
+                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(Keys)]));
                 }
             }
             else
             {
                 if (!MetadataUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUpdateRate) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(MetadataUpdateRate)]));
                 }
                 if (MetadataUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(MetadataUrl)]));
                 } 
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
+                }
             }
             return results;
         }

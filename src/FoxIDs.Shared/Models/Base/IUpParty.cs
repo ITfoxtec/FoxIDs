@@ -19,6 +19,5 @@ namespace FoxIDs.Models
         string HrdLogoUrl { get; set; }
         bool DisableUserAuthenticationTrust { get; set; }
         bool DisableTokenExchangeTrust { get; set; }
-        public List<UpPartyProfile> Profiles { get; set; }
     }
 }

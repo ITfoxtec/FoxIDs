@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
             }
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
-            await samlMetadataReadUpLogic.CheckMetadataAndUpdateUpPartyAsync(party);
+            party = await samlMetadataReadUpLogic.CheckMetadataAndUpdateUpPartyAsync(party);
 
             switch (party.AuthnBinding.RequestBinding)
             {

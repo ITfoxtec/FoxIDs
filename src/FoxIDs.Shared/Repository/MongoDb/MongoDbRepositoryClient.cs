@@ -43,7 +43,7 @@ namespace FoxIDs.Repository
             }
             if (settings.Options.Cache == CacheOptions.MongoDb)
             {
-                _ = InitCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
             }
         }
 

@@ -98,7 +98,7 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<TParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
-            await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
+            party = await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
 
             var nonce = RandomGenerator.GenerateNonce();
             var loginCallBackUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse, partyBindingPattern: party.PartyBindingPattern);

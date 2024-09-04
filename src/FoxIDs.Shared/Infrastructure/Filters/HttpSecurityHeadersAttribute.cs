@@ -45,8 +45,6 @@ namespace FoxIDs.Infrastructure.Filters
 
             protected virtual void SetHeaders(HttpContext httpContext)
             {
-                logger.ScopeTrace(() => $"Adding http security headers. Is {(isHtmlContent ? string.Empty : "not")} view.");
-
                 httpContext.Response.SetHeader("X-Content-Type-Options", "nosniff");
                 httpContext.Response.SetHeader("Referrer-Policy", "no-referrer");
                 httpContext.Response.SetHeader("X-XSS-Protection", "1; mode=block");
@@ -62,8 +60,6 @@ namespace FoxIDs.Infrastructure.Filters
                     httpContext.Response.SetHeader("Content-Security-Policy", csp);
                     httpContext.Response.SetHeader("X-Content-Security-Policy", csp);
                 }
-
-                logger.ScopeTrace(() => $"Http security headers added.");
             }       
 
             protected virtual void HeaderXFrameOptions(HttpContext httpContext)

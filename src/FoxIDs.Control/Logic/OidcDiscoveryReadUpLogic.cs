@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             {
                 if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    await oidcDiscoveryReadModelLogic.PopulateModelAsync(mp);
+                    _ = await oidcDiscoveryReadModelLogic.PopulateModelAsync(mp);
 
                     if(mp.UpdateState == PartyUpdateStates.AutomaticStopped)
                     {

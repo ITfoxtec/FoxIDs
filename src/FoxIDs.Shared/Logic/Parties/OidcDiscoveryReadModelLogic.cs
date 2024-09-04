@@ -14,7 +14,7 @@ namespace FoxIDs.Logic
         public OidcDiscoveryReadModelLogic(IHttpClientFactory httpClientFactory) : base(httpClientFactory) 
         { }
 
-        public async Task PopulateModelAsync(MParty party)
+        public async Task<MParty> PopulateModelAsync(MParty party)
         {
             (var oidcDiscovery, var jsonWebKeySet) = await GetOidcDiscoveryAndValidateAsync(party.Authority);
 
@@ -60,6 +60,8 @@ namespace FoxIDs.Logic
                     key.X5tS256 = null;
                 }
             }
+
+            return party;
         }
 
         private void CorrectFacebookOidcDiscoveryAddTokenEndpoint(OidcDiscovery oidcDiscovery)

@@ -20,10 +20,10 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task PopulateModelAsync(SamlUpParty party)
+        public async Task<SamlUpParty> PopulateModelAsync(SamlUpParty party)
         {
             var metadata = await ReadMetadataAsync(party.MetadataUrl);
-            await PopulateModelAsync(party, metadata);
+            return await PopulateModelAsync(party, metadata);
         }
 
         private async Task<string> ReadMetadataAsync(string metadataUrl)
@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task PopulateModelAsync(SamlUpParty party, string metadataXml)
+        public async Task<SamlUpParty> PopulateModelAsync(SamlUpParty party, string metadataXml)
         {
             if(metadataXml?.Length > Constants.Models.SamlParty.MetadataXmlSize)
             {
@@ -51,10 +51,10 @@ namespace FoxIDs.Logic
 
             var entityDescriptor = new EntityDescriptor();
             entityDescriptor.ReadIdPSsoDescriptor(metadataXml);
-            await PopulateModelInternalAsync(party, entityDescriptor);
+            return await PopulateModelInternalAsync(party, entityDescriptor);
         }
 
-        private async Task PopulateModelInternalAsync(SamlUpParty party, EntityDescriptor entityDescriptor)
+        private async Task<SamlUpParty> PopulateModelInternalAsync(SamlUpParty party, EntityDescriptor entityDescriptor)
         {
             if (entityDescriptor.IdPSsoDescriptor != null)
             {
@@ -98,6 +98,8 @@ namespace FoxIDs.Logic
                 {
                     party.SignAuthnRequest = entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.Value;
                 }
+
+                return party;
             }
             else
             {

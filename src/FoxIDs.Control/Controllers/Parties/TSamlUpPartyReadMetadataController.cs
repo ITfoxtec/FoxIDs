@@ -41,10 +41,10 @@ namespace FoxIDs.Controllers
                 {
                     case Api.SamlReadMetadataType.Url:
                         samlUpParty.MetadataUrl = samlReadMetadataRequest.Metadata;
-                        await samlMetadataReadLogic.PopulateModelAsync(samlUpParty);
+                        samlUpParty = await samlMetadataReadLogic.PopulateModelAsync(samlUpParty);
                         break;
                     case Api.SamlReadMetadataType.Xml:
-                        await samlMetadataReadLogic.PopulateModelAsync(samlUpParty, samlReadMetadataRequest.Metadata);
+                        samlUpParty = await samlMetadataReadLogic.PopulateModelAsync(samlUpParty, samlReadMetadataRequest.Metadata);
                         break;
                     default:
                         throw new NotSupportedException();

@@ -137,13 +137,19 @@
                     <LinkExternalUser Model="trackLinkUpParty.Form.Model.LinkExternalUser" />
                 }
             }
-            else if (trackLinkUpParty.ShowSessionTab)
-            {
-                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
-            }
             else if (trackLinkUpParty.ShowHrdTab)
             {
                 <UpPartyHrd Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowProfileTab)
+            {
+                @*  create list of profiles...
+
+                <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Profiles.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" /> *@
+            }
+            else if (trackLinkUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
             }
         </div>
     </div>

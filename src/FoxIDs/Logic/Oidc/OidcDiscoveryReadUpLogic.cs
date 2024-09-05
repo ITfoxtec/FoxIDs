@@ -26,24 +26,24 @@ namespace FoxIDs.Logic
             this.oidcDiscoveryReadModelLogic = oidcDiscoveryReadModelLogic;
         }
 
-        public async Task CheckOidcDiscoveryAndUpdatePartyAsync(TParty party)
+        public async Task<TParty> CheckOidcDiscoveryAndUpdatePartyAsync(TParty party)
         {
             if (party.UpdateState != PartyUpdateStates.Automatic)
             {
-                return;
+                return party;
             }
 
             var lastUpdated = DateTimeOffset.FromUnixTimeSeconds(party.LastUpdated);
             if (lastUpdated.AddSeconds(party.OidcDiscoveryUpdateRate.Value) >= DateTimeOffset.UtcNow)
             {
-                return;
+                return party;
             }
 
             var key = UpdateWaitPeriodKey(party.Id);
             if (await cacheProvider.ExistsAsync(key))
             {
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with OIDC discovery because another update is in progress.");
-                return;
+                return party;
             }
             else
             {
@@ -56,14 +56,14 @@ namespace FoxIDs.Logic
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
                 await tenantDataRepository.SaveAsync(party);
                 await cacheProvider.DeleteAsync(FailingUpdateCountKey(party.Id));
-                return;
+                return party;
             }
 
             try
             {
                 try
                 {
-                    await oidcDiscoveryReadModelLogic.PopulateModelAsync(party);
+                    party = await oidcDiscoveryReadModelLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {
@@ -80,6 +80,8 @@ namespace FoxIDs.Logic
                 await cacheProvider.IncrementNumberAsync(FailingUpdateCountKey(party.Id));
                 logger.Warning(ex);
             }
+
+            return party;
         }
 
         private string UpdateWaitPeriodKey(string partyId)

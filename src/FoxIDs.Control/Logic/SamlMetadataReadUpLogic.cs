@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             {
                 if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    await samlMetadataReadLogic.PopulateModelAsync(mp);
+                    _ = await samlMetadataReadLogic.PopulateModelAsync(mp);
 
                     if (mp.UpdateState == PartyUpdateStates.AutomaticStopped)
                     {

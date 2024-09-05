@@ -26,24 +26,24 @@ namespace FoxIDs.Logic
             this.samlMetadataReadLogic = samlMetadataReadLogic;
         }
 
-        public async Task CheckMetadataAndUpdateUpPartyAsync(SamlUpParty party)
+        public async Task<SamlUpParty> CheckMetadataAndUpdateUpPartyAsync(SamlUpParty party)
         {
             if (party.UpdateState != PartyUpdateStates.Automatic)
             {
-                return;
+                return party;
             }
 
             var lastUpdated = DateTimeOffset.FromUnixTimeSeconds(party.LastUpdated);
             if (lastUpdated.AddSeconds(party.MetadataUpdateRate.Value) >= DateTimeOffset.UtcNow)
             {
-                return;
+                return party;
             }
 
             var key = UpdateUpPartyWaitPeriodKey(party.Id);
             if (await cacheProvider.ExistsAsync(key))
             {
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with SAML 2.0 metadata because another update is in progress.");
-                return;
+                return party;
             }
             else
             {
@@ -56,14 +56,14 @@ namespace FoxIDs.Logic
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
                 await tenantDataRepository.SaveAsync(party);
                 await cacheProvider.DeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
-                return;
+                return party;
             }
 
             try
             {
                 try
                 {
-                    await samlMetadataReadLogic.PopulateModelAsync(party);
+                    party = await samlMetadataReadLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {
@@ -80,6 +80,8 @@ namespace FoxIDs.Logic
                 await cacheProvider.IncrementNumberAsync(FailingUpdateUpPartyCountKey(party.Id));
                 logger.Warning(ex);
             }
+
+            return party;
         }
 
         private string UpdateUpPartyWaitPeriodKey(string partyId)

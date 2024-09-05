@@ -61,6 +61,7 @@ namespace FoxIDs.Logic
                 DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
+                UpPartyProfileName = partyLink.ProfileName,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
@@ -68,7 +69,24 @@ namespace FoxIDs.Logic
                 Acr = loginRequest.Acr,
             }, setKeyValidUntil: true);
 
+            var profile = GetProfile(party, partyLink.ProfileName);
+
+            var selectedUpParties = party.SelectedUpParties;
+            if (profile != null && profile.SelectedUpParties?.Count() > 0)
+            {
+                selectedUpParties = profile.SelectedUpParties;
+            }
+
             return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
+        }
+
+        private TrackLinkUpPartyProfile GetProfile(TrackLinkUpParty party, string profileName)
+        {
+            if (!profileName.IsNullOrEmpty() && party.Profiles != null)
+            {
+                return party.Profiles.Where(p => p.Name == profileName).FirstOrDefault();
+            }
+            return null;
         }
 
         public async Task<IActionResult> AuthResponseAsync(string partyId)
@@ -94,9 +112,13 @@ namespace FoxIDs.Logic
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
-                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
                     c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+                if(!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+                {
+                    claims.AddClaim(Constants.JwtClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
+                }
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
@@ -160,7 +182,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.TrackLink);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.TrackLink);
             }
 
             logger.ScopeTrace(() => $"AuthMethod, Environment Link output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);

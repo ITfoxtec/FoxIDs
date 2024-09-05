@@ -125,16 +125,20 @@ namespace FoxIDs.Models.Api
         [ValidateComplexType]
         public LinkExternalUser LinkExternalUser { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [Display(Name = "Profiles")]
+        public List<TrackLinkUpPartyProfile> Profiles { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
-                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
             }
 
             var clientResults = Client.ValidateFromParty(UpdateState, DisableUserAuthenticationTrust);
@@ -147,28 +151,37 @@ namespace FoxIDs.Models.Api
             {
                 if (Issuers?.Count(i => !string.IsNullOrWhiteSpace(i)) <= 0)
                 {
-                    results.Add(new ValidationResult($"Require at least one issuer in '{nameof(Issuers)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Issuers) }));
+                    results.Add(new ValidationResult($"Require at least one issuer in '{nameof(Issuers)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(Issuers)]));
                 }
 
                 if (Keys?.Count <= 0)
                 {
-                    results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Keys) }));
+                    results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [nameof(Keys)]));
                 }
 
                 if (Client.AuthorizeUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.AuthorizeUrl)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { $"{nameof(Client)}.{nameof(Client.AuthorizeUrl)}" }));
+                    results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.AuthorizeUrl)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", [$"{nameof(Client)}.{nameof(Client.AuthorizeUrl)}"]));
                 }
             }
             else
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}'. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", 
-                        new[] { nameof(OidcDiscoveryUpdateRate) }));
+                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}'. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(OidcDiscoveryUpdateRate)]));
+                }
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
                 }
             }
             return results;

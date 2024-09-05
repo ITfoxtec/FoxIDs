@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkUpPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
@@ -45,31 +45,21 @@
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim Transform</a>
+                    <a class="nav-link active">Claim Transforms</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ClaimsTransform))">Claim Transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ClaimsTransform))">Claim Transforms</button>
                 }
             </li>
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowLinkExternalUserTab)
                 {
-                    <a class="nav-link active">Link External User</a>
+                    <a class="nav-link active">Link External Users</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.LinkExternalUser))">Link External User</button>
-                }
-            </li>
-            <li class="nav-item">
-                @if (trackLinkUpParty.ShowSessionTab)
-                {
-                    <a class="nav-link active">Logout Session</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout Session</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.LinkExternalUser))">Link External Users</button>
                 }
             </li>
             <li class="nav-item">
@@ -82,6 +72,29 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Hrd))">Home Realm Discovery</button>
                 }
             </li>
+            @if (trackLinkUpParty.ShowAdvanced)
+            {
+                <li class="nav-item">
+                    @if (trackLinkUpParty.ShowProfileTab)
+                    {
+                        <a class="nav-link active">Profiles</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Profile))">Profiles</button>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (trackLinkUpParty.ShowSessionTab)
+                    {
+                        <a class="nav-link active">Logout Session</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout Session</button>
+                    }
+                </li>
+            }
         </ul>
 
         <div class="tab-content pt-3">
@@ -124,13 +137,19 @@
                     <LinkExternalUser Model="trackLinkUpParty.Form.Model.LinkExternalUser" />
                 }
             }
-            else if (trackLinkUpParty.ShowSessionTab)
-            {
-                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
-            }
             else if (trackLinkUpParty.ShowHrdTab)
             {
                 <UpPartyHrd Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowProfileTab)
+            {
+                @*  create list of profiles...
+
+                <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Profiles.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" /> *@
+            }
+            else if (trackLinkUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
             }
         </div>
     </div>

@@ -175,6 +175,10 @@ namespace FoxIDs.MappingProfiles
                .ReverseMap()
                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(s => s)))
                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
+            CreateMap<OAuthUpPartyProfile, Api.OidcUpPartyProfile>()
+                .ReverseMap();
+            CreateMap<OAuthUpClientProfile, Api.OidcUpClientProfile>()
+                .ReverseMap();
 
             CreateMap<SamlUpParty, Api.SamlUpParty>()
                 .ForMember(d => d.Issuer, opt => opt.MapFrom(s => s.Issuers.First()))
@@ -201,12 +205,16 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.MetadataNameIdFormats, opt => opt.MapFrom(s => s.MetadataNameIdFormats.OrderBy(f => f)))
                 .ForMember(d => d.MetadataAttributeConsumingServices, opt => opt.MapFrom(s => s.MetadataAttributeConsumingServices.OrderBy(a => a.ServiceName.Name)))
                 .ForMember(d => d.MetadataContactPersons, opt => opt.MapFrom(s => s.MetadataContactPersons.OrderBy(c => c.ContactType)));
+            CreateMap<SamlUpPartyProfile, Api.SamlUpPartyProfile>()
+                .ReverseMap();
 
             CreateMap<TrackLinkUpParty, Api.TrackLinkUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
+            CreateMap<TrackLinkUpPartyProfile, Api.TrackLinkUpPartyProfile>()
+                .ReverseMap();
 
             CreateMap<ExternalLoginUpParty, Api.ExternalLoginUpParty>()
                 .ReverseMap()

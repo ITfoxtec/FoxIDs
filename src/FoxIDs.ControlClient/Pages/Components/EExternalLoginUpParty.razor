@@ -6,8 +6,8 @@
 
 <PageEditForm @ref="extLoginUpParty.Form" TModel="ExternalLoginUpPartyViewModel" OnAfterInit="@(async m => await ExternalLoginUpPartyViewModelAfterInitAsync(extLoginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalLoginUpPartyValidSubmitAsync(extLoginUpParty, editContext))">
     <div class="modal-header">
-        <div>
-            External login
+        <div class="h5">
+            External Login
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="extLoginUpParty.ShowAdvanced" />
     </div>

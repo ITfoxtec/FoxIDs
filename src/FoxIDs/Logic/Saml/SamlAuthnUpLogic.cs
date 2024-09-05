@@ -75,6 +75,7 @@ namespace FoxIDs.Logic
                 DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
+                UpPartyProfileName = partyLink.ProfileName,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
@@ -134,6 +135,8 @@ namespace FoxIDs.Logic
                     break;
             }
 
+            var profile = GetProfile(party, samlUpSequenceData);
+
             if (party.AuthnContextClassReferences?.Count() > 0)
             {
                 saml2AuthnRequest.RequestedAuthnContext = new RequestedAuthnContext
@@ -142,19 +145,42 @@ namespace FoxIDs.Logic
                     AuthnContextClassRef = party.AuthnContextClassReferences,
                 };
             }
+            if(profile != null && profile.AuthnContextClassReferences?.Count() > 0)
+            {
+                if(saml2AuthnRequest.RequestedAuthnContext == null)
+                {
+                    saml2AuthnRequest.RequestedAuthnContext = new RequestedAuthnContext();
+                }
+                else if(profile.AuthnContextComparison.HasValue)
+                {
+                    saml2AuthnRequest.RequestedAuthnContext.Comparison = (AuthnContextComparisonTypes)Enum.Parse(typeof(AuthnContextComparisonTypes), profile.AuthnContextComparison.Value.ToString());
+                }
+                saml2AuthnRequest.RequestedAuthnContext.AuthnContextClassRef = profile.AuthnContextClassReferences;
+            }
 
             if (!party.AuthnRequestExtensionsXml.IsNullOrWhiteSpace())
             {
                 try
                 {
-                    var extensionsElement = System.Xml.Linq.XElement.Parse(party.AuthnRequestExtensionsXml);
                     saml2AuthnRequest.Extensions = new Extensions();
-                    saml2AuthnRequest.Extensions.Element.Add(extensionsElement);
+                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(party.AuthnRequestExtensionsXml));
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Unable to parse and add extensions XML. A valid XML string is required.");
                 }            
+            }
+            if (profile != null && !profile.AuthnRequestExtensionsXml.IsNullOrWhiteSpace())
+            {
+                try
+                {
+                    saml2AuthnRequest.Extensions = new Extensions();
+                    saml2AuthnRequest.Extensions.Element.Add(System.Xml.Linq.XElement.Parse(profile.AuthnRequestExtensionsXml));
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Unable to parse and add profile extensions XML. A valid XML string is required.");
+                }
             }
 
             binding.Bind(saml2AuthnRequest);
@@ -176,6 +202,15 @@ namespace FoxIDs.Logic
             {
                 throw new NotSupportedException();
             }
+        }
+
+        private SamlUpPartyProfile GetProfile(SamlUpParty party, SamlUpSequenceData samlUpSequenceData)
+        {
+            if (!samlUpSequenceData.UpPartyProfileName.IsNullOrEmpty() && party.Profiles != null)
+            {
+                return party.Profiles.Where(p => p.Name == samlUpSequenceData.UpPartyProfileName).FirstOrDefault();
+            }
+            return null;
         }
 
         public async Task<IActionResult> AuthnResponseAsync(string partyId)
@@ -278,9 +313,13 @@ namespace FoxIDs.Logic
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
                 claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex &&
-                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
+                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthProfileMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
                     c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+                if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+                {
+                    claims.AddClaim(Constants.SamlClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
+                }
                 claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
@@ -367,7 +406,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Saml2);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Saml2);
             }
 
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
@@ -545,8 +584,12 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, SAML token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"AuthMethod, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthProfileMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
             claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+            if (!partyLink.ProfileName.IsNullOrEmpty())
+            {
+                claims.AddClaim(Constants.SamlClaimTypes.AuthProfileMethod, partyLink.ProfileName);
+            }
             claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());

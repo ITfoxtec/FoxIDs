@@ -16,7 +16,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// OAuth 2.0 authorization method.
     /// </summary>
-    public class OAuthUpParty<TClient> : ExternalUserUpParty, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
+    public class OAuthUpParty<TClient> : UpPartyExternal, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
     {
         public OAuthUpParty()
         {
@@ -68,6 +68,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [JsonProperty(PropertyName = "profiles")]
+        public List<OAuthUpPartyProfile> Profiles { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -79,7 +83,7 @@ namespace FoxIDs.Models
 
             if (!(Issuers?.Count() > 0))
             {
-                results.Add(new ValidationResult($"At least one issuer in the field {nameof(Issuers)} is required.", new[] { nameof(Issuers) }));
+                results.Add(new ValidationResult($"At least one issuer in the field {nameof(Issuers)} is required.", [nameof(Issuers)]));
             }
 
             var clientResults = Client.ValidateFromParty(DisableUserAuthenticationTrust);
@@ -92,7 +96,20 @@ namespace FoxIDs.Models
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}' if '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(OidcDiscoveryUpdateRate), nameof(UpdateState) }));
+                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}' if '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", [nameof(OidcDiscoveryUpdateRate), nameof(UpdateState)]));
+                }
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
                 }
             }
             return results;

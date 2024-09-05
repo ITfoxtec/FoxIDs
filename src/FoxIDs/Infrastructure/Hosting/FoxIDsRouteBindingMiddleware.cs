@@ -13,7 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsRouteBindingMiddleware : RouteBindingMiddleware
     {
-        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:(?<downparty>[\w-_]+)(?:\~(?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\~)?)|(?:(?<downparty>[\w-_]+)(?:.(?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*)).)?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~)|(?:.(?<upparty>[\w-_]+).))$", RegexOptions.Compiled);
+        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-]+)(?:\((?:(?:(?<toupparty>[\w+-]+)(?:,(?<toupparty>[\w+-]+))*)|(?<toupparty>\*))\))?)|(?:(?<downparty>[\w-]+)(?:\~(?:(?:(?<toupparty>[\w+-]+)(?:,(?<toupparty>[\w+-]+))*)|(?<toupparty>\*))\~)?)|(?:(?<downparty>[\w-]+)(?:.(?:(?:(?<toupparty>[\w+-]+)(?:,(?<toupparty>[\w+-]+))*)|(?<toupparty>\*)).)?)|(?:\((?<upparty>[\w-]+)\))|(?:\~(?<upparty>[\w-]+)\~)|(?:.(?<upparty>[\w-]+).))$", RegexOptions.Compiled);
         private readonly TrackKeyLogic trackKeyLogic;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
@@ -223,9 +223,13 @@ namespace FoxIDs.Infrastructure.Hosting
             }
 
             var toUpParties = new List<UpPartyLink>();
-            foreach (Capture upPartyCapture in toUpPartyGroup.Captures)
+            foreach (Capture upPartyAndProfileCapture in toUpPartyGroup.Captures)
             {
-                if (upPartyCapture.Value == "*")
+                var upPartyAndProfileSplit = upPartyAndProfileCapture.Value.Split('+');
+                var upPartyCapture = upPartyAndProfileSplit[0];
+                var profileCapture = upPartyAndProfileSplit.Length == 2 ? upPartyAndProfileSplit[1] : null;
+
+                if (upPartyCapture == "*")
                 {
                     toUpParties.Clear();
                     toUpParties.AddRange(allowUpParties);
@@ -233,7 +237,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture.Value, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                     if (allowUpParty != null)
                     {
                         if (!toUpParties.Contains(allowUpParty))
@@ -245,7 +249,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         try
                         {
-                            throw new ArgumentException($"Authentication method name '{upPartyCapture.Value}' not allowed for application registration '{downPartyId}',");
+                            throw new ArgumentException($"Authentication method name '{upPartyCapture}' not allowed for application registration '{downPartyId}',");
                         }
                         catch (Exception ex)
                         {

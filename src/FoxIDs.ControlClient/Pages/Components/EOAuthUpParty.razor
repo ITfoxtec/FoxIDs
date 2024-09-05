@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(async m => await OAuthUpPartyViewModelAfterInitAsync(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OAuth 2.0
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />

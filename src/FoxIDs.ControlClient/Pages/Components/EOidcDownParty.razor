@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OpenID Connect
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />

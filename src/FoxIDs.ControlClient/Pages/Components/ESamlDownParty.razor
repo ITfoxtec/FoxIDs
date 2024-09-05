@@ -7,7 +7,7 @@
 
 <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             SAML 2.0
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />

@@ -45,7 +45,7 @@ namespace FoxIDs.Models
                     case ClaimTransformTypes.Constant:
                         if (Transformation.IsNullOrWhiteSpace())
                         {
-                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
                         }
                         break;
 
@@ -70,11 +70,11 @@ namespace FoxIDs.Models
                     case ClaimTransformTypes.Concatenate:
                         if (ClaimsIn?.Count() < 1)
                         {
-                            results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                            results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
                         }
                         if (Transformation.IsNullOrWhiteSpace())
                         {
-                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
                         }
                         break;
 
@@ -126,7 +126,7 @@ namespace FoxIDs.Models
                     case ClaimTransformTypes.RegexMatch:
                         if (Transformation.IsNullOrWhiteSpace())
                         {
-                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
                         }
                         break;
 
@@ -141,11 +141,11 @@ namespace FoxIDs.Models
         {
             if (ClaimsIn?.Count() != 1)
             {
-                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
             }
             if (Transformation.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
             }
         }
 
@@ -153,15 +153,15 @@ namespace FoxIDs.Models
         {
             if (ClaimsIn?.Count() != 1)
             {
-                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
             }
             if (Transformation.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
             }
             if (TransformationExtension.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", new[] { nameof(TransformationExtension) }));
+                results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", [nameof(TransformationExtension)]));
             }
         }
 
@@ -169,7 +169,7 @@ namespace FoxIDs.Models
         {
             if (ClaimsIn?.Count() != 1)
             {
-                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
             }
         }
 
@@ -177,11 +177,11 @@ namespace FoxIDs.Models
         {
             if (ClaimsIn?.Count() != 1)
             {
-                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
             }
             if (Transformation.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
             }
         }
     }

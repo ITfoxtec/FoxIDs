@@ -27,6 +27,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ui")]
         public string UpPartyId { get; set; }
 
+        [JsonProperty(PropertyName = "pn")]
+        public string UpPartyProfileName { get; set; }
+
         [JsonProperty(PropertyName = "la")]
         public LoginAction LoginAction { get; set; }
 

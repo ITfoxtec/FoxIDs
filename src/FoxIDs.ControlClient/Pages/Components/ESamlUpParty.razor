@@ -393,13 +393,55 @@
                     <LinkExternalUser Model="samlUpParty.Form.Model.LinkExternalUser" />
                 }
             }
-            else if (samlUpParty.ShowSessionTab)
-            {
-                <UpPartySessionLifetime Model="samlUpParty.Form.Model" />
-            }
             else if (samlUpParty.ShowHrdTab)
             {
                 <UpPartyHrd Model="samlUpParty.Form.Model" />
+            }
+            else if (samlUpParty.ShowProfileTab)
+            {
+                <div class="form-group active-group active">
+                    <Label For="@(() => samlUpParty.Form.Model.Profiles)" class="label-control" />
+                    @if (samlUpParty.Form.Model.Profiles.Count() <= 0)
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                            </div>
+                        </div>
+                    }
+                    <ul class="list-group">
+                        @foreach (var profile in samlUpParty.Form.Model.Profiles)
+                        {
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <FInputText @bind-Value="profile.DisplayName" For="@(() => profile.DisplayName)" />
+                                        <FInputText @bind-Value="profile.Name" For="@(() => profile.Name)" />
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="profile.AuthnContextComparisonViewModel" For="@(() => profile.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
+                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
+                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
+                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
+                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
+                                            </FInputSelect>
+                                        </div>
+                                        <FInputTextList @bind-ValueList="profile.AuthnContextClassReferences" For="@(() => profile.AuthnContextClassReferences)" DynamicFirstRow="true" />
+                                        <FInputText @bind-Value="profile.AuthnRequestExtensionsXml" For="@(() => profile.AuthnRequestExtensionsXml)" />
+                                    </div>
+                                    <div class="col-1 text-right">
+                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveProfile(e, samlUpParty.Form.Model.Profiles, profile))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <ValidationMessage For="@(() => samlUpParty.Form.Model.Profiles)" />
+                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddProfile(e,  samlUpParty.Form.Model.Profiles))"><span class="oi oi-plus" aria-hidden="true"></span> Add Profile</button>
+                </div>
+            }
+            else if (samlUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="samlUpParty.Form.Model" />
             }
         </div>
     </div>

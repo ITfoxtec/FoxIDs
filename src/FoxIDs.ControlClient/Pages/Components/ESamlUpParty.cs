@@ -17,6 +17,8 @@ using Tewr.Blazor.FileReader;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http;
+using FoxIDs.Util;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -110,6 +112,22 @@ namespace FoxIDs.Client.Pages.Components
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
                     afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapClaimTransforms();
+                }
+
+                if(samlUpParty.Profiles?.Count() > 0)
+                {
+                    foreach (var profile in samlUpParty.Profiles)
+                    {
+                        var afterMapProfile = afterMap.Profiles.Where(p => p.Name.Equals(profile.Name)).First();
+                        if (profile.AuthnContextComparison.HasValue)
+                        {
+                            afterMapProfile.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
+                        }
+                        else
+                        {
+                            afterMapProfile.AuthnContextComparisonViewModel = SamlAuthnContextComparisonTypesVievModel.Null;
+                        }
+                    }
                 }
             });
         }
@@ -257,6 +275,20 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void AddProfile(MouseEventArgs e, List<SamlUpPartyProfileViewModel> profiles)
+        {
+            var profile = new SamlUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<SamlUpPartyProfileViewModel> profiles, SamlUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
+        }
+
         private async Task OnEditSamlUpPartyValidSubmitAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, EditContext editContext)
         {
             try
@@ -328,6 +360,18 @@ namespace FoxIDs.Client.Pages.Components
                             foreach (var claimTransform in afterMap.LinkExternalUser.ClaimTransforms)
                             {
                                 claimTransform.Order = order++;
+                            }
+                        }
+                    }
+
+                    if (generalSamlUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalSamlUpParty.Form.Model.Profiles)
+                        {
+                            if (profile.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
+                            {
+                                var afterMapProfile = afterMap.Profiles.Where(p => p.Name.Equals(profile.Name)).First();
+                                afterMapProfile.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());
                             }
                         }
                     }

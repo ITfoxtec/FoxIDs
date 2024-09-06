@@ -224,6 +224,9 @@ namespace FoxIDs
         {
             public const string CosmosPartitionKeyPath = "/partition_id";
 
+            public const int DefaultNameLength = 8;
+            public const int DefaultNameMaxAttempts = 3;
+
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
             public const int DocumentPartitionIdLength = 110;
@@ -731,8 +734,6 @@ namespace FoxIDs
 
         public static class ControlApi
         {
-            public const int DefaultNameLength = 8;
-
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 

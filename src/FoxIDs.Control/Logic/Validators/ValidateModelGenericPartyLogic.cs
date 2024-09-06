@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Logic
 {
@@ -190,6 +191,45 @@ namespace FoxIDs.Logic
             }
 
             return true;
+        }
+
+        public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, UpParty upParty)
+        {
+            var isValid = true;
+            try
+            {
+                if (upParty is OidcUpParty oidcUpParty)
+                {
+                    var duplicatedName = oidcUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(duplicatedName))
+                    {
+                        throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
+                    }
+                }
+                else if (upParty is SamlUpParty samlUpParty)
+                {
+                    var duplicatedName = samlUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(duplicatedName))
+                    {
+                        throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
+                    }
+                }
+                else if (upParty is TrackLinkUpParty trackLinkUpParty && trackLinkUpParty.Profiles != null)
+                {
+                    var duplicatedName = trackLinkUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(duplicatedName))
+                    {
+                        throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
+            }
+            return isValid;
         }
     }
 }

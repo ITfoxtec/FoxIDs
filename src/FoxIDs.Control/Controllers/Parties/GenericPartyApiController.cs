@@ -108,6 +108,7 @@ namespace FoxIDs.Controllers
                     samlDownParty.Issuer = GetSamlIssuer(party.Name);
                 }
 
+                if (!(mParty is UpParty mUpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpParty) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
@@ -151,6 +152,7 @@ namespace FoxIDs.Controllers
 
                 var mParty = mapper.Map<MParty>(party);
 
+                if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mParty as UpParty) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);

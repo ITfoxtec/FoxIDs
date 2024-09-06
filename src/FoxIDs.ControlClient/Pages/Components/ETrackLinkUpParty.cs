@@ -12,6 +12,8 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -82,6 +84,20 @@ namespace FoxIDs.Client.Pages.Components
                 model.ToDownPartyDisplayName = downParty.DisplayName;
             }
             catch { }
+        }
+
+        private void AddProfile(MouseEventArgs e, List<TrackLinkUpPartyProfileViewModel> profiles)
+        {
+            var profile = new TrackLinkUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<TrackLinkUpPartyProfileViewModel> profiles, TrackLinkUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
         }
 
         private async Task OnEditTrackLinkUpPartyValidSubmitAsync(GeneralTrackLinkUpPartyViewModel generalTrackLinkUpParty, EditContext editContext)

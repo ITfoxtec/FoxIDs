@@ -137,6 +137,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
 
+        [ValidateComplexType]
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        public List<OidcUpPartyProfileViewModel> Profiles { get; set; } = new List<OidcUpPartyProfileViewModel>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using FoxIDs.Util;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -157,6 +159,20 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.Client.Party = model;
             }
+        }
+
+        private void AddProfile(MouseEventArgs e, List<OidcUpPartyProfileViewModel> profiles)
+        {
+            var profile = new OidcUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<OidcUpPartyProfileViewModel> profiles, OidcUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
         }
 
         private async Task OnEditOidcUpPartyValidSubmitAsync(GeneralOidcUpPartyViewModel generalOidcUpParty, EditContext editContext)

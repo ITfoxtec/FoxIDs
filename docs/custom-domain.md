@@ -17,15 +17,12 @@ Custom domains is not supported in the master tenant and master environments.
 ## FoxIDs Cloud
 Configuring a custom domain in your FoxIDs cloud tenant.
 
-> Only sub domains is supported as custom domains, like e.g., `id.some-domain.com`, `auth.some-domain.com`, `login.some-domain.com` or `id.zyx.some-domain.com`
-
 Steps:
 
  1. In your DNS, add a CNAME with your custom domain and the target `custom-domains.foxids.com`    
- 2. Configure your custom domain in your FoxIDs tenants master environment.
- 3. Write an email to [FoxIDs support (support@foxids.com)](mailto:support@foxids.com) and ask for a custom domain verification.
- 4. FoxIDs support will ask you to add one or two TXT records to your DNS for verification.
- 5. After successfully verification your domain become active.
+ 2. Optionally configure your custom domain in your FoxIDs tenants master environment (otherwise configured by FoxIDs support).
+ 3. Write an email to [FoxIDs support (support@foxids.com)](mailto:support@foxids.com) and ask us to add your custom domain.
+ 4. After successfully verification your domain become active.
 
 ## Your own private cloud
 Custom domains can be configured on tenants in the master tenant using the [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api). 

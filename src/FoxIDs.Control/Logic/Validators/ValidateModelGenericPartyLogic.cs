@@ -200,7 +200,7 @@ namespace FoxIDs.Logic
             {
                 if (upParty is OidcUpParty oidcUpParty)
                 {
-                    var duplicatedName = oidcUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    var duplicatedName = oidcUpParty.Profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
                     if (!string.IsNullOrEmpty(duplicatedName))
                     {
                         throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
@@ -208,7 +208,7 @@ namespace FoxIDs.Logic
                 }
                 else if (upParty is SamlUpParty samlUpParty)
                 {
-                    var duplicatedName = samlUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    var duplicatedName = samlUpParty.Profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
                     if (!string.IsNullOrEmpty(duplicatedName))
                     {
                         throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
@@ -216,7 +216,7 @@ namespace FoxIDs.Logic
                 }
                 else if (upParty is TrackLinkUpParty trackLinkUpParty && trackLinkUpParty.Profiles != null)
                 {
-                    var duplicatedName = trackLinkUpParty.Profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    var duplicatedName = trackLinkUpParty.Profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
                     if (!string.IsNullOrEmpty(duplicatedName))
                     {
                         throw new ValidationException($"Duplicated profile name '{duplicatedName}'");

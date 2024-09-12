@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
-            var session = await sessionUpPartyLogic.GetSessionAsync(party);
+            var session = await sessionUpPartyLogic.GetSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)));
             if (session == null)
             {
                 return await SingleLogoutDone(party.Id);
@@ -93,7 +93,7 @@ namespace FoxIDs.Logic
             oidcUpSequenceData.SessionClaims = session.Claims;
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)), session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             try

@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// External login.
     /// </summary>
-    public class ExternalLoginUpParty : UpPartyExternal, IOAuthClaimTransforms, IValidatableObject
+    public class ExternalLoginUpParty : UpPartyExternal<ExternalLoginUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject
     {
         public ExternalLoginUpParty()
         {
@@ -67,10 +67,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
 
-        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
-        [JsonProperty(PropertyName = "profiles")]
-        public List<ExternalLoginUpPartyProfile> Profiles { get; set; }
-
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -108,18 +104,6 @@ namespace FoxIDs.Models
                 }
             }
 
-            if (Profiles != null)
-            {
-                var count = 0;
-                foreach (var profile in Profiles)
-                {
-                    count++;
-                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
-                    {
-                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
-                    }
-                }
-            }
             return results;
         }
     }

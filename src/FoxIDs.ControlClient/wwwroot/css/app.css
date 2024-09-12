@@ -554,6 +554,17 @@ img.logo {
     background-color: #f8f9fa;
 }
 
+.list-striped > .list-striped-item {
+    height: 0px;
+    margin: .25rem 0;
+    overflow: hidden;
+    border-top: 1px solid #e9ecef;
+}
+
+    .list-striped > .list-striped-item:last-child {
+        border-top: hidden;
+    }
+
 .card-row {
     flex-direction: row;
 }

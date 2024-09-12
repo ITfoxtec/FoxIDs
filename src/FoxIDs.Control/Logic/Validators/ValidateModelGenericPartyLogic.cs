@@ -198,10 +198,9 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                var profiles = GetProfils(upParty);
-                if(profiles != null)
+                if(upParty.Profiles != null)
                 {
-                    var duplicatedName = profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    var duplicatedName = upParty.Profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
                     if (!string.IsNullOrEmpty(duplicatedName))
                     {
                         throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
@@ -215,28 +214,6 @@ namespace FoxIDs.Logic
                 modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
             }
             return isValid;
-        }
-
-        private IEnumerable<UpPartyProfile> GetProfils(UpParty upParty)
-        {
-            if (upParty is OidcUpParty oidcUpParty && oidcUpParty.Profiles != null)
-            {
-                return oidcUpParty.Profiles.Cast<UpPartyProfile>();
-            }
-            else if (upParty is SamlUpParty samlUpParty && samlUpParty.Profiles != null)
-            {
-                return samlUpParty.Profiles.Cast<UpPartyProfile>();
-            }
-            else if (upParty is TrackLinkUpParty trackLinkUpParty && trackLinkUpParty.Profiles != null)
-            {
-                return trackLinkUpParty.Profiles.Cast<UpPartyProfile>();
-            }
-            else if (upParty is ExternalLoginUpParty externalLoginUpParty && externalLoginUpParty.Profiles != null)
-            {
-                return externalLoginUpParty.Profiles.Cast<UpPartyProfile>();
-            }
-
-            return null;
         }
     }
 }

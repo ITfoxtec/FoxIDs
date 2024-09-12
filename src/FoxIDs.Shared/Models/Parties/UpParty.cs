@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class UpParty : Party, IValidatableObject, IUpParty
+    public class UpParty : UpParty<UpPartyProfile> { }
+
+    public class UpParty<TProfile> : Party, IValidatableObject, IUpParty where TProfile : UpPartyProfile
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -126,7 +128,7 @@ namespace FoxIDs.Models
 
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [JsonProperty(PropertyName = "profiles")]
-        public List<UpPartyProfile> Profiles { get; set; }
+        public List<TProfile> Profiles { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {
@@ -141,6 +143,19 @@ namespace FoxIDs.Models
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
                 results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
+                }
             }
             return results;
         }

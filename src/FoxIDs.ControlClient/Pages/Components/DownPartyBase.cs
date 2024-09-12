@@ -4,6 +4,7 @@ using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -109,17 +110,17 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public void AddAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
+        public void AddAllowUpPartyName((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg)
         {
-            if (!arg.model.AllowUpPartyNames.Where(p => p.Equals(arg.upPartyName, StringComparison.OrdinalIgnoreCase)).Any())
+            if (!arg.model.AllowUpParties.Where(p => p.Name == arg.upPartyLink.Name && p.ProfileName == arg.upPartyLink.ProfileName).Any())
             {
-                arg.model.AllowUpPartyNames.Add(arg.upPartyName);
+                arg.model.AllowUpParties.Add(arg.upPartyLink);
             }
         }
 
-        public void RemoveAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
+        public void RemoveAllowUpPartyName((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg)
         {
-            arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
+            arg.model.AllowUpParties.RemoveAll(p => p.Name == arg.upPartyLink.Name && p.ProfileName == arg.upPartyLink.ProfileName);
         }
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)

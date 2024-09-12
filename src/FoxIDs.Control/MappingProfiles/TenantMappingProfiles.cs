@@ -148,6 +148,10 @@ namespace FoxIDs.MappingProfiles
 
         private void UpPartyMapping()
         {
+            CreateMap<UpPartyLink, Api.UpPartyLink>();
+
+            CreateMap<UpPartyProfile, Api.UpPartyProfile>();
+
             CreateMap<LoginUpParty, Api.LoginUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
@@ -227,8 +231,6 @@ namespace FoxIDs.MappingProfiles
 
         private void DownPartyMapping()
         {
-            CreateMap<UpPartyLink, Api.UpPartyLink>();                
-
             CreateMap<OAuthDownParty, Api.OAuthDownParty>()
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()

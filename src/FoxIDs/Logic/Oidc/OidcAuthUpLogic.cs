@@ -303,7 +303,7 @@ namespace FoxIDs.Logic
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, OIDC transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, validClaims,
+                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), validClaims,
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -375,9 +375,9 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthenticationRequestPostAsync(TParty party, OidcUpSequenceData sequenceData, List<Claim> validClaims, IEnumerable<Claim> externalUserClaims, string idToken, string externalSessionId)
         {
-            validClaims = externalUserLogic.AddExternalUserClaims(party, validClaims, externalUserClaims);
+            validClaims = externalUserLogic.AddExternalUserClaims((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), validClaims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
             if (!sessionId.IsNullOrEmpty())
             {
                 validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);

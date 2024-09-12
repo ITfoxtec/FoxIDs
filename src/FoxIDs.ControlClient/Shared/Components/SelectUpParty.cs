@@ -97,15 +97,17 @@ namespace FoxIDs.Client.Shared.Components
             }
         }
 
-        private async Task OnAddUpPartyNameAsync(UpPartyLink upPartyLink)
+        private async Task OnAddUpPartyNameAsync(UpParty upParty, UpPartyProfile profile = null)
         {
-            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
+            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, new UpPartyLink { Name = upParty.Name, ProfileName = profile?.Name } ));
         }
 
         private async Task OnRemoveUpPartyNameAsync(UpPartyLink upPartyLink)
         {
             await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
         }
+
+        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpParty upParty, string profileName = null) => UpPartyInfoText(new UpPartyLink { Name = upParty.Name, ProfileName = profileName });
 
         private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpPartyLink upPartyLink)
         {
@@ -116,22 +118,16 @@ namespace FoxIDs.Client.Shared.Components
             }
             else
             {
-                return UpPartyInfoText(upParty, upPartyLink.ProfileName);
+                return (upParty.DisplayName ?? upParty.Name, GetProfileDisplayName(upParty, upPartyLink.ProfileName), GetTypeText(upParty));
             }
-        }
-
-        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpParty upParty, string profileName)
-        {
-            return (upParty.DisplayName ?? upParty.Name, GetProfileDisplayName(upParty, profileName), GetTypeText(upParty));
         }
 
         private string GetProfileDisplayName(UpParty upParty, string profileName)
         {
-            if(!profileName.IsNullOrEmpty())
+            if(!profileName.IsNullOrEmpty() && upParty.Profiles != null)
             {
-
-
-                return profileName;
+                var profileDisplayName = upParty.Profiles.Where(p => p.Equals(profileName)).Select(p => p.DisplayName).FirstOrDefault();
+                return profileDisplayName ?? profileName;
             }
 
             return string.Empty;

@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
 
         public void CheckUpParty(ExternalLoginUpSequenceData sequenceData, PartyTypes partyType) => loginPageLogic.CheckUpParty(sequenceData, partyType);
 
-        public DownPartySessionLink GetDownPartyLink(ExternalLoginUpParty upParty, ExternalLoginUpSequenceData sequenceData) => loginPageLogic.GetDownPartyLink(upParty, sequenceData);
+        public DownPartySessionLink GetDownPartyLink(ExternalLoginUpParty upParty, ExternalLoginUpSequenceData sequenceData) => loginPageLogic.GetDownPartyLink((UpParty)Convert.ChangeType(upParty, typeof(UpParty)), sequenceData);
 
         public async Task<IActionResult> LoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
         {
@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData, session: session);
+            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink((UpParty)Convert.ChangeType(extLoginUpParty, typeof(UpParty)), sequenceData), claims, sequenceData, session: session);
         }
 
         private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)

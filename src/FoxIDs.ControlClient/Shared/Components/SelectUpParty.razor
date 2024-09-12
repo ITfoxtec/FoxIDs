@@ -51,20 +51,37 @@
                 {
                     @if (upPartyFilters.Count() > 0)
                     {
+                        <div class="list-striped">
                         @foreach (var upPartyFilter in upPartyFilters)
                         {
-                            <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
+                            <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter))">
                                 @{
                                     var upPartyFilterText = UpPartyInfoText(upPartyFilter);
                                 }
                                 <div>@upPartyFilterText.displayName</div>
-                                @if (!upPartyFilterText.profileDisplayName.IsNullOrWhiteSpace())
-                                {
-                                    <div>Profile: @upPartyFilterText.profileDisplayName</div>
-                                }
                                 <div class="small">@upPartyFilterText.type</div>
                             </button>
+                            <div class="list-striped-item"></div>
+                            @if (upPartyFilter.Profiles != null)
+                            {
+                                @foreach (var profile in upPartyFilter.Profiles)
+                                {
+                                    <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter, profile))">
+                                        @{
+                                            var upPartyFilterTextAndProfile = UpPartyInfoText(upPartyFilter, profile.Name);
+                                        }
+                                        <div>@upPartyFilterTextAndProfile.displayName</div>
+                                        @if (!upPartyFilterTextAndProfile.profileDisplayName.IsNullOrWhiteSpace())
+                                        {
+                                            <div>Profile: @upPartyFilterTextAndProfile.profileDisplayName</div>
+                                        }
+                                        <div class="small">@upPartyFilterTextAndProfile.type</div>
+                                    </button>
+                                    <div class="list-striped-item"></div>
+                                }
+                            }
                         }
+                        </div>
                     }
                     else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
                     {

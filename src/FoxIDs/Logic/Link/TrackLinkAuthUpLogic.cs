@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
                 claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, Environment Link transformed JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, claims,
+                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), claims,
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -172,9 +172,9 @@ namespace FoxIDs.Logic
 
         private async Task<List<Claim>> AuthResponsePostAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData, List<Claim> claims, IEnumerable<Claim> externalUserClaims, string externalSessionId)
         {
-            claims = externalUserLogic.AddExternalUserClaims(party, claims, externalUserClaims);
+            claims = externalUserLogic.AddExternalUserClaims((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), claims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, claims, externalSessionId);
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), party.DisableSingleLogout ? null : sequenceData.DownPartyLink, claims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {
                 claims.AddClaim(JwtClaimTypes.SessionId, sessionId);

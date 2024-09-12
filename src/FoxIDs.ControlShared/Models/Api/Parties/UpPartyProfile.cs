@@ -1,20 +1,17 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
-    public class UpPartyProfile
+    public class UpPartyProfile 
     {
         [Required]
         [MaxLength(Constants.Models.Party.ProfileNameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
-        [JsonProperty(PropertyName = "display_name")]
         public string DisplayName { get; set; }
     }
 }

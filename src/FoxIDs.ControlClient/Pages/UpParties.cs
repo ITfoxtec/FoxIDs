@@ -262,7 +262,7 @@ namespace FoxIDs.Client.Pages
             {
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
-                    UpPartyNames = new List<string> { upParty.Name },
+                    UpParties = new List<UpPartyLink> { new UpPartyLink { Name = upParty.Name } },
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 

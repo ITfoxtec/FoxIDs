@@ -14,6 +14,7 @@ using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Linq;
 
 namespace FoxIDs.Controllers
 {
@@ -190,7 +191,8 @@ namespace FoxIDs.Controllers
                         ExternalLoginUsernameTypes.Text => extLogin.Username,
                         _ => throw new NotSupportedException()
                     };
-                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, username, extLogin.Password);
+                    var profile = GetProfile(extLoginUpParty, sequenceData);
+                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, username, extLogin.Password);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
                 }
                 catch (UserObservationPeriodException uoex)
@@ -223,6 +225,15 @@ namespace FoxIDs.Controllers
             {
                 throw new EndpointException($"External login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
+        }
+
+        private ExternalLoginUpPartyProfile GetProfile(ExternalLoginUpParty party, ExternalLoginUpSequenceData sequenceData)
+        {
+            if (!sequenceData.UpPartyProfileName.IsNullOrEmpty() && party.Profiles != null)
+            {
+                return party.Profiles.Where(p => p.Name == sequenceData.UpPartyProfileName).FirstOrDefault();
+            }
+            return null;
         }
 
         public async Task<IActionResult> CancelLogin()

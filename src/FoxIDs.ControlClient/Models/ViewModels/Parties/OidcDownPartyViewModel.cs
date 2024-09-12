@@ -23,9 +23,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Note { get; set; }
 
         [ValidateComplexType]
-        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [Display(Name = "Allow applications (client IDs)")]
-        public List<string> AllowUpPartyNames { get; set; } = new List<string>();
+        public List<UpPartyLink> AllowUpParties { get; set; } = new List<UpPartyLink>();
 
         /// <summary>
         /// OIDC down client.

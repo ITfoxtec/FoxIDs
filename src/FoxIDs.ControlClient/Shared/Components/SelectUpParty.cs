@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared.Components
 {
@@ -29,10 +30,10 @@ namespace FoxIDs.Client.Shared.Components
         public PageEditForm<TModel> EditDownPartyForm { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, string)> OnAddUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnAddUpPartyName { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, string)> OnRemoveUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnRemoveUpPartyName { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -88,7 +89,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     upParties = ups?.ToList();
                 }
-                upPartyFilters = ups.Where(f => !EditDownPartyForm.Model.AllowUpPartyNames.Where(a => a.Equals(f.Name)).Any());
+                upPartyFilters = ups.Where(f => !EditDownPartyForm.Model.AllowUpParties.Where(a => a.Equals(f.Name)).Any());
             }
             catch (TokenUnavailableException)
             {
@@ -96,55 +97,73 @@ namespace FoxIDs.Client.Shared.Components
             }
         }
 
-        private async Task OnAddUpPartyNameAsync(string name)
+        private async Task OnAddUpPartyNameAsync(UpPartyLink upPartyLink)
         {
-            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
+            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
         }
 
-        private async Task OnRemoveUpPartyNameAsync(string name)
+        private async Task OnRemoveUpPartyNameAsync(UpPartyLink upPartyLink)
         {
-            await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
+            await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
         }
 
-        private string UpPartyInfoText(string upPartyName)
+        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpPartyLink upPartyLink)
         {
-            var upParty = upParties.Where(f => f.Name.Equals(upPartyName)).FirstOrDefault();
+            var upParty = upParties.Where(f => f.Name.Equals(upPartyLink.Name)).FirstOrDefault();
             if (upParty == null)
             {
-                return upPartyName;
+                return (upPartyLink.Name, upPartyLink.ProfileName, string.Empty);
             }
             else
             {
-                return UpPartyInfoText(upParty);
+                return UpPartyInfoText(upParty, upPartyLink.ProfileName);
             }
         }
 
-        private string UpPartyInfoText(UpParty upParty)
+        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpParty upParty, string profileName)
+        {
+            return (upParty.DisplayName ?? upParty.Name, GetProfileDisplayName(upParty, profileName), GetTypeText(upParty));
+        }
+
+        private string GetProfileDisplayName(UpParty upParty, string profileName)
+        {
+            if(!profileName.IsNullOrEmpty())
+            {
+
+
+                return profileName;
+            }
+
+            return string.Empty;
+        }
+
+        private string GetTypeText(UpParty upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Login)";
+                return "Login";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
+                return "OAuth 2.0";
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
+                return "OpenID Connect";
             }
             else if (upParty.Type == PartyTypes.Saml2)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
+                return "SAML 2.0";
             }
             else if (upParty.Type == PartyTypes.TrackLink)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
+                return "Environment Link";
             }
             else if (upParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (External API Login)";
+                return "External API Login";
             }
+
             throw new NotSupportedException();
         }
     }

@@ -34,6 +34,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "secret")]
         public string Secret { get; set; }
 
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [JsonProperty(PropertyName = "additional_parameter")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }
@@ -62,6 +66,10 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [JsonProperty(PropertyName = "profiles")]
+        public List<ExternalLoginUpPartyProfile> Profiles { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -97,6 +105,19 @@ namespace FoxIDs.Models
                 if(HrdDomains?.Count() > 0)
                 {
                     results.Add(new ValidationResult($"HRD domains in the field '{nameof(HrdDomains)}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
+                }
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
                 }
             }
             return results;

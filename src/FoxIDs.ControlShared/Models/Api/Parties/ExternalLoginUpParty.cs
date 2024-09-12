@@ -39,6 +39,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Secret")]
         public string Secret { get; set; }
 
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [Display(Name = "Additional parameters")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
+
         [Display(Name = "Enable cancel login")]
         public bool EnableCancelLogin { get; set; } = false;
 
@@ -124,6 +128,10 @@ namespace FoxIDs.Models.Api
         [ValidateComplexType]
         public LinkExternalUser LinkExternalUser { get; set; }
 
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        [Display(Name = "Profiles")]
+        public List<OidcUpPartyProfile> Profiles { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -151,6 +159,19 @@ namespace FoxIDs.Models.Api
                 if (HrdDomains?.Count() > 0)
                 {
                     results.Add(new ValidationResult($"HRD domains in the field '{nameof(HrdDomains)}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
+                }
+            }
+
+            if (Profiles != null)
+            {
+                var count = 0;
+                foreach (var profile in Profiles)
+                {
+                    count++;
+                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    {
+                        results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
+                    }
                 }
             }
             return results;

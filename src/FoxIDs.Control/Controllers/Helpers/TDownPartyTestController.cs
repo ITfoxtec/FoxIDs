@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
                     TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
                     Nonce = authenticationRequest.Nonce,
                     CodeVerifier = codeVerifier,                    
-                    AllowUpParties = testDownPartyRequest.UpPartyNames.Select(pName => new UpPartyLink { Name = pName }).ToList(),
+                    AllowUpParties = testDownPartyRequest.UpParties.Select(p => new UpPartyLink { Name = p.Name.ToLower(), ProfileName = p.ProfileName?.ToLower()  }).ToList(),
                     Client = new OidcDownClient
                     {
                         RedirectUris = new List<string> { authenticationRequest.RedirectUri },
@@ -139,7 +139,7 @@ namespace FoxIDs.Controllers
                 await secretHashLogic.AddSecretHashAsync(oauthClientSecret, secret);
                 mParty.Client.Secrets = [oauthClientSecret];
 
-                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testDownPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
+                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testDownPartyRequest.UpParties), mParty)) return BadRequest(ModelState);
 
                 mParty.DisplayName = $"Test application {(mParty.AllowUpParties.Count() == 1 ? $"[{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : $"- {mParty.Name}")}";
 

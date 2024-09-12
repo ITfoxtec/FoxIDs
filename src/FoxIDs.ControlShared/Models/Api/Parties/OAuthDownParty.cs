@@ -1,7 +1,9 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -21,11 +23,12 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
 
-        /// <summary>
-        /// Allow authentication method names.
-        /// </summary>
+        [Obsolete($"Please use {nameof(AllowUpParties)} instead.")]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
+
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
+        public List<UpPartyLink> AllowUpParties { get; set; }
 
         /// <summary>
         /// OAuth 2.0 down client.
@@ -66,6 +69,11 @@ namespace FoxIDs.Models.Api
             if (Client == null && Resource == null)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
+            }
+
+            if (AllowUpPartyNames?.Count() > 0 && AllowUpParties?.Count() > 0)
+            {
+                results.Add(new ValidationResult($"The field {nameof(AllowUpParties)} and the field {nameof(AllowUpPartyNames)} can not be used at the same time. Pleas only use the field {nameof(AllowUpParties)}.", [nameof(AllowUpParties), nameof(AllowUpPartyNames)]));
             }
             return results;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FoxIDs.Models.Api;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
@@ -6,6 +7,6 @@ namespace FoxIDs.Client.Models.ViewModels
     public interface IAllowUpPartyNames
     {
         [Display(Name = "Allowed authentication methods")]
-        List<string> AllowUpPartyNames { get; set; }
+        List<UpPartyLink> AllowUpParties { get; set; }
     }
 }

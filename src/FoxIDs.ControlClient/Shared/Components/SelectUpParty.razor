@@ -1,41 +1,39 @@
 ﻿@typeparam TModel
 
-<div class="form-group active-group @(EditDownPartyForm.Model.AllowUpPartyNames.Count() > 0 ? "active" : "")">
-    <ul class="list-group">
-        @if (EditDownPartyForm.Model.AllowUpPartyNames.Count() <= 0)
-        {
-            <li class="list-group-item p-0">
-                <div class="d-flex">
-                    <div class="mr-auto px-3 py-1">
-                    </div>
-                    <div class="p-0">
-                        <button type="button" class="btn btn-link px-2 py-1" title="Remove" disabled><span class="oi oi-delete" aria-hidden="true"></span></button>
-                    </div>
-                </div>
-            </li>
-        }
-        else
-        {
-            @if (upParties != null)
-            {
-                @foreach (var allowUpPartyName in EditDownPartyForm.Model.AllowUpPartyNames)
+<div class="form-group active-group active">
+    <div class="card card-row">
+        <div class="card-body px-0 py-0">
+            <div class="d-flex align-content-start flex-wrap">
+                @if (upParties != null)
                 {
-                    <li class="list-group-item p-0">
-                        <div class="d-flex">
-                            <div class="mr-auto px-3 py-1">
-                                @UpPartyInfoText(allowUpPartyName)                          
-                            </div>
-                            <div class="p-0">
-                                <button type="button" class="btn btn-link px-2 py-1" title="Remove" @onclick="@(() => OnRemoveUpPartyNameAsync(allowUpPartyName))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                    @foreach (var allowUpParty in EditDownPartyForm.Model.AllowUpParties)
+                    {
+                        <div class="card card-row">
+                            <div class="card-body px-2 py-1 d-flex">
+                                <div class="mr-auto">
+                                    @{
+                                        var allowUpPartyText = UpPartyInfoText(allowUpParty);
+                                    }
+                                    <div>@allowUpPartyText.displayName</div>
+                                    @if(!allowUpPartyText.profileDisplayName.IsNullOrWhiteSpace())
+                                    {
+                                        <div>Profile: @allowUpPartyText.profileDisplayName</div>
+                                    }
+                                    <div class="small">@allowUpPartyText.type</div>
+                                </div>
+                                <div class="p-0">
+                                    <button type="button" class="btn btn-link py-0 pl-2 pr-0" title="Remove" @onclick="@(() => OnRemoveUpPartyNameAsync(allowUpParty))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                </div>
                             </div>
                         </div>
-                    </li>
+                    }
                 }
-            }
-        }
-    </ul>
-    <Label For="@(() => EditDownPartyForm.Model.AllowUpPartyNames)" class="label-control" />
-    <ValidationMessage For="@(() => EditDownPartyForm.Model.AllowUpPartyNames)" />
+            </div>
+        </div>
+    </div>
+
+    <Label For="@(() => EditDownPartyForm.Model.AllowUpParties)" class="label-control" />
+    <ValidationMessage For="@(() => EditDownPartyForm.Model.AllowUpParties)" />
 
     <ul class="navbar-nav mr-auto">
         <li class="nav-item dropdown">
@@ -56,7 +54,15 @@
                         @foreach (var upPartyFilter in upPartyFilters)
                         {
                             <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
-                                @UpPartyInfoText(upPartyFilter)
+                                @{
+                                    var upPartyFilterText = UpPartyInfoText(upPartyFilter);
+                                }
+                                <div>@upPartyFilterText.displayName</div>
+                                @if (!upPartyFilterText.profileDisplayName.IsNullOrWhiteSpace())
+                                {
+                                    <div>Profile: @upPartyFilterText.profileDisplayName</div>
+                                }
+                                <div class="small">@upPartyFilterText.type</div>
                             </button>
                         }
                     }

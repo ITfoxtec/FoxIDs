@@ -42,9 +42,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string ToUpPartyDisplayName { get; set; }
 
         [ValidateComplexType]
-        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [Display(Name = "Allow applications")]
-        public List<string> AllowUpPartyNames { get; set; } = new List<string>();
+        public List<UpPartyLink> AllowUpParties { get; set; } = new List<UpPartyLink>();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]

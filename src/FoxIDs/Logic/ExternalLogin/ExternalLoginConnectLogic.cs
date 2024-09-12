@@ -29,11 +29,11 @@ namespace FoxIDs.Logic
             this.failingLoginLogic = failingLoginLogic;
         }
 
-        public async Task<List<Claim>> ValidateUserAsync(ExternalLoginUpParty party, string username, string password)
+        public async Task<List<Claim>> ValidateUserAsync(ExternalLoginUpParty party, ExternalLoginUpPartyProfile profile, string username, string password)
         {
             var claims = party.ExternalLoginType switch
             {
-                ExternalLoginTypes.Api => await ValidateUserApiAsync(party, username, password),
+                ExternalLoginTypes.Api => await ValidateUserApiAsync(party, profile, username, password),
                 _ => throw new NotSupportedException()
             };
 
@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        private async Task<List<Claim>> ValidateUserApiAsync(ExternalLoginUpParty extLoginUpParty, string username, string password)
+        private async Task<List<Claim>> ValidateUserApiAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpPartyProfile profile, string username, string password)
         {
             var authenticationApiUrl = UrlCombine.Combine(extLoginUpParty.ApiUrl, Constants.ExternalLogin.Api.Authentication);
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request, URL '{authenticationApiUrl}'.", traceType: TraceTypes.Message);
@@ -63,13 +63,49 @@ namespace FoxIDs.Logic
             };
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{new { authRequest.UsernameType, authRequest.Username }.ToJson()}'.", traceType: TraceTypes.Message);
 
+
+            var authRequestJObject = authRequest.ToJObject();
+
+            var additionalParameters = new List<OAuthAdditionalParameter>();
+            if (extLoginUpParty.AdditionalParameters?.Count() > 0)
+            {
+                foreach (var additionalParameter in extLoginUpParty.AdditionalParameters)
+                {
+                    additionalParameters.Add(additionalParameter);
+                }
+            }
+            if (profile != null && profile.AdditionalParameters?.Count() > 0)
+            {
+                foreach (var additionalParameter in profile.AdditionalParameters)
+                {
+                    var item = additionalParameters.Where(a => a.Name == additionalParameter.Name).FirstOrDefault();
+                    if(item != null)
+                    {
+                        item.Value = additionalParameter.Value;
+                    }
+                    else
+                    {
+                        additionalParameters.Add(additionalParameter);
+                    }
+                }
+            }
+
+            if (additionalParameters.Count() > 0)
+            {
+                foreach (var additionalParameter in additionalParameters)
+                {
+                    authRequestJObject.Add(additionalParameter.Name, additionalParameter.Value);
+                }
+                logger.ScopeTrace(() => $"AuthMethod, External login, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+            }
+
             var httpClient = httpClientFactory.CreateClient();
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? extLoginUpParty.Secret.Substring(0, 3) : string.Empty)}'.", traceType: TraceTypes.Message);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
 
-            using var response = await httpClient.PostAsJsonAsync(authenticationApiUrl, authRequest);
+            using var response = await httpClient.PostAsJsonAsync(authenticationApiUrl, authRequestJObject);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

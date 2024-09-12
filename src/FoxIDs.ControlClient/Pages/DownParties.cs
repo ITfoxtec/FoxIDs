@@ -147,7 +147,7 @@ namespace FoxIDs.Client.Pages
                 var ups = await UpPartyService.FilterUpPartyAsync(null);
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
-                    UpPartyNames = ups.Select(p => p.Name).Take(Constants.Models.DownParty.AllowUpPartyNamesMax).ToList(),
+                    UpParties = ups.Select(p => new UpPartyLink { Name = p.Name }).Take(Constants.Models.DownParty.AllowUpPartyNamesMax).ToList(),
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 

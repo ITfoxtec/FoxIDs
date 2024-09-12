@@ -1,0 +1,27 @@
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace FoxIDs.Models.Api
+{
+    public class ExternalLoginUpPartyProfile
+    {
+        [Required]
+        [MaxLength(Constants.Models.Party.ProfileNameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Add additional parameter or change parameter values.
+        /// </summary>
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [JsonProperty(PropertyName = "additional_parameter")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
+    }
+}

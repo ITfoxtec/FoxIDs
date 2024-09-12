@@ -1,4 +1,4 @@
-# External Login
+# External API Login
 
 With external login you can authenticate users in your existing user database with an [API call](#api). You implement the API which is called with a username and password, and the API then validate the username and password combination and return a response indicating success or failure.  
 You would use an external login authentication method if you have an existing user store to leverage the user store as a possible authentication method in FoxIDs. 

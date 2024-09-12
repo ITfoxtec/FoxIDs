@@ -205,7 +205,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (downParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{downParty.DisplayName ?? downParty.Name} (External Login)";
+                return $"{downParty.DisplayName ?? downParty.Name} (External API Login)";
             }
 
             throw new NotSupportedException();

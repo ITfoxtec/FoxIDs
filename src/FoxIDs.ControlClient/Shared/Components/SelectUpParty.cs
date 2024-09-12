@@ -143,7 +143,7 @@ namespace FoxIDs.Client.Shared.Components
             }
             else if (upParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (External Login)";
+                return $"{upParty.DisplayName ?? upParty.Name} (External API Login)";
             }
             throw new NotSupportedException();
         }

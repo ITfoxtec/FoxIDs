@@ -7,7 +7,7 @@
 <PageEditForm @ref="extLoginUpParty.Form" TModel="ExternalLoginUpPartyViewModel" OnAfterInit="@(async m => await ExternalLoginUpPartyViewModelAfterInitAsync(extLoginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalLoginUpPartyValidSubmitAsync(extLoginUpParty, editContext))">
     <div class="modal-header">
         <div class="h5">
-            External Login
+            External API Login
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="extLoginUpParty.ShowAdvanced" />
     </div>
@@ -42,11 +42,11 @@
             <li class="nav-item">
                 @if (extLoginUpParty.ShowExternalLoginTab)
                 {
-                    <a class="nav-link active">External Login</a>
+                    <a class="nav-link active">External API Login</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.ExternalLogin))">External Login</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.ExternalLogin))">External API Login</button>
                 }
             </li>
             <li class="nav-item">

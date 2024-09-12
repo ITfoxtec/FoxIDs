@@ -223,7 +223,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (upParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (External Login)";
+                return $"{upParty.DisplayName ?? upParty.Name} (External API Login)";
             }
             throw new NotSupportedException($"Type '{upParty.Type}'.");
         }

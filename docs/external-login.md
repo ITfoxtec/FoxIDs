@@ -37,6 +37,8 @@ The API call is secured with [HTTP Basic authentication scheme](https://datatrac
 
 The API is called with HTTP POST and a JSON body.
 
+> It is possible to configure additional parameters which is included in the JSON message.
+
 This is a JSON body for the username type `email`:
 ```JSON
 {

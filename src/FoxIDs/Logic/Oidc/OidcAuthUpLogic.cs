@@ -192,7 +192,10 @@ namespace FoxIDs.Logic
             {
                 foreach (var additionalParameter in additionalParameters)
                 {
-                    nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    if (!nameValueCollection.ContainsKey(additionalParameter.Name))
+                    {
+                        nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    }                        
                 }
                 logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }

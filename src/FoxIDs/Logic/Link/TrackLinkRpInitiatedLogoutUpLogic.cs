@@ -67,14 +67,14 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(trackLinkUpSequenceData.UpPartyId);
 
-            var session = await sessionUpPartyLogic.GetSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)));
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
             {
                 return await SingleLogoutDone(party.Id);
             }
             else
             {
-                _ = await sessionUpPartyLogic.DeleteSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)), session);
+                _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 trackLinkUpSequenceData.SessionId = session.ExternalSessionId;
             }
 

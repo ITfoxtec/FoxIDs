@@ -5,9 +5,7 @@ using System.Linq;
 
 namespace FoxIDs.Models
 {
-    public class UpPartyExternal : UpPartyExternal<UpPartyProfile> { }
-
-    public class UpPartyExternal<TProfile> : UpParty<TProfile>, IValidatableObject where TProfile : UpPartyProfile
+    public class UpPartyWithExternalUser<TProfile> : UpPartyWithProfile<TProfile>, IValidatableObject where TProfile : UpPartyProfile
     {
         [ValidateComplexType]
         [JsonProperty(PropertyName = "link_external_user")]

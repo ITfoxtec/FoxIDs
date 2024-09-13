@@ -34,7 +34,7 @@ h4 {
 }
 
 .blazored-toast-container {
-    z-index: 100;
+    z-index: 200;
 }
 
 @media (min-width: 576px) {
@@ -89,7 +89,7 @@ h4 {
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
     position: fixed;
     width: 100%;
-    z-index: 1000;
+    z-index: 5000;
 }
 
     #blazor-error-ui .dismiss {
@@ -169,7 +169,7 @@ img.logo {
 }
 
 .navbar .dropdown-nav-item {
-    z-index: 100;
+    z-index: 50;
     position: absolute;
     min-width: 100px;
     right: auto;
@@ -544,6 +544,7 @@ img.logo {
     background-color: inherit;
     border-color: #df8935;
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+    z-index: 100 !important;
 }
 
 .list-group-item .btn-link {

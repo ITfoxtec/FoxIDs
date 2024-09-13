@@ -347,7 +347,7 @@ namespace FoxIDs.Controllers
             var bt = type.BaseType;
             if (bt.Equals(baseType)) return true;
 
-            if (recursivCount > 2) return false;
+            if (recursivCount > 3) return false;
 
             recursivCount++;
             return EqualsBaseType(recursivCount, bt, baseType);

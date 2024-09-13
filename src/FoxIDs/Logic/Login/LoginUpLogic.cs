@@ -161,12 +161,21 @@ namespace FoxIDs.Logic
 
         private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(IEnumerable<UpPartyLink> toUpParties)
         {
-            return toUpParties.Select(up => new HrdUpPartySequenceData 
+            foreach(var up in toUpParties)
             {
-                Name = up.Name, DisplayName = up.DisplayName, Type = up.Type, Issuers = up.Issuers, 
-                HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl,
-                DisableUserAuthenticationTrust = up.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = up.DisableTokenExchangeTrust
-            });
+                yield return new HrdUpPartySequenceData
+                {
+                    Name = up.Name,
+                    DisplayName = up.DisplayName,
+                    ProfileName = up.ProfileName,
+                    ProfileDisplayName = up.ProfileDisplayName,
+                    Type = up.Type,
+                    HrdDomains = up.HrdDomains,
+                    HrdShowButtonWithDomain = up.HrdShowButtonWithDomain,
+                    HrdDisplayName = up.HrdDisplayName,
+                    HrdLogoUrl = up.HrdLogoUrl
+                };
+            }
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)

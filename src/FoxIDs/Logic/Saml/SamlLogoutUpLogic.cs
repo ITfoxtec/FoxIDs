@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
 
-            var session = await sessionUpPartyLogic.GetSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)));
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
             {
                 return await LogoutResponseDownAsync(samlUpSequenceData);
@@ -165,7 +165,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace(() => "AuthMethod, SAML Logout request.", triggerEvent: true);
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)), session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(samlUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -411,7 +411,7 @@ namespace FoxIDs.Logic
         {
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
 
-            var session = await sessionUpPartyLogic.DeleteSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)));
+            var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session?.SessionId);
 
             if (party.DisableSingleLogout)

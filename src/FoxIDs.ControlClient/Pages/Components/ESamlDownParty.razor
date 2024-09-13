@@ -67,7 +67,7 @@
         <div class="tab-content pt-3">
             @if (samlDownParty.ShowSamlTab)
             {
-                <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
                 <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
                 <FInputToggle @bind-Value="samlDownParty.Form.Model.DisableAbsoluteUrls" For="@(() => samlDownParty.Form.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />

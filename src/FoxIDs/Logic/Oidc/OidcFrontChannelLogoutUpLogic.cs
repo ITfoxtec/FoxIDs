@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
 
-            var session = await sessionUpPartyLogic.GetSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)));
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
             logger.ScopeTrace(() => "AuthMethod, Successful OIDC Front channel logout request.", triggerEvent: true);
             if (session != null)
             {
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync((UpParty<UpPartyProfile>)Convert.ChangeType(party, typeof(UpParty<UpPartyProfile>)), session);
+                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 if (!party.DisableSingleLogout)

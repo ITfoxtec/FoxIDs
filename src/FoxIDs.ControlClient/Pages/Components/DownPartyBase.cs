@@ -110,17 +110,24 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public void AddAllowUpPartyName((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg)
+        public void UpdateAllowUpParties((IAllowUpPartyNames model, List<UpPartyLink> upPartyLinks) arg, bool addDefaultUpParty)
         {
-            if (!arg.model.AllowUpParties.Where(p => p.Name == arg.upPartyLink.Name && p.ProfileName == arg.upPartyLink.ProfileName).Any())
-            {
-                arg.model.AllowUpParties.Add(arg.upPartyLink);
-            }
+            arg.model.AllowUpParties = arg.upPartyLinks;
+            AddDefaultUpParty(arg.model.AllowUpParties, addDefaultUpParty);
         }
 
-        public void RemoveAllowUpPartyName((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg)
+        public void RemoveAllowUpParty((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg, bool addDefaultUpParty)
         {
             arg.model.AllowUpParties.RemoveAll(p => p.Name == arg.upPartyLink.Name && p.ProfileName == arg.upPartyLink.ProfileName);
+            AddDefaultUpParty(arg.model.AllowUpParties, addDefaultUpParty);
+        }
+
+        private static void AddDefaultUpParty(List<UpPartyLink> allowUpParties, bool addDefaultUpParty)
+        {
+            if (addDefaultUpParty && allowUpParties.Count() <= 0)
+            {
+                allowUpParties.Add(new UpPartyLink { Name = Constants.DefaultLogin.Name });
+            }
         }
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)

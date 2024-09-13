@@ -121,7 +121,7 @@
                     <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
                     @if (oidcDownParty.Form.Model.Client != null)
                     {
-                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
                         @if (!oidcDownParty.Form.Model.IsTest && DownParty.ShowAdvanced)
                         {
                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true"  />

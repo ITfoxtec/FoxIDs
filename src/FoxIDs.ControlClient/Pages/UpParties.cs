@@ -262,7 +262,7 @@ namespace FoxIDs.Client.Pages
             {
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
-                    UpParties = new List<UpPartyLink> { new UpPartyLink { Name = upParty.Name } },
+                    UpParties = GetUpParties(upParty),
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 
@@ -280,6 +280,22 @@ namespace FoxIDs.Client.Pages
             {
                 testDownPartyModal.Error = ex.Message;
             }
+        }
+
+        private List<UpPartyLink> GetUpParties(UpParty up)
+        {
+            var upParties = new List<UpPartyLink>
+            {
+                new UpPartyLink { Name = up.Name }
+            };
+            if (up.Profiles != null)
+            {
+                foreach (var profile in up.Profiles)
+                {
+                    upParties.Add(new UpPartyLink { Name = up.Name, ProfileName = profile.Name });
+                }
+            }
+            return upParties;
         }
 
         private void ShowSelectTrack(NewUpPartyEnvironmentLinkViewModel newUpPartyEnvironmentLinkViewModel)

@@ -16,7 +16,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// OAuth 2.0 authorization method.
     /// </summary>
-    public class OAuthUpParty<TClient> : UpPartyExternal<OAuthUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
+    public class OAuthUpParty<TClient> : UpPartyWithExternalUser<OAuthUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthUpClient
     {
         public OAuthUpParty()
         {

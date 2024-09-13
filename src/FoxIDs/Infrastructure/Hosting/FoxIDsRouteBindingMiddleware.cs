@@ -191,7 +191,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return routeBinding;
         }
 
-        private async Task<UpParty> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
+        private async Task<UpPartyWithProfile<UpPartyProfile>> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
         {
             try
             {

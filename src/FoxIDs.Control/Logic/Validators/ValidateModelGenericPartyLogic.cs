@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -44,6 +45,25 @@ namespace FoxIDs.Logic
                         upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
                         upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;
                         upPartyLink.DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust;
+
+                        if(!upPartyLink.ProfileName.IsNullOrWhiteSpace())
+                        {
+                            upPartyLink.ProfileDisplayName = upParty.Profiles?.Where(p => p.Name == upPartyLink.ProfileName).Select(p => p.DisplayName).FirstOrDefault();
+                            if(upPartyLink.ProfileDisplayName.IsNullOrWhiteSpace())
+                            {
+                                isValid = false;
+                                var errorMessage = $"Allow authentication method '{upPartyLink.Name}' profile '{upPartyLink.ProfileName}' not found.";
+                                try
+                                {
+                                    throw new Exception(errorMessage);
+                                }
+                                catch (Exception pex)
+                                {
+                                    logger.Warning(pex, errorMessage);
+                                }
+                                modelState.TryAddModelError(propertyName.ToCamelCase(), errorMessage);
+                            }
+                        }
                     }
                     catch (FoxIDsDataException ex)
                     {
@@ -198,9 +218,10 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                if(upParty.Profiles != null)
+                var profiles = GetProfils(upParty);
+                if (profiles != null)
                 {
-                    var duplicatedName = upParty.Profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    var duplicatedName = profiles?.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
                     if (!string.IsNullOrEmpty(duplicatedName))
                     {
                         throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
@@ -214,6 +235,28 @@ namespace FoxIDs.Logic
                 modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
             }
             return isValid;
+        }
+
+        private IEnumerable<UpPartyProfile> GetProfils(UpParty upParty)
+        {
+            if (upParty is OidcUpParty oidcUpParty && oidcUpParty.Profiles != null)
+            {
+                return oidcUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (upParty is SamlUpParty samlUpParty && samlUpParty.Profiles != null)
+            {
+                return samlUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (upParty is TrackLinkUpParty trackLinkUpParty && trackLinkUpParty.Profiles != null)
+            {
+                return trackLinkUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (upParty is ExternalLoginUpParty externalLoginUpParty && externalLoginUpParty.Profiles != null)
+            {
+                return externalLoginUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+
+            return null;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkUpParty : UpPartyExternal<TrackLinkUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject
+    public class TrackLinkUpParty : UpPartyWithExternalUser<TrackLinkUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject
     {
         public TrackLinkUpParty()
         {

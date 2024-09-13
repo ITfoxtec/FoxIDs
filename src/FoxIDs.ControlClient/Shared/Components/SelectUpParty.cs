@@ -16,9 +16,10 @@ namespace FoxIDs.Client.Shared.Components
 {
     public partial class SelectUpParty<TModel> where TModel : class, IAllowUpPartyNames, new()
     {
+        private Modal upPartyFilterModal;        
         private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
         private List<UpParty> upParties;
-        private IEnumerable<UpParty> upPartyFilters;
+        private List<UpPartyFilterViewModel> upPartyFilters;
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -30,15 +31,15 @@ namespace FoxIDs.Client.Shared.Components
         public PageEditForm<TModel> EditDownPartyForm { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnAddUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, List<UpPartyLink>)> OnUpdateUpParties { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnRemoveUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnRemoveUpParty { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await LoadDefaultUpPartyFilter();
+            await UpPartyNamesFilterAsync(null);
         }
 
         public void Init()
@@ -49,6 +50,7 @@ namespace FoxIDs.Client.Shared.Components
         private async Task LoadDefaultUpPartyFilter()
         {
             await UpPartyNamesFilterAsync(null);
+            upPartyFilterModal.Show();
         }
 
         private async Task OnUpPartyNamesFilterValidSubmitAsync(EditContext editContext)
@@ -89,7 +91,37 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     upParties = ups?.ToList();
                 }
-                upPartyFilters = ups.Where(f => !EditDownPartyForm.Model.AllowUpParties.Where(a => a.Equals(f.Name)).Any());
+
+                upPartyFilters = new List<UpPartyFilterViewModel>();
+                foreach (var up in ups)
+                {
+                    var typeText = GetTypeText(up);
+                    upPartyFilters.Add(new UpPartyFilterViewModel
+                    {
+                        Name = up.Name,
+                        DisplayName = up.DisplayName ?? up.Name,
+                        Type = up.Type,
+                        TypeText = typeText,
+                        Selected = EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName.IsNullOrWhiteSpace()).Any()
+                    });
+
+                    if (up.Profiles != null)
+                    {
+                        foreach(var profile in up.Profiles) 
+                        {
+                            upPartyFilters.Add(new UpPartyFilterViewModel
+                            {
+                                Name = up.Name,
+                                DisplayName = up.DisplayName ?? up.Name,
+                                ProfileName = profile.Name,
+                                ProfileDisplayName = profile.DisplayName,
+                                Type = up.Type,
+                                TypeText = typeText,
+                                Selected = EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName == profile.Name).Any()
+                            });
+                        }
+                    }
+                }
             }
             catch (TokenUnavailableException)
             {
@@ -97,21 +129,33 @@ namespace FoxIDs.Client.Shared.Components
             }
         }
 
-        private async Task OnAddUpPartyNameAsync(UpParty upParty, UpPartyProfile profile = null)
+        private void OnFilterSelectedAllChange(bool selectAll)
         {
-            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, new UpPartyLink { Name = upParty.Name, ProfileName = profile?.Name } ));
+            foreach (var up in upPartyFilters)
+            {
+                up.Selected = selectAll;
+            }
         }
 
-        private async Task OnRemoveUpPartyNameAsync(UpPartyLink upPartyLink)
+        private void OnAddUpParty(UpPartyFilterViewModel upPartyFilter)
         {
-            await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
+            upPartyFilter.Selected = !upPartyFilter.Selected;
         }
 
-        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpParty upParty, string profileName = null) => UpPartyInfoText(new UpPartyLink { Name = upParty.Name, ProfileName = profileName });
+        private async Task OnRemoveUpPartyAsync(UpPartyLink upPartyLink)
+        {
+            await OnRemoveUpParty.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
+        }
+
+        private async Task OnUpPartyFilterSelectAsync()
+        {
+            await OnUpdateUpParties.InvokeAsync((EditDownPartyForm.Model, upPartyFilters.Where(u => u.Selected).Select(u => new UpPartyLink { Name = u.Name, ProfileName = u.ProfileName } ).ToList()));
+            upPartyFilterModal.Hide();
+        }
 
         private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpPartyLink upPartyLink)
         {
-            var upParty = upParties.Where(f => f.Name.Equals(upPartyLink.Name)).FirstOrDefault();
+            var upParty = upParties.Where(f => f.Name == upPartyLink.Name).FirstOrDefault();
             if (upParty == null)
             {
                 return (upPartyLink.Name, upPartyLink.ProfileName, string.Empty);
@@ -126,7 +170,7 @@ namespace FoxIDs.Client.Shared.Components
         {
             if(!profileName.IsNullOrEmpty() && upParty.Profiles != null)
             {
-                var profileDisplayName = upParty.Profiles.Where(p => p.Equals(profileName)).Select(p => p.DisplayName).FirstOrDefault();
+                var profileDisplayName = upParty.Profiles.Where(p => p.Name == profileName).Select(p => p.DisplayName).FirstOrDefault();
                 return profileDisplayName ?? profileName;
             }
 

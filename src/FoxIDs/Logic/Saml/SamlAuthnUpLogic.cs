@@ -330,7 +330,7 @@ namespace FoxIDs.Logic
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), jwtValidClaims, 
+                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, jwtValidClaims, 
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -396,9 +396,9 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, List<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId)
         {
-            jwtValidClaims = externalUserLogic.AddExternalUserClaims((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), jwtValidClaims, externalUserClaims);
+            jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(party, typeof(UpPartyExternal<UpPartyProfile>)), party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {
                 jwtValidClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);

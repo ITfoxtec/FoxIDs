@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -24,10 +23,6 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "t")]
         public PartyTypes Type { get; set; }
 
-        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
-        [JsonProperty(PropertyName = "i")]
-        public List<string> Issuers { get; set; }
-
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 
@@ -39,11 +34,5 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "hl")]
         public string HrdLogoUrl { get; set; }
-
-        [JsonProperty(PropertyName = "duat")]
-        public bool DisableUserAuthenticationTrust { get; set; }
-
-        [JsonProperty(PropertyName = "dtet")]
-        public bool DisableTokenExchangeTrust { get; set; }
     }
 }

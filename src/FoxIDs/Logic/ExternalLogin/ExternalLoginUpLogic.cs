@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                 await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
             }
 
-            (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(extLoginUpParty, typeof(UpPartyExternal<UpPartyProfile>)), claims,
+            (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(extLoginUpParty, claims,
                 (externalUserUpSequenceData) => { },
                 (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
             if (externalUserActionResult != null)
@@ -100,7 +100,7 @@ namespace FoxIDs.Logic
 
         private async Task<List<Claim>> AuthResponsePostAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, List<Claim> claims, IEnumerable<Claim> externalUserClaims)
         {
-            claims = externalUserLogic.AddExternalUserClaims((UpPartyExternal<UpPartyProfile>)Convert.ChangeType(extLoginUpParty, typeof(UpPartyExternal<UpPartyProfile>)), claims, externalUserClaims);
+            claims = externalUserLogic.AddExternalUserClaims(extLoginUpParty, claims, externalUserClaims);
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {

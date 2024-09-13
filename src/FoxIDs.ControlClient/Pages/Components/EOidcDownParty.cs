@@ -25,7 +25,7 @@ namespace FoxIDs.Client.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await DefaultLoadAsync();
+            await DefaultLoadAsync();            
         }
 
         private async Task DefaultLoadAsync()

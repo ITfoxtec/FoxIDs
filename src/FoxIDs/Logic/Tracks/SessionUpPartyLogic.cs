@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task<string> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty<UpPartyProfile>
+        public async Task<string> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace(() => $"Create or update session authentication method, Route '{RouteBinding.Route}'.");
 
@@ -122,7 +122,7 @@ namespace FoxIDs.Logic
 
         private string NewSessionId() => RandomGenerator.Generate(24);
 
-        public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty<UpPartyProfile>
+        public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty
         {
             logger.ScopeTrace(() => $"Get session authentication method, Route '{RouteBinding.Route}'.");
 
@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        public async Task<SessionUpPartyCookie> DeleteSessionAsync<T>(T upParty, SessionUpPartyCookie session = null) where T : UpParty<UpPartyProfile>
+        public async Task<SessionUpPartyCookie> DeleteSessionAsync<T>(T upParty, SessionUpPartyCookie session = null) where T : UpParty
         {
             logger.ScopeTrace(() => $"Delete session authentication method, Route '{RouteBinding.Route}'.");
             session = session ?? await sessionCookieRepository.GetAsync(upParty);

@@ -385,6 +385,7 @@ namespace FoxIDs.Client.Pages.Components
                     toastService.ShowSuccess("SAML 2.0 application created.");
                     generalSamlUpParty.Name = samlUpPartyResult.Name;
                     generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
+                    generalSamlUpParty.Profiles = samlUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }
                 else
                 {
@@ -392,7 +393,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     toastService.ShowSuccess("SAML 2.0 application updated.");
                     generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
-                }                
+                    generalSamlUpParty.Profiles = samlUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
+                }
             }
             catch (FoxIDsApiException ex)
             {

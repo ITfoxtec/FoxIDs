@@ -2,7 +2,7 @@
 
 With external login you can authenticate users in your existing user database with an [API call](#api). You implement the API which is called with a username and password, and the API then validate the username and password combination and return a response indicating success or failure.  
 You would use an external login authentication method if you have an existing user store to leverage the user store as a possible authentication method in FoxIDs. 
-After login it is possible to create [external users](users.md#external-users) and optionally show a dialog where the user e.g., can put in a name, email etc.
+After login it is possible to create [external users](users.md#external-users) and optionally show a dialog where the user e.g., can put in a name, email.
 
 > If desired, you can possible over time migrate users to FoxIDs and phase out the API and existing user store. However, it requires that emails have been added to the users.
 
@@ -61,7 +61,7 @@ The username types:
 
 ### Response
 **Success**  
-On success the API should return HTTP code 200 and optionally a list of claims for the authenticated user.
+On success the API should return HTTP code 200 and optionally a list of `claims` for the authenticated user.
 
 For example, the user's, sub (unique ID / username), name, email and maybe even a role:
 ```JSON
@@ -92,19 +92,31 @@ For example, the user's, sub (unique ID / username), name, email and maybe even 
 ```
 
 **Error**  
-The API must return HTTP code 401 (Unauthorized) if the Basic authentication is rejected.
+The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `errorDescription`.
+```JSON
+{
+    "error": "invalid_api_id_secret",
+    "errorDescription": "Invalid API ID or secret"
+}
+```
 
-The API must return HTTP code 403 (Forbidden) if the username and password combination is rejected.
+The API must return HTTP code 400, 401 or 403 and an `error` (required) if the username and password combination is rejected. Optionally add an error description in `errorDescription`.
+```JSON
+{
+    "error": "invalid_username_password",
+    "errorDescription": "Invalid username or password."
+}
+```
 
-If other errors occur, the API should return HTTP code 400 (Bad Request), 500 (Internal Server Error) or another or another appropriate error code.
+If other errors occur, the API should return HTTP code 500 or another appropriate error code. 
+It is recommended to add a technical error message in to the return body. The error message can then later be found in the FoxIDs logs.  
 
-In all error cases, a technical error message should be added to the return body. The error message can then later be found in the FoxIDs logs.  
-The error message is NOT displayed for the user.
+> Error messages returned from the API is NOT displayed for the user.
 
 ## API Sample
-The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample) show how to implement the API in ASP.NET Core 8.
+The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalApiLoginSample) show how to implement the API in ASP.NET Core 8.
 
-You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample/external-login-api.postman_collection.json) to call and test the sample with [Postman](https://www.postman.com/downloads/).
+You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample/external-api-login.postman_collection.json) to call and test the sample with [Postman](https://www.postman.com/downloads/).
 
 ## Configure 
 Configure a external login authentication method to call your API in [FoxIDs Control Client](control.md#foxids-control-client).

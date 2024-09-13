@@ -273,7 +273,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
                     toastService.ShowSuccess("OpenID Connect application updated.");
                     generalOidcUpParty.DisplayName = oidcUpPartyResult.DisplayName;
-                }                
+                    generalOidcUpParty.Profiles = oidcUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
+                }
             }
             catch (FoxIDsApiException ex)
             {

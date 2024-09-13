@@ -3,21 +3,30 @@ using FoxIDs.Models;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Ext = FoxIDs.Models.ExternalLogin;
+using System.Net.Mime;
 
 namespace FoxIDs.Logic
 {
     public class ExternalLoginConnectLogic : LogicSequenceBase
     {
+        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         private readonly TelemetryScopedLogger logger;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly FailingLoginLogic failingLoginLogic;
@@ -62,9 +71,7 @@ namespace FoxIDs.Logic
                 Password = password
             };
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{new { authRequest.UsernameType, authRequest.Username }.ToJson()}'.", traceType: TraceTypes.Message);
-
-
-            var authRequestJObject = authRequest.ToJObject();
+            var requestDictionary = authRequest.ToDictionary();
 
             var additionalParameters = new List<OAuthAdditionalParameter>();
             if (extLoginUpParty.AdditionalParameters?.Count() > 0)
@@ -79,7 +86,7 @@ namespace FoxIDs.Logic
                 foreach (var additionalParameter in profile.AdditionalParameters)
                 {
                     var item = additionalParameters.Where(a => a.Name == additionalParameter.Name).FirstOrDefault();
-                    if(item != null)
+                    if (item != null)
                     {
                         item.Value = additionalParameter.Value;
                     }
@@ -94,7 +101,7 @@ namespace FoxIDs.Logic
             {
                 foreach (var additionalParameter in additionalParameters)
                 {
-                    authRequestJObject.Add(additionalParameter.Name, additionalParameter.Value);
+                    requestDictionary.Add(additionalParameter.Name, additionalParameter.Value);
                 }
                 logger.ScopeTrace(() => $"AuthMethod, External login, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
@@ -104,8 +111,9 @@ namespace FoxIDs.Logic
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
-
-            using var response = await httpClient.PostAsJsonAsync(authenticationApiUrl, authRequestJObject);
+            
+            var content = new StringContent(JsonConvert.SerializeObject(requestDictionary, jsonSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
+            using var response = await httpClient.PostAsync(authenticationApiUrl, content);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
@@ -118,14 +126,22 @@ namespace FoxIDs.Logic
 
                     return authenticationResponse.Claims?.Select(c => new Claim(c.Type, c.Value))?.ToList();
 
+                case HttpStatusCode.BadRequest:
+                case HttpStatusCode.Unauthorized:
                 case HttpStatusCode.Forbidden:
-                    logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response, Status code={response.StatusCode}. Response '{response.Content.ReadAsStringAsync().GetAwaiter().GetResult()}'.", traceType: TraceTypes.Message);
+                    var resultError = await response.Content.ReadAsStringAsync();
+                    var errorResponse = resultError.ToObject<Ext.ErrorResponse>();
+                    logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.", traceType: TraceTypes.Message);
 
-                    throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}'.");
+                    if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
+                    {
+                        throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}'.");
+                    }
+                    throw new Exception($"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.");
 
                 default:
                     var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"AuthMethod, External login, Authentication API response, Status code={response.StatusCode}. Response '{resultUnexpectedStatus}'.");
+                    throw new Exception($"AuthMethod, External login, Authentication API error '{resultUnexpectedStatus}'. Status code={response.StatusCode}.");
             }
         }
     }

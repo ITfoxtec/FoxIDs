@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models.Api;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {

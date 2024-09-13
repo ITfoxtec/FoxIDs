@@ -167,6 +167,7 @@ namespace FoxIDs.Client.Pages.Components
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
                     toastService.ShowSuccess("Environment Link authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
+                    generalTrackLinkUpParty.Profiles = trackLinkUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }
             }
             catch (FoxIDsApiException ex)

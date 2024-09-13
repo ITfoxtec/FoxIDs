@@ -14,6 +14,7 @@ namespace FoxIDs.Client.Models.ViewModels
             Name = upParty.Name;
             DisplayName = upParty.DisplayName;
             Type = upParty.Type;
+            Profiles = upParty.Profiles;
         }
 
         public bool TokenExchange { get; set; }

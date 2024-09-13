@@ -130,7 +130,7 @@ namespace FoxIDs.Models.Api
 
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [Display(Name = "Profiles")]
-        public List<OidcUpPartyProfile> Profiles { get; set; }
+        public List<ExternalLoginUpPartyProfile> Profiles { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

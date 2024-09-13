@@ -11,6 +11,8 @@ using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using FoxIDs.Util;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -74,6 +76,20 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.Name = await UpPartyService.GetNewPartyNameAsync();
             }
+        }
+
+        private void AddProfile(MouseEventArgs e, List<ExternalLoginUpPartyProfileViewModel> profiles)
+        {
+            var profile = new ExternalLoginUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<ExternalLoginUpPartyProfileViewModel> profiles, ExternalLoginUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
         }
 
         private async Task OnEditExternalLoginUpPartyValidSubmitAsync(GeneralExternalLoginUpPartyViewModel generalExtLoginUpParty, EditContext editContext)
@@ -153,6 +169,7 @@ namespace FoxIDs.Client.Pages.Components
                     generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
                     toastService.ShowSuccess("External login application updated.");
                     generalExtLoginUpParty.DisplayName = extLoginUpPartyResult.DisplayName;
+                    generalExtLoginUpParty.Profiles = extLoginUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }
             }
             catch (FoxIDsApiException ex)

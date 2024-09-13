@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ExternalLogin
-
 {
     public class AuthenticationResponse
     {

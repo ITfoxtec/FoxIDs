@@ -51,7 +51,7 @@
             @if (upPartyFilters.Count() > 0)
             {
                 <div class="list-striped">                    
-                    @foreach (var upPartyFilter in upPartyFilters)
+                    @foreach (var upPartyFilter in upPartyFilters.Where(u => !u.Hide))
                     {
                         <div class="d-flex">
                             <InputCheckbox @bind-Value="upPartyFilter.Selected" class="mr-1" />

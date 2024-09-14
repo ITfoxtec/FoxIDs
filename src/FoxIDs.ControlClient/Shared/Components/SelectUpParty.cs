@@ -92,23 +92,31 @@ namespace FoxIDs.Client.Shared.Components
                     upParties = ups?.ToList();
                 }
 
+                var tempUpPartyFilters = upPartyFilters;
                 upPartyFilters = new List<UpPartyFilterViewModel>();
                 foreach (var up in ups)
                 {
                     var typeText = GetTypeText(up);
+
+                    var item = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName.IsNullOrWhiteSpace()).FirstOrDefault();
                     upPartyFilters.Add(new UpPartyFilterViewModel
                     {
                         Name = up.Name,
                         DisplayName = up.DisplayName ?? up.Name,
                         Type = up.Type,
                         TypeText = typeText,
-                        Selected = EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName.IsNullOrWhiteSpace()).Any()
+                        Selected = item != null ? item?.Selected == true : EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName.IsNullOrWhiteSpace()).Any()
                     });
+                    if(tempUpPartyFilters != null && item != null)
+                    {
+                        tempUpPartyFilters.Remove(item);
+                    }
 
                     if (up.Profiles != null)
                     {
                         foreach(var profile in up.Profiles) 
                         {
+                            var itemProfile = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName == profile.Name).FirstOrDefault();
                             upPartyFilters.Add(new UpPartyFilterViewModel
                             {
                                 Name = up.Name,
@@ -117,10 +125,20 @@ namespace FoxIDs.Client.Shared.Components
                                 ProfileDisplayName = profile.DisplayName,
                                 Type = up.Type,
                                 TypeText = typeText,
-                                Selected = EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName == profile.Name).Any()
+                                Selected = itemProfile != null ? itemProfile?.Selected == true : EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName == profile.Name).Any()
                             });
+                            if (tempUpPartyFilters != null && itemProfile != null)
+                            {
+                                tempUpPartyFilters.Remove(itemProfile);
+                            }
                         }
                     }
+                }
+
+                if(tempUpPartyFilters?.Count() > 0)
+                {
+                    tempUpPartyFilters.ForEach(u => u.Hide = true);
+                    upPartyFilters.AddRange(tempUpPartyFilters);
                 }
             }
             catch (TokenUnavailableException)

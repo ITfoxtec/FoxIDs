@@ -4,6 +4,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class UpPartyFilterViewModel 
     {
+        public bool Hide { get; set; }
+
         public bool Selected { get; set; }
 
         public string Name { get; set; }

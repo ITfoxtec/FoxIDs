@@ -145,17 +145,21 @@ namespace FoxIDs.Logic
                     AuthnContextClassRef = party.AuthnContextClassReferences,
                 };
             }
-            if(profile != null && profile.AuthnContextClassReferences?.Count() > 0)
+            if(profile != null && (profile.AuthnContextComparison.HasValue || profile.AuthnContextClassReferences?.Count() > 0))
             {
                 if(saml2AuthnRequest.RequestedAuthnContext == null)
                 {
                     saml2AuthnRequest.RequestedAuthnContext = new RequestedAuthnContext();
                 }
-                else if(profile.AuthnContextComparison.HasValue)
+
+                if(profile.AuthnContextComparison.HasValue)
                 {
                     saml2AuthnRequest.RequestedAuthnContext.Comparison = (AuthnContextComparisonTypes)Enum.Parse(typeof(AuthnContextComparisonTypes), profile.AuthnContextComparison.Value.ToString());
                 }
-                saml2AuthnRequest.RequestedAuthnContext.AuthnContextClassRef = profile.AuthnContextClassReferences;
+                if(profile.AuthnContextClassReferences?.Count() > 0)
+                {
+                    saml2AuthnRequest.RequestedAuthnContext.AuthnContextClassRef = profile.AuthnContextClassReferences;
+                }
             }
 
             if (!party.AuthnRequestExtensionsXml.IsNullOrWhiteSpace())

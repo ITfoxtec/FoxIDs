@@ -121,7 +121,7 @@ namespace FoxIDs.Client.Pages.Components
                         var afterMapProfile = afterMap.Profiles.Where(p => p.Name.Equals(profile.Name)).First();
                         if (profile.AuthnContextComparison.HasValue)
                         {
-                            afterMapProfile.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
+                            afterMapProfile.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), profile.AuthnContextComparison.Value.ToString());
                         }
                         else
                         {
@@ -371,7 +371,7 @@ namespace FoxIDs.Client.Pages.Components
                             if (profile.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
                             {
                                 var afterMapProfile = afterMap.Profiles.Where(p => p.Name.Equals(profile.Name)).First();
-                                afterMapProfile.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());
+                                afterMapProfile.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), profile.AuthnContextComparisonViewModel.ToString());
                             }
                         }
                     }

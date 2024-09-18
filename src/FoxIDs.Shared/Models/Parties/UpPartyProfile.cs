@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public abstract class UpPartyProfile
+    public class UpPartyProfile
     {
         [Required]
         [MaxLength(Constants.Models.Party.ProfileNameLength)]
@@ -11,6 +11,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [Required]
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
         [JsonProperty(PropertyName = "display_name")]

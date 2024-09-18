@@ -314,36 +314,49 @@ namespace FoxIDs.Client.Pages.Components
                     upParty.ShowExternalLoginTab = true;
                     upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
+                    upParty.ShowProfileTab = false;
+                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.ClaimsTransform:
                     upParty.ShowExternalLoginTab = false;
                     upParty.ShowClaimTransformTab = true;
                     upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
+                    upParty.ShowProfileTab = false;
+                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.LinkExternalUser:
                     upParty.ShowExternalLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = true;
+                    upParty.ShowHrdTab = false;
+                    upParty.ShowProfileTab = false;
                     upParty.ShowSessionTab = false;
-                    upParty.ShowHrdTab = false;
-                    break;
-                case ExternalLoginTabTypes.Session:
-                    upParty.ShowExternalLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowSessionTab = true;
-                    upParty.ShowHrdTab = false;
                     break;
                 case ExternalLoginTabTypes.Hrd:
                     upParty.ShowExternalLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;
+                    upParty.ShowProfileTab = false;
+                    upParty.ShowSessionTab = false;
+                    break;
+                case ExternalLoginTabTypes.Profile:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowHrdTab = false;
+                    upParty.ShowProfileTab = true;
+                    upParty.ShowSessionTab = false;
+                    break;
+                case ExternalLoginTabTypes.Session:
+                    upParty.ShowExternalLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowLinkExternalUserTab = false;
+                    upParty.ShowHrdTab = false;
+                    upParty.ShowProfileTab = false;
+                    upParty.ShowSessionTab = true;
                     break;
                 default:
                     throw new NotSupportedException();

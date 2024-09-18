@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         /// <returns>External login authentication method.</returns>
         [ProducesResponseType(typeof(Api.ExternalLoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.ExternalLoginUpParty>> GetExternalloginUpParty(string name) => await Get(name);
+        public async Task<ActionResult<Api.ExternalLoginUpParty>> GetExternalLoginUpParty(string name) => await Get(name);
 
         /// <summary>
         /// Create external login authentication method.
@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
         /// <returns>External login authentication method.</returns>
         [ProducesResponseType(typeof(Api.ExternalLoginUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.ExternalLoginUpParty>> PostExternalloginUpParty([FromBody] Api.ExternalLoginUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelExternalLoginPartyLogic.ValidateApiModel(ModelState, ap)));
+        public async Task<ActionResult<Api.ExternalLoginUpParty>> PostExternalLoginUpParty([FromBody] Api.ExternalLoginUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelExternalLoginPartyLogic.ValidateApiModel(ModelState, ap)));
 
         /// <summary>
         /// Update external login authentication method.
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
         /// <returns>External login authentication method.</returns>
         [ProducesResponseType(typeof(Api.ExternalLoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.ExternalLoginUpParty>> PutExternalloginUpParty([FromBody] Api.ExternalLoginUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelExternalLoginPartyLogic.ValidateApiModel(ModelState, ap)));
+        public async Task<ActionResult<Api.ExternalLoginUpParty>> PutExternalLoginUpParty([FromBody] Api.ExternalLoginUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelExternalLoginPartyLogic.ValidateApiModel(ModelState, ap)));
 
         /// <summary>
         /// Delete external login authentication method.
@@ -56,6 +56,6 @@ namespace FoxIDs.Controllers
         /// <param name="name">Authentication method name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteExternalloginUpParty(string name) => await Delete(name);
+        public async Task<IActionResult> DeleteExternalLoginUpParty(string name) => await Delete(name);
     }
 }

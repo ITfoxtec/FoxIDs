@@ -111,6 +111,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
 
+        [ValidateComplexType]
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         public List<TrackLinkUpPartyProfileViewModel> Profiles { get; set; } = new List<TrackLinkUpPartyProfileViewModel>();
     }

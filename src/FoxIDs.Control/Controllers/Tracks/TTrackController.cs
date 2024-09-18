@@ -10,9 +10,9 @@ using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
-using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Util;
 
 namespace FoxIDs.Controllers
 {
@@ -203,8 +203,8 @@ namespace FoxIDs.Controllers
         {
             if (name.IsNullOrWhiteSpace())
             {
-                name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
-                if (count < 3)
+                name = RandomName.GenerateDefaultName();
+                if (count < Constants.Models.DefaultNameMaxAttempts)
                 {
                     var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
                     if (mTrack != null)
@@ -213,12 +213,8 @@ namespace FoxIDs.Controllers
                         return await GetTrackNameAsync(count: count);
                     }
                 }
-                return name;
             }
-            else
-            {
-                return name.ToLower();
-            }
+            return name;
         }
     }
 }

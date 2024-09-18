@@ -7,11 +7,15 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    public class OAuthUpParty : IValidatableObject, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]

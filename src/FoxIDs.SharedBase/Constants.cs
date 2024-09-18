@@ -208,7 +208,10 @@ namespace FoxIDs
                 public const string RequestPath = "RequestPath";                
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
+                public const string UserAgent = "UserAgent";
                 public const string AppRoleInstance = "AppRoleInstance";
+                public const string UpPartyId = "UpPartyId";
+                public const string DownPartyId = "DownPartyId";
             }
 
             public static class IndexName
@@ -223,6 +226,9 @@ namespace FoxIDs
         public static class Models
         {
             public const string CosmosPartitionKeyPath = "/partition_id";
+
+            public const int DefaultNameLength = 8;
+            public const int DefaultNameMaxAttempts = 3;
 
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
@@ -432,7 +438,6 @@ namespace FoxIDs
             {
                 public const int UsernameLength = 60;
             }
-
 
             public static class DynamicElements
             {
@@ -731,8 +736,6 @@ namespace FoxIDs
 
         public static class ControlApi
         {
-            public const int DefaultNameLength = 8;
-
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 
@@ -779,6 +782,12 @@ namespace FoxIDs
             {
                 public const string Authentication = "authentication";
                 public const string ApiId = "external_login";
+
+                public static class ErrorCodes
+                {
+                    public const string InvalidAPIIDOrSecret = "invalid_api_id_secret";
+                    public const string InvalidUsernameOrPassword = "invalid_username_password";
+                }
             }
         }
 

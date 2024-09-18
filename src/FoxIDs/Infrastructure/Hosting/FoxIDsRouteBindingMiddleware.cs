@@ -191,7 +191,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return routeBinding;
         }
 
-        private async Task<UpParty> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
+        private async Task<UpPartyWithProfile<UpPartyProfile>> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
         {
             try
             {
@@ -237,7 +237,8 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture, StringComparison.OrdinalIgnoreCase) && 
+                        (profileCapture.IsNullOrEmpty() && ap.ProfileName.IsNullOrEmpty() || ap.ProfileName?.Equals(profileCapture, StringComparison.OrdinalIgnoreCase) == true)).FirstOrDefault();
                     if (allowUpParty != null)
                     {
                         if (!toUpParties.Contains(allowUpParty))
@@ -249,7 +250,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         try
                         {
-                            throw new ArgumentException($"Authentication method name '{upPartyCapture}' not allowed for application registration '{downPartyId}',");
+                            throw new ArgumentException($"Authentication method name '{upPartyCapture}'{(profileCapture.IsNullOrEmpty() ? string.Empty : $" and profile name '{profileCapture}'")} not allowed for application registration '{downPartyId}',");
                         }
                         catch (Exception ex)
                         {

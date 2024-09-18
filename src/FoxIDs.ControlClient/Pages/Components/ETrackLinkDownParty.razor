@@ -68,7 +68,7 @@
                 {
                     <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyDisplayName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyDisplayName)" />
                 }
-                <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
 
                 @if (DownParty.ShowAdvanced)
                 {

@@ -164,29 +164,40 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, Authentication request '{authenticationRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
+            var additionalParameters = new List<OAuthAdditionalParameter>();
             if (party.Client.AdditionalParameters?.Count() > 0)
             {
-                foreach(var additionalParameter in party.Client.AdditionalParameters)
+                foreach (var additionalParameter in party.Client.AdditionalParameters)
                 {
-                    nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    additionalParameters.Add(additionalParameter);
                 }
-
-                if (profile != null && profile.Client.AdditionalParameters?.Count() > 0)
+            }
+            if (profile != null && profile.Client.AdditionalParameters?.Count() > 0)
+            {
+                foreach (var additionalParameter in profile.Client.AdditionalParameters)
                 {
-                    foreach (var additionalParameter in party.Client.AdditionalParameters)
+                    var item = additionalParameters.Where(a => a.Name == additionalParameter.Name).FirstOrDefault();
+                    if (item != null)
                     {
-                        if (nameValueCollection.ContainsKey(additionalParameter.Name))
-                        {
-                            nameValueCollection[additionalParameter.Name] = additionalParameter.Value;
-                        }
-                        else
-                        {
-                            nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
-                        }
+                        item.Value = additionalParameter.Value;
+                    }
+                    else
+                    {
+                        additionalParameters.Add(additionalParameter);
                     }
                 }
+            }
 
-                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+            if (additionalParameters.Count() > 0)
+            {
+                foreach (var additionalParameter in additionalParameters)
+                {
+                    if (!nameValueCollection.ContainsKey(additionalParameter.Name))
+                    {
+                        nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    }                        
+                }
+                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
 
             if (party.Client.EnablePkce)

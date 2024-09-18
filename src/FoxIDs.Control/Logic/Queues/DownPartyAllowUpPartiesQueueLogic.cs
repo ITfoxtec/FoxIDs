@@ -1,10 +1,13 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
+using Api = FoxIDs.Models.Api;
 using FoxIDs.Models.Queue;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,94 +29,177 @@ namespace FoxIDs.Logic
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
-        public async Task UpdateUpParty(UpParty oldUpParty, UpParty newUpParty)
+        public async Task UpdateUpParty(UpPartyWithProfile<UpPartyProfile> oldUpParty, UpParty newUpParty, IEnumerable<Api.IProfile> newProfiles)
         {
-            if (UpPartyHrdHasChanged(oldUpParty, newUpParty))
+            var messages = new List<UpPartyHrdQueueMessage>();
+
+            var action = UpPartyHrdHasChanged(oldUpParty, newUpParty);
+            if (action != UpPartyHrdQueueMessageActions.None)
             {
-                await AddToQueue(newUpParty, false);
+                await AddUpPartyToQueue(messages, oldUpParty, newUpParty, action);
             }
+
+            if (oldUpParty != null && oldUpParty.Profiles?.Count > 0)
+            {
+                foreach (var profile in oldUpParty.Profiles)
+                {
+                    (var actionProfile, var newProfile) = UpPartyProfileHrdHasChanged(profile, newProfiles);
+                    if (actionProfile == UpPartyHrdQueueMessageActions.RemoveProfile)
+                    {
+                        await AddToQueue(messages, new UpPartyHrdQueueMessage { ProfileName = profile.Name, MessageAction = actionProfile });
+                    }
+                    else if(actionProfile != UpPartyHrdQueueMessageActions.None)
+                    {
+                        await AddUpPartyProfileToQueue(messages, newProfile, actionProfile);
+                    }
+                }
+            }
+
+            StartWork(oldUpParty.Name, messages);
         }
 
-        private bool UpPartyHrdHasChanged(UpParty oldUpParty, UpParty newUpParty)
+        private UpPartyHrdQueueMessageActions UpPartyHrdHasChanged(UpParty oldUpParty, UpParty newUpParty)
         {
-            if (oldUpParty == null)
+            var update = false;
+            var nameChange = false;
+
+            if (oldUpParty != null)
             {
-                return true;
+                if (oldUpParty.Name != newUpParty.Name)
+                {
+                    update = true;
+                    nameChange = true;
+                }
+                if (oldUpParty.DisplayName != newUpParty.DisplayName)
+                {
+                    update = true;
+                }
+
+                var oldHrdIssuers = oldUpParty.Issuers != null ? string.Join(',', oldUpParty.Issuers) : string.Empty;
+                var newHrdIssuers = newUpParty.Issuers != null ? string.Join(',', newUpParty.Issuers) : string.Empty;
+                if (oldHrdIssuers != newHrdIssuers)
+                {
+                    update = true;
+                }
+
+                if (oldUpParty.SpIssuer != newUpParty.SpIssuer)
+                {
+                    update = true;
+                }
+
+                var oldHrdDomains = oldUpParty.HrdDomains != null ? string.Join(',', oldUpParty.HrdDomains) : string.Empty;
+                var newHrdDomains = newUpParty.HrdDomains != null ? string.Join(',', newUpParty.HrdDomains) : string.Empty;
+                if (oldHrdDomains != newHrdDomains)
+                {
+                    update = true;
+                }
+
+                if (oldUpParty.HrdShowButtonWithDomain != newUpParty.HrdShowButtonWithDomain)
+                {
+                    update = true;
+                }
+
+                if (oldUpParty.HrdDisplayName != newUpParty.HrdDisplayName)
+                {
+                    update = true;
+                }
+
+                if (oldUpParty.HrdLogoUrl != newUpParty.HrdLogoUrl)
+                {
+                    update = true;
+                }
             }
 
-            if (oldUpParty.DisplayName != newUpParty.DisplayName)
-            {
-                return true;
-            }
-
-            var oldHrdIssuers = oldUpParty.Issuers != null ? string.Join(',', oldUpParty.Issuers) : string.Empty;
-            var newHrdIssuers = newUpParty.Issuers != null ? string.Join(',', newUpParty.Issuers) : string.Empty;
-            if (oldHrdIssuers != newHrdIssuers) 
-            {
-                return true;
-            }
-
-            if (oldUpParty.SpIssuer != newUpParty.SpIssuer)
-            {
-                return true;
-            }
-
-            var oldHrdDomains = oldUpParty.HrdDomains != null ? string.Join(',', oldUpParty.HrdDomains) : string.Empty;
-            var newHrdDomains = newUpParty.HrdDomains != null ? string.Join(',', newUpParty.HrdDomains) : string.Empty;
-            if (oldHrdDomains != newHrdDomains)
-            {
-                return true;
-            }
-
-            if (oldUpParty.HrdShowButtonWithDomain != newUpParty.HrdShowButtonWithDomain)
-            {
-                return true;
-            }
-
-            if (oldUpParty.HrdDisplayName != newUpParty.HrdDisplayName)
-            {
-                return true;
-            }
-
-            if (oldUpParty.HrdLogoUrl != newUpParty.HrdLogoUrl)
-            {
-                return true;
-            }
-
-            return false;
+            return update ? (nameChange ? UpPartyHrdQueueMessageActions.ChangeName : UpPartyHrdQueueMessageActions.Update) : UpPartyHrdQueueMessageActions.None;
         }
+
+        private (UpPartyHrdQueueMessageActions, Api.IProfile) UpPartyProfileHrdHasChanged(UpPartyProfile profile, IEnumerable<Api.IProfile> newProfiles)
+        {
+            var newProfile = newProfiles?.Where(p => p.Name == profile.Name).FirstOrDefault();
+            if (newProfile != null)
+            {
+                if(!newProfile.NewName.IsNullOrWhiteSpace())
+                {
+                    return (UpPartyHrdQueueMessageActions.ChangeProfileName, newProfile);
+                }
+
+                if (profile.DisplayName != newProfile.DisplayName)
+                {
+                    return (UpPartyHrdQueueMessageActions.UpdateProfile, newProfile);
+                }
+            }
+            else
+            {
+                return (UpPartyHrdQueueMessageActions.RemoveProfile, null);
+            }
+
+            return (UpPartyHrdQueueMessageActions.None, null);
+        }       
 
         public async Task DeleteUpParty(string upPartyName)
         {
-            await AddToQueue(new UpParty { Name = upPartyName }, true);
+            var messages = new List<UpPartyHrdQueueMessage>();
+            await AddToQueue(messages, new UpPartyHrdQueueMessage { MessageAction = UpPartyHrdQueueMessageActions.Remove });
+            StartWork(upPartyName, messages);
         }
 
-        private async Task AddToQueue(UpParty upParty, bool remove)
+        private async Task AddToQueue(List<UpPartyHrdQueueMessage> messages, UpPartyHrdQueueMessage message)
+        {
+            await message.ValidateObjectAsync();
+            messages.Add(message);
+        }
+
+        private async Task AddUpPartyToQueue(List<UpPartyHrdQueueMessage> messages, UpPartyWithProfile<UpPartyProfile> oldUpParty, UpParty newUpParty, UpPartyHrdQueueMessageActions messageAction)
         {
             var message = new UpPartyHrdQueueMessage
             {
-                Name = upParty.Name,
-                DisplayName = upParty.DisplayName,
-                Issuers = upParty.Issuers,
-                SpIssuer = upParty.SpIssuer,
-                HrdDisplayName = upParty.HrdDisplayName,
-                HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,
-                HrdDomains = upParty.HrdDomains,
-                HrdLogoUrl = upParty.HrdLogoUrl,
-                DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust,
-                DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust,
-                Remove = remove
+                DisplayName = newUpParty.DisplayName,                
+                Issuers = newUpParty.Issuers,
+                SpIssuer = newUpParty.SpIssuer,
+                HrdDisplayName = newUpParty.HrdDisplayName,
+                HrdShowButtonWithDomain = newUpParty.HrdShowButtonWithDomain,
+                HrdDomains = newUpParty.HrdDomains,
+                HrdLogoUrl = newUpParty.HrdLogoUrl,
+                DisableUserAuthenticationTrust = newUpParty.DisableUserAuthenticationTrust,
+                DisableTokenExchangeTrust = newUpParty.DisableTokenExchangeTrust,
+                MessageAction = messageAction
             };
-            await message.ValidateObjectAsync();
 
+            if(messageAction == UpPartyHrdQueueMessageActions.ChangeName)
+            {
+                message.NewName = newUpParty.Name;
+            }
+
+            await AddToQueue(messages, message);
+        }
+
+        private async Task AddUpPartyProfileToQueue(List<UpPartyHrdQueueMessage> messages, Api.IProfile newProfile, UpPartyHrdQueueMessageActions messageAction)
+        {
+            var message = new UpPartyHrdQueueMessage
+            {
+                ProfileName = newProfile.Name,
+                ProfileDisplayName = newProfile.DisplayName,
+                MessageAction = messageAction
+            };
+
+            if (messageAction == UpPartyHrdQueueMessageActions.ChangeProfileName)
+            {
+                message.NewProfileName = newProfile.NewName;
+            }
+
+            await AddToQueue(messages, message);
+        }
+
+        private void StartWork(string upPartyName, IEnumerable<UpPartyHrdQueueMessage> messages)
+        {
             var routeBinding = RouteBinding;
             backgroundQueue.QueueBackgroundWorkItem(async (stoppingToken) =>
             {
                 try
                 {
-                    var info = $"{(remove ? "Remove" : "Update")} authentication method '{upParty.Name}' {(remove ? "from" : "in")} application registrations allow authentication method list";                                       
+                    var info = $"Update applications allowed authentication for methodsAuthentication method name '{upPartyName}'.";
                     logger.Event($"Start to process '{info}'.");
-                    await DoWorkAsync(routeBinding.TenantName, routeBinding.TrackName, message, stoppingToken);
+                    await DoWorkAsync(routeBinding.TenantName, routeBinding.TrackName, upPartyName, messages, stoppingToken);
                     logger.Event($"Done processing '{info}'.");
                 }
                 catch (Exception ex)
@@ -123,18 +209,18 @@ namespace FoxIDs.Logic
             });
         }
 
-        public async Task DoWorkAsync(string tenantName, string trackName, UpPartyHrdQueueMessage message, CancellationToken stoppingToken)
+        public async Task DoWorkAsync(string tenantName, string trackName, string upPartyName, IEnumerable<UpPartyHrdQueueMessage> messages, CancellationToken stoppingToken)
         {
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             string paginationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == message.Name).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
+                (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == upPartyName).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
                 stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
-                    await UpdateDownPartyAsync(tenantName, trackName, downParty, message);
+                    await UpdateDownPartyAsync(tenantName, trackName, upPartyName, downParty, messages);
                 }
                 
                 if (paginationToken == null)
@@ -144,25 +230,28 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task UpdateDownPartyAsync(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage message)
+        private async Task UpdateDownPartyAsync(string tenantName, string trackName, string upPartyName, DownParty downParty, IEnumerable<UpPartyHrdQueueMessage> messages)
         {
             switch (downParty.Type)
             {
                 case PartyTypes.Oidc:
-                    await UpdateDownPartyAsync<OidcDownParty>(tenantName, trackName, downParty, message);
+                    await UpdateDownPartyAsync<OidcDownParty>(tenantName, trackName, upPartyName, downParty, messages);
                     break;
                 case PartyTypes.Saml2:
-                    await UpdateDownPartyAsync<SamlDownParty>(tenantName, trackName, downParty, message);
+                    await UpdateDownPartyAsync<SamlDownParty>(tenantName, trackName, upPartyName, downParty, messages);
                     break;
                 case PartyTypes.OAuth2:
-                    await UpdateDownPartyAsync<OAuthDownParty>(tenantName, trackName, downParty, message);
+                    await UpdateDownPartyAsync<OAuthDownParty>(tenantName, trackName, upPartyName, downParty, messages);
+                    break;
+                case PartyTypes.TrackLink:
+                    await UpdateDownPartyAsync<TrackLinkDownParty>(tenantName, trackName, upPartyName, downParty, messages);
                     break;
                 default:
                     throw new NotSupportedException($"Application registration type {downParty.Type} not supported.");
             }
         }
 
-        private async Task UpdateDownPartyAsync<T>(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj) where T : DownParty
+        private async Task UpdateDownPartyAsync<T>(string tenantName, string trackName, string upPartyName, DownParty downParty, IEnumerable<UpPartyHrdQueueMessage> messages) where T : DownParty
         {
             var idKey = new Party.IdKey
             {
@@ -171,29 +260,66 @@ namespace FoxIDs.Logic
                 PartyName = downParty.Name
             };
             var downPartyFullObj = await tenantDataRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: logger);
-            var upParty = downPartyFullObj.AllowUpParties.Where(up => up.Name == messageObj.Name).FirstOrDefault();
-            if (upParty != null)
+
+            var removeMessages = messages.Where(m => m.MessageAction == UpPartyHrdQueueMessageActions.Remove || m.MessageAction == UpPartyHrdQueueMessageActions.RemoveProfile);
+            foreach(var removeMessage in removeMessages)
             {
-                if (!messageObj.Remove)
+                if (removeMessage.MessageAction == UpPartyHrdQueueMessageActions.Remove)
                 {
-                    upParty.DisplayName = messageObj.DisplayName;
-                    upParty.Issuers = messageObj.Issuers;
-                    upParty.SpIssuer = messageObj.SpIssuer;
-                    upParty.HrdDomains = messageObj.HrdDomains;
-                    upParty.HrdShowButtonWithDomain = messageObj.HrdShowButtonWithDomain;
-                    upParty.HrdDisplayName = messageObj.HrdDisplayName;
-                    upParty.HrdLogoUrl = messageObj.HrdLogoUrl;
-                    upParty.DisableUserAuthenticationTrust = messageObj.DisableUserAuthenticationTrust;
-                    upParty.DisableTokenExchangeTrust = messageObj.DisableTokenExchangeTrust;
+                    downPartyFullObj.AllowUpParties.RemoveAll(up => up.Name == upPartyName);
                 }
-                else
+                else if (removeMessage.MessageAction == UpPartyHrdQueueMessageActions.RemoveProfile)
                 {
-                    downPartyFullObj.AllowUpParties.Remove(upParty);
+                    downPartyFullObj.AllowUpParties.RemoveAll(up => up.Name == upPartyName && up.ProfileName == removeMessage.ProfileName);
+                }
+            }
+
+            var allowUpParties = downPartyFullObj.AllowUpParties.Where(up => up.Name == upPartyName).ToList();
+
+            messages = messages.Where(m => m.MessageAction != UpPartyHrdQueueMessageActions.Remove && m.MessageAction != UpPartyHrdQueueMessageActions.RemoveProfile);
+            foreach (var message in messages)
+            {
+                if(message.MessageAction == UpPartyHrdQueueMessageActions.ChangeName)
+                {
+                    foreach (var allowUpParty in allowUpParties)
+                    {
+                        allowUpParty.Name = message.NewName;
+                    }
                 }
 
-                await tenantDataRepository.UpdateAsync(downPartyFullObj, scopedLogger: logger);
-                await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
+                if (message.MessageAction == UpPartyHrdQueueMessageActions.Update || message.MessageAction == UpPartyHrdQueueMessageActions.ChangeName)
+                {
+                    var upParty = allowUpParties.Where(up => up.ProfileName.IsNullOrEmpty()).FirstOrDefault();
+                    if (upParty != null)
+                    {
+                        upParty.DisplayName = message.DisplayName;
+                        upParty.Issuers = message.Issuers;
+                        upParty.SpIssuer = message.SpIssuer;
+                        upParty.HrdDomains = message.HrdDomains;
+                        upParty.HrdShowButtonWithDomain = message.HrdShowButtonWithDomain;
+                        upParty.HrdDisplayName = message.HrdDisplayName;
+                        upParty.HrdLogoUrl = message.HrdLogoUrl;
+                        upParty.DisableUserAuthenticationTrust = message.DisableUserAuthenticationTrust;
+                        upParty.DisableTokenExchangeTrust = message.DisableTokenExchangeTrust;
+                    }
+                }
+                else if (message.MessageAction == UpPartyHrdQueueMessageActions.UpdateProfile || message.MessageAction == UpPartyHrdQueueMessageActions.ChangeProfileName)
+                {
+                    var upPartyByProfile = allowUpParties.Where(up => up.ProfileName == message.ProfileName).FirstOrDefault();
+                    if (upPartyByProfile != null)
+                    {
+                        upPartyByProfile.ProfileDisplayName = message.ProfileDisplayName;
+
+                        if (message.MessageAction == UpPartyHrdQueueMessageActions.ChangeProfileName)
+                        {
+                            upPartyByProfile.ProfileName = message.NewProfileName;
+                        }
+                    }
+                }
             }
+
+            await tenantDataRepository.UpdateAsync(downPartyFullObj, scopedLogger: logger);
+            await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
         }
     }
 }

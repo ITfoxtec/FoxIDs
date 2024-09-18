@@ -3,6 +3,7 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2;
 using ITfoxtec.Identity.Saml2.Schemas;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,11 +12,15 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlDownParty : IDownParty, INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
+    public class SamlDownParty : IDownParty, INameValue, INewNameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
@@ -24,8 +29,12 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
 
+        [Obsolete($"Please use {nameof(AllowUpParties)} instead.")]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
+
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
+        public List<UpPartyLink> AllowUpParties { get; set; }
 
         /// <summary>
         /// Optional custom IdP issuer (default auto generated).
@@ -159,6 +168,11 @@ namespace FoxIDs.Models.Api
                 {
                     results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", new[] { nameof(LogoutResponseBinding) }));
                 }
+            }
+
+            if (AllowUpPartyNames?.Count() > 0 && AllowUpParties?.Count() > 0)
+            {
+                results.Add(new ValidationResult($"The field {nameof(AllowUpParties)} and the field {nameof(AllowUpPartyNames)} can not be used at the same time. Pleas only use the field {nameof(AllowUpParties)}.", [nameof(AllowUpParties), nameof(AllowUpPartyNames)]));
             }
             return results;
         }

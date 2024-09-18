@@ -25,7 +25,7 @@ namespace FoxIDs.Client.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await DefaultLoadAsync();
+            await DefaultLoadAsync();            
         }
 
         private async Task DefaultLoadAsync()
@@ -51,6 +51,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oidcDownParty.Map<OidcDownPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -188,6 +190,12 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
                 {
+                    if (generalOidcDownParty.Form.Model.Name != generalOidcDownParty.Form.Model.InitName)
+                    {
+                        afterMap.NewName = afterMap.Name;
+                        afterMap.Name = generalOidcDownParty.Form.Model.InitName;
+                    }
+
                     if (generalOidcDownParty.Form.Model.Client?.DefaultResourceScope == true && !generalOidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                     {
                         afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOidcDownParty.Form.Model.Name, Scopes = generalOidcDownParty.Form.Model.Client.DefaultResourceScopeScopes });
@@ -209,8 +217,9 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
                 });
-                
+             
                 var oidcDownPartyResult = await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
+                generalOidcDownParty.Name = oidcDownPartyResult.Name;
                 if (oidcDownParty.Client != null)
                 {
                     foreach (var existingSecret in generalOidcDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))

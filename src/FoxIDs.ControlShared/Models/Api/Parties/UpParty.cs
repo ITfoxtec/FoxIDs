@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -15,5 +16,7 @@ namespace FoxIDs.Models.Api
 
         [Required]
         public PartyTypes Type { get; set; }
+
+        public List<UpPartyProfile> Profiles { get; set; }
     }
 }

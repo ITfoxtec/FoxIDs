@@ -7,11 +7,15 @@ using Newtonsoft.Json;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    public class OidcUpParty : IValidatableObject, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
@@ -127,7 +131,7 @@ namespace FoxIDs.Models.Api
 
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         [Display(Name = "Profiles")]
-        public List<TrackLinkUpPartyProfile> Profiles { get; set; }
+        public List<OidcUpPartyProfile> Profiles { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -178,7 +182,7 @@ namespace FoxIDs.Models.Api
                 foreach (var profile in Profiles)
                 {
                     count++;
-                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    if ((Name.Length + profile.Name?.Length) > Constants.Models.Party.NameLength)
                     {
                         results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
                     }

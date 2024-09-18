@@ -138,6 +138,7 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
             }
+
             return results;
         }
     }

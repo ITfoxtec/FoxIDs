@@ -6,11 +6,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackLinkUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    public class TrackLinkUpParty : IValidatableObject, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+        
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
@@ -113,7 +117,7 @@ namespace FoxIDs.Models.Api
                 foreach (var profile in Profiles)
                 {
                     count++;
-                    if ((Name.Length + profile.Name.Length) > Constants.Models.Party.NameLength)
+                    if ((Name.Length + profile.Name?.Length) > Constants.Models.Party.NameLength)
                     {
                         results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
                     }

@@ -11,6 +11,8 @@ using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using FoxIDs.Util;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -47,6 +49,15 @@ namespace FoxIDs.Client.Pages.Components
         {
             return extLoginUpParty.Map<ExternalLoginUpPartyViewModel>(afterMap: afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+                if (afterMap.Profiles?.Count() > 0)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -74,6 +85,20 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.Name = await UpPartyService.GetNewPartyNameAsync();
             }
+        }
+
+        private void AddProfile(MouseEventArgs e, List<ExternalLoginUpPartyProfileViewModel> profiles)
+        {
+            var profile = new ExternalLoginUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<ExternalLoginUpPartyProfileViewModel> profiles, ExternalLoginUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
         }
 
         private async Task OnEditExternalLoginUpPartyValidSubmitAsync(GeneralExternalLoginUpPartyViewModel generalExtLoginUpParty, EditContext editContext)
@@ -130,6 +155,24 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (generalExtLoginUpParty.Form.Model.Name != generalExtLoginUpParty.Form.Model.InitName)
+                    {
+                        extLoginUpParty.NewName = extLoginUpParty.Name;
+                        extLoginUpParty.Name = generalExtLoginUpParty.Form.Model.InitName;
+                    }
+                    if(generalExtLoginUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach(var profile in generalExtLoginUpParty.Form.Model.Profiles)
+                        {
+                            if(!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = extLoginUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var deleteSecret = false;
                     if (extLoginUpParty.Secret != generalExtLoginUpParty.Form.Model.SecretLoaded)
                     {
@@ -145,14 +188,16 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var extLoginUpPartyResult = await UpPartyService.UpdateExternalLoginUpPartyAsync(extLoginUpParty);
+                    generalExtLoginUpParty.Name = extLoginUpPartyResult.Name;
                     if (deleteSecret)
                     {
                         await UpPartyService.DeleteExternalLoginSecretUpPartyAsync(UpParty.Name);
                         extLoginUpPartyResult.Secret = null;
                     }
                     generalExtLoginUpParty.Form.UpdateModel(ToViewModel(extLoginUpPartyResult));
-                    toastService.ShowSuccess("External login application updated.");
+                    toastService.ShowSuccess("External login application updated.");                    
                     generalExtLoginUpParty.DisplayName = extLoginUpPartyResult.DisplayName;
+                    generalExtLoginUpParty.Profiles = extLoginUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }
             }
             catch (FoxIDsApiException ex)

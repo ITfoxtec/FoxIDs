@@ -8,7 +8,7 @@ namespace FoxIDs.Client
         {
             if (!logKey.IsNullOrEmpty())
             {
-                return logKey.Replace("f_", string.Empty).Replace("Track", "Environment").Replace("DownParty", "Application").Replace("UpParty", "AuthMethod");
+                return logKey.Replace("Track", "Environment").Replace("DownParty", "Application").Replace("UpParty", "AuthMethod");
             }
 
             return logKey;

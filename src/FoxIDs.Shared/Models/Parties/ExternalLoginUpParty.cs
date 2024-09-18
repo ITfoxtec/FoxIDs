@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// External login.
     /// </summary>
-    public class ExternalLoginUpParty : UpPartyExternal, IOAuthClaimTransforms, IValidatableObject
+    public class ExternalLoginUpParty : UpPartyWithExternalUser<ExternalLoginUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject
     {
         public ExternalLoginUpParty()
         {
@@ -33,6 +33,10 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "secret")]
         public string Secret { get; set; }
+
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [JsonProperty(PropertyName = "additional_parameter")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
@@ -99,6 +103,7 @@ namespace FoxIDs.Models
                     results.Add(new ValidationResult($"HRD domains in the field '{nameof(HrdDomains)}' is not allowed if the {nameof(UsernameType)} is '{UsernameType}'.", [nameof(ApiUrl), nameof(UsernameType)]));
                 }
             }
+
             return results;
         }
     }

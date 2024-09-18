@@ -19,19 +19,12 @@
             </div>
         }
 
-        @if (oidcUpParty.CreateMode)
+        <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="oidcUpParty.CreateMode" />
+        @if (oidcUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (oidcUpParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-            }
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
-        else
-        {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" />
-            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-        }
+
         @if (oidcUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
@@ -360,13 +353,46 @@
                     <LinkExternalUser Model="oidcUpParty.Form.Model.LinkExternalUser" />
                 }
             }
-            else if (oidcUpParty.ShowSessionTab)
-            {
-                <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />
-            }
             else if (oidcUpParty.ShowHrdTab)
             {
                 <UpPartyHrd Model="oidcUpParty.Form.Model" />
+            }
+            else if (oidcUpParty.ShowProfileTab)
+            {
+                <div class="form-group active-group active">
+                    <Label For="@(() => oidcUpParty.Form.Model.Profiles)" class="label-control" />
+                    @if (oidcUpParty.Form.Model.Profiles.Count() <= 0)
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                            </div>
+                        </div>
+                    }
+                    <ul class="list-group">
+                        @foreach (var profile in oidcUpParty.Form.Model.Profiles)
+                        {
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <FInputText @bind-Value="profile.DisplayName" For="@(() => profile.DisplayName)" />
+                                        <FInputText @bind-Value="profile.Name" For="@(() => profile.Name)" />
+                                        <FInputTextList @bind-ValueList="profile.Client.Scopes" For="@(() => profile.Client.Scopes)" DynamicFirstRow="true" />
+                                        <OAuthAdditionalParameters Model="profile.Client" />
+                                    </div>
+                                    <div class="col-1 text-right">
+                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveProfile(e, oidcUpParty.Form.Model.Profiles, profile))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <ValidationMessage For="@(() => oidcUpParty.Form.Model.Profiles)" />
+                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddProfile(e,  oidcUpParty.Form.Model.Profiles))"><span class="oi oi-plus" aria-hidden="true"></span> Add Profile</button>
+                </div>
+            }
+            else if (oidcUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />
             }
         </div>
     </div>

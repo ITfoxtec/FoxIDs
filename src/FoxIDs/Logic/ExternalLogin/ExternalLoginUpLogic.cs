@@ -54,6 +54,7 @@ namespace FoxIDs.Logic
                 DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
+                UpPartyProfileName = partyLink.ProfileName,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,

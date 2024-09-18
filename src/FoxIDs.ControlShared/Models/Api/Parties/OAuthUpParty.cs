@@ -7,11 +7,15 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    public class OAuthUpParty : IValidatableObject, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
@@ -71,16 +75,16 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             if (!DisableUserAuthenticationTrust)
             {
-                results.Add(new ValidationResult($"The field {nameof(DisableUserAuthenticationTrust)} has to be false. User authentication not supported.", new[] { nameof(DisableUserAuthenticationTrust) }));
+                results.Add(new ValidationResult($"The field {nameof(DisableUserAuthenticationTrust)} has to be false. User authentication not supported.", [nameof(DisableUserAuthenticationTrust)]));
             }
 
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
-                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", [nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust)]));
             }
 
             if (UpdateState == PartyUpdateStates.Manual)
@@ -88,13 +92,13 @@ namespace FoxIDs.Models.Api
                 if (Issuers?.Count(i => !string.IsNullOrWhiteSpace(i)) <= 0)
                 {
                     results.Add(new ValidationResult($"Require at least one issuer in '{nameof(Issuers)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Issuers) }));
+                        [nameof(Issuers)]));
                 }
 
                 if (Keys?.Count <= 0)
                 {
                     results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Keys) }));
+                        [nameof(Keys)]));
                 }
             }
             else
@@ -102,7 +106,7 @@ namespace FoxIDs.Models.Api
                 if (!OidcDiscoveryUpdateRate.HasValue)
                 {
                     results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}'. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", 
-                        new[] { nameof(OidcDiscoveryUpdateRate) }));
+                        [nameof(OidcDiscoveryUpdateRate)]));
                 }
             }
             return results;

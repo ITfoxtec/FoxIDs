@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OpenID Connect
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
@@ -33,7 +33,7 @@
 
         @if (!oidcDownParty.Form.Model.IsTest || oidcDownParty.ShowAdvanced)
         {
-            <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
 
             @if (oidcDownParty.ShowAdvanced)
             {
@@ -121,7 +121,7 @@
                     <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
                     @if (oidcDownParty.Form.Model.Client != null)
                     {
-                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
                         @if (!oidcDownParty.Form.Model.IsTest && DownParty.ShowAdvanced)
                         {
                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true"  />
@@ -348,7 +348,7 @@
                                     }
                                 </ul>
                                 <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
                             </div>
 
                             @if (!oidcDownParty.Form.Model.IsTest)

@@ -6,14 +6,14 @@
 
 <PageEditForm @ref="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAfterInit="@(m => OAuthDownPartyViewModelAfterInit(oauthDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthDownPartyValidSubmitAsync(oauthDownParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OAuth 2.0
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" />
-        <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
+        <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         @if (DownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
@@ -107,7 +107,7 @@
                     <div class="mb-3 alert alert-info" role="alert">
                         The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
-                    <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                    <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />
                     @if (DownParty.ShowAdvanced)
                     {
                         <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true" />

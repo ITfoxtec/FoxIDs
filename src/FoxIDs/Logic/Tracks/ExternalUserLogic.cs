@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
         }
 
 
-        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync(ExternalUserUpParty party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction)
+        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction) where TProfile : UpPartyProfile
         {
             if (string.IsNullOrWhiteSpace(party.LinkExternalUser?.LinkClaimType))
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
             return (null, null);
         }
 
-        public async Task<IEnumerable<Claim>> CreateUserAsync(ExternalUserUpParty upParty, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null)
+        public async Task<IEnumerable<Claim>> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile
         {
             logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
 
@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
             return externalUserClaims;
         }  
 
-        private async Task<IActionResult> StartUICreateUserAsync(ExternalUserUpParty party, string linkClaimValue, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction)
+        private async Task<IActionResult> StartUICreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, string linkClaimValue, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction) where TProfile : UpPartyProfile
         {
             logger.ScopeTrace(() => $"Start UI create external user, link claim '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
             var sequenceData = new ExternalUserUpSequenceData
@@ -132,7 +132,7 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.ExtController, Constants.Endpoints.CreateUser, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
-        private List<Claim> GetExternalUserClaim(ExternalUserUpParty party, ExternalUser externalUser)
+        private List<Claim> GetExternalUserClaim<TProfile>(UpPartyWithExternalUser<TProfile> party, ExternalUser externalUser) where TProfile : UpPartyProfile
         {
             var claims = externalUser.Claims?.ToClaimList() ?? new List<Claim>();
             var userIdClaims = claims.Where(c => c.Type == Constants.JwtClaimTypes.LocalSub).Select(c => c.Value);
@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
 
         private string GetLinkClaim(string linkClaimType, IEnumerable<Claim> claims) => claims.Where(c => c.Type.Equals(linkClaimType, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
 
-        public List<Claim> AddExternalUserClaims(ExternalUserUpParty party, List<Claim> claims, IEnumerable<Claim> externalUserClaims)
+        public List<Claim> AddExternalUserClaims<TProfile>(UpPartyWithExternalUser<TProfile> party, List<Claim> claims, IEnumerable<Claim> externalUserClaims) where TProfile : UpPartyProfile
         {
             if (externalUserClaims?.Count() > 0)
             {

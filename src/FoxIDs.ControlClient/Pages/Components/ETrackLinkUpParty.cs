@@ -12,6 +12,8 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using FoxIDs.Util;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -55,6 +57,14 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkUpParty.Map<TrackLinkUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.Profiles != null)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -82,6 +92,20 @@ namespace FoxIDs.Client.Pages.Components
                 model.ToDownPartyDisplayName = downParty.DisplayName;
             }
             catch { }
+        }
+
+        private void AddProfile(MouseEventArgs e, List<TrackLinkUpPartyProfileViewModel> profiles)
+        {
+            var profile = new TrackLinkUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<TrackLinkUpPartyProfileViewModel> profiles, TrackLinkUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
         }
 
         private async Task OnEditTrackLinkUpPartyValidSubmitAsync(GeneralTrackLinkUpPartyViewModel generalTrackLinkUpParty, EditContext editContext)
@@ -147,10 +171,24 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (!generalTrackLinkUpParty.CreateMode)
                 {
+                    if (generalTrackLinkUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalTrackLinkUpParty.Form.Model.Profiles)
+                        {
+                            if (!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = trackLinkUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
                     toastService.ShowSuccess("Environment Link authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
+                    generalTrackLinkUpParty.Profiles = trackLinkUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }
             }
             catch (FoxIDsApiException ex)

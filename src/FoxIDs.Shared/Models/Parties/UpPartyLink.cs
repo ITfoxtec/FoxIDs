@@ -1,11 +1,12 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class UpPartyLink
+    public class UpPartyLink : IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -17,6 +18,16 @@ namespace FoxIDs.Models
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
         [JsonProperty(PropertyName = "display_name")]
         public string DisplayName { get; set; }
+
+        [MaxLength(Constants.Models.Party.ProfileNameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [JsonProperty(PropertyName = "profile_name")]
+        public string ProfileName { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "profile_display_name")]
+        public string ProfileDisplayName { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "type")]
@@ -52,5 +63,17 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "disable_token_exchange_trust")]
         public bool DisableTokenExchangeTrust { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            
+            if (!ProfileDisplayName.IsNullOrEmpty() && (Name.Length + ProfileName.Length) > Constants.Models.Party.NameLength)
+            {
+                results.Add(new ValidationResult($"The fields {nameof(Name)} and {nameof(ProfileName)} must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), nameof(ProfileName)]));
+            }
+
+            return results;
+        }
     }
 }

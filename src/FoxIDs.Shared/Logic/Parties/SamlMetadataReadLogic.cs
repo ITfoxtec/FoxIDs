@@ -28,17 +28,25 @@ namespace FoxIDs.Logic
 
         private async Task<string> ReadMetadataAsync(string metadataUrl)
         {
-            var httpClient = httpClientFactory.CreateClient();
-            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, metadataUrl));
-            // Handle the response
-            switch (response.StatusCode)
+            try
             {
-                case HttpStatusCode.OK:
-                    var metadata = await response.Content.ReadAsStringAsync();
-                    return metadata;
+                var httpClient = httpClientFactory.CreateClient();
+                using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, metadataUrl));
+                // Handle the response
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        var metadata = await response.Content.ReadAsStringAsync();
+                        return metadata;
 
-                default:
-                    throw new Exception($"Status Code OK expected. Unable to read SAML 2.0 metadata '{metadataUrl}'. StatusCode={response.StatusCode}..");
+                    default:
+                        throw new Exception($"Read SAML 2.0 metadata error, status code={response.StatusCode}.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"SAML 2.0 metadata error for metadata URL '{metadataUrl}'.", ex);
             }
         }
 

@@ -123,7 +123,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData.AuthMethods, session: session);
+                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
             }
         }
 
@@ -176,7 +176,7 @@ namespace FoxIDs.Logic
             return session;
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, IEnumerable<string> authMethods, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, LoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -188,7 +188,7 @@ namespace FoxIDs.Logic
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(loginUpParty, user, authTime, authMethods, sessionId, acrClaims);
+                claims = await GetClaimsAsync(loginUpParty, user, authTime, sequenceData, sessionId, acrClaims);
                 await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
             }
 
@@ -232,12 +232,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, User user, long authTime, IEnumerable<string> authMethods, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, User user, long authTime, LoginUpSequenceData sequenceData, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
             claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
+            claims.AddRange(sequenceData.AuthMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
             if (acrClaims?.Count() > 0)
             {
                 claims.AddRange(acrClaims);
@@ -247,6 +247,10 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
             claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, loginUpParty.Name);
+            if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+            {
+                claims.AddClaim(Constants.JwtClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
+            }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, loginUpParty.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, loginUpParty.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, loginUpParty.Type.GetPartyTypeValue());

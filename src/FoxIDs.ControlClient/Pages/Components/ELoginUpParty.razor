@@ -6,8 +6,8 @@
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
-        <div>
-            User login UI
+        <div class="h5">
+            User Login UI
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
@@ -17,24 +17,19 @@
             <br />
             The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
         </div>
-        @if (loginUpParty.CreateMode)
+
+        <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="loginUpParty.CreateMode" />
+        @if (loginUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (loginUpParty.ShowAdvanced) 
+            @if (loginUpParty.CreateMode || loginUpParty.Form.Model.Name != Constants.DefaultLogin.Name)
             {
                 <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
             }
-        }
-        else
-        {
-            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (loginUpParty.ShowAdvanced)
+            else
             {
                 <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
             }
-        }
-        @if (loginUpParty.ShowAdvanced)
-        {
+
             <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
         }
 

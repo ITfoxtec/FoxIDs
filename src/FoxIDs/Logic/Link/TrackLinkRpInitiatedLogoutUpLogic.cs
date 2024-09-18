@@ -3,10 +3,12 @@ using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -45,6 +47,7 @@ namespace FoxIDs.Logic
                 KeyName = partyLink.Name,
                 DownPartyLink = logoutRequest.DownPartyLink,
                 UpPartyId = partyId,
+                UpPartyProfileName = partyLink.ProfileName,
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent
             });
@@ -55,14 +58,14 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "AuthMethod, Environment Link RP initiated logout request.");
-            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
-            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            var trackLinkUpSequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
+            if (!trackLinkUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
             }
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, trackLinkUpSequenceData.UpPartyId);
 
-            var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(oidcUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(trackLinkUpSequenceData.UpPartyId);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
@@ -72,12 +75,29 @@ namespace FoxIDs.Logic
             else
             {
                 _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-                oidcUpSequenceData.SessionId = session.ExternalSessionId;
+                trackLinkUpSequenceData.SessionId = session.ExternalSessionId;
             }
 
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, setKeyValidUntil: true);
+            await sequenceLogic.SaveSequenceDataAsync(trackLinkUpSequenceData, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
+            var profile = GetProfile(party, trackLinkUpSequenceData);
+
+            var selectedUpParties = party.SelectedUpParties;
+            if (profile != null && profile.SelectedUpParties?.Count() > 0)
+            {
+                selectedUpParties = profile.SelectedUpParties;
+            }
+
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, selectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
+        }
+
+        private TrackLinkUpPartyProfile GetProfile(TrackLinkUpParty party, TrackLinkUpSequenceData trackLinkUpSequenceData)
+        {
+            if (!trackLinkUpSequenceData.UpPartyProfileName.IsNullOrEmpty() && party.Profiles != null)
+            {
+                return party.Profiles.Where(p => p.Name == trackLinkUpSequenceData.UpPartyProfileName).FirstOrDefault();
+            }
+            return null;
         }
 
         public async Task<IActionResult> SingleLogoutDone(string partyId)

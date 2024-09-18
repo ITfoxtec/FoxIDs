@@ -144,10 +144,9 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var ups = await UpPartyService.FilterUpPartyAsync(null);
                 var downPartyTestStartResponse = await HelpersService.StartDownPartyTestAsync(new DownPartyTestStartRequest
                 {
-                    UpPartyNames = ups.Select(p => p.Name).Take(Constants.Models.DownParty.AllowUpPartyNamesMax).ToList(),
+                    UpParties = await GetUpPartiesAsync(),
                     RedirectUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{TenantName}/applications/test".ToLower()
                 });
 
@@ -170,6 +169,24 @@ namespace FoxIDs.Client.Pages
             {
                 testDownPartyModal.Error = ex.Message;
             }
+        }
+
+        private async Task<List<UpPartyLink>> GetUpPartiesAsync()
+        {
+            var ups = await UpPartyService.FilterUpPartyAsync(null);
+            var upParties = new List<UpPartyLink>();
+            foreach (var up in ups)
+            {
+                upParties.Add(new UpPartyLink { Name = up.Name });
+                if(up.Profiles != null)
+                {
+                    foreach (var profile in up.Profiles)
+                    {
+                        upParties.Add(new UpPartyLink { Name = up.Name, ProfileName = profile.Name });
+                    }
+                }
+            }
+            return upParties;
         }
 
         private void ShowUpdateDownParty(GeneralDownPartyViewModel downParty)
@@ -205,7 +222,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (downParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{downParty.DisplayName ?? downParty.Name} (External Login)";
+                return $"{downParty.DisplayName ?? downParty.Name} (External API Login)";
             }
 
             throw new NotSupportedException();

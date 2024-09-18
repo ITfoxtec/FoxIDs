@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
                 {
                     foreach (var rs in party.Client.ResourceScopes)
                     {
-                        if (rs.Resource == party.Name)
+                        if (rs.Resource == party.Name || (!party.NewName.IsNullOrWhiteSpace() && rs.Resource == party.NewName))
                         {
                             rs.Scopes = null;
                         }
@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
                 {
                     foreach (var rs in party.Client.ResourceScopes)
                     {
-                        if (rs.Resource == party.Name)
+                        if (rs.Resource == party.Name || (!party.NewName.IsNullOrWhiteSpace() && rs.Resource == party.NewName))
                         {
                             rs.Scopes = null;
                         }
@@ -285,7 +285,7 @@ namespace FoxIDs.Logic
                         }
                     }
 
-                    var appResourceScope = oauthDownParty.Client.ResourceScopes.Where(rs => rs.Resource.Equals(oauthDownParty.Name, System.StringComparison.Ordinal)).SingleOrDefault();
+                    var appResourceScope = oauthDownParty.Client.ResourceScopes.Where(rs => rs.Resource.Equals(oauthDownParty.Name, StringComparison.Ordinal)).SingleOrDefault();
                     if (appResourceScope != null && appResourceScope.Scopes?.Count() > 0)
                     {
                         foreach (var scope in appResourceScope.Scopes)

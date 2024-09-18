@@ -6,7 +6,7 @@
 
 <PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(async m => await OidcUpPartyViewModelAfterInitAsync(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="h5">
             OpenID Connect
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
@@ -19,19 +19,12 @@
             </div>
         }
 
-        @if (oidcUpParty.CreateMode)
+        <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="oidcUpParty.CreateMode" />
+        @if (oidcUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (oidcUpParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-            }
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
-        else
-        {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" />
-            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-        }
+
         @if (oidcUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
@@ -151,11 +144,11 @@
             <li class="nav-item">
                 @if (oidcUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Claim Transform</a>
+                    <a class="nav-link active">Claim Transforms</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim Transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim Transforms</button>
                 }
             </li>
             @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
@@ -163,21 +156,11 @@
                 <li class="nav-item">
                     @if (oidcUpParty.ShowLinkExternalUserTab)
                     {
-                        <a class="nav-link active">Link External User</a>
+                        <a class="nav-link active">Link External Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.LinkExternalUser))">Link External User</button>
-                    }
-                </li>
-                <li class="nav-item">
-                    @if (oidcUpParty.ShowSessionTab)
-                    {
-                        <a class="nav-link active">Logout Session</a>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout Session</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.LinkExternalUser))">Link External Users</button>
                     }
                 </li>
                 <li class="nav-item">
@@ -190,6 +173,29 @@
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Hrd))">Home Realm Discovery</button>
                     }
                 </li>
+                @if (UpParty.ShowAdvanced)
+                {
+                    <li class="nav-item">
+                        @if (oidcUpParty.ShowProfileTab)
+                        {
+                            <a class="nav-link active">Profiles</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Profile))">Profiles</button>
+                        }
+                    </li>
+                    <li class="nav-item">
+                        @if (oidcUpParty.ShowSessionTab)
+                        {
+                            <a class="nav-link active">Logout Session</a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout Session</button>
+                        }
+                    </li>
+                }
             }
             else
             {
@@ -347,13 +353,46 @@
                     <LinkExternalUser Model="oidcUpParty.Form.Model.LinkExternalUser" />
                 }
             }
-            else if (oidcUpParty.ShowSessionTab)
-            {
-                <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />
-            }
             else if (oidcUpParty.ShowHrdTab)
             {
                 <UpPartyHrd Model="oidcUpParty.Form.Model" />
+            }
+            else if (oidcUpParty.ShowProfileTab)
+            {
+                <div class="form-group active-group active">
+                    <Label For="@(() => oidcUpParty.Form.Model.Profiles)" class="label-control" />
+                    @if (oidcUpParty.Form.Model.Profiles.Count() <= 0)
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                            </div>
+                        </div>
+                    }
+                    <ul class="list-group">
+                        @foreach (var profile in oidcUpParty.Form.Model.Profiles)
+                        {
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <FInputText @bind-Value="profile.DisplayName" For="@(() => profile.DisplayName)" />
+                                        <FInputText @bind-Value="profile.Name" For="@(() => profile.Name)" />
+                                        <FInputTextList @bind-ValueList="profile.Client.Scopes" For="@(() => profile.Client.Scopes)" DynamicFirstRow="true" />
+                                        <OAuthAdditionalParameters Model="profile.Client" />
+                                    </div>
+                                    <div class="col-1 text-right">
+                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveProfile(e, oidcUpParty.Form.Model.Profiles, profile))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <ValidationMessage For="@(() => oidcUpParty.Form.Model.Profiles)" />
+                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddProfile(e,  oidcUpParty.Form.Model.Profiles))"><span class="oi oi-plus" aria-hidden="true"></span> Add Profile</button>
+                </div>
+            }
+            else if (oidcUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />
             }
         </div>
     </div>

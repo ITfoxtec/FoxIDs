@@ -1,9 +1,9 @@
-﻿using ITfoxtec.Identity.Util;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using FoxIDs.Repository;
 using FoxIDs.Models;
 using System;
+using FoxIDs.Util;
 
 namespace FoxIDs.Logic
 {
@@ -18,8 +18,8 @@ namespace FoxIDs.Logic
 
         public async Task<string> GeneratePartyNameAsync(bool isUpParty, int count = 0)
         {
-            var name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
-            if (count < 5)
+            var name = RandomName.GenerateDefaultName();
+            if (count < Constants.Models.DefaultNameMaxAttempts)
             {
                 var mParty = await tenantDataRepository.GetAsync<Party>(isUpParty ? await UpParty.IdFormatAsync(RouteBinding, name) : await DownParty.IdFormatAsync(RouteBinding, name), required: false);
                 if (mParty != null)

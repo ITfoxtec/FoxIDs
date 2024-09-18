@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -43,6 +45,25 @@ namespace FoxIDs.Logic
                         upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
                         upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;
                         upPartyLink.DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust;
+
+                        if(!upPartyLink.ProfileName.IsNullOrWhiteSpace())
+                        {
+                            upPartyLink.ProfileDisplayName = upParty.Profiles?.Where(p => p.Name == upPartyLink.ProfileName).Select(p => p.DisplayName).FirstOrDefault();
+                            if(upPartyLink.ProfileDisplayName.IsNullOrWhiteSpace())
+                            {
+                                isValid = false;
+                                var errorMessage = $"Allow authentication method '{upPartyLink.Name}' profile '{upPartyLink.ProfileName}' not found.";
+                                try
+                                {
+                                    throw new Exception(errorMessage);
+                                }
+                                catch (Exception pex)
+                                {
+                                    logger.Warning(pex, errorMessage);
+                                }
+                                modelState.TryAddModelError(propertyName.ToCamelCase(), errorMessage);
+                            }
+                        }
                     }
                     catch (FoxIDsDataException ex)
                     {
@@ -190,6 +211,29 @@ namespace FoxIDs.Logic
             }
 
             return true;
+        }
+
+        public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, IEnumerable<UpPartyProfile> profiles)
+        {
+            var isValid = true;
+            try
+            {
+                if (profiles?.Count() > 0)
+                {
+                    var duplicatedName = profiles.GroupBy(ct => ct.Name).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(duplicatedName))
+                    {
+                        throw new ValidationException($"Duplicated profile name '{duplicatedName}'");
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
+            }
+            return isValid;
         }
     }
 }

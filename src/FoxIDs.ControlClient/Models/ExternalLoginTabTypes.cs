@@ -5,7 +5,8 @@
         ExternalLogin,
         ClaimsTransform,
         LinkExternalUser,
-        Session,
-        Hrd
+        Hrd,
+        Profile,
+        Session
     }
 }

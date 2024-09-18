@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -11,6 +13,16 @@ namespace FoxIDs.Models
         {
             Type = PartyTypes.Oidc;
         }
+
+        #region TestApp
+        [MaxLength(IdentityConstants.MessageLength.CodeVerifierMax)]
+        [JsonProperty(PropertyName = "code_verifier")]
+        public string CodeVerifier { get; set; }
+
+        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
+        [JsonProperty(PropertyName = "nonce")]
+        public string Nonce { get; set; }
+        #endregion
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

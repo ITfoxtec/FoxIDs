@@ -4,6 +4,7 @@ using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -109,17 +110,24 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public void AddAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
+        public void UpdateAllowUpParties((IAllowUpPartyNames model, List<UpPartyLink> upPartyLinks) arg, bool addDefaultUpParty)
         {
-            if (!arg.model.AllowUpPartyNames.Where(p => p.Equals(arg.upPartyName, StringComparison.OrdinalIgnoreCase)).Any())
-            {
-                arg.model.AllowUpPartyNames.Add(arg.upPartyName);
-            }
+            arg.model.AllowUpParties = arg.upPartyLinks;
+            AddDefaultUpParty(arg.model.AllowUpParties, addDefaultUpParty);
         }
 
-        public void RemoveAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
+        public void RemoveAllowUpParty((IAllowUpPartyNames model, UpPartyLink upPartyLink) arg, bool addDefaultUpParty)
         {
-            arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
+            arg.model.AllowUpParties.RemoveAll(p => p.Name == arg.upPartyLink.Name && p.ProfileName == arg.upPartyLink.ProfileName);
+            AddDefaultUpParty(arg.model.AllowUpParties, addDefaultUpParty);
+        }
+
+        private static void AddDefaultUpParty(List<UpPartyLink> allowUpParties, bool addDefaultUpParty)
+        {
+            if (addDefaultUpParty && allowUpParties.Count() <= 0)
+            {
+                allowUpParties.Add(new UpPartyLink { Name = Constants.DefaultLogin.Name });
+            }
         }
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)

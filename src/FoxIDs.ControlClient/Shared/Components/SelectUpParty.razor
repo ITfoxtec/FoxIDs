@@ -73,9 +73,9 @@
                 <div class="font-italic px-1">No match</div>
             }
         }
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary @(upPartyFilters?.Count() > 0 ? "" : "disabled")" @onclick="OnUpPartyFilterSelectAsync">Select</button>
-            <button type="button" class="btn btn-secondary" @onclick="@(() => upPartyFilterModal.Hide())">Cancel</button>
-        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary @(upPartyFilters?.Count() > 0 ? "" : "disabled")" @onclick="OnUpPartyFilterSelectAsync">Select</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => upPartyFilterModal.Hide())">Cancel</button>
     </div>
 </Modal>

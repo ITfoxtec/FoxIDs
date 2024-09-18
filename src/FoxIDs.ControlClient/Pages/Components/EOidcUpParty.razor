@@ -19,19 +19,12 @@
             </div>
         }
 
-        @if (oidcUpParty.CreateMode)
+        <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="oidcUpParty.CreateMode" />
+        @if (oidcUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (oidcUpParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-            }
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
-        else
-        {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" />
-            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
-        }
+
         @if (oidcUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />

@@ -10,6 +10,8 @@ using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FoxIDs.Controllers
 {
@@ -17,7 +19,7 @@ namespace FoxIDs.Controllers
     /// Abstract connection API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
-    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
+    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INewNameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
@@ -51,12 +53,12 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
+                var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(name));
                 if (mParty is DownParty mDownParty)
                 {
                     if (mDownParty.IsTest == true)
                     {
-                        var mDownPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, name));
+                        var mDownPartyTest = await tenantDataRepository.GetAsync<OidcDownParty>(await GetId(name));
                         var arDownPartyTest = mapper.Map<Api.OidcDownParty>(mDownPartyTest);
                         return base.Ok(arDownPartyTest);
                     }
@@ -80,6 +82,14 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
                 party.Name = await GetPartyNameAsync(party.Name);
+                var profiles = GetUpPartyProfiles(party);
+                if (profiles?.Count() > 0)
+                {
+                    foreach (var profile in profiles)
+                    {
+                        profile.Name = profile.Name.ToLower();
+                    }
+                }
 
                 var mParty = mapper.Map<MParty>(party);
                 if (mParty is UpParty)
@@ -108,27 +118,15 @@ namespace FoxIDs.Controllers
                     samlDownParty.Issuer = GetSamlIssuer(party.Name);
                 }
 
-                if (!(mParty is UpParty mUpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpParty) : true)) return BadRequest(ModelState);
+                var mUpPartyProfiles = GetMUpPartyProfils(mParty);
+
+                if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 await tenantDataRepository.CreateAsync(mParty);
-
-                if (mParty is UpParty)
-                {
-                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
-                    await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(null, mParty as UpParty);
-                }
-                else if (mParty is DownParty)
-                {
-                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
-                }
-                else
-                {
-                    throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
-                }
 
                 return Created(ModelToApiMap(mParty));
             }
@@ -148,18 +146,52 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
-                party.Name = await GetPartyNameAsync(party.Name);
+                party.Name = party.Name?.ToLower();
+                party.NewName = party.NewName?.ToLower();
+
+                if(IsUpParty() && party.Name == Constants.DefaultLogin.Name && !party.NewName.IsNullOrEmpty())
+                {
+                    throw new Exception("The name can not be changed on the default Login authentication method.");
+                }
+
+                var upPartyProfiles = GetUpPartyProfiles(party);
+                if (upPartyProfiles?.Count() > 0)
+                {
+                    foreach (var profile in upPartyProfiles)
+                    {
+                        profile.Name = profile.Name.ToLower();
+                        profile.NewName = profile.NewName?.ToLower();
+                    }
+                }
 
                 var mParty = mapper.Map<MParty>(party);
 
-                if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mParty as UpParty) : true)) return BadRequest(ModelState);
+                if (!party.NewName.IsNullOrWhiteSpace())
+                {
+                    mParty.Name = party.NewName;
+                    mParty.Id = await GetId(party.NewName);
+                }
+                var mUpPartyProfiles = GetMUpPartyProfils(mParty);
+                if (mUpPartyProfiles?.Count() > 0)
+                {
+                    foreach (var mProfile in mUpPartyProfiles)
+                    {
+                        var profile = upPartyProfiles?.Where(p => !p.NewName.IsNullOrWhiteSpace() && p.Name == mProfile.Name).FirstOrDefault();
+                        if (profile != null)
+                        {
+                            mProfile.Name = profile.NewName;
+                        }
+                    }
+                }
+
+                if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 if (mParty is OidcDownParty mOidcDownParty)
                 {
-                    var tempMParty = await tenantDataRepository.GetAsync<OidcDownParty>(mParty.Id);
+                    var tempMParty = await tenantDataRepository.GetAsync<OidcDownParty>(await GetId(party.Name));
                     if(tempMParty.Client != null && mOidcDownParty.Client != null)
                     {
                         mOidcDownParty.Client.Secrets = tempMParty.Client.Secrets;
@@ -167,25 +199,20 @@ namespace FoxIDs.Controllers
 
                     if(tempMParty.IsTest == true)
                     {
-                        var tempMPartyTest = await tenantDataRepository.GetAsync<OidcDownPartyTest>(mParty.Id);
-                        tempMPartyTest.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
-                        tempMPartyTest.DisplayName = mOidcDownParty.DisplayName;
-                        tempMPartyTest.Note = mOidcDownParty.Note;
-                        tempMPartyTest.AllowUpParties = mOidcDownParty.AllowUpParties;
-                        tempMPartyTest.Client.ResourceScopes = mOidcDownParty.Client.ResourceScopes;
-                        tempMPartyTest.Client.Scopes = mOidcDownParty.Client.Scopes;
-                        tempMPartyTest.Client.Claims = mOidcDownParty.Client.Claims;
-                        tempMPartyTest.ClaimTransforms = mOidcDownParty.ClaimTransforms;
-
-                        await tenantDataRepository.UpdateAsync(tempMPartyTest);
-                        await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
-
-                        return Ok(mapper.Map<AParty>(tempMPartyTest));
+                        mOidcDownParty.IsTest = true;
+                        mOidcDownParty.TestUrl = tempMParty.TestUrl;
+                        if (!party.NewName.IsNullOrWhiteSpace())
+                        {
+                            mOidcDownParty.TestUrl = mOidcDownParty.TestUrl.Replace(party.Name, party.NewName);
+                        }
+                        mOidcDownParty.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
+                        mOidcDownParty.CodeVerifier = tempMParty.CodeVerifier;
+                        mOidcDownParty.Nonce = tempMParty.Nonce;
                     }
                 }
                 else if (mParty is OAuthDownParty mOAuthDownParty)
                 {
-                    var tempMParty = await tenantDataRepository.GetAsync<OAuthDownParty>(mParty.Id);
+                    var tempMParty = await tenantDataRepository.GetAsync<OAuthDownParty>(await GetId(party.Name));
                     if (tempMParty.Client != null && mOAuthDownParty.Client != null)
                     {
                         mOAuthDownParty.Client.Secrets = tempMParty.Client.Secrets;
@@ -193,13 +220,13 @@ namespace FoxIDs.Controllers
                 }
                 else if (mParty is OidcUpParty mOidcUpParty)
                 {
-                    var tempMOidcUpPartyParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
+                    var tempMOidcUpPartyParty = await tenantDataRepository.GetAsync<OidcUpParty>(await GetId(party.Name));
                     mOidcUpParty.Client.ClientSecret = tempMOidcUpPartyParty.Client.ClientSecret;
                     mOidcUpParty.Client.ClientKeys = tempMOidcUpPartyParty.Client.ClientKeys;
                 }
                 else if (mParty is ExternalLoginUpParty mExtLoginUpParty)
                 {
-                    var tempMExtLoginParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
+                    var tempMExtLoginParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(await GetId(party.Name));
                     mExtLoginUpParty.Secret = tempMExtLoginParty.Secret;
                 }
 
@@ -210,13 +237,22 @@ namespace FoxIDs.Controllers
 
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
-                var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantDataRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
-                await tenantDataRepository.UpdateAsync(mParty);
+                var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantDataRepository.GetAsync<UpPartyWithProfile<UpPartyProfile>>(await GetId(party.Name)) : null;
+               
+                if (!party.NewName.IsNullOrWhiteSpace())
+                {
+                    await tenantDataRepository.CreateAsync(mParty);
+                    await tenantDataRepository.DeleteAsync<MParty>(await GetId(party.Name));
+                }
+                else
+                {
+                    await tenantDataRepository.UpdateAsync(mParty);
+                }
 
                 if (mParty is UpParty)
-                {
+                {                    
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
-                    await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(oldMUpParty, mParty as UpParty);
+                    await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(oldMUpParty, mParty as UpParty, upPartyProfiles);
                 }
                 else if (mParty is DownParty)
                 {
@@ -240,6 +276,52 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private IEnumerable<Api.IProfile> GetUpPartyProfiles(AParty party)
+        {
+            if(party is Api.OidcUpParty oidcUpParty)
+            {
+                return oidcUpParty.Profiles;
+            }
+            else if (party is Api.SamlUpParty samlUpParty)
+            {
+                return samlUpParty.Profiles;
+            }
+            else if (party is Api.TrackLinkUpParty trackLinkUpParty)
+            {
+                return trackLinkUpParty.Profiles;
+            }
+            else if(party is Api.ExternalLoginUpParty externalLoginUpParty)
+            {
+                return externalLoginUpParty.Profiles;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private IEnumerable<UpPartyProfile> GetMUpPartyProfils(MParty mParty)
+        {
+            if (mParty is OidcUpParty oidcUpParty && oidcUpParty.Profiles != null)
+            {
+                return oidcUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (mParty is SamlUpParty samlUpParty && samlUpParty.Profiles != null)
+            {
+                return samlUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (mParty is TrackLinkUpParty trackLinkUpParty && trackLinkUpParty.Profiles != null)
+            {
+                return trackLinkUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+            else if (mParty is ExternalLoginUpParty externalLoginUpParty && externalLoginUpParty.Profiles != null)
+            {
+                return externalLoginUpParty.Profiles.Cast<UpPartyProfile>();
+            }
+
+            return null;
+        }
+
         protected async Task<IActionResult> Delete(string name)
         {
             try
@@ -252,10 +334,9 @@ namespace FoxIDs.Controllers
                     throw new Exception($"The default login with the name '{Constants.DefaultLogin.Name}' can not be deleted.");
                 }
 
-                var isUpParty = IsUpParty();
-                await tenantDataRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
+                await tenantDataRepository.DeleteAsync<MParty>(await GetId(name));
 
-                if (isUpParty)
+                if (IsUpParty())
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(name);
                     await downPartyAllowUpPartiesQueueLogic.DeleteUpParty(name);
@@ -314,6 +395,18 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private Task<string> GetId(string name)
+        {
+            if (IsUpParty())
+            {
+                return UpParty.IdFormatAsync(RouteBinding, name);
+            }
+            else
+            {
+                return DownParty.IdFormatAsync(RouteBinding, name);
+            }
+        }
+
         private bool IsUpParty()
         {
             if (EqualsBaseType(0, typeof(MParty), typeof(UpParty)))
@@ -327,18 +420,6 @@ namespace FoxIDs.Controllers
             else
             {
                 throw new NotSupportedException($"{typeof(MParty)} type not supported.");
-            }
-        }
-
-        private Task<string> GetId(bool isUpParty, string name)
-        {
-            if(isUpParty)
-            {
-                return UpParty.IdFormatAsync(RouteBinding, name);
-            }
-            else 
-            {
-                return DownParty.IdFormatAsync(RouteBinding, name);
             }
         }
 

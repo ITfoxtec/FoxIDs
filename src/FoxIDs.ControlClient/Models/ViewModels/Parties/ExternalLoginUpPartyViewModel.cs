@@ -8,6 +8,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class ExternalLoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
     {
+        public string InitName { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Technical name")]

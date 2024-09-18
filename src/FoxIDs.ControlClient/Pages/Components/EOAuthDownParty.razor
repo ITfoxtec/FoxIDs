@@ -13,7 +13,7 @@
     </div>
     <div class="modal-body">
         <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" />
-        <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
+        <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         @if (DownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />

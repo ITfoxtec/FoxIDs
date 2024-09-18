@@ -4,6 +4,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public abstract class UpPartyProfileViewModel
     {
+        public string InitName { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Party.ProfileNameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

@@ -57,6 +57,14 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkUpParty.Map<TrackLinkUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.Profiles != null)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -163,6 +171,19 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (!generalTrackLinkUpParty.CreateMode)
                 {
+                    if (generalTrackLinkUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalTrackLinkUpParty.Form.Model.Profiles)
+                        {
+                            if (!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = trackLinkUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
                     toastService.ShowSuccess("Environment Link authentication method updated.");

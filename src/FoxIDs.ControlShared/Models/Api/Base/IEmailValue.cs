@@ -1,7 +1,7 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public interface INameValue
+    public interface IEmailValue
     {
-        string Name { get; set; }
+        string Email { get; set; }
     }
 }

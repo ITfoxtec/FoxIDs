@@ -145,7 +145,7 @@ namespace FoxIDs.Logic
                     AuthnContextClassRef = party.AuthnContextClassReferences,
                 };
             }
-            if(profile != null && (profile.AuthnContextComparison.HasValue || profile.AuthnContextClassReferences?.Count() > 0))
+            if(profile != null && (profile.AuthnContextComparison.HasValue && party.AuthnContextClassReferences?.Count() > 0 || profile.AuthnContextClassReferences?.Count() > 0))
             {
                 if(saml2AuthnRequest.RequestedAuthnContext == null)
                 {

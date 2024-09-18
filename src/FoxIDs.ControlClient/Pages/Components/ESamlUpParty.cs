@@ -63,6 +63,15 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+                if (afterMap.Profiles?.Count() > 0)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -389,9 +398,28 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (generalSamlUpParty.Form.Model.Name != generalSamlUpParty.Form.Model.InitName)
+                    {
+                        samlUpParty.NewName = samlUpParty.Name;
+                        samlUpParty.Name = generalSamlUpParty.Form.Model.InitName;
+                    }
+                    if (generalSamlUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalSamlUpParty.Form.Model.Profiles)
+                        {
+                            if (!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = samlUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     toastService.ShowSuccess("SAML 2.0 application updated.");
+                    generalSamlUpParty.Name = samlUpPartyResult.Name;
                     generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
                     generalSamlUpParty.Profiles = samlUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
                 }

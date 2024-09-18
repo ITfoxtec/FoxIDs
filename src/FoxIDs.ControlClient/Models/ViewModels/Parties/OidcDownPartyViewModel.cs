@@ -7,6 +7,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames, IOAuthClaimTransformViewModel
     {
+        public string InitName { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Client ID / Resource name")]

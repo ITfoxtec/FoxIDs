@@ -42,17 +42,17 @@ namespace FoxIDs.MappingProfiles
             CreateMap<UpParty, Api.UpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<UpPartyWithProfile<UpPartyProfile>, Api.UpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<DownParty, Api.DownParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<User, Api.User>()
                 .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty() || !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
@@ -271,7 +271,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.IsTest, opt => opt.Ignore())
                 .ForMember(d => d.TestUrl, opt => opt.Ignore())
                 .ForMember(d => d.TestExpireAt, opt => opt.Ignore());
-            CreateMap<OidcDownPartyTest, Api.OidcDownParty>()
+            CreateMap<OidcDownParty, Api.OidcDownParty>()
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)));
 
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()

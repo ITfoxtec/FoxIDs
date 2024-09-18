@@ -33,7 +33,7 @@
 
         @if (!oidcDownParty.Form.Model.IsTest || oidcDownParty.ShowAdvanced)
         {
-            <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
 
             @if (oidcDownParty.ShowAdvanced)
             {

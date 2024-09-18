@@ -17,21 +17,10 @@
             <br />
             The user interface is customizable.
         </div>
-        @if (extLoginUpParty.CreateMode)
+        <FInputText @bind-Value="extLoginUpParty.Form.Model.DisplayName" For="@(() => extLoginUpParty.Form.Model.DisplayName)" Focus="extLoginUpParty.CreateMode" />
+        @if (extLoginUpParty.ShowAdvanced) 
         {
-            <FInputText @bind-Value="extLoginUpParty.Form.Model.DisplayName" For="@(() => extLoginUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (extLoginUpParty.ShowAdvanced) 
-            {
-                <FInputText @bind-Value="extLoginUpParty.Form.Model.Name" For="@(() => extLoginUpParty.Form.Model.Name)" />
-            }
-        }
-        else
-        {
-            <FInputText @bind-Value="extLoginUpParty.Form.Model.DisplayName" For="@(() => extLoginUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (extLoginUpParty.ShowAdvanced)
-            {
-                <FFieldText @bind-Value="extLoginUpParty.Form.Model.Name" For="@(() => extLoginUpParty.Form.Model.Name)" />
-            }
+            <FInputText @bind-Value="extLoginUpParty.Form.Model.Name" For="@(() => extLoginUpParty.Form.Model.Name)" />
         }
         @if (extLoginUpParty.ShowAdvanced)
         {

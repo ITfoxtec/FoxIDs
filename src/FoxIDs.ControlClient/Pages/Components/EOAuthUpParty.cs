@@ -12,7 +12,6 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Net.Http;
-using FoxIDs.Client.Shared.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -57,6 +56,8 @@ namespace FoxIDs.Client.Pages.Components
 
             return oauthUpParty.Map<OAuthUpPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -173,9 +174,15 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (generalOAuthUpParty.Form.Model.Name != generalOAuthUpParty.Form.Model.InitName)
+                    {
+                        oauthUpParty.NewName = oauthUpParty.Name;
+                        oauthUpParty.Name = generalOAuthUpParty.Form.Model.InitName;
+                    }
                     var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     toastService.ShowSuccess("OAuth 2.0 application updated.");
+                    generalOAuthUpParty.Name = oauthUpPartyResult.Name;
                     generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
             }

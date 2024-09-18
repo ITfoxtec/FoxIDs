@@ -65,6 +65,15 @@ namespace FoxIDs.Client.Pages.Components
 
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+                if (afterMap.Profiles?.Count() > 0)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -249,6 +258,24 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (generalOidcUpParty.Form.Model.Name != generalOidcUpParty.Form.Model.InitName)
+                    {
+                        oidcUpParty.NewName = oidcUpParty.Name;
+                        oidcUpParty.Name = generalOidcUpParty.Form.Model.InitName;
+                    }
+                    if (generalOidcUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalOidcUpParty.Form.Model.Profiles)
+                        {
+                            if (!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = oidcUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var deleteClientSecret = false;
                     if (oidcUpParty.Client != null && oidcUpParty.Client.ClientSecret != generalOidcUpParty.Form.Model.Client.ClientSecretLoaded)
                     {
@@ -264,6 +291,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    generalOidcUpParty.Name = oidcUpPartyResult.Name;
                     if (deleteClientSecret)
                     {
                         await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);

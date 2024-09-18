@@ -12,11 +12,15 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlDownParty : IDownParty, INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
+    public class SamlDownParty : IDownParty, INameValue, INewNameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string NewName { get; set; }
 
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]

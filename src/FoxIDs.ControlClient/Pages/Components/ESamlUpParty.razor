@@ -14,22 +14,12 @@
         </div>
     </div>
     <div class="modal-body">
-        @if (samlUpParty.CreateMode)
+        <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" Focus="samlUpParty.CreateMode" />
+        @if (samlUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (samlUpParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
-            }
+            <FInputText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
-        else
-        {
-            <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" />
-            @if (samlUpParty.ShowAdvanced)
-            {
-                <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
-            }
-        }
+
         @if (samlUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />

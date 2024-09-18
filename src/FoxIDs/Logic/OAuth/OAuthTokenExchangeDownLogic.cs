@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
 
                 claims = claims.Where(c => c.Type != JwtClaimTypes.ClientId && c.Type != JwtClaimTypes.Actor && 
-                    (!sameTrack || c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType)).ToList();
+                    (!sameTrack || c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType)).ToList();
                 logger.ScopeTrace(() => $"AppReg, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 if (!party.Client.DisableClientAsTokenExchangeActor)
                 {

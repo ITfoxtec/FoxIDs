@@ -11,6 +11,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
+        public string InitName { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Technical name")]
@@ -225,6 +227,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
+
+        [ValidateComplexType]
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        public List<SamlUpPartyProfileViewModel> Profiles { get; set; } = new List<SamlUpPartyProfileViewModel>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

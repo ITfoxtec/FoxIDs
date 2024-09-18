@@ -6,8 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class ExternalLoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class ExternalLoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
     {
+        public string InitName { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Technical name")]
@@ -79,6 +81,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; } = new List<string>(["*"]);
 
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [Display(Name = "Additional parameters")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; } = new List<OAuthAdditionalParameter>();
+
         /// <summary>
         /// Claim transforms.
         /// </summary>
@@ -132,5 +138,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
+
+        [ValidateComplexType]
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        public List<ExternalLoginUpPartyProfileViewModel> Profiles { get; set; } = new List<ExternalLoginUpPartyProfileViewModel>();
     }
 }

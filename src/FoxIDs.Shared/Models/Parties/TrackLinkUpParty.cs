@@ -2,10 +2,11 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
-    public class TrackLinkUpParty : ExternalUserUpParty, IOAuthClaimTransforms
+    public class TrackLinkUpParty : UpPartyWithExternalUser<TrackLinkUpPartyProfile>, IOAuthClaimTransforms, IValidatableObject
     {
         public TrackLinkUpParty()
         {
@@ -38,5 +39,16 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "pipe_external_id")]
         public bool PipeExternalId { get; set; }
+
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+            return results;
+        }
     }
 }

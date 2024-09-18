@@ -8,6 +8,8 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
+        public string InitName { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Client ID")]
@@ -136,6 +138,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();
+
+        [ValidateComplexType]
+        [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
+        public List<OidcUpPartyProfileViewModel> Profiles { get; set; } = new List<OidcUpPartyProfileViewModel>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using FoxIDs.Util;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -63,6 +65,15 @@ namespace FoxIDs.Client.Pages.Components
 
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+                if (afterMap.Profiles?.Count() > 0)
+                {
+                    foreach (var profile in afterMap.Profiles)
+                    {
+                        profile.InitName = profile.Name;
+                    }
+                }
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -159,6 +170,20 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void AddProfile(MouseEventArgs e, List<OidcUpPartyProfileViewModel> profiles)
+        {
+            var profile = new OidcUpPartyProfileViewModel
+            {
+                Name = RandomName.GenerateDefaultName(profiles.Select(p => p.Name))
+            };
+            profiles.Add(profile);
+        }
+
+        private void RemoveProfile(MouseEventArgs e, List<OidcUpPartyProfileViewModel> profiles, OidcUpPartyProfileViewModel removeProfile)
+        {
+            profiles.Remove(removeProfile);
+        }
+
         private async Task OnEditOidcUpPartyValidSubmitAsync(GeneralOidcUpPartyViewModel generalOidcUpParty, EditContext editContext)
         {
             try
@@ -233,6 +258,24 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (generalOidcUpParty.Form.Model.Name != generalOidcUpParty.Form.Model.InitName)
+                    {
+                        oidcUpParty.NewName = oidcUpParty.Name;
+                        oidcUpParty.Name = generalOidcUpParty.Form.Model.InitName;
+                    }
+                    if (generalOidcUpParty.Form.Model.Profiles?.Count() > 0)
+                    {
+                        foreach (var profile in generalOidcUpParty.Form.Model.Profiles)
+                        {
+                            if (!profile.InitName.IsNullOrWhiteSpace() && profile.InitName != profile.Name)
+                            {
+                                var profileMap = oidcUpParty.Profiles?.Where(p => p.Name == profile.Name).First();
+                                profileMap.Name = profile.InitName;
+                                profileMap.NewName = profile.Name;
+                            }
+                        }
+                    }
+
                     var deleteClientSecret = false;
                     if (oidcUpParty.Client != null && oidcUpParty.Client.ClientSecret != generalOidcUpParty.Form.Model.Client.ClientSecretLoaded)
                     {
@@ -248,6 +291,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    generalOidcUpParty.Name = oidcUpPartyResult.Name;
                     if (deleteClientSecret)
                     {
                         await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);
@@ -257,7 +301,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
                     toastService.ShowSuccess("OpenID Connect application updated.");
                     generalOidcUpParty.DisplayName = oidcUpPartyResult.DisplayName;
-                }                
+                    generalOidcUpParty.Profiles = oidcUpPartyResult.Profiles?.Map<List<UpPartyProfile>>();
+                }
             }
             catch (FoxIDsApiException ex)
             {

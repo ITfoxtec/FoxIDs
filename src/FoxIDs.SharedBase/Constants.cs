@@ -208,7 +208,10 @@ namespace FoxIDs
                 public const string RequestPath = "RequestPath";                
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
+                public const string UserAgent = "UserAgent";
                 public const string AppRoleInstance = "AppRoleInstance";
+                public const string UpPartyId = "UpPartyId";
+                public const string DownPartyId = "DownPartyId";
             }
 
             public static class IndexName
@@ -223,6 +226,9 @@ namespace FoxIDs
         public static class Models
         {
             public const string CosmosPartitionKeyPath = "/partition_id";
+
+            public const int DefaultNameLength = 8;
+            public const int DefaultNameMaxAttempts = 3;
 
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
@@ -433,7 +439,6 @@ namespace FoxIDs
                 public const int UsernameLength = 60;
             }
 
-
             public static class DynamicElements
             {
                 public const int ElementsMin = 0;
@@ -481,6 +486,7 @@ namespace FoxIDs
             public static class Party
             {
                 public const int NameLength = 50;
+                public const int ProfileNameLength = 20;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
@@ -607,6 +613,8 @@ namespace FoxIDs
                 public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
                 public const int HrdLogoUrlLength = 500;
                 public const string HrdLogoUrlRegExPattern = @"^https:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}";
+                public const int ProfilesMin = 0;
+                public const int ProfilesMax = 20;
             }
 
             public static class OAuthUpParty
@@ -728,8 +736,6 @@ namespace FoxIDs
 
         public static class ControlApi
         {
-            public const int DefaultNameLength = 8;
-
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 
@@ -776,6 +782,12 @@ namespace FoxIDs
             {
                 public const string Authentication = "authentication";
                 public const string ApiId = "external_login";
+
+                public static class ErrorCodes
+                {
+                    public const string InvalidAPIIDOrSecret = "invalid_api_id_secret";
+                    public const string InvalidUsernameOrPassword = "invalid_username_password";
+                }
             }
         }
 
@@ -839,7 +851,7 @@ namespace FoxIDs
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] 
                 { 
-                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, JwtClaimTypes.LocalSub
                 }).ToArray();
 
@@ -848,7 +860,7 @@ namespace FoxIDs
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] 
                 { 
-                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                    JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
                 }).ToArray();
 
@@ -858,7 +870,7 @@ namespace FoxIDs
             public readonly static string[] JwtTokenUpParty = 
             {
                 FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, 
-                JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
+                JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                 JwtClaimTypes.AuthMethodIssuer, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr 
             };
 
@@ -879,7 +891,7 @@ namespace FoxIDs
             {
                 ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, 
                 ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, 
-                SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, 
+                SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthProfileMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, 
                 SamlClaimTypes.AuthMethodIssuer, SamlClaimTypes.LocalNameIdentifier
             };
         }
@@ -887,6 +899,7 @@ namespace FoxIDs
         public static class JwtClaimTypes
         {
             public const string AuthMethod = "auth_method";
+            public const string AuthProfileMethod = "auth_profile_method";
             public const string AuthMethodType = "auth_method_type";
             [Obsolete($"Phase out and instead use the '{AuthMethod}' claim.")]
             public const string UpParty = "up_party";
@@ -902,6 +915,7 @@ namespace FoxIDs
         public static class SamlClaimTypes
         {
             public const string AuthMethod = "http://schemas.foxids.com/identity/claims/authmethod";
+            public const string AuthProfileMethod = "http://schemas.foxids.com/identity/claims/authprofilemethod";
             public const string AuthMethodType = "http://schemas.foxids.com/identity/claims/authmethodtype";
             [Obsolete($"Phase out and instead use the '{AuthMethod}' claim.")]
             public const string UpParty = "http://schemas.foxids.com/identity/claims/upparty";
@@ -928,6 +942,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Amr, SamlClaim = SamlClaimTypes.Amr },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AuthMethod, SamlClaim = SamlClaimTypes.AuthMethod },
+                new ClaimMap { JwtClaim = JwtClaimTypes.AuthProfileMethod, SamlClaim = SamlClaimTypes.AuthProfileMethod },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AuthMethodType, SamlClaim = SamlClaimTypes.AuthMethodType },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpParty, SamlClaim = SamlClaimTypes.UpParty },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },

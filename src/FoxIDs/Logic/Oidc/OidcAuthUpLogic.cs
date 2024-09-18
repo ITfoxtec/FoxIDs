@@ -75,6 +75,7 @@ namespace FoxIDs.Logic
                 DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
+                UpPartyProfileName = partyLink.ProfileName,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
@@ -148,7 +149,14 @@ namespace FoxIDs.Logic
                 authenticationRequest.LoginHint = oidcUpSequenceData.LoginEmailHint;
             }
 
-            authenticationRequest.Scope = new[] { IdentityConstants.DefaultOidcScopes.OpenId}.ConcatOnce(party.Client.Scopes).ToSpaceList();
+            var profile = GetProfile(party, oidcUpSequenceData);
+
+            var scopes = new[] { IdentityConstants.DefaultOidcScopes.OpenId }.ConcatOnce(party.Client.Scopes);
+            if (profile != null && profile.Client.Scopes?.Count() > 0)
+            {
+                scopes = scopes.ConcatOnce(profile.Client.Scopes);
+            }
+            authenticationRequest.Scope = scopes.ToSpaceList();
 
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
@@ -156,13 +164,40 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, Authentication request '{authenticationRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
+            var additionalParameters = new List<OAuthAdditionalParameter>();
             if (party.Client.AdditionalParameters?.Count() > 0)
             {
-                foreach(var additionalParameter in party.Client.AdditionalParameters)
+                foreach (var additionalParameter in party.Client.AdditionalParameters)
                 {
-                    nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    additionalParameters.Add(additionalParameter);
                 }
-                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+            }
+            if (profile != null && profile.Client.AdditionalParameters?.Count() > 0)
+            {
+                foreach (var additionalParameter in profile.Client.AdditionalParameters)
+                {
+                    var item = additionalParameters.Where(a => a.Name == additionalParameter.Name).FirstOrDefault();
+                    if (item != null)
+                    {
+                        item.Value = additionalParameter.Value;
+                    }
+                    else
+                    {
+                        additionalParameters.Add(additionalParameter);
+                    }
+                }
+            }
+
+            if (additionalParameters.Count() > 0)
+            {
+                foreach (var additionalParameter in additionalParameters)
+                {
+                    if (!nameValueCollection.ContainsKey(additionalParameter.Name))
+                    {
+                        nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                    }                        
+                }
+                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", additionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
 
             if (party.Client.EnablePkce)
@@ -182,6 +217,15 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, Authentication request URL '{party.Client.AuthorizeUrl}'.");
             logger.ScopeTrace(() => "AuthMethod, Sending OIDC Authentication request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl, RouteBinding.DisplayName);            
+        }
+
+        private OAuthUpPartyProfile GetProfile(TParty party, OidcUpSequenceData oidcUpSequenceData)
+        {
+            if (!oidcUpSequenceData.UpPartyProfileName.IsNullOrEmpty() && party.Profiles != null)
+            {
+                return party.Profiles.Where(p => p.Name == oidcUpSequenceData.UpPartyProfileName).FirstOrDefault();
+            }
+            return null;
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)
@@ -239,10 +283,14 @@ namespace FoxIDs.Logic
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
-                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType &&
                     c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
                     c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+                if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
+                {
+                    claims.AddClaim(Constants.JwtClaimTypes.AuthProfileMethod, sequenceData.UpPartyProfileName);
+                }
                 claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
@@ -340,7 +388,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Oidc);
             }
 
             logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);

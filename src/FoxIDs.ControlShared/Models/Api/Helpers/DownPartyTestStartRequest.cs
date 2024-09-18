@@ -9,10 +9,10 @@ namespace FoxIDs.Models.Api
     public class DownPartyTestStartRequest
     {
         /// <summary>
-        /// Allow authentication method names.
+        /// Allow authentication methods.
         /// </summary>
-        [ListLength(Constants.Models.OidcDownPartyTest.UpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        public List<string> UpPartyNames { get; set; }
+        [ListLength(Constants.Models.OidcDownPartyTest.UpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
+        public List<UpPartyLink> UpParties { get; set; }
 
         [ListLength(Constants.Models.OidcDownPartyTest.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "Issue claims (use * to issue all claims)")]

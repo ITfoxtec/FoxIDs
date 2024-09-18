@@ -10,14 +10,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared.Components
 {
     public partial class SelectUpParty<TModel> where TModel : class, IAllowUpPartyNames, new()
     {
+        private Modal upPartyFilterModal;        
         private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
         private List<UpParty> upParties;
-        private IEnumerable<UpParty> upPartyFilters;
+        private List<UpPartyFilterViewModel> upPartyFilters;
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -29,15 +31,15 @@ namespace FoxIDs.Client.Shared.Components
         public PageEditForm<TModel> EditDownPartyForm { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, string)> OnAddUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, List<UpPartyLink>)> OnUpdateUpParties { get; set; }
 
         [Parameter]
-        public EventCallback<(IAllowUpPartyNames, string)> OnRemoveUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, UpPartyLink)> OnRemoveUpParty { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await LoadDefaultUpPartyFilter();
+            await UpPartyNamesFilterAsync(null);
         }
 
         public void Init()
@@ -48,6 +50,7 @@ namespace FoxIDs.Client.Shared.Components
         private async Task LoadDefaultUpPartyFilter()
         {
             await UpPartyNamesFilterAsync(null);
+            upPartyFilterModal.Show();
         }
 
         private async Task OnUpPartyNamesFilterValidSubmitAsync(EditContext editContext)
@@ -88,7 +91,55 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     upParties = ups?.ToList();
                 }
-                upPartyFilters = ups.Where(f => !EditDownPartyForm.Model.AllowUpPartyNames.Where(a => a.Equals(f.Name)).Any());
+
+                var tempUpPartyFilters = upPartyFilters;
+                upPartyFilters = new List<UpPartyFilterViewModel>();
+                foreach (var up in ups)
+                {
+                    var typeText = GetTypeText(up);
+
+                    var item = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName.IsNullOrWhiteSpace()).FirstOrDefault();
+                    upPartyFilters.Add(new UpPartyFilterViewModel
+                    {
+                        Name = up.Name,
+                        DisplayName = up.DisplayName ?? up.Name,
+                        Type = up.Type,
+                        TypeText = typeText,
+                        Selected = item != null ? item?.Selected == true : EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName.IsNullOrWhiteSpace()).Any()
+                    });
+                    if(tempUpPartyFilters != null && item != null)
+                    {
+                        tempUpPartyFilters.Remove(item);
+                    }
+
+                    if (up.Profiles != null)
+                    {
+                        foreach(var profile in up.Profiles) 
+                        {
+                            var itemProfile = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName == profile.Name).FirstOrDefault();
+                            upPartyFilters.Add(new UpPartyFilterViewModel
+                            {
+                                Name = up.Name,
+                                DisplayName = up.DisplayName ?? up.Name,
+                                ProfileName = profile.Name,
+                                ProfileDisplayName = profile.DisplayName,
+                                Type = up.Type,
+                                TypeText = typeText,
+                                Selected = itemProfile != null ? itemProfile?.Selected == true : EditDownPartyForm.Model.AllowUpParties.Where(a => a.Name == up.Name && a.ProfileName == profile.Name).Any()
+                            });
+                            if (tempUpPartyFilters != null && itemProfile != null)
+                            {
+                                tempUpPartyFilters.Remove(itemProfile);
+                            }
+                        }
+                    }
+                }
+
+                if(tempUpPartyFilters?.Count() > 0)
+                {
+                    tempUpPartyFilters.ForEach(u => u.Hide = true);
+                    upPartyFilters.AddRange(tempUpPartyFilters);
+                }
             }
             catch (TokenUnavailableException)
             {
@@ -96,55 +147,81 @@ namespace FoxIDs.Client.Shared.Components
             }
         }
 
-        private async Task OnAddUpPartyNameAsync(string name)
+        private void OnFilterSelectedAllChange(bool selectAll)
         {
-            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
+            foreach (var up in upPartyFilters)
+            {
+                up.Selected = selectAll;
+            }
         }
 
-        private async Task OnRemoveUpPartyNameAsync(string name)
+        private void OnAddUpParty(UpPartyFilterViewModel upPartyFilter)
         {
-            await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
+            upPartyFilter.Selected = !upPartyFilter.Selected;
         }
 
-        private string UpPartyInfoText(string upPartyName)
+        private async Task OnRemoveUpPartyAsync(UpPartyLink upPartyLink)
         {
-            var upParty = upParties.Where(f => f.Name.Equals(upPartyName)).FirstOrDefault();
+            await OnRemoveUpParty.InvokeAsync((EditDownPartyForm.Model, upPartyLink));
+        }
+
+        private async Task OnUpPartyFilterSelectAsync()
+        {
+            await OnUpdateUpParties.InvokeAsync((EditDownPartyForm.Model, upPartyFilters.Where(u => u.Selected).Select(u => new UpPartyLink { Name = u.Name, ProfileName = u.ProfileName } ).ToList()));
+            upPartyFilterModal.Hide();
+        }
+
+        private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpPartyLink upPartyLink)
+        {
+            var upParty = upParties.Where(f => f.Name == upPartyLink.Name).FirstOrDefault();
             if (upParty == null)
             {
-                return upPartyName;
+                return (upPartyLink.Name, upPartyLink.ProfileName, string.Empty);
             }
             else
             {
-                return UpPartyInfoText(upParty);
+                return (upParty.DisplayName ?? upParty.Name, GetProfileDisplayName(upParty, upPartyLink.ProfileName), GetTypeText(upParty));
             }
         }
 
-        private string UpPartyInfoText(UpParty upParty)
+        private string GetProfileDisplayName(UpParty upParty, string profileName)
+        {
+            if(!profileName.IsNullOrEmpty() && upParty.Profiles != null)
+            {
+                var profileDisplayName = upParty.Profiles.Where(p => p.Name == profileName).Select(p => p.DisplayName).FirstOrDefault();
+                return profileDisplayName ?? profileName;
+            }
+
+            return string.Empty;
+        }
+
+        private string GetTypeText(UpParty upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Login)";
+                return "Login";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
+                return "OAuth 2.0";
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
+                return "OpenID Connect";
             }
             else if (upParty.Type == PartyTypes.Saml2)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
+                return "SAML 2.0";
             }
             else if (upParty.Type == PartyTypes.TrackLink)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
+                return "Environment Link";
             }
             else if (upParty.Type == PartyTypes.ExternalLogin)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (External Login)";
+                return "External API Login";
             }
+
             throw new NotSupportedException();
         }
     }

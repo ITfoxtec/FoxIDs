@@ -52,6 +52,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -244,6 +246,12 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oauthDownParty = generalOAuthDownParty.Form.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
+                    if (generalOAuthDownParty.Form.Model.Name != generalOAuthDownParty.Form.Model.InitName)
+                    {
+                        afterMap.NewName = afterMap.Name;
+                        afterMap.Name = generalOAuthDownParty.Form.Model.InitName;
+                    }
+
                     if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true && !generalOAuthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                     {
                         afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOAuthDownParty.Form.Model.Name, Scopes = generalOAuthDownParty.Form.Model.Client.DefaultResourceScopeScopes });
@@ -267,6 +275,7 @@ namespace FoxIDs.Client.Pages.Components
                 });
 
                 var oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
+                generalOAuthDownParty.Name = oauthDownPartyResult.Name;
                 if (oauthDownParty.Client != null)
                 {
                     foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))

@@ -33,17 +33,17 @@ namespace FoxIDs.Logic
             await InvalidateUpPartyCacheAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName));
         }
 
-        public async Task<UpParty> GetUpPartyAsync(Party.IdKey idKey, bool required = true)
+        public async Task<UpPartyWithProfile<UpPartyProfile>> GetUpPartyAsync(Party.IdKey idKey, bool required = true)
         {
             var key = CacheUpPartyNameKey(idKey);
 
             var upPartyAsString = await cacheProvider.GetAsync(key);
             if (!upPartyAsString.IsNullOrEmpty())
             {
-                return upPartyAsString.ToObject<UpParty>();
+                return upPartyAsString.ToObject<UpPartyWithProfile<UpPartyProfile>>();
             }
 
-            var upParty = await tenantDataRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(idKey), required: required);
+            var upParty = await tenantDataRepository.GetAsync<UpPartyWithProfile<UpPartyProfile>>(await UpParty.IdFormatAsync(idKey), required: required);
             if (upParty != null)
             {
                 await cacheProvider.SetAsync(key, upParty.ToJson(), settings.Cache.UpPartyLifetime);
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
             return upParty;
         }
 
-        public async Task<UpParty> GetUpPartyAsync(string upPartyName, string tenantName = null, string trackName = null, bool required = true)
+        public async Task<UpPartyWithProfile<UpPartyProfile>> GetUpPartyAsync(string upPartyName, string tenantName = null, string trackName = null, bool required = true)
         {
             return await GetUpPartyAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName), required);
         }

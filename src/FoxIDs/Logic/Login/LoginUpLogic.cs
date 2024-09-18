@@ -132,6 +132,7 @@ namespace FoxIDs.Logic
                     var selectedUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d.Equals(domain, StringComparison.OrdinalIgnoreCase)).Count() > 0).FirstOrDefault();
                     if (selectedUpParty != null)
                     {
+                        // A profile is not possible.
                         return new UpPartyLink { Name = selectedUpParty.Name, Type = selectedUpParty.Type };
                     }
                 }
@@ -141,10 +142,10 @@ namespace FoxIDs.Logic
             var hrdUpParties = await hrdLogic.GetHrdSelectionAsync();
             if (hrdUpParties?.Count() > 0)
             {
-                var hrdUpParty = hrdUpParties.Where(hu => toUpParties.Any(up => up.Name == hu.SelectedUpPartyName)).FirstOrDefault();
+                var hrdUpParty = hrdUpParties.Where(hu => toUpParties.Any(up => up.Name == hu.SelectedUpPartyName && (hu.SelectedUpPartyProfileName.IsNullOrEmpty() || up.ProfileName == hu.SelectedUpPartyProfileName))).FirstOrDefault();
                 if (hrdUpParty != null)
                 {
-                    return new UpPartyLink { Name = hrdUpParty.SelectedUpPartyName, Type = hrdUpParty.SelectedUpPartyType };
+                    return new UpPartyLink { Name = hrdUpParty.SelectedUpPartyName, ProfileName = hrdUpParty.SelectedUpPartyProfileName, Type = hrdUpParty.SelectedUpPartyType };
                 }
             }
 
@@ -152,7 +153,7 @@ namespace FoxIDs.Logic
             var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
             if (starUpParty != null)
             {
-                return new UpPartyLink { Name = starUpParty.Name, Type = starUpParty.Type };
+                return new UpPartyLink { Name = starUpParty.Name, ProfileName = starUpParty.ProfileName, Type = starUpParty.Type };
             }
 
             return null;
@@ -160,12 +161,21 @@ namespace FoxIDs.Logic
 
         private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(IEnumerable<UpPartyLink> toUpParties)
         {
-            return toUpParties.Select(up => new HrdUpPartySequenceData 
+            foreach(var up in toUpParties)
             {
-                Name = up.Name, DisplayName = up.DisplayName, Type = up.Type, Issuers = up.Issuers, 
-                HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl,
-                DisableUserAuthenticationTrust = up.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = up.DisableTokenExchangeTrust
-            });
+                yield return new HrdUpPartySequenceData
+                {
+                    Name = up.Name,
+                    DisplayName = up.DisplayName,
+                    ProfileName = up.ProfileName,
+                    ProfileDisplayName = up.ProfileDisplayName,
+                    Type = up.Type,
+                    HrdDomains = up.HrdDomains,
+                    HrdShowButtonWithDomain = up.HrdShowButtonWithDomain,
+                    HrdDisplayName = up.HrdDisplayName,
+                    HrdLogoUrl = up.HrdLogoUrl
+                };
+            }
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
@@ -177,7 +187,7 @@ namespace FoxIDs.Logic
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Login);
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
             }
 
             logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");

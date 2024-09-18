@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start external create user.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalUserUpSequenceData>(remove: false);
-                var externalUserUpParty = await tenantDataRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
+                var externalUserUpParty = await tenantDataRepository.GetAsync<UpPartyWithExternalUser<UpPartyProfile>>(sequenceData.UpPartyId);
                 if (!(externalUserUpParty.LinkExternalUser?.AutoCreateUser == true))
                 {
                     throw new InvalidOperationException("Automatic create external user not enabled.");
@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalUserUpSequenceData>(remove: false);
-                var externalUserUpParty = await tenantDataRepository.GetAsync<ExternalUserUpParty>(sequenceData.UpPartyId);
+                var externalUserUpParty = await tenantDataRepository.GetAsync<UpPartyWithExternalUser<UpPartyProfile>>(sequenceData.UpPartyId);
                 if (!(externalUserUpParty.LinkExternalUser?.AutoCreateUser == true))
                 {
                     throw new InvalidOperationException("Automatic create external user not enabled.");

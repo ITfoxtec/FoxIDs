@@ -52,6 +52,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             return loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -143,6 +145,12 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     var loginUpParty = await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
+                        if (generalLoginUpParty.Form.Model.Name != generalLoginUpParty.Form.Model.InitName)
+                        {
+                            afterMap.NewName = afterMap.Name;
+                            afterMap.Name = generalLoginUpParty.Form.Model.InitName;
+                        }
+
                         if (afterMap.ClaimTransforms?.Count() > 0)
                         {
                             int order = 1;
@@ -173,6 +181,7 @@ namespace FoxIDs.Client.Pages.Components
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
                     toastService.ShowSuccess("Login application updated.");
+                    generalLoginUpParty.Name = loginUpParty.Name;
                     generalLoginUpParty.DisplayName = loginUpParty.DisplayName;
                 }
             }

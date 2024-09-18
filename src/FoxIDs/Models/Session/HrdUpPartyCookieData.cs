@@ -10,6 +10,9 @@ namespace FoxIDs.Models.Session
         [JsonProperty(PropertyName = "sn")]
         public string SelectedUpPartyName { get; set; }
 
+        [JsonProperty(PropertyName = "spn")]
+        public string SelectedUpPartyProfileName { get; set; }
+
         [JsonProperty(PropertyName = "st")]
         public PartyTypes SelectedUpPartyType { get; set; }
     }

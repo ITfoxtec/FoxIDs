@@ -94,7 +94,7 @@ namespace FoxIDs.Controllers
                 var requestDictionary = authenticationRequest.ToDictionary().AddToDictionary(codeChallengeRequest);
                 var testUrl = QueryHelpers.AddQueryString(UrlCombine.Combine(GetAuthority(partyName), Constants.Routes.OAuthController, Constants.Endpoints.Authorize), requestDictionary);
 
-                var mParty = new OidcDownPartyTest
+                var mParty = new OidcDownParty
                 {
                     Id = await DownParty.IdFormatAsync(RouteBinding, partyName),
                     Name = partyName,
@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
                     TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
                     Nonce = authenticationRequest.Nonce,
                     CodeVerifier = codeVerifier,                    
-                    AllowUpParties = testDownPartyRequest.UpPartyNames.Select(pName => new UpPartyLink { Name = pName }).ToList(),
+                    AllowUpParties = testDownPartyRequest.UpParties.Select(p => new UpPartyLink { Name = p.Name.ToLower(), ProfileName = p.ProfileName?.ToLower()  }).ToList(),
                     Client = new OidcDownClient
                     {
                         RedirectUris = new List<string> { authenticationRequest.RedirectUri },
@@ -139,7 +139,7 @@ namespace FoxIDs.Controllers
                 await secretHashLogic.AddSecretHashAsync(oauthClientSecret, secret);
                 mParty.Client.Secrets = [oauthClientSecret];
 
-                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testDownPartyRequest.UpPartyNames), mParty)) return BadRequest(ModelState);
+                if (!await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(testDownPartyRequest.UpParties), mParty)) return BadRequest(ModelState);
 
                 mParty.DisplayName = $"Test application {(mParty.AllowUpParties.Count() == 1 ? $"[{GetUpPartyDisplayName(mParty.AllowUpParties.First())}]" : $"- {mParty.Name}")}";
 
@@ -161,8 +161,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create '{typeof(OidcDownPartyTest).Name}' by name '{partyName}'.");
-                    return Conflict(typeof(OidcDownPartyTest).Name, partyName, nameof(OidcDownPartyTest.Name));
+                    logger.Warning(ex, $"Conflict, Create '{typeof(OidcDownParty).Name}' by name '{partyName}'.");
+                    return Conflict(typeof(OidcDownParty).Name, partyName, nameof(OidcDownParty.Name));
                 }
                 throw;
             }
@@ -225,7 +225,7 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var mParty = await tenantDataRepository.GetAsync<OidcDownPartyTest>(await DownParty.IdFormatAsync(RouteBinding, partyName));
+                var mParty = await tenantDataRepository.GetAsync<OidcDownParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
 
                 (var tokenResponse, var idTokenPrincipal, var accessTokenPrincipal) = await AcquireTokensAsync(mParty, clientSecret, mParty.Nonce, testDownPartyRequest.Code);
 
@@ -255,7 +255,7 @@ namespace FoxIDs.Controllers
             }
             catch (ResponseErrorException rex)
             {
-                logger.Warning(rex, $"Response error, Update '{typeof(OidcDownPartyTest).Name}' by name '{partyName}'.");
+                logger.Warning(rex, $"Response error, Update '{typeof(OidcDownParty).Name}' by name '{partyName}'.");
                 ModelState.AddModelError(string.Empty, rex.Message);
                 return BadRequest(ModelState);
             }
@@ -263,7 +263,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(OidcDownPartyTest).Name}' by name '{partyName}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(OidcDownParty).Name}' by name '{partyName}'.");
                     return NotFound("Test application was not found, it has probably expired.");
                 }
                 throw;
@@ -287,7 +287,7 @@ namespace FoxIDs.Controllers
             return UrlCombine.Combine(useBackendCall ? settings.FoxIDsBackendEndpoint : (useValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint), urlItems.ToArray());
         }
 
-        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownPartyTest mParty, string clientSecret, string nonce, string code)
+        private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownParty mParty, string clientSecret, string nonce, string code)
         {
             var tokenRequest = new TokenRequest
             {

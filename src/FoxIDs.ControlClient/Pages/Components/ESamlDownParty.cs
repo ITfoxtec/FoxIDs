@@ -51,6 +51,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
             {
+                afterMap.InitName = afterMap.Name;
+
                 if (afterMap.DisplayName.IsNullOrWhiteSpace())
                 {
                     afterMap.DisplayName = afterMap.Name;
@@ -228,6 +230,12 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlDownParty = generalSamlDownParty.Form.Model.Map<SamlDownParty>(afterMap =>
                 {
+                    if (generalSamlDownParty.Form.Model.Name != generalSamlDownParty.Form.Model.InitName)
+                    {
+                        afterMap.NewName = afterMap.Name;
+                        afterMap.Name = generalSamlDownParty.Form.Model.InitName;
+                    }
+
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;
@@ -241,6 +249,7 @@ namespace FoxIDs.Client.Pages.Components
                 var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
                 generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
                 toastService.ShowSuccess("SAML 2.0 authentication method updated.");
+                generalSamlDownParty.Name = samlDownPartyResult.Name;
                 generalSamlDownParty.DisplayName = samlDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)

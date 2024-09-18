@@ -28,7 +28,7 @@ namespace FoxIDs.Models
 
         public RouteTrackKey Key { get; set; }
 
-        public UpParty UpParty { get; set; }
+        public UpPartyWithProfile<UpPartyProfile> UpParty { get; set; }
 
         public List<UpPartyLink> ToUpParties { get; set; }
 

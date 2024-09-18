@@ -102,7 +102,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public async Task<IActionResult> LoginUpParty(string name)
+        public async Task<IActionResult> LoginUpParty(string name, string profileName)
         {
             try
             {
@@ -121,22 +121,12 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Selected authentication method '{name}' do not exist as allowed on application registration '{RouteBinding.DownParty?.Name}'.");
                 }
 
-                return await GoToUpParty(sequenceData, ToUpPartyLink(selectedUpParty));
+                return await GoToUpParty(sequenceData, new UpPartyLink { Name = selectedUpParty.Name, ProfileName = profileName, Type = selectedUpParty.Type });
             }
             catch (Exception ex)
             {
                 throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
-        }
-
-        private UpPartyLink ToUpPartyLink(HrdUpPartySequenceData upParty)
-        {
-            return new UpPartyLink 
-            {
-                Name = upParty.Name, DisplayName = upParty.DisplayName, Type = upParty.Type, Issuers = upParty.Issuers, 
-                HrdDomains = upParty.HrdDomains, HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl,
-                DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust
-            };
         }
 
         private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, UpPartyLink selectedUpParty)
@@ -228,7 +218,7 @@ namespace FoxIDs.Controllers
         private IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
             var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0)))
-                .Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = GetDisplayName(up), LogoUrl = up.HrdLogoUrl });
+                .Select(up => new IdentifierUpPartyViewModel { Name = up.Name, ProfileName = up.ProfileName, DisplayName = GetDisplayName(up), LogoUrl = up.HrdLogoUrl });
 
             foreach (var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))
             {
@@ -239,7 +229,11 @@ namespace FoxIDs.Controllers
 
         private string GetDisplayName(HrdUpPartySequenceData up)
         {
-            if (up.HrdDisplayName.IsNullOrWhiteSpace())
+            if (!up.ProfileDisplayName.IsNullOrWhiteSpace())
+            {
+                return up.ProfileDisplayName;
+            }
+            else if (up.HrdDisplayName.IsNullOrWhiteSpace())
             {
                 if (up.HrdLogoUrl.IsNullOrWhiteSpace())
                 {

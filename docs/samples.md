@@ -52,9 +52,9 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
   
     -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
 
-- ASP.NET Core - External login API - authentication method
+- ASP.NET Core - External API login - authentication method
   
-    -  [ExternalLoginApiSample](#externalloginapisample)
+    -  [ExternalApiLoginSample](#externalapiloginsample)
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
@@ -201,9 +201,9 @@ Identity Server ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/mai
 
 Local development domain and port: `https://localhost:44346`
 
-### ExternalLoginApiSample
+### ExternalApiLoginSample
 
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample)) application implementing an external login API which is connected as a external login authentication method in FoxIDs.
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalApiLoginSample)) application implementing an external API login which is connected as a external login authentication method in FoxIDs.
 
 Local development domain and port: `https://localhost:44352`
 

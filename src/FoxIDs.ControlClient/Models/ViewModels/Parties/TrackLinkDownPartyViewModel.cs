@@ -42,9 +42,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string ToUpPartyDisplayName { get; set; }
 
         [ValidateComplexType]
-        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [Display(Name = "Allow applications")]
-        public List<string> AllowUpPartyNames { get; set; } = new List<string>();
+        public List<UpPartyLink> AllowUpParties { get; set; } = new List<UpPartyLink>();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
@@ -60,9 +60,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (AllowUpPartyNames?.Count <= 0)
+            if (AllowUpParties?.Count <= 0)
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));
+                results.Add(new ValidationResult($"At least one allowed authentication method is required.", [nameof(AllowUpParties)]));
             }
             return results;
         }

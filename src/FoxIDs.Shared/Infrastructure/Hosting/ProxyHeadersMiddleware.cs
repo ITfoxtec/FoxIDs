@@ -77,14 +77,14 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected void ReadClientIp(HttpContext context)
         {
-            string ipHeader = context.Request.Headers["CF-Connecting-IP"];
+            string ipHeader = context.Request.Headers["X-Forwarded-For"];
             if (ipHeader.IsNullOrWhiteSpace())
             {
-                ipHeader = context.Request.Headers["X-Azure-ClientIP"];
+                ipHeader = context.Request.Headers["CF-Connecting-IP"]; 
             }
             if (ipHeader.IsNullOrWhiteSpace())
             {
-                ipHeader = context.Request.Headers["X-Forwarded-For"];
+                ipHeader = context.Request.Headers["X-Azure-ClientIP"];
             }
             if (!ipHeader.IsNullOrWhiteSpace())
             {

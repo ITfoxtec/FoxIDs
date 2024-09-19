@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
             if (entityDescriptor.IdPSsoDescriptor != null)
             {
                 party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                party.Issuer = entityDescriptor.EntityId;
+                party.Issuers = [entityDescriptor.EntityId];
                 var singleSignOnServices = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.FirstOrDefault();
                 if (singleSignOnServices == null)
                 {

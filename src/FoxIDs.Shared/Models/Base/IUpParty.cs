@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
     public interface IUpParty : IParty
     {
+        [Obsolete("Use Issuers instead.")]
         string Issuer { set; }
         List<string> Issuers { get; set; }
         string SpIssuer { get; set; }

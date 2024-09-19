@@ -37,7 +37,18 @@ namespace FoxIDs.Logic
                 session.Claims = sessionClaims.ToClaimAndValues(); 
 
                 session.ExternalSessionId = externalSessionId;
-                session.IdToken = idToken;
+                try
+                {
+                    if (idToken?.Count() > Constants.Models.Claim.ValueLength)
+                    {
+                        throw new Exception($"The ID Token exceeds the maximum allowed limit of {Constants.Models.Claim.ValueLength} bytes and is NOT included in the authentication method session. Logout may not work without the ID Token.");
+                    }
+                    session.IdToken = idToken;
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                }
                 AddDownPartyLink(session, newDownPartyLink);
             };
 

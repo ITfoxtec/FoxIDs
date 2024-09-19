@@ -95,12 +95,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_request_extensions_xml")]
         public string AuthnRequestExtensionsXml { get; set; }
 
+        [JsonProperty(PropertyName = "disable_login_hint")]
+        public bool DisableLoginHint { get; set; }
+
         [JsonProperty(PropertyName = "metadata_add_logout_response_location")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 
         [JsonProperty(PropertyName = "sign_metadata")]
-        public bool SignMetadata { get; set; }
-
+        public bool SignMetadata { get; set; }       
+        
         [JsonProperty(PropertyName = "metadata_include_enc_certs")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 

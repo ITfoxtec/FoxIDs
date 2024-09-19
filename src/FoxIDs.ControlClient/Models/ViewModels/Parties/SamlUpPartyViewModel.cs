@@ -169,6 +169,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional Authn request extensions XML")]
         public string AuthnRequestExtensionsXml { get; set; }
 
+        [Display(Name = "Login hint in Authn request in Subject NameID")]
+        public bool DisableLoginHint { get; set; }
+
         [Display(Name = "Add logout response location URL in metadata")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 

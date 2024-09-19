@@ -35,42 +35,27 @@ namespace FoxIDs.Models
         }
 
         // Support back words capability in CosmosDB - single issuer in SAML 2.0 up-parties
-        private bool hasSingleIssuer;
-        private List<string> issuers;
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
+        [Obsolete("Use Issuers instead.")]
         public string Issuer
         {
             get
             {
-                return issuers?.FirstOrDefault();
+                return null;
             }
             set
             {
-                if (!value.IsNullOrWhiteSpace())
+                if (!value.IsNullOrWhiteSpace() && !(Issuers?.Count() > 0))
                 {
-                    hasSingleIssuer = true;
-                    issuers = new List<string> { value };
+                    Issuers = [value];
                 }
             }
         }
 
         [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
-        public virtual List<string> Issuers
-        {
-            get
-            {
-                return issuers;
-            }
-            set
-            {
-                if (!hasSingleIssuer)
-                {
-                    issuers = value;
-                }
-            }
-        }
+        public virtual List<string> Issuers { get; set; }
 
         /// <summary>
         /// SP issuer / audience

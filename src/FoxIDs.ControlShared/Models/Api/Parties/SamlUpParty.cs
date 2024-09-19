@@ -130,6 +130,8 @@ namespace FoxIDs.Models.Api
 
         public string AuthnRequestExtensionsXml { get; set; }
 
+        public bool DisableLoginHint { get; set; }
+
         public bool MetadataAddLogoutResponseLocation { get; set; }
 
         public bool SignMetadata { get; set; }

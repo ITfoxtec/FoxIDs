@@ -115,7 +115,7 @@ namespace FoxIDs.Logic
 
             binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
-            if (!samlUpSequenceData.LoginEmailHint.IsNullOrWhiteSpace())
+            if (!party.DisableLoginHint && !samlUpSequenceData.LoginEmailHint.IsNullOrWhiteSpace())
             {
                 saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginEmailHint, Format = NameIdentifierFormats.Email.OriginalString } };
             }

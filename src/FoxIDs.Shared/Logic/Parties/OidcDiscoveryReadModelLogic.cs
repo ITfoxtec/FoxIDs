@@ -2,7 +2,6 @@
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace FoxIDs.Logic
             party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             if (party.EditIssuersInAutomatic != true || string.IsNullOrWhiteSpace(party.Issuers?.FirstOrDefault()))
             {
-                party.Issuers = new List<string> { oidcDiscovery.Issuer };
+                party.Issuers = [oidcDiscovery.Issuer];
             }
             party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
 

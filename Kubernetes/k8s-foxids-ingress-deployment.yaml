@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: foxids-ingress-http
   annotations:
+   nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+   nginx.ingress.kubernetes.io/proxy-buffer-size: "32k"
    cert-manager.io/issuer: "letsencrypt-production" #production    
    #cert-manager.io/issuer: "letsencrypt-staging" #staging
 spec:

@@ -45,6 +45,7 @@
                 <FInputText @bind-Value="trackSettingsForm.Model.DisplayName" For="@(() => trackSettingsForm.Model.DisplayName)" />
                 <FFieldText @bind-Value="trackSettingsForm.Model.Name" For="@(() => trackSettingsForm.Model.Name)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" Focus="true" />
+                <FInputToggle @bind-Value="trackSettingsForm.Model.AutoMapSamlClaims" For="@(() => trackSettingsForm.Model.AutoMapSamlClaims)" TextType="e.d" />
 
                 <div class="mr-auto">
                     <h4 class="pt-5 pb-3">User & login settings</h4>

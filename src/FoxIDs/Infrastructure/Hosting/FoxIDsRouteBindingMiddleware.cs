@@ -142,6 +142,7 @@ namespace FoxIDs.Infrastructure.Hosting
             routeBinding.PartyNameAndBinding = partyNameAndBinding;
             routeBinding.Key = await trackKeyLogic.LoadTrackKeyAsync(scopedLogger, trackIdKey, track);
             routeBinding.ClaimMappings = track.ClaimMappings;
+            routeBinding.AutoMapSamlClaims = track.AutoMapSamlClaims;
             routeBinding.SequenceLifetime = track.SequenceLifetime;
             routeBinding.MaxFailingLogins = track.MaxFailingLogins;
             routeBinding.FailingLoginCountLifetime = track.FailingLoginCountLifetime;

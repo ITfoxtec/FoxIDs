@@ -75,13 +75,6 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(claimMappings)) return BadRequest(ModelState);
 
-                var duplicatedJwtClaimMappings = claimMappings.GroupBy(cm => cm.JwtClaim).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                if (duplicatedJwtClaimMappings != null)
-                {
-                    ModelState.TryAddModelError(string.Empty, $"Duplicated JWT claim mappings '{duplicatedJwtClaimMappings}'");
-                    return BadRequest(ModelState);
-                }
-
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 

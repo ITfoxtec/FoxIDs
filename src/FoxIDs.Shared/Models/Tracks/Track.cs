@@ -63,6 +63,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_mappings")]
         public List<ClaimMap> ClaimMappings { get; set; }
 
+        [JsonProperty(PropertyName = "auto_map_saml_claims")]
+        public bool AutoMapSamlClaims { get; set; }
+
         [ListLength(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }

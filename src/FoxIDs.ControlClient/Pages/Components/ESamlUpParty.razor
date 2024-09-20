@@ -338,7 +338,7 @@
                         </FInputSelect>
                         </div>
                         <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
-                        <FInputText @bind-Value="samlUpParty.Form.Model.AuthnRequestExtensionsXml" For="@(() => samlUpParty.Form.Model.AuthnRequestExtensionsXml)" />
+                        <FInputTextArea @bind-Value="samlUpParty.Form.Model.AuthnRequestExtensionsXml" For="@(() => samlUpParty.Form.Model.AuthnRequestExtensionsXml)" />
 
                         <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableLoginHint" For="@(() => samlUpParty.Form.Model.DisableLoginHint)" Negation="true" TextType="e.d" />
                     }
@@ -418,7 +418,7 @@
                                             </FInputSelect>
                                         </div>
                                         <FInputTextList @bind-ValueList="profile.AuthnContextClassReferences" For="@(() => profile.AuthnContextClassReferences)" DynamicFirstRow="true" />
-                                        <FInputText @bind-Value="profile.AuthnRequestExtensionsXml" For="@(() => profile.AuthnRequestExtensionsXml)" />
+                                        <FInputTextArea @bind-Value="profile.AuthnRequestExtensionsXml" For="@(() => profile.AuthnRequestExtensionsXml)" />
                                     </div>
                                     <div class="col-1 text-right">
                                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveProfile(e, samlUpParty.Form.Model.Profiles, profile))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>

@@ -150,8 +150,7 @@ Select show advanced settings and add the extension XML in **Authn request exten
 
 ![NemLog-in SAML 2.0 authn request extension XM](images/howto-saml-nemlogin3-auth-req-ext.png)
 
-You can only configure one SAML 2.0 extension per authentication method in FoxIDs, therefor you might need to configure multiple authentication method for NemLog-in. 
-One authentication method for your web site without a SAML 2.0 extension, and one authentication method for each of the supported mobile app platforms.
+You can configure authn request extensions XML in profiles on the authentication method. And then support multiple mobile platforms in profiles.
 
 > As of now iOS do not require a return URL to do app-switch. But this can change over time!  
 > Therefor, you currently only need two authentication methods; one for your web site and iOS app without a redirect URL and one for your Android app with a redirect URL.
@@ -168,15 +167,7 @@ Furthermore, it makes the tokens readable.
 
 ![NemLog-in SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
- **5) - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
-
- FoxIDs internally converts SAML 2.0 clams to JWT claims. NemLog-in / OIOSAML3 defines a set of SAML 2.0 claims where JWT mappings need to be added.
-
- 1. Go to the Settings tab and Claim mappings
- 2. Add mappings for all the claims configured in step 1.11, optionally also include mapping for the privilege claim, you can create you own short JWT claim names
- 3. Click update
-
-![Claim mappings](images/howto-saml-nemlogin3-claim-mappings.png)
+FoxIDs internally converts SAML 2.0 claims to JWT claims. The mapping between SAML 2.0 and JWT claims is automatically created by default. You can find and change the mapping in the **Settings** tab.
 
 The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the environment.
 
@@ -226,5 +217,5 @@ And possible credential types:
  - `https://nemlogin.dk/internal/credential/type/test`
 
 
-In the case you need to provide different sets of authn context class references. You need to create multiple SAML 2.0 authentication methods connected to NemLog-in as different IT systems.  
-E.g., if you need to support step-up authentication. Then you would create one SAML 2.0 authentication method with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another SAML 2.0 authentication method with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.
+You can configure authn context class references in profiles on the authentication method. In the case you need to provide different sets of authn context class references.  
+E.g., if you need to support step-up authentication. Then you would create one profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.

@@ -244,8 +244,8 @@ namespace FoxIDs.Controllers
 
         private IActionResult HandleexternalKeyIsNotReadyException(ErrorViewModel errorViewModel)
         {
-            errorViewModel.ErrorTitle = localizer["Initializing certificate in Key Vault"];
-            errorViewModel.Error = localizer["The certificate will soon be ready. Please try again in a little while."];
+            errorViewModel.ErrorTitle = localizer["Initialized new certificate"];
+            errorViewModel.Error = localizer["The certificate is ready. Please try again."];
             errorViewModel.ShowRetry = true;
             return View(errorViewModel);
         }

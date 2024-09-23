@@ -136,6 +136,7 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 mTrack.DisplayName = track.DisplayName;
                 mTrack.SequenceLifetime = track.SequenceLifetime;
+                mTrack.AutoMapSamlClaims = track.AutoMapSamlClaims;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;
                 mTrack.FailingLoginCountLifetime = track.FailingLoginCountLifetime;
                 mTrack.FailingLoginObservationPeriod = track.FailingLoginObservationPeriod;

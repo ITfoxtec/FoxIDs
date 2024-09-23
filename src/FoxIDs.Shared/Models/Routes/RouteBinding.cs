@@ -36,6 +36,8 @@ namespace FoxIDs.Models
 
         public List<ClaimMap> ClaimMappings { get; set; }
 
+        public bool AutoMapSamlClaims { get; set; }
+
         public List<ResourceItem> Resources { get; set; }
 
         public bool ShowResourceId { get; set; }

@@ -12,22 +12,16 @@ Supported privilege standard:
 ## Configuring DK privilege - claim transforms
 The DK privilege can both be configured in a SAML 2.0 authentication method and application registration and likewise in a OpenID Connect authentication method and application registration.
 
-- In SAML 2.0 the DK privilege claim transformer default read the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and issue the transformed claim `http://schemas.foxids.com/identity/claims/privilege`.
-- In OpenID Connect the DK privilege claim transformer default read the standard claim `privileges_intermediate` and issue the transformed claim `privilege`.
+- The SAML 2.0 claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` is transformed.
+- The OpenID Connect / JWT claim `privileges_intermediate` is transformed.
 
 Configure the DK privilege claim transformer on SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client):
 
 1. Select the **Claim transform** tab
 2. Click **Add claim transform** and click **DK XML privilege to JSON**
-3. Click **Add claim transform** and click **Match claim**
-4. As **Action** select **Remove claim**, to remove the original privilege claim from the claims pipeline
-5. In the **Remove claim** add `https://data.gov.dk/model/core/eid/privilegesIntermediate` 
-6. Click **Update**
+3. Click **Update**
 
 ![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
-
-
-> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
 
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.

@@ -26,6 +26,9 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours. Default 2 hours.
         public int SequenceLifetime { get; set; } = Constants.TrackDefaults.DefaultSequenceLifetime;
 
+        [Display(Name = "Automatically create mappings between JWT and SAML claim types")]
+        public bool AutoMapSamlClaims { get; set; }
+
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
         public int MaxFailingLogins { get; set; } = Constants.TrackDefaults.DefaultMaxFailingLogins;
 

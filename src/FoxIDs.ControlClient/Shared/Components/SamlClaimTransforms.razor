@@ -274,8 +274,9 @@
                 Model.ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
                     {
                         ClaimIn = "https://data.gov.dk/model/core/eid/privilegesIntermediate",
-                        ClaimOut = "http://schemas.foxids.com/identity/claims/privilege",
+                        ClaimOut = "https://data.gov.dk/model/core/eid/privilegesIntermediate",
                         ShowDetails = true,
+                        Action = ClaimTransformActions.Replace,
                         Type = claimTransformType
                     });
                 break;

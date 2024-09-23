@@ -38,6 +38,7 @@ namespace FoxIDs.Logic
                 DisplayName = "Master",
                 Name = trackName,
                 SequenceLifetime = 1800,
+                AutoMapSamlClaims = true,
                 MaxFailingLogins = 5,
                 FailingLoginCountLifetime = 36000,
                 FailingLoginObservationPeriod = 600,
@@ -262,7 +263,8 @@ namespace FoxIDs.Logic
             var mTrack = new Track
             {
                 DisplayName = trackDisplayName,
-                Name = trackName?.ToLower()
+                Name = trackName?.ToLower(), 
+                AutoMapSamlClaims = true,
             };
             await CreateTrackDocumentAsync(tenantName, mTrack);
             await CreateLoginDocumentAsync(tenantName, mTrack.Name);

@@ -26,6 +26,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Sequence lifetime")]
         public int SequenceLifetime { get; set; }
 
+        [Display(Name = "Automatically create mappings between JWT and SAML claim types")]
+        public bool AutoMapSamlClaims { get; set; }
+
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
         [Display(Name = "Max failing logins")]
         public int MaxFailingLogins { get; set; } = 5;

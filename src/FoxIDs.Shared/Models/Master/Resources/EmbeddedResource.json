@@ -281,11 +281,11 @@
       "id": 64
     },
     {
-      "name": "Initializing certificate in Key Vault",
+      "name": "Initialized new certificate",
       "id": 65
     },
     {
-      "name": "The certificate will soon be ready. Please try again in a little while.",
+      "name": "The certificate is ready. Please try again.",
       "id": 66
     },
     {
@@ -8990,7 +8990,7 @@
         },
         {
           "culture": "en",
-          "value": "Initializing certificate in Key Vault",
+          "value": "Initialized new certificate",
           "edit_level": 100
         },
         {
@@ -9125,7 +9125,7 @@
         },
         {
           "culture": "en",
-          "value": "The certificate will soon be ready. Please try again in a little while.",
+          "value": "The certificate is ready. Please try again.",
           "edit_level": 100
         },
         {

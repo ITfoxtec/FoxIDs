@@ -140,24 +140,11 @@ Furthermore, it makes the tokens readable.
 
 1. Select the **Claim transform** tab
 2. Click **Add claim transform** and click **DK XML privilege to JSON**
-3. Click **Add claim transform** and click **Match claim**
-4. As **Action** select **Remove claim**, to remove the original privilege claim from the claims pipeline
-5. In the **Remove claim** add `https://data.gov.dk/model/core/eid/privilegesIntermediate` 
-6. Click **Update**
+3. Click **Update**
 
 ![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
-> Remember to add a claim mapping from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` please see next section 4).
-
- **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
-
- FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the environment.
-
- 1. Go to Settings tab and Claim mappings
- 2. Click **Add claim mapping** for all the claims configured in step 1.14, you can create you own short JWT claim names if no standard name exists
- 3. Click **Update**
-
- ![Context Handler SAML 2.0 claim mappings](images/howto-saml-claim-mappings.png)
+FoxIDs internally converts SAML 2.0 claims to JWT claims. The mapping between SAML 2.0 and JWT claims is automatically created by default. You can find and change the mapping in the **Settings** tab.
 
 You are done. The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the environment.
 
@@ -260,10 +247,10 @@ Create the claims which has to be issued to Context Handler in claim transforms.
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the environment.
+ FoxIDs internally converts SAML 2.0 claims to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the environment.
 
- 1. Go to **Settings** tab and sub **Claim mappings** tab
- 2. Click **Add claim mapping** for all the claims configured in step 1.20, you can create you own short JWT claim names if no standard name exists - please see the corresponding information in section [Configuring Context Handler as Identity Provider](#configuring-context-handler-as-identity-provider) step 4
+ 1. Go to Settings tab and Claim mappings
+ 2. Click **Add claim mapping** for all the claims configured in step 1.20, you can create you own short JWT claim names if no standard name exists (or edit the claim mappings if they already exist)
  3. Click **Update**
 
 **5 - Add test users in [FoxIDs Control Client](control.md#foxids-control-client)**

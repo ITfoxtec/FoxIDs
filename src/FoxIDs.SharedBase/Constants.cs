@@ -3,6 +3,7 @@ using System.Security.Claims;
 using ITfoxtec.Identity.Saml2.Claims;
 using System.Net.Http;
 using System;
+using System.Collections.Generic;
 
 namespace FoxIDs
 {
@@ -879,7 +880,7 @@ namespace FoxIDs
             /// </summary>
             public readonly static string[] ExcludeJwtTokenUpParty = 
             {
-                FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, 
+                FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.ClientId, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, 
                 FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, 
                 FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash 
             };
@@ -925,6 +926,16 @@ namespace FoxIDs
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
             public const string Amr = "http://schemas.foxids.com/identity/claims/amr";
             public const string LocalNameIdentifier = "http://schemas.foxids.com/identity/claims/localnameidentifier";
+            public const string EmailVerified = "http://schemas.foxids.com/ws/identity/claims/emailverified";
+            public const string PreferredUsername = "http://schemas.foxids.com/ws/identity/claims/preferredusername";
+            public const string ClientId = "http://schemas.foxids.com/ws/identity/claims/clientid";
+        }
+
+        public static class SamlAutoMapClaimTypes
+        {
+            public const string Namespace = "http://schemas.foxids.com/ws/identity/claims/";
+
+            public static Dictionary<string, string> SamlToJwtTypeMappings = new Dictionary<string, string> { { "firstname", FoxI.JwtClaimTypes.GivenName }, { "givenname", FoxI.JwtClaimTypes.GivenName }, { "lastname", FoxI.JwtClaimTypes.FamilyName }, { "surname", FoxI.JwtClaimTypes.FamilyName } };
         }
 
         /// <summary>
@@ -957,11 +968,14 @@ namespace FoxIDs
             public readonly static ClaimMap[] ChangeableMappings =
             {
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.EmailVerified, SamlClaim = SamlClaimTypes.EmailVerified },
                 new ClaimMap { JwtClaim = JwtClaimTypes.Upn, SamlClaim = ClaimTypes.Upn },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.PreferredUsername, SamlClaim = SamlClaimTypes.PreferredUsername },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Name, SamlClaim = ClaimTypes.Name },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.GivenName, SamlClaim = ClaimTypes.GivenName },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.ClientId, SamlClaim = SamlClaimTypes.ClientId },
             };
 
             public class ClaimMap

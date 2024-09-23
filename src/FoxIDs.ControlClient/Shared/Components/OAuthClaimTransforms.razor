@@ -274,8 +274,9 @@
                 Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
                     {
                         ClaimIn = "privileges_intermediate",
-                        ClaimOut = "privilege",
+                        ClaimOut = "privileges_intermediate",
                         ShowDetails = true,
+                        Action = ClaimTransformActions.Replace,
                         Type = claimTransformType
                     });
                 break;

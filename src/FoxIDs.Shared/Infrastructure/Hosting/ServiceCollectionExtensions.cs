@@ -78,6 +78,10 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<DownPartyCacheLogic>();
             services.AddSingleton<UpPartyCacheLogic>();
 
+            services.AddTransient<DownloadLogic>();
+
+            services.AddTransient<SamlMetadataReadLogic>();
+
             return services;
         }
 

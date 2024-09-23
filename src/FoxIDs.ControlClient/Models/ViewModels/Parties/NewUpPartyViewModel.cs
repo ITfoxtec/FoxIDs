@@ -10,6 +10,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PartyTypes? Type { get; set; }
 
+        public IdPTypes? IdPType { get; set; }
+
         public string AppTitle { get; set; }
 
         public bool ShowAll { get; set; }
@@ -26,6 +28,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<NewUpPartyEnvironmentLinkViewModel> EnvironmentLinkForm { get; set; }
 
+        public PageEditForm<NewUpPartyNemLoginViewModel> NemLoginForm { get; set; }
+
         //public PageEditForm<NewUpPartyOidcViewModel> OidcForm { get; set; }
 
         //public PageEditForm<NewUpPartyEnvironmentLinkViewModel> OAuthTokenExchangeForm { get; set; }
@@ -36,6 +40,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             AppTitle = null;
             Type = null;
+            IdPType = null;
             ShowAll = false;
             ShowAdvanced = false;
             CreateWorking = false;

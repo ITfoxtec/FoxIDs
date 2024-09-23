@@ -31,6 +31,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public TrackService TrackService { get; set; }
+        
+        [Inject]
+        public WizardService WizardService { get; set; }
 
         [Inject]
         public HelpersService HelpersService { get; set; }
@@ -234,18 +237,23 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.Modal.Show();
         }
 
-        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, IdPTypes? idpType = null, bool tokenExchange = false)
         {
-            if(type == PartyTypes.TrackLink)
+            if(type == PartyTypes.TrackLink || idpType.HasValue)
             {
                 await LoadTracksAsync();
                 newUpPartyModal.AppTitle = appTitle;
                 newUpPartyModal.Type = type;
+                newUpPartyModal.IdPType = idpType;
             }
             else if(type.HasValue)
             {
                 ShowCreateUpParty(type.Value, tokenExchange);
-                newUpPartyModal.Modal.Hide();
+            }
+            else
+            {
+                newUpPartyModal.Type = null;
+                newUpPartyModal.IdPType = null;
             }
         }
 
@@ -335,13 +343,13 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName = track.DisplayName.GetConcatProdTrackName();
         }
 
-        private async Task OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyOAuthEnvironmentLinkForm, EditContext editContext)
+        private async Task OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyEnvironmentLinkForm, EditContext editContext)
         {
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
 
-                var trackLinkUpParty = newUpPartyOAuthEnvironmentLinkForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
+                var trackLinkUpParty = newUpPartyEnvironmentLinkForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
                 {
                     afterMap.ToDownPartyName = "x";
                     afterMap.SelectedUpParties = new List<string> { "*" };
@@ -352,7 +360,7 @@ namespace FoxIDs.Client.Pages
 
                 var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
                 {
-                    DisplayName = newUpPartyOAuthEnvironmentLinkForm.Model.DisplayName,
+                    DisplayName = newUpPartyEnvironmentLinkForm.Model.DisplayName,
                     ToUpTrackName = TrackSelectedLogic.Track.Name,
                     ToUpPartyName = trackLinkUpPartyResult.Name,
                     AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
@@ -360,7 +368,57 @@ namespace FoxIDs.Client.Pages
                     {
                         new OAuthDownClaim { Claim = "*" }
                     }
-                }, trackName: newUpPartyOAuthEnvironmentLinkForm.Model.ToDownTrackName);
+                }, trackName: newUpPartyEnvironmentLinkForm.Model.ToDownTrackName);
+
+                trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
+                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
+                toastService.ShowSuccess("Environment Link authentication method created.");
+
+                var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });
+                upParties.Add(generalUpPartyViewModel);
+                if (upParties.Count() <= 1)
+                {
+                    ShowUpdateUpParty(generalUpPartyViewModel);
+                }
+                newDownPartyViewModel.Created = true;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                newDownPartyViewModel.CreateWorking = false;
+                throw;
+            }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
+        }
+
+        private async Task OnNewUpPartyNemLoginModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyNemLoginViewModel> newUpPartyNemLoginForm, EditContext editContext)
+        {
+            try
+            {
+                newDownPartyViewModel.CreateWorking = true;
+
+                var trackLinkUpParty = newUpPartyNemLoginForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
+                {
+                    afterMap.ToDownPartyName = "x";
+                    afterMap.SelectedUpParties = new List<string> { "*" };
+                    afterMap.Claims = new List<string> { "*" };
+                    afterMap.PipeExternalId = true;
+                });
+                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
+
+                var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
+                {
+                    DisplayName = newUpPartyNemLoginForm.Model.DisplayName,
+                    ToUpTrackName = TrackSelectedLogic.Track.Name,
+                    ToUpPartyName = trackLinkUpPartyResult.Name,
+                    AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
+                    Claims = new List<OAuthDownClaim>
+                    {
+                        new OAuthDownClaim { Claim = "*" }
+                    }
+                }, trackName: newUpPartyNemLoginForm.Model.ToDownTrackName);
 
                 trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
                 _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);

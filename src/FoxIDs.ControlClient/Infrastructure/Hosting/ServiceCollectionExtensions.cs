@@ -45,6 +45,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<UpPartyService>();
             services.AddScoped<UserService>();
             services.AddScoped<ExternalUserService>();
+            services.AddScoped<WizardService>();
             services.AddScoped<HelpersService>();
             services.AddScoped<HelpersNoAccessTokenService>();
             

@@ -87,84 +87,192 @@
 {
     <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
         <div class="modal-body">
-            <div class="d-flex">
-                <div class="mr-auto"><h6>@newUpPartyModal.AppTitle</h6></div>
-                <div class="pt-0 pb-2">
-                    @if (newUpPartyModal.Type == null)
-                    {
-                        <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
-                    }
-                    else if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
-                    {
-                        <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
-                    }
+            @if (newUpPartyModal.Type != null)
+            {                
+                <div class="d-flex">
+                    <div class="mr-auto"><h6>@newUpPartyModal.AppTitle</h6></div>
+                    <div class="pt-0 pb-2">
+                        @if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
+                        {
+                            <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
+                        }
+                    </div>
                 </div>
-            </div>
+            }
             @if (newUpPartyModal.Type == null)
             {
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("OpenID Provider", PartyTypes.Oidc))" @onclick:preventDefault>
-                                <h5 class="py-2">OpenID Provider <div class="small">(OpenID Connect)</div></h5>
-                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
-                                <div class="py-2">Identity Provider that support OpenID Connect.</div>
-                            </a>
-                        </div>
-                        <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2))" @onclick:preventDefault>
-                                <h5 class="py-2">Identity Provider <div class="small">(SAML 2.0)</div></h5>
-                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
-                                <div class="py-2">Identity Provider that support SAML 2.0.</div>
-                            </a>
+                <div class="accordion" id="accordionAuthMethods">
+                    <div class="card">
+                        <div class="card-header" id="headingOneS">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneS" aria-expanded="true" aria-controls="collapseOneS">
+                                    Connect to Social
+                                </button>
+                            </h2>
                         </div>
 
-
-                        @if (newUpPartyModal.ShowAll)
-                        {
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
-                                    <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
-                                    <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
-                                </a>
+                        <div id="collapseOneS" class="collapse show" aria-labelledby="headingOneS" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
                             </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOneE">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
+                                    Connect to Enterprise
+                                </button>
+                            </h2>
+                        </div>
 
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
-                                    <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
-                                    <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
-                                </a>
+                        <div id="collapseOneE" class="collapse" aria-labelledby="headingOneE" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOneI">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneI" aria-expanded="true" aria-controls="collapseOneI">
+                                    Connect to Danish ID Provider
+                                </button>
+                            </h2>
+                        </div>
 
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External API login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
-                                    <h5 class="py-2">External API login</h5>
-                                    <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
-                                </a>
+                        <div id="collapseOneI" class="collapse" aria-labelledby="headingOneI" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("NemLog-in", PartyTypes.Saml2, IdPTypes.NemLogin))" @onclick:preventDefault>
+                                            <div class="d-flex">
+                                                <img class="py-2 pr-2" style="height: 65px" src="./images/logos/nemlogin.png" />
+                                                <h5 class="py-2">NemLog-in (Danish IdP) <div class="small">(SAML 2.0)</div></h5>
+                                            </div>
+                                            <div class="py-2">Connect to NemLog-in and let the uses login with MitID or other methods supported by NemLog-in.</div>
+                                            <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection and NemLog-in requirements including message logging.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2, IdPTypes.ContextHandler))" @onclick:preventDefault>
+                                            <div class="d-flex">
+                                                <img class="py-2 pr-2" style="height: 65px" src="./images/logos/contexthandler.svg" />
+                                                <h5 class="py-2">Context Handler / FKA (Danish IdP) <div class="small">(SAML 2.0)</div></h5>
+                                            </div>
+                                            <div class="py-2">Connect to Context Handler, in Danish called 'Fælleskommunal Adgangsstyring' (FKA), and leverage the municipal login.</div>
+                                            <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection.</div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("User login UI", PartyTypes.Login))" @onclick:preventDefault>
-                                    <h5 class="py-2">User login UI</h5>
-                                    <div class="py-2">Users can authenticate with the environment's user store or have the option to choose another authentication method.<br />The user interface is customizable.</div>
-                                </a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Connect by Security Standard
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="mr-auto"></div>
+                                    <div class="pt-0 pb-2">
+                                        <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("OpenID Provider", PartyTypes.Oidc))" @onclick:preventDefault>
+                                            <h5 class="py-2">OpenID Provider <div class="small">(OpenID Connect)</div></h5>
+                                            <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
+                                            <div class="py-2">Identity Provider that support OpenID Connect.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2))" @onclick:preventDefault>
+                                            <h5 class="py-2">Identity Provider <div class="small">(SAML 2.0)</div></h5>
+                                            <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
+                                            <div class="py-2">Identity Provider that support SAML 2.0.</div>
+                                        </a>
+                                    </div>
+                                    @if (newUpPartyModal.ShowAll)
+                                    {
+                                        <div class="col-6 py-2">
+                                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, tokenExchange: true))" @onclick:preventDefault>
+                                                <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
+                                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
+                                                <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
+                                            </a>
+                                        </div>
+                                        <div class="col-6 py-2">
+                                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, tokenExchange: true))" @onclick:preventDefault>
+                                                <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
+                                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
+                                                <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
                             </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
-                                    <h5 class="py-2">Environment Link</h5>
-                                    <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
-                                </a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Connect User Store
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External API login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
+                                            <h5 class="py-2">External API login</h5>
+                                            <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("User login UI", PartyTypes.Login))" @onclick:preventDefault>
+                                            <h5 class="py-2">User login UI</h5>
+                                            <div class="py-2">Users can authenticate with the environment's user store or have the option to choose another authentication method.<br />The user interface is customizable.</div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        }
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingFour">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Connect two Environments
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
+                                            <h5 class="py-2">Environment Link</h5>
+                                            <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             }
             else if (newUpPartyModal.Type == PartyTypes.TrackLink)
             {
-                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
+                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
                     @if (!newUpPartyModal.Created)
                     {
                         <div class="info-text">
@@ -175,6 +283,126 @@
 
                         <div>
                             <FInputText @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.DisplayName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.DisplayName)" Focus="true" />
+
+                            <ValidationMessage For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
+                            @if (@newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName.IsNullOrWhiteSpace())
+                            {
+                                <div class=" form-group active-group active">
+                                    <label class="label-control">Select the environment to link to</label>
+                                    <div class="card px-3 pt-3">
+                                        <PageEditForm @ref="newUpPartyModal.SelectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
+                                            <div class="form-group active-group pb-2">
+                                                <FInputTextFilter @bind-Value="newUpPartyModal.SelectTrackFilterForm.Model.FilterName" For="@(() => newUpPartyModal.SelectTrackFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                                            </div>
+                                        </PageEditForm>
+
+                                        @if (newUpPartyModal.SelectTracks != null)
+                                        {
+                                            @if (newUpPartyModal.SelectTracks.Count() > 0)
+                                            {
+                                                <div class="list-striped">
+                                                    @foreach (var track in newUpPartyModal.SelectTracks)
+                                                    {
+                                                        @if (newUpPartyModal.SelectTracks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            <div class="info-text pl-1 pb-1">
+                                                                Your tenant access is configured in the master environment.
+                                                            </div>
+                                                        }
+                                                        <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrack(track))">
+                                                            @if (track.DisplayName.IsNullOrWhiteSpace())
+                                                            {
+                                                                @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
+                                                            }
+                                                            else
+                                                            {
+                                                                @track.DisplayName
+                                                            }
+                                                        </button>
+                                                        <div class="list-striped-item"></div>
+                                                    }
+                                                </div>
+                                            }
+                                            else if (!newUpPartyModal.SelectTrackFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="font-italic pl-1">No match</div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @if (!newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName.IsNullOrWhiteSpace())
+                                {
+                                    <FFieldText Class="pb-0" @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName)" />
+                                }
+                                else
+                                {
+                                    <FFieldText Class="pb-0" @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
+                                }
+                                <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectTrack(newUpPartyModal.EnvironmentLinkForm.Model))">Link to a different environment</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            The two FoxIDs environments are linked together.
+                        </div>
+
+                        <div class="info-text">
+                            This authentication method '@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName' can be selected as an allowed authentication method in your application registrations.
+                            <br />
+                            You can find the application registration '@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName' in the connected environment where authentication method(s) can be selected.
+                        </div>
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newUpPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newUpPartyModal.CreateWorking ? "disabled" : "")" onclick="@(async () => await ChangeNewUpPartyStateAsync())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newUpPartyModal.CreateWorking ? "disabled" : "")">Create</button>
+                            <button type="button" class="btn btn-secondary @(newUpPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newUpPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newUpPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newUpPartyModal.IdPType == IdPTypes.NemLogin)
+            {
+                <PageEditForm @ref="newUpPartyModal.NemLoginForm" TModel="NewUpPartyNemLoginViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyNemLoginModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.NemLoginForm, editContext))">
+                    @if (!newUpPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in</DocsLink> connection for integration test or production.
+                            <br />
+                            Each IT-system in NemLog-in holds two configurations, one for integration test and one for production (two different tabs). First you configure the integration test and upload the test rapport, then it become possible to configure production.
+
+
+
+                            NemLog-in require you to configure a OCES3 certificate as the <DocsLink Page="certificate">environment certificate</DocsLink>. Therefor, consider if NemLog-in should be configured in its own environment (different certificates is required in test and production).
+                            <ul>
+                                <li>In test: find the 'OCES3 systemcertifikat' section and download the 'OCES3 systemcertifikat' and password from the <DocsLink External="nemlogin-integration-test">NemLog-in integration test docs</DocsLink>.</li>
+                                <li>In production: create a OCES3 certificate in the <DocsLink External="odes3-create">NemLog-in business administration</DocsLink>.</li>
+                            </ul>
+                            With the certificate in place continue the wizard.
+                        </div>
+
+                        <div>
+                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.DisplayName" For="@(() => newUpPartyModal.NemLoginForm.Model.DisplayName)" Focus="true" />
+
+
+                            <div class="info-text">
+                                Find the NemLog-in metadata URL 
+                            </div>
+                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
+
 
                             <ValidationMessage For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
                             @if (@newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName.IsNullOrWhiteSpace())

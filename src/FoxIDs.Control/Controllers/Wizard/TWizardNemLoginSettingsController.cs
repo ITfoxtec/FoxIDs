@@ -47,14 +47,16 @@ namespace FoxIDs.Controllers
 
                 var result = new Api.WizardNemLoginSettings();
 
-                var oces3TestCertificate = new X509Certificate2(WebEncoders.Base64UrlDecode(await downloadLogic.DownloadAsync(nemLoginSettings.Oces3TestCertificateUrl, "OCES3 test certificate")), nemLoginSettings.Oces3TestCertificatePasswrod, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+                var certBytes = await downloadLogic.DownloadAsBytesAsync(nemLoginSettings.Oces3TestCertificateUrl, "OCES3 test certificate");
+                var oces3TestCertificate = new X509Certificate2(certBytes, nemLoginSettings.Oces3TestCertificatePasswrod, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
                 if (!oces3TestCertificate.HasPrivateKey)
                 {
                     throw new ValidationException("Unable to read the OCES3 test certificate private key.");
                 }
+
                 result.Oces3TestCertificate = mapper.Map<Api.JwkWithCertificateInfo>(await oces3TestCertificate.ToFTJsonWebKeyAsync(includePrivateKey: true));
-                result.OioSaml3MetadataTest = await downloadLogic.DownloadAsync(nemLoginSettings.OioSaml3MetadataTest, "OIOSAML3 test metadata");
-                result.OioSaml3MetadataProduction = await downloadLogic.DownloadAsync(nemLoginSettings.OioSaml3MetadataProduction, "OIOSAML3 production metadata");
+                result.OioSaml3MetadataTest = nemLoginSettings.OioSaml3MetadataTest;
+                result.OioSaml3MetadataProduction = nemLoginSettings.OioSaml3MetadataProduction;
                 return result;
             }
             catch (Exception ex)

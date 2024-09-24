@@ -13,6 +13,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public IdPTypes? IdPType { get; set; }
 
         public string AppTitle { get; set; }
+        public string AppSubTitle { get; set; }
+        public string AppTitleImage { get; set; }
+        public string AppTitleImageHeight { get; set; }
 
         public bool ShowAll { get; set; }
 
@@ -29,7 +32,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public PageEditForm<NewUpPartyEnvironmentLinkViewModel> EnvironmentLinkForm { get; set; }
 
         public PageEditForm<NewUpPartyNemLoginViewModel> NemLoginForm { get; set; }
-
         //public PageEditForm<NewUpPartyOidcViewModel> OidcForm { get; set; }
 
         //public PageEditForm<NewUpPartyEnvironmentLinkViewModel> OAuthTokenExchangeForm { get; set; }

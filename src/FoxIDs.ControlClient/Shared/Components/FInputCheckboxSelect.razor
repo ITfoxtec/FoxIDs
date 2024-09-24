@@ -7,14 +7,14 @@
             {
                 @foreach (var item in Items)
                 {
-                    <div class="form-check form-check-inline">
+                    <div class="form-check @(NewLine ? string.Empty : "form-check-inline")">
                         @if (IsSelected(item))
                         {
-                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" checked="checked" @onchange="@((e) => SelectChanged(e, item))" />
+                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" disabled="@(IsDisable(item))" checked="checked" @onchange="@((e) => SelectChanged(e, item))" />
                         }
                         else
                         {
-                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" @onchange="@((e) => SelectChanged(e, item))" />
+                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" disabled="@(IsDisable(item))" @onchange="@((e) => SelectChanged(e, item))" />
                         }
                         <label class="form-check-label" for="@ItemToId(item)">@item</label>
                     </div>
@@ -28,10 +28,16 @@
 
 @code {
     [Parameter]
-    public List<string> Items { get; set; }
+    public IEnumerable<string> Items { get; set; }
 
     [Parameter]
     public List<string> SelectedItems { get; set; }
+
+    [Parameter]
+    public IEnumerable<string> DisableItems { get; set; }
+
+    [Parameter]
+    public bool NewLine { get; set; }
 
     [Parameter]
     public Expression<Func<object>> For { get; set; }
@@ -41,6 +47,11 @@
     private bool IsSelected(string item)
     {
         return SelectedItems?.Where(s => s.Equals(item, StringComparison.Ordinal)).Any() == true;
+    }
+
+    private bool IsDisable(string item)
+    {
+        return DisableItems?.Where(s => s.Equals(item, StringComparison.Ordinal)).Any() == true;
     }
 
     private void SelectChanged(ChangeEventArgs e, string item)

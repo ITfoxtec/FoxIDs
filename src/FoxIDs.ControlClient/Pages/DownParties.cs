@@ -240,6 +240,11 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.Type = type;
             newDownPartyModal.OAuthType = oauthType;
             newDownPartyModal.OAuthClientType = oauthClientType;
+
+            if(type == null)
+            {
+                newDownPartyModal.ShowAdvanced = false;
+            }
         }
 
         private async Task OnNewDownPartyOidcModalAfterInitAsync(NewDownPartyOidcViewModel model)

@@ -88,9 +88,13 @@
     <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
         <div class="modal-body">
             @if (newUpPartyModal.Type != null)
-            {                
-                <div class="d-flex">
-                    <div class="mr-auto"><h6>@newUpPartyModal.AppTitle</h6></div>
+            {
+                <div class="d-flex pb-2">
+                    @if (!newUpPartyModal.AppTitleImage.IsNullOrEmpty())
+                    {
+                        <img class="pr-2" style="height: @(newUpPartyModal.AppTitleImageHeight)" src="@newUpPartyModal.AppTitleImage" />
+                    }
+                    <div class="mr-auto"><h5>@(newUpPartyModal.AppTitle) @if (!newUpPartyModal.AppSubTitle.IsNullOrEmpty()) { <div class="small">(@(newUpPartyModal.AppSubTitle))</div> } </h5></div>
                     <div class="pt-0 pb-2">
                         @if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
                         {
@@ -99,8 +103,7 @@
                     </div>
                 </div>
             }
-            @if (newUpPartyModal.Type == null)
-            {
+            <div class="@(newUpPartyModal.Type == null ? string.Empty : "d-none")">
                 <div class="accordion" id="accordionAuthMethods">
                     <div class="card">
                         <div class="card-header" id="headingOneS">
@@ -145,20 +148,38 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6 py-2">
-                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("NemLog-in", PartyTypes.Saml2, IdPTypes.NemLogin))" @onclick:preventDefault>
+                                        @{
+                                            var nemlogin = new UpPartyInfo
+                                            {
+                                                Title = "NemLog-in (Danish IdP)",
+                                                SubTitle = "SAML 2.0",
+                                                Image = "./images/logos/nemlogin.png",
+                                                ImageHeight = "45px"
+                                            };
+                                        }
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync(nemlogin, PartyTypes.Saml2, IdPTypes.NemLogin))" @onclick:preventDefault>
                                             <div class="d-flex">
-                                                <img class="py-2 pr-2" style="height: 65px" src="./images/logos/nemlogin.png" />
-                                                <h5 class="py-2">NemLog-in (Danish IdP) <div class="small">(SAML 2.0)</div></h5>
+                                                <img class="my-2 pr-2" style="height: @(nemlogin.ImageHeight)" src="@(nemlogin.Image)" />
+                                                <h5 class="my-2">@(nemlogin.Title) <div class="small">(@(nemlogin.SubTitle))</div></h5>
                                             </div>
                                             <div class="py-2">Connect to NemLog-in and let the uses login with MitID or other methods supported by NemLog-in.</div>
                                             <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection and NemLog-in requirements including message logging.</div>
                                         </a>
                                     </div>
                                     <div class="col-6 py-2">
-                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2, IdPTypes.ContextHandler))" @onclick:preventDefault>
+                                        @{
+                                            var contextHandler = new UpPartyInfo
+                                            {
+                                                Title = "Context Handler / FKA (Danish IdP)",
+                                                SubTitle = "SAML 2.0",
+                                                Image = "./images/logos/contexthandler.svg",
+                                                ImageHeight = "45px"
+                                            };
+                                        }
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync(contextHandler, PartyTypes.Saml2, IdPTypes.ContextHandler))" @onclick:preventDefault>
                                             <div class="d-flex">
-                                                <img class="py-2 pr-2" style="height: 65px" src="./images/logos/contexthandler.svg" />
-                                                <h5 class="py-2">Context Handler / FKA (Danish IdP) <div class="small">(SAML 2.0)</div></h5>
+                                                <img class="my-2 pr-2" style="height: @(contextHandler.ImageHeight)" src="@(contextHandler.Image)" />
+                                                <h5 class="my-2">@(contextHandler.Title) <div class="small">(@(contextHandler.SubTitle))</div></h5>
                                             </div>
                                             <div class="py-2">Connect to Context Handler, in Danish called 'Fælleskommunal Adgangsstyring' (FKA), and leverage the municipal login.</div>
                                             <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection.</div>
@@ -269,8 +290,8 @@
                         </div>
                     </div>
                 </div>
-            }
-            else if (newUpPartyModal.Type == PartyTypes.TrackLink)
+            </div>
+            @if (newUpPartyModal.Type == PartyTypes.TrackLink)
             {
                 <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
                     @if (!newUpPartyModal.Created)
@@ -380,102 +401,99 @@
                     @if (!newUpPartyModal.Created)
                     {
                         <div class="info-text">
-                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in</DocsLink> connection for integration test or production.
+                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in</DocsLink> connection for either test or production.
                             <br />
-                            Each IT-system in NemLog-in holds two configurations, one for integration test and one for production (two different tabs). First you configure the integration test and upload the test rapport, then it become possible to configure production.
-
-
-
-                            NemLog-in require you to configure a OCES3 certificate as the <DocsLink Page="certificate">environment certificate</DocsLink>. Therefor, consider if NemLog-in should be configured in its own environment (different certificates is required in test and production).
-                            <ul>
-                                <li>In test: find the 'OCES3 systemcertifikat' section and download the 'OCES3 systemcertifikat' and password from the <DocsLink External="nemlogin-integration-test">NemLog-in integration test docs</DocsLink>.</li>
-                                <li>In production: create a OCES3 certificate in the <DocsLink External="odes3-create">NemLog-in business administration</DocsLink>.</li>
-                            </ul>
-                            With the certificate in place continue the wizard.
+                            <div class="font-italic pt-2">NemLog-in required different certificates in test and production. Therefor, consider if the NemLog-in connections should be configured in dedicated environments.</div>
                         </div>
-
                         <div>
                             <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.DisplayName" For="@(() => newUpPartyModal.NemLoginForm.Model.DisplayName)" Focus="true" />
 
-
                             <div class="info-text">
-                                Find the NemLog-in metadata URL 
+                                Each IT-system in NemLog-in holds two configurations, one for <strong>Integration test</strong> and one for <strong>Production</strong> (two different tabs).
+                                First you configure the integration test and upload the test rapport, then it become possible to configure production.
                             </div>
-                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
 
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment" For="@(() => newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment)">
+                                <option value="@NemLoginEnvironments.Test">Integration test</option>
+                                <option value="@NemLoginEnvironments.Production">Production</option>
+                            </FInputSelect>
 
-                            <ValidationMessage For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
-                            @if (@newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName.IsNullOrWhiteSpace())
+                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test) 
                             {
-                                <div class=" form-group active-group active">
-                                    <label class="label-control">Select the environment to link to</label>
-                                    <div class="card px-3 pt-3">
-                                        <PageEditForm @ref="newUpPartyModal.SelectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
-                                            <div class="form-group active-group pb-2">
-                                                <FInputTextFilter @bind-Value="newUpPartyModal.SelectTrackFilterForm.Model.FilterName" For="@(() => newUpPartyModal.SelectTrackFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
-                                            </div>
-                                        </PageEditForm>
-
-                                        @if (newUpPartyModal.SelectTracks != null)
-                                        {
-                                            @if (newUpPartyModal.SelectTracks.Count() > 0)
-                                            {
-                                                <div class="list-striped">
-                                                    @foreach (var track in newUpPartyModal.SelectTracks)
-                                                    {
-                                                        @if (newUpPartyModal.SelectTracks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
-                                                        {
-                                                            <div class="info-text pl-1 pb-1">
-                                                                Your tenant access is configured in the master environment.
-                                                            </div>
-                                                        }
-                                                        <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrack(track))">
-                                                            @if (track.DisplayName.IsNullOrWhiteSpace())
-                                                            {
-                                                                @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
-                                                            }
-                                                            else
-                                                            {
-                                                                @track.DisplayName
-                                                            }
-                                                        </button>
-                                                        <div class="list-striped-item"></div>
-                                                    }
-                                                </div>
-                                            }
-                                            else if (!newUpPartyModal.SelectTrackFilterForm.Model.FilterName.IsNullOrWhiteSpace())
-                                            {
-                                                <div class="font-italic pl-1">No match</div>
-                                            }
-                                        }
-                                    </div>
+                                <div class="info-text">
+                                    NemLog-in require a OCES3 test certificate as the <DocsLink Page="certificates">environment certificate</DocsLink>. This wizard will change the environment to use a OCES3 test certificate.
                                 </div>
                             }
                             else
                             {
-                                @if (!newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName.IsNullOrWhiteSpace())
-                                {
-                                    <FFieldText Class="pb-0" @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName)" />
-                                }
-                                else
-                                {
-                                    <FFieldText Class="pb-0" @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
-                                }
-                                <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectTrack(newUpPartyModal.EnvironmentLinkForm.Model))">Link to a different environment</button>
+                                <div class="info-text">
+                                    NemLog-in require you to configure a OCES3 certificate as the environment certificate. Create a OCES3 certificate in <DocsLink External="odes3-create">NemLog-in business administration</DocsLink> and change the <DocsLink Page="certificates">environment certificate</DocsLink> to your new OCES3 certificate.
+                                    <br />
+                                    <div class="font-italic pt-2">With the certificate in place continue the wizard.</div>                                    
+                                </div>
+                            }
+
+                            <div class="info-text">
+                                Select <strong>Public sector service</strong> and create a Public IT-system in NemLog-in (no transaction cost) if your service is for the public sector. This also applies for a private company.
+                                <br />
+                                Otherwise, select <strong>Private company service</strong> and create a Private IT-system in NemLog-in (low transaction cost).
+                            </div>
+
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.NemLoginServiceType" For="@(() => newUpPartyModal.NemLoginForm.Model.NemLoginServiceType)">
+                                <option value="@NemLoginServiceTypes.PublicSector">Public sector service</option>
+                                <option value="@NemLoginServiceTypes.Private">Private company service</option>
+                            </FInputSelect>
+
+                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Production)
+                            {
+                                <div class="active-group active pb-2">
+                                    <label class="label-control">Contact information</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Company" For="@(() => newUpPartyModal.NemLoginForm.Model.Company)" />
+                  @*                           <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.GivenName" For="@(() => newUpPartyModal.NemLoginForm.Model.GivenName)" />
+                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Surname" For="@(() => newUpPartyModal.NemLoginForm.Model.Surname)" /> *@
+                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.EmailAddress" For="@(() => newUpPartyModal.NemLoginForm.Model.EmailAddress)" />
+                       @*                      <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.TelephoneNumber" For="@(() => newUpPartyModal.NemLoginForm.Model.TelephoneNumber)" /> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (!newUpPartyModal.ShowAdvanced)
+                            {
+                                <button type="button" class="btn btn-link pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    Select the NemLog-in privileges claim <small class="font-weight-bold">'https://data.gov.dk/model/core/eid/privilegesIntermediate'</small> if you want to grant access based on privileges.
+                                </div>
+                                <FInputCheckboxSelect Items="newUpPartyModal.NemLoginForm.Model.Claims" SelectedItems="newUpPartyModal.NemLoginForm.Model.SelectedClaims" DisableItems="newUpPartyModal.NemLoginForm.Model.DisabledClaims" NewLine="true" For="@(() => newUpPartyModal.NemLoginForm.Model.Claims)" />
                             }
                         </div>
                     }
                     else
                     {
                         <div class="info-text">
-                            The two FoxIDs environments are linked together.
+                            Your NemLog-in authentication method has been created.
                         </div>
 
                         <div class="info-text">
-                            This authentication method '@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName' can be selected as an allowed authentication method in your application registrations.
-                            <br />
-                            You can find the application registration '@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName' in the connected environment where authentication method(s) can be selected.
+                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test)
+                            {
+                                <div>Use the metadata URL to download the metadata and save it locally.</div>
+                            }
+                            else
+                            {
+                                <div>
+                                    If your OCES3 certificate has been configured as the environments certificate, use the metadata URL to download the metadata and save it locally.
+                                    <br />
+                                    Otherwise, save the metadata URL until your OCES3 certificate is in place in the environment and then download the metadata.
+                                </div>
+                            }
+                            <div class="pt-2">Then upload the metadata file to your NemLog-in IT-system, please see the <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in guide</DocsLink></div>
                         </div>
+                        <FFieldTextClipboard @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
                     }
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newUpPartyModal.Created)
@@ -494,7 +512,7 @@
                     </div>
                 </PageEditForm>
             }
-            else
+            else if (newUpPartyModal.Type != null)
             {
                 throw new Exception("New up-party type and selection not supported.");
             }

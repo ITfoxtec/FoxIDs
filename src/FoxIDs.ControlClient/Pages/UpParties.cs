@@ -31,7 +31,10 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public TrackService TrackService { get; set; }
-        
+
+        [Inject]
+        public MetadataLogic MetadataLogic { get; set; }
+
         [Inject]
         public WizardService WizardService { get; set; }
 
@@ -237,23 +240,42 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.Modal.Show();
         }
 
-        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, IdPTypes? idpType = null, bool tokenExchange = false)
+        private async Task ChangeNewUpPartyStateAsync()
+        {
+            await ChangeNewUpPartyStateAsync(string.Empty);
+        }
+
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
+        {
+            await ChangeNewUpPartyStateAsync(new UpPartyInfo { Title = appTitle }, type, tokenExchange: tokenExchange);
+        }
+
+        private async Task ChangeNewUpPartyStateAsync(UpPartyInfo appInfo = null, PartyTypes? type = null, IdPTypes? idpType = null, bool tokenExchange = false)
         {
             if(type == PartyTypes.TrackLink || idpType.HasValue)
             {
-                await LoadTracksAsync();
-                newUpPartyModal.AppTitle = appTitle;
+                if (type == PartyTypes.TrackLink)
+                {
+                    await LoadTracksAsync();
+                }
+                newUpPartyModal.AppTitle = appInfo?.Title;
+                newUpPartyModal.AppSubTitle = appInfo?.SubTitle;
+                newUpPartyModal.AppTitleImage = appInfo?.Image;
+                newUpPartyModal.AppTitleImageHeight = appInfo?.ImageHeight;
                 newUpPartyModal.Type = type;
                 newUpPartyModal.IdPType = idpType;
+                StateHasChanged();
             }
             else if(type.HasValue)
             {
                 ShowCreateUpParty(type.Value, tokenExchange);
+                newUpPartyModal.Modal.Hide();
             }
             else
             {
                 newUpPartyModal.Type = null;
                 newUpPartyModal.IdPType = null;
+                newUpPartyModal.ShowAdvanced = false;
             }
         }
 
@@ -343,11 +365,11 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName = track.DisplayName.GetConcatProdTrackName();
         }
 
-        private async Task OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyEnvironmentLinkForm, EditContext editContext)
+        private async Task OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newUpPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyEnvironmentLinkForm, EditContext editContext)
         {
             try
             {
-                newDownPartyViewModel.CreateWorking = true;
+                newUpPartyViewModel.CreateWorking = true;
 
                 var trackLinkUpParty = newUpPartyEnvironmentLinkForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
                 {
@@ -380,66 +402,140 @@ namespace FoxIDs.Client.Pages
                 {
                     ShowUpdateUpParty(generalUpPartyViewModel);
                 }
-                newDownPartyViewModel.Created = true;
+                newUpPartyViewModel.Created = true;
             }
             catch (FoxIDsApiException ex)
             {
-                newDownPartyViewModel.CreateWorking = false;
+                newUpPartyViewModel.CreateWorking = false;
                 throw;
             }
             catch
             {
-                newDownPartyViewModel.CreateWorking = false;
+                newUpPartyViewModel.CreateWorking = false;
             }
         }
 
-        private async Task OnNewUpPartyNemLoginModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyNemLoginViewModel> newUpPartyNemLoginForm, EditContext editContext)
+        private async Task OnNewUpPartyNemLoginModalValidSubmitAsync(NewUpPartyViewModel newUpPartyViewModel, PageEditForm<NewUpPartyNemLoginViewModel> newUpPartyNemLoginForm, EditContext editContext)
         {
             try
             {
-                newDownPartyViewModel.CreateWorking = true;
+                newUpPartyViewModel.CreateWorking = true;
 
-                var trackLinkUpParty = newUpPartyNemLoginForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
-                {
-                    afterMap.ToDownPartyName = "x";
-                    afterMap.SelectedUpParties = new List<string> { "*" };
-                    afterMap.Claims = new List<string> { "*" };
-                    afterMap.PipeExternalId = true;
-                });
-                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
 
-                var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
+                var samlUpParty = new SamlUpParty
                 {
+                    PartyBindingPattern = PartyBindingPatterns.Dot,
                     DisplayName = newUpPartyNemLoginForm.Model.DisplayName,
-                    ToUpTrackName = TrackSelectedLogic.Track.Name,
-                    ToUpPartyName = trackLinkUpPartyResult.Name,
-                    AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
-                    Claims = new List<OAuthDownClaim>
+                    Name = await UpPartyService.GetNewPartyNameAsync(),
+                    AuthnRequestBinding = SamlBindingTypes.Post,
+                    AuthnResponseBinding = SamlBindingTypes.Post,
+                    LogoutRequestBinding = SamlBindingTypes.Post,
+                    LogoutResponseBinding = SamlBindingTypes.Post,
+                    SignAuthnRequest = true,
+                    DisableLoginHint = true,                    
+                    MetadataIncludeEncryptionCertificates = true,
+                    MetadataNameIdFormats = ["urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"],
+                    Claims = newUpPartyNemLoginForm.Model.Claims.Where(c => newUpPartyNemLoginForm.Model.SelectedClaims.Where(s => s.Equals(c, StringComparison.Ordinal)).Any() == true).ToList()
+                };
+
+                samlUpParty.SpIssuer = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint().Replace("://", (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test ? "://samltest." : "://saml."))}/{TrackSelectedLogic.Track.Name}/{samlUpParty.Name}/";
+
+                samlUpParty.MetadataAttributeConsumingServices = [new SamlMetadataAttributeConsumingService
+                {
+                    ServiceName = new SamlMetadataServiceName { Name = samlUpParty.DisplayName, Lang = "en" },
+                    RequestedAttributes = new List<SamlMetadataRequestedAttribute>()
+                }];
+                
+                foreach(var claim in samlUpParty.Claims)
+                {
+                    samlUpParty.MetadataAttributeConsumingServices[0].RequestedAttributes.Add(new SamlMetadataRequestedAttribute
                     {
-                        new OAuthDownClaim { Claim = "*" }
+                        Name = claim,
+                        IsRequired = claim.Equals("https://data.gov.dk/concept/core/nsis/loa", StringComparison.Ordinal) ? true: false,
+                        NameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    });
+                }
+
+                var privilegesClaim = "https://data.gov.dk/model/core/eid/privilegesIntermediate";
+                if (samlUpParty.Claims.Where(c => c.Equals(privilegesClaim, StringComparison.Ordinal)).Any())
+                {
+                    samlUpParty.ClaimTransforms = [new SamlClaimTransform 
+                    {
+                        Type = ClaimTransformTypes.DkPrivilege,
+                        Order = 1,
+                        Action = ClaimTransformActions.Replace,
+                        ClaimsIn = [privilegesClaim],
+                        ClaimOut = privilegesClaim,
+                    }];
+                }
+
+                if (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Production)
+                {
+                    samlUpParty.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.Online;
+
+                    samlUpParty.MetadataContactPersons = [new SamlMetadataContactPerson
+                    {
+                        ContactType = SamlMetadataContactPersonTypes.Technical,
+                        Company = newUpPartyNemLoginForm.Model.Company,
+                        //GivenName = newUpPartyNemLoginForm.Model.GivenName,
+                        //Surname = newUpPartyNemLoginForm.Model.Surname,
+                        EmailAddress = newUpPartyNemLoginForm.Model.EmailAddress,
+                        //TelephoneNumber = newUpPartyNemLoginForm.Model.TelephoneNumber,
+                    }];
+                }
+
+                newUpPartyNemLoginForm.Model.Metadata = MetadataLogic.GetUpSamlMetadata(samlUpParty.Name, samlUpParty.PartyBindingPattern);
+
+                var wizardNemLoginSettings = await WizardService.ReadNemLoginSettingsAsync();
+                if (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test)
+                {
+                    samlUpParty.MetadataUrl = wizardNemLoginSettings.OioSaml3MetadataTest;
+                    
+                    var trackKey = await TrackService.GetTrackKeyTypeAsync();
+                    if (trackKey.Type == TrackKeyTypes.Contained)
+                    {
+                        var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                        if (trackKeys.SecondaryKey != null)
+                        {
+                            await TrackService.DeleteTrackKeyContainedAsync();
+                        }
                     }
-                }, trackName: newUpPartyNemLoginForm.Model.ToDownTrackName);
+                    else
+                    {
+                        await TrackService.UpdateTrackKeyTypeAsync(new TrackKey { Type = TrackKeyTypes.Contained });
+                    }
+                    _ = await TrackService.UpdateTrackKeyContainedAsync(new TrackKeyItemContainedRequest 
+                    {
+                        IsPrimary = true,
+                        Key = wizardNemLoginSettings.Oces3TestCertificate
+                    });
+                }
+                else
+                {
+                    samlUpParty.MetadataUrl = wizardNemLoginSettings.OioSaml3MetadataProduction;
+                }
 
-                trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
-                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
-                toastService.ShowSuccess("Environment Link authentication method created.");
 
-                var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });
+
+                _ = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                toastService.ShowSuccess("NemLog-in (SAML 2.0) authentication method created.");
+
+                var generalUpPartyViewModel = new GeneralSamlUpPartyViewModel(new UpParty { Type = PartyTypes.Saml2, Name = samlUpParty.Name, DisplayName = samlUpParty.DisplayName });
                 upParties.Add(generalUpPartyViewModel);
                 if (upParties.Count() <= 1)
                 {
                     ShowUpdateUpParty(generalUpPartyViewModel);
                 }
-                newDownPartyViewModel.Created = true;
+                newUpPartyViewModel.Created = true;
             }
             catch (FoxIDsApiException ex)
             {
-                newDownPartyViewModel.CreateWorking = false;
+                newUpPartyViewModel.CreateWorking = false;
                 throw;
             }
             catch
             {
-                newDownPartyViewModel.CreateWorking = false;
+                newUpPartyViewModel.CreateWorking = false;
             }
         }
     }

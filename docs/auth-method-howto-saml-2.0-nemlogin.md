@@ -65,19 +65,17 @@ It is subsequently possible to add a secondary certificate and to swap between t
 3. Add the name
 4. Select show advanced
 5. Select the dot URL binding pattern
-6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
-7. Go back to the SAML tab
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-top.png)
 
-8. Disable automatic update
-9. Click Read metadata from file and select the NemLog-in IdP-metadata
+6. Disable automatic update
+7. Click Read metadata from file and select the NemLog-in IdP-metadata
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-read-metadata.png)
 
-10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
+8. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
-11. Optionally remove the `*` and configure claims, the following claims is most often used:
+9. Optionally remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
     - `https://data.gov.dk/model/core/eid/cprNumber`
     - `https://data.gov.dk/model/core/eid/cprUuid`
@@ -92,27 +90,27 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
- 12. Set Login hint in Authn request in Subject NameID to Disabled
- 13. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+ 10. Set Login hint in Authn request in Subject NameID to Disabled
+ 11. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
      Set the Certificate revocation mode to `Online`
- 14. Select to include the encryption certificate in metadata
- 15. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+ 12. Select to include the encryption certificate in metadata
+ 13. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
  ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-nameidformat.png)
 
- 16. Add an attribute consuming service in metadata and add the service name.
- 17. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
+ 14. Add an attribute consuming service in metadata and add the service name.
+ 15. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-attributes.png)
 
- 18. Add at least one technical contact person
+ 16. Add at least one technical contact person
  
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-contact.png)
 
- 19. Click create
- 20. Go to the top of the SAML 2.0 authentication method
- 21. Download the SAML 2.0 authentication method SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
- 22. The SP-metadata file is used to configure the NemLog-in IT system.
+ 17. Click create
+ 18. Go to the top of the SAML 2.0 authentication method
+ 10. Download the SAML 2.0 authentication method SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
+ 20. The SP-metadata file is used to configure the NemLog-in IT system.
  
  **2) - Then go to the [NemLog-in adminstration protal](https://administration.nemlog-in.dk/)**
 

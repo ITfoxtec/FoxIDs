@@ -99,7 +99,7 @@ namespace FoxIDs.Models.Api
         public SamlBindingTypes? AuthnRequestBinding { get; set; }
 
         [Required]
-        public SamlBindingTypes? AuthnResponseBinding { get; set; }
+        public SamlBindingTypes? AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }

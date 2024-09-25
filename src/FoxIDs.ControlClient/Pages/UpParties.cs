@@ -426,10 +426,6 @@ namespace FoxIDs.Client.Pages
                     PartyBindingPattern = PartyBindingPatterns.Dot,
                     DisplayName = newUpPartyNemLoginForm.Model.DisplayName,
                     Name = await UpPartyService.GetNewPartyNameAsync(),
-                    AuthnRequestBinding = SamlBindingTypes.Post,
-                    AuthnResponseBinding = SamlBindingTypes.Post,
-                    LogoutRequestBinding = SamlBindingTypes.Post,
-                    LogoutResponseBinding = SamlBindingTypes.Post,
                     SignAuthnRequest = true,
                     DisableLoginHint = true,                    
                     MetadataIncludeEncryptionCertificates = true,
@@ -541,13 +537,8 @@ namespace FoxIDs.Client.Pages
 
                 var samlUpParty = new SamlUpParty
                 {
-                    PartyBindingPattern = PartyBindingPatterns.Dot,
                     DisplayName = newUpPartyContextHandlerForm.Model.DisplayName,
                     Name = await UpPartyService.GetNewPartyNameAsync(),
-                    AuthnRequestBinding = SamlBindingTypes.Post,
-                    AuthnResponseBinding = SamlBindingTypes.Post,
-                    LogoutRequestBinding = SamlBindingTypes.Post,
-                    LogoutResponseBinding = SamlBindingTypes.Redirect,
                     SignAuthnRequest = true,
                     DisableLoginHint = true,                    
                     MetadataAddLogoutResponseLocation = true,
@@ -611,7 +602,9 @@ namespace FoxIDs.Client.Pages
                     samlUpParty.MetadataUrl = wizardContextHandlerSettings.OioSaml3MetadataProduction;
                 }
 
-                _ = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                samlUpPartyResult.LogoutResponseBinding = SamlBindingTypes.Redirect;
+                _ = await UpPartyService.UpdateSamlUpPartyAsync(samlUpPartyResult);
                 toastService.ShowSuccess("Context Handler (SAML 2.0) authentication method created.");
 
                 var generalUpPartyViewModel = new GeneralSamlUpPartyViewModel(new UpParty { Type = PartyTypes.Saml2, Name = samlUpParty.Name, DisplayName = samlUpParty.DisplayName });

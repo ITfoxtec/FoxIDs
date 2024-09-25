@@ -74,7 +74,7 @@ namespace FoxIDs.Models.Api
         public SamlBindingTypes? AuthnRequestBinding { get; set; }
 
         [Required]
-        public SamlBindingTypes? AuthnResponseBinding { get; set; }
+        public SamlBindingTypes? AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
         public string AuthnUrl { get; set; }

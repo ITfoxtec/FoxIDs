@@ -148,7 +148,7 @@ Select show advanced settings and add the extension XML in **Authn request exten
 
 ![NemLog-in SAML 2.0 authn request extension XM](images/howto-saml-nemlogin3-auth-req-ext.png)
 
-You can configure authn request extensions XML in profiles on the authentication method. And then support multiple mobile platforms in profiles.
+You can configure authn request extensions XML in profiles (click **Show advanged** to see profiles) on the authentication method. And then support multiple mobile platforms in profiles.
 
 > As of now iOS do not require a return URL to do app-switch. But this can change over time!  
 > Therefor, you currently only need two authentication methods; one for your web site and iOS app without a redirect URL and one for your Android app with a redirect URL.
@@ -215,5 +215,5 @@ And possible credential types:
  - `https://nemlogin.dk/internal/credential/type/test`
 
 
-You can configure authn context class references in profiles on the authentication method. In the case you need to provide different sets of authn context class references.  
+You can configure authn context class references in profiles (click **Show advanged** to see profiles) on the authentication method. In the case you need to provide different sets of authn context class references.  
 E.g., if you need to support step-up authentication. Then you would create one profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.

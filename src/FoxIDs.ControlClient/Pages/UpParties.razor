@@ -395,73 +395,70 @@
                     </div>
                 </PageEditForm>
             }
-            else if (newUpPartyModal.IdPType == IdPTypes.NemLogin)
+            else if (newUpPartyModal.Type == PartyTypes.Saml2 && newUpPartyModal.IdPType == IdPTypes.NemLogin)
             {
                 <PageEditForm @ref="newUpPartyModal.NemLoginForm" TModel="NewUpPartyNemLoginViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyNemLoginModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.NemLoginForm, editContext))">
                     @if (!newUpPartyModal.Created)
                     {
                         <div class="info-text">
-                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in</DocsLink> connection for either test or production.
+                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in connection</DocsLink> for either test or production.
                             <br />
-                            <div class="font-italic pt-2">NemLog-in required different certificates in test and production. Therefor, consider if the NemLog-in connections should be configured in dedicated environments.</div>
+                            <div class="font-italic pt-2">NemLog-in require different OCES3 certificates in test and production. Therefore, consider whether NemLog-in connections should be configured in dedicated environments.</div>
                         </div>
                         <div>
                             <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.DisplayName" For="@(() => newUpPartyModal.NemLoginForm.Model.DisplayName)" Focus="true" />
 
                             <div class="info-text">
-                                Each IT-system in NemLog-in holds two configurations, one for <strong>Integration test</strong> and one for <strong>Production</strong> (two different tabs).
-                                First you configure the integration test and upload the test rapport, then it become possible to configure production.
+                                Select <strong>public sector service</strong> and create a public IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink> (no transaction cost) if your service is for the public sector. This also applies for a private company.
+                                <br />
+                                Otherwise, select <strong>private company service</strong> and create a private IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink> (low transaction cost).
                             </div>
 
-                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment" For="@(() => newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment)">
-                                <option value="@NemLoginEnvironments.Test">Integration test</option>
-                                <option value="@NemLoginEnvironments.Production">Production</option>
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.ServiceType" For="@(() => newUpPartyModal.NemLoginForm.Model.ServiceType)">
+                                <option value="@NemLoginServiceTypes.PublicSector">Public sector service</option>
+                                <option value="@NemLoginServiceTypes.Private">Private company service</option>
                             </FInputSelect>
 
-                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test) 
+                            <div class="info-text">
+                                Each IT-system in NemLog-in holds two configurations, one for <strong>integration test</strong> and one for <strong>production</strong> (two different tabs).
+                                First you need to configure the integration test and upload the test rapport, and then it become possible to configure production in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink>.
+                            </div>
+
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.Environment" For="@(() => newUpPartyModal.NemLoginForm.Model.Environment)">
+                                <option value="@WizardEnvironments.Test">Integration test</option>
+                                <option value="@WizardEnvironments.Production">Production</option>
+                            </FInputSelect>
+
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Test)
                             {
-                                <div class="info-text">
+                                <div class="info-text pb-4">
                                     NemLog-in require a OCES3 test certificate as the <DocsLink Page="certificates">environment certificate</DocsLink>. This wizard will change the environment to use a OCES3 test certificate.
                                 </div>
                             }
                             else
                             {
-                                <div class="info-text">
+                                <div class="info-text pb-4">
                                     NemLog-in require you to configure a OCES3 certificate as the environment certificate. Create a OCES3 certificate in <DocsLink External="odes3-create">NemLog-in business administration</DocsLink> and change the <DocsLink Page="certificates">environment certificate</DocsLink> to your new OCES3 certificate.
                                     <br />
                                     <div class="font-italic pt-2">With the certificate in place continue the wizard.</div>                                    
                                 </div>
                             }
 
-                            <div class="info-text">
-                                Select <strong>Public sector service</strong> and create a Public IT-system in NemLog-in (no transaction cost) if your service is for the public sector. This also applies for a private company.
-                                <br />
-                                Otherwise, select <strong>Private company service</strong> and create a Private IT-system in NemLog-in (low transaction cost).
-                            </div>
-
-                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.NemLoginServiceType" For="@(() => newUpPartyModal.NemLoginForm.Model.NemLoginServiceType)">
-                                <option value="@NemLoginServiceTypes.PublicSector">Public sector service</option>
-                                <option value="@NemLoginServiceTypes.Private">Private company service</option>
-                            </FInputSelect>
-
-                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Production)
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Production)
                             {
-                                <div class="active-group active pb-2">
+                                <div class="active-group active py-3">
                                     <label class="label-control">Contact information</label>
                                     <div class="card">
                                         <div class="card-body">
                                             <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Company" For="@(() => newUpPartyModal.NemLoginForm.Model.Company)" />
-                  @*                           <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.GivenName" For="@(() => newUpPartyModal.NemLoginForm.Model.GivenName)" />
-                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Surname" For="@(() => newUpPartyModal.NemLoginForm.Model.Surname)" /> *@
                                             <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.EmailAddress" For="@(() => newUpPartyModal.NemLoginForm.Model.EmailAddress)" />
-                       @*                      <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.TelephoneNumber" For="@(() => newUpPartyModal.NemLoginForm.Model.TelephoneNumber)" /> *@
                                         </div>
                                     </div>
                                 </div>
                             }
                             @if (!newUpPartyModal.ShowAdvanced)
                             {
-                                <button type="button" class="btn btn-link pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
+                                <button type="button" class="btn btn-link pt-0 pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
                             }
                             else
                             {
@@ -479,21 +476,124 @@
                         </div>
 
                         <div class="info-text">
-                            @if (newUpPartyModal.NemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test)
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Test)
                             {
-                                <div>Use the metadata URL to download the metadata and save it locally.</div>
+                                <div>Use the metadata URL to download the metadata file and store it locally.</div>
                             }
                             else
                             {
                                 <div>
-                                    If your OCES3 certificate has been configured as the environments certificate, use the metadata URL to download the metadata and save it locally.
-                                    <br />
-                                    Otherwise, save the metadata URL until your OCES3 certificate is in place in the environment and then download the metadata.
+                                    Save the metadata URL and make sure your OCES3 certificate is in place as the <DocsLink Page="certificates">environment certificate</DocsLink>. Then use the metadata URL to download the metadata file and store it locally.
                                 </div>
                             }
-                            <div class="pt-2">Then upload the metadata file to your NemLog-in IT-system, please see the <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in guide</DocsLink></div>
+                            <div class="pt-2">Upload the metadata file to your NemLog-in IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink>, please see the <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in guide</DocsLink></div>
                         </div>
-                        <FFieldTextClipboard @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
+                        <FFieldTextLinkClipboard @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newUpPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newUpPartyModal.CreateWorking ? "disabled" : "")" onclick="@(async () => await ChangeNewUpPartyStateAsync())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newUpPartyModal.CreateWorking ? "disabled" : "")">Create</button>
+                            <button type="button" class="btn btn-secondary @(newUpPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newUpPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newUpPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newUpPartyModal.Type == PartyTypes.Saml2 && newUpPartyModal.IdPType == IdPTypes.ContextHandler)
+            {
+                <PageEditForm @ref="newUpPartyModal.ContextHandlerForm" TModel="NewUpPartyContextHandlerViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyContextHandlerModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.ContextHandlerForm, editContext))">
+                    @if (!newUpPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="howto-saml-2.0-context-handler">Context Handler connection</DocsLink> for either test or production.
+                            <br />
+                            <div class="font-italic pt-2">Context Handler require unique OCES3 certificates in both test and production. Therefore, consider whether Context Handler connections should be configured in dedicated environments.</div>
+                        </div>
+                        <div>
+                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.DisplayName" For="@(() => newUpPartyModal.ContextHandlerForm.Model.DisplayName)" Focus="true" />
+
+                            @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                            {
+                                <div class="info-text">
+                                    The test IT-system is configured as a user-facing system in <DocsLink External="contexthandler-admin-test">Context Handler test administration</DocsLink>.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    The IT-system is configured as a user-facing system in <DocsLink External="contexthandler-admin">Context Handler administration</DocsLink>.
+                                </div>
+                            }
+
+                            <FInputSelect @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Environment" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Environment)">
+                                <option value="@WizardEnvironments.Test">Test</option>
+                                <option value="@WizardEnvironments.Production">Production</option>
+                            </FInputSelect>
+
+                            <div class="info-text pb-4">
+                                Context Handler require you to configure an OCES3 certificate as the environment certificate. Create an OCES3 certificate in <DocsLink External="odes3-create">NemLog-in business administration</DocsLink> and change the <DocsLink Page="certificates">environment certificate</DocsLink> to be your new OCES3 certificate.
+                                <br />
+                                <div class="font-italic pt-2">With the certificate in place continue the wizard.</div>
+                            </div>
+
+                            @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Production)
+                            {
+                                <div class="active-group active py-3">
+                                    <label class="label-control">Contact information</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Company" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Company)" />
+                                            @*                           <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.GivenName" For="@(() => newUpPartyModal.ContextHandlerForm.Model.GivenName)" />
+                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Surname" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Surname)" /> *@
+                                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.EmailAddress" For="@(() => newUpPartyModal.ContextHandlerForm.Model.EmailAddress)" />
+                                            @*                      <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.TelephoneNumber" For="@(() => newUpPartyModal.ContextHandlerForm.Model.TelephoneNumber)" /> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (!newUpPartyModal.ShowAdvanced)
+                            {
+                                <button type="button" class="btn btn-link pt-0 pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
+                            }
+                            else
+                            {
+                                <FInputCheckboxSelect Items="newUpPartyModal.ContextHandlerForm.Model.Claims" SelectedItems="newUpPartyModal.ContextHandlerForm.Model.SelectedClaims" DisableItems="newUpPartyModal.ContextHandlerForm.Model.DisabledClaims" NewLine="true" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Claims)" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your Context Handler authentication method has been created.
+                        </div>
+
+                        <div class="info-text">
+                            <div>
+                                Save the metadata URL and make sure your OCES3 certificate is in place as the <DocsLink Page="certificates">environment certificate</DocsLink>.
+                            </div>
+
+                            <div class="pt-2">
+                                Use the metadata URL to configure your Context Handler user-facing IT-system in
+                                @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                                {
+                                    <DocsLink External="ContextHandler-admin-test">Context Handler test administration</DocsLink>
+                                }
+                                else
+                                {
+                                    <DocsLink External="ContextHandler-admin">Context Handler administration</DocsLink>
+                                }, please see the <DocsLink Page="howto-saml-2.0-context-handler">Context Handler guide</DocsLink>
+                            </div>
+                        </div>
+
+                        <FFieldTextLinkClipboard @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Metadata" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Metadata)" />
                     }
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newUpPartyModal.Created)

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Infrastructure.Security;

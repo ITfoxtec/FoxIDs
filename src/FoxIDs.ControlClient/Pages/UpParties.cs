@@ -421,7 +421,6 @@ namespace FoxIDs.Client.Pages
             {
                 newUpPartyViewModel.CreateWorking = true;
 
-
                 var samlUpParty = new SamlUpParty
                 {
                     PartyBindingPattern = PartyBindingPatterns.Dot,
@@ -438,7 +437,7 @@ namespace FoxIDs.Client.Pages
                     Claims = newUpPartyNemLoginForm.Model.Claims.Where(c => newUpPartyNemLoginForm.Model.SelectedClaims.Where(s => s.Equals(c, StringComparison.Ordinal)).Any() == true).ToList()
                 };
 
-                samlUpParty.SpIssuer = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint().Replace("://", (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test ? "://samltest." : "://saml."))}/{TrackSelectedLogic.Track.Name}/{samlUpParty.Name}/";
+                samlUpParty.SpIssuer = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint().Replace("://", (newUpPartyNemLoginForm.Model.Environment == WizardEnvironments.Test ? "://samltest." : "://saml."))}/{TrackSelectedLogic.Track.Name}/{samlUpParty.Name}/";
 
                 samlUpParty.MetadataAttributeConsumingServices = [new SamlMetadataAttributeConsumingService
                 {
@@ -469,25 +468,22 @@ namespace FoxIDs.Client.Pages
                     }];
                 }
 
-                if (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Production)
+                if (newUpPartyNemLoginForm.Model.Environment == WizardEnvironments.Production)
                 {
                     samlUpParty.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.Online;
 
                     samlUpParty.MetadataContactPersons = [new SamlMetadataContactPerson
                     {
-                        ContactType = SamlMetadataContactPersonTypes.Technical,
+                        ContactType = SamlMetadataContactPersonTypes.Administrative,
                         Company = newUpPartyNemLoginForm.Model.Company,
-                        //GivenName = newUpPartyNemLoginForm.Model.GivenName,
-                        //Surname = newUpPartyNemLoginForm.Model.Surname,
                         EmailAddress = newUpPartyNemLoginForm.Model.EmailAddress,
-                        //TelephoneNumber = newUpPartyNemLoginForm.Model.TelephoneNumber,
                     }];
                 }
 
                 newUpPartyNemLoginForm.Model.Metadata = MetadataLogic.GetUpSamlMetadata(samlUpParty.Name, samlUpParty.PartyBindingPattern);
 
                 var wizardNemLoginSettings = await WizardService.ReadNemLoginSettingsAsync();
-                if (newUpPartyNemLoginForm.Model.NemLoginEnvironment == NemLoginEnvironments.Test)
+                if (newUpPartyNemLoginForm.Model.Environment == WizardEnvironments.Test)
                 {
                     samlUpParty.MetadataUrl = wizardNemLoginSettings.OioSaml3MetadataTest;
                     
@@ -515,10 +511,108 @@ namespace FoxIDs.Client.Pages
                     samlUpParty.MetadataUrl = wizardNemLoginSettings.OioSaml3MetadataProduction;
                 }
 
-
-
                 _ = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
                 toastService.ShowSuccess("NemLog-in (SAML 2.0) authentication method created.");
+
+                var generalUpPartyViewModel = new GeneralSamlUpPartyViewModel(new UpParty { Type = PartyTypes.Saml2, Name = samlUpParty.Name, DisplayName = samlUpParty.DisplayName });
+                upParties.Add(generalUpPartyViewModel);
+                if (upParties.Count() <= 1)
+                {
+                    ShowUpdateUpParty(generalUpPartyViewModel);
+                }
+                newUpPartyViewModel.Created = true;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                newUpPartyViewModel.CreateWorking = false;
+                throw;
+            }
+            catch
+            {
+                newUpPartyViewModel.CreateWorking = false;
+            }
+        }
+        
+        private async Task OnNewUpPartyContextHandlerModalValidSubmitAsync(NewUpPartyViewModel newUpPartyViewModel, PageEditForm<NewUpPartyContextHandlerViewModel> newUpPartyContextHandlerForm, EditContext editContext)
+        {
+            try
+            {
+                newUpPartyViewModel.CreateWorking = true;
+
+                var samlUpParty = new SamlUpParty
+                {
+                    PartyBindingPattern = PartyBindingPatterns.Dot,
+                    DisplayName = newUpPartyContextHandlerForm.Model.DisplayName,
+                    Name = await UpPartyService.GetNewPartyNameAsync(),
+                    AuthnRequestBinding = SamlBindingTypes.Post,
+                    AuthnResponseBinding = SamlBindingTypes.Post,
+                    LogoutRequestBinding = SamlBindingTypes.Post,
+                    LogoutResponseBinding = SamlBindingTypes.Redirect,
+                    SignAuthnRequest = true,
+                    DisableLoginHint = true,                    
+                    MetadataAddLogoutResponseLocation = true,
+                    MetadataIncludeEncryptionCertificates = true,
+                    MetadataNameIdFormats = ["urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"],
+                    Claims = newUpPartyContextHandlerForm.Model.Claims.Where(c => newUpPartyContextHandlerForm.Model.SelectedClaims.Where(s => s.Equals(c, StringComparison.Ordinal)).Any() == true).ToList()
+                };
+
+                samlUpParty.SpIssuer = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint().Replace("://", (newUpPartyContextHandlerForm.Model.Environment == WizardEnvironments.Test ? "://samltest." : "://saml."))}/{TrackSelectedLogic.Track.Name}/{samlUpParty.Name}/";
+
+                samlUpParty.MetadataAttributeConsumingServices = [new SamlMetadataAttributeConsumingService
+                {
+                    ServiceName = new SamlMetadataServiceName { Name = samlUpParty.DisplayName, Lang = "en" },
+                    RequestedAttributes = new List<SamlMetadataRequestedAttribute>()
+                }];
+                
+                foreach(var claim in samlUpParty.Claims)
+                {
+                    samlUpParty.MetadataAttributeConsumingServices[0].RequestedAttributes.Add(new SamlMetadataRequestedAttribute
+                    {
+                        Name = claim,
+                        IsRequired = claim.Equals("https://data.gov.dk/concept/core/nsis/loa", StringComparison.Ordinal) ? true: false,
+                        NameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    });
+                }
+
+                var privilegesClaim = "https://data.gov.dk/model/core/eid/privilegesIntermediate";
+                samlUpParty.ClaimTransforms = [new SamlClaimTransform 
+                {
+                    Type = ClaimTransformTypes.DkPrivilege,
+                    Order = 1,
+                    Action = ClaimTransformActions.Replace,
+                    ClaimsIn = [privilegesClaim],
+                    ClaimOut = privilegesClaim,
+                }];
+
+                if (newUpPartyContextHandlerForm.Model.Environment == WizardEnvironments.Production)
+                {
+                    samlUpParty.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.Online;
+
+                    samlUpParty.MetadataContactPersons = [new SamlMetadataContactPerson
+                    {
+                        ContactType = SamlMetadataContactPersonTypes.Administrative,
+                        Company = newUpPartyContextHandlerForm.Model.Company,
+                        //GivenName = newUpPartyNemLoginForm.Model.GivenName,
+                        //Surname = newUpPartyNemLoginForm.Model.Surname,
+                        EmailAddress = newUpPartyContextHandlerForm.Model.EmailAddress,
+                        //TelephoneNumber = newUpPartyNemLoginForm.Model.TelephoneNumber,
+                    }];
+                }
+
+                newUpPartyContextHandlerForm.Model.Metadata = MetadataLogic.GetUpSamlMetadata(samlUpParty.Name, samlUpParty.PartyBindingPattern);
+
+                var wizardContextHandlerSettings = await WizardService.ReadContextHandlerSettingsAsync();
+                if (newUpPartyContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                {
+                    samlUpParty.MetadataUrl = wizardContextHandlerSettings.OioSaml3MetadataTest;
+                }
+                else
+                {
+                    samlUpParty.MetadataUrl = wizardContextHandlerSettings.OioSaml3MetadataProduction;
+                }
+
+                _ = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                toastService.ShowSuccess("Context Handler (SAML 2.0) authentication method created.");
 
                 var generalUpPartyViewModel = new GeneralSamlUpPartyViewModel(new UpParty { Type = PartyTypes.Saml2, Name = samlUpParty.Name, DisplayName = samlUpParty.DisplayName });
                 upParties.Add(generalUpPartyViewModel);

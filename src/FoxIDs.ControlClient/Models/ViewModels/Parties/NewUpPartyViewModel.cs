@@ -32,6 +32,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public PageEditForm<NewUpPartyEnvironmentLinkViewModel> EnvironmentLinkForm { get; set; }
 
         public PageEditForm<NewUpPartyNemLoginViewModel> NemLoginForm { get; set; }
+        public PageEditForm<NewUpPartyContextHandlerViewModel> ContextHandlerForm { get; set; }
         //public PageEditForm<NewUpPartyOidcViewModel> OidcForm { get; set; }
 
         //public PageEditForm<NewUpPartyEnvironmentLinkViewModel> OAuthTokenExchangeForm { get; set; }

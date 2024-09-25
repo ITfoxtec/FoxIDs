@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class NewUpPartyNemLoginViewModel : IValidatableObject
+    public class NewUpPartyContextHandlerViewModel : IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
@@ -12,27 +12,23 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Name")]
         public string DisplayName { get; set; }
 
-        [Display(Name = "NemLog-in environment")]
-        public NemLoginEnvironments NemLoginEnvironment { get; set; } = NemLoginEnvironments.Test;
+        [Display(Name = "Context Handler environment")]
+        public WizardEnvironments Environment { get; set; } = WizardEnvironments.Test;
 
-        [Display(Name = "NemLog-in service type")]
-        public NemLoginServiceTypes NemLoginServiceType { get; set; } = NemLoginServiceTypes.PublicSector;
-
-        [Display(Name = "NemLog-in claims")]
+        [Display(Name = "Context Handler claims")]
         public IEnumerable<string> Claims
         {
             get 
             {
                 yield return "https://data.gov.dk/model/core/specVersion";
                 yield return "https://data.gov.dk/concept/core/nsis/loa";
+                yield return "https://data.gov.dk/model/core/eid/privilegesIntermediate";
                 yield return "https://data.gov.dk/model/core/eid/fullName";
                 yield return "https://data.gov.dk/model/core/eid/firstName";
                 yield return "https://data.gov.dk/model/core/eid/lastName";
+                yield return "https://data.gov.dk/model/core/eid/alias";
                 yield return "https://data.gov.dk/model/core/eid/email";
-                if (NemLoginServiceType == NemLoginServiceTypes.PublicSector)
-                {
-                    yield return "https://data.gov.dk/model/core/eid/cprNumber";
-                }
+                yield return "https://data.gov.dk/model/core/eid/cprNumber";
                 yield return "https://data.gov.dk/model/core/eid/cprUuid";
                 yield return "https://data.gov.dk/model/core/eid/person/pid";
                 yield return "https://data.gov.dk/model/core/eid/age";
@@ -43,7 +39,10 @@ namespace FoxIDs.Client.Models.ViewModels
                 yield return "https://data.gov.dk/model/core/eid/professional/rid";
                 yield return "https://data.gov.dk/model/core/eid/professional/productionUnit";
                 yield return "https://data.gov.dk/model/core/eid/professional/seNumber";
-                yield return "https://data.gov.dk/model/core/eid/privilegesIntermediate";
+                yield return "https://data.gov.dk/model/core/eid/professional/authorizedToRepresent";
+                yield return "https://data.gov.dk/concept/core/nsis/ial";
+                yield return "https://data.gov.dk/concept/core/nsis/aal";
+                yield return "https://data.gov.dk/model/core/eid/bootstrapToken";
             }
         }
 
@@ -51,11 +50,14 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             "https://data.gov.dk/model/core/specVersion",
             "https://data.gov.dk/concept/core/nsis/loa",
+            "https://data.gov.dk/model/core/eid/privilegesIntermediate",
+            "https://data.gov.dk/model/core/eid/professional/cvr",
         };
         public List<string> SelectedClaims { get; set; } = new List<string>
         {
             "https://data.gov.dk/model/core/specVersion",
             "https://data.gov.dk/concept/core/nsis/loa",
+            "https://data.gov.dk/model/core/eid/privilegesIntermediate",
             "https://data.gov.dk/model/core/eid/firstName",
             "https://data.gov.dk/model/core/eid/lastName",
             "https://data.gov.dk/model/core/eid/email",
@@ -64,7 +66,6 @@ namespace FoxIDs.Client.Models.ViewModels
             "https://data.gov.dk/model/core/eid/professional/cvr",
             "https://data.gov.dk/model/core/eid/professional/orgName",
             "https://data.gov.dk/model/core/eid/professional/uuid/persistent",
-            "https://data.gov.dk/model/core/eid/privilegesIntermediate",
         };
 
         [MaxLength(Constants.Models.Claim.LimitedValueLength)]
@@ -94,7 +95,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (NemLoginEnvironment == NemLoginEnvironments.Production)
+            if (Environment == WizardEnvironments.Production)
             {
                 if(Company.IsNullOrWhiteSpace())
                 {

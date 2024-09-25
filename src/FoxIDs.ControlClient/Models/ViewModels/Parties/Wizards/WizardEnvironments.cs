@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Client.Models.ViewModels
 {
-    public enum NemLoginEnvironments
+    public enum WizardEnvironments
     {
         Test,
         Production

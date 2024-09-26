@@ -15,7 +15,7 @@ The following describes how to configure a OpenID Connect authentication method 
 
 ## Configure integration
 
-**1 - Start in your FoxIDs environment by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start in your FoxIDs environment by creating an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Add the name
 
@@ -40,7 +40,7 @@ The client is a confidential client using Authorization Code Flow and PKCE.
 
 ![Parallel FoxIDs application registration client](images/howto-oidc-foxids-parallel-app-reg.png)
 
-**3 - Go back to your FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Go back to your FoxIDs authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the parallel FoxIDs environment application registration client authority.  
      > Default the parallel environment use the `login` authentication method to authenticate users with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(login)/` authority.  

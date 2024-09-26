@@ -7,7 +7,7 @@ FoxIDs can be connected to PingOne with a [SAML 2.0 authentication method](auth-
  
 ## Configuring PingOne as Identity Provider (IdP)
 
-**1 - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the name
  2. Then the SAML 2.0 Metadata is created with the authentication method name, copy the metadata URL
@@ -25,7 +25,7 @@ FoxIDs can be connected to PingOne with a [SAML 2.0 authentication method](auth-
 
 > Currently FoxIDs only support PingOne if either the `Sign Assertion` or `Sign Response` option is selected, the option `Sign Assertion & Response` is not supported. Please see the [issue](https://github.com/ITfoxtec/ITfoxtec.Identity.Saml2/issues/107).
 
-**3 - Then go back to the SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Then go back to the SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Add the PingOne metadata URL in the Metadata URL field.
 2. Click Create

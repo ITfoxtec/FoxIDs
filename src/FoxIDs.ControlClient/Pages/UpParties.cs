@@ -464,7 +464,14 @@ namespace FoxIDs.Client.Pages
                     }];
                 }
 
-                if (newUpPartyNemLoginForm.Model.Environment == WizardEnvironments.Production)
+                if (newUpPartyNemLoginForm.Model.Environment == WizardEnvironments.Test)
+                {
+                    if (!samlUpParty.DisplayName.Contains("test", StringComparison.OrdinalIgnoreCase))
+                    {
+                        samlUpParty.DisplayName = $"{samlUpParty.DisplayName} TEST";
+                    }
+                }
+                else
                 {
                     samlUpParty.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.Online;
 
@@ -575,7 +582,14 @@ namespace FoxIDs.Client.Pages
                     ClaimOut = privilegesClaim,
                 }];
 
-                if (newUpPartyContextHandlerForm.Model.Environment == WizardEnvironments.Production)
+                if (newUpPartyContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                {
+                    if (!samlUpParty.DisplayName.Contains("test", StringComparison.OrdinalIgnoreCase))
+                    {
+                        samlUpParty.DisplayName = $"{samlUpParty.DisplayName} TEST";
+                    }
+                }
+                else
                 {
                     samlUpParty.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.Online;
 

@@ -45,7 +45,7 @@ A default login authentication method is created in each environment.
 The [title, icon and CSS](title-icon-css.md) configured on the default login authentication method is use in the case where no login authentication method is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login authentication method.
 
 ### Configure login options
-It can be configured whether users should be allowed to cancel login and whether users are allowed to create a [new user online](users.md#internal-users) through the login user interface. New users can alternatively be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
+It can be configured whether users should be allowed to cancel login and whether users are allowed to create a [new user online](users.md#internal-users) through the login user interface. New users can alternatively be created by the administrator through the [Control Client](https://www.foxids.com/action/login) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-login.png)
 

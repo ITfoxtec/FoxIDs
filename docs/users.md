@@ -27,7 +27,7 @@ This is the configuration in the [login](login.md) authentication method. Moreov
 ![Login configuration - create an account online](images/user-create-new-account-config.png)
 
 ### Provisioning
-Internal users can be created, changed and deleted with the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
+Internal users can be created, changed and deleted with the [Control Client](https://www.foxids.com/action/login) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-user.png)
 
@@ -77,7 +77,7 @@ This is the configuration in a [OpenID Connect](auth-method-oidc.md) authenticat
 > If the login sequence is started base on a [login](login.md) authentication method, it provides the basis for the UI look and feel ([customize](customization.md)). Otherwise, the default [login](login.md) authentication method is selected as the base.
 
 ### Provisioning
-External users can be created, changed and deleted with the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
+External users can be created, changed and deleted with the [Control Client](https://www.foxids.com/action/login) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-user-external.png)
 

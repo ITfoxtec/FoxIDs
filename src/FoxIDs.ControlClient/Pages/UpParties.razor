@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/authentication"
+﻿@page "/{tenantName}/authentications"
 @inherits PageBase
 
 <div class="tab-content">
@@ -85,7 +85,7 @@
 
 @if (newUpPartyModal != null)
 {
-    <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
+    <Modal @ref="newUpPartyModal.Modal" Title="New Authentication">
         <div class="modal-body">
             @if (newUpPartyModal.Type != null)
             {
@@ -163,7 +163,6 @@
                                                 <h5 class="my-2">@(nemlogin.Title) <div class="small">(@(nemlogin.SubTitle))</div></h5>
                                             </div>
                                             <div class="py-2">Connect to NemLog-in and let the uses login with MitID or other methods supported by NemLog-in.</div>
-                                            <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection and NemLog-in requirements including message logging.</div>
                                         </a>
                                     </div>
                                     <div class="col-6 py-2">
@@ -182,7 +181,6 @@
                                                 <h5 class="my-2">@(contextHandler.Title) <div class="small">(@(contextHandler.SubTitle))</div></h5>
                                             </div>
                                             <div class="py-2">Connect to Context Handler, in Danish called 'Fælleskommunal Adgangsstyring' (FKA), and leverage the municipal login.</div>
-                                            <div class="py-2 font-italic">Convert to OpenID Connect and let FoxIDs handle the OIOSAML 3.0 connection.</div>
                                         </a>
                                     </div>
                                 </div>
@@ -622,7 +620,7 @@
 
 @if (testDownPartyModal != null)
 {
-    <Modal @ref="testDownPartyModal.Modal" Title="Test Authentication Method">
+    <Modal @ref="testDownPartyModal.Modal" Title="Test Authentication">
         <div class="modal-body">
             <FFieldText @bind-Value="testDownPartyModal.DisplayName" For="@(() => testDownPartyModal.DisplayName)" />
             @if (!testDownPartyModal.Error.IsNullOrWhiteSpace())

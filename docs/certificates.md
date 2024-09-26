@@ -13,7 +13,7 @@ There are two different certificate container types:
 - NOT automatically renewed.
 
 ## Change the environments certificate
-Navigate to the `Certificates` tab in [FoxIDs Control Client](control.md#foxids-control-client) where you can change the environments certificate container type.
+Navigate to the `Certificates` tab in [FoxIDs Control Client](https://www.foxids.com/action/login) where you can change the environments certificate container type.
 
 If the certificate container type is `Self-signed or your one certificates`, you can choose to upload your own certificate(s).
 

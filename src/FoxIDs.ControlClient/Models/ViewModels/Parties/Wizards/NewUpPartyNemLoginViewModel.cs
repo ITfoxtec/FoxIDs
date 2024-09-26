@@ -10,7 +10,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
         [Display(Name = "Name")]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = "NemLog-in";
 
         [Display(Name = "NemLog-in environment")]
         public WizardEnvironments Environment { get; set; } = WizardEnvironments.Test;

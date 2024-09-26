@@ -4,7 +4,7 @@
 
 A display name for you organisation, company or system can be configured on each environment. When FoxIDs send an email to a user the email text is customized by adding the display name.
 
-The name is configured in the environment settings in [FoxIDs Control Client](control.md#foxids-control-client).
+The name is configured in the environment settings in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
 1. Select Settings
 2. Add the name in the Display name field
@@ -16,7 +16,7 @@ The FoxIDs user interface can be customized per [login authentication method](lo
 
 > FoxIDs use Bootstrap 4.6 and Flexbox CSS.
 
-Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
+Find the login authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login) that you want to configure.
 
  1. Select show advanced
  4. Add the browser title text

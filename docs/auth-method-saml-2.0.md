@@ -28,7 +28,7 @@ How to configure an external SAML 2.0 Identity Provider (IdP).
 > The FoxIDs SAML 2.0 authentication method metadata endpoint is `https://foxids.com/tenant-x/environment-y/(some_external_idp)/saml/spmetadata`  
 > if the IdP is configured in tenant `tenant-x` and environment `environment-y` with the authentication method name `some_external_idp`  
 
-The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration available in [FoxIDs Control Client](https://www.foxids.com/action/login).
 Where the configuration is created with the external IdP metadata.
 
 > More configuration options become available by clicking `Show advanced`.

@@ -6,7 +6,7 @@ FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenti
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the name
  2. Select show advanced
@@ -27,7 +27,7 @@ When the authority is registered in FoxIDs as an authentication method. FoxIDs w
 > The full URL would look like this `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SOME_SIGNIN_PROFILE` and 
 > the authority is then `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/` where the Azure AD B2C profile name is moved to be a path element in the URL.
 
-**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 > Azure AD B2C is not by default return an access token in the token response and is thereby not OpenID Connect Authorization Code flow compliant. You need to add a Azure AD B2C client ID as a scope to get an access token returned.
 

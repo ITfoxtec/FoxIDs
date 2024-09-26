@@ -15,7 +15,7 @@ It is possible to connect an [IdentityServer client](#configure-identityserver-c
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the name
 
@@ -51,7 +51,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
-**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)
@@ -94,7 +94,7 @@ You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
 
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/main/src/IdentityServerOidcOpSample/Config.cs).*
 
-**2 - Then go to [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then go to [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Add the API scope `some.api.access` as a scope in the FoxIDs authentication method client
 2. Read claims from access token by not selecting to use claims from ID token

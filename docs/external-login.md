@@ -121,7 +121,7 @@ The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/t
 You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample/external-api-login.postman_collection.json) to call and test the sample with [Postman](https://www.postman.com/downloads/).
 
 ## Configure 
-Configure a external login authentication method to call your API in [FoxIDs Control Client](control.md#foxids-control-client).
+Configure a external login authentication method to call your API in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
  1. Navigate to the **Authentication Methods** tab
  2. Click **New authentication**

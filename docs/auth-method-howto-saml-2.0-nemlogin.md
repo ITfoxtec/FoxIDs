@@ -1,6 +1,20 @@
-# NemLog-in as authentication method
+# Connect to NemLog-in
 
-You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
+Connect to NemLog-in (Danish IdP) and let the users authenticate with MitID or other methods supported by NemLog-in.
+
+> Not an IT system in NemLog-in? Become a [NemLog-in service provider](https://tilslut.nemlog-in.dk/) and read more on [NemLog-in information site](https://tu.nemlog-in.dk/) for service providers.
+
+Each IT-system in NemLog-in holds two configurations, one for **integration test** and one for **production** (two different tabs).
+First you need to configure the [integration test](#integration_test) and upload the test rapport, and then it become possible to configure production in [NemLog-in administration](https://administration.nemlog-in.dk/).
+
+## Integration test
+Start by creating a integration test connection to your IT-system in NemLog-in.
+
+1. Open [FoxIDs Control Client](https://www.foxids.com/action/login) and navigate to the **Authentications** tab
+2. Click 
+**1) - Start by creating an SAML 2.0 authentication method in 
+
+
 
 By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
@@ -38,7 +52,7 @@ NemLog-in requires all requests (authn and logout) from the Relying Party (RP) t
 OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
 You will need separate FoxIDs environments to handle the test and production environments respectively. The environments can optionally be combined in an app environment with [environment links](howto-environmentlink-foxids.md).
 
-Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+Add the `.P12` OCES3 certificate in [FoxIDs Control Client](https://www.foxids.com/action/login):
 1. Select (or create) the environment to be used for NemLog-in
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
@@ -55,7 +69,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 > You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Select the Authentication methods tab
 2. Click New authentication and then SAML 2.0
@@ -121,7 +135,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 > To configure production you need to upload a test report, have it approved and then repeat the FoxIDs and NemLog-in configuration.
 
- **3) - Optionally - Configure MitID app-switch to mobile app in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3) - Optionally - Configure MitID app-switch to mobile app in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  *Optionally, configure MitID app-switch if you are using NemLog-in / MitID in a mobile app.*
 
@@ -150,7 +164,7 @@ You can configure authn request extensions XML in profiles (click **Show advange
 > As of now iOS do not require a return URL to do app-switch. But this can change over time!  
 > Therefor, you currently only need two authentication methods; one for your web site and iOS app without a redirect URL and one for your Android app with a redirect URL.
 
- **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 *Optionally, if you are using the privilege claim.*
 

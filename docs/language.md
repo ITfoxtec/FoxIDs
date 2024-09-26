@@ -64,7 +64,7 @@ It is possible to contribute either by creating a pull request in the FoxIDs [Gi
 
 ## Translation in environment
 
-It is possible to add environment specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
+It is possible to add environment specific translations for each text element in multiple languages in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
 > If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language. It is also possible to add new HTML tags in the text and set the related CSS.
 

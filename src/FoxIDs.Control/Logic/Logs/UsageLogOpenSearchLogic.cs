@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
         {
             if (logRequest.IncludeLogins)
             {
-                foreach(var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Login.ToString()))
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Login.ToString()))
                 {
                     yield return bucketItem;
                 }
@@ -119,7 +119,7 @@ namespace FoxIDs.Logic
         {
             var singleBucketAggregate = aggregations[usageType] as SingleBucketAggregate;
             var bucketAggregate = singleBucketAggregate.Values.First() as BucketAggregate;
-            foreach(DateHistogramBucket bucketItem in bucketAggregate.Items)
+            foreach (DateHistogramBucket bucketItem in bucketAggregate.Items)
             {
                 yield return (usageType, bucketItem);
             }
@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
                 var valueAggregate = bucketItem.Values.First() as ValueAggregate;
-                if(valueAggregate?.Value != null)
+                if (valueAggregate?.Value != null)
                 {
                     count += valueAggregate.Value.Value;
                 }
@@ -201,8 +201,7 @@ namespace FoxIDs.Logic
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
-                                     .LessThanOrEquals(queryTimeRange.end)))
-                                 .Must(m => m.Term(t => t.LogType, Constants.Logs.IndexName.Events));
+                                     .LessThanOrEquals(queryTimeRange.end)));
 
             if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
             {

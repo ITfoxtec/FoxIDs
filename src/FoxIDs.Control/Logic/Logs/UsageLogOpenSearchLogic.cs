@@ -191,7 +191,7 @@ namespace FoxIDs.Logic
 
             return response.Aggregations.Values.FirstOrDefault() as FiltersAggregate;
         }
-        
+
         private string GetIndexName()
         {
             return $"{Constants.Logs.LogName}*";

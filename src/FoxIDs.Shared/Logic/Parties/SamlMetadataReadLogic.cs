@@ -5,49 +5,23 @@ using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
     public class SamlMetadataReadLogic
     {
-        private readonly IHttpClientFactory httpClientFactory;
+        private readonly DownloadLogic downloadLogic;
 
-        public SamlMetadataReadLogic(IHttpClientFactory httpClientFactory)
+        public SamlMetadataReadLogic(DownloadLogic downloadLogic)
         {
-            this.httpClientFactory = httpClientFactory;
+            this.downloadLogic = downloadLogic;
         }
 
         public async Task<SamlUpParty> PopulateModelAsync(SamlUpParty party)
         {
-            var metadata = await ReadMetadataAsync(party.MetadataUrl);
+            var metadata = await downloadLogic.DownloadAsync(party.MetadataUrl, "SAML 2.0 metadata");
             return await PopulateModelAsync(party, metadata);
-        }
-
-        private async Task<string> ReadMetadataAsync(string metadataUrl)
-        {
-            try
-            {
-                var httpClient = httpClientFactory.CreateClient();
-                using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, metadataUrl));
-                // Handle the response
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.OK:
-                        var metadata = await response.Content.ReadAsStringAsync();
-                        return metadata;
-
-                    default:
-                        throw new Exception($"Read SAML 2.0 metadata error, status code={response.StatusCode}.");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"SAML 2.0 metadata error for metadata URL '{metadataUrl}'.", ex);
-            }
         }
 
         public async Task<SamlUpParty> PopulateModelAsync(SamlUpParty party, string metadataXml)

@@ -4,7 +4,7 @@ FoxIDs can be connected to AD FS with a [SAML 2.0 authentication method](auth-me
  
 ## Configuring AD FS as Identity Provider (IdP)
 
-**1 - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 The SAML 2.0 authentication method can either be configured by using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` or by manually adding the SAML 2.0 details.
 
@@ -17,7 +17,7 @@ Remark; The authn request redirect binding can result in a long query string whi
 > Take a look at the AD FS sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication methods` tab.
 
-The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration using AD FS metadata in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration using AD FS metadata in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
 > The AD FS metadata endpoint need to be accessible online to do the SAML 2.0 configuration with AD FS metadata. If not, you need to do the configuration manually.
 

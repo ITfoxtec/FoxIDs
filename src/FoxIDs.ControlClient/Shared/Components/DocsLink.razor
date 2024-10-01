@@ -13,11 +13,21 @@
     public string Fragment { get; set; }
 
     [Parameter]
+    public string External { get; set; }
+
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     private string LinkUrl()
     {
         var baseUrl = NavigationManager.BaseUri.StartsWith("https://localhost:", StringComparison.Ordinal) ? "https://localhost:44333" : "https://www.foxids.com";
-        return $"{baseUrl}/link?p={Page}{(Fragment.IsNullOrWhiteSpace() ? string.Empty : $"&f={Fragment}")}";
+        if (External.IsNullOrWhiteSpace())
+        {
+            return $"{baseUrl}/link?p={Page}{(Fragment.IsNullOrWhiteSpace() ? string.Empty : $"&f={Fragment}")}";
+        }
+        else
+        {
+            return $"{baseUrl}/link?e={External}";
+        }
     }
 }

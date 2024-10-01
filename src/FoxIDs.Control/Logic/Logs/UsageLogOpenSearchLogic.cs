@@ -201,7 +201,8 @@ namespace FoxIDs.Logic
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
-                                     .LessThanOrEquals(queryTimeRange.end)));
+                                     .LessThanOrEquals(queryTimeRange.end)))
+                                 .Must(m => m.Term(t => t.LogType, Constants.Logs.IndexName.Events));
 
             if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
             {

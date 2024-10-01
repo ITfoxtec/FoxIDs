@@ -23,7 +23,7 @@ The Azure container deployment include:
 FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email.md).
 
 ### First login and admin users
-After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
+After successfully deployment open [FoxIDs Control Client](https://www.foxids.com/action/login) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
 
 The default admin user is `admin@foxids.com` with password `FirstAccess!` (you are required to change the password on first login)  
 
@@ -66,7 +66,7 @@ The FoxIDs site support one primary domain and multiple [custom domains](custom-
 
 Configure new primary custom domains:
 
-1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Applications` tab then click `OpenID Connect - foxids_control_client` and click `Show advanced`.
+1) Login to [FoxIDs Control Client](https://www.foxids.com/action/login) using the default/old primary domain. Select the `Applications` tab then click `OpenID Connect - foxids_control_client` and click `Show advanced`.
 
    - Add the FoxIDs Control sites new primary custom domain URL to the `Allow CORS origins` list without a trailing slash.
    - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.

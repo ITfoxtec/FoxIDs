@@ -1,0 +1,18 @@
+﻿@inherits FInputBase<string>
+
+<div class="active-group active">
+    <div class="card card-row bg-light">
+        <div class="card-body">
+            <a href="@CurrentValue" target="_blank">@CurrentValue</a>
+        </div>
+        <div>
+            <button class="btn btn-link" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@CurrentValue))"><i class="bi bi-copy" title="Click to copy"></i></button>
+        </div>
+    </div>
+    <Label For="@For" class="label-control" />
+</div>
+
+@code {
+    [Inject]
+    public ClipboardLogic ClipboardLogic { get; set; }
+}

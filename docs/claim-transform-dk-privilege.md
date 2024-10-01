@@ -15,7 +15,7 @@ The DK privilege can both be configured in a SAML 2.0 authentication method and 
 - The SAML 2.0 claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` is transformed.
 - The OpenID Connect / JWT claim `privileges_intermediate` is transformed.
 
-Configure the DK privilege claim transformer on SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client):
+Configure the DK privilege claim transformer on SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login):
 
 1. Select the **Claim transform** tab
 2. Click **Add claim transform** and click **DK XML privilege to JSON**

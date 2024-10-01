@@ -24,7 +24,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  5. Click Create
  6. Copy the Client ID
 
-**2 - Then create an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then create an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Add the name
  2. Add the Signicat Express test authority `https://login-test.signicat.io` in the Authority field

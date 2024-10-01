@@ -409,9 +409,14 @@ img.logo {
     background-color: #ea7c0f;
 }
 
+
 .btn {
     white-space: nowrap;
 }
+
+    .btn.btn-left {
+        text-align: left !important;
+    }
 
     .btn.btn-wrap {
         white-space: normal !important;

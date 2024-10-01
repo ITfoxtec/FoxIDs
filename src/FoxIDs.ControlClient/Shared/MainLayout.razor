@@ -19,13 +19,7 @@
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
                         {
-                            <li class="nav-item dropdown">
-                                @if (!selectTrackError.IsNullOrWhiteSpace())
-                                {
-                                    <div class="alert alert-danger" role="alert">
-                                        @selectTrackError
-                                    </div>
-                                }
+                            <li class="nav-item dropdown">             
                                 <div class=" form-group active-group active">
                                     <label class="label-control">Environments</label>
                                     <div class="card">
@@ -140,7 +134,7 @@
                                     Applications
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="authentication">
-                                    Authentication Methods
+                                    Authentication
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="users" SubPages="externalusers">
                                     Users

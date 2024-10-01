@@ -229,7 +229,7 @@ Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configur
 
 > Access to create the sample configuration in a environment is granted in the `master` environment. The sample configuration should not be added to the `master` environment.
 
-Create a sample seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+Create a sample seed tool OAuth 2.0 client in the [FoxIDs Control Client](https://www.foxids.com/action/login):
 
 1. Select the `master` environment and create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 2. Set the client id to `sample_seed`.

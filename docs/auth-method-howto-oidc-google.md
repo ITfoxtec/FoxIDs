@@ -10,7 +10,7 @@ FoxIDs can be connected to Google with OpenID Connect and authenticate users wit
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow + PKCE and read the users claims from the ID token.
 
-**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Navigate to the **Authentication Methods** tab
  2. Click **New authentication**
@@ -45,7 +45,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  18. Click **CREATE** 
  19. Read the **Client ID** and **Client Secret** and save it for later
 
- **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Click the **Show advanced** in the top right corner of this configuration section
  2. Disable the **Single logout** switch

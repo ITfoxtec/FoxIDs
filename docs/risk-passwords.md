@@ -8,7 +8,7 @@ Download the `SHA-1` pwned passwords in a single file from [haveibeenpwned.com/p
 
 > Be aware that it takes some time to upload all risk passwords.
 
-You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
+You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](https://www.foxids.com/action/login) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
 
 ## Configure the Seed Tool
 
@@ -16,7 +16,7 @@ The seed tool is configured in the `appsettings.json` file.
 
 Access to upload risk passwords is granted in the `master` tenant.
 
-Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](https://www.foxids.com/action/login):
 
 1. Login to the `master` tenant and select the Applications tab
 2. Create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.

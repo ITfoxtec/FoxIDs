@@ -10,7 +10,7 @@ FoxIDs can be connected to Facebook with OpenID Connect and authenticate users w
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and read the users claims from the ID token.
 
-**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Navigate to the **Authentication Methods** tab
  2. Click **New authentication**
@@ -51,7 +51,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  17. Read the **App ID** and **App Secret** and save it for later
  18. Fill in the required details
  
- **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  1. Click **Show advanced** in the top right corner of this configuration section
  2. Disable the **Single logout** switch

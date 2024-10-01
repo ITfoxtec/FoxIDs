@@ -6,7 +6,7 @@ This example do login through the authentication method `login`, which can be ch
  
 ## Configuring AD FS as Relying Party (RP)
 
-**1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 The SAML 2.0 application registration can either be configured by manually adding the SAML 2.0 details or using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` *(future support)*.
 

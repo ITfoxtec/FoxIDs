@@ -15,7 +15,7 @@ Environment links support login, logout and single logout and it is possible to 
 
 The following describes how to connect two environments called `Environment X` and `Environment Y`. The environment `Environment X` will be enabled to login with `Environment Y` as an authentication method.
 
-**Select in the `Environment X` environment in [FoxIDs Control Client](control.md#foxids-control-client)**
+**Select in the `Environment X` environment in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Select the **Authentication Methods** tab
 2. Click **New authentication**

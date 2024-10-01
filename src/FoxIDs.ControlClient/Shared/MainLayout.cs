@@ -16,6 +16,7 @@ using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
 using ITfoxtec.Identity;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Shared
 {
@@ -34,7 +35,6 @@ namespace FoxIDs.Client.Shared
         private List<string> createTrackReceipt = new List<string>();
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
         private bool selectTrackInitialized = false;
-        private string selectTrackError;
         private IEnumerable<Track> selectTrackTasks;
         private Modal myProfileModal;
         private bool myProfileMasterMasterLogin;
@@ -57,6 +57,9 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -244,7 +247,6 @@ namespace FoxIDs.Client.Shared
             }
             else
             {
-                selectTrackError = null;
                 await LoadSelectTrackAsync();
 
                 var userProfile = await UserProfileLogic.GetUserProfileAsync();
@@ -274,7 +276,6 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackError = null;
                 selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();                
             }
             catch (TokenUnavailableException)
@@ -283,7 +284,7 @@ namespace FoxIDs.Client.Shared
             }
             catch (Exception ex)
             {
-                selectTrackError = ex.Message;
+                toastService.ShowError(ex.Message);
             }
         }
 
@@ -293,16 +294,20 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
             }
-            catch (FoxIDsApiException ex)
+            catch (FoxIDsApiException exa)
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (exa.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), ex.Message);
+                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), exa.Message);
                 }
                 else
                 {
-                    throw;
+                    toastService.ShowError(exa.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message);
             }
         }
 
@@ -319,11 +324,22 @@ namespace FoxIDs.Client.Shared
 
         private async Task SelectTrackAsync(Track track)
         {
-            if (!RouteBindingLogic.IsMasterTenant)
+            try
             {
-                await UserProfileLogic.UpdateTrackAsync(track.Name);
+                if (!RouteBindingLogic.IsMasterTenant)
+                {
+                    await UserProfileLogic.UpdateTrackAsync(track.Name);
+                }
+                await TrackSelectedLogic.TrackSelectedAsync(track);
             }
-            await TrackSelectedLogic.TrackSelectedAsync(track);
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message);
+            }
         }
 
         public async Task ChangeMyPasswordAsync()
@@ -333,7 +349,6 @@ namespace FoxIDs.Client.Shared
                 await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
 
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
-
             }
             catch (TokenUnavailableException)
             {

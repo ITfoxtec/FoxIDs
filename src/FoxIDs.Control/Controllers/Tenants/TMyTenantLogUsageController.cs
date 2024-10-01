@@ -34,6 +34,10 @@ namespace FoxIDs.Controllers
             {
                 logRequest.TrackName = logRequest.TrackName.ToLower();
             }
+            else
+            {
+                logRequest.TrackName = null;
+            }
 
             var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, logRequest.TrackName, isMasterTrack: true);
             return Ok(logResponse);

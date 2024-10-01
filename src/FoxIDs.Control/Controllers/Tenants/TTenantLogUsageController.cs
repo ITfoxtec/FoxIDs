@@ -35,17 +35,19 @@ namespace FoxIDs.Controllers
             if (!logRequest.TenantName.IsNullOrWhiteSpace())
             {
                 logRequest.TenantName = logRequest.TenantName.ToLower();
+
+                if (!logRequest.TrackName.IsNullOrWhiteSpace())
+                {
+                    logRequest.TrackName = logRequest.TrackName.ToLower();
+                }
+                else
+                {
+                    logRequest.TrackName = null;
+                }
             }
             else
             {
                 logRequest.TenantName = null;
-            }
-            if (!logRequest.TrackName.IsNullOrWhiteSpace())
-            {
-                logRequest.TrackName = logRequest.TrackName.ToLower();
-            }
-            else
-            {
                 logRequest.TrackName = null;
             }
 

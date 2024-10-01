@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
             }
 
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
-                .Index(GetIndexName(Constants.Logs.IndexName.Events))
+                .Index(GetIndexName())
                     .Size(0)
                     .Query(q => q
                          .Bool(b => GetQuery(b, tenantName, trackName, queryTimeRange)))
@@ -192,23 +192,17 @@ namespace FoxIDs.Logic
             return response.Aggregations.Values.FirstOrDefault() as FiltersAggregate;
         }
         
-        private string GetIndexName(string logIndexName)
+        private string GetIndexName()
         {
-            var lifetime = settings.OpenSearch.LogLifetime.GetLifetimeInDays();
-
-            if (RouteBinding?.PlanLogLifetime != null)
-            {
-                lifetime = RouteBinding.PlanLogLifetime.Value.GetLifetimeInDays();
-            }
-
-            return $"{Constants.Logs.LogName}-{lifetime}d-{logIndexName}*";
+            return $"{Constants.Logs.LogName}*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
-                                     .LessThanOrEquals(queryTimeRange.end)));
+                                     .LessThanOrEquals(queryTimeRange.end)))
+                                 .Must(m => m.Term(t => t.LogType, Constants.Logs.IndexName.Events));
 
             if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
             {
@@ -216,11 +210,7 @@ namespace FoxIDs.Logic
             }
             else if (!tenantName.IsNullOrWhiteSpace())
             {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Exists(e => e.Field(f => f.TrackName)));
-            }
-            else if (!trackName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Exists(e => e.Field(f => f.TenantName)) && m.Term(t => t.TrackName, trackName));
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName));
             }
 
             return boolQuery;

@@ -7,11 +7,51 @@ Connect to NemLog-in (Danish IdP) and let the users authenticate with MitID or o
 Each IT-system in NemLog-in holds two configurations, one for **integration test** and one for **production** (two different tabs).
 First you need to configure the [integration test](#integration_test) and upload the test rapport, and then it become possible to configure production in [NemLog-in administration](https://administration.nemlog-in.dk/).
 
+Considerations:
+- [Public or private NemLog-in IT-system](#public-or-private-nemlog-in-it-system)
+- [Dedicated environment](#consider-a-dedicated-environment)
+
 ## Integration test
 Start by creating a integration test connection to your IT-system in NemLog-in.
 
-1. Open [FoxIDs Control Client](https://www.foxids.com/action/login) and navigate to the **Authentications** tab
-2. Click 
+1. Open [FoxIDs Control Client](https://www.foxids.com/action/login) and navigate to the **Authentication** tab
+2. Click **New authentication**
+3. Select **EU Identity Provider**
+4. Click **NemLog-in (Danish IdP)**
+
+
+
+
+
+## Public or private NemLog-in IT-system
+
+Select public sector service and create a public IT-system in [NemLog-in administration](https://administration.nemlog-in.dk/) (no transaction cost) if your service is for the public sector. This also applies for a private company.
+Otherwise, select private company service and create a private IT-system in [NemLog-in administration](https://administration.nemlog-in.dk/) (low transaction cost).
+
+
+
+## Consider a dedicated environment
+
+NemLog-in requires to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.  
+Furthermore, NemLog-in use different certificates in test and production; A test OSES3 certificate in test and a production OSES3 certificate in production.
+
+![Connect to NemLog-in and use Environment Link](images/how-to-nemlogin-environment-link.svg)    
+
+You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. 
 **1) - Start by creating an SAML 2.0 authentication method in 
 
 
@@ -37,13 +77,7 @@ NemLog-in documentation:
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
-## Consider separate environment
 
-NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.
-
-![Connect to NemLog-in and use Environment Link](images/how-to-nemlogin-environment-link.svg)    
-
-You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 
 ## Certificate
 

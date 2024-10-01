@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Search by authentication method name.
         /// </summary>
         [MaxLength(Constants.Models.Party.NameLength)]
-        [Display(Name = "Filter authentications")]
+        [Display(Name = "Filter authentication methods")]
         public string FilterName { get; set; }
     }
 }

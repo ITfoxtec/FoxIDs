@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/authentications"
+﻿@page "/{tenantName}/authentication"
 @inherits PageBase
 
 <div class="tab-content">
@@ -85,7 +85,7 @@
 
 @if (newUpPartyModal != null)
 {
-    <Modal @ref="newUpPartyModal.Modal" Title="New Authentication">
+    <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
         <div class="modal-body">
             @if (newUpPartyModal.Type != null)
             {
@@ -104,18 +104,26 @@
                 </div>
             }
             <div class="@(newUpPartyModal.Type == null ? string.Empty : "d-none")">
+                <div class="info-text pb-4">
+                    Connect and configure new authentication method.
+                </div>
                 <div class="accordion" id="accordionAuthMethods">
                     <div class="card">
                         <div class="card-header" id="headingOneS">
+ 
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneS" aria-expanded="true" aria-controls="collapseOneS">
-                                    Connect to Social
+                                    Social
                                 </button>
                             </h2>
                         </div>
 
                         <div id="collapseOneS" class="collapse show" aria-labelledby="headingOneS" data-parent="#accordionAuthMethods">
                             <div class="card-body">
+                                <div class="info-text">
+                                    Connect to social like Facebook, Apple, Google and others, and let your user’s log in with them.
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -123,7 +131,7 @@
                         <div class="card-header" id="headingOneE">
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
-                                    Connect to Enterprise
+                                    Enterprise
                                 </button>
                             </h2>
                         </div>
@@ -131,6 +139,10 @@
                         <div id="collapseOneE" class="collapse" aria-labelledby="headingOneE" data-parent="#accordionAuthMethods">
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="info-text">
+                                        Connect to enterprise like Microsoft Entra ID, Google Workspace and others, and let your user’s log in with them.
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -139,13 +151,16 @@
                         <div class="card-header" id="headingOneI">
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneI" aria-expanded="true" aria-controls="collapseOneI">
-                                    Connect to Danish ID Provider
+                                    EU Identity Providers
                                 </button>
                             </h2>
                         </div>
 
                         <div id="collapseOneI" class="collapse" aria-labelledby="headingOneI" data-parent="#accordionAuthMethods">
                             <div class="card-body">
+                                <div class="info-text">
+                                    Connect to EU identity provider like Nemlog-in (Danish IdP) and Context Handler (Danish IdP), and let your user’s log in with them.
+                                </div>
                                 <div class="row">
                                     <div class="col-6 py-2">
                                         @{
@@ -191,15 +206,17 @@
                         <div class="card-header" id="headingTwo">
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Connect by Security Standard
+                                    OpenID Connect, OAuth 2.0 and SAML 2.0
                                 </button>
                             </h2>
                         </div>
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionAuthMethods">
                             <div class="card-body">
                                 <div class="d-flex">
-                                    <div class="mr-auto"></div>
-                                    <div class="pt-0 pb-2">
+                                    <div class="info-text mr-auto">
+                                        Connect to identity providers with OpenID Connect, OAuth 2.0 and SAML 2.0 for even more versatility.
+                                    </div>
+                                    <div class="pl-2 pt-2 pb-2">
                                         <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
                                     </div>
                                 </div>
@@ -243,13 +260,17 @@
                         <div class="card-header" id="headingThree">
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Connect User Store
+                                    External user store or environment user store
                                 </button>
                             </h2>
                         </div>
                         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionAuthMethods">
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="info-text">
+                                        Connect to external user store or configure environment login, and let your user’s log in with the user stores.
+                                    </div>
+
                                     <div class="col-6 py-2">
                                         <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External API login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
                                             <h5 class="py-2">External API login</h5>
@@ -258,7 +279,7 @@
                                     </div>
                                     <div class="col-6 py-2">
                                         <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("User login UI", PartyTypes.Login))" @onclick:preventDefault>
-                                            <h5 class="py-2">User login UI</h5>
+                                            <h5 class="py-2">Environment login</h5>
                                             <div class="py-2">Users can authenticate with the environment's user store or have the option to choose another authentication method.<br />The user interface is customizable.</div>
                                         </a>
                                     </div>
@@ -270,13 +291,17 @@
                         <div class="card-header" id="headingFour">
                             <h2 class="mb-0">
                                 <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    Connect two Environments
+                                    Connect environments
                                 </button>
                             </h2>
                         </div>
                         <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionAuthMethods">
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="info-text"> 
+                                        Connect to another environment and let you user’s log in with the environment’s authentication methods.
+                                    </div>
+
                                     <div class="col-6 py-2">
                                         <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
                                             <h5 class="py-2">Environment Link</h5>

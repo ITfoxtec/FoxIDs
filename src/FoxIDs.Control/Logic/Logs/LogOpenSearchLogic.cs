@@ -254,14 +254,7 @@ namespace FoxIDs.Logic
 
         private string GetIndexName()
         {
-            var lifetime = settings.OpenSearch.LogLifetime.GetLifetimeInDays();
-
-            if (RouteBinding?.PlanLogLifetime != null)
-            {
-                lifetime = RouteBinding.PlanLogLifetime.Value.GetLifetimeInDays();
-            }
-
-            return $"{Constants.Logs.LogName}-{lifetime}d*";
+            return $"{Constants.Logs.LogName}*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)

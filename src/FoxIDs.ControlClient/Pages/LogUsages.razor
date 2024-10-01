@@ -48,8 +48,8 @@
             <FInputCheckboxSelect Items="IncludeTypeItems" SelectedItems="usageLogRequestForm.Model.IncludeTypes" For="@(() => usageLogRequestForm.Model.IncludeTypes)" />
             @if (IsMasterTenant)
             {
-                <FInputText @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
-                <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TenantName" For="@(() => usageLogRequestForm.Model.TenantName)" />
+                <FInputText @bind-Value="usageLogRequestForm.Model.TenantName" For="@(() => usageLogRequestForm.Model.TenantName)" />
+                <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
             }
             else @if (IsMasterTrack)
             {

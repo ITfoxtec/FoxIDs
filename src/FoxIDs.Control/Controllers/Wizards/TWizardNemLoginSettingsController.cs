@@ -54,8 +54,6 @@ namespace FoxIDs.Controllers
                 }
 
                 result.Oces3TestCertificate = mapper.Map<Api.JwkWithCertificateInfo>(await oces3TestCertificate.ToFTJsonWebKeyAsync(includePrivateKey: true));
-                result.OioSaml3MetadataTest = nemLoginSettings.OioSaml3MetadataTest;
-                result.OioSaml3MetadataProduction = nemLoginSettings.OioSaml3MetadataProduction;
                 return result;
             }
             catch (Exception ex)

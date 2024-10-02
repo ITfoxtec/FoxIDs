@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models.Config;
-using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -17,13 +16,11 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
-        private readonly DownloadLogic downloadLogic;
 
-        public TWizardContextHandlerSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, DownloadLogic downloadLogic) : base(logger)
+        public TWizardContextHandlerSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper) : base(logger)
         {
             this.settings = settings;
             this.mapper = mapper;
-            this.downloadLogic = downloadLogic;
         }
 
         /// <summary>
@@ -42,11 +39,7 @@ namespace FoxIDs.Controllers
                 }
                 await contextHandlerSettings.ValidateObjectAsync();
 
-                return new Api.WizardContextHandlerSettings
-                {
-                    OioSaml3MetadataTest = contextHandlerSettings.OioSaml3MetadataTest,
-                    OioSaml3MetadataProduction = contextHandlerSettings.OioSaml3MetadataProduction
-                };
+                return mapper.Map<Api.WizardContextHandlerSettings>(contextHandlerSettings);
             }
             catch (Exception ex)
             {

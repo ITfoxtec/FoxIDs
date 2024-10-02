@@ -53,6 +53,7 @@ namespace FoxIDs.Logic
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
+                ClientId = ResolveClientId(party)
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
@@ -111,9 +112,10 @@ namespace FoxIDs.Logic
             var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
             var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
             {
+                IdTokenHint = session.IdToken,
+                ClientId = oidcUpSequenceData.ClientId,
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = await sequenceLogic.CreateExternalSequenceIdAsync(),
-                IdTokenHint = session.IdToken
             };
             logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
@@ -211,6 +213,11 @@ namespace FoxIDs.Logic
             {
                 throw new StopSequenceException("Falling logout response down", ex);
             }
+        }
+
+        protected string ResolveClientId(OidcUpParty party)
+        {
+            return !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId;
         }
     }
 }

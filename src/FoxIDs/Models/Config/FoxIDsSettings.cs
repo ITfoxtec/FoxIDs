@@ -56,6 +56,11 @@ namespace FoxIDs.Models.Config
         public int SequenceGracePeriod { get; set; } = 7200;
 
         /// <summary>
+        /// Should the sequences be deleted after they have been used, default not deleted.
+        /// </summary>
+        public bool DeleteUsedSequences { get; set; }
+
+        /// <summary>
         /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]

@@ -17,10 +17,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Usage types")]
         public List<string> IncludeTypes { get; set; } = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests };
 
-        [Display(Name = "Select one tenant by full tenant name")]
+        [Display(Name = "Select tenant by full tenant name")]
         public string TenantName { get; set; } 
 
-        [Display(Name = "Select one environment by full environment name")]
+        [Display(Name = "Select environment by full environment name")]
         public string TrackName { get; set; }       
     }
 }

@@ -241,7 +241,7 @@ namespace FoxIDs.Logic
             }
 
             var sequenceData = data.ToObject<T>();
-            if (remove)
+            if (settings.DeleteUsedSequences && remove)
             {
                 await cacheProvider.DeleteAsync(key);
             }
@@ -271,9 +271,12 @@ namespace FoxIDs.Logic
 
         public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData, new()
         {
-            var sequence = HttpContext.GetSequence();
-            var key = DataKey(typeof(T), sequence);
-            await cacheProvider.DeleteAsync(key);
+            if (settings.DeleteUsedSequences)
+            {
+                var sequence = HttpContext.GetSequence();
+                var key = DataKey(typeof(T), sequence);
+                await cacheProvider.DeleteAsync(key);
+            }
         }
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
@@ -337,8 +340,12 @@ namespace FoxIDs.Logic
                 {
                     throw new SequenceBrowserBackException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
                 }
-                await cacheProvider.DeleteAsync(key);
-
+                
+                if (settings.DeleteUsedSequences)
+                {
+                    await cacheProvider.DeleteAsync(key);
+                }
+                    
                 var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;

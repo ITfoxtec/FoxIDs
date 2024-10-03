@@ -47,6 +47,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<HrdLogic>();
             services.AddTransient<SessionLoginUpPartyLogic>();
             services.AddTransient<SessionUpPartyLogic>();
+            services.AddTransient<StateUpPartyLogic>();
             services.AddTransient<ClaimTransformLogic>();
             services.AddTransient<DynamicElementLogic>();
 

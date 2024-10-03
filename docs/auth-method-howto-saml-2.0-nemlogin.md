@@ -16,7 +16,7 @@ Start by creating a integration test connection to your IT-system in NemLog-in.
 
 1. Open [FoxIDs Control Client](https://www.foxids.com/action/login) and navigate to the **Authentication** tab
 2. Click **New authentication**
-3. Select **EU Identity Provider**
+3. Select **Enterprise**
 4. Click **NemLog-in (Danish IdP)**
 
 

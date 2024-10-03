@@ -21,17 +21,19 @@ namespace FoxIDs.Logic
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
+        private readonly StateUpPartyLogic stateUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
+            this.stateUpPartyLogic = stateUpPartyLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -53,6 +55,7 @@ namespace FoxIDs.Logic
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
+                ClientId = ResolveClientId(party)
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
@@ -111,12 +114,19 @@ namespace FoxIDs.Logic
             var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
             var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
             {
+                IdTokenHint = session.IdToken,
+                ClientId = oidcUpSequenceData.ClientId,
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = await sequenceLogic.CreateExternalSequenceIdAsync(),
-                IdTokenHint = session.IdToken
             };
             logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
+            if(party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
+            {
+                nameValueCollection.Add("logout_uri", rpInitiatedLogoutRequest.PostLogoutRedirectUri);
+                await stateUpPartyLogic.CreateOrUpdateStateCookieAsync(party, rpInitiatedLogoutRequest.State);
+                logger.ScopeTrace(() => $"AuthMethod, End session add custom 'logout_uri={rpInitiatedLogoutRequest.PostLogoutRedirectUri}' parameter and state cookie for Amazon AWS Cognito.");
+            }
             logger.ScopeTrace(() => $"AuthMethod, End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace(() => "AuthMethod, Sending OIDC End session request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl, RouteBinding.DisplayName);
@@ -147,6 +157,11 @@ namespace FoxIDs.Logic
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
             logger.ScopeTrace(() => $"AuthMethod, End session response '{rpInitiatedLogoutResponse.ToJson()}'.", traceType: TraceTypes.Message);
             rpInitiatedLogoutResponse.Validate();
+
+            if (party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
+            {
+                rpInitiatedLogoutResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
+            }
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
@@ -211,6 +226,11 @@ namespace FoxIDs.Logic
             {
                 throw new StopSequenceException("Falling logout response down", ex);
             }
+        }
+
+        protected string ResolveClientId(OidcUpParty party)
+        {
+            return !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId;
         }
     }
 }

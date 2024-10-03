@@ -157,11 +157,12 @@ namespace FoxIDs.Logic
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
             logger.ScopeTrace(() => $"AuthMethod, End session response '{rpInitiatedLogoutResponse.ToJson()}'.", traceType: TraceTypes.Message);
             rpInitiatedLogoutResponse.Validate();
-            if (rpInitiatedLogoutResponse.State.IsNullOrEmpty())
+
+            if (party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
             {
-                rpInitiatedLogoutResponse.State = await stateUpPartyLogic.GetAndDeleteStateAsync(party);
-                if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
-            }                               
+                rpInitiatedLogoutResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
+            }
+            if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
             logger.ScopeTrace(() => "AuthMethod, Successful OIDC End session response.", triggerEvent: true);

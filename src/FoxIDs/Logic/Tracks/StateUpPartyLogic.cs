@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             await stateCookieRepository.SaveAsync(upParty, stateCookie, null);
         }
 
-        public async Task<string> GetAndDeleteStateAsync<T>(T upParty) where T : UpParty
+        public async Task<string> GetAndDeleteStateCookieAsync<T>(T upParty) where T : UpParty
         {
             logger.ScopeTrace(() => $"Get and delete authentication method state cookie, Route '{RouteBinding.Route}'.");
 

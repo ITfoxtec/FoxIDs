@@ -82,7 +82,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.Tracks)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.Tracks.Included" For="@(() => plan.Form.Model.Tracks.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.Tracks.IsLimited" For="@(() => plan.Form.Model.Tracks.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Tracks.LimitedThreshold" For="@(() => plan.Form.Model.Tracks.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.Tracks.FirstLevelCost" For="@(() => plan.Form.Model.Tracks.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.Tracks.FirstLevelThreshold" For="@(() => plan.Form.Model.Tracks.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.Tracks.SecondLevelCost" For="@(() => plan.Form.Model.Tracks.SecondLevelCost)" />
@@ -90,7 +90,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.Users)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.Users.Included" For="@(() => plan.Form.Model.Users.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.Users.IsLimited" For="@(() => plan.Form.Model.Users.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Users.LimitedThreshold" For="@(() => plan.Form.Model.Users.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.Users.FirstLevelCost" For="@(() => plan.Form.Model.Users.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.Users.FirstLevelThreshold" For="@(() => plan.Form.Model.Users.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.Users.SecondLevelCost" For="@(() => plan.Form.Model.Users.SecondLevelCost)" />
@@ -98,7 +98,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.Logins)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.Logins.Included" For="@(() => plan.Form.Model.Logins.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.Logins.IsLimited" For="@(() => plan.Form.Model.Logins.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Logins.LimitedThreshold" For="@(() => plan.Form.Model.Logins.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.Logins.FirstLevelCost" For="@(() => plan.Form.Model.Logins.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.Logins.FirstLevelThreshold" For="@(() => plan.Form.Model.Logins.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.Logins.SecondLevelCost" For="@(() => plan.Form.Model.Logins.SecondLevelCost)" />
@@ -106,7 +106,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.TokenRequests)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.TokenRequests.Included" For="@(() => plan.Form.Model.TokenRequests.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.TokenRequests.IsLimited" For="@(() => plan.Form.Model.TokenRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.TokenRequests.LimitedThreshold" For="@(() => plan.Form.Model.TokenRequests.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.TokenRequests.FirstLevelCost" For="@(() => plan.Form.Model.TokenRequests.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.TokenRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.TokenRequests.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.TokenRequests.SecondLevelCost" For="@(() => plan.Form.Model.TokenRequests.SecondLevelCost)" />
@@ -114,7 +114,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.ControlApiGetRequests)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.ControlApiGetRequests.Included" For="@(() => plan.Form.Model.ControlApiGetRequests.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.ControlApiGetRequests.IsLimited" For="@(() => plan.Form.Model.ControlApiGetRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequests.LimitedThreshold" For="@(() => plan.Form.Model.ControlApiGetRequests.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiGetRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.SecondLevelCost)" />
@@ -122,7 +122,7 @@
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.ControlApiUpdateRequests)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.ControlApiUpdateRequests.Included" For="@(() => plan.Form.Model.ControlApiUpdateRequests.Included)" />
-                                <FInputToggle @bind-Value="plan.Form.Model.ControlApiUpdateRequests.IsLimited" For="@(() => plan.Form.Model.ControlApiUpdateRequests.IsLimited)" TextType="y.n" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.LimitedThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequests.LimitedThreshold)" />
                                 <FInputNumberD @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost)" />

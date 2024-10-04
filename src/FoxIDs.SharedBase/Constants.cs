@@ -277,6 +277,7 @@ namespace FoxIDs
                 public const string CurrencyRegExPattern = @"^[\w]*$";
                 public const int CostPerMonthMin = 0;
                 public const int IncludedMin = 0;
+                public const int LimitedThresholdMin = 0;
                 public const int FirstLevelThresholdMin = 0;
             }
 

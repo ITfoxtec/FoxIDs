@@ -11,9 +11,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Included")]
         public long Included { get; set; }
 
-        [Required]
-        [Display(Name = "Is limited")]
-        public bool IsLimited { get; set; }
+        [Min(Constants.Models.Plan.LimitedThresholdMin)]
+        [Display(Name = "Limited threshold")]
+        public long? LimitedThreshold { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]

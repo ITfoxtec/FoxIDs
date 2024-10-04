@@ -11,9 +11,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "included")]
         public long Included { get; set; }
 
-        [Required]
-        [JsonProperty(PropertyName = "is_limited")]
-        public bool IsLimited { get; set; }
+        [Min(Constants.Models.Plan.LimitedThresholdMin)]
+        [Display(Name = "Limited threshold")]
+        public long? LimitedThreshold { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]

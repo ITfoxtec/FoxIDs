@@ -4,12 +4,17 @@ Connect to NemLog-in (Danish IdP) and let the users authenticate with MitID or o
 
 > Not an IT system in NemLog-in? Become a [NemLog-in service provider](https://tilslut.nemlog-in.dk/) and read more on [NemLog-in information site](https://tu.nemlog-in.dk/) for service providers.
 
-Each IT-system in NemLog-in holds two configurations, one for **integration test** and one for **production** (two different tabs).
-First you need to configure the [integration test](#integration_test) and upload the test rapport, and then it become possible to configure production in [NemLog-in administration](https://administration.nemlog-in.dk/).
+Each IT-system in NemLog-in holds two configurations, one for **integration test** and one for **production** (two different tabs). NemLog-in is configured in [NemLog-in administration](https://administration.nemlog-in.dk/).
+First you need to configure [integration test](#integration-test) and [upload the test rapport](#upload-test-rapport), and then it become possible to configure [production](#production).
 
 Considerations:
 - [Public or private NemLog-in IT-system](#public-or-private-nemlog-in-it-system)
 - [Dedicated environment](#consider-a-dedicated-environment)
+
+NemLog-in docs:
+- [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/)
+- [NemLog-in LogViewer](https://logviewer.test-nemlog-in.dk/) (integration test)
+- Create test users in [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) or [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create) (login with username and password)
 
 ## Integration test
 Start by creating a integration test connection to your IT-system in NemLog-in.
@@ -18,17 +23,41 @@ Start by creating a integration test connection to your IT-system in NemLog-in.
 2. Click **New authentication**
 3. Select **Enterprise**
 4. Click **NemLog-in (Danish IdP)**
+5. Optionally change the **Name**
+6. Select **NemLog-in service type**, either [Public sector service or Private company service](#public-or-private-nemlog-in-it-system)
+   ![Connect to NemLog-in wizard](images/howto-saml-nemlogin3-wizard.png)    
+7. Click **Create**  
+   ![Connect to NemLog-in wizard receipt](images/howto-saml-nemlogin3-wizard-receipt.png)    
+8. Read the **Metadata URL** on the receipt and download the metadata file
+9. Click **Close**
+10. Open [NemLog-in administration](https://administration.nemlog-in.dk/) and find / create the IT-system, with a matching service type (public or private)
+   ![Connect to NemLog-in Administration](images/howto-saml-nemlogin3-admin-test.png)    
+11. Click **Upload metadata file** and upload the metadata file from FoxIDs
+12. Click **Provision to integrationtest** and then click **Applay for integration test**
+13. Go back to the authentication method in FoxIDs and click **Test authentication** to perform a test login on NemLog-in.
+   ![Connect to NemLog-in test](images/howto-saml-nemlogin3-auth-test.png)    
+ 
+## Upload test rapport
+NemLog-in require you to do a integration test and upload a test report.
 
+1. Download an empty [test rapport for public service](https://cms.nemlog-in.dk/media/tfpbdcls/integrationstestrapport-offentlige-tjenester-v3-1.doc) or [test rapport for private service](https://cms.nemlog-in.dk/media/xymn2v4i/integrationstestrapport-private-tjenester-v3-1.doc), and [test description](https://cms.nemlog-in.dk/media/jfslsngd/integrationstest-v3-0-4-oiosaml-3.pdf).
+2. Carry out the test and fill in the test report
+3. Open [NemLog-in administration](https://administration.nemlog-in.dk/) 
+4. Navigate to **Waiting tasks**, find the integration test environment task, and click **Approve**
+5. Navigate to **Home**, and find the IT-system
+6. Click **Upload test report** and upload the test report
+7. NemLog-in support will need to approve your test report (usually within one business day) and it will then be possible to set up production 
+
+## Production
 
 
 
 
 ## Public or private NemLog-in IT-system
 
-Select public sector service and create a public IT-system in [NemLog-in administration](https://administration.nemlog-in.dk/) (no transaction cost) if your service is for the public sector. This also applies for a private company.
-Otherwise, select private company service and create a private IT-system in [NemLog-in administration](https://administration.nemlog-in.dk/) (low transaction cost).
+Select public sector service if your service is for the public sector. This also applies for a private company. No transaction costs. Your service will then be part of the public sector federation and utilise single sign-on (SSO) with other public services.
 
-
+Otherwise, select private company service. Low transaction cost. (the absolute lowest price on the market). You will not have single sign-on (SSO) with public services.
 
 ## Consider a dedicated environment
 

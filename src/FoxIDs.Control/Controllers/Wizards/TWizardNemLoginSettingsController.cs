@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
                 }
                 await nemLoginSettings.ValidateObjectAsync();
 
-                var result = new Api.WizardNemLoginSettings();
+                var result = mapper.Map<Api.WizardNemLoginSettings>(nemLoginSettings);
 
                 var certBytes = await downloadLogic.DownloadAsBytesAsync(nemLoginSettings.Oces3TestCertificateUrl, "OCES3 test certificate");
                 var oces3TestCertificate = new X509Certificate2(certBytes, nemLoginSettings.Oces3TestCertificatePasswrod, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
@@ -52,8 +52,8 @@ namespace FoxIDs.Controllers
                 {
                     throw new ValidationException("Unable to read the OCES3 test certificate private key.");
                 }
-
                 result.Oces3TestCertificate = mapper.Map<Api.JwkWithCertificateInfo>(await oces3TestCertificate.ToFTJsonWebKeyAsync(includePrivateKey: true));
+
                 return result;
             }
             catch (Exception ex)

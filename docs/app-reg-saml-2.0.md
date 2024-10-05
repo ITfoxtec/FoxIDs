@@ -56,7 +56,7 @@ How to configure your application as an SAML 2.0 Relying Party (RP).
 > A application registration can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
 > An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/environment-y/application-saml-pr1(login)/saml/idpmetadata`
 
-The following screen shot show the basic FoxIDs SAML 2.0 application registration configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 application registration configuration available in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
 > More configuration options become available by clicking `Show advanced`.
 

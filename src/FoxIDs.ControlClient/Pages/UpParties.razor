@@ -87,84 +87,216 @@
 {
     <Modal @ref="newUpPartyModal.Modal" Title="New Authentication Method">
         <div class="modal-body">
-            <div class="d-flex">
-                <div class="mr-auto"><h6>@newUpPartyModal.AppTitle</h6></div>
-                <div class="pt-0 pb-2">
-                    @if (newUpPartyModal.Type == null)
-                    {
-                        <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
-                    }
-                    else if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
-                    {
-                        <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
-                    }
-                </div>
-            </div>
-            @if (newUpPartyModal.Type == null)
+            @if (newUpPartyModal.Type != null)
             {
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("OpenID Provider", PartyTypes.Oidc))" @onclick:preventDefault>
-                                <h5 class="py-2">OpenID Provider <div class="small">(OpenID Connect)</div></h5>
-                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
-                                <div class="py-2">Identity Provider that support OpenID Connect.</div>
-                            </a>
-                        </div>
-                        <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2))" @onclick:preventDefault>
-                                <h5 class="py-2">Identity Provider <div class="small">(SAML 2.0)</div></h5>
-                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
-                                <div class="py-2">Identity Provider that support SAML 2.0.</div>
-                            </a>
-                        </div>
-
-
-                        @if (newUpPartyModal.ShowAll)
+                <div class="d-flex pb-2">
+                    @if (!newUpPartyModal.AppTitleImage.IsNullOrEmpty())
+                    {
+                        <img class="pr-2" style="height: @(newUpPartyModal.AppTitleImageHeight)" src="@newUpPartyModal.AppTitleImage" />
+                    }
+                    <div class="mr-auto"><h5>@(newUpPartyModal.AppTitle) @if (!newUpPartyModal.AppSubTitle.IsNullOrEmpty()) { <div class="small">(@(newUpPartyModal.AppSubTitle))</div> } </h5></div>
+                    <div class="pt-0 pb-2">
+                        @if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
                         {
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
-                                    <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
-                                    <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
-                                </a>
-                            </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
-                                    <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
-                                    <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
-                                </a>
-                            </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External API login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
-                                    <h5 class="py-2">External API login</h5>
-                                    <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
-                                </a>
-                            </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("User login UI", PartyTypes.Login))" @onclick:preventDefault>
-                                    <h5 class="py-2">User login UI</h5>
-                                    <div class="py-2">Users can authenticate with the environment's user store or have the option to choose another authentication method.<br />The user interface is customizable.</div>
-                                </a>
-                            </div>
-
-                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
-                                    <h5 class="py-2">Environment Link</h5>
-                                    <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
-                                </a>
-                            </div>
+                            <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
                         }
                     </div>
                 </div>
             }
-            else if (newUpPartyModal.Type == PartyTypes.TrackLink)
+            <div class="@(newUpPartyModal.Type == null ? string.Empty : "d-none")">
+                <div class="info-text pb-4">
+                    Connect and configure new authentication method.
+                </div>
+                <div class="accordion" id="accordionAuthMethods">
+                    <div class="card">
+                        <div class="card-header" id="headingOneS">
+ 
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneS" aria-expanded="true" aria-controls="collapseOneS">
+                                    Social
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="collapseOneS" class="collapse show" aria-labelledby="headingOneS" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="info-text">
+                                    Connect to social like Facebook, Apple, Google and others, and let your user’s log in with them.
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingOneE">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
+                                    Enterprise
+                                </button>
+                            </h2>
+                        </div>
+
+                        <div id="collapseOneE" class="collapse" aria-labelledby="headingOneE" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="info-text">
+                                    Connect to enterprise like Microsoft Entra ID, Google Workspace and others, and let your user’s log in with them.
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        @{
+                                            var nemlogin = new UpPartyInfo
+                                            {
+                                                Title = "NemLog-in (Danish IdP)",
+                                                SubTitle = "SAML 2.0",
+                                                Image = "./images/logos/nemlogin.png",
+                                                ImageHeight = "45px"
+                                            };
+                                        }
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync(nemlogin, PartyTypes.Saml2, IdPTypes.NemLogin))" @onclick:preventDefault>
+                                            <div class="d-flex">
+                                                <img class="my-2 pr-2" style="height: @(nemlogin.ImageHeight)" src="@(nemlogin.Image)" />
+                                                <h5 class="my-2">@(nemlogin.Title) <div class="small">(@(nemlogin.SubTitle))</div></h5>
+                                            </div>
+                                            <div class="py-2">Connect to NemLog-in and let the uses login with MitID or other methods supported by NemLog-in.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        @{
+                                            var contextHandler = new UpPartyInfo
+                                            {
+                                                Title = "Context Handler / FKA (Danish IdP)",
+                                                SubTitle = "SAML 2.0",
+                                                Image = "./images/logos/contexthandler.svg",
+                                                ImageHeight = "45px"
+                                            };
+                                        }
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync(contextHandler, PartyTypes.Saml2, IdPTypes.ContextHandler))" @onclick:preventDefault>
+                                            <div class="d-flex">
+                                                <img class="my-2 pr-2" style="height: @(contextHandler.ImageHeight)" src="@(contextHandler.Image)" />
+                                                <h5 class="my-2">@(contextHandler.Title) <div class="small">(@(contextHandler.SubTitle))</div></h5>
+                                            </div>
+                                            <div class="py-2">Connect to Context Handler, in Danish called 'Fælleskommunal Adgangsstyring' (FKA), and leverage the municipal login.</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    OpenID Connect, OAuth 2.0 and SAML 2.0
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="info-text mr-auto">
+                                        Connect to identity providers with OpenID Connect, OAuth 2.0 and SAML 2.0 for even more versatility.
+                                    </div>
+                                    <div class="pl-2 pt-2 pb-2">
+                                        <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("OpenID Provider", PartyTypes.Oidc))" @onclick:preventDefault>
+                                            <h5 class="py-2">OpenID Provider <div class="small">(OpenID Connect)</div></h5>
+                                            <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
+                                            <div class="py-2">Identity Provider that support OpenID Connect.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2))" @onclick:preventDefault>
+                                            <h5 class="py-2">Identity Provider <div class="small">(SAML 2.0)</div></h5>
+                                            <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
+                                            <div class="py-2">Identity Provider that support SAML 2.0.</div>
+                                        </a>
+                                    </div>
+                                    @if (newUpPartyModal.ShowAll)
+                                    {
+                                        <div class="col-6 py-2">
+                                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, tokenExchange: true))" @onclick:preventDefault>
+                                                <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
+                                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
+                                                <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
+                                            </a>
+                                        </div>
+                                        <div class="col-6 py-2">
+                                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, tokenExchange: true))" @onclick:preventDefault>
+                                                <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
+                                                <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
+                                                <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    External user store or environment user store
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="info-text">
+                                        Connect to external user store or configure environment login, and let your user’s log in with the user stores.
+                                    </div>
+
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("External API login", PartyTypes.ExternalLogin))" @onclick:preventDefault>
+                                            <h5 class="py-2">External API login</h5>
+                                            <div class="py-2">Users can authenticate in a external user store, where FoxIDs call an external API to validate the user.<br />The user interface is customizable.</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("User login UI", PartyTypes.Login))" @onclick:preventDefault>
+                                            <h5 class="py-2">Environment login</h5>
+                                            <div class="py-2">Users can authenticate with the environment's user store or have the option to choose another authentication method.<br />The user interface is customizable.</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingFour">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Connect environments
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionAuthMethods">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="info-text"> 
+                                        Connect to another environment and let you user’s log in with the environment’s authentication methods.
+                                    </div>
+
+                                    <div class="col-6 py-2">
+                                        <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-left btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Environment Link", PartyTypes.TrackLink))" @onclick:preventDefault>
+                                            <h5 class="py-2">Environment Link</h5>
+                                            <div class="py-2">Connect this environment to another FoxIDs environment to reuse functionality and connections.</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (newUpPartyModal.Type == PartyTypes.TrackLink)
             {
-                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
+                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
                     @if (!newUpPartyModal.Created)
                     {
                         <div class="info-text">
@@ -266,7 +398,224 @@
                     </div>
                 </PageEditForm>
             }
-            else
+            else if (newUpPartyModal.Type == PartyTypes.Saml2 && newUpPartyModal.IdPType == IdPTypes.NemLogin)
+            {
+                <PageEditForm @ref="newUpPartyModal.NemLoginForm" TModel="NewUpPartyNemLoginViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyNemLoginModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.NemLoginForm, editContext))">
+                    @if (!newUpPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in connection</DocsLink> for either test or production.
+                            <br />
+                            <div class="font-italic pt-2">NemLog-in require different OCES3 certificates in test and production. Therefore, consider whether NemLog-in connections should be configured in dedicated environments.</div>
+                        </div>
+                        <div>
+                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.DisplayName" For="@(() => newUpPartyModal.NemLoginForm.Model.DisplayName)" Focus="true" />
+
+                            <div class="info-text">
+                                Select <strong>public sector service</strong> and create a public IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink> (no transaction costs) if your service is for the public sector. This also applies for a private company.
+                                <br />
+                                Otherwise, select <strong>private company service</strong> and create a private IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink> (low transaction costs).
+                            </div>
+
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.ServiceType" For="@(() => newUpPartyModal.NemLoginForm.Model.ServiceType)">
+                                <option value="@NemLoginServiceTypes.PublicSector">Public sector service</option>
+                                <option value="@NemLoginServiceTypes.Private">Private company service</option>
+                            </FInputSelect>
+
+                            <div class="info-text">
+                                Each IT-system in NemLog-in holds two configurations, one for <strong>integration test</strong> and one for <strong>production</strong> (two different tabs).
+                                First you need to configure the integration test and upload the test rapport, and then it become possible to configure production in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink>.
+                            </div>
+
+                            <FInputSelect @bind-Value="newUpPartyModal.NemLoginForm.Model.Environment" For="@(() => newUpPartyModal.NemLoginForm.Model.Environment)">
+                                <option value="@WizardEnvironments.Test">Integration test</option>
+                                <option value="@WizardEnvironments.Production">Production</option>
+                            </FInputSelect>
+
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Test)
+                            {
+                                <div class="info-text pb-4">
+                                    NemLog-in require a OCES3 test certificate as the <DocsLink Page="certificates">environment certificate</DocsLink>. This wizard will change the environment to use a OCES3 test certificate.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-text pb-4">
+                                    NemLog-in require you to configure a OCES3 certificate as the environment certificate. Create a OCES3 certificate in <DocsLink External="odes3-create">NemLog-in business administration</DocsLink> and change the <DocsLink Page="certificates">environment certificate</DocsLink> to your new OCES3 certificate.
+                                    <br />
+                                    <div class="font-italic pt-2">With the certificate in place continue the wizard.</div>                                    
+                                </div>
+                            }
+
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Production)
+                            {
+                                <div class="active-group active py-3">
+                                    <label class="label-control">Contact information</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.Company" For="@(() => newUpPartyModal.NemLoginForm.Model.Company)" />
+                                            <FInputText @bind-Value="newUpPartyModal.NemLoginForm.Model.EmailAddress" For="@(() => newUpPartyModal.NemLoginForm.Model.EmailAddress)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (!newUpPartyModal.ShowAdvanced)
+                            {
+                                <button type="button" class="btn btn-link pt-0 pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    Select the NemLog-in privileges claim <small class="font-weight-bold">'https://data.gov.dk/model/core/eid/privilegesIntermediate'</small> if you want to grant access based on privileges.
+                                </div>
+                                <FInputCheckboxSelect Items="newUpPartyModal.NemLoginForm.Model.Claims" SelectedItems="newUpPartyModal.NemLoginForm.Model.SelectedClaims" DisableItems="newUpPartyModal.NemLoginForm.Model.DisabledClaims" NewLine="true" For="@(() => newUpPartyModal.NemLoginForm.Model.Claims)" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your NemLog-in authentication method has been created.
+                        </div>
+
+                        <div class="info-text">
+                            @if (newUpPartyModal.NemLoginForm.Model.Environment == WizardEnvironments.Test)
+                            {
+                                <div>Use the metadata URL to download the metadata file and store it locally.</div>
+                            }
+                            else
+                            {
+                                <div>
+                                    Save the metadata URL and make sure your OCES3 certificate is in place as the <DocsLink Page="certificates">environment certificate</DocsLink>. Then use the metadata URL to download the metadata file and store it locally.
+                                </div>
+                            }
+                            <div class="pt-2">Upload the metadata file to your NemLog-in IT-system in <DocsLink External="nemlogin-admin">NemLog-in administration</DocsLink>, please see the <DocsLink Page="auth-method-howto-saml-2.0-nemlogin">NemLog-in guide</DocsLink></div>
+                        </div>
+                        <FFieldTextLinkClipboard @bind-Value="newUpPartyModal.NemLoginForm.Model.Metadata" For="@(() => newUpPartyModal.NemLoginForm.Model.Metadata)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newUpPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newUpPartyModal.CreateWorking ? "disabled" : "")" onclick="@(async () => await ChangeNewUpPartyStateAsync())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newUpPartyModal.CreateWorking ? "disabled" : "")">Create</button>
+                            <button type="button" class="btn btn-secondary @(newUpPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newUpPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newUpPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newUpPartyModal.Type == PartyTypes.Saml2 && newUpPartyModal.IdPType == IdPTypes.ContextHandler)
+            {
+                <PageEditForm @ref="newUpPartyModal.ContextHandlerForm" TModel="NewUpPartyContextHandlerViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyContextHandlerModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.ContextHandlerForm, editContext))">
+                    @if (!newUpPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="howto-saml-2.0-context-handler">Context Handler connection</DocsLink> for either test or production.
+                            <br />
+                            <div class="font-italic pt-2">Context Handler require unique OCES3 certificates in both test and production. Therefore, consider whether Context Handler connections should be configured in dedicated environments.</div>
+                        </div>
+                        <div>
+                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.DisplayName" For="@(() => newUpPartyModal.ContextHandlerForm.Model.DisplayName)" Focus="true" />
+
+                            @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                            {
+                                <div class="info-text">
+                                    The test IT-system is configured as a user-facing system in <DocsLink External="contexthandler-admin-test">Context Handler test administration</DocsLink>.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    The IT-system is configured as a user-facing system in <DocsLink External="contexthandler-admin">Context Handler administration</DocsLink>.
+                                </div>
+                            }
+
+                            <FInputSelect @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Environment" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Environment)">
+                                <option value="@WizardEnvironments.Test">Test</option>
+                                <option value="@WizardEnvironments.Production">Production</option>
+                            </FInputSelect>
+
+                            <div class="info-text pb-4">
+                                Context Handler require you to configure an OCES3 certificate as the environment certificate. Create an OCES3 certificate in <DocsLink External="odes3-create">NemLog-in business administration</DocsLink> and change the <DocsLink Page="certificates">environment certificate</DocsLink> to be your new OCES3 certificate.
+                                <br />
+                                <div class="font-italic pt-2">With the certificate in place continue the wizard.</div>
+                            </div>
+
+                            @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Production)
+                            {
+                                <div class="active-group active py-3">
+                                    <label class="label-control">Contact information</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Company" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Company)" />
+                                            @*                           <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.GivenName" For="@(() => newUpPartyModal.ContextHandlerForm.Model.GivenName)" />
+                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Surname" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Surname)" /> *@
+                                            <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.EmailAddress" For="@(() => newUpPartyModal.ContextHandlerForm.Model.EmailAddress)" />
+                                            @*                      <FInputText @bind-Value="newUpPartyModal.ContextHandlerForm.Model.TelephoneNumber" For="@(() => newUpPartyModal.ContextHandlerForm.Model.TelephoneNumber)" /> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (!newUpPartyModal.ShowAdvanced)
+                            {
+                                <button type="button" class="btn btn-link pt-0 pb-3" @onclick="@(() => newUpPartyModal.ShowAdvanced = true)">Show and edit claims (optional)</button>
+                            }
+                            else
+                            {
+                                <FInputCheckboxSelect Items="newUpPartyModal.ContextHandlerForm.Model.Claims" SelectedItems="newUpPartyModal.ContextHandlerForm.Model.SelectedClaims" DisableItems="newUpPartyModal.ContextHandlerForm.Model.DisabledClaims" NewLine="true" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Claims)" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your Context Handler authentication method has been created.
+                        </div>
+
+                        <div class="info-text">
+                            <div>
+                                Save the metadata URL and make sure your OCES3 certificate is in place as the <DocsLink Page="certificates">environment certificate</DocsLink>.
+                            </div>
+
+                            <div class="pt-2">
+                                Use the metadata URL to configure your Context Handler user-facing IT-system in
+                                @if (newUpPartyModal.ContextHandlerForm.Model.Environment == WizardEnvironments.Test)
+                                {
+                                    <DocsLink External="ContextHandler-admin-test">Context Handler test administration</DocsLink>
+                                }
+                                else
+                                {
+                                    <DocsLink External="ContextHandler-admin">Context Handler administration</DocsLink>
+                                }, please see the <DocsLink Page="howto-saml-2.0-context-handler">Context Handler guide</DocsLink>
+                            </div>
+                        </div>
+
+                        <FFieldTextLinkClipboard @bind-Value="newUpPartyModal.ContextHandlerForm.Model.Metadata" For="@(() => newUpPartyModal.ContextHandlerForm.Model.Metadata)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newUpPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newUpPartyModal.CreateWorking ? "disabled" : "")" onclick="@(async () => await ChangeNewUpPartyStateAsync())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newUpPartyModal.CreateWorking ? "disabled" : "")">Create</button>
+                            <button type="button" class="btn btn-secondary @(newUpPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newUpPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newUpPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newUpPartyModal.Type != null)
             {
                 throw new Exception("New up-party type and selection not supported.");
             }
@@ -276,7 +625,7 @@
 
 @if (testDownPartyModal != null)
 {
-    <Modal @ref="testDownPartyModal.Modal" Title="Test Authentication Method">
+    <Modal @ref="testDownPartyModal.Modal" Title="Test Authentication">
         <div class="modal-body">
             <FFieldText @bind-Value="testDownPartyModal.DisplayName" For="@(() => testDownPartyModal.DisplayName)" />
             @if (!testDownPartyModal.Error.IsNullOrWhiteSpace())

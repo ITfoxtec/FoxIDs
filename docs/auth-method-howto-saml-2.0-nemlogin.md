@@ -1,6 +1,89 @@
-# Connect NemLog-in as authentication method
+# Connect to NemLog-in
 
-You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
+Connect to NemLog-in (Danish IdP) and let the users authenticate with MitID or other methods supported by NemLog-in.
+
+> Not an IT system in NemLog-in? Become a [NemLog-in service provider](https://tilslut.nemlog-in.dk/) and read more on [NemLog-in information site](https://tu.nemlog-in.dk/) for service providers.
+
+Each IT-system in NemLog-in holds two configurations, one for **integration test** and one for **production** (two different tabs). NemLog-in is configured in [NemLog-in administration](https://administration.nemlog-in.dk/).
+First you need to configure [integration test](#integration-test) and [upload the test rapport](#upload-test-rapport), and then it become possible to configure [production](#production).
+
+Considerations:
+- [Public or private NemLog-in IT-system](#public-or-private-nemlog-in-it-system)
+- [Dedicated environment](#consider-a-dedicated-environment)
+
+NemLog-in docs:
+- [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/)
+- [NemLog-in LogViewer](https://logviewer.test-nemlog-in.dk/) (integration test)
+- Create test users in [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) or [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create) (login with username and password)
+
+## Integration test
+Start by creating a integration test connection to your IT-system in NemLog-in.
+
+1. Open [FoxIDs Control Client](https://www.foxids.com/action/login) and navigate to the **Authentication** tab
+2. Click **New authentication**
+3. Select **Enterprise**
+4. Click **NemLog-in (Danish IdP)**
+5. Optionally change the **Name**
+6. Select **NemLog-in service type**, either [Public sector service or Private company service](#public-or-private-nemlog-in-it-system)
+   ![Connect to NemLog-in wizard](images/howto-saml-nemlogin3-wizard.png)    
+7. Click **Create**  
+   ![Connect to NemLog-in wizard receipt](images/howto-saml-nemlogin3-wizard-receipt.png)    
+8. Read the **Metadata URL** on the receipt and download the metadata file
+9. Click **Close**
+10. Open [NemLog-in administration](https://administration.nemlog-in.dk/) and find / create the IT-system, with a matching service type (public or private)
+   ![Connect to NemLog-in Administration](images/howto-saml-nemlogin3-admin-test.png)    
+11. Click **Upload metadata file** and upload the metadata file from FoxIDs
+12. Click **Provision to integrationtest** and then click **Applay for integration test**
+13. Go back to the authentication method in FoxIDs and click **Test authentication** to perform a test login on NemLog-in.
+   ![Connect to NemLog-in test](images/howto-saml-nemlogin3-auth-test.png)    
+ 
+## Upload test rapport
+NemLog-in require you to do a integration test and upload a test report.
+
+1. Download an empty [test rapport for public service](https://cms.nemlog-in.dk/media/tfpbdcls/integrationstestrapport-offentlige-tjenester-v3-1.doc) or [test rapport for private service](https://cms.nemlog-in.dk/media/xymn2v4i/integrationstestrapport-private-tjenester-v3-1.doc), and [test description](https://cms.nemlog-in.dk/media/jfslsngd/integrationstest-v3-0-4-oiosaml-3.pdf).
+2. Carry out the test and fill in the test report
+3. Open [NemLog-in administration](https://administration.nemlog-in.dk/) 
+4. Navigate to **Waiting tasks**, find the integration test environment task, and click **Approve**
+5. Navigate to **Home**, and find the IT-system
+6. Click **Upload test report** and upload the test report
+7. NemLog-in support will need to approve your test report (usually within one business day) and it will then be possible to set up production 
+
+## Production
+
+
+
+
+## Public or private NemLog-in IT-system
+
+Select public sector service if your service is for the public sector. This also applies for a private company. No transaction costs. Your service will then be part of the public sector federation and utilise single sign-on (SSO) with other public services.
+
+Otherwise, select private company service. Low transaction cost. (the absolute lowest price on the market). You will not have single sign-on (SSO) with public services.
+
+## Consider a dedicated environment
+
+NemLog-in requires to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.  
+Furthermore, NemLog-in use different certificates in test and production; A test OSES3 certificate in test and a production OSES3 certificate in production.
+
+![Connect to NemLog-in and use Environment Link](images/how-to-nemlogin-environment-link.svg)    
+
+You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. 
+**1) - Start by creating an SAML 2.0 authentication method in 
+
+
 
 By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
@@ -10,9 +93,6 @@ FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Servic
 FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout (SLO), logging, issuer naming, required OCES3 (RSASSA-PSS) certificates and it is possible to support NSIS.
 
 > You can test the NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
-> Take a look at the NemLog-in sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `nemlogin` or `nemlogin-test` environment.  
-> *The sample is configured with a separate environment for the NemLog-in SAML 2.0 integration.*
 
 NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
@@ -26,13 +106,7 @@ NemLog-in documentation:
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
-## Consider separate environment
 
-NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.
-
-![Connect to NemLog-in and use Environment Link](images/how-to-nemlogin-environment-link.svg)    
-
-You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 
 ## Certificate
 
@@ -41,7 +115,7 @@ NemLog-in requires all requests (authn and logout) from the Relying Party (RP) t
 OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
 You will need separate FoxIDs environments to handle the test and production environments respectively. The environments can optionally be combined in an app environment with [environment links](howto-environmentlink-foxids.md).
 
-Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+Add the `.P12` OCES3 certificate in [FoxIDs Control Client](https://www.foxids.com/action/login):
 1. Select (or create) the environment to be used for NemLog-in
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
@@ -58,26 +132,24 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 > You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 1. Select the Authentication methods tab
 2. Click New authentication and then SAML 2.0
 3. Add the name
 4. Select show advanced
 5. Select the dot URL binding pattern
-6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
-7. Go back to the SAML tab
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-top.png)
 
-8. Disable automatic update
-9. Click Read metadata from file and select the NemLog-in IdP-metadata
+6. Disable automatic update
+7. Click Read metadata from file and select the NemLog-in IdP-metadata
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-read-metadata.png)
 
-10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
+8. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
-11. Optionally remove the `*` and configure claims, the following claims is most often used:
+9. Optionally remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
     - `https://data.gov.dk/model/core/eid/cprNumber`
     - `https://data.gov.dk/model/core/eid/cprUuid`
@@ -92,27 +164,27 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
- 12. Set Login hint in Authn request in Subject NameID to Disabled
- 13. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+ 10. Set Login hint in Authn request in Subject NameID to Disabled
+ 11. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
      Set the Certificate revocation mode to `Online`
- 14. Select to include the encryption certificate in metadata
- 15. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+ 12. Select to include the encryption certificate in metadata
+ 13. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
  ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-nameidformat.png)
 
- 16. Add an attribute consuming service in metadata and add the service name.
- 17. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
+ 14. Add an attribute consuming service in metadata and add the service name.
+ 15. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
 
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-attributes.png)
 
- 18. Add at least one technical contact person
+ 16. Add at least one technical contact person
  
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-contact.png)
 
- 19. Click create
- 20. Go to the top of the SAML 2.0 authentication method
- 21. Download the SAML 2.0 authentication method SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
- 22. The SP-metadata file is used to configure the NemLog-in IT system.
+ 17. Click create
+ 18. Go to the top of the SAML 2.0 authentication method
+ 10. Download the SAML 2.0 authentication method SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
+ 20. The SP-metadata file is used to configure the NemLog-in IT system.
  
  **2) - Then go to the [NemLog-in adminstration protal](https://administration.nemlog-in.dk/)**
 
@@ -126,7 +198,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 > To configure production you need to upload a test report, have it approved and then repeat the FoxIDs and NemLog-in configuration.
 
- **3) - Optionally - Configure MitID app-switch to mobile app in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3) - Optionally - Configure MitID app-switch to mobile app in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
  *Optionally, configure MitID app-switch if you are using NemLog-in / MitID in a mobile app.*
 
@@ -150,12 +222,12 @@ Select show advanced settings and add the extension XML in **Authn request exten
 
 ![NemLog-in SAML 2.0 authn request extension XM](images/howto-saml-nemlogin3-auth-req-ext.png)
 
-You can configure authn request extensions XML in profiles on the authentication method. And then support multiple mobile platforms in profiles.
+You can configure authn request extensions XML in profiles (click **Show advanged** to see profiles) on the authentication method. And then support multiple mobile platforms in profiles.
 
 > As of now iOS do not require a return URL to do app-switch. But this can change over time!  
 > Therefor, you currently only need two authentication methods; one for your web site and iOS app without a redirect URL and one for your Android app with a redirect URL.
 
- **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **4) - Optionally - add privilege claim transformation in [FoxIDs Control Client](https://www.foxids.com/action/login)**
 
 *Optionally, if you are using the privilege claim.*
 
@@ -217,5 +289,5 @@ And possible credential types:
  - `https://nemlogin.dk/internal/credential/type/test`
 
 
-You can configure authn context class references in profiles on the authentication method. In the case you need to provide different sets of authn context class references.  
+You can configure authn context class references in profiles (click **Show advanged** to see profiles) on the authentication method. In the case you need to provide different sets of authn context class references.  
 E.g., if you need to support step-up authentication. Then you would create one profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another profile with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.

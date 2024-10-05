@@ -102,12 +102,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task SaveAndSendEmailCode(string redisKey, string email, Func<string, EmailContent> emailContent, string logText)
+        private async Task SaveAndSendEmailCode(string key, string email, Func<string, EmailContent> emailContent, string logText)
         {
             var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.ConfirmationCodeLength).ToUpper();
             var confirmationCodeObj = new ConfirmationCode();
             await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
-            await cacheProvider.SetAsync(redisKey, confirmationCodeObj.ToJson(), settings.ConfirmationCodeLifetime);
+            await cacheProvider.SetAsync(key, confirmationCodeObj.ToJson(), settings.ConfirmationCodeLifetime);
 
             var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
@@ -120,11 +120,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Email with {logText} confirmation code send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
         }
 
-        private async Task<User> VerifyEmailCodeAsync(Func<string, EmailContent> emailContent, string redisKeyElement, Func<User, Task> onSuccess, string email, string code, string logText)
+        private async Task<User> VerifyEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, Func<User, Task> onSuccess, string email, string code, string logText)
         {
             var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var key = EmailConfirmationCodeCacheKey(redisKeyElement, email);
+            var key = EmailConfirmationCodeCacheKey(keyElement, email);
             var confirmationCodeValue = await cacheProvider.GetAsync(key);
             if (!confirmationCodeValue.IsNullOrEmpty())
             {

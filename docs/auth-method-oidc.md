@@ -21,7 +21,7 @@ How to guides:
 ## Configuration
 How to configure external OpenID Provider (OP) as an authority.
 
-The following screen shot show the basic FoxIDs OpenID Connect authentication method configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs OpenID Connect authentication method configuration available in [FoxIDs Control Client](https://www.foxids.com/action/login).
 
 > More configuration options become available by clicking `Show advanced`.
 
@@ -29,7 +29,7 @@ The following screen shot show the basic FoxIDs OpenID Connect authentication me
 
 FoxIDs automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on create. You can see the added configuration by opening the authentication method again.
 
-FoxIDs automatically read future updates. If the endpoint become unavailable for a period of time FoxIDs will stop the automated update process. It can be restarted by doing an authentication method update in [FoxIDs Control Client](control.md#foxids-control-client) or [API](control.md#foxids-control-api).
+FoxIDs automatically read future updates. If the endpoint become unavailable for a period of time FoxIDs will stop the automated update process. It can be restarted by doing an authentication method update in [FoxIDs Control Client](https://www.foxids.com/action/login) or [API](control.md#foxids-control-api).
 
 > FoxIDs Control Client only support creating automatic updated authentication methods using the OpenID Configuration endpoint. [FoxIDs Control API](control.md#foxids-control-api) support both automatic and manually updated authentication methods. In manual you can specify all values and the OpenID Configuration endpoint (`.well-known/openid-configuration`) will not be called.
 

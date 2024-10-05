@@ -17,7 +17,7 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (!CreateSelfSigned && Key == null)
             {
-                results.Add(new ValidationResult($"The field {nameof(Key)} is required if {nameof(CreateSelfSigned)} is false.", new[] { nameof(Key) }));
+                results.Add(new ValidationResult($"The field {nameof(Key)} is required if {nameof(CreateSelfSigned)} is false.", [nameof(Key)]));
             }
             return results;
         }

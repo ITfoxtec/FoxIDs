@@ -1,6 +1,6 @@
 - [Description](index.md)
 - [Get started](get-started.md)
-- [How to](howto-connect.md)
+- [How to connect](howto-connect.md)
   - [Applications](howto-connect.md#how-to-connect-applications)
   - [Authentication methods](howto-connect.md#how-to-connect-authentication-methods)
 - [Development](development.md)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles
@@ -35,6 +36,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<RiskPassword, Api.RiskPassword>()
                 .ForMember(d => d.PasswordSha1Hash, opt => opt.MapFrom(s => s.Id.Substring(s.Id.LastIndexOf(':') + 1)))
                 .ReverseMap();
+
+            CreateMap<WizardNemLoginSettings, Api.WizardNemLoginSettings>();
+            CreateMap<WizardContextHandlerSettings, Api.WizardContextHandlerSettings>();
         }
     }
 }

@@ -97,7 +97,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlClaimsDownLogic>();
             services.AddTransient<Saml2ConfigurationLogic>();
             services.AddTransient<SamlMetadataExposeLogic>();
-            services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
             services.AddTransient<SamlAuthnUpLogic>();
             services.AddTransient<SamlAuthnDownLogic>();

@@ -14,6 +14,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Infrastructure;
 using System.Linq;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages
 {
@@ -29,6 +30,9 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<ChangePlanPaymentViewModel> changePlanPaymentForm;
         private Modal tenantDeletedModal;
         private bool tenantWorking;
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -147,13 +151,20 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowPlanPaymentModal()
+        private async Task ShowPlanPaymentModalAsync()
         {
             changePlanPaymentWorking = false;
             changePlanPaymentDone = false;
             //createTrackReceipt = new List<string>();
             changePlanPaymentForm.Init();
             changePlanPaymentModal.Show();
+
+            await LoadMollieAsync();
+        }
+
+        private async Task LoadMollieAsync()
+        {
+            await JSRuntime.InvokeAsync<object>("loadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
         }
 
         private async Task OnChangePlanPaymentValidSubmitAsync(EditContext editContext)

@@ -8,6 +8,9 @@ namespace FoxIDs.Models.Config
         [RegularExpression(Constants.Models.Plan.CurrencyRegExPattern)]
         public string Currency { get; set; } = "EUR";
 
-        public string MollieApiKey { get; set; }
+        public bool TestMode { get; set; } = false;
+
+        public string MollieApiKey { get; set; }   
+        public string MollieProfileId { get; set; }
     }
 }

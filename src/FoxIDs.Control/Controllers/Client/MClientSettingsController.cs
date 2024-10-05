@@ -34,8 +34,10 @@ namespace FoxIDs.Controllers.Client
                 FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
                 KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
-                EnablePlanPayment = !string.IsNullOrWhiteSpace(settings.PlanPayment?.MollieApiKey),
-                Currency = settings.PlanPayment?.Currency
+                EnablePlanPayment = !string.IsNullOrWhiteSpace(settings.PlanPayment?.MollieApiKey) && !string.IsNullOrWhiteSpace(settings.PlanPayment?.MollieProfileId),
+                TestMode = settings.PlanPayment != null ? settings.PlanPayment.TestMode : true,
+                Currency = settings.PlanPayment?.Currency,
+                MollieProfileId = settings.PlanPayment?.MollieProfileId,
             });
         }
     }

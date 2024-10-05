@@ -21,7 +21,7 @@
                 @if (ClientSettings.EnablePlanPayment)
                 {
                     <div class="py-2">
-                        <button class="btn btn-primary" type="button" @onclick="ShowPlanPaymentModal">Change plan and playment</button>
+                        <button class="btn btn-primary" type="button" @onclick="ShowPlanPaymentModalAsync">Change plan and playment</button>
                     </div>
                 }
 
@@ -47,7 +47,76 @@
     </PageEditForm>
 </div>
 
-<Modal @ref="changePlanPaymentModal" Title="Plan and Payment">
+<Modal @ref="changePlanPaymentModal" Title="Payment">
+    <form id="mollieform">
+        <div class="modal-body">
+            <div class="mr-auto info-text pb-3">
+                @* You can change the plan to a higher one and change payments. *@
+                You can change the payments for your tenant plan.
+                <br />
+                A payment with a zero amount is used to register your card. No money will be debited from you card or account in the registration payment.
+            </div>
+
+            <div class="pt-2">
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="card-number"></div>
+                        </div>
+                    </div>
+                    <div id="card-number-error" class="validation-message"></div>
+                    <label for="card-number" class="label-control">Card number</label>
+                </div>
+            </div>
+
+            <div class="">
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="card-holder"></div>
+                        </div>
+                    </div>
+                    <div id="card-holder-error" class="validation-message"></div>
+                    <label for="card-holder" class="label-control">Card holder</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="">
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="expiry-date"></div>
+                                </div>
+                            </div>
+                            <div id="expiry-date-error" class="validation-message"></div>
+                            <label for="expiry-date" class="label-control">Expiry date</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="">
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="verification-code" class="validation-message"></div>
+                                </div>
+                            </div>
+                            <div id="verification-code-error"></div>
+                            <label for="verification-code" class="label-control">CVV</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Pay</button>
+            <button type="button" class="btn btn-secondary @(changePlanPaymentWorking ? "disabled" : "")" @onclick="@(() => changePlanPaymentModal.Hide())">Cancel</button>
+        </div>
+    </form>
+
     <PageEditForm @ref="changePlanPaymentForm" TModel="ChangePlanPaymentViewModel" OnValidSubmit="OnChangePlanPaymentValidSubmitAsync">
         <div class="modal-body">
             <div class="mr-auto info-text">

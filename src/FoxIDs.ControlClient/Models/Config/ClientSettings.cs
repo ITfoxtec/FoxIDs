@@ -16,6 +16,8 @@ namespace FoxIDs.Client.Models.Config
         public KeyStorageOptions KeyStorageOption { get; set; }
 
         public bool EnablePlanPayment { get; set; }
+        public bool PlanPaymentTestMode { get; set; }
         public string Currency { get; set; }
+        public string MollieProfileId { get; set; }
     }
 }

@@ -11,6 +11,8 @@
         public KeyStorageOptions KeyStorageOption { get; set; }
 
         public bool EnablePlanPayment { get; set; }
+        public bool TestMode { get; set; }
         public string Currency { get; set;}
+        public string MollieProfileId { get; set;}
     }
 }

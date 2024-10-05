@@ -136,6 +136,12 @@
                                         Tenants
                                     </TenantLiNavLink>
                                 }
+                                else if (IsMasterTrack)
+                                {
+                                    <TenantLiNavLink Href="tenant">
+                                        Tenant
+                                    </TenantLiNavLink>
+                                }
                                 <TenantLiNavLink Href="applications">
                                     Applications
                                 </TenantLiNavLink>
@@ -158,12 +164,6 @@
                                 {
                                     <TenantLiNavLink Href="logsettings">
                                         Logs
-                                    </TenantLiNavLink>
-                                }
-                                @if (!IsMasterTenant && IsMasterTrack)
-                                {
-                                    <TenantLiNavLink Href="tenant">
-                                        Tenant
                                     </TenantLiNavLink>
                                 }
                                 <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings,texts,plans,riskpasswords">

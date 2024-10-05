@@ -158,10 +158,6 @@ namespace FoxIDs.Client.Pages.Settings
 
         private void PlanViewModelAfterInit(GeneralPlanViewModel generalPlan, PlanViewModel plan)
         {
-            if (generalPlan.CreateMode)
-            {
-                plan.Currency = "EUR";
-            }
             plan.Users = plan.Users ?? new PlanItem();
             plan.Logins = plan.Logins ?? new PlanItem();
             plan.TokenRequests = plan.TokenRequests ?? new PlanItem();
@@ -171,7 +167,12 @@ namespace FoxIDs.Client.Pages.Settings
 
         private string PlanInfoText(GeneralPlanViewModel generalPlan)
         {
-            return $"Plan - {generalPlan.Name}";
+            return $"Plan - {PlanDisplayName(generalPlan)}";
+        }
+
+        private string PlanDisplayName(GeneralPlanViewModel generalPlan)
+        {
+            return generalPlan.DisplayName ?? generalPlan.Name;
         }
 
         private void PlanCancel(GeneralPlanViewModel plan)
@@ -215,6 +216,7 @@ namespace FoxIDs.Client.Pages.Settings
                 }
 
                 generalPlan.Name = generalPlan.Form.Model.Name;
+                generalPlan.DisplayName = generalPlan.Form.Model.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

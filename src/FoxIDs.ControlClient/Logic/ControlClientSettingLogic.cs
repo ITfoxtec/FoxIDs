@@ -26,7 +26,8 @@ namespace FoxIDs.Client.Logic
                 clientSettings.FullVersion = controlClientSettings.FullVersion;
                 clientSettings.LogOption = controlClientSettings.LogOption;
                 clientSettings.KeyStorageOption = controlClientSettings.KeyStorageOption;
-                clientSettings.EnableMollie = controlClientSettings.EnableMollie;
+                clientSettings.EnablePlanPayment = controlClientSettings.EnablePlanPayment;
+                clientSettings.Currency = controlClientSettings.Currency;
             }
         }
     }

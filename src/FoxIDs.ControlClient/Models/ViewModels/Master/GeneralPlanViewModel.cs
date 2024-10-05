@@ -11,6 +11,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralPlanViewModel(Plan plan)
         {
             Name = plan.Name;
+            DisplayName = plan.DisplayName;
         }
 
         public bool Edit { get; set; }

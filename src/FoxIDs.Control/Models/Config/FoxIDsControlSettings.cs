@@ -34,10 +34,8 @@ namespace FoxIDs.Models.Config
         [Required]
         public int DownPartyTestLifetime { get; set; } = 900; // 15 minutes
 
-        /// <summary>
-        /// Mollie payment settings.
-        /// </summary>
-        public MollieSettings Mollie { get; set; }
+        [ValidateComplexType]
+        public PlanPaymentSettings PlanPayment { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

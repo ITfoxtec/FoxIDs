@@ -18,7 +18,7 @@
 
 
                 <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
-                @if (ClientSettings.EnableMollie)
+                @if (ClientSettings.EnablePlanPayment)
                 {
                     <div class="py-2">
                         <button class="btn btn-primary" type="button" @onclick="ShowPlanPaymentModal">Change plan and playment</button>

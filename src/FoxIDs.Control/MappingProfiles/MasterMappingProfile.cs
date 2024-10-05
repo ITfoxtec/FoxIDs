@@ -22,6 +22,7 @@ namespace FoxIDs.MappingProfiles
                .ForMember(d => d.Id, opt => opt.MapFrom(s => Plan.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
             CreateMap<PlanItem, Api.PlanItem>()
                 .ReverseMap();
+            CreateMap<Plan, Api.PlanInfo>();
 
             CreateMap<ResourceEnvelope, Api.Resource>()
                 .ReverseMap();

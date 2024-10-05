@@ -9,18 +9,17 @@ namespace FoxIDs.Models.Api
         [Required]
         [MaxLength(Constants.Models.Plan.NameLength)]
         [RegularExpression(Constants.Models.Plan.NameRegExPattern)]
-        [Display(Name = "Plan name")]
+        [Display(Name = "Technical plan name")]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Plan.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Plan.DisplayNameRegExPattern)]
+        [Display(Name = "Plan name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Plan.TextLength)]
         [Display(Name = "Text")]
         public string Text { get; set; }
-
-        [Required]
-        [MaxLength(Constants.Models.Plan.CurrencyLength)]
-        [RegularExpression(Constants.Models.Plan.CurrencyRegExPattern)]
-        [Display(Name = "Currency")]
-        public string Currency { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]

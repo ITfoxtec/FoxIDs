@@ -34,7 +34,8 @@ namespace FoxIDs.Controllers.Client
                 FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
                 KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
-                EnableMollie = !string.IsNullOrWhiteSpace(settings.Mollie?.ApiKey)
+                EnablePlanPayment = !string.IsNullOrWhiteSpace(settings.PlanPayment?.MollieApiKey),
+                Currency = settings.PlanPayment?.Currency
             });
         }
     }

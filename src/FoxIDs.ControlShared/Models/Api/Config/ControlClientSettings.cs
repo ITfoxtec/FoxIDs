@@ -8,12 +8,9 @@
         public string FullVersion { get; set; }
 
         public LogOptions LogOption { get; set; }
-
         public KeyStorageOptions KeyStorageOption { get; set; }
 
-        /// <summary>
-        /// Enable Mollie payment.
-        /// </summary>
-        public bool EnableMollie { get; set; }
+        public bool EnablePlanPayment { get; set; }
+        public string Currency { get; set;}
     }
 }

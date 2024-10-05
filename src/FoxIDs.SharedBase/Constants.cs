@@ -273,6 +273,8 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
+                public const int DisplayNameLength = 50;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
                 public const int CurrencyLength = 10;
                 public const string CurrencyRegExPattern = @"^[\w]*$";
                 public const int CostPerMonthMin = 0;

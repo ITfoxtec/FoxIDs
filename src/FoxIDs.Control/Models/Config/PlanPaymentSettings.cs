@@ -1,0 +1,13 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoxIDs.Models.Config
+{
+    public class PlanPaymentSettings
+    {
+        [MaxLength(Constants.Models.Plan.CurrencyLength)]
+        [RegularExpression(Constants.Models.Plan.CurrencyRegExPattern)]
+        public string Currency { get; set; } = "EUR";
+
+        public string MollieApiKey { get; set; }
+    }
+}

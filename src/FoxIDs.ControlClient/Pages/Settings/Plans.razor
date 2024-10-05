@@ -57,9 +57,10 @@
                         Plan
                     </div>
                     <div class="modal-body">
+                        <FInputText @bind-Value="plan.Form.Model.DisplayName" For="@(() => plan.Form.Model.DisplayName)" Focus="true" />
                         @if (plan.CreateMode)
                         {
-                            <FInputText @bind-Value="plan.Form.Model.Name" For="@(() => plan.Form.Model.Name)" Focus="true" />
+                            <FInputText @bind-Value="plan.Form.Model.Name" For="@(() => plan.Form.Model.Name)" />
                         }
                         else
                         {
@@ -68,7 +69,6 @@
                         }
 
                         <FInputText @bind-Value="plan.Form.Model.Text" For="@(() => plan.Form.Model.Text)" />
-                        <FInputText @bind-Value="plan.Form.Model.Currency" For="@(() => plan.Form.Model.Currency)" />
                         <FInputNumberD @bind-Value="plan.Form.Model.CostPerMonth" For="@(() => plan.Form.Model.CostPerMonth)" />
                         <FInputToggle @bind-Value="plan.Form.Model.EnableCustomDomain" For="@(() => plan.Form.Model.EnableCustomDomain)" TextType="e.d" />
 
@@ -134,7 +134,7 @@
                         <div class="modal-footer">
                             <div class="alert alert-danger" role="alert">
                                 <div>
-                                    You are about to delete Plan "@plan.Name", are you sure?
+                                    You are about to delete Plan "@PlanDisplayName(plan)", are you sure?
                                 </div>
 
                                 <div class="mt-3">

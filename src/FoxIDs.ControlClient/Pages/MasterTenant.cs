@@ -13,6 +13,7 @@ using Blazored.Toast.Services;
 using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Infrastructure;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
@@ -40,6 +41,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public MyTenantService MyTenantService { get; set; }
@@ -76,11 +80,11 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnTrackSelectedAsync(Track track)
         {
-            await DefaultLoadAsync();
             if (!IsMasterTrack)
             {
                 NavigationManager.NavigateTo($"{TenantName}/applications");
             }
+            await DefaultLoadAsync();
             StateHasChanged();
         }
 
@@ -91,9 +95,22 @@ namespace FoxIDs.Client.Pages
                 tenantWorking = false;
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
+
+                var planInfoList = await HelpersService.GetPlanInfoAsync();
+
                 var myTenant = await MyTenantService.GetTenantAsync();
                 savedCustomDomain = myTenant.CustomDomain;
-                await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>());
+                await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
+                {
+                    if (!afterMap.PlanName.IsNullOrWhiteSpace())
+                    {
+                        var planDisplayName = planInfoList.Where(p => p.Name == afterMap.PlanName).Select(p => p.DisplayName).FirstOrDefault();
+                        if (!planDisplayName.IsNullOrWhiteSpace())
+                        {
+                            afterMap.PlanName = planDisplayName;
+                        }
+                    }
+                }));
                 RouteBindingLogic.SetMyTenant(myTenant);
             }
             catch (TokenUnavailableException)

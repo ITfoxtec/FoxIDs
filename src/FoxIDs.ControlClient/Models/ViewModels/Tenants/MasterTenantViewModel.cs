@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TenantSettingsViewModel
+    public class MasterTenantViewModel
     {
         [Display(Name = "Name")]
         public string Name { get; set; }

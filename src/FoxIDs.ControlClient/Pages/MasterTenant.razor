@@ -1,36 +1,9 @@
-﻿@page "/{tenantName}/tenantsettings"
+﻿@page "/{tenantName}/tenant"
 @inherits PageBase
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active">Tenant</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@trackSettingsHref">Environment</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@mailSettingsHref">Mail</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@textsHref">Texts</a>
-    </li>
-    @if (IsMasterTenant)
-    {
-        <li class="nav-item">
-            <a class="nav-link" href="@plansHref">Plans</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
-        </li>
-    }
-</ul>
-
 <div class="tab-content">
-    <PageEditForm @ref="tenantSettingsForm" TModel="TenantSettingsViewModel" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
-        @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    <PageEditForm @ref="tenantSettingsForm" TModel="MasterTenantViewModel" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected)
         {
             <div class="modal-body px-0">
                 @if (!deleteTenantError.IsNullOrWhiteSpace())

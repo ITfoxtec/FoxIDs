@@ -82,6 +82,10 @@ namespace FoxIDs.Client.Shared
         [Inject]
         public UserService UserService { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+
         protected override async Task OnInitializedAsync()
         {
             await ControlClientSettingLogic.InitLoadAsync();

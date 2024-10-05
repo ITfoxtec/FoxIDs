@@ -15,7 +15,6 @@ namespace FoxIDs.Client.Pages.Settings
 {
     public partial class TrackSettings
     {
-        private string tenantSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
         private string textsHref;
@@ -44,7 +43,6 @@ namespace FoxIDs.Client.Pages.Settings
 
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";

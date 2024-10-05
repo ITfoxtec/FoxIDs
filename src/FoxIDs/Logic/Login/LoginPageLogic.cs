@@ -73,7 +73,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromEmailVerificationStep) 
         {
-            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.Id);
+            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
 
             sequenceData.Email = user.Email;
             sequenceData.EmailVerified = user.EmailVerified;

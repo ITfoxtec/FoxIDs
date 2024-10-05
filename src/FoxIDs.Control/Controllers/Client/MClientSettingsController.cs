@@ -33,7 +33,8 @@ namespace FoxIDs.Controllers.Client
                 Version = version.ToString(2),
                 FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
-                KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage)
+                KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
+                EnableMollie = !string.IsNullOrWhiteSpace(settings.Mollie?.ApiKey)
             });
         }
     }

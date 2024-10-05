@@ -26,7 +26,7 @@ namespace FoxIDs.Client.Pages
         private string logSettingsHref;
 
         [Inject]
-        public ClientSettings clientSettings { get; set; }
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -125,7 +125,7 @@ namespace FoxIDs.Client.Pages
 
         private void LogRequestViewModelAfterInit(LogRequestViewModel model)
         {
-            if(clientSettings.LogOption == LogOptions.ApplicationInsights)
+            if(ClientSettings.LogOption == LogOptions.ApplicationInsights)
             {
                 model.DisableBothEventAndTrace = true;
             }

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 using ITfoxtec.Identity;
+using FoxIDs.Client.Models.Config;
+using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Client.Pages
 {
@@ -20,8 +22,15 @@ namespace FoxIDs.Client.Pages
         private string deleteTenantError;
         private bool deleteTenantAcknowledge = false;
         private string savedCustomDomain;
+        private bool changePlanPaymentWorking;
+        private bool changePlanPaymentDone;
+        private Modal changePlanPaymentModal;
+        private PageEditForm<ChangePlanPaymentViewModel> changePlanPaymentForm;
         private Modal tenantDeletedModal;
         private bool tenantWorking;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -118,6 +127,56 @@ namespace FoxIDs.Client.Pages
             {
                 tenantWorking = false;
                 tenantSettingsForm.SetError(ex.Message);
+            }
+        }
+
+        private void ShowPlanPaymentModal()
+        {
+            changePlanPaymentWorking = false;
+            changePlanPaymentDone = false;
+            //createTrackReceipt = new List<string>();
+            changePlanPaymentForm.Init();
+            changePlanPaymentModal.Show();
+        }
+
+        private async Task OnChangePlanPaymentValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                //if (createTrackWorking)
+                //{
+                //    return;
+                //}
+                //createTrackWorking = true;
+                //var track = createTrackForm.Model.Map<Track>();
+                //track.AutoMapSamlClaims = true;
+                //var trackResponse = await TrackService.CreateTrackAsync(track);
+                //createTrackForm.Model.Name = trackResponse.Name;
+                //createTrackDone = true;
+                //createTrackReceipt.Add("Environment created.");
+                //createTrackReceipt.Add("User repository created.");
+                //createTrackReceipt.Add("Certificate created.");
+                //createTrackReceipt.Add("Login authentication method created.");
+
+                //if (selectTrackFilterForm.Model != null)
+                //{
+                //    selectTrackFilterForm.Model.FilterName = null;
+                //}
+                //await LoadSelectTrackAsync();
+                //await TrackSelectedLogic.TrackSelectedAsync(trackResponse);
+                //await UserProfileLogic.UpdateTrackAsync(trackResponse.Name);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                //createTrackWorking = false;
+                //if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                //{
+                //    createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);
+                //}
+                //else
+                //{
+                //    throw;
+                //}
             }
         }
 

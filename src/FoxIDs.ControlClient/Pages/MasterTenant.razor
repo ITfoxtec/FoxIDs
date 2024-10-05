@@ -13,9 +13,17 @@
                     </div>
                 }
                 <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
-                <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
                 <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
                 <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
+
+
+                <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
+                @if (ClientSettings.EnableMollie)
+                {
+                    <div class="py-2">
+                        <button class="btn btn-primary" type="button" @onclick="ShowPlanPaymentModal">Change plan and playment</button>
+                    </div>
+                }
 
                 @if (deleteTenantAcknowledge)
                 {
@@ -38,6 +46,29 @@
         }
     </PageEditForm>
 </div>
+
+<Modal @ref="changePlanPaymentModal" Title="Plan and Payment">
+    <PageEditForm @ref="changePlanPaymentForm" TModel="ChangePlanPaymentViewModel" OnValidSubmit="OnChangePlanPaymentValidSubmitAsync">
+        <div class="modal-body">
+            <div class="mr-auto info-text">
+                You can change the plan to a higher one and change payments.
+            </div>
+           @*  <FInputText @bind-Value="changePlanPaymentForm.Model.DisplayName" For="@(() => changePlanPaymentForm.Model.DisplayName)" Focus="true" /> *@
+
+        </div>
+        <div class="modal-footer">
+            @if (!changePlanPaymentDone)
+            {
+                @* <button type="submit" class="btn btn-primary @(changePlanPaymentWorking ? "disabled" : "")">Create</button> *@
+                <button type="button" class="btn btn-secondary @(changePlanPaymentWorking ? "disabled" : "")" @onclick="@(() => changePlanPaymentModal.Hide())">Cancel</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" @onclick="@(() => changePlanPaymentModal.Hide())">Close</button>
+            }
+        </div>
+    </PageEditForm>
+</Modal>
 
 <Modal @ref="tenantDeletedModal" Title="Deleted" DisableClose="true">
     <div class="modal-body">

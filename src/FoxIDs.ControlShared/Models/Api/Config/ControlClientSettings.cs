@@ -9,6 +9,11 @@
 
         public LogOptions LogOption { get; set; }
 
-        public KeyStorageOptions KeyStorageOption { get; set; } 
+        public KeyStorageOptions KeyStorageOption { get; set; }
+
+        /// <summary>
+        /// Enable Mollie payment.
+        /// </summary>
+        public bool EnableMollie { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using FoxIDs.Repository;
 using FoxIDs.Models;
 using FoxIDs.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers.Client
 {
@@ -16,11 +17,13 @@ namespace FoxIDs.Controllers.Client
         private static string indexFile;
         private readonly TelemetryScopedLogger logger;
         private readonly IWebHostEnvironment currentEnvironment;
+        private readonly FoxIDsControlSettings settings;
 
-        public WController(TelemetryScopedLogger logger, IWebHostEnvironment environment)
+        public WController(TelemetryScopedLogger logger, IWebHostEnvironment environment, FoxIDsControlSettings settings)
         {
             this.logger = logger;
             currentEnvironment = environment;
+            this.settings = settings;
         }
 
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -83,6 +86,14 @@ namespace FoxIDs.Controllers.Client
                 var file = currentEnvironment.WebRootFileProvider.GetFileInfo("index.html");
                 indexFile = System.IO.File.ReadAllText(file.PhysicalPath);
                 indexFile = indexFile.Replace("{version}", GetBuildDate());
+                if(settings.PlanPayment?.EnablePlanPayment == true)
+                {
+                    indexFile = indexFile.Replace("{payment_script}", "<script src=\"https://js.mollie.com/v1/mollie.js\"></script>");
+                }
+                else
+                {
+                    indexFile = indexFile.Replace("{payment_script}", string.Empty);
+                }
             }
             return Content(AddErrorInfo(indexFile, technicalError), "text/HTML");
         }

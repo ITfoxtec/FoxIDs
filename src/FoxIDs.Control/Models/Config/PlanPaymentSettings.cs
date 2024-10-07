@@ -10,7 +10,10 @@ namespace FoxIDs.Models.Config
 
         public bool TestMode { get; set; } = false;
 
+        public bool EnablePlanPayment => !string.IsNullOrWhiteSpace(MollieApiKey) && !string.IsNullOrWhiteSpace(MollieProfileId);
+
         public string MollieApiKey { get; set; }   
         public string MollieProfileId { get; set; }
+        public string MollieApiUrl { get; set; }
     }
 }

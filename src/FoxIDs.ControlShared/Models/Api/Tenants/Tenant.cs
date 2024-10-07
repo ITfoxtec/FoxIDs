@@ -15,5 +15,7 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
+
+        public Payment Payment { get; set; }
     }
 }

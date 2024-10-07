@@ -11,23 +11,27 @@ function readError() {
     return document.getElementById('error').textContent;    
 }
 
+var mollie = null;
+var cardNumber = null;
+var cardHolder = null;
+var expiryDate = null;
+var verificationCode = null;
 function loadMollie(profileId, testmode) {
-    var mollie = Mollie(profileId, { locale: 'en_GB', testmode: testmode });
+    mollie = Mollie(profileId, { locale: 'en_GB', testmode: testmode });
 
-    var cardNumber = mollie.createComponent('cardNumber');
+    cardNumber = mollie.createComponent('cardNumber');
     cardNumber.mount('#card-number');
 
-    var cardHolder = mollie.createComponent('cardHolder');
+    cardHolder = mollie.createComponent('cardHolder');
     cardHolder.mount('#card-holder');
 
-    var expiryDate = mollie.createComponent('expiryDate');
+    expiryDate = mollie.createComponent('expiryDate');
     expiryDate.mount('#expiry-date');
 
-    var verificationCode = mollie.createComponent('verificationCode');
+    verificationCode = mollie.createComponent('verificationCode');
     verificationCode.mount('#verification-code');
 
     var cardNumberError = document.querySelector('#card-number-error');
-
     cardNumber.addEventListener('change', event => {
         if (event.error && event.touched) {
             cardNumberError.textContent = event.error;
@@ -36,25 +40,41 @@ function loadMollie(profileId, testmode) {
         }
     });
 
-    document.getElementById('mollieform').addEventListener('submit', async e => {
-        e.preventDefault();
-
-        var { token, error } = await mollie.createToken();
-
-        if (error) {
-            // Something wrong happened while creating the token. Handle this situation gracefully.
-            return;
+    var cardHolderError = document.querySelector('#card-holder-error');
+    cardHolder.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            cardHolderError.textContent = event.error;
+        } else {
+            cardHolderError.textContent = '';
         }
-
-        // Add token to the form
-        var tokenInput = document.createElement('input');
-        tokenInput.setAttribute('type', 'hidden');
-        tokenInput.setAttribute('name', 'cardToken');
-        tokenInput.setAttribute('value', token);
-
-        form.appendChild(tokenInput);
-
-        // Submit form to the server
-        form.submit();
     });
+
+    var expiryDateError = document.querySelector('#expiry-date-error');
+    expiryDate.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            expiryDateError.textContent = event.error;
+        } else {
+            expiryDateError.textContent = '';
+        }
+    });
+
+    var verificationCodeError = document.querySelector('#verification-code-error');
+    verificationCode.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            verificationCodeError.textContent = event.error;
+        } else {
+            verificationCodeError.textContent = '';
+        }
+    });
+}
+
+function unloadMollie() {
+    cardNumber.unmount();
+    cardHolder.unmount();
+    expiryDate.unmount();
+    verificationCode.unmount();
+}
+
+async function submitMollie() {
+    return await mollie.createToken();
 }

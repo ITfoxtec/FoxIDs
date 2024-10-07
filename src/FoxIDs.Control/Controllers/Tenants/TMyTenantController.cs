@@ -12,6 +12,8 @@ using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Config;
+using Mollie.Api.Models.Mandate.Response.PaymentSpecificParameters;
+using Mollie.Api.Client.Abstract;
 
 namespace FoxIDs.Controllers
 {
@@ -26,8 +28,9 @@ namespace FoxIDs.Controllers
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
+        private readonly IMandateClient mandateClient;
 
-        public TMyTenantController(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TMyTenantController(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, IMandateClient mandateClient) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -37,6 +40,7 @@ namespace FoxIDs.Controllers
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
+            this.mandateClient = mandateClient;
         }
 
         /// <summary>
@@ -49,8 +53,11 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var MTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
-                return Ok(mapper.Map<Api.Tenant>(MTenant));
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+
+                await UpdatePayment(mTenant);
+
+                return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {
@@ -97,6 +104,8 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
                 }
 
+                await UpdatePayment(mTenant);
+
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
             catch (FoxIDsDataException ex)
@@ -107,6 +116,26 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
                 }
                 throw;
+            }
+        }
+
+        private async Task UpdatePayment(Tenant mTenant)
+        {
+            if (mTenant.Payment != null && string.IsNullOrEmpty(mTenant.Payment.CardNumber) && !string.IsNullOrEmpty(mTenant.Payment.MandateId))
+            {
+                var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
+                if ("valid".Equals(mandateResponse.Status, StringComparison.OrdinalIgnoreCase))
+                {
+                    mTenant.Payment.IsActive = true;
+                    var cardExpiryDate = DateTime.Parse(mandateResponse.Details.CardExpiryDate);
+                    mTenant.Payment.CardHolder = mandateResponse.Details.CardHolder;
+                    mTenant.Payment.CardNumber = mandateResponse.Details.CardNumber;
+                    mTenant.Payment.CardLabel = mandateResponse.Details.CardLabel;
+                    mTenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
+                    mTenant.Payment.CardExpiryYear = cardExpiryDate.Year;
+
+                    await tenantDataRepository.UpdateAsync(mTenant);
+                }
             }
         }
 

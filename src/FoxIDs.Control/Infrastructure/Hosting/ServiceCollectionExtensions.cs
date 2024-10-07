@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Mollie.Api;
+using Mollie.Api.Framework;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using System;
@@ -139,6 +141,14 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddApiSwagger();
             services.AddAutoMapper();
+
+            if(settings.PlanPayment?.EnablePlanPayment == true)
+            {
+                services.AddMollieApi(options => {
+                    options.ApiKey = settings.PlanPayment.MollieApiKey;
+                    options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
+                });
+            }
 
             return services;
         }

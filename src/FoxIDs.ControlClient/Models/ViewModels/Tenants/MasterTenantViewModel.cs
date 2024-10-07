@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Models.Api;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -17,5 +18,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Custom domain is verified (read only)")]
         public bool CustomDomainVerified { get; set; }
+
+        public Payment Payment { get; set; }
     }
 }

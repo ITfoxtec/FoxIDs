@@ -24,10 +24,9 @@ namespace FoxIDs.Client.Pages
         private string deleteTenantError;
         private bool deleteTenantAcknowledge = false;
         private string savedCustomDomain;
-        private bool changePlanPaymentWorking;
-        private bool changePlanPaymentDone;
-        private Modal changePlanPaymentModal;
-        private PageEditForm<ChangePlanPaymentViewModel> changePlanPaymentForm;
+        private string changePaymentError;
+        private bool changePaymentWorking;
+        private Modal changePaymentModal;
         private Modal tenantDeletedModal;
         private bool tenantWorking;
 
@@ -104,6 +103,10 @@ namespace FoxIDs.Client.Pages
 
                 var myTenant = await MyTenantService.GetTenantAsync();
                 savedCustomDomain = myTenant.CustomDomain;
+                //if(myTenant.Payment?.IsActive != true)
+                //{
+                //    showChangePlanPayment = true;
+                //}
                 await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
                 {
                     if (!afterMap.PlanName.IsNullOrWhiteSpace())
@@ -151,60 +154,69 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ShowPlanPaymentModalAsync()
+        private void ShowPlanModal()
         {
-            changePlanPaymentWorking = false;
-            changePlanPaymentDone = false;
+        }
+
+        private async Task ShowPaymentModalAsync()
+        {
+            changePaymentError = null;
+            changePaymentWorking = false;
             //createTrackReceipt = new List<string>();
-            changePlanPaymentForm.Init();
-            changePlanPaymentModal.Show();
+            changePaymentModal.Show();
 
             await LoadMollieAsync();
         }
 
-        private async Task LoadMollieAsync()
+        private async Task HidePaymentModalAsync()
         {
-            await JSRuntime.InvokeAsync<object>("loadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+            changePaymentModal.Hide();
+            await UnloadMollieAsync();
         }
 
-        private async Task OnChangePlanPaymentValidSubmitAsync(EditContext editContext)
+        private async Task LoadMollieAsync()
         {
-            try
-            {
-                //if (createTrackWorking)
-                //{
-                //    return;
-                //}
-                //createTrackWorking = true;
-                //var track = createTrackForm.Model.Map<Track>();
-                //track.AutoMapSamlClaims = true;
-                //var trackResponse = await TrackService.CreateTrackAsync(track);
-                //createTrackForm.Model.Name = trackResponse.Name;
-                //createTrackDone = true;
-                //createTrackReceipt.Add("Environment created.");
-                //createTrackReceipt.Add("User repository created.");
-                //createTrackReceipt.Add("Certificate created.");
-                //createTrackReceipt.Add("Login authentication method created.");
+            await JSRuntime.InvokeVoidAsync("loadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+        }
 
-                //if (selectTrackFilterForm.Model != null)
-                //{
-                //    selectTrackFilterForm.Model.FilterName = null;
-                //}
-                //await LoadSelectTrackAsync();
-                //await TrackSelectedLogic.TrackSelectedAsync(trackResponse);
-                //await UserProfileLogic.UpdateTrackAsync(trackResponse.Name);
-            }
-            catch (FoxIDsApiException ex)
+        private async Task UnloadMollieAsync()
+        {
+            await JSRuntime.InvokeVoidAsync("unloadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+        }
+
+        private async Task SubmitMollieAsync()
+        {
+            var result = await JSRuntime.InvokeAsync<MolliePaymentResult>("submitMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+
+            if (string.IsNullOrWhiteSpace(result.Error?.Detail) && !string.IsNullOrWhiteSpace(result.Error?.Message?.ToString()))
             {
-                //createTrackWorking = false;
-                //if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                //{
-                //    createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);
-                //}
-                //else
-                //{
-                //    throw;
-                //}
+                changePaymentError = result.Error?.Message?.ToString();
+            }
+            else if (!string.IsNullOrWhiteSpace(result.Token))
+            {
+                try
+                {
+                    changePaymentError = null;
+                    var firstPaymentResponse = await MyTenantService.CreateMollieFirstPaymentAsync(new MollieFirstPaymentRequest { CardToken = result.Token });
+
+                    if (!firstPaymentResponse.CheckoutUrl.IsNullOrWhiteSpace())
+                    {
+                        NavigationManager.NavigateTo(firstPaymentResponse.CheckoutUrl);
+                    }
+                    else
+                    {
+                        await HidePaymentModalAsync();
+                    }
+                }
+                catch (FoxIDsApiException ex)
+                {
+                    changePaymentWorking = false;
+                    changePaymentError = ex.Message;
+                }
+            }
+            else
+            {
+                changePaymentError = null;
             }
         }
 

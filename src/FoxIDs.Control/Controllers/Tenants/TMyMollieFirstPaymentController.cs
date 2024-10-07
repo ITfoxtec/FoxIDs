@@ -88,12 +88,6 @@ namespace FoxIDs.Controllers
                 CardToken = payment.CardToken
             };
 
-            //var webhookUrl = $"{HttpContext.GetHost()}api/{RouteBinding.TenantName}/mymolliewebhook";
-            //if(!webhookUrl.Contains("://localhost:", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    paymentRequest.WebhookUrl = webhookUrl;
-            //}
-
             var paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 
             mTenant.Payment.IsActive = false;

@@ -268,6 +268,8 @@ namespace FoxIDs
 
             public static class Plan
             {
+                public const int PlansMax = 10;
+
                 public const int IdLength = 70;
                 public const int TextLength = 4000;
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
@@ -275,12 +277,13 @@ namespace FoxIDs
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int DisplayNameLength = 50;
                 public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
-                public const int CurrencyLength = 10;
-                public const string CurrencyRegExPattern = @"^[\w]*$";
                 public const int CostPerMonthMin = 0;
                 public const int IncludedMin = 0;
                 public const int LimitedThresholdMin = 0;
                 public const int FirstLevelThresholdMin = 0;
+
+                public const int CurrencyLength = 10;
+                public const string CurrencyRegExPattern = @"^[\w]*$";
             }
 
             public static class Logging

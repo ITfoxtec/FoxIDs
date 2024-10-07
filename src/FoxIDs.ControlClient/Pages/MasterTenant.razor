@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="py-1">
-                        <button class="btn btn-secondary" type="button" @onclick="ShowPaymentModalAsync">Change payment</button>
+                        <button class="btn btn-secondary" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
                     </div>
                 }
 

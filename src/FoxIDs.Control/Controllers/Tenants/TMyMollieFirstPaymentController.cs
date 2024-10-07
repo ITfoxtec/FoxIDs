@@ -15,6 +15,7 @@ using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Customer.Request;
 using Mollie.Api.Models.Payment.Request.PaymentSpecificParameters;
 using Mollie.Api.Models.Mandate.Response.PaymentSpecificParameters;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -91,6 +92,10 @@ namespace FoxIDs.Controllers
             var paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 
             mTenant.Payment.IsActive = false;
+            if (!mTenant.Payment.MandateId.IsNullOrWhiteSpace())
+            {
+                await RevokeMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId);
+            }
             mTenant.Payment.MandateId = paymentResponse.MandateId;
             var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
             var cardExpiryDate = DateTime.Parse(mandateResponse.Details.CardExpiryDate);
@@ -102,6 +107,11 @@ namespace FoxIDs.Controllers
             await tenantDataRepository.UpdateAsync(mTenant);
 
             return Ok(new Api.MollieFirstPaymentResponse { Status = paymentResponse.Status, CheckoutUrl = paymentResponse.Links?.Checkout?.Href });  
+        }
+
+        private async Task RevokeMandateAsync(string customerId, string mandateId)
+        {
+            await mandateClient.RevokeMandate(customerId, mandateId);
         }
     }
 }

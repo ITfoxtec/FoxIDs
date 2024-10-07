@@ -13,7 +13,6 @@ using Blazored.Toast.Services;
 using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Infrastructure;
-using System.Linq;
 using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages
@@ -99,26 +98,25 @@ namespace FoxIDs.Client.Pages
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
 
-                var planInfoList = await HelpersService.GetPlanInfoAsync();
-
                 var myTenant = await MyTenantService.GetTenantAsync();
+                RouteBindingLogic.SetMyTenant(myTenant);
+
                 savedCustomDomain = myTenant.CustomDomain;
-                //if(myTenant.Payment?.IsActive != true)
-                //{
-                //    showChangePlanPayment = true;
-                //}
+                
+                var planInfoList = await HelpersService.GetPlanInfoAsync();
                 await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
                 {
+                    afterMap.PlanInfoList = planInfoList;
                     if (!afterMap.PlanName.IsNullOrWhiteSpace())
                     {
-                        var planDisplayName = planInfoList.Where(p => p.Name == afterMap.PlanName).Select(p => p.DisplayName).FirstOrDefault();
-                        if (!planDisplayName.IsNullOrWhiteSpace())
-                        {
-                            afterMap.PlanName = planDisplayName;
-                        }
+                        afterMap.PlanDisplayName = afterMap.CurrentPlanInfo?.DisplayName ?? afterMap.PlanName;
                     }
                 }));
-                RouteBindingLogic.SetMyTenant(myTenant);
+
+                if (ClientSettings.EnablePayment && myTenant.Payment == null)
+                {
+                    await ShowPaymentModalAsync();
+                }
             }
             catch (TokenUnavailableException)
             {
@@ -141,6 +139,7 @@ namespace FoxIDs.Client.Pages
                 tenantWorking = true;
                 var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>());
                 ToastService.ShowSuccess("Tenant settings updated.");
+                tenantSettingsForm.Model.PlanName = myTenant.PlanName;
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;
@@ -154,15 +153,10 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowPlanModal()
-        {
-        }
-
         private async Task ShowPaymentModalAsync()
         {
             changePaymentError = null;
             changePaymentWorking = false;
-            //createTrackReceipt = new List<string>();
             changePaymentModal.Show();
 
             await LoadMollieAsync();
@@ -176,17 +170,17 @@ namespace FoxIDs.Client.Pages
 
         private async Task LoadMollieAsync()
         {
-            await JSRuntime.InvokeVoidAsync("loadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+            await JSRuntime.InvokeVoidAsync("loadMollie", ClientSettings.MollieProfileId, ClientSettings.PaymentTestMode);
         }
 
         private async Task UnloadMollieAsync()
         {
-            await JSRuntime.InvokeVoidAsync("unloadMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+            await JSRuntime.InvokeVoidAsync("unloadMollie", ClientSettings.MollieProfileId, ClientSettings.PaymentTestMode);
         }
 
         private async Task SubmitMollieAsync()
         {
-            var result = await JSRuntime.InvokeAsync<MolliePaymentResult>("submitMollie", ClientSettings.MollieProfileId, ClientSettings.PlanPaymentTestMode);
+            var result = await JSRuntime.InvokeAsync<MolliePaymentResult>("submitMollie", ClientSettings.MollieProfileId, ClientSettings.PaymentTestMode);
 
             if (string.IsNullOrWhiteSpace(result.Error?.Detail) && !string.IsNullOrWhiteSpace(result.Error?.Message?.ToString()))
             {

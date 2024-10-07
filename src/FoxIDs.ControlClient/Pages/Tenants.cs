@@ -22,9 +22,13 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
         private bool tenantWorking;
+        private IEnumerable<PlanInfo> planInfoList;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
@@ -109,8 +113,13 @@ namespace FoxIDs.Client.Pages
 
             try
             {
+                if (planInfoList == null)
+                {
+                    planInfoList = await HelpersService.GetPlanInfoAsync();
+                }
+
                 var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
-                await generalTenant.Form.InitAsync(tenant);
+                await generalTenant.Form.InitAsync(tenant.Map<TenantViewModel>());
             }
             catch (TokenUnavailableException)
             {
@@ -137,7 +146,7 @@ namespace FoxIDs.Client.Pages
                 }
                 tenantWorking = true;
                 var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
-                generalTenant.Form.UpdateModel(tenantResult);
+                generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                 toastService.ShowSuccess("Tenant updated.");
 
                 generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;

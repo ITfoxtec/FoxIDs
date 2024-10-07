@@ -281,6 +281,11 @@ namespace FoxIDs
                 public const int IncludedMin = 0;
                 public const int LimitedThresholdMin = 0;
                 public const int FirstLevelThresholdMin = 0;
+            }
+
+            public static class Payment
+            {
+                public const int CardTokenLength = 100;
 
                 public const int CurrencyLength = 10;
                 public const string CurrencyRegExPattern = @"^[\w]*$";

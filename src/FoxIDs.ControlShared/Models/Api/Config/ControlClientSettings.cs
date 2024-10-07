@@ -10,8 +10,8 @@
         public LogOptions LogOption { get; set; }
         public KeyStorageOptions KeyStorageOption { get; set; }
 
-        public bool EnablePlanPayment { get; set; }
-        public bool TestMode { get; set; }
+        public bool EnablePayment { get; set; }
+        public bool PaymentTestMode { get; set; }
         public string Currency { get; set;}
         public string MollieProfileId { get; set;}
     }

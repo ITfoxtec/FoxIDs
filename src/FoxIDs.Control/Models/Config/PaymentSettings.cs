@@ -2,15 +2,15 @@
 
 namespace FoxIDs.Models.Config
 {
-    public class PlanPaymentSettings
+    public class PaymentSettings
     {
-        [MaxLength(Constants.Models.Plan.CurrencyLength)]
-        [RegularExpression(Constants.Models.Plan.CurrencyRegExPattern)]
+        [MaxLength(Constants.Models.Payment.CurrencyLength)]
+        [RegularExpression(Constants.Models.Payment.CurrencyRegExPattern)]
         public string Currency { get; set; } = "EUR";
 
         public bool TestMode { get; set; } = false;
 
-        public bool EnablePlanPayment => !string.IsNullOrWhiteSpace(MollieApiKey) && !string.IsNullOrWhiteSpace(MollieProfileId);
+        public bool EnablePayment => !string.IsNullOrWhiteSpace(MollieApiKey) && !string.IsNullOrWhiteSpace(MollieProfileId);
 
         public string MollieApiKey { get; set; }   
         public string MollieProfileId { get; set; }

@@ -14,33 +14,34 @@ using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Config;
 using Mollie.Api.Models.Mandate.Response.PaymentSpecificParameters;
 using Mollie.Api.Client.Abstract;
+using System.Linq;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TMyTenantController :  ApiController
     {
-        private readonly Settings settings;
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
+        private readonly IMasterDataRepository masterDataRepository;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly IMandateClient mandateClient;
 
-        public TMyTenantController(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, IMandateClient mandateClient) : base(logger)
+        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.mapper = mapper;
+            this.masterDataRepository = masterDataRepository;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.mandateClient = mandateClient;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace FoxIDs.Controllers
             {
                 var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
 
-                await UpdatePayment(mTenant);
+                await UpdatePaymentAsync(mTenant);
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -94,6 +95,28 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                try
+                {
+                    if (settings.Payment.EnablePayment == true && !tenant.PlanName.IsNullOrEmpty())
+                    {
+                        tenant.PlanName = tenant.PlanName.ToLower();
+                        if (tenant.PlanName != RouteBinding.PlanName)
+                        {
+                            var mPlans = await masterDataRepository.GetListAsync<Plan>();
+                            decimal currentCost = RouteBinding.PlanName.IsNullOrEmpty() ? 0 : mPlans.Where(p => p.Name == RouteBinding.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
+                            decimal updateCost = mPlans.Where(p => p.Name == tenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
+                            if (updateCost >= currentCost)
+                            {
+                                mTenant.PlanName = tenant.PlanName;
+                            }
+                        }
+                    }
+                }
+                catch (Exception exp)
+                {
+                    logger.Error(exp, "Unable to update plan in tenant.");
+                }
+
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = false;
                 await tenantDataRepository.UpdateAsync(mTenant);
@@ -104,7 +127,7 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
                 }
 
-                await UpdatePayment(mTenant);
+                await UpdatePaymentAsync(mTenant);
 
                 return Ok(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -119,10 +142,11 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task UpdatePayment(Tenant mTenant)
+        private async Task UpdatePaymentAsync(Tenant mTenant)
         {
             if (mTenant.Payment != null && string.IsNullOrEmpty(mTenant.Payment.CardNumber) && !string.IsNullOrEmpty(mTenant.Payment.MandateId))
             {
+                var mandateClient = serviceProvider.GetService<IMandateClient>();
                 var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
                 if ("valid".Equals(mandateResponse.Status, StringComparison.OrdinalIgnoreCase))
                 {

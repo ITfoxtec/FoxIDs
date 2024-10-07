@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.MollieFirstPaymentResponse>> PostMyMollieFirstPayment([FromBody] Api.MollieFirstPaymentRequest payment)
         {
-            if(settings.PlanPayment?.EnablePlanPayment != true)
+            if(settings.Payment?.EnablePayment != true)
             {
                 throw new Exception("Payment not configured.");
             }

@@ -15,14 +15,21 @@
                 <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
                 <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
                 <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
-
-
-                <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
-                @if (ClientSettings.EnablePlanPayment)
+               
+                @if (ClientSettings.EnablePayment)
                 {
-                    <div class="py-1">
-                        <button class="btn btn-secondary" type="button" @onclick="ShowPlanModal">Change plan</button>
+                    <div class="info-text">
+                        You can change the plan to a higher plan.
                     </div>
+                    @if (tenantSettingsForm.Model.PlanInfoList != null)
+                    {
+                        <FInputSelect @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)">
+                            @foreach (var planInfo in tenantSettingsForm.Model.PlanInfoList)
+                            {
+                                <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
+                            }
+                        </FInputSelect> 
+                    }
 
                     <div class="pt-3">
                         <div class="active-group active">
@@ -58,6 +65,10 @@
                         <button class="btn btn-secondary" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
                     </div>
                 }
+                else
+                {
+                    <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
+                }
 
                 @if (deleteTenantAcknowledge)
                 {
@@ -86,7 +97,6 @@
         <form id="mollieform">
             <div class="modal-body">
                 <div class="mr-auto info-text pb-3">
-                    @* You can change the plan to a higher one and change payments. *@
                     Register your card to pay the tenant plan subscription.
                     <br />
                     A payment with a zero amount is used to register your card, no money will be debited from you card or account.

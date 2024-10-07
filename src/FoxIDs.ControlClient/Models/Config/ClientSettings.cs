@@ -15,8 +15,8 @@ namespace FoxIDs.Client.Models.Config
         public LogOptions LogOption { get; set; }
         public KeyStorageOptions KeyStorageOption { get; set; }
 
-        public bool EnablePlanPayment { get; set; }
-        public bool PlanPaymentTestMode { get; set; }
+        public bool EnablePayment { get; set; }
+        public bool PaymentTestMode { get; set; }
         public string Currency { get; set; }
         public string MollieProfileId { get; set; }
     }

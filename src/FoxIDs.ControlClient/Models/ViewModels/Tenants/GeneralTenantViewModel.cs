@@ -3,7 +3,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralTenantViewModel : Tenant
+    public class GeneralTenantViewModel : TenantViewModel
     {
         public GeneralTenantViewModel()
         { }
@@ -25,6 +25,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string LoginUri { get; set; }
 
-        public PageEditForm<Tenant> Form { get; set; }
+        public PageEditForm<TenantViewModel> Form { get; set; }
     }
 }

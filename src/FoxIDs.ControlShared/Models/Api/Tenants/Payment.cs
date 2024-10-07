@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace FoxIDs.Models.Api
+﻿namespace FoxIDs.Models.Api
 {
     public class Payment
     {

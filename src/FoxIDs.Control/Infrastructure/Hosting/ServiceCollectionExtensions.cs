@@ -142,10 +142,10 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddApiSwagger();
             services.AddAutoMapper();
 
-            if(settings.PlanPayment?.EnablePlanPayment == true)
+            if(settings.Payment?.EnablePayment == true)
             {
                 services.AddMollieApi(options => {
-                    options.ApiKey = settings.PlanPayment.MollieApiKey;
+                    options.ApiKey = settings.Payment.MollieApiKey;
                     options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
                 });
             }

@@ -92,14 +92,17 @@
     </PageEditForm>
 </div>
 
-<Modal @ref="changePaymentModal" Title="Payment">
+<Modal @ref="changePaymentModal" Title="Payment" DisableClose="true">
      <div class="modal-body">
         <form id="mollieform">
             <div class="modal-body">
-                <div class="mr-auto info-text pb-3">
-                    Register your card to pay the tenant plan subscription.
-                    <br />
-                    A payment with a zero amount is used to register your card, no money will be debited from you card or account.
+                <div class="mr-auto info-text pt-0 pb-3">
+                    <div>
+                        Register your card for the tenant subscription.
+                    </div>
+                    <div class="font-italic pt-1 small">
+                        Your card is register with a zero amount payment and no money will be withdrawn from you card or account in advance.
+                    </div>
                 </div>
 
                 @if (!changePaymentError.IsNullOrWhiteSpace())
@@ -164,7 +167,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary @(changePaymentWorking ? "disabled" : "")" @onclick="SubmitMollieAsync">Pay</button>
+                <button type="button" class="btn btn-primary @(changePaymentWorking ? "disabled" : "")" @onclick="SubmitMollieAsync">Register payment</button>
                 <button type="button" class="btn btn-secondary @(changePaymentWorking ? "disabled" : "")" @onclick="HidePaymentModalAsync">Cancel</button>
             </div>
         </form>

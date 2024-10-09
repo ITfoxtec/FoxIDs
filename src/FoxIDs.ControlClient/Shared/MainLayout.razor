@@ -5,6 +5,17 @@
 <div class="min-vh-100 d-flex flex-column justify-content-between">
     <div class=container-fluid>
 
+        <AuthorizeView>
+            <Authorized>
+                @if (!IsMasterTenant && RequestPayment)
+                {
+                    <div class="alert alert-warning text-center" role="alert">
+                        Please register a <a href="@TenantHerf" class="alert-link" @onclick="OpenPaymentMethodAsync">payment method</a> for the tenant subscription.
+                    </div>
+                }
+            </Authorized>
+        </AuthorizeView>
+
         <nav class="navbar navbar-expand navbar-light bg-light navbar-main nav-fill">
             <a class="navbar-brand mr-auto"><img class="logo" src="images/foxids_logo.svg" /></a>
             <AuthorizeView>

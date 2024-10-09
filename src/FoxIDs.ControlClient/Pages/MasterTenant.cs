@@ -45,6 +45,9 @@ namespace FoxIDs.Client.Pages
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
+        public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
         public HelpersService HelpersService { get; set; }
 
         [Inject]
@@ -53,7 +56,7 @@ namespace FoxIDs.Client.Pages
         [Parameter]
         public string TenantName { get; set; }
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
         private bool IsCustomDomainVerified
         {
@@ -72,11 +75,13 @@ namespace FoxIDs.Client.Pages
             {
                 await DefaultLoadAsync();
             }
+            NotificationLogic.OnOpenPaymentMethodAsync += OnOpenPaymentMethodAsync;
         }
 
         protected override void OnDispose()
         {
             TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            NotificationLogic.OnOpenPaymentMethodAsync -= OnOpenPaymentMethodAsync;
             base.OnDispose();
         }
 
@@ -98,12 +103,13 @@ namespace FoxIDs.Client.Pages
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
 
+                var planInfoList = await HelpersService.GetPlanInfoAsync();
+
                 var myTenant = await MyTenantService.GetTenantAsync();
-                RouteBindingLogic.SetMyTenant(myTenant);
+                await RouteBindingLogic.SetMyTenantAsync(myTenant, planInfoList);
 
                 savedCustomDomain = myTenant.CustomDomain;
                 
-                var planInfoList = await HelpersService.GetPlanInfoAsync();
                 await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
                 {
                     afterMap.PlanInfoList = planInfoList;
@@ -112,11 +118,6 @@ namespace FoxIDs.Client.Pages
                         afterMap.PlanDisplayName = afterMap.CurrentPlanInfo?.DisplayName ?? afterMap.PlanName;
                     }
                 }));
-
-                if (ClientSettings.EnablePayment && myTenant.Payment == null)
-                {
-                    await ShowPaymentModalAsync();
-                }
             }
             catch (TokenUnavailableException)
             {
@@ -143,13 +144,21 @@ namespace FoxIDs.Client.Pages
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;
-                RouteBindingLogic.SetMyTenant(myTenant);
+                await RouteBindingLogic.SetMyTenantAsync(myTenant);
                 tenantWorking = false;
             }
             catch (Exception ex)
             {
                 tenantWorking = false;
                 tenantSettingsForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task OnOpenPaymentMethodAsync()
+        {
+            if (NavigationManager.Uri.EndsWith("tenant", StringComparison.OrdinalIgnoreCase))
+            {
+                await ShowPaymentModalAsync();
             }
         }
 

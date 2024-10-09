@@ -84,7 +84,9 @@ namespace FoxIDs.Client.Shared
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
+
+        private bool RequestPayment => RouteBindingLogic.RequestPayment;
 
         protected override async Task OnInitializedAsync()
         {
@@ -92,6 +94,12 @@ namespace FoxIDs.Client.Shared
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;
+            NotificationLogic.OnRequestPaymentUpdated += OnRequestPaymentUpdated;
+        }
+
+        protected void Dispose()
+        {
+            NotificationLogic.OnRequestPaymentUpdated -= OnRequestPaymentUpdated;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -225,6 +233,18 @@ namespace FoxIDs.Client.Shared
         {
             await LoadAndSelectTracAsync(forceSelect: true);
             StateHasChanged();
+        }  
+        
+        private void OnRequestPaymentUpdated()
+        {
+            StateHasChanged();
+        }
+
+        private string TenantHerf => $"{RouteBindingLogic.GetTenantNameAsync().GetAwaiter().GetResult()}/tenant";
+
+        private async Task OpenPaymentMethodAsync()
+        {
+            await NotificationLogic.OpenPaymentMethodAsync();
         }
 
         private async Task LoadAndSelectTracAsync(bool forceSelect = false)

@@ -50,7 +50,7 @@ namespace FoxIDs.Client.Pages
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => TrackSelectedLogic.IsTrackSelected && Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
         protected override async Task OnInitializedAsync()
         {

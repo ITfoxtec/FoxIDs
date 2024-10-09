@@ -5,6 +5,13 @@ namespace FoxIDs.Models
 {
     public class Customer
     {
+        [Required]
+        [MaxLength(Constants.Models.User.EmailLength)]
+        [EmailAddress]
+        [RegularExpression(Constants.Models.User.EmailRegExPattern)]
+        [JsonProperty(PropertyName = "invoice_email")]
+        public string InvoiceEmail { get; set; }
+
         /// <summary>
         /// Company name or name.
         /// </summary>

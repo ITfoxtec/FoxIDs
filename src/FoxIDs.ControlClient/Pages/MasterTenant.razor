@@ -35,6 +35,54 @@
                         <div class="active-group active">
                             <div class="card">
                                 <div class="card-body">
+                                    <div class="info-text">
+                                        Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
+                                    </div>
+                                    <FInputText @bind-Value="tenantSettingsForm.Model.Customer.InvoiceEmail" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmail)" />
+                                    <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.VatNumber" For="@(() => tenantSettingsForm.Model.Customer.VatNumber)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine1" For="@(() => tenantSettingsForm.Model.Customer.AddressLine1)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine2" For="@(() => tenantSettingsForm.Model.Customer.AddressLine2)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.PostalCode" For="@(() => tenantSettingsForm.Model.Customer.PostalCode)" />
+                                        </div>
+                                        <div class="col-6">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.City" For="@(() => tenantSettingsForm.Model.Customer.City)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.StateRegion" For="@(() => tenantSettingsForm.Model.Customer.StateRegion)" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Country" For="@(() => tenantSettingsForm.Model.Customer.Country)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="card-number" class="label-control">Customer information</label>
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
                                     @if (tenantSettingsForm.Model.Payment == null)
                                     {
                                         <div>There is not registered a payment method.</div>
@@ -60,10 +108,6 @@
                             <label for="card-number" class="label-control">Payment method</label>
                         </div>
                     </div>
-
-                    <div class="py-1">
-                        <button class="btn btn-secondary" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
-                    </div>
                 }
                 else
                 {
@@ -85,6 +129,7 @@
                 }
             </div>
             <div class="modal-footer px-0">
+                <button class="btn btn-secondary mr-auto" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
                 <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
                 <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
             </div>

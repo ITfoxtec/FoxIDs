@@ -19,6 +19,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
 
+        [ValidateComplexType]
+        public Customer Customer { get; set; }
+
         public Payment Payment { get; set; }
     }
 }

@@ -39,6 +39,91 @@
                                 }
                                 <FInputText @bind-Value="tenant.Form.Model.CustomDomain" For="@(() => tenant.Form.Model.CustomDomain)" Focus="true" />
                                 <FInputToggle @bind-Value="tenant.Form.Model.CustomDomainVerified" For="@(() => tenant.Form.Model.CustomDomainVerified)" TextType="y.n" />
+
+                                @if (!string.IsNullOrEmpty(tenant.Form.Model.Name) && !Constants.Routes.MasterTenantName.Equals(tenant.Form.Model.Name, StringComparison.OrdinalIgnoreCase) && ClientSettings.EnablePayment)
+                                {
+                                    tenant.Form.Model.Customer ??= new Customer();
+                                }
+                                @if (tenant.Form.Model.Customer != null)
+                                {
+                                    <div class="pt-3">
+                                        <div class="active-group active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="info-text">
+                                                        Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
+                                                    </div>
+                                                    <FInputText @bind-Value="tenant.Form.Model.Customer.InvoiceEmail" For="@(() => tenant.Form.Model.Customer.InvoiceEmail)" />
+                                                    <FInputText @bind-Value="tenant.Form.Model.Customer.Name" For="@(() => tenant.Form.Model.Customer.Name)" />
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.VatNumber" For="@(() => tenant.Form.Model.Customer.VatNumber)" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.AddressLine1" For="@(() => tenant.Form.Model.Customer.AddressLine1)" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.AddressLine2" For="@(() => tenant.Form.Model.Customer.AddressLine2)" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.PostalCode" For="@(() => tenant.Form.Model.Customer.PostalCode)" />
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.City" For="@(() => tenant.Form.Model.Customer.City)" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.StateRegion" For="@(() => tenant.Form.Model.Customer.StateRegion)" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <FInputText @bind-Value="tenant.Form.Model.Customer.Country" For="@(() => tenant.Form.Model.Customer.Country)" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label for="card-number" class="label-control">Customer information</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-3">
+                                        <div class="active-group active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    @if (tenant.Form.Model.Payment == null)
+                                                    {
+                                                        <div>There is not registered a payment method.</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (!tenant.Form.Model.Payment.IsActive)
+                                                        {
+                                                            <div class="validation-message">Not active</div>
+                                                        }
+                                                        @if (!tenant.Form.Model.Payment.CardNumber.IsNullOrWhiteSpace())
+                                                        {
+                                                            <div class="font-weight-bold">@tenant.Form.Model.Payment.CardLabel ****@tenant.Form.Model.Payment.CardNumber</div>
+                                                        }
+                                                        @if (!tenant.Form.Model.Payment.CardHolder.IsNullOrWhiteSpace())
+                                                        {
+                                                            <div>@tenant.Form.Model.Payment.CardHolder</div>
+                                                        }
+                                                        <div>Expiry date: @tenant.Form.Model.Payment.CardExpiryMonth/@tenant.Form.Model.Payment.CardExpiryYear</div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <label for="card-number" class="label-control">Payment method</label>
+                                        </div>
+                                    </div>
+                                }
                             </div>
 
                             @if (tenant.DeleteAcknowledge)

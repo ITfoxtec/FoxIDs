@@ -188,6 +188,7 @@ namespace FoxIDs.Controllers
                 }
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);

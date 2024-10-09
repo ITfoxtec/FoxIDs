@@ -39,6 +39,8 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<Customer, Api.Customer>()
+                .ReverseMap();
 
             CreateMap<Payment, Api.Payment>();
 

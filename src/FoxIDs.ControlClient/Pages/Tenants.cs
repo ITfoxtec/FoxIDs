@@ -14,6 +14,7 @@ using FoxIDs.Client.Infrastructure.Security;
 using Blazored.Toast.Services;
 using System.Net.Http;
 using ITfoxtec.Identity;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages
 {
@@ -23,6 +24,9 @@ namespace FoxIDs.Client.Pages
         private List<GeneralTenantViewModel> tenants;
         private bool tenantWorking;
         private IEnumerable<PlanInfo> planInfoList;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }

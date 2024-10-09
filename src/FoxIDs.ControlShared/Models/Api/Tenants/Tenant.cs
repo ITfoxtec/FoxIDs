@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class Tenant : BaseTenant, INameValue
+    public class Tenant : TenantBase, INameValue
     {
         /// <summary>
         /// Tenant name.
@@ -15,7 +16,5 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
-
-        public Payment Payment { get; set; }
     }
 }

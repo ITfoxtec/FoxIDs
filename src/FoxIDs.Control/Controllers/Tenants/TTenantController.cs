@@ -48,9 +48,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="name">Tenant name.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> GetTenant(string name)
+        public async Task<ActionResult<Api.TenantResponse>> GetTenant(string name)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var MTenant = await tenantDataRepository.GetTenantByNameAsync(name);
-                return Ok(mapper.Map<Api.Tenant>(MTenant));
+                return Ok(mapper.Map<Api.TenantResponse>(MTenant));
             }
             catch (FoxIDsDataException ex)
             {
@@ -76,9 +76,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.Tenant>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
 
                 await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
 
-                return Created(mapper.Map<Api.Tenant>(mTenant));
+                return Created(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (AccountException aex)
             {
@@ -161,9 +161,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> PutTenant([FromBody] Api.TenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PutTenant([FromBody] Api.TenantRequest tenant)
         {
             try
             {
@@ -196,7 +196,7 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
                 }
 
-                return Ok(mapper.Map<Api.Tenant>(mTenant));
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {

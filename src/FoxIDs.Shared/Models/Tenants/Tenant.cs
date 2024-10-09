@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using static OpenSearch.Client.JoinField;
 
 namespace FoxIDs.Models
 {
@@ -53,7 +52,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "custom_domain_verified")]
         public bool CustomDomainVerified { get; set; }
 
+        [JsonProperty(PropertyName = "customer")]
+        [ValidateComplexType]
+        public Customer Customer { get; set; }
+
         [JsonProperty(PropertyName = "payment")]
+        [ValidateComplexType]
         public Payment Payment { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)

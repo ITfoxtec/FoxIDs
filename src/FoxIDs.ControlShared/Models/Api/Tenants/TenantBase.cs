@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.Api
 {
-    public abstract class BaseTenant
+    public abstract class TenantBase
     {
         [MaxLength(Constants.Models.Plan.NameLength)]
         [RegularExpression(Constants.Models.Plan.NameRegExPattern)]

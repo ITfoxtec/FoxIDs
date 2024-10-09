@@ -17,9 +17,9 @@ namespace FoxIDs.Client.Services
 
         public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterApiUri, filterValue, parmValue2: filterValue, parmName2: "filterCustomDomain");
 
-        public async Task<Tenant> GetTenantAsync(string name) => await GetAsync<Tenant>(apiUri, name);
+        public async Task<TenantResponse> GetTenantAsync(string name) => await GetAsync<TenantResponse>(apiUri, name);
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
-        public async Task<Tenant> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, Tenant>(apiUri, tenant);
+        public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);

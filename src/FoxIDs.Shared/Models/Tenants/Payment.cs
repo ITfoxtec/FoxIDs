@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
@@ -7,18 +8,23 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "is_active")]
         public bool IsActive { get; set; }
 
+        [MaxLength(Constants.Models.Payment.CustomerIdLength)]
         [JsonProperty(PropertyName = "customer_id")]
         public string CustomerId { get; set; }
-        
+
+        [MaxLength(Constants.Models.Payment.MandateIdLength)]
         [JsonProperty(PropertyName = "mandate_id")]
         public string MandateId { get; set; }
 
+        [MaxLength(Constants.Models.Payment.CardHolderLength)]
         [JsonProperty(PropertyName = "card_holder")]
         public string CardHolder { get; set; }
 
+        [MaxLength(Constants.Models.Payment.CardNumberLength)]
         [JsonProperty(PropertyName = "card_number")]
         public string CardNumber { get; set; }
 
+        [MaxLength(Constants.Models.Payment.CardLabelLength)]
         [JsonProperty(PropertyName = "card_label")]
         public string CardLabel { get; set; }
 

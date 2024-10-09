@@ -289,6 +289,24 @@ namespace FoxIDs
 
                 public const int CurrencyLength = 10;
                 public const string CurrencyRegExPattern = @"^[\w]*$";
+
+                public const int CustomerIdLength = 100;
+                public const int MandateIdLength = 100;
+                public const int CardHolderLength = 500;
+                public const int CardNumberLength = 50; 
+                public const int CardLabelLength = 100;
+            }
+
+            public static class Customer
+            {
+                public const int NameLength = 100;
+                public const int VatNumberLength = 50;
+                public const int AddressLine1Length = 50;
+                public const int AddressLine2Length = 50;
+                public const int PostalCodeLength = 50;
+                public const int CityLength = 50;
+                public const int StateRegionLength = 50;
+                public const int CountryLength = 50;
             }
 
             public static class Logging

@@ -48,9 +48,9 @@ namespace FoxIDs.Controllers
         /// Get my tenant.
         /// </summary>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> GetMyTenant()
+        public async Task<ActionResult<Api.TenantResponse>> GetMyTenant()
         {
             try
             {
@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
 
                 await UpdatePaymentAsync(mTenant);
 
-                return Ok(mapper.Map<Api.Tenant>(mTenant));
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {
@@ -76,9 +76,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> PutMyTenant([FromBody] Api.MyTenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PutMyTenant([FromBody] Api.MyTenantRequest tenant)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace FoxIDs.Controllers
 
                 await UpdatePaymentAsync(mTenant);
 
-                return Ok(mapper.Map<Api.Tenant>(mTenant));
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {

@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Logic
     {
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
-        private Tenant myTenant;
+        private TenantResponse myTenant;
         private bool? isMasterTenant;
         private readonly ClientSettings clientSettings;
         private readonly IServiceProvider serviceProvider;
@@ -45,7 +45,7 @@ namespace FoxIDs.Client.Logic
 
         public bool RequestPayment { get; private set; }
 
-        public async Task SetMyTenantAsync(Tenant tenant, IEnumerable<PlanInfo> planInfoList = null)
+        public async Task SetMyTenantAsync(TenantResponse tenant, IEnumerable<PlanInfo> planInfoList = null)
         {
             myTenant = tenant;
 
@@ -55,7 +55,7 @@ namespace FoxIDs.Client.Logic
             }
         }
 
-        private async Task UpdatRequestPaymentAsync(Tenant myTenant, IEnumerable<PlanInfo> planInfoList = null)
+        private async Task UpdatRequestPaymentAsync(TenantResponse myTenant, IEnumerable<PlanInfo> planInfoList = null)
         {
             if (!myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
             {

@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Claims;
+using ITfoxtec.Identity.Saml2.Schemas;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using System;
@@ -22,8 +23,18 @@ namespace FoxIDs.Logic
 
         public Saml2NameIdentifier GetNameId(IEnumerable<Claim> claims, string overwriteNameIdFormat = null)
         {
-            var nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.NameIdentifier);
+            var nameIdValue = string.Empty;
+
+            if (NameIdentifierFormats.Email.OriginalString.Equals(overwriteNameIdFormat, StringComparison.OrdinalIgnoreCase))
+            {
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Email);
+            }
+
             if (nameIdValue.IsNullOrEmpty())
+            {
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.NameIdentifier);
+            }
+            else if (nameIdValue.IsNullOrEmpty())
             {
                 nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Upn);
             }

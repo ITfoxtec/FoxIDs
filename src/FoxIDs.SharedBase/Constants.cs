@@ -293,7 +293,7 @@ namespace FoxIDs
                 public const int CustomerIdLength = 100;
                 public const int MandateIdLength = 100;
                 public const int CardHolderLength = 500;
-                public const int CardNumberLength = 50; 
+                public const int CardNumberInfoLength = 10; 
                 public const int CardLabelLength = 100;
             }
 

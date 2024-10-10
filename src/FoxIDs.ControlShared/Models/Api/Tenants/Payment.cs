@@ -10,8 +10,8 @@ namespace FoxIDs.Models.Api
         [JsonProperty(PropertyName = "card_holder")]
         public string CardHolder { get; set; }
 
-        [MaxLength(Constants.Models.Payment.CardNumberLength)]
-        public string CardNumber { get; set; }
+        [MaxLength(Constants.Models.Payment.CardNumberInfoLength)]
+        public string CardNumberInfo { get; set; }
 
         [MaxLength(Constants.Models.Payment.CardLabelLength)]
         public string CardLabel { get; set; }

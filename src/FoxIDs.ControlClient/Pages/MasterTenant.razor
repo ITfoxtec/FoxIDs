@@ -93,9 +93,9 @@
                                         {
                                             <div class="validation-message">Not active</div>
                                         }
-                                        @if (!tenantSettingsForm.Model.Payment.CardNumber.IsNullOrWhiteSpace())
+                                        @if (!tenantSettingsForm.Model.Payment.CardNumberInfo.IsNullOrWhiteSpace())
                                         {
-                                            <div class="font-weight-bold">@tenantSettingsForm.Model.Payment.CardLabel ****@tenantSettingsForm.Model.Payment.CardNumber</div>
+                                            <div class="font-weight-bold">@tenantSettingsForm.Model.Payment.CardLabel ****@tenantSettingsForm.Model.Payment.CardNumberInfo</div>
                                         }
                                         @if (!tenantSettingsForm.Model.Payment.CardHolder.IsNullOrWhiteSpace())
                                         {

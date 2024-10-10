@@ -20,9 +20,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "card_holder")]
         public string CardHolder { get; set; }
 
-        [MaxLength(Constants.Models.Payment.CardNumberLength)]
-        [JsonProperty(PropertyName = "card_number")]
-        public string CardNumber { get; set; }
+        [MaxLength(Constants.Models.Payment.CardNumberInfoLength)]
+        [JsonProperty(PropertyName = "card_number_info")]
+        public string CardNumberInfo { get; set; }
 
         [MaxLength(Constants.Models.Payment.CardLabelLength)]
         [JsonProperty(PropertyName = "card_label")]

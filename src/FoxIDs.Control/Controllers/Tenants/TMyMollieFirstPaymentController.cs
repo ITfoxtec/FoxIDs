@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
             var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
             var cardExpiryDate = DateTime.Parse(mandateResponse.Details.CardExpiryDate);
             mTenant.Payment.CardHolder = mandateResponse.Details.CardHolder;
-            mTenant.Payment.CardNumber = mandateResponse.Details.CardNumber;
+            mTenant.Payment.CardNumberInfo = mandateResponse.Details.CardNumber;
             mTenant.Payment.CardLabel = mandateResponse.Details.CardLabel;
             mTenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
             mTenant.Payment.CardExpiryYear = cardExpiryDate.Year;

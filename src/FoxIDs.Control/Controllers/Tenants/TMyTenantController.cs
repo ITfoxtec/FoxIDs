@@ -145,7 +145,7 @@ namespace FoxIDs.Controllers
 
         private async Task UpdatePaymentAsync(Tenant mTenant)
         {
-            if (mTenant.Payment != null && string.IsNullOrEmpty(mTenant.Payment.CardNumber) && !string.IsNullOrEmpty(mTenant.Payment.MandateId))
+            if (mTenant.Payment != null && string.IsNullOrEmpty(mTenant.Payment.CardNumberInfo) && !string.IsNullOrEmpty(mTenant.Payment.MandateId))
             {
                 var mandateClient = serviceProvider.GetService<IMandateClient>();
                 var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
@@ -154,7 +154,7 @@ namespace FoxIDs.Controllers
                     mTenant.Payment.IsActive = true;
                     var cardExpiryDate = DateTime.Parse(mandateResponse.Details.CardExpiryDate);
                     mTenant.Payment.CardHolder = mandateResponse.Details.CardHolder;
-                    mTenant.Payment.CardNumber = mandateResponse.Details.CardNumber;
+                    mTenant.Payment.CardNumberInfo = mandateResponse.Details.CardNumber;
                     mTenant.Payment.CardLabel = mandateResponse.Details.CardLabel;
                     mTenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
                     mTenant.Payment.CardExpiryYear = cardExpiryDate.Year;

@@ -23,7 +23,7 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;

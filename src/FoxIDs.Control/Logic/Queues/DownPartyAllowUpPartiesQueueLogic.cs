@@ -201,6 +201,14 @@ namespace FoxIDs.Logic.Queues
                     await DoWorkAsync(routeBinding.TenantName, routeBinding.TrackName, upPartyName, messages, stoppingToken);
                     logger.Event($"Done processing '{info}'.");
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Background queue error.");
@@ -215,7 +223,6 @@ namespace FoxIDs.Logic.Queues
             while (!stoppingToken.IsCancellationRequested) 
             {
                 (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == upPartyName).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
-                stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();

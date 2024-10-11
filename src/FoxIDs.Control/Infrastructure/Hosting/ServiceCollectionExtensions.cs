@@ -88,7 +88,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadUpLogic>();
 
             services.AddSingleton<UsageCalculatorLogic>(); 
-            services.AddHostedService<UsageBackgroundService>();
+            services.AddHostedService<UsageCalculatorBackgroundService>();
 
             return services;
         }

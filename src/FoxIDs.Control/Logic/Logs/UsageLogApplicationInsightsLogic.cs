@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;

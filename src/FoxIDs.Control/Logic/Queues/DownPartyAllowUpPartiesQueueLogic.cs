@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using FoxIDs.Models.Queue;
@@ -12,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Logic
+namespace FoxIDs.Logic.Queues
 {
     public class DownPartyAllowUpPartiesQueueLogic : LogicBase
     {

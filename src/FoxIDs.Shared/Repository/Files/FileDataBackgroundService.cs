@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
-    public class BackgroundFileDataService : BackgroundService
+    public class FileDataBackgroundService : BackgroundService
     {
         private readonly Settings settings;
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
 
-        public BackgroundFileDataService(Settings settings, TelemetryLogger logger, IServiceProvider serviceProvider)
+        public FileDataBackgroundService(Settings settings, TelemetryLogger logger, IServiceProvider serviceProvider)
         {
             this.settings = settings;
             this.logger = logger;
@@ -45,7 +45,7 @@ namespace FoxIDs.Repository
                         var fileDataRepository = scope.ServiceProvider.GetRequiredService<FileDataRepository>();
                         await fileDataRepository.CleanDataAsync(stoppingToken);
 
-                        scopedLogger.Event("Done processing  file data.");
+                        scopedLogger.Event("Done processing file data.");
                     }
                     catch (Exception ex)
                     {

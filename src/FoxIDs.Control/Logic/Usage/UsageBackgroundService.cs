@@ -1,19 +1,20 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using FoxIDs.Infrastructure;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Infrastructure.Queue
+namespace FoxIDs.Logic.Usage
 {
-    public class BackgroundQueueService : BackgroundService
+    public class UsageBackgroundService : BackgroundService
     {
         private readonly TelemetryLogger logger;
-        private readonly BackgroundQueue backgroundQueue;
+        private readonly UsageCalculatorLogic usageCalculatorLogic;
 
-        public BackgroundQueueService(TelemetryLogger logger, BackgroundQueue backgroundQueue)
+        public UsageBackgroundService(TelemetryLogger logger, UsageCalculatorLogic usageCalculatorLogic)
         {
             this.logger = logger;
-            this.backgroundQueue = backgroundQueue;
+            this.usageCalculatorLogic = usageCalculatorLogic;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -22,8 +23,10 @@ namespace FoxIDs.Infrastructure.Queue
             {
                 try
                 {
-                    var workItem = await backgroundQueue.DequeueAsync(stoppingToken);
-                    await workItem(stoppingToken);
+                    if (await usageCalculatorLogic.ShouldStartAsync(stoppingToken))
+                    {
+                        await usageCalculatorLogic.DoCalculationAsync(stoppingToken);
+                    }
                 }
                 catch (OperationCanceledException)
                 {

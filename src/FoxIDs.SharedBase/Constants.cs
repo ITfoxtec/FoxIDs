@@ -255,6 +255,7 @@ namespace FoxIDs
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
                 public const string DataProtection = "datap";
+                public const string Used = "used";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -307,6 +308,16 @@ namespace FoxIDs
                 public const int CityLength = 50;
                 public const int StateRegionLength = 50;
                 public const int CountryLength = 50;
+            }
+
+            public static class Used
+            {
+                public const int IdLength = 80;
+                public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
+
+                public const int YearMin = 0;
+                public const int MonthMin = 0;
+                public const int MonthMax = 12;
             }
 
             public static class Logging

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Azure.Identity;
-using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Queues;
 using FoxIDs.Logic.Seed;
+using FoxIDs.Logic.Usage;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
@@ -40,6 +41,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();
 
+            services.AddSingleton<BackgroundQueue>();
+            services.AddHostedService<QueueBackgroundService>();
             services.AddTransient<DownPartyAllowUpPartiesQueueLogic>();
 
             services.AddTransient<BaseAccountLogic>();
@@ -84,6 +87,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 
+            services.AddSingleton<UsageCalculatorLogic>(); 
+            services.AddHostedService<UsageBackgroundService>();
+
             return services;
         }
 
@@ -94,7 +100,7 @@ namespace FoxIDs.Infrastructure.Hosting
             switch (settings.Options.DataStorage)
             {
                 case DataStorageOptions.File:
-                    services.AddHostedService<BackgroundFileDataService>();
+                    services.AddHostedService<FileDataBackgroundService>();
                     break;
                 case DataStorageOptions.PostgreSql:
                     services.AddHostedService<BackgroundPgDataService>();
@@ -110,9 +116,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
             services.AddScoped<FoxIDsClientRouteTransformer>();
-
-            services.AddSingleton<BackgroundQueue>();
-            services.AddHostedService<BackgroundQueueService>();
 
             if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {

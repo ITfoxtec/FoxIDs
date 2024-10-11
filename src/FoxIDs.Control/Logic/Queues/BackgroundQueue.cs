@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 
-namespace FoxIDs.Infrastructure.Queue
+namespace FoxIDs.Logic.Queues
 {
     public class BackgroundQueue
     {

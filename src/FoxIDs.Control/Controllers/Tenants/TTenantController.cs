@@ -103,6 +103,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
+                mTenant.PlanName = plan?.Name;
                 await tenantDataRepository.CreateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
@@ -177,7 +178,7 @@ namespace FoxIDs.Controllers
                 (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
                 if (!validPlan) return BadRequest(ModelState);
 
-                mTenant.PlanName = tenant.PlanName;
+                mTenant.PlanName = plan?.Name;
                 
                 if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
                 {

@@ -81,7 +81,7 @@ namespace FoxIDs.Logic.Usage
                 {
                     logger.Event("Start usage calculation.");
 
-                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName != "free" , pageSize: 100, paginationToken: paginationToken);
+                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName != null && t.PlanName != "free" , pageSize: 100, paginationToken: paginationToken);
                     foreach(var tenant in tenants)
                     {
                         stoppingToken.ThrowIfCancellationRequested();
@@ -159,7 +159,7 @@ namespace FoxIDs.Logic.Usage
                             ControlApiUpdates = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault(),
                         };
 
-                        await tenantDataRepository.CreateAsync(used);
+                        await tenantDataRepository.SaveAsync(used);
 
                         scopedLogger.Event($"Done calculating tenant '{tenantName}' usage.");
                     }

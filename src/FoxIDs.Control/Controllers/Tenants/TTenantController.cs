@@ -104,6 +104,7 @@ namespace FoxIDs.Controllers
 
                 var mTenant = mapper.Map<Tenant>(tenant);
                 mTenant.PlanName = plan?.Name;
+                mTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 await tenantDataRepository.CreateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);

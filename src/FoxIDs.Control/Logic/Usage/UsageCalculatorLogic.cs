@@ -11,22 +11,18 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Usage;
 using System.Linq;
 using FoxIDs.Logic.Caches.Providers;
-using FoxIDs.Models.Config;
 
 namespace FoxIDs.Logic.Usage
 {
     public class UsageCalculatorLogic : LogicBase
     {
-        private const int twoMonthLifetime = 60 * 60 * 24 * 62; // min. 2 month lifetime
-        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ICacheProvider cacheProvider;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public UsageCalculatorLogic(FoxIDsControlSettings settings, TelemetryLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageCalculatorLogic(TelemetryLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.cacheProvider = cacheProvider;
@@ -42,15 +38,15 @@ namespace FoxIDs.Logic.Usage
                     if (!await cacheProvider.ExistsAsync(UsageMonthCalculateKey(datePointer)))
                     {
                         var myId = Guid.NewGuid().ToString();
-                        await cacheProvider.SetAsync(UsageMonthCalculateKey(datePointer), myId, twoMonthLifetime);
+                        await cacheProvider.SetAsync(UsageMonthCalculateKey(datePointer), myId, 60 * 60 * 24); // 24 hours lifetime
 
                         // wait, for others to override
-                        await Task.Delay(60*5, stoppingToken); // 5 minutes
+                        await Task.Delay(1000 * 60 * 5, stoppingToken); // 5 minutes
 
                         var keyId = await cacheProvider.GetAsync(UsageMonthCalculateKey(datePointer));
                         if(myId == keyId)
                         {
-                            await cacheProvider.SetFlagAsync(UsageMonthKey(datePointer), twoMonthLifetime);
+                            await cacheProvider.SetFlagAsync(UsageMonthKey(datePointer), 60 * 60 * 24 * 62); // min. 2 month lifetime
                             return true;
                         }
                     }
@@ -81,7 +77,7 @@ namespace FoxIDs.Logic.Usage
                 {
                     logger.Event("Start usage calculation.");
 
-                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName != null && t.PlanName != "free" , pageSize: 100, paginationToken: paginationToken);
+                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" , pageSize: 100, paginationToken: paginationToken);
                     foreach(var tenant in tenants)
                     {
                         stoppingToken.ThrowIfCancellationRequested();
@@ -109,72 +105,69 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        public async Task DoTenantCalculationAsync(DateTimeOffset datePointer, string tenantName, CancellationToken stoppingToken)
+        private async Task DoTenantCalculationAsync(DateTimeOffset datePointer, string tenantName, CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            using (IServiceScope scope = serviceProvider.CreateScope())
             {
-                using (IServiceScope scope = serviceProvider.CreateScope())
+                var scopedLogger = scope.ServiceProvider.GetRequiredService<TelemetryScopedLogger>();
+                try
                 {
-                    var scopedLogger = scope.ServiceProvider.GetRequiredService<TelemetryScopedLogger>();
-                    try
-                    {
-                        scopedLogger.Event($"Start tenant '{tenantName}' usage calculation.", properties: new Dictionary<string, string> { { Constants.Logs.TenantName, tenantName } });
+                    scopedLogger.Event($"Start tenant '{tenantName}' usage calculation.", properties: new Dictionary<string, string> { { Constants.Logs.TenantName, tenantName } });
                         
-                        var usageLogLogic = scope.ServiceProvider.GetService<UsageLogLogic>();
-                        var usageDbLogs = await usageLogLogic.GetTrackUsageLogAsync(
-                            new Api.UsageLogRequest
-                            {
-                                OnlyDbQuery = true,
-                                TimeScope = Api.UsageLogTimeScopes.ThisMonth,
-                                SummarizeLevel = Api.UsageLogSummarizeLevels.Month,
-                                IncludeTracks = true,
-                                IncludeUsers = true,
-                            }, tenantName, null);
-
-                        stoppingToken.ThrowIfCancellationRequested();
-
-                        var usageLogs = await usageLogLogic.GetTrackUsageLogAsync(
-                            new Api.UsageLogRequest
-                            {
-                                TimeScope = Api.UsageLogTimeScopes.LastMonth,
-                                SummarizeLevel = Api.UsageLogSummarizeLevels.Month,
-                                IncludeLogins = true,
-                                IncludeTokenRequests = true,
-                                IncludeControlApiGets = true,
-                                IncludeControlApiUpdates = true,
-                            }, tenantName, null);
-
-                        stoppingToken.ThrowIfCancellationRequested();
-
-                        var used = new Used
+                    var usageLogLogic = scope.ServiceProvider.GetService<UsageLogLogic>();
+                    var usageDbLogs = await usageLogLogic.GetTrackUsageLogAsync(
+                        new Api.UsageLogRequest
                         {
-                            Id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, Year = datePointer.Year, Month = datePointer.Month }),
-                            Year = datePointer.Year,
-                            Month = datePointer.Month,
-                            Tracks = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Track).Select(i => i.Value).FirstOrDefault(),
-                            Users = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.User).Select(i => i.Value).FirstOrDefault(),
-                            Logins = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Login).Select(i => i.Value).FirstOrDefault(),
-                            TokenRequests = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.TokenRequest).Select(i => i.Value).FirstOrDefault(),
-                            ControlApiGets = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiGet).Select(i => i.Value).FirstOrDefault(),
-                            ControlApiUpdates = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault(),
-                        };
+                            OnlyDbQuery = true,
+                            TimeScope = Api.UsageLogTimeScopes.ThisMonth,
+                            SummarizeLevel = Api.UsageLogSummarizeLevels.Month,
+                            IncludeTracks = true,
+                            IncludeUsers = true,
+                        }, tenantName, null, isMasterTrack: true);
 
-                        await tenantDataRepository.SaveAsync(used);
+                    stoppingToken.ThrowIfCancellationRequested();
 
-                        scopedLogger.Event($"Done calculating tenant '{tenantName}' usage.");
-                    }
-                    catch (OperationCanceledException)
+                    var usageLogs = await usageLogLogic.GetTrackUsageLogAsync(
+                        new Api.UsageLogRequest
+                        {
+                            TimeScope = Api.UsageLogTimeScopes.LastMonth,
+                            SummarizeLevel = Api.UsageLogSummarizeLevels.Month,
+                            IncludeLogins = true,
+                            IncludeTokenRequests = true,
+                            IncludeControlApiGets = true,
+                            IncludeControlApiUpdates = true,
+                        }, tenantName, null, isMasterTrack: true);
+
+                    stoppingToken.ThrowIfCancellationRequested();
+
+                    var used = new Used
                     {
-                        throw;
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex)
-                    {
-                        scopedLogger.Error(ex, $"Error occurred during tenant '{tenantName}' usage calculation.");
-                    }
+                        Id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, Year = datePointer.Year, Month = datePointer.Month }),
+                        Year = datePointer.Year,
+                        Month = datePointer.Month,
+                        Tracks = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Track).Select(i => i.Value).FirstOrDefault(),
+                        Users = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.User).Select(i => i.Value).FirstOrDefault(),
+                        Logins = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Login).Select(i => i.Value).FirstOrDefault(),
+                        TokenRequests = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.TokenRequest).Select(i => i.Value).FirstOrDefault(),
+                        ControlApiGets = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiGet).Select(i => i.Value).FirstOrDefault(),
+                        ControlApiUpdates = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault(),
+                    };
+
+                    await tenantDataRepository.SaveAsync(used);
+
+                    scopedLogger.Event($"Done calculating tenant '{tenantName}' usage.");
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    scopedLogger.Error(ex, $"Error occurred during tenant '{tenantName}' usage calculation.");
                 }
             }
         }

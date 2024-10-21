@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
 
         private (DateTime start, DateTime end) GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
         {
-            var timePointer = DateTimeOffset.Now;
+            var timePointer = DateTimeOffset.UtcNow;
             if (timeScope == Api.UsageLogTimeScopes.LastMonth)
             {
                 timePointer = timePointer.AddMonths(-1);

@@ -31,7 +31,7 @@ namespace FoxIDs.Logic.Usage
                     var now = DateTime.Now;
                     var endOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0).AddMonths(1).AddSeconds(-1);
                     var timeSpanToEndOfMonth = endOfMonth - now;
-                    int waitPeriod = (Convert.ToInt32(timeSpanToEndOfMonth.TotalMilliseconds) + settings.Usage.BackgroundServiceWaitPeriod) * 1000;
+                    int waitPeriod = 1000 * (Convert.ToInt32(timeSpanToEndOfMonth.TotalMilliseconds) + settings.Usage.BackgroundServiceWaitPeriod);
                     await Task.Delay(waitPeriod, stoppingToken);
                 }
                 while (!stoppingToken.IsCancellationRequested);

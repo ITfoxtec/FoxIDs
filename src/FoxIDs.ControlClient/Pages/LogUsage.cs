@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages
 {
-    public partial class LogUsages
+    public partial class LogUsage
     {
         private static List<string> includeNotUserTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
         private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };

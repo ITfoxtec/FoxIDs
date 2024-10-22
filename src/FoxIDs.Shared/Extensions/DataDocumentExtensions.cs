@@ -53,6 +53,10 @@ namespace FoxIDs
             {
                 return Tenant.PartitionIdFormat();
             }
+            else if (id.StartsWith("used:"))
+            {
+                return Used.PartitionIdFormat();
+            }
             else if (id.StartsWith("track:"))
             {
                 return Track.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });

@@ -315,9 +315,20 @@ namespace FoxIDs
                 public const int IdLength = 80;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
 
-                public const int YearMin = 0;
-                public const int MonthMin = 0;
+                public const int YearMin = 2000;
+                public const int MonthMin = 1;
                 public const int MonthMax = 12;
+                public const int ItemsMin = 0;
+                public const int ItemsMax = 1000;
+                public const int DayMin = 0;
+                public const int DayMax = 31;
+                public const int CountMin = 0;
+                public const int CountMax = 1000;
+                public const int PriceMin = 0;
+                public const int InvoicesMin = 0;
+                public const int InvoicesMax = 10;
+                public const int UsedItemTextLength = 200;
+                public const int InvoiceLineTextLength = 300;
             }
 
             public static class Logging

@@ -165,9 +165,15 @@
                                 <TenantLiNavLink Href="certificates">
                                     Certificates
                                 </TenantLiNavLink>
+                                @if (IsMasterTenant)
+                                {
+                                    <TenantLiNavLink Href="usage">
+                                        Usage
+                                    </TenantLiNavLink>
+                                }
                                 @if (clientSettings.LogOption != LogOptions.Stdout)
                                 {
-                                    <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
+                                    <TenantLiNavLink Href="logusage" SubPages="logs,logsettings">
                                         Logs
                                     </TenantLiNavLink>
                                 }

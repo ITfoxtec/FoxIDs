@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FoxIDs.Models.Usage;
 using System.Linq;
 using FoxIDs.Logic.Caches.Providers;
 
@@ -140,18 +139,25 @@ namespace FoxIDs.Logic.Usage
 
                     stoppingToken.ThrowIfCancellationRequested();
 
-                    var used = new Used
+                    var id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, Year = datePointer.Year, Month = datePointer.Month });
+                    var used = await tenantDataRepository.GetAsync<Used>(id, required: false);
+                    if (used == null)
                     {
-                        Id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, Year = datePointer.Year, Month = datePointer.Month }),
-                        Year = datePointer.Year,
-                        Month = datePointer.Month,
-                        Tracks = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Track).Select(i => i.Value).FirstOrDefault(),
-                        Users = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.User).Select(i => i.Value).FirstOrDefault(),
-                        Logins = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Login).Select(i => i.Value).FirstOrDefault(),
-                        TokenRequests = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.TokenRequest).Select(i => i.Value).FirstOrDefault(),
-                        ControlApiGets = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiGet).Select(i => i.Value).FirstOrDefault(),
-                        ControlApiUpdates = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault(),
-                    };
+                        used = new Used
+                        {
+                            Id = id,
+                            TenantName = tenantName,
+                            Year = datePointer.Year,
+                            Month = datePointer.Month
+                        };
+                    }
+
+                    used.Tracks = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Track).Select(i => i.Value).FirstOrDefault();
+                    used.Users = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.User).Select(i => i.Value).FirstOrDefault();
+                    used.Logins = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Login).Select(i => i.Value).FirstOrDefault();
+                    used.TokenRequests = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.TokenRequest).Select(i => i.Value).FirstOrDefault();
+                    used.ControlApiGets = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiGet).Select(i => i.Value).FirstOrDefault();
+                    used.ControlApiUpdates = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault();
 
                     await tenantDataRepository.SaveAsync(used);
 

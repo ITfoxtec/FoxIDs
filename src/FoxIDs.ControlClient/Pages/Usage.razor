@@ -1,0 +1,101 @@
+﻿@page "/{tenantName}/usage"
+@inherits PageBase
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        Add usage for a tenant in a month and register time spend and other tasks.
+    </div>
+    <div class="py-2">
+        <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateUsage())">
+            <span class="oi oi-plus" aria-hidden="true"></span> Create Usage
+        </button>
+    </div>
+</div>
+
+<PageEditForm @ref="searchUsageForm" TModel="FilterUsageViewModel" OnAfterInit="OnUsageFilterAfterInit" OnValidSubmit="OnUsageFilterValidSubmitAsync">
+    <div class="row">
+        <div class="col-6">
+            <FInputNumber @bind-Value="searchUsageForm.Model.Year" For="@(() => searchUsageForm.Model.Year)" />
+        </div>
+        <div class="col-6">
+            <FInputNumber @bind-Value="searchUsageForm.Model.Month" For="@(() => searchUsageForm.Model.Month)" />
+        </div>
+    </div>
+    <FInputTextFilter @bind-Value="searchUsageForm.Model.FilterTenantValue" For="@(() => searchUsageForm.Model.FilterTenantValue)" />
+</PageEditForm>
+
+
+<ul class="list-group">
+    @foreach (var used in usedList)
+    {
+        <li class="list-group-item @(used.Edit ? "active" : string.Empty)">
+            @if (!used.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @used.Error
+                </div>
+            }
+            @if (used.Edit)
+            {
+                <PageEditForm @ref="used.Form" TModel="UsedViewModel" OnAfterInit="@(m => UsedViewModelAfterInit(used, m))" OnValidSubmit="@(async (editContext) => await OnEditUsedValidSubmitAsync(used, editContext))">
+                    <div class="modal-header">
+                        User
+                    </div>
+                    <div class="modal-body">
+                        @if (used.CreateMode)
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <FInputNumber @bind-Value="used.Form.Model.Year" For="@(() => used.Form.Model.Year)" />
+                                </div>
+                                <div class="col-6">
+                                    <FInputNumber @bind-Value="used.Form.Model.Month" For="@(() => used.Form.Model.Month)" />
+                                </div>
+                            </div>
+                            <FInputText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" Focus="true" />
+                        }
+                        else
+                        {
+                            <FFieldText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" />
+                        }
+
+
+                        <div class="info-text mr-auto">
+                            Add items to register time spend and other tasks.
+                        </div>
+                        <div class="form-group active-group active">
+                            <Label For="@(() => used.Form.Model.Items)" class="label-control" />
+                            <ul class="list-group">
+                                @foreach (var item in used.Form.Model.Items)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveItem(e, used.Form.Model.Items, item))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => used.Form.Model.Items)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items))"><span class="oi oi-plus" aria-hidden="true"></span> Add Item</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">@(used.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(@used.CreateMode ? "Cancel" : "Close")</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
+                    @used.TenantName
+                </button>
+            }
+        </li>
+    }
+</ul>

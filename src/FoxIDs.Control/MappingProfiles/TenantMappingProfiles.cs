@@ -44,6 +44,19 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Payment, Api.Payment>();
 
+            CreateMap<Used, Api.UsedBase>()
+                .ReverseMap()
+                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+            CreateMap<Used, Api.Used>()
+                .ReverseMap()
+                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+            CreateMap<Used, Api.UpdateUsageRequest>()
+                .ReverseMap()
+                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+
             CreateMap<Track, Api.Track>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))

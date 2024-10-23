@@ -45,17 +45,15 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Payment, Api.Payment>();
 
             CreateMap<Used, Api.UsedBase>()
-                .ReverseMap()
-                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+                .ForMember(d => d.TotalPrice, opt => opt.MapFrom(s => s.Invoices != null && s.Invoices.Any() ? s.Invoices.Last().TotalPrice : 0));
             CreateMap<Used, Api.Used>()
-                .ReverseMap()
-                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+                .ForMember(d => d.TotalPrice, opt => opt.MapFrom(s => s.Invoices != null && s.Invoices.Any() ? s.Invoices.Last().TotalPrice : 0));
             CreateMap<Used, Api.UpdateUsageRequest>()
                 .ReverseMap()
+                .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items != null && s.Items.Any() ? s.Items.OrderBy(i => i.Day) : null))
                 .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
+            CreateMap<UsedItem, Api.UsedItem>();
 
             CreateMap<Track, Api.Track>()
                 .ReverseMap()

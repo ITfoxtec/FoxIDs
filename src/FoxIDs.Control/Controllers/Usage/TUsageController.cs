@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
                 var mUsed = mapper.Map<Used>(usageRequest);
                 await tenantDataRepository.CreateAsync(mUsed);
 
-                return Created(FinalisingUsed(mapper.Map<Api.Used>(mUsed)));
+                return Created(mapper.Map<Api.Used>(mUsed));
             }
             catch (FoxIDsDataException ex)
             {
@@ -93,10 +93,10 @@ namespace FoxIDs.Controllers
         /// Update usage.
         /// </summary>
         /// <param name="usageRequest">Usage request.</param>
-        /// <returns>Tenant.</returns>
+        /// <returns>Used.</returns>
         [ProducesResponseType(typeof(Api.Used), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Used>> PutTenant([FromBody] Api.UpdateUsageRequest usageRequest)
+        public async Task<ActionResult<Api.Used>> PutUsage([FromBody] Api.UpdateUsageRequest usageRequest)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace FoxIDs.Controllers
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.Year, usageRequest.Month));
                 if (mUsed.Items?.Count() > 0) 
                 {
-                    mUsed.Items = mapper.Map<List<UsedItem>>(mUsed.Items);
+                    mUsed.Items = mapper.Map<List<UsedItem>>(usageRequest.Items);
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
                 }
                 await tenantDataRepository.UpdateAsync(mUsed);
 
-                return Ok(FinalisingUsed(mapper.Map<Api.Used>(mUsed)));
+                return Ok(mapper.Map<Api.Used>(mUsed));
             }
             catch (FoxIDsDataException ex)
             {
@@ -125,20 +125,6 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
-        }
-
-        private Api.Used FinalisingUsed(Api.Used used)
-        {
-            if(used.Items?.Count() > 0)
-            {
-                used.Items = used.Items.OrderBy(i => i.Day).ToList();
-            }
-            if (used.Invoices?.Count() > 0)
-            {
-                used.Invoices = used.Invoices.OrderBy(i => i.CreateTime).ToList();
-                used.TotalPrice = used.Invoices.Last().TotalPrice;
-            }
-            return used;
         }
     }
 }

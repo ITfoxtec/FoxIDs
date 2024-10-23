@@ -236,9 +236,10 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                throw new NotImplementedException();
-
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
+                var usedResult = await TenantService.SendUsageInvoiceAsync(new UsageInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
+                generalUsed.TotalPrice = usedResult.TotalPrice;
             }
             catch (TokenUnavailableException)
             {
@@ -257,9 +258,10 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                throw new NotImplementedException();
-
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
+                var usedResult = await TenantService.SendUsageInvoiceAsync(new UsageInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month, IsCreditNote = true });
+                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
+                generalUsed.TotalPrice = usedResult.TotalPrice;
             }
             catch (TokenUnavailableException)
             {
@@ -278,9 +280,9 @@ namespace FoxIDs.Client.Pages
             generalUsed.PaymentButtonDisabled = true;
             try
             {
-                throw new NotImplementedException();
-
                 generalUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
+                var usedResult = await TenantService.ExecuteUsagePaymentAsync(new UsageRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
             }
             catch (TokenUnavailableException)
             {

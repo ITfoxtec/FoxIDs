@@ -14,6 +14,8 @@ namespace FoxIDs.Client.Services
         private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
         private const string filterUsageApiUri = "api/{tenant}/master/!filterusage";
         private const string usageApiUri = "api/{tenant}/master/!usage";
+        private const string usageInvoiceApiUri = "api/{tenant}/master/!usageinvoice";
+        private const string usagePaymentApiUri = "api/{tenant}/master/!usagepayment";
 
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -28,8 +30,11 @@ namespace FoxIDs.Client.Services
         public async Task<IEnumerable<UsedBase>> FilterUsageAsync(string filterValue, int year, int month) => await FilterAsync<UsedBase>(filterUsageApiUri, parmValue1: filterValue, parmValue2: Convert.ToString(year), parmValue3: Convert.ToString(month), parmName1: "filterTenantName", parmName2: "year", parmName3: "month");
 
         public async Task<Used> GetUsageAsync(UsageRequest usageRequest) => await GetAsync<UsageRequest, Used>(usageApiUri, usageRequest);
-        public async Task<Used> CreateUsageAsync(UpdateUsageRequest usageRequest) => await PostResponseAsync<UpdateUsageRequest, Used>(apiUri, usageRequest);
-        public async Task<Used> UpdateUsageAsync(UpdateUsageRequest usageRequest) => await PutResponseAsync<UpdateUsageRequest, Used>(apiUri, usageRequest);
+        public async Task<Used> CreateUsageAsync(UpdateUsageRequest usageRequest) => await PostResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
+        public async Task<Used> UpdateUsageAsync(UpdateUsageRequest usageRequest) => await PutResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
+
+        public async Task<Used> SendUsageInvoiceAsync(UsageInvoiceRequest usageInvoiceRequest) => await PutResponseAsync<UsageInvoiceRequest, Used>(usageInvoiceApiUri, usageInvoiceRequest);
+        public async Task<Used> ExecuteUsagePaymentAsync(UsageRequest usageRequest) => await PutResponseAsync<UsageRequest, Used>(usagePaymentApiUri, usageRequest);
 
         public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
 

@@ -208,7 +208,7 @@ namespace FoxIDs.Controllers
 
         private bool ShowEmailSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
-            if (sequenceData.ToUpParties.Where(up => up.Name == currentUpPartyName).Any())
+            if (sequenceData.ToUpParties.Where(up => up.Name == currentUpPartyName || up.HrdDomains?.Count() > 0).Any())
             {
                 return true;
             }

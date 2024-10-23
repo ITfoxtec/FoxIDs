@@ -28,7 +28,7 @@
 <ul class="list-group">
     @foreach (var used in usedList)
     {
-        <li class="list-group-item @(used.Edit ? "active" : string.Empty)">
+        <li class="list-group-item @(used.Edit ? "active" : "d-flex justify-content-between align-items-center")">
             @if (!used.Error.IsNullOrWhiteSpace())
             {
                 <div class="alert alert-danger" role="alert">
@@ -93,8 +93,54 @@
             else
             {
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
-                    @used.TenantName
+                    @UsageInfoText(used)
                 </button>
+                @if (used.InvoiceStatus == UsedInvoiceStatus.None || used.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend)
+                {
+                    @if (!used.InvoiceButtonDisabled)
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await SendInvoiceAsync(used))">
+                            Send invoice
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
+                            Send invoice
+                        </button>
+                    }
+                }
+                @if (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed)
+                {
+                    @if (!used.InvoiceButtonDisabled)
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await SendCreditNoteAsync(used))">
+                            Send credit note
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
+                            Send credit note
+                        </button>
+                    }
+
+                    @if (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus == UsedPaymentStatus.PaymentFailed)
+                    {
+                        @if (!used.PaymentButtonDisabled)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ExecutePaymentAsync(used))">
+                                Execute payment
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
+                                Execute payment
+                            </button>
+                        }
+                    }
+                }
             }
         </li>
     }

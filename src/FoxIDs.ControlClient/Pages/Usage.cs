@@ -51,8 +51,8 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                var now = DateTimeOffset.Now;
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(null, now.Year, now.Month));
+                var lastMonth = DateTimeOffset.Now.AddMonths(-1);
+                SetGeneralUsageList(await TenantService.FilterUsageAsync(null, lastMonth.Year, lastMonth.Month));
             }
             catch (TokenUnavailableException)
             {
@@ -104,11 +104,52 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private string UsageInfoText(GeneralUsedViewModel generalUsed)
+        {
+            return $"Tenant: {generalUsed.TenantName}{(generalUsed.InvoiceStatus != UsedInvoiceStatus.None ? $", invoice status: {GetInvoiceStatus(generalUsed)}" : string.Empty)}{(generalUsed.PaymentStatus != UsedPaymentStatus.None ? $", payment status: {GetPaymentStatus(generalUsed)}" : string.Empty)}{(generalUsed.TotalPrice > 0 ? $", total price: €{generalUsed.TotalPrice}" : ", total price: not calculated")}";
+        }
+
+        private string GetInvoiceStatus(GeneralUsedViewModel generalUsed)
+        {
+            switch (generalUsed.InvoiceStatus)
+            {
+                case UsedInvoiceStatus.InvoiceInitiated:
+                    return "initiated";
+                case UsedInvoiceStatus.InvoiceSend:
+                    return "send";
+                case UsedInvoiceStatus.InvoiceFailed:
+                    return "failed";
+                case UsedInvoiceStatus.CreditNoteInitiated:
+                    return "credit note initiated";
+                case UsedInvoiceStatus.CreditNoteSend:
+                    return "credit note send";
+                case UsedInvoiceStatus.CreditNoteFailed:
+                    return "credit note failed";
+                default:
+                    return generalUsed.InvoiceStatus.ToString();
+            }
+        }
+
+        private string GetPaymentStatus(GeneralUsedViewModel generalUsed)
+        {
+            switch (generalUsed.PaymentStatus)
+            {
+                case UsedPaymentStatus.PaymentInitiated:
+                    return "initiated";
+                case UsedPaymentStatus.PaymentDone:
+                    return "done";
+                case UsedPaymentStatus.PaymentFailed:
+                    return "failed";
+                default:
+                    return generalUsed.PaymentStatus.ToString();
+            }
+        }
+
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
         {
-            var now = DateTimeOffset.Now;
-            filterUsage.Year = now.Year;
-            filterUsage.Month = now.Month;
+            var lastMonth = DateTimeOffset.Now.AddMonths(-1);
+            filterUsage.Year = lastMonth.Year;
+            filterUsage.Month = lastMonth.Month;
         }
 
         private async Task OnUsageFilterValidSubmitAsync(EditContext editContext)
@@ -188,6 +229,69 @@ namespace FoxIDs.Client.Pages
                     throw;
                 }
             }
+        }
+
+        private async Task SendInvoiceAsync(GeneralUsedViewModel generalUsed)
+        {
+            generalUsed.InvoiceButtonDisabled = true;
+            try
+            {
+                throw new NotImplementedException();
+
+                generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceFailed;
+                toastService.ShowError(ex.Message);
+            }
+            generalUsed.InvoiceButtonDisabled = false;
+        }
+
+        private async Task SendCreditNoteAsync(GeneralUsedViewModel generalUsed)
+        {
+            generalUsed.InvoiceButtonDisabled = true;
+            try
+            {
+                throw new NotImplementedException();
+
+                generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteFailed;
+                toastService.ShowError(ex.Message);
+            }
+            generalUsed.InvoiceButtonDisabled = false;
+        }
+
+        private async Task ExecutePaymentAsync(GeneralUsedViewModel generalUsed)
+        {
+            generalUsed.PaymentButtonDisabled = true;
+            try
+            {
+                throw new NotImplementedException();
+
+                generalUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                generalUsed.PaymentStatus = UsedPaymentStatus.PaymentFailed;
+                toastService.ShowError(ex.Message);
+            }
+            generalUsed.PaymentButtonDisabled = false;
         }
     }
 }

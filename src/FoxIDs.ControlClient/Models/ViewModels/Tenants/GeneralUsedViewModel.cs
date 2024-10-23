@@ -22,6 +22,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool CreateMode { get; set; }
 
+        public bool InvoiceButtonDisabled { get; set; }
+        public bool PaymentButtonDisabled { get; set; }
+
         public string Error { get; set; }
 
         public PageEditForm<UsedViewModel> Form { get; set; }

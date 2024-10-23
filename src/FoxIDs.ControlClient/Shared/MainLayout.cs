@@ -16,6 +16,7 @@ using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
 using ITfoxtec.Identity;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Shared
 {
@@ -63,6 +64,9 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public UserProfileLogic UserProfileLogic { get; set; }
@@ -317,16 +321,20 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
             }
-            catch (FoxIDsApiException ex)
+            catch (FoxIDsApiException aex)
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (aex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), ex.Message);
+                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), aex.Message);
                 }
                 else
                 {
-                    throw;
+                    toastService.ShowError(aex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message);
             }
         }
 

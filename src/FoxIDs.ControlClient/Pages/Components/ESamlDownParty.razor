@@ -121,6 +121,8 @@
                             </ul>
                         </div>
                     }
+
+                    <div class="info-text">By default, the Name ID value is the user's unique ID. If you configure <code>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</code> as Name ID Format, the Name ID value becomes the user's email.</div>
                     <FInputText @bind-Value="samlDownParty.Form.Model.NameIdFormat" For="@(() => samlDownParty.Form.Model.NameIdFormat)" />
                 }
 

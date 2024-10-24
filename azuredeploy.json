@@ -293,7 +293,7 @@
       "properties": {
         "name": "[variables('foxidsDefaultName')]",
         "siteConfig": {
-          "linuxFxVersion": "DOCKER|foxids/foxids:latest",
+          "linuxFxVersion": "DOCKER|foxids/foxids:latest-test",
           "ftpsState": "Disabled",
           "alwaysOn": true
         },
@@ -319,7 +319,7 @@
       "properties": {
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
-          "linuxFxVersion": "DOCKER|foxids/foxids-control:latest",
+          "linuxFxVersion": "DOCKER|foxids/foxids-control:latest-test",
           "ftpsState": "Disabled",
           "alwaysOn": true
         },

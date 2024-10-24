@@ -43,15 +43,25 @@ namespace FoxIDs.Repository
                     {
                         scopedLogger.Event("Start to process PostgreSQL data.");
 
-                        var pgTenantDataRepository = scope.ServiceProvider.GetRequiredService<PgTenantDataRepository>();
-                        await pgTenantDataRepository.RemoveAllExpiredAsync();
+                        if (settings.Options.DataStorage == DataStorageOptions.PostgreSql)
+                        {
+                            var tenantDataRepository = scope.ServiceProvider.GetService<ITenantDataRepository>();
+                            if (tenantDataRepository is PgTenantDataRepository pgTenantDataRepository)
+                            {
+                                await pgTenantDataRepository.RemoveAllExpiredAsync();
+                                scopedLogger.Event("Done processing tenant PostgreSQL data.");
+                            }
+                        }
 
-                        scopedLogger.Event("Done processing tenant PostgreSQL data.");
-
-                        var postgreSqlCacheProvider = scope.ServiceProvider.GetRequiredService<PostgreSqlCacheProvider>();
-                        await postgreSqlCacheProvider.RemoveAllExpiredAsync();
-
-                        scopedLogger.Event("Done processing cache PostgreSQL data.");
+                        if (settings.Options.Cache == CacheOptions.PostgreSql)
+                        {
+                            var cacheProvider = scope.ServiceProvider.GetRequiredService<ICacheProvider>();
+                            if (cacheProvider is PostgreSqlCacheProvider postgreSqlCacheProvider)
+                            {
+                                await postgreSqlCacheProvider.RemoveAllExpiredAsync();
+                                scopedLogger.Event("Done processing cache PostgreSQL data.");
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {

@@ -287,7 +287,6 @@
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
       ],
-      "kind": "app",
       "identity": {
         "type": "SystemAssigned"
       },
@@ -298,9 +297,8 @@
           "ftpsState": "Disabled",
           "alwaysOn": true
         },
-        "reserved": false,
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "reserved": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
@@ -315,7 +313,6 @@
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
       ],
-      "kind": "app",
       "identity": {
         "type": "SystemAssigned"
       },
@@ -326,9 +323,8 @@
           "ftpsState": "Disabled",
           "alwaysOn": true
         },
-        "reserved": false,
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "reserved": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }

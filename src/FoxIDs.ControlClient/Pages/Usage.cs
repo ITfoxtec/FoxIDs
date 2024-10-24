@@ -237,7 +237,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
-                var usedResult = await TenantService.SendUsageInvoiceAsync(new UsageInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -259,7 +259,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
-                var usedResult = await TenantService.SendUsageInvoiceAsync(new UsageInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month, IsCreditNote = true });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month, IsCreditNote = true });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -281,8 +281,8 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
-                var usedResult = await TenantService.ExecuteUsagePaymentAsync(new UsageRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
-                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
+                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
             catch (TokenUnavailableException)
             {

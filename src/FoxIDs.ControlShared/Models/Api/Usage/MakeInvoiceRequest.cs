@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public class UsageInvoiceRequest : UsageRequest
+    public class MakeInvoiceRequest : UsageRequest
     {
         public bool IsCreditNote { get; set; }
     }

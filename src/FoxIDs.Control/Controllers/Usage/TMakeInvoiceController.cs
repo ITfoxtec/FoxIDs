@@ -14,7 +14,7 @@ namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
     [MasterScopeAuthorize]
-    public class TUsageInvoiceController : ApiController
+    public class TMakeInvoiceController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -22,7 +22,7 @@ namespace FoxIDs.Controllers
 
         public object MTenant { get; private set; }
 
-        public TUsageInvoiceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TMakeInvoiceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -32,20 +32,20 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Create and send invoice / credit note.
         /// </summary>
-        /// <param name="usageInvoiceRequest">Invoice request.</param>
+        /// <param name="makeInvoiceRequest">Invoice request.</param>
         /// <returns>Used.</returns>
         [ProducesResponseType(typeof(Api.Used), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Used>> PutUsageInvoiceController([FromBody] Api.UsageInvoiceRequest usageInvoiceRequest)
+        public async Task<ActionResult<Api.Used>> PostMakeInvoice([FromBody] Api.MakeInvoiceRequest makeInvoiceRequest)
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(usageInvoiceRequest)) return BadRequest(ModelState);
-                usageInvoiceRequest.TenantName = usageInvoiceRequest.TenantName.ToLower();
+                if (!await ModelState.TryValidateObjectAsync(makeInvoiceRequest)) return BadRequest(ModelState);
+                makeInvoiceRequest.TenantName = makeInvoiceRequest.TenantName.ToLower();
 
-                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageInvoiceRequest.TenantName, usageInvoiceRequest.Year, usageInvoiceRequest.Month));
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(makeInvoiceRequest.TenantName, makeInvoiceRequest.Year, makeInvoiceRequest.Month));
 
-                if(!usageInvoiceRequest.IsCreditNote)
+                if(!makeInvoiceRequest.IsCreditNote)
                 {
                     if(!(mUsed.InvoiceStatus == UsedInvoiceStatus.None || mUsed.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || mUsed.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend))
                     {
@@ -73,7 +73,8 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    if (!(mUsed.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || mUsed.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed))
+                    if (!(mUsed.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || mUsed.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) ||
+                        !(mUsed.PaymentStatus == UsedPaymentStatus.None || mUsed.PaymentStatus == UsedPaymentStatus.PaymentFailed))
                     {
                         throw new Exception($"Usage invoice status '{mUsed.InvoiceStatus}' is invalid, unable to send credit note.");
                     }
@@ -102,8 +103,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{usageInvoiceRequest.TenantName}', year '{usageInvoiceRequest.Year}' and month '{usageInvoiceRequest.Month}'.");
-                    return NotFound(typeof(Api.Tenant).Name, $"{usageInvoiceRequest.TenantName}/{usageInvoiceRequest.Year}/{usageInvoiceRequest.Month}");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{makeInvoiceRequest.TenantName}', year '{makeInvoiceRequest.Year}' and month '{makeInvoiceRequest.Month}'.");
+                    return NotFound(typeof(Api.Tenant).Name, $"{makeInvoiceRequest.TenantName}/{makeInvoiceRequest.Year}/{makeInvoiceRequest.Month}");
                 }
                 throw;
             }

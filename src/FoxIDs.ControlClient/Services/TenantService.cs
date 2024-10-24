@@ -14,8 +14,8 @@ namespace FoxIDs.Client.Services
         private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
         private const string filterUsageApiUri = "api/{tenant}/master/!filterusage";
         private const string usageApiUri = "api/{tenant}/master/!usage";
-        private const string usageInvoiceApiUri = "api/{tenant}/master/!usageinvoice";
-        private const string usagePaymentApiUri = "api/{tenant}/master/!usagepayment";
+        private const string makeInvoiceApiUri = "api/{tenant}/master/!makeinvoice";
+        private const string makePaymentApiUri = "api/{tenant}/master/!makepayment";
 
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -24,17 +24,17 @@ namespace FoxIDs.Client.Services
 
         public async Task<TenantResponse> GetTenantAsync(string name) => await GetAsync<TenantResponse>(apiUri, name);
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
-        public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
+        public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PostResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<IEnumerable<UsedBase>> FilterUsageAsync(string filterValue, int year, int month) => await FilterAsync<UsedBase>(filterUsageApiUri, parmValue1: filterValue, parmValue2: Convert.ToString(year), parmValue3: Convert.ToString(month), parmName1: "filterTenantName", parmName2: "year", parmName3: "month");
 
         public async Task<Used> GetUsageAsync(UsageRequest usageRequest) => await GetAsync<UsageRequest, Used>(usageApiUri, usageRequest);
         public async Task<Used> CreateUsageAsync(UpdateUsageRequest usageRequest) => await PostResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
-        public async Task<Used> UpdateUsageAsync(UpdateUsageRequest usageRequest) => await PutResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
+        public async Task<Used> UpdateUsageAsync(UpdateUsageRequest usageRequest) => await PostResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
 
-        public async Task<Used> SendUsageInvoiceAsync(UsageInvoiceRequest usageInvoiceRequest) => await PutResponseAsync<UsageInvoiceRequest, Used>(usageInvoiceApiUri, usageInvoiceRequest);
-        public async Task<Used> ExecuteUsagePaymentAsync(UsageRequest usageRequest) => await PutResponseAsync<UsageRequest, Used>(usagePaymentApiUri, usageRequest);
+        public async Task<Used> MakeInvoiceAsync(MakeInvoiceRequest makeInvoiceRequest) => await PostResponseAsync<MakeInvoiceRequest, Used>(makeInvoiceApiUri, makeInvoiceRequest);
+        public async Task<Used> MakePaymentAsync(MakePaymentRequest makePaymentRequest) => await PostResponseAsync<UsageRequest, Used>(makePaymentApiUri, makePaymentRequest);
 
         public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
 

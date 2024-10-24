@@ -13,6 +13,8 @@ namespace FoxIDs.Client.Models.ViewModels
             TenantName = used.TenantName;
             Year = used.Year;
             Month = used.Month;
+            InvoiceStatus = used.InvoiceStatus;
+            PaymentStatus = used.PaymentStatus;
             TotalPrice = used.TotalPrice;
         }
 

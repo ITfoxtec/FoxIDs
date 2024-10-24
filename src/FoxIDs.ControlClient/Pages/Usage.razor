@@ -92,7 +92,7 @@
             }
             else
             {
-                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
+                <button class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
                     @UsageInfoText(used)
                 </button>
                 @if (used.InvoiceStatus == UsedInvoiceStatus.None || used.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend)
@@ -100,43 +100,43 @@
                     @if (!used.InvoiceButtonDisabled)
                     {
                         <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await SendInvoiceAsync(used))">
-                            Send invoice
+                            Make invoice
                         </button>
                     }
                     else
                     {
                         <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
-                            Send invoice
+                            Make invoice
                         </button>
                     }
                 }
-                @if (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed)
+                else
                 {
-                    @if (!used.InvoiceButtonDisabled)
-                    {
-                        <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await SendCreditNoteAsync(used))">
-                            Send credit note
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
-                            Send credit note
-                        </button>
-                    }
-
                     @if (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus == UsedPaymentStatus.PaymentFailed)
                     {
+                        @if (!used.InvoiceButtonDisabled)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await SendCreditNoteAsync(used))">
+                                Make credit note
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
+                                Make credit note
+                            </button>
+                        }
+
                         @if (!used.PaymentButtonDisabled)
                         {
                             <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ExecutePaymentAsync(used))">
-                                Execute payment
+                                Make payment
                             </button>
                         }
                         else
                         {
                             <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
-                                Execute payment
+                                Make payment
                             </button>
                         }
                     }

@@ -30,9 +30,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetHashSetAsync<T>(partitionId);
-                var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).Count();
+                return await db.GetListAsync<T>(partitionId, whereQuery).CountAsync();
             }
         }
 
@@ -93,21 +91,11 @@ namespace FoxIDs.Repository
         {
             //TODO pagination
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
+            var dataItems = await db.GetListAsync(partitionId, whereQuery, pageSize).ToListAsync();
             paginationToken = null;
-            if (whereQuery == null)
-            {
-                var items = dataItems;
-                await items.ValidateObjectAsync();
-                return (items, paginationToken);
-            }
-            else
-            {
-                var lambda = whereQuery.Compile();
-                var items = dataItems.Where(d => lambda(d)).ToHashSet();
-                await items.ValidateObjectAsync();
-                return (items, paginationToken);
-            }
+            var items = dataItems;
+            await items.ValidateObjectAsync();
+            return (items, paginationToken);
             throw new NotImplementedException();
         }
 
@@ -183,9 +171,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetHashSetAsync<T>(partitionId);
-                var lambda = whereQuery.Compile();
-                var deleteItems = dataItems.Where(d => lambda(d));
+                var deleteItems = await db.GetListAsync<T>(partitionId, whereQuery).ToListAsync();
                 foreach (var item in deleteItems)
                 {
                     _ = await db.RemoveAsync(item.Id, item.PartitionId);

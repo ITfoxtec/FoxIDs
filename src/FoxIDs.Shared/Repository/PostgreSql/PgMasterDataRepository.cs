@@ -28,9 +28,7 @@ namespace FoxIDs.Repository
             }
             else
             {
-                var dataItems = await db.GetHashSetAsync<T>(partitionId);
-                var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).Count();
+                return await db.GetListAsync<T>(partitionId, whereQuery).CountAsync();
             }
         }
 
@@ -54,20 +52,10 @@ namespace FoxIDs.Repository
         public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = TypeToMasterPartitionId<T>();
-            var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
-            if (whereQuery == null)
-            {
-                var items = dataItems.ToList();
-                await items.ValidateObjectAsync();
-                return items;
-            }
-            else
-            {
-                var lambda = whereQuery.Compile();
-                var items = dataItems.Where(d => lambda(d)).ToList();
-                await items.ValidateObjectAsync();
-                return items;
-            }
+            var dataItems = await db.GetListAsync(partitionId, whereQuery, pageSize).ToListAsync();
+            var items = dataItems.ToList();
+            await items.ValidateObjectAsync();
+            return items;
             throw new NotImplementedException();
         }
 

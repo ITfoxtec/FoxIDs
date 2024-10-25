@@ -24,14 +24,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
-            if (whereQuery == null)
-            {
-                return (int) await db.CountAsync(partitionId);
-            }
-            else
-            {
-                return await db.GetListAsync<T>(partitionId, whereQuery).CountAsync();
-            }
+            return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
         public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
@@ -164,20 +157,7 @@ namespace FoxIDs.Repository
 
             await idKey.ValidateObjectAsync();
             var partitionId = PartitionIdFormat<T>(idKey);
-
-            if (whereQuery == null)
-            {
-                return await db.RemoveAllAsync(partitionId);
-            }
-            else
-            {
-                var deleteItems = await db.GetListAsync<T>(partitionId, whereQuery).ToListAsync();
-                foreach (var item in deleteItems)
-                {
-                    _ = await db.RemoveAsync(item.Id, item.PartitionId);
-                }
-                return deleteItems.Count();
-            }
+            return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
         public async Task RemoveAllExpiredAsync()

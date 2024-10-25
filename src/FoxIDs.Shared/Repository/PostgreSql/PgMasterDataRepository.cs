@@ -22,14 +22,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null)
         {
             var partitionId = TypeToMasterPartitionId<T>();
-            if (whereQuery == null)
-            {
-                return (int) await db.CountAsync(partitionId);
-            }
-            else
-            {
-                return await db.GetListAsync<T>(partitionId, whereQuery).CountAsync();
-            }
+            return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
         public override async ValueTask<T> GetAsync<T>(string id, bool required = true)

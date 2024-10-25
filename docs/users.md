@@ -39,7 +39,7 @@ It is possible to see whether a two-factor authenticator app is configured for t
 ![Configure Login](images/configure-user-mfa.png)
 
 ### Password hash
-A hash of the password is saved in the database along with the rest of the user information.
+Only a hash of the password is saved in the database.
 
 The password hash functionality is designed to support a growing number of algorithms with different iterations by saving information about the hash algorithm used alongside the actually hash. Therefore, it is possible to validate an old hash algorithm and at the same time save new hashes with a new hash algorithm.
 

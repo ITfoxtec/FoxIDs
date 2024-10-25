@@ -9,14 +9,10 @@ namespace FoxIDs.Logic
     public  class TrackLogic : LogicBase
     {
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly TrackCacheLogic trackCacheLogic;
-        private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantDataRepository = tenantDataRepository;
-            this.trackCacheLogic = trackCacheLogic;
-            this.upPartyCacheLogic = upPartyCacheLogic;
         }
 
         public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
@@ -32,8 +28,6 @@ namespace FoxIDs.Logic
             };
 
             await tenantDataRepository.CreateAsync(mTrack);
-
-            await trackCacheLogic.InvalidateTrackCacheAsync(trackName ?? RouteBinding.TrackName, tenantName ?? RouteBinding.TenantName);
         }
 
         public async Task CreateLoginDocumentAsync(Track mTrack)
@@ -52,8 +46,6 @@ namespace FoxIDs.Logic
             await mLoginUpParty.SetIdAsync(partyIdKey);
 
             await tenantDataRepository.CreateAsync(mLoginUpParty);
-
-            await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
         }
     }
 }

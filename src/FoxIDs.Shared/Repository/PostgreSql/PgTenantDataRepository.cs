@@ -82,14 +82,30 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
-            //TODO pagination
+            var offset = GetOffset(paginationToken, pageSize);
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = await db.GetListAsync(partitionId, whereQuery, pageSize).ToListAsync();
-            paginationToken = null;
+            var dataItems = await db.GetListAsync(partitionId, whereQuery, pageSize + 1, offset).ToListAsync();
+            paginationToken = NextPaginationToken(paginationToken, pageSize, dataItems.Count);
             var items = dataItems;
             await items.ValidateObjectAsync();
             return (items, paginationToken);
             throw new NotImplementedException();
+        }
+
+        private static int GetOffset(string paginationToken, int pageSize)
+        {
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+                return pageNumber * pageSize;
+            return 0;
+        }
+
+        private static string NextPaginationToken(string paginationToken, int pageSize, int itemCount)
+        {
+            if (itemCount < pageSize)
+                return null;
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+                return (pageNumber+1).ToString();
+            return "1";
         }
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
@@ -16,14 +17,16 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class TMakeInvoiceController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
         public object MTenant { get; private set; }
 
-        public TMakeInvoiceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TMakeInvoiceController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
@@ -57,6 +60,11 @@ namespace FoxIDs.Controllers
 
                     try
                     {
+                        if(string.IsNullOrWhiteSpace(settings.Usage?.MakeInvoiceExternalApiUrl))
+                        {
+                            throw new Exception("Make invoice external API URL not configured.");
+                        }
+
                         // todo
 
                         mUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceSend;
@@ -84,6 +92,12 @@ namespace FoxIDs.Controllers
 
                     try
                     {
+                        if (string.IsNullOrWhiteSpace(settings.Usage?.MakeInvoiceExternalApiUrl))
+                        {
+                            throw new Exception("Make invoice external API URL not configured.");
+                        }
+
+
                         // todo
 
                         mUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteSend;

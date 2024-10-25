@@ -53,7 +53,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ICacheProvider, MongoDbCacheProvider>();
                     break;
                 case CacheOptions.PostgreSql:
-                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Cache);
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => AddPgKeyValueDBSettings(a, settings), ServiceLifetime.Singleton, Constants.Models.DataType.Cache);
                     services.AddSingleton<ICacheProvider, PostgreSqlCacheProvider>();
                     break;
                 default:
@@ -111,9 +111,9 @@ namespace FoxIDs.Infrastructure.Hosting
                     services.AddSingleton<ITenantDataRepository, MongoDbTenantDataRepository>();
                     break;
                 case DataStorageOptions.PostgreSql:
-                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Master);
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => AddPgKeyValueDBSettings(a, settings), ServiceLifetime.Singleton, Constants.Models.DataType.Master);
                     services.AddSingleton<IMasterDataRepository, PgMasterDataRepository>();
-                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => a.TableName = settings.PostgreSql.TableName, ServiceLifetime.Singleton, Constants.Models.DataType.Tenant);
+                    services.AddPgKeyValueDB(settings.PostgreSql.ConnectionString, a => AddPgKeyValueDBSettings(a, settings), ServiceLifetime.Singleton, Constants.Models.DataType.Tenant);
                     services.AddSingleton<ITenantDataRepository, PgTenantDataRepository>();
                     break;
                 default:
@@ -121,6 +121,12 @@ namespace FoxIDs.Infrastructure.Hosting
             }
 
             return services;
+        }
+
+        static void AddPgKeyValueDBSettings(PgKeyValueDBBuilder builder, Settings settings)
+        {
+            builder.SchemaName = settings.PostgreSql.SchemaName;
+            builder.TableName = settings.PostgreSql.TableName;
         }
 
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment environment)

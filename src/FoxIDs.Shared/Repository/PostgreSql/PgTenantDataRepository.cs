@@ -95,7 +95,7 @@ namespace FoxIDs.Repository
         private static int GetOffset(string paginationToken, int pageSize)
         {
             if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
-                return pageNumber * pageSize;
+                return (pageNumber - 1) * pageSize;
             return 0;
         }
 
@@ -104,7 +104,7 @@ namespace FoxIDs.Repository
             if (itemCount < pageSize)
                 return null;
             if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
-                return (pageNumber+1).ToString();
+                return (pageNumber + 1).ToString();
             return "1";
         }
 

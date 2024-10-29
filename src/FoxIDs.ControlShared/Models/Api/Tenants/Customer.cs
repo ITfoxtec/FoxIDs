@@ -11,6 +11,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Invoice email")]
         public string InvoiceEmail { get; set; }
 
+        [MaxLength(Constants.Models.Customer.ReferenceLength)]
+        [Display(Name = "Reference")]
+        public string Reference { get; set; }
+
         /// <summary>
         /// Company name or name.
         /// </summary>
@@ -44,6 +48,6 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Customer.CountryLength)]
         [Display(Name = "Country")]
-        public string Country { get; set; }
+        public string Country { get; set; }           
     }
 }

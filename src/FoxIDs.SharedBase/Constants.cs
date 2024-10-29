@@ -300,7 +300,8 @@ namespace FoxIDs
 
             public static class Customer
             {
-                public const int NameLength = 100;
+                public const int ReferenceLength = 60;
+                public const int NameLength = 60;
                 public const int VatNumberLength = 50;
                 public const int AddressLine1Length = 50;
                 public const int AddressLine2Length = 50;

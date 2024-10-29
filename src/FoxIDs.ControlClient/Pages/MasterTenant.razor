@@ -36,10 +36,29 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="info-text">
+                                        The invoice email will receive the monthly invoices.
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.InvoiceEmail" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmail)" />
+                                        </div>
+                                    </div>
+                                    <div class="info-text">
+                                        Optionally add a reference (e.g., email or username) that is included in the invoice.
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Reference" For="@(() => tenantSettingsForm.Model.Customer.Reference)" />
+                                        </div>
+                                    </div>
+                                    <div class="info-text">
                                         Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
                                     </div>
-                                    <FInputText @bind-Value="tenantSettingsForm.Model.Customer.InvoiceEmail" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmail)" />
-                                    <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <FInputText @bind-Value="tenantSettingsForm.Model.Customer.VatNumber" For="@(() => tenantSettingsForm.Model.Customer.VatNumber)" />
@@ -75,7 +94,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <label for="card-number" class="label-control">Customer information</label>
+                            <label class="label-control">Customer information</label>
                         </div>
                     </div>
 
@@ -105,7 +124,7 @@
                                     }
                                 </div>
                             </div>
-                            <label for="card-number" class="label-control">Payment method</label>
+                            <label class="label-control">Payment method</label>
                         </div>
                     </div>
                 }

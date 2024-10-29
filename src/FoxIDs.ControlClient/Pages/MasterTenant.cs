@@ -164,11 +164,19 @@ namespace FoxIDs.Client.Pages
 
         private async Task ShowPaymentModalAsync()
         {
-            changePaymentError = null;
-            changePaymentWorking = false;
-            changePaymentModal.Show();
+            (var isValid, var error) = await tenantSettingsForm.Submit();
+            if(isValid)
+            {
+                changePaymentError = null;
+                changePaymentWorking = false;
+                changePaymentModal.Show();
 
-            await LoadMollieAsync();
+                await LoadMollieAsync();
+            }
+            else if(!error.IsNullOrWhiteSpace())
+            {
+                ToastService.ShowError(error);
+            }
         }
 
         private async Task HidePaymentModalAsync()

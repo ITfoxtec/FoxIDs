@@ -9,8 +9,11 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.User.EmailLength)]
         [EmailAddress]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
-        [JsonProperty(PropertyName = "invoice_email")]
         public string InvoiceEmail { get; set; }
+
+        [MaxLength(Constants.Models.Customer.ReferenceLength)]
+        [JsonProperty(PropertyName = "reference")]
+        public string Reference { get; set; }
 
         /// <summary>
         /// Company name or name.

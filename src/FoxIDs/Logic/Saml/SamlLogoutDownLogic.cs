@@ -95,12 +95,7 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
-                    if (isex != null)
-                    {
-                        throw isex;
-                    }
-                    throw;
+                    throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
                 }
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
@@ -348,12 +343,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
-                if (isex != null)
-                {
-                    throw isex;
-                }
-                throw;
+                throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
             }
 
             return await singleLogoutDownLogic.HandleSingleLogoutAsync();

@@ -95,11 +95,7 @@ namespace FoxIDs.Logic
                     }
                     if (samlConfig.SignatureValidationCertificates.Count() <= 0)
                     {
-                        var isex = GetInvalidSignatureValidationCertificateException(samlConfig);
-                        if (isex != null)
-                        {
-                            throw isex;
-                        }
+                        throw GetInvalidSignatureValidationCertificateException(samlConfig);
                     }
                 }
 
@@ -132,7 +128,10 @@ namespace FoxIDs.Logic
                 var certInfo = samlConfig.InvalidSignatureValidationCertificates.Select(c => $"'{c.Subject}, Valid from {c.NotBefore.ToShortDateString()} to {c.NotAfter.ToShortDateString()}, Thumbprint: {c.Thumbprint}'");
                 return new Exception($"Invalid signature validation certificates {string.Join(", ", certInfo)}.", ex);
             }
-            return null;
+            else
+            {
+                return new Exception($"A signature validation certificate is not configured.", ex);
+            }
         }
     }
 }

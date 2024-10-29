@@ -89,7 +89,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Id token lifetime in seconds")]
         public int? IdTokenLifetime { get; set; } = 3600;
 
-        [Display(Name = "Require logout id token hint")]
+        [Display(Name = "Require logout ID token hint")]
         public bool? RequireLogoutIdTokenHint { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]

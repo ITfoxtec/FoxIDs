@@ -62,16 +62,13 @@ The environment properties can be configured by clicking the top right setting i
 ## FoxIDs Control API
 Control API is a REST API and has a [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v1/swagger.json) interface description.
 
-Control API require that the client calling the API is granted the `foxids:master` scope to access master tenant data or the `foxids:tenant` scope to access tenant data in a particular tenant. Normally only tenant data is accessed.
+Control API require that the client calling the API is granted appropriate [access rights](#api-access-rights) by scopes and roles.
 
- - The API can be accessed with a OAuth 2.0 client. Where the client is granted the administrator role `foxids:tenant.admin` acting as the client itself using client credentials grant.  
- It is probably helpful to take a look at how the [sample seed tool](samples.md#configure-the-sample-seed-tool) client is granted access.
- - Or the API can be accessed with a OpenID Connect client with an authenticated master environment user. Where the user is granted the administrator role `foxids:tenant.admin`.  
- *As an advanced option the mater user can also be granted access via a trust.*
-
-This shows the Control API configuration in a tenants master environment with a scope that grants access to tenant data.
+This shows the Control API configuration in a tenants master environment with a default set of scopes that grants access to tenants data.
 
 ![Configure foxids_control_api](images/configure-foxids_control_api.png)
+
+More scopes can be added to extend the [API access rights](#api-access-rights) for the different environments. To achieve least privileges access rights for each environment.
 
 Control API is called with an access token as described in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
 
@@ -86,19 +83,21 @@ If you e.g. want to read a OpenID Connect application registration on FoxIDs.com
 
 ### API access rights
 Access to Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
-The Control API resource `foxids_control_api` is defined in each tenant's master environment and the configured set of scopes grant access the tenants data in the Control API.
+The Control API resource `foxids_control_api` is defined in each tenant's master environment and the configured set of scopes grant access the tenants data through the Control API.
 
-A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits or grant a sub role, the notation is both used in scopes and roles. 
+A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits to a specific sub role, the notation is both used in scopes and roles. 
 To be granted access the caller is required to possess one or more matching scope(s) and role(s).
 
 Each access right is both defined as a scope and a role. This makes it possible to limit or grant access on both client and user level. The access rights are a hierarchy and the client and user do not need to be granted matching scopes and roles. 
 
-The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the role `foxids:tenant` and `foxids:master`.
+The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the roles `foxids:tenant` and `foxids:master`.
 
 > A client request a scope by requesting a scope on a resource, separating the resource and scope with a semicolon. E.g., to request the `foxids:tenant:track:party.create` scope the client request for `foxids_control_api:foxids:tenant:track:party.create`.
 
 #### Tenant access rights
 The tenant access rights is at the same time both scopes and roles.
+
+> If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope. The same goes for roles which has to be defined on the user or the calling client.
 
 The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
 
@@ -395,5 +394,3 @@ The master tenant access rights is at the same time both scopes and roles.
         <td>read</td>
     </tr>
 </table>
-
-If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope. The same goes for roles which has to be defined on the user or the calling client.

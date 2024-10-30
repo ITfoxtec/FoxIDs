@@ -46,14 +46,14 @@ namespace FoxIDs.Models
         public string TenantName { get; set; }
 
         [Required]
-        [Min(Constants.Models.Used.YearMin)]
-        [JsonProperty(PropertyName = "year")]
-        public int Year { get; set; }
+        [Min(Constants.Models.Used.PeriodYearMin)]
+        [JsonProperty(PropertyName = "period_year")]
+        public int PeriodYear { get; set; }
 
         [Required]
-        [Range(Constants.Models.Used.MonthMin, Constants.Models.Used.MonthMax)]
-        [JsonProperty(PropertyName = "month")]
-        public int Month { get; set; }
+        [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
+        [JsonProperty(PropertyName = "period_month")]
+        public int PeriodMonth { get; set; }
 
         [JsonProperty(PropertyName = "invoice_status")]
         public UsedInvoiceStatus InvoiceStatus { get; set; }
@@ -90,11 +90,11 @@ namespace FoxIDs.Models
         public class IdKey : Tenant.IdKey
         {
             [Required]
-            [Min(Constants.Models.Used.YearMin)]
+            [Min(Constants.Models.Used.PeriodYearMin)]
             public int Year { get; set; }
 
             [Required]
-            [Range(Constants.Models.Used.MonthMin, Constants.Models.Used.MonthMax)]
+            [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
             public int Month { get; set; }
         }
     }

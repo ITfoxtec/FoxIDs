@@ -8,6 +8,10 @@ namespace FoxIDs.Models.Api
 {
     public class Invoice : IValidatableObject
     {
+        [Required]
+        public string InvoiceNumber { get; set; }
+
+        [Required]
         public long CreateTime { get; set; }
 
         public bool IsCreditNote { get; set; }
@@ -16,13 +20,13 @@ namespace FoxIDs.Models.Api
         public List<InvoiceLine> Lines { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
-        public double Vat { get; set; }
+        public decimal Vat { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
 
         /// <summary>
         /// Time specification items,

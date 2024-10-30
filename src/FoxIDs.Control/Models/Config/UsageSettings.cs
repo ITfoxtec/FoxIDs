@@ -9,7 +9,13 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public int BackgroundServiceWaitPeriod { get; set; } = 7200; // 2 hours
-        
-        public string MakeInvoiceExternalApiUrl { get; set; }
+
+        public bool EnableInvoice => !string.IsNullOrWhiteSpace(ExternalInvoiceApiId) && !string.IsNullOrWhiteSpace(ExternalInvoiceApiSecret) && !string.IsNullOrWhiteSpace(ExternalInvoiceApiUrl);
+
+        public string ExternalInvoiceApiId { get; set; } = "external_invoice";
+
+        public string ExternalInvoiceApiSecret { get; set; }
+
+        public string ExternalInvoiceApiUrl { get; set; }
     }
 }

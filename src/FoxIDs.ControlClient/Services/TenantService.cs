@@ -24,7 +24,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<TenantResponse> GetTenantAsync(string name) => await GetAsync<TenantResponse>(apiUri, name);
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
-        public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PostResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
+        public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<IEnumerable<UsedBase>> FilterUsageAsync(string filterValue, int year, int month) => await FilterAsync<UsedBase>(filterUsageApiUri, parmValue1: filterValue, parmValue2: Convert.ToString(year), parmValue3: Convert.ToString(month), parmName1: "filterTenantName", parmName2: "year", parmName3: "month");

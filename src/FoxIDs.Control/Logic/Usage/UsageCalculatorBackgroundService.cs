@@ -22,7 +22,7 @@ namespace FoxIDs.Logic.Usage
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if(settings.Payment.EnablePayment == true)
+            if(settings.Payment.EnablePayment == true && settings.Usage?.EnableInvoice == true)
             {
                 do
                 {

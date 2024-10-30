@@ -91,7 +91,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
                 await generalUsed.Form.InitAsync(used.Map<UsedViewModel>());
             }
             catch (TokenUnavailableException)
@@ -237,7 +237,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -259,7 +259,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month, IsCreditNote = true });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth, IsCreditNote = true });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -281,7 +281,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 generalUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
-                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, Year = generalUsed.Year, Month = generalUsed.Month });
+                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
                 generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
             catch (TokenUnavailableException)

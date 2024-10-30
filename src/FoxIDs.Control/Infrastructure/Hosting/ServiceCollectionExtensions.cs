@@ -89,6 +89,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<UsageCalculatorLogic>(); 
             services.AddHostedService<UsageCalculatorBackgroundService>();
+            services.AddTransient<InvoiceLogic>();
 
             return services;
         }
@@ -145,7 +146,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddApiSwagger();
             services.AddAutoMapper();
 
-            if(settings.Payment?.EnablePayment == true)
+            if(settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
             {
                 services.AddMollieApi(options => {
                     options.ApiKey = settings.Payment.MollieApiKey;
@@ -244,6 +245,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
                     mc.AddProfile(new MasterMappingProfile());
                     mc.AddProfile(new TenantMappingProfiles(httpContextAccessor));
+                    mc.AddProfile(new ExternalMappingProfile());
                 });
 
                 return mappingConfig.CreateMapper();

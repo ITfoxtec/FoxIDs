@@ -36,11 +36,11 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="info-text">
-                                        The invoice email will receive the monthly invoices.
+                                        The invoice emails will receive the monthly invoices.
                                     </div>
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.InvoiceEmail" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmail)" />
+                                            <FInputTextList @bind-ValueList="tenantSettingsForm.Model.Customer.InvoiceEmails" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmails)" />
                                         </div>
                                     </div>
                                     <div class="info-text">
@@ -148,7 +148,10 @@
                 }
             </div>
             <div class="modal-footer px-0">
-                <button class="btn btn-secondary mr-auto" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
+                @if (ClientSettings.EnablePayment)
+                {
+                    <button class="btn btn-secondary mr-auto" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
+                }
                 <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
                 <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
             </div>

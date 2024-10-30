@@ -51,7 +51,10 @@ namespace FoxIDs.Client.Shared
         public AuthenticationStateProvider authenticationStateProvider { get; set; }
 
         [Inject]
-        public ClientSettings clientSettings { get; set; }
+        public ClientSettings ClientSettings { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -66,7 +69,7 @@ namespace FoxIDs.Client.Shared
         public NotificationLogic NotificationLogic { get; set; }
 
         [Inject]
-        public IToastService toastService { get; set; }
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public UserProfileLogic UserProfileLogic { get; set; }
@@ -98,11 +101,14 @@ namespace FoxIDs.Client.Shared
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;
+            NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;
             NotificationLogic.OnRequestPaymentUpdated += OnRequestPaymentUpdated;
         }
 
         protected void Dispose()
         {
+            TrackSelectedLogic.OnSelectTrackAsync -= OnSelectTrackAsync;
+            NotificationLogic.OnClientSettingLoaded -= OnClientSettingLoaded;
             NotificationLogic.OnRequestPaymentUpdated -= OnRequestPaymentUpdated;
         }
 
@@ -238,17 +244,27 @@ namespace FoxIDs.Client.Shared
             await LoadAndSelectTracAsync(forceSelect: true);
             StateHasChanged();
         }  
-        
+
+        private void OnClientSettingLoaded()
+        {
+            StateHasChanged();
+        }
+
         private void OnRequestPaymentUpdated()
         {
             StateHasChanged();
         }
 
-        private string TenantHerf => $"{RouteBindingLogic.GetTenantNameAsync().GetAwaiter().GetResult()}/tenant";
-
         private async Task OpenPaymentMethodAsync()
         {
-            await NotificationLogic.OpenPaymentMethodAsync();
+            if (NavigationManager.Uri.EndsWith("tenant", StringComparison.OrdinalIgnoreCase))
+            {
+                await NotificationLogic.OpenPaymentMethodAsync();
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"{await RouteBindingLogic.GetTenantNameAsync()}/tenant");
+            }
         }
 
         private async Task LoadAndSelectTracAsync(bool forceSelect = false)
@@ -329,12 +345,12 @@ namespace FoxIDs.Client.Shared
                 }
                 else
                 {
-                    toastService.ShowError(aex.Message);
+                    ToastService.ShowError(aex.Message);
                 }
             }
             catch (Exception ex)
             {
-                toastService.ShowError(ex.Message);
+                ToastService.ShowError(ex.Message);
             }
         }
 

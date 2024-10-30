@@ -5,6 +5,15 @@ namespace FoxIDs.Client.Logic
 {
     public class NotificationLogic
     {
+        public void ClientSettingLoaded()
+        {
+            if (OnClientSettingLoaded != null)
+            {
+                OnClientSettingLoaded();
+            }
+        }
+        public event Action OnClientSettingLoaded;
+
         public async Task TenantUpdatedAsync()
         {
             if(OnTenantUpdatedAsync != null)

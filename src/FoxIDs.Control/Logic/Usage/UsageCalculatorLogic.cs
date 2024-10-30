@@ -147,8 +147,8 @@ namespace FoxIDs.Logic.Usage
                         {
                             Id = id,
                             TenantName = tenantName,
-                            Year = datePointer.Year,
-                            Month = datePointer.Month
+                            PeriodYear = datePointer.Year,
+                            PeriodMonth = datePointer.Month
                         };
                     }
 

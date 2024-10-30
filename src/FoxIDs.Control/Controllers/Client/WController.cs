@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers.Client
                 var file = currentEnvironment.WebRootFileProvider.GetFileInfo("index.html");
                 indexFile = System.IO.File.ReadAllText(file.PhysicalPath);
                 indexFile = indexFile.Replace("{version}", GetBuildDate());
-                if(settings.Payment?.EnablePayment == true)
+                if(settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
                 {
                     indexFile = indexFile.Replace("{payment_script}", "<script src=\"https://js.mollie.com/v1/mollie.js\"></script>");
                 }

@@ -34,7 +34,7 @@ namespace FoxIDs.Controllers.Client
                 FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
                 KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
-                EnablePayment = settings.Payment?.EnablePayment == true,
+                EnablePayment = settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true,
                 PaymentTestMode = settings.Payment != null ? settings.Payment.TestMode : true,
                 Currency = settings.Payment?.Currency,
                 MollieProfileId = settings.Payment?.MollieProfileId,

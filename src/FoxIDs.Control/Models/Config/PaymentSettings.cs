@@ -4,6 +4,7 @@ namespace FoxIDs.Models.Config
 {
     public class PaymentSettings
     {
+        [Required]
         [MaxLength(Constants.Models.Payment.CurrencyLength)]
         [RegularExpression(Constants.Models.Payment.CurrencyRegExPattern)]
         public string Currency { get; set; } = "EUR";

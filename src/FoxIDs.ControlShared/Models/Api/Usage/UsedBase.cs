@@ -13,12 +13,12 @@ namespace FoxIDs.Models.Api
         public string TenantName { get; set; }
 
         [Required]
-        [Min(Constants.Models.Used.YearMin)]
-        public int Year { get; set; }
+        [Min(Constants.Models.Used.PeriodYearMin)]
+        public int PeriodYear { get; set; }
 
         [Required]
-        [Range(Constants.Models.Used.MonthMin, Constants.Models.Used.MonthMax)]
-        public int Month { get; set; }
+        [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
+        public int PeriodMonth { get; set; }
 
         public UsedInvoiceStatus InvoiceStatus { get; set; }
 

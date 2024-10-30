@@ -71,16 +71,18 @@ namespace FoxIDs.Client.Pages
         {        
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
+            NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;
+            NotificationLogic.OnOpenPaymentMethodAsync += OnOpenPaymentMethodAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
                 await DefaultLoadAsync();
             }
-            NotificationLogic.OnOpenPaymentMethodAsync += OnOpenPaymentMethodAsync;
         }
 
         protected override void OnDispose()
         {
             TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            NotificationLogic.OnClientSettingLoaded -= OnClientSettingLoaded;
             NotificationLogic.OnOpenPaymentMethodAsync -= OnOpenPaymentMethodAsync;
             base.OnDispose();
         }
@@ -154,12 +156,14 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private void OnClientSettingLoaded()
+        {
+            StateHasChanged();
+        }
+
         private async Task OnOpenPaymentMethodAsync()
         {
-            if (NavigationManager.Uri.EndsWith("tenant", StringComparison.OrdinalIgnoreCase))
-            {
-                await ShowPaymentModalAsync();
-            }
+            await ShowPaymentModalAsync();
         }
 
         private async Task ShowPaymentModalAsync()

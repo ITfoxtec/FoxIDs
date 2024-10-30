@@ -35,6 +35,9 @@ namespace FoxIDs.Client.Pages
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
+        public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
         public TrackService TrackService { get; set; }
 
         [Parameter]
@@ -46,6 +49,7 @@ namespace FoxIDs.Client.Pages
             logUsageHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusage";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
+            NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;
             if (TrackSelectedLogic.IsTrackSelected)
             {
                 await DefaultLoadAsync();
@@ -55,6 +59,7 @@ namespace FoxIDs.Client.Pages
         protected override void OnDispose()
         {
             TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            NotificationLogic.OnClientSettingLoaded -= OnClientSettingLoaded;
             base.OnDispose();
         }
 
@@ -90,6 +95,11 @@ namespace FoxIDs.Client.Pages
             {
                 logSreamSettingsListError = ex.Message;
             }
+        }
+
+        private void OnClientSettingLoaded()
+        {
+            StateHasChanged();
         }
 
         private async Task ShowUpdateLogSettingsAsync()

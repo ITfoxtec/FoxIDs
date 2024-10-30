@@ -55,12 +55,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "custom_domain_verified")]
         public bool CustomDomainVerified { get; set; }
 
-        [JsonProperty(PropertyName = "customer")]
         [ValidateComplexType]
+        [JsonProperty(PropertyName = "customer")]
         public Customer Customer { get; set; }
 
-        [JsonProperty(PropertyName = "payment")]
         [ValidateComplexType]
+        [JsonProperty(PropertyName = "payment")]
         public Payment Payment { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)

@@ -97,7 +97,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    if (settings.Payment.EnablePayment == true && !tenant.PlanName.IsNullOrEmpty())
+                    if (settings.Payment.EnablePayment == true && settings.Usage?.EnableInvoice == true && !tenant.PlanName.IsNullOrEmpty())
                     {
                         tenant.PlanName = tenant.PlanName.ToLower();
                         if (tenant.PlanName != RouteBinding.PlanName)

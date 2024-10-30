@@ -6,11 +6,11 @@ namespace FoxIDs.Client.Models.ViewModels
     public class FilterUsageViewModel
     {
         [Required]
-        [Min(Constants.Models.Used.YearMin)]
+        [Min(Constants.Models.Used.PeriodYearMin)]
         public int Year { get; set; }
 
         [Required]
-        [Range(Constants.Models.Used.MonthMin, Constants.Models.Used.MonthMax)]
+        [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
         public int Month { get; set; }
 
         /// <summary>

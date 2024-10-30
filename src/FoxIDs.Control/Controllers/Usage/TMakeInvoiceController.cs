@@ -10,6 +10,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using FoxIDs.Models.Config;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
@@ -21,15 +22,17 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly InvoiceLogic invoiceLogic;
 
         public object MTenant { get; private set; }
 
-        public TMakeInvoiceController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TMakeInvoiceController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, InvoiceLogic invoiceLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.invoiceLogic = invoiceLogic;
         }
 
         /// <summary>
@@ -41,6 +44,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.Used>> PostMakeInvoice([FromBody] Api.MakeInvoiceRequest makeInvoiceRequest)
         {
+            if (settings.Payment?.EnablePayment != true || settings.Usage?.EnableInvoice != true)
+            {
+                throw new Exception("Payment not configured.");
+            }
+
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(makeInvoiceRequest)) return BadRequest(ModelState);
@@ -60,12 +68,7 @@ namespace FoxIDs.Controllers
 
                     try
                     {
-                        if(string.IsNullOrWhiteSpace(settings.Usage?.MakeInvoiceExternalApiUrl))
-                        {
-                            throw new Exception("Make invoice external API URL not configured.");
-                        }
-
-                        // todo
+                        await invoiceLogic.CreateAndSendInvoiceAsync(mUsed);
 
                         mUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceSend;
                         await tenantDataRepository.UpdateAsync(mUsed);
@@ -92,12 +95,6 @@ namespace FoxIDs.Controllers
 
                     try
                     {
-                        if (string.IsNullOrWhiteSpace(settings.Usage?.MakeInvoiceExternalApiUrl))
-                        {
-                            throw new Exception("Make invoice external API URL not configured.");
-                        }
-
-
                         // todo
 
                         mUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteSend;

@@ -10,7 +10,7 @@
                 @if (!IsMasterTenant && RequestPayment)
                 {
                     <div class="alert alert-warning text-center" role="alert">
-                        Please register a <a href="@TenantHerf" class="alert-link" @onclick="OpenPaymentMethodAsync">payment method</a> for the tenant subscription.
+                        Please register a <a href="" class="alert-link" @onclick="OpenPaymentMethodAsync" @onclick:preventDefault>payment method</a> for the tenant subscription.
                     </div>
                 }
             </Authorized>
@@ -165,13 +165,13 @@
                                 <TenantLiNavLink Href="certificates">
                                     Certificates
                                 </TenantLiNavLink>
-                                @if (IsMasterTenant)
+                                @if (IsMasterTenant && ClientSettings.EnablePayment)
                                 {
                                     <TenantLiNavLink Href="usage">
                                         Usage
                                     </TenantLiNavLink>
                                 }
-                                @if (clientSettings.LogOption != LogOptions.Stdout)
+                                @if (ClientSettings.LogOption != LogOptions.Stdout)
                                 {
                                     <TenantLiNavLink Href="logusage" SubPages="logs,logsettings">
                                         Logs
@@ -344,7 +344,7 @@
     </div>
 
     <footer class="footer-container">
-        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {clientSettings.FullVersion}")">@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
+        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {ClientSettings.FullVersion}")">@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {ClientSettings.Version}")</small></span>
     </footer>
 </div>
 

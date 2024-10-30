@@ -300,6 +300,8 @@ namespace FoxIDs
 
             public static class Customer
             {
+                public const int InvoiceEmailsMin = 1;
+                public const int InvoiceEmailsMax = 5;
                 public const int ReferenceLength = 60;
                 public const int NameLength = 60;
                 public const int VatNumberLength = 50;
@@ -316,9 +318,9 @@ namespace FoxIDs
                 public const int IdLength = 80;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
 
-                public const int YearMin = 2000;
-                public const int MonthMin = 1;
-                public const int MonthMax = 12;
+                public const int PeriodYearMin = 2000;
+                public const int PeriodMonthMin = 1;
+                public const int PeriodMonthMax = 12;
                 public const int ItemsMin = 0;
                 public const int ItemsMax = 1000;
                 public const int DayMin = 0;

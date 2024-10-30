@@ -11,8 +11,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralUsedViewModel(UsedBase used)
         {
             TenantName = used.TenantName;
-            Year = used.Year;
-            Month = used.Month;
+            PeriodYear = used.PeriodYear;
+            PeriodMonth = used.PeriodMonth;
             InvoiceStatus = used.InvoiceStatus;
             PaymentStatus = used.PaymentStatus;
             TotalPrice = used.TotalPrice;

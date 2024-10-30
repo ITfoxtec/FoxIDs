@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
@@ -16,14 +17,16 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public class TMakePaymentController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
         public object MTenant { get; private set; }
 
-        public TMakePaymentController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TMakePaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
+            this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
@@ -38,6 +41,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.Used>> PostMakePayment([FromBody] Api.MakePaymentRequest makePaymentRequest)
         {
+            if (settings.Payment?.EnablePayment != true || settings.Usage?.EnableInvoice != true)
+            {
+                throw new Exception("Payment not configured.");
+            }
+
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(makePaymentRequest)) return BadRequest(ModelState);

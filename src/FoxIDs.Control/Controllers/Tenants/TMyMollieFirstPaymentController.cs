@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.MollieFirstPaymentResponse>> PostMyMollieFirstPayment([FromBody] Api.MollieFirstPaymentRequest payment)
         {
-            if(settings.Payment?.EnablePayment != true)
+            if(settings.Payment?.EnablePayment != true || settings.Usage?.EnableInvoice != true)
             {
                 throw new Exception("Payment not configured.");
             }
@@ -83,7 +83,7 @@ namespace FoxIDs.Controllers
             {
                 Amount = new Amount("EUR", "0.00"),
                 RedirectUrl = $"{HttpContext.GetHost()}{RouteBinding.TenantName}/tenant",
-                Description = "Registration payment",
+                Description = "Zero amount registration payment",
                 CustomerId = mTenant.Payment.CustomerId,
                 SequenceType = SequenceType.First,
                 CardToken = payment.CardToken

@@ -15,7 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Logging
 {
     public partial class LogSettings
     {
@@ -71,9 +71,31 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
-            generalLogSettings.Error = null;
-            generalLogSettings.Edit = false;
+            await LoadSettingsAsync();
+            await LoadLogStreamSettingsAsync();
+        }
 
+        private async Task LoadSettingsAsync()
+        {
+            generalLogSettings.Error = null;
+
+            try
+            {
+                var logSettings = await TrackService.GetTrackLogSettingAsync();
+                await generalLogSettings.Form.InitAsync(logSettings);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalLogSettings.Error = ex.Message;
+            }
+        }
+
+        private async Task LoadLogStreamSettingsAsync()
+        {
             logSreamSettingsListError = null;
             try
             {
@@ -102,32 +124,11 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
-        private async Task ShowUpdateLogSettingsAsync()
-        {
-            generalLogSettings.Error = null;
-            generalLogSettings.Edit = true;
-
-            try
-            {
-                var logSettings = await TrackService.GetTrackLogSettingAsync();
-                await generalLogSettings.Form.InitAsync(logSettings);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (HttpRequestException ex)
-            {
-                generalLogSettings.Error = ex.Message;
-            }
-        }
-
         private async Task OnUpdateLogSettingsValidSubmitAsync(EditContext editContext)
         {
             try
             {
                 await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model);
-                generalLogSettings.Edit = false;
                 toastService.ShowSuccess("Log settings updated.");
             }
             catch (Exception ex)

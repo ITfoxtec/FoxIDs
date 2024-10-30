@@ -31,48 +31,35 @@
 
 <div class="tab-content pt-4">
     <div class="card">
-        <div class="card-body @(generalLogSettings.Edit ? "active" : string.Empty)">
+        <div class="card-body">
             @if (TrackSelectedLogic.IsTrackSelected)
             {
 
-                <div>
-                    <p>FoxIDs default log warnings, errors, critical errors and events to the log store. The trace level and metric are configurable.</p>
+                <div class="info-text py-3">
+                    FoxIDs default log warnings, errors, critical errors and events to the log store. The trace level and metrics are configurable.
                 </div>
 
-                @if (generalLogSettings.Edit && !generalLogSettings.Error.IsNullOrWhiteSpace())
+                @if (!generalLogSettings.Error.IsNullOrWhiteSpace())
                 {
                     <div class="alert alert-danger" role="alert">
                         @generalLogSettings.Error
                     </div>
                 }
 
-                @if (generalLogSettings.Edit)
-                {
-                    <PageEditForm @ref="generalLogSettings.Form" TModel="Api.LogSettings" OnValidSubmit="OnUpdateLogSettingsValidSubmitAsync">
-                        @if (generalLogSettings.Form?.Model != null)
-                        {
-                            <div class="modal-header">
-                                Log settings
-                            </div>
-                            <div class="modal-body">
-                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogInfoTrace" For="@(() => generalLogSettings.Form.Model.LogInfoTrace)" TextType="e.d" />
-                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogClaimTrace" For="@(() => generalLogSettings.Form.Model.LogClaimTrace)" TextType="e.d" />
-                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMessageTrace" For="@(() => generalLogSettings.Form.Model.LogMessageTrace)" TextType="e.d" />
-                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMetric" For="@(() => generalLogSettings.Form.Model.LogMetric)" TextType="e.d" />
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Update</button>
-                                <button type="button" class="btn btn-secondary" @onclick="@(() => generalLogSettings.Edit = false)">Cancel</button>
-                            </div>
-                        }
-                    </PageEditForm>
-                }
-                else
-                {
-                    <button class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateLogSettingsAsync())">
-                        Change log settings
-                    </button>
-                }
+                <PageEditForm @ref="generalLogSettings.Form" TModel="Api.LogSettings" OnValidSubmit="OnUpdateLogSettingsValidSubmitAsync">
+                    @if (generalLogSettings.Form?.Model != null)
+                    {
+                        <div class="">
+                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogInfoTrace" For="@(() => generalLogSettings.Form.Model.LogInfoTrace)" TextType="e.d" />
+                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogClaimTrace" For="@(() => generalLogSettings.Form.Model.LogClaimTrace)" TextType="e.d" />
+                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMessageTrace" For="@(() => generalLogSettings.Form.Model.LogMessageTrace)" TextType="e.d" />
+                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMetric" For="@(() => generalLogSettings.Form.Model.LogMetric)" TextType="e.d" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    }
+                </PageEditForm>
             }
         </div>
     </div>

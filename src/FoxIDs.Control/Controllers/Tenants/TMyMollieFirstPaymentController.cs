@@ -106,7 +106,7 @@ namespace FoxIDs.Controllers
             mTenant.Payment.CardExpiryYear = cardExpiryDate.Year;
             await tenantDataRepository.UpdateAsync(mTenant);
 
-            return Ok(new Api.MollieFirstPaymentResponse { Status = paymentResponse.Status, CheckoutUrl = paymentResponse.Links?.Checkout?.Href });  
+            return Ok(new Api.MollieFirstPaymentResponse { CheckoutUrl = paymentResponse.Links?.Checkout?.Href });  
         }
 
         private async Task RevokeMandateAsync(string customerId, string mandateId)

@@ -54,6 +54,8 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.Year, s.Month).GetAwaiter().GetResult()));
             CreateMap<UsedItem, Api.UsedItem>();
+            CreateMap<Invoice, Api.Invoice>();
+            CreateMap<InvoiceLine, Api.InvoiceLine>();
 
             CreateMap<Track, Api.Track>()
                 .ReverseMap()

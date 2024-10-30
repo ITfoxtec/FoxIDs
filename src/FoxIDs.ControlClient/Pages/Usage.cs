@@ -113,14 +113,10 @@ namespace FoxIDs.Client.Pages
         {
             switch (generalUsed.InvoiceStatus)
             {
-                case UsedInvoiceStatus.InvoiceInitiated:
-                    return "initiated";
                 case UsedInvoiceStatus.InvoiceSend:
                     return "send";
                 case UsedInvoiceStatus.InvoiceFailed:
                     return "failed";
-                case UsedInvoiceStatus.CreditNoteInitiated:
-                    return "credit note initiated";
                 case UsedInvoiceStatus.CreditNoteSend:
                     return "credit note send";
                 case UsedInvoiceStatus.CreditNoteFailed:
@@ -132,17 +128,7 @@ namespace FoxIDs.Client.Pages
 
         private string GetPaymentStatus(GeneralUsedViewModel generalUsed)
         {
-            switch (generalUsed.PaymentStatus)
-            {
-                case UsedPaymentStatus.PaymentInitiated:
-                    return "initiated";
-                case UsedPaymentStatus.PaymentDone:
-                    return "done";
-                case UsedPaymentStatus.PaymentFailed:
-                    return "failed";
-                default:
-                    return generalUsed.PaymentStatus.ToString();
-            }
+            return generalUsed.PaymentStatus.ToString();
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
@@ -236,7 +222,6 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
                 var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
@@ -258,7 +243,6 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
                 var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth, IsCreditNote = true });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
@@ -280,7 +264,6 @@ namespace FoxIDs.Client.Pages
             generalUsed.PaymentButtonDisabled = true;
             try
             {
-                generalUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
                 var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
                 generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
@@ -290,7 +273,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                generalUsed.PaymentStatus = UsedPaymentStatus.PaymentFailed;
+                generalUsed.PaymentStatus = UsedPaymentStatus.Failed;
                 toastService.ShowError(ex.Message);
             }
             generalUsed.PaymentButtonDisabled = false;

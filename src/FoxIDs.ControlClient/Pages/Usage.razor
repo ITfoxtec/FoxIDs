@@ -112,7 +112,8 @@
                 }
                 else
                 {
-                    @if (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus == UsedPaymentStatus.PaymentFailed)
+                    @if ((used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
+                         (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed()))
                     {
                         @if (!used.InvoiceButtonDisabled)
                         {
@@ -126,19 +127,23 @@
                                 Make credit note
                             </button>
                         }
+                    }
+                }
 
-                        @if (!used.PaymentButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ExecutePaymentAsync(used))">
-                                Make payment
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
-                                Make payment
-                            </button>
-                        }
+                @if ((used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
+                     (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed()))
+                {
+                    @if (!used.PaymentButtonDisabled)
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ExecutePaymentAsync(used))">
+                            Make payment
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
+                            Make payment
+                        </button>
                     }
                 }
             }

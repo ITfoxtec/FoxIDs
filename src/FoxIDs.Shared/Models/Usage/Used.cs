@@ -61,6 +61,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "payment_status")]
         public UsedPaymentStatus PaymentStatus { get; set; }
 
+        [JsonProperty(PropertyName = "payment_id")]
+        public string PaymentId { get; set; }
+
         [JsonProperty(PropertyName = "tracks")]
         public double Tracks { get; set; }
 

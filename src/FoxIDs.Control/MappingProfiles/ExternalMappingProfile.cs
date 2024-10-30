@@ -16,6 +16,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Invoice, ExtInv.InvoiceRequest>();
             CreateMap<InvoiceLine, ExtInv.InvoiceLine>();
             CreateMap<UsedItem, ExtInv.UsedItem>();
+            CreateMap<Customer, ExtInv.Customer>();
         }
     }
 }

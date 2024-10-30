@@ -1,6 +1,4 @@
-﻿using Amazon.Runtime;
-using AutoMapper;
-using FoxIDs.Client.Pages.Components;
+﻿using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
@@ -53,12 +51,11 @@ namespace FoxIDs.Logic.Usage
             {
                 used.Invoices = [invoice];
             }
-
         }
 
         private async Task<Invoice> CreateInvoiceAsync(Used used)
         {
-            var tenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+            var tenant = await tenantDataRepository.GetTenantByNameAsync(used.TenantName);
             if (tenant.PlanName.IsNullOrWhiteSpace())
             {
                 throw new Exception($"Tenant '{RouteBinding.TenantName}' do not have a plan.");
@@ -106,11 +103,9 @@ namespace FoxIDs.Logic.Usage
             invoiceRequest.PeriodMonth = used.PeriodMonth;
             await invoiceRequest.ValidateObjectAsync();
 
-            var requestDictionary = invoiceRequest.ToDictionary();
             var httpClient = httpClientFactory.CreateClient();
-
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{settings.Usage.ExternalInvoiceApiId.OAuthUrlDencode()}:{settings.Usage.ExternalInvoiceApiSecret.OAuthUrlDencode()}".Base64Encode());
-            var content = new StringContent(JsonConvert.SerializeObject(requestDictionary, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var content = new StringContent(JsonConvert.SerializeObject(invoiceRequest, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
             using var response = await httpClient.PostAsync(settings.Usage.ExternalInvoiceApiUrl, content);
             switch (response.StatusCode)
             {

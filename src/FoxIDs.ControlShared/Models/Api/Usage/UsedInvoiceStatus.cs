@@ -3,11 +3,9 @@
     public enum UsedInvoiceStatus
     {
         None = 0,
-        InvoiceInitiated = 100,
-        InvoiceSend = 120,
+        InvoiceSend = 100,
         InvoiceFailed = 200,
-        CreditNoteInitiated = 500,
-        CreditNoteSend = 520,
+        CreditNoteSend = 500,
         CreditNoteFailed = 600,
     }
 }

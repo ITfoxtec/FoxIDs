@@ -10,6 +10,11 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using FoxIDs.Models.Config;
+using Mollie.Api.Client.Abstract;
+using Mollie.Api.Models.Payment;
+using Mollie.Api.Models;
+using System.Linq;
+using Mollie.Api.Models.Payment.Request;
 
 namespace FoxIDs.Controllers
 {
@@ -21,15 +26,15 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly IPaymentClient paymentClient;
 
-        public object MTenant { get; private set; }
-
-        public TMakePaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TMakePaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IPaymentClient paymentClient) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.paymentClient = paymentClient;
         }
 
         /// <summary>
@@ -54,26 +59,23 @@ namespace FoxIDs.Controllers
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(makePaymentRequest.TenantName, makePaymentRequest.Year, makePaymentRequest.Month));
 
                 if(!((mUsed.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || mUsed.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) && 
-                     (mUsed.PaymentStatus == UsedPaymentStatus.None || mUsed.PaymentStatus == UsedPaymentStatus.PaymentFailed)))
+                     (mUsed.PaymentStatus == UsedPaymentStatus.None || mUsed.PaymentStatus.PaymentStatusIsGenerallyFailed())))
                 {
                     throw new Exception($"Usage invoice status '{mUsed.InvoiceStatus}' and payment status '{mUsed.PaymentStatus}' is invalid, unable to execute payment.");
                 }
 
-                mUsed.PaymentStatus = UsedPaymentStatus.PaymentInitiated;
                 await tenantDataRepository.UpdateAsync(mUsed);
 
                 try
                 {
-                    // todo
-
-                    mUsed.PaymentStatus = UsedPaymentStatus.PaymentDone;
+                    await MakePaymentAsync(mUsed);
                     await tenantDataRepository.UpdateAsync(mUsed);
 
                     return Ok(mapper.Map<Api.Used>(mUsed));
                 }
                 catch
                 {
-                    mUsed.PaymentStatus = UsedPaymentStatus.PaymentFailed;
+                    mUsed.PaymentStatus = UsedPaymentStatus.Failed;
                     await tenantDataRepository.UpdateAsync(mUsed);
                     throw;
                 }
@@ -87,6 +89,31 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task MakePaymentAsync(Used mUsed)
+        {
+            var mTenant = await tenantDataRepository.GetTenantByNameAsync(mUsed.TenantName);
+            if(mTenant.Payment?.IsActive != true)
+            {
+                throw new Exception("Not an active payment.");
+            }
+
+            var invoice = mUsed.Invoices.Where(i => !i.IsCreditNote).Last();
+
+            var paymentRequest = new PaymentRequest
+            {
+                RedirectUrl = "https://www.foxids.com",
+                Amount = new Amount("EUR", invoice.TotalPrice),
+                Description = "FoxIDs subscription",
+                CustomerId = mTenant.Payment.CustomerId,
+                SequenceType = SequenceType.Recurring,
+                MandateId = mTenant.Payment.MandateId,
+            };
+
+            var paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
+            mUsed.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
+            mUsed.PaymentId = paymentResponse.Id;
         }
     }
 }

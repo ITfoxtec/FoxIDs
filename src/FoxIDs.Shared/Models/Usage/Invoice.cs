@@ -17,6 +17,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "ct")]
         public long CreateTime { get; set; }
 
+        public bool IsCreditNote { get; set; }
+
         [ListLength(Constants.Models.Used.ItemsMin, Constants.Models.Used.ItemsMin)]
         [JsonProperty(PropertyName = "lines")]
         public List<InvoiceLine> Lines { get; set; }

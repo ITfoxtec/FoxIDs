@@ -63,9 +63,6 @@ namespace FoxIDs.Controllers
                         throw new Exception($"Usage invoice status '{mUsed.InvoiceStatus}' is invalid, unable to send invoice.");
                     }
 
-                    mUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceInitiated;
-                    await tenantDataRepository.UpdateAsync(mUsed);
-
                     try
                     {
                         await invoiceLogic.CreateAndSendInvoiceAsync(mUsed);
@@ -85,13 +82,10 @@ namespace FoxIDs.Controllers
                 else
                 {
                     if (!(mUsed.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || mUsed.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) ||
-                        !(mUsed.PaymentStatus == UsedPaymentStatus.None || mUsed.PaymentStatus == UsedPaymentStatus.PaymentFailed))
+                        !(mUsed.PaymentStatus == UsedPaymentStatus.None || mUsed.PaymentStatus.PaymentStatusIsGenerallyFailed()))
                     {
                         throw new Exception($"Usage invoice status '{mUsed.InvoiceStatus}' is invalid, unable to send credit note.");
                     }
-
-                    mUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteInitiated;
-                    await tenantDataRepository.UpdateAsync(mUsed);
 
                     try
                     {
@@ -115,7 +109,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{makeInvoiceRequest.TenantName}', year '{makeInvoiceRequest.Year}' and month '{makeInvoiceRequest.Month}'.");
-                    return NotFound(typeof(Api.Tenant).Name, $"{makeInvoiceRequest.TenantName}/{makeInvoiceRequest.Year}/{makeInvoiceRequest.Month}");
+                    return NotFound(typeof(Api.Used).Name, $"{makeInvoiceRequest.TenantName}/{makeInvoiceRequest.Year}/{makeInvoiceRequest.Month}");
                 }
                 throw;
             }

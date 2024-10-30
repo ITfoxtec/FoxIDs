@@ -12,6 +12,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using FoxIDs.Models;
+using Mollie.Api.Client.Abstract;
 
 namespace FoxIDs.Controllers
 {
@@ -22,12 +23,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly IPaymentClient paymentClient;
 
-        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IPaymentClient paymentClient) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.paymentClient = paymentClient;
         }
 
         /// <summary>
@@ -57,6 +60,13 @@ namespace FoxIDs.Controllers
                 var aTenants = new HashSet<Api.UsedBase>(mUsedList.Count());
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))
                 {
+                    if(!mUsed.PaymentId.IsNullOrEmpty() &&
+                       (mUsed.PaymentStatus == UsedPaymentStatus.Open || mUsed.PaymentStatus == UsedPaymentStatus.Pending || mUsed.PaymentStatus == UsedPaymentStatus.Authorized))
+                    {
+                        var paymentResponse = await paymentClient.GetPaymentAsync(mUsed.PaymentId);
+                        mUsed.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
+                        await tenantDataRepository.UpdateAsync(mUsed);
+                    }
                     aTenants.Add(mapper.Map<Api.UsedBase>(mUsed));
                 }
                 return Ok(aTenants);

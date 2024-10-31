@@ -23,7 +23,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false);
+            var item = await ReadItemAsync<T>(id, id.IdToMasterPartitionId(), false);
             return item != null;
         }
 

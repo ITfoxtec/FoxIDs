@@ -8,6 +8,9 @@
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
 <div class="info-text">The external user is linked with a claim type (e.g., 'sub' or 'email'). Each user has a unique claim value.</div>
 <FInputText @bind-Value="Model.LinkClaimType" For="@(() => Model.LinkClaimType)" />
+
+<div class="info-text">By default, claims on external users are added to the revived claims with the exception of the <code>sub</code> claim, which overrides the revived <code>sub</code> claim.</div>
+
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />
 <DynamicElements Model="Model" IncludeEmailElement=true />
 <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>

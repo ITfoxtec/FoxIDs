@@ -18,7 +18,7 @@ The authentication method issued claims (default forward):
 - `auth_method` contain the authentication method name, the name is unique in a environment.
 - `auth_method_type` contain the authentication method type: `login`, `oidc`, `oauth2`, `saml2` or `env_link`.
 
-A `sub` claim and an access token revived from an external Identity Provider is nested with a pipe symbol (|) after the up_party name.  
+A `sub` claim and an access token received from an external Identity Provider is nested with a pipe symbol (|) after the up_party name.  
 Examples: 
 
  - An external `sub` with the value `afeda2a3-c08b-4bbb-ab77-35138dd2ef2d` gets the nested value `the-auth-method|afeda2a3-c08b-4bbb-ab77-35138dd2ef2d`

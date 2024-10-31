@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Link claim type")]
         public string LinkClaimType { get; set; }
 
-        [Display(Name = "Overwrite revived claims")]
+        [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
     }
 }

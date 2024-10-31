@@ -61,6 +61,10 @@ namespace FoxIDs.Logic
                         logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                         return (null, externalUserClaims);
                     }
+                    else
+                    {
+                        requireUserExceptionAction($"External user is disabled for link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}'.");
+                    }
                 }
                 else if (party.LinkExternalUser.AutoCreateUser)
                 {

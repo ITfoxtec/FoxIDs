@@ -21,7 +21,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Link claim")]
         public string LinkClaimType { get; set; } = JwtClaimTypes.Subject;
 
-        [Display(Name = "Overwrite revived claims")]
+        [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
 
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]

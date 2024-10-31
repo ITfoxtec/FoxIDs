@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Tenant : DataDocument
+    public class Tenant : DataDocument, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -47,6 +49,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "plan_name")]
         public string PlanName { get; set; }
 
+        /// <summary>
+        /// Default EUR if empty.
+        /// </summary>
+        [MaxLength(Constants.Models.Currency.CurrencyLength)]
+        [JsonProperty(PropertyName = "currency")]
+        public string Currency { get; set; }
+
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
         [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]
         [JsonProperty(PropertyName = "custom_domain")]
@@ -77,6 +86,17 @@ namespace FoxIDs.Models
             [MaxLength(Constants.Models.Tenant.NameLength)]
             [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
             public string TenantName { get; set; }
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (!Currency.IsNullOrWhiteSpace() && Currency != Constants.Models.Currency.Dkk)
+            {
+                results.Add(new ValidationResult($"The field {nameof(Currency)} only support the currency '{Constants.Models.Currency.Dkk}'.", [nameof(Currency)]));
+            }
+
+            return results;
         }
     }
 }

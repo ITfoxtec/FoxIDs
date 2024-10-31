@@ -23,7 +23,7 @@ namespace FoxIDs.Models.Api
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "Cost per month")]
+        [Display(Name = "Cost per month in EUR")]
         public decimal CostPerMonth { get; set; }
 
         [Display(Name = "Custom domain")]

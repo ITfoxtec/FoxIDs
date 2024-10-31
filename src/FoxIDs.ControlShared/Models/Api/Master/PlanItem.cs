@@ -17,7 +17,7 @@ namespace FoxIDs.Models.Api
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "First level cost per instance")] 
+        [Display(Name = "First level cost per instance in EUR")] 
         public decimal FirstLevelCost { get; set; }
 
         [Min(Constants.Models.Plan.FirstLevelThresholdMin)]
@@ -25,7 +25,7 @@ namespace FoxIDs.Models.Api
         public long? FirstLevelThreshold { get; set; }
 
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "Second level cost per instance")]
+        [Display(Name = "Second level cost per instance in EUR")]
         public decimal? SecondLevelCost { get; set; }
     }
 }

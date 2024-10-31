@@ -69,7 +69,7 @@ namespace FoxIDs.Logic.Usage
 
             var invoice = new Invoice
             {
-                InvoiceNumber = GetNextInvoiceNumber(),
+                InvoiceNumber = await GetNextInvoiceNumberAsync(),
                 CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 Customer = tenant.Customer,
             };
@@ -84,9 +84,24 @@ namespace FoxIDs.Logic.Usage
             return invoice;
         }
 
-        private string GetNextInvoiceNumber()
+        private async Task<string> GetNextInvoiceNumberAsync()
         {
-            return "fc-00003";
+            var masterUsage = await masterDataRepository.GetAsync<MasterUsage>(await MasterUsage.IdFormatAsync(), required: false);
+            if(masterUsage == null)
+            {
+                masterUsage = new MasterUsage
+                {
+                    InvoiceNumber = 1
+                };
+                await masterDataRepository.CreateAsync(masterUsage);
+            }
+            else
+            {
+                masterUsage.InvoiceNumber += 1;
+                await masterDataRepository.UpdateAsync(masterUsage);
+            }
+
+            return $"{masterUsage.InvoiceNumberPrefix}{masterUsage.InvoiceNumber}";
         }
 
         private decimal GetTrackPrice(Used used, Plan plan)

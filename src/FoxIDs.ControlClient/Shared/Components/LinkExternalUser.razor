@@ -5,9 +5,9 @@
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
 
 <div class="info-text">
-    By default, claims on external users are added to the revived claims with the exception of the <code>sub</code> claim, which overrides the revived <code>sub</code> claim.
+    By default, claims on external users are added to the received claims with the exception of the <code>sub</code> claim, which overrides the received <code>sub</code> claim.
     <br />
-    Claims on external users can optionally override revived and transformed claims.
+    Claims on external users can optionally override received and transformed claims.
 </div>
 
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />

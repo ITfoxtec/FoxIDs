@@ -76,9 +76,11 @@ namespace FoxIDs.Client.Pages
 
         private void ShowCreateUsage()
         {
-            var used = new GeneralUsedViewModel();
-            used.CreateMode = true;
-            used.Edit = true;
+            var used = new GeneralUsedViewModel
+            {
+                CreateMode = true,
+                Edit = true
+            };
             usedList.Add(used);
         }
 
@@ -102,7 +104,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
+                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
                 await generalUsed.Form.InitAsync(used.Map<UsedViewModel>());
             }
             catch (TokenUnavailableException)
@@ -145,15 +147,15 @@ namespace FoxIDs.Client.Pages
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
         {
             var lastMonth = DateTimeOffset.Now.AddMonths(-1);
-            filterUsage.Year = lastMonth.Year;
-            filterUsage.Month = lastMonth.Month;
+            filterUsage.PeriodYear = lastMonth.Year;
+            filterUsage.PeriodMonth = lastMonth.Month;
         }
 
         private async Task OnUsageFilterValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.Year, searchUsageForm.Model.Month));
+                SetGeneralUsageList(await TenantService.FilterUsageAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
             }
             catch (FoxIDsApiException ex)
             {
@@ -187,9 +189,9 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void AddItem(MouseEventArgs e, List<UsedItem> items)
+        private void AddItem(MouseEventArgs e, List<UsedItem> items, UsedItemTypes type)
         {
-            items.Add(new UsedItem());
+            items.Add(new UsedItem { Type = type });
         }
 
         private void RemoveItem(MouseEventArgs e, List<UsedItem> items, UsedItem item)
@@ -233,7 +235,7 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -254,7 +256,7 @@ namespace FoxIDs.Client.Pages
             generalUsed.InvoiceButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth, IsCreditNote = true });
+                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, IsCreditNote = true });
                 generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
                 generalUsed.TotalPrice = usedResult.TotalPrice;
             }
@@ -275,7 +277,7 @@ namespace FoxIDs.Client.Pages
             generalUsed.PaymentButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, Year = generalUsed.PeriodYear, Month = generalUsed.PeriodMonth });
+                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
                 generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
             catch (TokenUnavailableException)

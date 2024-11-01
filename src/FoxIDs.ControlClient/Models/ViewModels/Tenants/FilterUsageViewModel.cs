@@ -7,11 +7,11 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         [Required]
         [Min(Constants.Models.Used.PeriodYearMin)]
-        public int Year { get; set; }
+        public int PeriodYear { get; set; }
 
         [Required]
         [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
-        public int Month { get; set; }
+        public int PeriodMonth { get; set; }
 
         /// <summary>
         /// Search by tenant name.

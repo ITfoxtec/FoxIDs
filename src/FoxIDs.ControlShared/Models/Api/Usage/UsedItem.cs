@@ -10,10 +10,10 @@ namespace FoxIDs.Models.Api
         public string Text { get; set; }
 
         [Range(Constants.Models.Used.DayMin, Constants.Models.Used.DayMax)]
-        public int Day { get; set; }
+        public int? Day { get; set; }
 
         [Min(Constants.Models.Used.QuantityMin)]
-        public double Quantity { get; set; }
+        public decimal? Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
         public decimal UnitPrice { get; set; }
@@ -23,15 +23,16 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (UnitPrice == 0)
+            {
+                results.Add(new ValidationResult($"The {nameof(UnitPrice)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(UnitPrice), nameof(Type)]));
+            }
+
             if (Type == UsedItemTypes.Text)
             {
                 if (Quantity > 0)
                 {
                     results.Add(new ValidationResult($"The {nameof(Quantity)} field can not be used if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
-                }
-                if (UnitPrice == 0)
-                {
-                    results.Add(new ValidationResult($"The {nameof(UnitPrice)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(UnitPrice), nameof(Type)]));
                 }
             }
             else if (Type == UsedItemTypes.Hours)

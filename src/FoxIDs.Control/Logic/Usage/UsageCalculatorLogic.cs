@@ -131,7 +131,7 @@ namespace FoxIDs.Logic.Usage
 
                 stoppingToken.ThrowIfCancellationRequested();
 
-                var id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, Year = datePointer.Year, Month = datePointer.Month });
+                var id = await Used.IdFormatAsync(new Used.IdKey { TenantName = tenantName, PeriodYear = datePointer.Year, PeriodMonth = datePointer.Month });
                 var used = await tenantDataRepository.GetAsync<Used>(id, required: false);
                 if (used == null)
                 {

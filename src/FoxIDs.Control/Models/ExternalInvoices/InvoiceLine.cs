@@ -9,7 +9,7 @@ namespace FoxIDs.Models.ExternalInvoices
         public string Text { get; set; }
 
         [Min(Constants.Models.Used.QuantityMin)]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
         public decimal UnitPrice { get; set; }

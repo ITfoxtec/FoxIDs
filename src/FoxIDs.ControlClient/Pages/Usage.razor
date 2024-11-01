@@ -15,10 +15,10 @@
 <PageEditForm @ref="searchUsageForm" TModel="FilterUsageViewModel" OnAfterInit="OnUsageFilterAfterInit" OnValidSubmit="OnUsageFilterValidSubmitAsync">
     <div class="row">
         <div class="col-6">
-            <FInputNumber @bind-Value="searchUsageForm.Model.Year" For="@(() => searchUsageForm.Model.Year)" />
+            <FInputNumber @bind-Value="searchUsageForm.Model.PeriodYear" For="@(() => searchUsageForm.Model.PeriodYear)" />
         </div>
         <div class="col-6">
-            <FInputNumber @bind-Value="searchUsageForm.Model.Month" For="@(() => searchUsageForm.Model.Month)" />
+            <FInputNumber @bind-Value="searchUsageForm.Model.PeriodMonth" For="@(() => searchUsageForm.Model.PeriodMonth)" />
         </div>
     </div>
     <FInputTextFilter @bind-Value="searchUsageForm.Model.FilterTenantValue" For="@(() => searchUsageForm.Model.FilterTenantValue)" />
@@ -59,19 +59,44 @@
                             <FFieldText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" />
                         }
 
-
-                        <div class="info-text mr-auto">
-                            Add items to register time spend and other tasks.
-                        </div>
                         <div class="form-group active-group active">
-                            <Label For="@(() => used.Form.Model.Items)" class="label-control" />
+                            <div class="info-text mr-auto">
+                                Add items and register time spend.
+                            </div>
                             <ul class="list-group">
                                 @foreach (var item in used.Form.Model.Items)
                                 {
                                     <li class="list-group-item">
                                         <div class="row">
                                             <div class="col-11">
-                                                <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
+                                                @if (item.Type == UsedItemTypes.Hours)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-2">
+                                                            <FInputNumberN @bind-Value="item.Day" For="@(() => item.Day)" />
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <FInputNumberDN @bind-Value="item.Quantity" For="@(() => item.Quantity)" />
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <FInputNumberD @bind-Value="item.UnitPrice" For="@(() => item.UnitPrice)" />
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <FInputNumberD @bind-Value="item.UnitPrice" For="@(() => item.UnitPrice)" />
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                             <div class="col-1 text-right">
                                                 <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveItem(e, used.Form.Model.Items, item))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
@@ -81,7 +106,8 @@
                                 }
                             </ul>
                             <ValidationMessage For="@(() => used.Form.Model.Items)" />
-                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items))"><span class="oi oi-plus" aria-hidden="true"></span> Add Item</button>
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items, UsedItemTypes.Text))"><span class="oi oi-plus" aria-hidden="true"></span> Add Text item</button>
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items, UsedItemTypes.Hours))"><span class="oi oi-plus" aria-hidden="true"></span> Add Hours</button>
                         </div>
                     </div>
                     <div class="modal-footer">

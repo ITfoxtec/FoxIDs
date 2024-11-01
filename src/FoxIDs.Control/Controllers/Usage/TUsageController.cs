@@ -36,24 +36,24 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="usageRequest">Usage request.</param>
         /// <returns>Used.</returns>
-        [ProducesResponseType(typeof(Api.UpdateUsageRequest), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.Used), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UpdateUsageRequest>> GetUsage(Api.UsageRequest usageRequest)
+        public async Task<ActionResult<Api.Used>> GetUsage(Api.UsageRequest usageRequest)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(usageRequest)) return BadRequest(ModelState);
                 usageRequest.TenantName = usageRequest.TenantName?.ToLower();
 
-                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.Year, usageRequest.Month));
-                return Ok(mapper.Map<Api.UpdateUsageRequest>(mUsed));
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.PeriodYear, usageRequest.PeriodMonth));
+                return Ok(mapper.Map<Api.Used>(mUsed));
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.UpdateUsageRequest).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.Year}' and month '{usageRequest.Month}'.");
-                    return NotFound(typeof(Api.UpdateUsageRequest).Name, $"{usageRequest.TenantName}/{usageRequest.Year}/{usageRequest.Month}");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.PeriodYear}' and month '{usageRequest.PeriodMonth}'.");
+                    return NotFound(typeof(Api.Used).Name, $"{usageRequest.TenantName}/{usageRequest.PeriodYear}/{usageRequest.PeriodMonth}");
                 }
                 throw;
             }
@@ -74,6 +74,7 @@ namespace FoxIDs.Controllers
                 usageRequest.TenantName = usageRequest.TenantName.ToLower();
 
                 var mUsed = mapper.Map<Used>(usageRequest);
+                mUsed.Items = mUsed.Items?.OrderBy(i => i.Day).ToList();
                 await tenantDataRepository.CreateAsync(mUsed);
 
                 return Created(mapper.Map<Api.Used>(mUsed));
@@ -82,8 +83,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.Year}' and month '{usageRequest.Month}'.");
-                    return Conflict(typeof(Api.Tenant).Name, $"{usageRequest.TenantName}/{usageRequest.Year}/{usageRequest.Month}");
+                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.PeriodYear}' and month '{usageRequest.PeriodMonth}'.");
+                    return Conflict(typeof(Api.Used).Name, $"{usageRequest.TenantName}/{usageRequest.PeriodYear}/{usageRequest.PeriodMonth}");
                 }
                 throw;
             }
@@ -103,10 +104,10 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(usageRequest)) return BadRequest(ModelState);
                 usageRequest.TenantName = usageRequest.TenantName.ToLower();
 
-                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.Year, usageRequest.Month));
-                if (mUsed.Items?.Count() > 0) 
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.PeriodYear, usageRequest.PeriodMonth));
+                if (usageRequest.Items?.Count() > 0) 
                 {
-                    mUsed.Items = mapper.Map<List<UsedItem>>(usageRequest.Items);
+                    mUsed.Items = mapper.Map<List<UsedItem>>(usageRequest.Items).OrderBy(i => i.Day).ToList();
                 }
                 else
                 {
@@ -120,8 +121,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.Year}' and month '{usageRequest.Month}'.");
-                    return NotFound(typeof(Api.Tenant).Name, $"{usageRequest.TenantName}/{usageRequest.Year}/{usageRequest.Month}");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.PeriodYear}' and month '{usageRequest.PeriodMonth}'.");
+                    return NotFound(typeof(Api.Used).Name, $"{usageRequest.TenantName}/{usageRequest.PeriodYear}/{usageRequest.PeriodMonth}");
                 }
                 throw;
             }

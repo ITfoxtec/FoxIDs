@@ -171,14 +171,14 @@ namespace FoxIDs.Logic.Usage
             invoice.TotalPrice = invoice.Price + invoice.Vat;
         }
 
-        private decimal AddInvoiceLine(List<InvoiceLine> lines, string textFirstLevel, string textSecondLevel, double usedCount, PlanItem planItem, decimal exchangeRate)
+        private decimal AddInvoiceLine(List<InvoiceLine> lines, string textFirstLevel, string textSecondLevel, decimal usedCount, PlanItem planItem, decimal exchangeRate)
         {
             decimal price = 0;
 
-            var firstLevel = planItem.FirstLevelThreshold > 0 && usedCount > planItem.FirstLevelThreshold ? Convert.ToDouble(planItem.FirstLevelThreshold) : usedCount;
+            var firstLevel = planItem.FirstLevelThreshold > 0 && usedCount > planItem.FirstLevelThreshold ? Convert.ToDecimal(planItem.FirstLevelThreshold) : usedCount;
             var firstLevelUnitPrice = CurrencyAndRoundPrice(planItem.FirstLevelCost, exchangeRate);
             var firstLevelQuantity = usedCount > planItem.Included ? firstLevel - planItem.Included : 0;
-            var firstLevelPrice = RoundPrice(firstLevelUnitPrice * Convert.ToDecimal(firstLevelQuantity));
+            var firstLevelPrice = RoundPrice(firstLevelUnitPrice * firstLevelQuantity);
             lines.Add(new InvoiceLine { Text = textFirstLevel, Quantity = firstLevelQuantity, UnitPrice = firstLevelUnitPrice, Price = firstLevelPrice });
             price += firstLevelPrice;
 
@@ -186,7 +186,7 @@ namespace FoxIDs.Logic.Usage
             {
                 var secondLevelUnitPrice = CurrencyAndRoundPrice(planItem.SecondLevelCost.Value, exchangeRate);
                 var secundLevelPriceQuantity = usedCount - planItem.FirstLevelThreshold.Value;
-                var secundLevelPrice = RoundPrice(secondLevelUnitPrice * Convert.ToDecimal(secundLevelPriceQuantity));
+                var secundLevelPrice = RoundPrice(secondLevelUnitPrice * secundLevelPriceQuantity);
                 lines.Add(new InvoiceLine { Text = textSecondLevel, Quantity = secundLevelPriceQuantity, UnitPrice = secondLevelUnitPrice, Price = secundLevelPrice });
                 price += secundLevelPrice;
             }

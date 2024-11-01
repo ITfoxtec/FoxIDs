@@ -12,7 +12,7 @@ namespace FoxIDs.Models
 
         [Min(Constants.Models.Used.QuantityMin)]
         [JsonProperty(PropertyName = "quantity")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
         [JsonProperty(PropertyName = "unit_price")]

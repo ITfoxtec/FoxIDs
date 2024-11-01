@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(makeInvoiceRequest)) return BadRequest(ModelState);
                 makeInvoiceRequest.TenantName = makeInvoiceRequest.TenantName.ToLower();
 
-                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(makeInvoiceRequest.TenantName, makeInvoiceRequest.Year, makeInvoiceRequest.Month));
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(makeInvoiceRequest.TenantName, makeInvoiceRequest.PeriodYear, makeInvoiceRequest.PeriodMonth));
 
                 if(!makeInvoiceRequest.IsCreditNote)
                 {
@@ -108,8 +108,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{makeInvoiceRequest.TenantName}', year '{makeInvoiceRequest.Year}' and month '{makeInvoiceRequest.Month}'.");
-                    return NotFound(typeof(Api.Used).Name, $"{makeInvoiceRequest.TenantName}/{makeInvoiceRequest.Year}/{makeInvoiceRequest.Month}");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{makeInvoiceRequest.TenantName}', year '{makeInvoiceRequest.PeriodYear}' and month '{makeInvoiceRequest.PeriodMonth}'.");
+                    return NotFound(typeof(Api.Used).Name, $"{makeInvoiceRequest.TenantName}/{makeInvoiceRequest.PeriodYear}/{makeInvoiceRequest.PeriodMonth}");
                 }
                 throw;
             }

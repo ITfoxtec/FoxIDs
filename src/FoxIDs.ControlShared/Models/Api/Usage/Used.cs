@@ -5,17 +5,17 @@ namespace FoxIDs.Models.Api
 {
     public class Used : UsedBase, INameValue
     {
-        public double Tracks { get; set; }
+        public decimal Tracks { get; set; }
 
-        public double Users { get; set; }
+        public decimal Users { get; set; }
 
-        public double Logins { get; set; }
+        public decimal Logins { get; set; }
 
-        public double TokenRequests { get; set; }
+        public decimal TokenRequests { get; set; }
 
-        public double ControlApiGets { get; set; }
+        public decimal ControlApiGets { get; set; }
 
-        public double ControlApiUpdates { get; set; }
+        public decimal ControlApiUpdates { get; set; }
 
         [ListLength(Constants.Models.Used.ItemsMin, Constants.Models.Used.ItemsMax)]
         public List<UsedItem> Items { get; set; }

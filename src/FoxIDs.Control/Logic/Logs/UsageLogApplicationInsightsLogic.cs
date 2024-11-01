@@ -123,12 +123,12 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private double GetCount(LogsTableRow row, Api.UsageLogTypes logType)
+        private decimal GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
-            var count = row.GetDouble("UsageCount");
+            var count = row.GetDecimal("UsageCount");
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
-                count += row.GetDouble("UsageAddRating");
+                count += row.GetDecimal("UsageAddRating");
             }
             return Math.Round(count.HasValue ? count.Value : 0, 1);
         }

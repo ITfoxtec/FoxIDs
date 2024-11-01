@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.ExternalInvoice
+namespace FoxIDs.Models.ExternalInvoices
 {
     public class InvoiceResponse
     {

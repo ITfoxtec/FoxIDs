@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Models.ExternalInvoice
+﻿namespace FoxIDs.Models.ExternalInvoices
 {
     public enum UsedItemTypes
     {

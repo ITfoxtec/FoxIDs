@@ -1,7 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
-using FoxIDs.Models.Queue;
+using FoxIDs.Models.Queues;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;

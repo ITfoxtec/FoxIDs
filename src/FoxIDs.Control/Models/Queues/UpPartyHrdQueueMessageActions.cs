@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Models.Queue
+﻿namespace FoxIDs.Models.Queues
 {
     public enum UpPartyHrdQueueMessageActions
     {

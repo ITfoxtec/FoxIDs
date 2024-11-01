@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using Microsoft.AspNetCore.Http;
@@ -41,6 +42,8 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Customer, Api.Customer>()
                 .ReverseMap();
+
+            CreateMap<UsageSellerSettings, Seller>();
 
             CreateMap<Payment, Api.Payment>();
 

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Queue
+namespace FoxIDs.Models.Queues
 {
     public class UpPartyHrdQueueMessage
     {

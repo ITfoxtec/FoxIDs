@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace FoxIDs.Models.Payment
+namespace FoxIDs.Models.Payments
 {
-    public class MolliePaymentsResponse
+    public class MolliePaymentResponse
     {
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
@@ -21,9 +21,9 @@ namespace FoxIDs.Models.Payment
         public string Status { get; set; }
 
         [JsonProperty(PropertyName = "details")]
-        public MolliePaymentsDetailsResponse Details { get; set; }
+        public MolliePaymentDetailsResponse Details { get; set; }
 
         [JsonProperty(PropertyName = "_links")]
-        public MolliePaymentsLinksResponse Links { get; set; }
+        public MolliePaymentLinksResponse Links { get; set; }
     }
 }

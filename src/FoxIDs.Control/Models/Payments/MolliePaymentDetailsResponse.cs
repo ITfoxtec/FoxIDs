@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace FoxIDs.Models.Payment
+namespace FoxIDs.Models.Payments
 {
-    public class MolliePaymentsDetailsResponse
+    public class MolliePaymentDetailsResponse
     {
         [JsonProperty(PropertyName = "failureReason")]
         public string FailureReason { get; set; }

@@ -30,7 +30,6 @@ namespace FoxIDs.Client.Logic
                 clientSettings.KeyStorageOption = controlClientSettings.KeyStorageOption;
                 clientSettings.EnablePayment = controlClientSettings.EnablePayment;
                 clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
-                clientSettings.Currency = controlClientSettings.Currency;
                 clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
                 
                 notificationLogic.ClientSettingLoaded();

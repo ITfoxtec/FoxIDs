@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
-using ExtInv = FoxIDs.Models.ExternalInvoice;
+using ExtInv = FoxIDs.Models.ExternalInvoices;
 
 namespace FoxIDs.MappingProfiles
 {
@@ -16,6 +16,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Invoice, ExtInv.InvoiceRequest>();
             CreateMap<InvoiceLine, ExtInv.InvoiceLine>();
             CreateMap<UsedItem, ExtInv.UsedItem>();
+            CreateMap<Seller, ExtInv.Seller>();
             CreateMap<Customer, ExtInv.Customer>();
         }
     }

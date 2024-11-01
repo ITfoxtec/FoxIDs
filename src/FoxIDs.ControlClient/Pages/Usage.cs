@@ -82,6 +82,17 @@ namespace FoxIDs.Client.Pages
             usedList.Add(used);
         }
 
+        public bool ShowMakeInvoiceButton(GeneralUsedViewModel used) =>
+            used.InvoiceStatus == UsedInvoiceStatus.None || used.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend;
+
+        public bool ShowCreditNoteButton(GeneralUsedViewModel used) =>
+            (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
+            (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed());
+
+        public bool ShowMakePaymentButton(GeneralUsedViewModel used) =>
+            (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
+            (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed());
+
         private async Task ShowUpdateUsageAsync(GeneralUsedViewModel generalUsed)
         {
             generalUsed.CreateMode = false;

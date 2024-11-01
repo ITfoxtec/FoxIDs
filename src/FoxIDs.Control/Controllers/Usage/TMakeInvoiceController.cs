@@ -89,7 +89,7 @@ namespace FoxIDs.Controllers
 
                     try
                     {
-                        // todo
+                        await invoiceLogic.CreateAndSendCreditNoteAsync(mUsed);
 
                         mUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteSend;
                         await tenantDataRepository.UpdateAsync(mUsed);

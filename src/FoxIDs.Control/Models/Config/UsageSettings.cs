@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
 {
@@ -7,8 +8,15 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// The usage calculator background service wait period in seconds.
         /// </summary>
-        [Required]
         public int BackgroundServiceWaitPeriod { get; set; } = 7200; // 2 hours
+
+        [Required]
+        public UsageSellerSettings Seller { get; set; }
+
+        /// <summary>
+        /// Default VAR percent.
+        /// </summary>
+        public int VatPercent { get; set; } = 25;
 
         public bool EnableInvoice => !string.IsNullOrWhiteSpace(ExternalInvoiceApiId) && !string.IsNullOrWhiteSpace(ExternalInvoiceApiSecret) && !string.IsNullOrWhiteSpace(ExternalInvoiceApiUrl);
 

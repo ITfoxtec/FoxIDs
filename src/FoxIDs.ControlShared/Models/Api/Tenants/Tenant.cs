@@ -16,5 +16,15 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
+
+        /// <summary>
+        /// Default EUR if empty.
+        /// </summary>
+        [MaxLength(Constants.Models.Currency.CurrencyLength)]
+        [Display(Name = "Currency")]
+        public string Currency { get; set; }
+
+        [Display(Name = "Include VAT")]
+        public bool IncludeVat { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace FoxIDs.Models.Payment
+namespace FoxIDs.Models.Payments
 {
-    public class MolliePaymentsLinksResponse
+    public class MolliePaymentLinksResponse
     {
         [JsonProperty(PropertyName = "self")]
         public string Self { get; set; }

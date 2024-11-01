@@ -17,7 +17,6 @@ namespace FoxIDs.Client.Models.Config
 
         public bool EnablePayment { get; set; }
         public bool PaymentTestMode { get; set; }
-        public string Currency { get; set; }
         public string MollieProfileId { get; set; }
     }
 }

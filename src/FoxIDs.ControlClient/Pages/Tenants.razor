@@ -40,6 +40,12 @@
                                 <FInputText @bind-Value="tenant.Form.Model.CustomDomain" For="@(() => tenant.Form.Model.CustomDomain)" Focus="true" />
                                 <FInputToggle @bind-Value="tenant.Form.Model.CustomDomainVerified" For="@(() => tenant.Form.Model.CustomDomainVerified)" TextType="y.n" />
 
+                                <FInputSelect @bind-Value="tenant.Form.Model.Currency" For="@(() => tenant.Form.Model.Currency)" ShowDefaultOption=true>
+                                    <option value="@Constants.Models.Currency.Eur">@Constants.Models.Currency.Eur</option>
+                                    <option value="@Constants.Models.Currency.Dkk">@Constants.Models.Currency.Dkk</option>
+                                </FInputSelect>
+                                <FInputToggle @bind-Value="tenant.Form.Model.IncludeVat" For="@(() => tenant.Form.Model.IncludeVat)" TextType="y.n" />
+
                                 @if (!string.IsNullOrEmpty(tenant.Form.Model.Name) && !Constants.Routes.MasterTenantName.Equals(tenant.Form.Model.Name, StringComparison.OrdinalIgnoreCase) && ClientSettings.EnablePayment)
                                 {
                                     tenant.Form.Model.Customer ??= new Customer();

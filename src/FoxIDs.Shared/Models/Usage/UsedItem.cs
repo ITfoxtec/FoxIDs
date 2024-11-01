@@ -15,13 +15,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "day")]
         public int Day { get; set; }
 
-        [Range(Constants.Models.Used.CountMin, Constants.Models.Used.CountMax)]
-        [JsonProperty(PropertyName = "count")]
-        public int Count { get; set; }
+        [Min(Constants.Models.Used.QuantityMin)]
+        [JsonProperty(PropertyName = "quantity")]
+        public double Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
-        [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        [JsonProperty(PropertyName = "unit_price")]
+        public decimal UnitPrice { get; set; }
 
         [JsonProperty(PropertyName = "type")]
         public UsedItemTypes Type { get; set; }
@@ -31,13 +31,13 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (Type == UsedItemTypes.Text)
             {
-                if (Count > 0)
+                if (Quantity > 0)
                 {
-                    results.Add(new ValidationResult($"The {nameof(Count)} field can not be used if the {nameof(Type)} field is '{Type}'.", [nameof(Count), nameof(Type)]));
+                    results.Add(new ValidationResult($"The {nameof(Quantity)} field can not be used if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
                 }
-                if (Price == 0)
+                if (UnitPrice == 0)
                 {
-                    results.Add(new ValidationResult($"The {nameof(Price)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Price), nameof(Type)]));
+                    results.Add(new ValidationResult($"The {nameof(UnitPrice)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(UnitPrice), nameof(Type)]));
                 }
             }
             else if (Type == UsedItemTypes.Hours)
@@ -46,9 +46,9 @@ namespace FoxIDs.Models
                 {
                     results.Add(new ValidationResult($"The {nameof(Day)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Day), nameof(Type)]));
                 }
-                if (Count == 0)
+                if (Quantity == 0)
                 {
-                    results.Add(new ValidationResult($"The {nameof(Count)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Count), nameof(Type)]));
+                    results.Add(new ValidationResult($"The {nameof(Quantity)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
                 }
             }
             return results;

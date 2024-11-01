@@ -85,6 +85,55 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        @if (ShowMakeInvoiceButton(used))
+                        {
+                            @if (!used.InvoiceButtonDisabled)
+                            {
+                                <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await SendInvoiceAsync(used))">
+                                    Make invoice
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark" disabled="disabled">
+                                    Make invoice
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            @if (ShowCreditNoteButton(used))
+                            {
+                                @if (!used.InvoiceButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await SendCreditNoteAsync(used))">
+                                        Make credit note
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
+                                        Make credit note
+                                    </button>
+                                }
+                            }
+                        }
+
+                        @if (ShowMakePaymentButton(used))
+                        {
+                            @if (!used.PaymentButtonDisabled)
+                            {
+                                <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await ExecutePaymentAsync(used))">
+                                    Make payment
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark" disabled="disabled">
+                                    Make payment
+                                </button>
+                            }
+                        }
                         <button type="submit" class="btn btn-primary">@(used.CreateMode ? "Create" : "Update")</button>
                         <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(@used.CreateMode ? "Cancel" : "Close")</button>
                     </div>
@@ -95,7 +144,7 @@
                 <button class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
                     @UsageInfoText(used)
                 </button>
-                @if (used.InvoiceStatus == UsedInvoiceStatus.None || used.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend)
+                @if (ShowMakeInvoiceButton(used))
                 {
                     @if (!used.InvoiceButtonDisabled)
                     {
@@ -112,8 +161,7 @@
                 }
                 else
                 {
-                    @if ((used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
-                         (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed()))
+                    @if (ShowCreditNoteButton(used))
                     {
                         @if (!used.InvoiceButtonDisabled)
                         {
@@ -130,8 +178,7 @@
                     }
                 }
 
-                @if ((used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
-                     (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed()))
+                @if (ShowMakePaymentButton(used))
                 {
                     @if (!used.PaymentButtonDisabled)
                     {

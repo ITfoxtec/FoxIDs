@@ -17,9 +17,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "ct")]
         public long CreateTime { get; set; }
 
+        [Required]
+        [MaxLength(Constants.Models.Currency.CurrencyLength)]
+        [JsonProperty(PropertyName = "currency")]
+        public string Currency { get; set; }
+
         public bool IsCreditNote { get; set; }
 
-        [ListLength(Constants.Models.Used.ItemsMin, Constants.Models.Used.ItemsMin)]
+        [ListLength(Constants.Models.Used.InvoiceLinesMin, Constants.Models.Used.ItemsMax)]
         [JsonProperty(PropertyName = "lines")]
         public List<InvoiceLine> Lines { get; set; }
 
@@ -38,9 +43,13 @@ namespace FoxIDs.Models
         /// <summary>
         /// Time specification items,
         /// </summary>
-        [ListLength(Constants.Models.Used.ItemsMin, Constants.Models.Used.ItemsMin)]
+        [ListLength(Constants.Models.Used.ItemsMin, Constants.Models.Used.ItemsMax)]
         [JsonProperty(PropertyName = "time_items")]
         public List<UsedItem> TimeItems { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "seller")]
+        public Seller Seller { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "customer")]
@@ -49,6 +58,11 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (!(Currency != Constants.Models.Currency.Eur || Currency != Constants.Models.Currency.Dkk))
+            {
+                results.Add(new ValidationResult($"The field {nameof(Currency)} only support the currency '{Constants.Models.Currency.Eur}' and '{Constants.Models.Currency.Dkk}'.", [nameof(Currency)]));
+            }
+
             if (TimeItems?.Count() > 0)
             {
                 if (TimeItems.Where(i => i.Type != UsedItemTypes.Hours).Any())

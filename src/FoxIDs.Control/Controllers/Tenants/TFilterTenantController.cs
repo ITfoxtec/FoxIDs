@@ -64,19 +64,19 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>();
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name != Constants.Routes.MasterTenantName);
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
             else
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

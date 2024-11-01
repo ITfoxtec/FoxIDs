@@ -56,6 +56,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
 
+        [JsonProperty(PropertyName = "include_vat")]
+        public bool IncludeVat { get; set; }
+
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
         [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]
         [JsonProperty(PropertyName = "custom_domain")]

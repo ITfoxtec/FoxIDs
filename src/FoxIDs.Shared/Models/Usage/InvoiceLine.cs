@@ -10,8 +10,16 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
 
+        [Min(Constants.Models.Used.QuantityMin)]
+        [JsonProperty(PropertyName = "quantity")]
+        public double Quantity { get; set; }
+
+        [Min(Constants.Models.Used.PriceMin)]
+        [JsonProperty(PropertyName = "unit_price")]
+        public decimal UnitPrice { get; set; }
+
         [Min(Constants.Models.Used.PriceMin)]
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

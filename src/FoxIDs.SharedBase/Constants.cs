@@ -289,9 +289,6 @@ namespace FoxIDs
             {
                 public const int CardTokenLength = 100;
 
-                public const int CurrencyLength = 10;
-                public const string CurrencyRegExPattern = @"^[\w]*$";
-
                 public const int CustomerIdLength = 100;
                 public const int MandateIdLength = 100;
                 public const int CardHolderLength = 500;
@@ -299,11 +296,8 @@ namespace FoxIDs
                 public const int CardLabelLength = 100;
             }
 
-            public static class Customer
+            public static class Address
             {
-                public const int InvoiceEmailsMin = 1;
-                public const int InvoiceEmailsMax = 5;
-                public const int ReferenceLength = 60;
                 public const int NameLength = 60;
                 public const int VatNumberLength = 50;
                 public const int AddressLine1Length = 50;
@@ -312,6 +306,19 @@ namespace FoxIDs
                 public const int CityLength = 50;
                 public const int StateRegionLength = 50;
                 public const int CountryLength = 50;
+            }
+
+            public static class Customer
+            {
+                public const int InvoiceEmailsMin = 1;
+                public const int InvoiceEmailsMax = 5;
+                public const int ReferenceLength = 60;
+            }
+
+            public static class Seller
+            {
+                public const int BccEmailsMin = 1;
+                public const int BccEmailsMax = 5;
             }
 
             public static class MasterUsage
@@ -345,11 +352,11 @@ namespace FoxIDs
                 public const int ItemsMax = 1000;
                 public const int DayMin = 0;
                 public const int DayMax = 31;
-                public const int CountMin = 0;
-                public const int CountMax = 1000;
+                public const int QuantityMin = 0;
                 public const int PriceMin = 0;
                 public const int InvoicesMin = 0;
                 public const int InvoicesMax = 10;
+                public const int InvoiceLinesMin = 1;
                 public const int UsedItemTextLength = 200;
                 public const int InvoiceLineTextLength = 300;
             }

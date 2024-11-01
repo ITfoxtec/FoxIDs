@@ -190,6 +190,8 @@ namespace FoxIDs.Controllers
                 }
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                mTenant.Currency = tenant.Currency;
+                mTenant.IncludeVat = tenant.IncludeVat;
                 mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 

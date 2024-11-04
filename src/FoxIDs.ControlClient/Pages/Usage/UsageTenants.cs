@@ -1,30 +1,30 @@
-﻿using FoxIDs.Infrastructure;
+﻿using Blazored.Toast.Services;
+using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
-using FoxIDs.Models.Api;
+using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
+using FoxIDs.Infrastructure;
+using FoxIDs.Models.Api;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
-using FoxIDs.Client.Infrastructure.Security;
-using Blazored.Toast.Services;
 using System.Net.Http;
-using ITfoxtec.Identity;
-using FoxIDs.Client.Models.Config;
+using System.Threading.Tasks;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Usage
 {
-    public partial class Tenants : IDisposable 
+    public partial class UsageTenants
     {
-        private UsageSettings usageSettings;
+        private string usageHref;
+        private string usageSettingsHref;
+        private FoxIDs.Models.Api.UsageSettings usageSettings;
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
         private bool tenantWorking;
-        private IEnumerable<PlanInfo> planInfoList;
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -36,9 +36,6 @@ namespace FoxIDs.Client.Pages
         public HelpersService HelpersService { get; set; }
 
         [Inject]
-        public NotificationLogic NotificationLogic { get; set; }
-
-        [Inject]
         public IToastService toastService { get; set; }
 
         [Inject]
@@ -47,25 +44,21 @@ namespace FoxIDs.Client.Pages
         [Parameter]
         public string TenantName { get; set; }
 
+
         protected override async Task OnInitializedAsync()
         {
+            usageHref = $"{TenantName}/usage";
+            usageSettingsHref = $"{TenantName}/usagesettings";
             await base.OnInitializedAsync();
             usageSettings = await TenantService.GetUsageSettingsAsync();
             await DefaultLoadAsync();
-            NotificationLogic.OnTenantUpdatedAsync += OnTenantUpdatedAsync;
-        }
-
-        private async Task OnTenantUpdatedAsync()
-        {
-            await DefaultLoadAsync();
-            StateHasChanged();
         }
 
         private async Task OnTenantFilterValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterTenantAsync(searchTenantForm.Model.FilterValue));
+                SetGeneralTenants(await TenantService.FilterUsageTenantAsync(searchTenantForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -101,7 +94,7 @@ namespace FoxIDs.Client.Pages
             var tes = new List<GeneralTenantViewModel>();
             foreach (var dp in dataTenans)
             {
-                tes.Add(new GeneralTenantViewModel(dp) 
+                tes.Add(new GeneralTenantViewModel(dp)
                 {
                     LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{dp.Name}".ToLower()
                 });
@@ -119,11 +112,6 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                if (planInfoList == null)
-                {
-                    planInfoList = await HelpersService.GetPlanInfoAsync();
-                }
-
                 var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
                 await generalTenant.Form.InitAsync(tenant.Map<TenantViewModel>());
             }
@@ -135,11 +123,6 @@ namespace FoxIDs.Client.Pages
             {
                 generalTenant.Error = ex.Message;
             }
-        }
-
-        private string TenantInfoText(GeneralTenantViewModel generalTenant)
-        {
-            return $"{generalTenant.Name}{(!generalTenant.CustomDomain.IsNullOrEmpty() ? $" - custom domain: '{generalTenant.CustomDomain}'{(generalTenant.CustomDomainVerified ? " verified" : string.Empty)}" : string.Empty)}";
         }
 
         private async Task OnEditTenantValidSubmitAsync(GeneralTenantViewModel generalTenant, EditContext editContext)
@@ -177,8 +160,8 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                generalTenant.DeleteAcknowledge = false;                
-                if(tenantWorking)
+                generalTenant.DeleteAcknowledge = false;
+                if (tenantWorking)
                 {
                     return;
                 }
@@ -196,11 +179,6 @@ namespace FoxIDs.Client.Pages
                 tenantWorking = false;
                 generalTenant.Form.SetError(ex.Message);
             }
-        }
-
-        public void Dispose()
-        {
-            NotificationLogic.OnTenantUpdatedAsync -= OnTenantUpdatedAsync;
         }
     }
 }

@@ -10,7 +10,8 @@ namespace FoxIDs.Client.Services
     public class TenantService : BaseService
     {
         private const string apiUri = "api/{tenant}/master/!tenant";
-        private const string filterApiUri = "api/{tenant}/master/!filtertenant";
+        private const string filterTenantApiUri = "api/{tenant}/master/!filtertenant";
+        private const string filterUsageTenantApiUri = "api/{tenant}/master/!filterusagetenant";
         private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
         private const string usageSettingsApiUri = "api/@master/!usagesettings";
         private const string filterUsageApiUri = "api/{tenant}/master/!filterusage";
@@ -20,7 +21,8 @@ namespace FoxIDs.Client.Services
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterApiUri, filterValue, parmValue2: filterValue, parmName2: "filterCustomDomain");
+        public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterTenantApiUri, filterValue, parmValue2: filterValue, parmName2: "filterCustomDomain");
+        public async Task<IEnumerable<Tenant>> FilterUsageTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterUsageTenantApiUri, filterValue, parmValue2: filterValue, parmName2: "filterCustomDomain");
 
         public async Task<TenantResponse> GetTenantAsync(string name) => await GetAsync<TenantResponse>(apiUri, name);
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);

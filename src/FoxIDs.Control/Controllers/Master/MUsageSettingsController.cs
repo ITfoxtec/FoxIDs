@@ -33,12 +33,11 @@ namespace FoxIDs.Controllers
         /// <returns>Usage settings.</returns>
         [ProducesResponseType(typeof(Api.UsageSettings), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UsageSettings>> GetPlan()
+        public async Task<ActionResult<Api.UsageSettings>> GetUsageSettings()
         {
             try
             {
-                var mUsageSettings = await masterDataRepository.GetAsync<UsageSettings>(await UsageSettings.IdFormatAsync());
-
+                var mUsageSettings = await LoadAndCreateUsageSettings();
                 return Ok(mapper.Map<Api.UsageSettings>(mUsageSettings));
             }
             catch (FoxIDsDataException ex)
@@ -59,13 +58,13 @@ namespace FoxIDs.Controllers
         /// <returns>UsageSettings.</returns>
         [ProducesResponseType(typeof(Api.UsageSettings), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UsageSettings>> PutPlan([FromBody] Api.UsageSettings usageSettings)
+        public async Task<ActionResult<Api.UsageSettings>> PutUsageSettings([FromBody] Api.UsageSettings usageSettings)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(usageSettings)) return BadRequest(ModelState);
 
-                var mUsageSettings = await masterDataRepository.GetAsync<UsageSettings>(await UsageSettings.IdFormatAsync());
+                var mUsageSettings = await LoadAndCreateUsageSettings();
                 mUsageSettings.CurrencyExchanges = mapper.Map<List<UsageCurrencyExchange>>(usageSettings.CurrencyExchanges);
                 mUsageSettings.InvoiceNumber = usageSettings.InvoiceNumber;
                 mUsageSettings.InvoiceNumberPrefix = usageSettings.InvoiceNumberPrefix;
@@ -82,6 +81,21 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<UsageSettings> LoadAndCreateUsageSettings()
+        {
+            var mUsageSettings = await masterDataRepository.GetAsync<UsageSettings>(await UsageSettings.IdFormatAsync(), required: false);
+            if (mUsageSettings == null)
+            {
+                mUsageSettings = new UsageSettings
+                {
+                    Id = await UsageSettings.IdFormatAsync()
+                };
+                await masterDataRepository.CreateAsync(mUsageSettings);
+            }
+
+            return mUsageSettings;
         }
     }
 }

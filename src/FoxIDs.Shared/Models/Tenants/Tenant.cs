@@ -1,13 +1,11 @@
-﻿using ITfoxtec.Identity;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Tenant : DataDocument, IValidatableObject
+    public class Tenant : DataDocument
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -49,6 +47,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "plan_name")]
         public string PlanName { get; set; }
 
+        [JsonProperty(PropertyName = "for_usage")]
+        public bool ForUsage { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>
@@ -89,17 +90,6 @@ namespace FoxIDs.Models
             [MaxLength(Constants.Models.Tenant.NameLength)]
             [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
             public string TenantName { get; set; }
-        }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-            if (!Currency.IsNullOrWhiteSpace() && Currency != Constants.Models.Currency.Dkk)
-            {
-                results.Add(new ValidationResult($"The field {nameof(Currency)} only support the currency '{Constants.Models.Currency.Dkk}'.", [nameof(Currency)]));
-            }
-
-            return results;
         }
     }
 }

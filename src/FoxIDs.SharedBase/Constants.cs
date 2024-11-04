@@ -338,7 +338,6 @@ namespace FoxIDs
             {
                 public const int CurrencyLength = 3;
                 public const string Eur = "EUR";
-                public const string Dkk = "DKK";
             }
 
             public static class Used

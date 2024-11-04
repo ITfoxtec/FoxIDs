@@ -17,6 +17,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
 
+        public bool ForUsage { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>

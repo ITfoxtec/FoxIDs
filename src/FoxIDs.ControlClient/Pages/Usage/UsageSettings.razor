@@ -1,0 +1,74 @@
+﻿@page "/{tenantName}/usagesettings"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@usageHref">Usage</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@usageTenantsHref">Usage tenants</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Usage settings</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="card">
+        <div class="card-body">
+            <div class="info-text py-3">
+                FoxIDs default log warnings, errors, critical errors and events to the log store. The trace level and metrics are configurable.
+            </div>
+
+            @if (!generalUsageSettings.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @generalUsageSettings.Error
+                </div>
+            }
+
+            <PageEditForm @ref="generalUsageSettings.Form" TModel="UsageSettingsViewModel" OnValidSubmit="OnUpdateUsageSettingsValidSubmitAsync">
+                @if (generalUsageSettings.Form?.Model != null)
+                {
+                    <div class="">
+                        <FInputNumber @bind-Value="generalUsageSettings.Form.Model.InvoiceNumber" For="@(() => generalUsageSettings.Form.Model.InvoiceNumber)" />
+                        <FInputText @bind-Value="generalUsageSettings.Form.Model.InvoiceNumberPrefix" For="@(() => generalUsageSettings.Form.Model.InvoiceNumberPrefix)" />
+
+                        <div class="form-group active-group active">
+                            <div class="info-text mr-auto">
+                                Add currency exchanges. 
+                            </div>
+                            <ul class="list-group">
+                                @foreach (var item in generalUsageSettings.Form.Model.CurrencyExchanges)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <div class="row">
+                                                    <div class="col-10">
+                                                        <FInputText @bind-Value="item.Currency" For="@(() => item.Currency)" />
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <FInputNumberD @bind-Value="item.Rate" For="@(() => item.Rate)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveItem(e, generalUsageSettings.Form.Model.CurrencyExchanges, item))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => generalUsageSettings.Form.Model.CurrencyExchanges)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, generalUsageSettings.Form.Model.CurrencyExchanges))"><span class="oi oi-plus" aria-hidden="true"></span> Add item</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                }
+            </PageEditForm>
+        </div>
+    </div>
+</div>

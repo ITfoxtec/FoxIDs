@@ -17,10 +17,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Usage
 {
     public partial class Usage
     {
+        private string usageTenantsHref;
+        private string usageSettingsHref;
         private PageEditForm<FilterUsageViewModel> searchUsageForm;
         private List<GeneralUsedViewModel> usedList = new List<GeneralUsedViewModel>();
 
@@ -44,6 +46,8 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            usageTenantsHref = $"{TenantName}/usagetenants";
+            usageSettingsHref = $"{TenantName}/usagesettings";
             await base.OnInitializedAsync();
             await DefaultLoadAsync();
         }

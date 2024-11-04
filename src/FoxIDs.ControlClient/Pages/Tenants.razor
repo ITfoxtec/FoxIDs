@@ -42,7 +42,13 @@
 
                                 <FInputSelect @bind-Value="tenant.Form.Model.Currency" For="@(() => tenant.Form.Model.Currency)" ShowDefaultOption=true>
                                     <option value="@Constants.Models.Currency.Eur">@Constants.Models.Currency.Eur</option>
-                                    <option value="@Constants.Models.Currency.Dkk">@Constants.Models.Currency.Dkk</option>
+                                    @if (usageSettings.CurrencyExchanges?.Count() > 0)
+                                    {
+                                        @foreach (var ce in usageSettings.CurrencyExchanges)
+                                        {
+                                            <option value="@ce">@ce</option>
+                                        }
+                                    }
                                 </FInputSelect>
                                 <FInputToggle @bind-Value="tenant.Form.Model.IncludeVat" For="@(() => tenant.Form.Model.IncludeVat)" TextType="y.n" />
 

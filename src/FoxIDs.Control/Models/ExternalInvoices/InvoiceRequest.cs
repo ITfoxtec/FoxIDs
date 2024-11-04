@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.ExternalInvoices
 {
-    public class InvoiceRequest : IValidatableObject
+    public class InvoiceRequest
     {
         public bool SendInvoice { get; set; }
 
@@ -61,11 +61,6 @@ namespace FoxIDs.Models.ExternalInvoices
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (!(Currency != Constants.Models.Currency.Eur || Currency != Constants.Models.Currency.Dkk))
-            {
-                results.Add(new ValidationResult($"The field {nameof(Currency)} only support the currency '{Constants.Models.Currency.Eur}' and '{Constants.Models.Currency.Dkk}'.", [nameof(Currency)]));
-            }
-
             if (TimeItems?.Count() > 0)
             {
                 if (TimeItems.Where(i => i.Type != UsedItemTypes.Hours).Any())

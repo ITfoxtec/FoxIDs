@@ -41,13 +41,18 @@ namespace FoxIDs.Logic.Usage
                     used = new Used
                     {
                         Id = id,
-                        TenantName = tenant.Name
+                        TenantName = tenant.Name,
+                        PeriodYear = datePointer.Year,
+                        PeriodMonth = datePointer.Month
                     };
 
-                    used.PeriodBeginDate = new DateTime(datePointer.Year, datePointer.Month, 1);
+                    used.PeriodBeginDate = new DateTime(used.PeriodYear, used.PeriodMonth, 1);
                     used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
-                    var tenantCreateDate = DateTimeOffset.FromUnixTimeSeconds(tenant.CreateTime).Date;
-                    used.PeriodBeginDate = used.PeriodBeginDate < tenantCreateDate && tenantCreateDate < used.PeriodEndDate ? tenantCreateDate : used.PeriodBeginDate;
+                    if (tenant.CreateTime > 0)
+                    {
+                        var tenantCreateDate = DateTimeOffset.FromUnixTimeSeconds(tenant.CreateTime).Date;
+                        used.PeriodBeginDate = used.PeriodBeginDate < tenantCreateDate && tenantCreateDate < used.PeriodEndDate ? tenantCreateDate : used.PeriodBeginDate;
+                    }
                 }
 
                 stoppingToken.ThrowIfCancellationRequested();

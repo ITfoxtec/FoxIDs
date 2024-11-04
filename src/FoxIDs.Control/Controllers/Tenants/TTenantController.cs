@@ -57,8 +57,8 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MTenant = await tenantDataRepository.GetTenantByNameAsync(name);
-                return Ok(mapper.Map<Api.TenantResponse>(MTenant));
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(name);
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {

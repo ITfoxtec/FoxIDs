@@ -6,37 +6,37 @@ namespace FoxIDs
 {
     public static class PaymentStatusExtension
     {
-        public static UsedPaymentStatus FromMollieStatusToPaymentStatus(this string mollieStatus)
+        public static UsagePaymentStatus FromMollieStatusToPaymentStatus(this string mollieStatus)
         {
             switch (mollieStatus)
             {
                 case PaymentStatus.Open:
-                    return UsedPaymentStatus.Open;
+                    return UsagePaymentStatus.Open;
                 case PaymentStatus.Pending:
-                    return UsedPaymentStatus.Pending;
+                    return UsagePaymentStatus.Pending;
                 case PaymentStatus.Authorized:
-                    return UsedPaymentStatus.Authorized;
+                    return UsagePaymentStatus.Authorized;
                 case PaymentStatus.Paid:
-                    return UsedPaymentStatus.Paid;
+                    return UsagePaymentStatus.Paid;
                 case PaymentStatus.Canceled:
-                    return UsedPaymentStatus.Canceled;
+                    return UsagePaymentStatus.Canceled;
                 case PaymentStatus.Expired:
-                    return UsedPaymentStatus.Expired;
+                    return UsagePaymentStatus.Expired;
                 case PaymentStatus.Failed:
-                    return UsedPaymentStatus.Failed;
+                    return UsagePaymentStatus.Failed;
 
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        public static bool PaymentStatusIsGenerallyFailed(this UsedPaymentStatus status)
+        public static bool PaymentStatusIsGenerallyFailed(this UsagePaymentStatus status)
         {
             switch (status)
             {
-                case UsedPaymentStatus.Canceled:
-                case UsedPaymentStatus.Expired:
-                case UsedPaymentStatus.Failed:
+                case UsagePaymentStatus.Canceled:
+                case UsagePaymentStatus.Expired:
+                case UsagePaymentStatus.Failed:
                     return true;
                 default:
                     return false;

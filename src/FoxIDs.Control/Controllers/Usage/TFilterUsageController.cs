@@ -12,7 +12,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
 using FoxIDs.Models;
-using Mollie.Api.Client.Abstract;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
@@ -23,14 +23,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly IPaymentClient paymentClient;
+        private readonly UsageInvoicingLogic usageInvoicingLogic;
 
-        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, IPaymentClient paymentClient) : base(logger)
+        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
-            this.paymentClient = paymentClient;
+            this.usageInvoicingLogic = usageInvoicingLogic;
         }
 
         /// <summary>
@@ -57,19 +57,16 @@ namespace FoxIDs.Controllers
                     await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodMonth == month && u.PeriodYear == year) :
                     await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodMonth == month && u.PeriodYear == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
 
-                var aTenants = new HashSet<Api.UsedBase>(mUsedList.Count());
+                var aUsedList = new HashSet<Api.UsedBase>(mUsedList.Count());
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))
                 {
-                    if(!mUsed.PaymentId.IsNullOrEmpty() &&
-                       (mUsed.PaymentStatus == UsedPaymentStatus.Open || mUsed.PaymentStatus == UsedPaymentStatus.Pending || mUsed.PaymentStatus == UsedPaymentStatus.Authorized))
+                    if(mUsed.PaymentStatus == UsagePaymentStatus.Open || mUsed.PaymentStatus == UsagePaymentStatus.Pending || mUsed.PaymentStatus == UsagePaymentStatus.Authorized)
                     {
-                        var paymentResponse = await paymentClient.GetPaymentAsync(mUsed.PaymentId);
-                        mUsed.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
-                        await tenantDataRepository.UpdateAsync(mUsed);
+                        await usageInvoicingLogic.UpdatePaymentAsync(mUsed);
                     }
-                    aTenants.Add(mapper.Map<Api.UsedBase>(mUsed));
+                    aUsedList.Add(mapper.Map<Api.UsedBase>(mUsed));
                 }
-                return Ok(aTenants);
+                return Ok(aUsedList);
             }
             catch (FoxIDsDataException ex)
             {

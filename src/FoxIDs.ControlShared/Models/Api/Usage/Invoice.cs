@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,17 +8,23 @@ namespace FoxIDs.Models.Api
 {
     public class Invoice : IValidatableObject
     {
+        public bool IsCardPayment { get; set; }
+
+        public bool IsCreditNote { get; set; }
+
+        public UsageInvoiceSendStatus SendStatus { get; set; }
+
         [Required]
         public string InvoiceNumber { get; set; }
 
         [Required]
-        public long CreateTime { get; set; }
+        public DateTime IssueDate { get; set; }
+
+        public DateTime? DueDate { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]
         public string Currency { get; set; }
-
-        public bool IsCreditNote { get; set; }
 
         [ListLength(Constants.Models.Used.InvoiceLinesMin, Constants.Models.Used.ItemsMax)]
         public List<InvoiceLine> Lines { get; set; }

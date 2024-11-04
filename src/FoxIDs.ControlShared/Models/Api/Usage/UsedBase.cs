@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,6 +11,7 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
         public string TenantName { get; set; }
 
+        #region period
         [Required]
         [Min(Constants.Models.Used.PeriodYearMin)]
         public int PeriodYear { get; set; }
@@ -20,11 +20,19 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
         public int PeriodMonth { get; set; }
 
-        public UsedInvoiceStatus InvoiceStatus { get; set; }
+        [Required]
+        public DateTime PeriodBeginDate { get; set; }
 
-        public UsedPaymentStatus PaymentStatus { get; set; }
+        [Required]
+        public DateTime PeriodEndDate { get; set; }
+        #endregion
 
-        [Min(Constants.Models.Used.PriceMin)]
-        public double TotalPrice { get; set; }
+        public bool IsUsageCalculated { get; set; }
+
+        public bool IsInvoiceReady { get; set; }
+
+        public UsagePaymentStatus PaymentStatus { get; set; }
+
+        public bool IsDone { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralUsedViewModel : Used
+    public class GeneralUsedViewModel : UsedViewModel
     {
         public GeneralUsedViewModel()
         { }
@@ -11,11 +11,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralUsedViewModel(UsedBase used)
         {
             TenantName = used.TenantName;
-            PeriodYear = used.PeriodYear;
-            PeriodMonth = used.PeriodMonth;
-            InvoiceStatus = used.InvoiceStatus;
-            PaymentStatus = used.PaymentStatus;
-            TotalPrice = used.TotalPrice;
+            PeriodYear = used.PeriodBeginDate.Year;
+            PeriodMonth = used.PeriodBeginDate.Month;
+            IsUsageCalculated = used.IsUsageCalculated;
+            IsInvoiceReady = used.IsInvoiceReady;
+            PaymentStatus = used.PaymentStatus;            
         }
 
         public bool Edit { get; set; }
@@ -24,8 +24,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool CreateMode { get; set; }
 
-        public bool InvoiceButtonDisabled { get; set; }
-        public bool PaymentButtonDisabled { get; set; }
+        public bool InvoicingActionButtonDisabled { get; set; }
 
         public string Error { get; set; }
 

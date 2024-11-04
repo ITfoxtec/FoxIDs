@@ -23,6 +23,6 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.Used.InvoicesMin, Constants.Models.Used.InvoicesMax)]
         public List<Invoice> Invoices { get; set; }
 
-        public string Name { get => $"{TenantName}/{PeriodYear}/{PeriodMonth}"; set => _ = string.Empty; }
+        public string Name { get => $"{TenantName}/{PeriodBeginDate.Year}/{PeriodBeginDate.Month}"; set => _ = string.Empty; }
     }
 }

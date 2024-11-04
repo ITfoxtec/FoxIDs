@@ -45,6 +45,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "tenant_name")]
         public string TenantName { get; set; }
 
+        #region period
         [Required]
         [Min(Constants.Models.Used.PeriodYearMin)]
         [JsonProperty(PropertyName = "period_year")]
@@ -55,11 +56,26 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "period_month")]
         public int PeriodMonth { get; set; }
 
-        [JsonProperty(PropertyName = "invoice_status")]
-        public UsedInvoiceStatus InvoiceStatus { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "period_begin_date")]
+        public DateTime PeriodBeginDate { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "period_end_date")]
+        public DateTime PeriodEndDate { get; set; } 
+        #endregion
+
+        [JsonProperty(PropertyName = "is_usage_calculated")]
+        public bool IsUsageCalculated { get; set; }
+
+        [JsonProperty(PropertyName = "is_invoice_ready")]
+        public bool IsInvoiceReady { get; set; }
 
         [JsonProperty(PropertyName = "payment_status")]
-        public UsedPaymentStatus PaymentStatus { get; set; }
+        public UsagePaymentStatus PaymentStatus { get; set; }
+
+        [JsonProperty(PropertyName = "is_done")]
+        public bool IsDone { get; set; }
 
         [JsonProperty(PropertyName = "payment_id")]
         public string PaymentId { get; set; }

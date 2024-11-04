@@ -38,7 +38,7 @@ namespace FoxIDs.Models.Config
         public PaymentSettings Payment { get; set; } 
 
         [ValidateComplexType]
-        public UsageSettings Usage { get; set; }
+        public UsageBaseSettings Usage { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

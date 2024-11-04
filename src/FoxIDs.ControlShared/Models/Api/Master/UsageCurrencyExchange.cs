@@ -1,21 +1,18 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
-    public class CurrencyExchange : IValidatableObject
+    public class UsageCurrencyExchange : IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]
-        [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
 
         /// <summary>
         /// The exchange rate from EUR.
         /// </summary>
         [Required]
-        [JsonProperty(PropertyName = "rate")]
         public decimal Rate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -40,5 +40,9 @@ namespace FoxIDs.Models.Config
 
         [MaxLength(Constants.Models.Address.CountryLength)]
         public string Country { get; set; }
+
+        public int PaymentDueDays { get; set; } = 10;
+
+        public List<string> BankDetails { get; set; }
     }
 }

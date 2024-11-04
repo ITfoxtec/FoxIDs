@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum UsedPaymentStatus
+    public enum UsagePaymentStatus
     {
         None = 0,
         Open = 100,

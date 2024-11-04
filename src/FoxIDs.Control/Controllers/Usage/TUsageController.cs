@@ -74,6 +74,8 @@ namespace FoxIDs.Controllers
                 usageRequest.TenantName = usageRequest.TenantName.ToLower();
 
                 var mUsed = mapper.Map<Used>(usageRequest);
+                mUsed.PeriodBeginDate = new DateTime(usageRequest.PeriodYear, usageRequest.PeriodMonth, 1);
+                mUsed.PeriodEndDate = mUsed.PeriodBeginDate.AddMonths(1).AddDays(-1);
                 mUsed.Items = mUsed.Items?.OrderBy(i => i.Day).ToList();
                 await tenantDataRepository.CreateAsync(mUsed);
 

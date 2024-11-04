@@ -1,9 +1,8 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
 {
-    public class UsageSettings
+    public class UsageBaseSettings
     {
         /// <summary>
         /// The usage calculator background service wait period in seconds.

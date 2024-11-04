@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -84,16 +85,13 @@ namespace FoxIDs.Client.Pages
             usedList.Add(used);
         }
 
-        public bool ShowMakeInvoiceButton(GeneralUsedViewModel used) =>
-            used.InvoiceStatus == UsedInvoiceStatus.None || used.InvoiceStatus == UsedInvoiceStatus.InvoiceFailed || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteSend;
+        public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady;
 
-        public bool ShowCreditNoteButton(GeneralUsedViewModel used) =>
-            (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
-            (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed());
+        public bool ShowDoCreditNoteButton(GeneralUsedViewModel used) => used.IsInvoiceReady;
 
-        public bool ShowMakePaymentButton(GeneralUsedViewModel used) =>
-            (used.InvoiceStatus == UsedInvoiceStatus.InvoiceSend || used.InvoiceStatus == UsedInvoiceStatus.CreditNoteFailed) &&
-            (used.PaymentStatus == UsedPaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed());
+        public bool ShowSendCreditNoteAgainButton(GeneralUsedViewModel used) => !used.IsInvoiceReady && used.Invoices?.LastOrDefault()?.IsCreditNote == true;
+
+        public bool ShowDoPaymentButton(GeneralUsedViewModel used) => used.IsInvoiceReady && used.PaymentStatus.PaymentApiStatusIsGenerallyFailed();
 
         private async Task ShowUpdateUsageAsync(GeneralUsedViewModel generalUsed)
         {
@@ -119,29 +117,12 @@ namespace FoxIDs.Client.Pages
 
         private string UsageInfoText(GeneralUsedViewModel generalUsed)
         {
-            return $"Tenant: {generalUsed.TenantName}{(generalUsed.InvoiceStatus != UsedInvoiceStatus.None ? $", invoice status: {GetInvoiceStatus(generalUsed)}" : string.Empty)}{(generalUsed.PaymentStatus != UsedPaymentStatus.None ? $", payment status: {GetPaymentStatus(generalUsed)}" : string.Empty)}{(generalUsed.TotalPrice > 0 ? $", total price: €{generalUsed.TotalPrice}" : ", total price: not calculated")}";
-        }
-
-        private string GetInvoiceStatus(GeneralUsedViewModel generalUsed)
-        {
-            switch (generalUsed.InvoiceStatus)
-            {
-                case UsedInvoiceStatus.InvoiceSend:
-                    return "send";
-                case UsedInvoiceStatus.InvoiceFailed:
-                    return "failed";
-                case UsedInvoiceStatus.CreditNoteSend:
-                    return "credit note send";
-                case UsedInvoiceStatus.CreditNoteFailed:
-                    return "credit note failed";
-                default:
-                    return generalUsed.InvoiceStatus.ToString();
-            }
-        }
-
-        private string GetPaymentStatus(GeneralUsedViewModel generalUsed)
-        {
-            return generalUsed.PaymentStatus.ToString();
+            var invoice = generalUsed.Invoices?.LastOrDefault();
+            var invoiceSendState = invoice?.SendStatus;
+            var statusText = generalUsed.IsDone ? ", DONE" : $"{(generalUsed.IsUsageCalculated ? ", usage calculated" : string.Empty)}{(generalUsed.IsInvoiceReady ? ", invoice is ready" : string.Empty)}{(invoiceSendState > 0 ? $", invoice {invoiceSendState}" : string.Empty)}{(generalUsed.PaymentStatus > 0 ? $", payment {generalUsed.PaymentStatus}" : string.Empty)}";
+            var price = invoice?.TotalPrice;
+            var priceText = $"{(price > 0 ? $", price: {invoice?.Currency}{price}" : string.Empty)}";
+            return $"Tenant {generalUsed.TenantName}{statusText}{priceText}";
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
@@ -230,14 +211,14 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task SendInvoiceAsync(GeneralUsedViewModel generalUsed)
+        private async Task SendInvoiceAgainAsync(GeneralUsedViewModel generalUsed)
         {
-            generalUsed.InvoiceButtonDisabled = true;
+            generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
-                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
-                generalUsed.TotalPrice = usedResult.TotalPrice;
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoSendInvoiceAgain = true });
+                generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
+                generalUsed.Invoices = usedResult.Invoices;
             }
             catch (TokenUnavailableException)
             {
@@ -245,20 +226,19 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                generalUsed.InvoiceStatus = UsedInvoiceStatus.InvoiceFailed;
                 toastService.ShowError(ex.Message);
             }
-            generalUsed.InvoiceButtonDisabled = false;
+            generalUsed.InvoicingActionButtonDisabled = false;
         }
 
-        private async Task SendCreditNoteAsync(GeneralUsedViewModel generalUsed)
+        private async Task DoCreditNoteAsync(GeneralUsedViewModel generalUsed)
         {
-            generalUsed.InvoiceButtonDisabled = true;
+            generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakeInvoiceAsync(new MakeInvoiceRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, IsCreditNote = true });
-                generalUsed.InvoiceStatus = usedResult.InvoiceStatus;
-                generalUsed.TotalPrice = usedResult.TotalPrice;
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoCreditNote = true });
+                generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
+                generalUsed.Invoices = usedResult.Invoices;
             }
             catch (TokenUnavailableException)
             {
@@ -266,18 +246,37 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                generalUsed.InvoiceStatus = UsedInvoiceStatus.CreditNoteFailed;
                 toastService.ShowError(ex.Message);
             }
-            generalUsed.InvoiceButtonDisabled = false;
+            generalUsed.InvoicingActionButtonDisabled = false;
         }
 
-        private async Task ExecutePaymentAsync(GeneralUsedViewModel generalUsed)
+        private async Task SendCreditNoteAgainAsync(GeneralUsedViewModel generalUsed)
         {
-            generalUsed.PaymentButtonDisabled = true;
+            generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.MakePaymentAsync(new MakePaymentRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoSendCreditNoteAgain = true });
+                generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
+                generalUsed.Invoices = usedResult.Invoices;
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message);
+            }
+            generalUsed.InvoicingActionButtonDisabled = false;
+        }
+
+        private async Task DoPaymentAgainAsync(GeneralUsedViewModel generalUsed)
+        {
+            generalUsed.InvoicingActionButtonDisabled = true;
+            try
+            {
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoPaymentAgain = true });
                 generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
             catch (TokenUnavailableException)
@@ -286,10 +285,9 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                generalUsed.PaymentStatus = UsedPaymentStatus.Failed;
                 toastService.ShowError(ex.Message);
             }
-            generalUsed.PaymentButtonDisabled = false;
+            generalUsed.InvoicingActionButtonDisabled = false;
         }
     }
 }

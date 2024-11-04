@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,30 +8,29 @@ namespace FoxIDs.Models.ExternalInvoices
 {
     public class InvoiceRequest : IValidatableObject
     {
+        public bool SendInvoice { get; set; }
+
+        public bool IsCardPayment { get; set; }
+
+        public bool IsCreditNote { get; set; }
+
         [Required]
         public string InvoiceNumber { get; set; }
 
-        public bool SendInvoice { get; set; }
+        [Required]
+        public DateTime IssueDate { get; set; }
+
+        public DateTime? DueDate { get; set; }
 
         [Required]
-        public long CreateTime { get; set; }
+        public DateTime PeriodBeginDate { get; set; }
+
+        [Required]
+        public DateTime PeriodEndDate { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]
         public string Currency { get; set; }
-
-        [Required]
-        public bool CardPayment { get; set; }
-
-        [Required]
-        [Min(Constants.Models.Used.PeriodYearMin)]
-        public int PeriodYear { get; set; }
-
-        [Required]
-        [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
-        public int PeriodMonth { get; set; }
-
-        public bool IsCreditNote { get; set; }
 
         [ListLength(Constants.Models.Used.InvoiceLinesMin, Constants.Models.Used.ItemsMax)]
         public List<InvoiceLine> Lines { get; set; }
@@ -55,6 +55,8 @@ namespace FoxIDs.Models.ExternalInvoices
 
         [Required]
         public Customer Customer { get; set; }
+
+        public List<string> BankDetails { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

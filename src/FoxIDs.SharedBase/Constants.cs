@@ -256,7 +256,7 @@ namespace FoxIDs
                 public const string Plan = "plan";
                 public const string DataProtection = "datap";
                 public const string Used = "used";
-                public const string MasterUsage = "musage";
+                public const string UsageSettings = "uset";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -321,7 +321,7 @@ namespace FoxIDs
                 public const int BccEmailsMax = 5;
             }
 
-            public static class MasterUsage
+            public static class UsageSettings
             {
                 public const int IdLength = 20;
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
@@ -329,6 +329,7 @@ namespace FoxIDs
                 public const int CurrencyExchangesMin = 0;
                 public const int CurrencyExchangesMax = 10;
 
+                public const int InvoiceNumberMin = 0;
                 public const int InvoiceNumberPrefixLength = 20;
                 public const string InvoiceNumberPrefixRegExPattern = @"^[\w;:\/\-.,+ ]*$";
             }

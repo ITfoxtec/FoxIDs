@@ -65,9 +65,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "is_done")]
         public bool IsDone { get; set; }
 
-        [JsonProperty(PropertyName = "has_error")]
-        public bool HasError { get; set; }
-
         [JsonProperty(PropertyName = "payment_id")]
         public string PaymentId { get; set; }
 

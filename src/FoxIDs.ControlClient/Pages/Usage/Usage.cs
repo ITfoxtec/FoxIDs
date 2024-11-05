@@ -123,10 +123,10 @@ namespace FoxIDs.Client.Pages.Usage
         {
             var invoice = generalUsed.Invoices?.LastOrDefault();
             var invoiceSendState = invoice?.SendStatus;
-            var statusText = generalUsed.IsDone ? ", DONE" : $"{(generalUsed.IsUsageCalculated ? ", usage calculated" : string.Empty)}{(generalUsed.IsInvoiceReady ? ", invoice is ready" : string.Empty)}{(invoiceSendState.HasValue ? $", invoice {invoiceSendState}" : string.Empty)}{(generalUsed.PaymentStatus != UsagePaymentStatus.None ? $", payment {generalUsed.PaymentStatus}" : string.Empty)}";
+            var statusText = $"{(generalUsed.IsUsageCalculated ? ", calculated" : string.Empty)}{(invoiceSendState.HasValue ? $", invoice {invoiceSendState}" : (generalUsed.IsInvoiceReady ? ", invoice created" : string.Empty))}{(generalUsed.PaymentStatus != UsagePaymentStatus.None ? $", payment {generalUsed.PaymentStatus}" : string.Empty)}{(generalUsed.IsDone ? ", DONE" : string.Empty)}";
             var price = invoice?.Price;
             var priceText = $"{(price > 0 ? $", price: {invoice?.Currency}{price}" : string.Empty)}";
-            return $"Tenant {generalUsed.TenantName}{statusText}{priceText}{(generalUsed.HasError ? ", ERROR" : string.Empty)}";
+            return $"Tenant {generalUsed.TenantName}{statusText}{priceText}";
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)

@@ -17,7 +17,6 @@ namespace FoxIDs.Client.Models.ViewModels
             IsInvoiceReady = used.IsInvoiceReady;
             PaymentStatus = used.PaymentStatus;   
             IsDone = used.IsDone;
-            HasError = used.HasError;
             Invoices = used.Invoices;
         }
 

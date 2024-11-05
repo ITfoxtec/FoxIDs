@@ -121,16 +121,9 @@ namespace FoxIDs.Logic.Usage
 
             if(taskDone)
             {
-                used.HasError = false;
                 used.IsDone = true;
                 await tenantDataRepository.UpdateAsync(used);
                 logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' done.");
-            }
-            else
-            {
-                used.HasError = true;
-                await tenantDataRepository.UpdateAsync(used);
-                logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' error.");
             }
             return taskDone;
         }

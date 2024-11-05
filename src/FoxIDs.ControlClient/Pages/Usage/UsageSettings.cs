@@ -71,6 +71,7 @@ namespace FoxIDs.Client.Pages.Usage
             try
             {
                 var usageSettings = await TenantService.UpdateUsageSettingsAsync(generalUsageSettings.Form.Model);
+                generalUsageSettings.Form.UpdateModel(usageSettings.Map<UsageSettingsViewModel>());
                 toastService.ShowSuccess("Usage settings updated.");
             }
             catch (Exception ex)

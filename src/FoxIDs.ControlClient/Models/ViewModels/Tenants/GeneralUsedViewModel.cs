@@ -11,11 +11,14 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralUsedViewModel(UsedBase used)
         {
             TenantName = used.TenantName;
-            PeriodYear = used.PeriodYear;
-            PeriodMonth = used.PeriodMonth;
+            PeriodBeginDate = used.PeriodBeginDate;
+            PeriodEndDate = used.PeriodEndDate;
             IsUsageCalculated = used.IsUsageCalculated;
             IsInvoiceReady = used.IsInvoiceReady;
-            PaymentStatus = used.PaymentStatus;            
+            PaymentStatus = used.PaymentStatus;   
+            IsDone = used.IsDone;
+            HasError = used.HasError;
+            Invoices = used.Invoices;
         }
 
         public bool Edit { get; set; }

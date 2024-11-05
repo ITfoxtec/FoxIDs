@@ -18,9 +18,9 @@ namespace FoxIDs.Models.Api
         public string InvoiceNumber { get; set; }
 
         [Required]
-        public DateTime IssueDate { get; set; }
+        public DateOnly IssueDate { get; set; }
 
-        public DateTime? DueDate { get; set; }
+        public DateOnly? DueDate { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]

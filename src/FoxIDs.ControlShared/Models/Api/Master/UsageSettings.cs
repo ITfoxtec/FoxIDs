@@ -13,6 +13,7 @@ namespace FoxIDs.Models.Api
         /// The current / last used invoice number.
         /// </summary>
         [Min(Constants.Models.UsageSettings.InvoiceNumberMin)]
+        [Display(Name = "Invoice number")]
         public int InvoiceNumber { get; set; }
 
         /// <summary>
@@ -20,6 +21,7 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [MaxLength(Constants.Models.UsageSettings.InvoiceNumberPrefixLength)]
         [RegularExpression(Constants.Models.UsageSettings.InvoiceNumberPrefixRegExPattern)]
+        [Display(Name = "Invoice number prefix")]
         public string InvoiceNumberPrefix { get; set; }
     }
 }

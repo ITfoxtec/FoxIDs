@@ -6,9 +6,6 @@ using FoxIDs.Repository;
 using FoxIDs.Util;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Mollie.Api.Models.Payment.Request;
-using Mollie.Api.Models.Payment;
-using Mollie.Api.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,7 +18,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ExtInv = FoxIDs.Models.ExternalInvoices;
-using Mollie.Api.Client.Abstract;
 
 namespace FoxIDs.Logic.Usage
 {
@@ -33,9 +29,9 @@ namespace FoxIDs.Logic.Usage
         private readonly IMapper mapper;
         private readonly IMasterDataRepository masterDataRepository;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly IPaymentClient paymentClient;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public UsageInvoicingLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, IPaymentClient paymentClient, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageInvoicingLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, UsageMolliePaymentLogic usageMolliePaymentLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -43,17 +39,22 @@ namespace FoxIDs.Logic.Usage
             this.mapper = mapper;
             this.masterDataRepository = masterDataRepository;
             this.tenantDataRepository = tenantDataRepository;
-            this.paymentClient = paymentClient;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
         {
+            if(!tenant.EnableUsage)
+            {
+                return false;
+            }
+
             var taskDone = true;
-            var cardPayment = tenant.Payment?.IsActive == true;
+            var isCardPayment = usageMolliePaymentLogic.HasCardPayment(tenant);
 
-            logger.Event($"Usage {EventNameText(cardPayment)} invoicing tenant '{used.TenantName}' started.");
+            logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' started.");
 
-            (var invoiceTaskDone, var invoice) = await GetInvoiceAsync(tenant, used, cardPayment, stoppingToken);
+            (var invoiceTaskDone, var invoice) = await GetInvoiceAsync(tenant, used, isCardPayment, stoppingToken);
             if (!invoiceTaskDone)
             {
                 taskDone = false;
@@ -62,31 +63,46 @@ namespace FoxIDs.Logic.Usage
             if (taskDone)
             {
                 stoppingToken.ThrowIfCancellationRequested();
-                if (cardPayment)
+                if (isCardPayment)
                 {
-                    if (used.PaymentStatus == UsagePaymentStatus.None)
+                    if (!usageMolliePaymentLogic.HasActiveCardPayment(tenant))
                     {
-                        if(!await DoPaymentAsync(tenant, used, invoice))
+                        try
                         {
+                            throw new Exception("Card payment NOT active.");
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex);
                             taskDone = false;
                         }
                     }
-                    else if (used.PaymentStatus == UsagePaymentStatus.Open || used.PaymentStatus == UsagePaymentStatus.Pending || used.PaymentStatus == UsagePaymentStatus.Authorized)
+                    else
                     {
-                        if(!await UpdatePaymentAsync(used))
+                        if (used.PaymentStatus == UsagePaymentStatus.None)
                         {
-                            taskDone = false;
-                        }
-                    }
-
-                    if(taskDone)
-                    {
-                        stoppingToken.ThrowIfCancellationRequested();
-                        if (invoice.SendStatus == UsageInvoiceSendStatus.None && used.PaymentStatus == UsagePaymentStatus.Paid)
-                        {
-                            if (!await SendInvoiceAsync(used, invoice))
+                            if (!await usageMolliePaymentLogic.DoPaymentAsync(tenant, used, invoice))
                             {
                                 taskDone = false;
+                            }
+                        }
+                        else if (used.PaymentStatus == UsagePaymentStatus.Open || used.PaymentStatus == UsagePaymentStatus.Pending || used.PaymentStatus == UsagePaymentStatus.Authorized)
+                        {
+                            if (!await usageMolliePaymentLogic.UpdatePaymentAsync(used))
+                            {
+                                taskDone = false;
+                            }
+                        }
+
+                        if (taskDone)
+                        {
+                            stoppingToken.ThrowIfCancellationRequested();
+                            if (invoice.SendStatus == UsageInvoiceSendStatus.None && used.PaymentStatus == UsagePaymentStatus.Paid)
+                            {
+                                if (!await SendInvoiceAsync(used, invoice))
+                                {
+                                    taskDone = false;
+                                }
                             }
                         }
                     }
@@ -105,15 +121,27 @@ namespace FoxIDs.Logic.Usage
 
             if(taskDone)
             {
+                used.HasError = false;
                 used.IsDone = true;
                 await tenantDataRepository.UpdateAsync(used);
-                logger.Event($"Usage {EventNameText(cardPayment)} invoicing tenant '{used.TenantName}' done.");
+                logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' done.");
+            }
+            else
+            {
+                used.HasError = true;
+                await tenantDataRepository.UpdateAsync(used);
+                logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' error.");
             }
             return taskDone;
         }
 
         public async Task CreateAndSendCreditNoteAsync(Used used)
         {
+            if (used.PaymentStatus != UsagePaymentStatus.None && !used.PaymentStatus.PaymentStatusIsGenerallyFailed())
+            {
+                throw new Exception("Invalid payment status.");
+            }
+
             logger.Event($"Usage create and send credit note tenant '{used.TenantName}' started.");
 
             var invoice = used.Invoices.LastOrDefault();
@@ -121,19 +149,31 @@ namespace FoxIDs.Logic.Usage
             {
                 throw new Exception("Invalid last invoice.");
             }
-            
-            invoice.InvoiceNumber = await GetInvoiceNumberAsync(await GetUsageSettingsAsync()); 
 
-            invoice.IsCreditNote = true;
+            var creditNote = new Invoice
+            {
+                IsCreditNote = true,
+                InvoiceNumber = await GetInvoiceNumberAsync(await GetUsageSettingsAsync()),
+                IsCardPayment = invoice.IsCardPayment,
+                IssueDate = DateOnly.FromDateTime(DateTime.Now),
+                Seller = mapper.Map<Seller>(settings.Usage.Seller),
+                Customer = invoice.Customer,
+                Currency = invoice.Currency,
+                Lines = invoice.Lines,
+                Price = invoice.Price,
+                Vat = invoice.Vat,
+                TotalPrice = invoice.TotalPrice,
+            };
+
             used.IsInvoiceReady = false;
-            used.Invoices.Add(invoice);
+            used.Invoices.Add(creditNote);
             await tenantDataRepository.UpdateAsync(used);
 
-            logger.Event($"Usage create {EventNameText(invoice.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
+            logger.Event($"Usage create {EventNameText(creditNote.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
 
-            _ = await SendInvoiceAsync(used, invoice);
+            _ = await SendInvoiceAsync(used, creditNote);
 
-            logger.Event($"Usage send {EventNameText(invoice.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
+            logger.Event($"Usage send {EventNameText(creditNote.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
         }
 
         public async Task<bool> SendInvoiceAsync(Used used, Invoice invoice)
@@ -164,90 +204,9 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        public async Task<bool> DoPaymentAsync(Tenant tenant, Used used, Invoice invoice)
-        {
-            if (tenant.Payment?.IsActive != true)
-            {
-                throw new InvalidOperationException("Not an active payment.");
-            }
+        private string EventNameText(bool isCardPayment) => isCardPayment ? "'card'" : "'payment period'";
 
-            try
-            {
-                logger.Event($"Usage payment card invoice tenant '{used.TenantName}' started.");
-
-                var paymentRequest = new PaymentRequest
-                {
-                    RedirectUrl = "https://www.foxids.com",
-                    Amount = new Amount(invoice.Currency, invoice.TotalPrice),
-                    Description = "FoxIDs subscription",
-                    CustomerId = tenant.Payment.CustomerId,
-                    SequenceType = SequenceType.Recurring,
-                    MandateId = tenant.Payment.MandateId,
-                };
-
-                var paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-                used.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
-                used.PaymentId = paymentResponse.Id;
-                await tenantDataRepository.UpdateAsync(used);
-
-                logger.Event($"Usage payment card invoice tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    used.PaymentStatus = UsagePaymentStatus.Failed;
-                    await tenantDataRepository.UpdateAsync(used);
-                }
-                catch (Exception saveEx)
-                {
-                    logger.Error(saveEx, $"Unable to save status: {UsagePaymentStatus.Failed}.");
-                }
-                logger.Error(ex, $"Error occurred during tenant '{used.TenantName}' usage payment card invoice.");
-                return false;
-            }
-        }
-
-        public async Task<bool> UpdatePaymentAsync(Used used)
-        {
-            if (used.PaymentId.IsNullOrEmpty())
-            {
-                throw new InvalidOperationException("The payment id is empty.");
-            }
-
-            try
-            {
-                logger.Event($"Usage read payment card invoice tenant '{used.TenantName}' started.");
-
-                var paymentResponse = await paymentClient.GetPaymentAsync(used.PaymentId);
-                used.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
-                await tenantDataRepository.UpdateAsync(used);
-
-                logger.Event($"Usage read payment card invoice tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    used.PaymentStatus = UsagePaymentStatus.Failed;
-                    await tenantDataRepository.UpdateAsync(used);
-                }
-                catch (Exception saveEx)
-                {
-                    logger.Error(saveEx, $"Unable to save status: {UsagePaymentStatus.Failed}.");
-                }
-                logger.Error(ex, $"Error occurred during tenant '{used.TenantName}' usage read payment card invoice.");
-                return false;
-            }
-        }
-
-        private string EventNameText(bool cardPayment) => cardPayment ? "card" : "payment period";
-
-        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceAsync(Tenant tenant, Used used, bool cardPayment, CancellationToken stoppingToken)
+        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken stoppingToken)
         {
             try
             {
@@ -257,9 +216,9 @@ namespace FoxIDs.Logic.Usage
                 }
                 else
                 {
-                    logger.Event($"Usage create {EventNameText(cardPayment)} invoice tenant '{used.TenantName}' started.");
-                    var invoice = await CreateInvoiceAsync(tenant, used, cardPayment, stoppingToken);
-                    logger.Event($"Usage create {EventNameText(cardPayment)} invoice tenant '{used.TenantName}' done.");
+                    logger.Event($"Usage create {EventNameText(isCardPayment)} invoice tenant '{used.TenantName}' started.");
+                    var invoice = await CreateInvoiceAsync(tenant, used, isCardPayment, stoppingToken);
+                    logger.Event($"Usage create {EventNameText(isCardPayment)} invoice tenant '{used.TenantName}' done.");
                     return (true, invoice);
                 }
             }
@@ -273,7 +232,7 @@ namespace FoxIDs.Logic.Usage
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error occurred during tenant '{tenant.Name}' usage {EventNameText(cardPayment)} invoicing.");
+                logger.Error(ex, $"Error occurred during tenant '{tenant.Name}' usage {EventNameText(isCardPayment)} invoicing.");
                 return (false, null);
             }
         }
@@ -292,7 +251,7 @@ namespace FoxIDs.Logic.Usage
             var invoice = new Invoice
             {
                 IsCardPayment = isCardPayment,
-                IssueDate = DateTime.Now,
+                IssueDate = DateOnly.FromDateTime(DateTime.Now),
                 Seller = mapper.Map<Seller>(settings.Usage.Seller),
                 Customer = tenant.Customer,
                 Currency = tenant.Currency.IsNullOrEmpty() ? Constants.Models.Currency.Eur : tenant.Currency,
@@ -310,7 +269,7 @@ namespace FoxIDs.Logic.Usage
 
             if (!isCardPayment)
             {
-                invoice.DueDate = invoice.IssueDate + TimeSpan.FromDays(settings.Usage.Seller.PaymentDueDays);
+                invoice.DueDate = invoice.IssueDate.AddDays(settings.Usage.Seller.PaymentDueDays);
             }
 
             await invoice.ValidateObjectAsync();
@@ -372,16 +331,16 @@ namespace FoxIDs.Logic.Usage
 
         private void CalculateInvoice(Invoice invoice, Used used, Plan plan, bool includeVat, decimal exchangeRate)
         {
-            var invoiceDays = (used.PeriodEndDate - used.PeriodBeginDate).Days;
+            var invoiceDays = used.PeriodEndDate.Day - used.PeriodBeginDate.Day;
             if (invoiceDays > 10)
             {
                 if(used.PeriodBeginDate.Day == 1)
                 {
-                    invoice.Price = RoundPrice(plan.CostPerMonth);
+                    invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth, exchangeRate, false);
                 }
                 else
                 {
-                    invoice.Price = RoundPrice(plan.CostPerMonth / DateTime.DaysInMonth(used.PeriodYear, used.PeriodMonth) * invoiceDays);
+                    invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth / DateTime.DaysInMonth(used.PeriodBeginDate.Year, used.PeriodBeginDate.Month) * invoiceDays, exchangeRate, false);
                 }
             }
 
@@ -395,7 +354,7 @@ namespace FoxIDs.Logic.Usage
 
             if (includeVat)
             {
-                invoice.Vat = RoundPrice(invoice.Price * settings.Usage.VatPercent / 100);
+                invoice.Vat = RoundPrice(invoice.Price * settings.Usage.VatPercent / 100, false);
             }
             invoice.TotalPrice = invoice.Price + invoice.Vat;
         }
@@ -405,17 +364,17 @@ namespace FoxIDs.Logic.Usage
             decimal price = 0;
 
             var firstLevel = planItem.FirstLevelThreshold > 0 && usedCount > planItem.FirstLevelThreshold ? Convert.ToDecimal(planItem.FirstLevelThreshold) : usedCount;
-            var firstLevelUnitPrice = CurrencyAndRoundPrice(planItem.FirstLevelCost, exchangeRate);
+            var firstLevelUnitPrice = CurrencyAndRoundPrice(planItem.FirstLevelCost, exchangeRate, true);
             var firstLevelQuantity = usedCount > planItem.Included ? firstLevel - planItem.Included : 0;
-            var firstLevelPrice = RoundPrice(firstLevelUnitPrice * firstLevelQuantity);
+            var firstLevelPrice = RoundPrice(firstLevelUnitPrice * firstLevelQuantity, false);
             lines.Add(new InvoiceLine { Text = textFirstLevel, Quantity = firstLevelQuantity, UnitPrice = firstLevelUnitPrice, Price = firstLevelPrice });
             price += firstLevelPrice;
 
             if (planItem.FirstLevelThreshold > 0 && usedCount > planItem.FirstLevelThreshold)
             {
-                var secondLevelUnitPrice = CurrencyAndRoundPrice(planItem.SecondLevelCost.Value, exchangeRate);
+                var secondLevelUnitPrice = CurrencyAndRoundPrice(planItem.SecondLevelCost.Value, exchangeRate, true);
                 var secundLevelPriceQuantity = usedCount - planItem.FirstLevelThreshold.Value;
-                var secundLevelPrice = RoundPrice(secondLevelUnitPrice * secundLevelPriceQuantity);
+                var secundLevelPrice = RoundPrice(secondLevelUnitPrice * secundLevelPriceQuantity, false);
                 lines.Add(new InvoiceLine { Text = textSecondLevel, Quantity = secundLevelPriceQuantity, UnitPrice = secondLevelUnitPrice, Price = secundLevelPrice });
                 price += secundLevelPrice;
             }
@@ -423,14 +382,14 @@ namespace FoxIDs.Logic.Usage
             return price;
         }
 
-        private decimal CurrencyAndRoundPrice(decimal price, decimal exchangeRate)
+        private decimal CurrencyAndRoundPrice(decimal price, decimal exchangeRate, bool isUnitPrice)
         {
-            return RoundPrice(price * exchangeRate);
+            return RoundPrice(price * exchangeRate, isUnitPrice);
         }
 
-        private decimal RoundPrice(decimal price)
+        private decimal RoundPrice(decimal price, bool isUnitPrice)
         {
-            return decimal.Round(price, 2);
+            return decimal.Round(price, isUnitPrice ? 6 : 2);
         }
 
         private async Task<ExtInv.InvoiceResponse> CallExternalMakeInvoiceAsync(Used used, Invoice invoice, bool sendInvoice)

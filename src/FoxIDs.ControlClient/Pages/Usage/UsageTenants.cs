@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -50,7 +51,6 @@ namespace FoxIDs.Client.Pages.Usage
             usageHref = $"{TenantName}/usage";
             usageSettingsHref = $"{TenantName}/usagesettings";
             await base.OnInitializedAsync();
-            usageSettings = await TenantService.GetUsageSettingsAsync();
             await DefaultLoadAsync();
         }
 
@@ -77,7 +77,8 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterTenantAsync(null));
+                SetGeneralTenants(await TenantService.FilterUsageTenantAsync(null));
+                usageSettings = await TenantService.GetUsageSettingsAsync();
             }
             catch (TokenUnavailableException)
             {
@@ -94,10 +95,7 @@ namespace FoxIDs.Client.Pages.Usage
             var tes = new List<GeneralTenantViewModel>();
             foreach (var dp in dataTenans)
             {
-                tes.Add(new GeneralTenantViewModel(dp)
-                {
-                    LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{dp.Name}".ToLower()
-                });
+                tes.Add(new GeneralTenantViewModel(dp));
             }
             tenants = tes;
         }
@@ -125,6 +123,29 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
+        private void ShowCreateTenant()
+        {
+            var used = new GeneralTenantViewModel
+            {
+                CreateMode = true,
+                Edit = true
+            };
+
+            tenants.Add(used);
+        }
+
+        private void TenantCancel(GeneralTenantViewModel tenant)
+        {
+            if (tenant.CreateMode)
+            {
+                tenants.Remove(tenant);
+            }
+            else
+            {
+                tenant.Edit = false;
+            }
+        }
+
         private async Task OnEditTenantValidSubmitAsync(GeneralTenantViewModel generalTenant, EditContext editContext)
         {
             try
@@ -134,12 +155,32 @@ namespace FoxIDs.Client.Pages.Usage
                     return;
                 }
                 tenantWorking = true;
-                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
-                generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
-                toastService.ShowSuccess("Tenant updated.");
 
-                generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;
-                generalTenant.CustomDomainVerified = generalTenant.Form.Model.CustomDomainVerified;
+                if (generalTenant.CreateMode)
+                {
+                    var tenantResult = await TenantService.CreateTenantAsync(generalTenant.Form.Model.Map<CreateTenantRequest>(afterMap: afterMap => 
+                    {
+                        afterMap.ForUsage = true;
+                        afterMap.EnableUsage = true;
+                        afterMap.AdministratorEmail = afterMap.Customer.InvoiceEmails.First();
+                        afterMap.AdministratorPassword = Util.SecretGenerator.GenerateNewPassword();
+                        afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
+                    }));
+                    generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
+                    generalTenant.CreateMode = false;
+                    toastService.ShowSuccess("Usage tenant created.");
+                }
+                else
+                {
+                    var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
+                    {
+                        afterMap.ForUsage = true; 
+                        afterMap.EnableUsage = true;
+                    }));
+                    generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
+                    toastService.ShowSuccess("Usage tenant updated.");
+                }
+
                 tenantWorking = false;
             }
             catch (FoxIDsApiException ex)

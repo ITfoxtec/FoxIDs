@@ -14,8 +14,8 @@ using Mollie.Api.Models;
 using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Customer.Request;
 using Mollie.Api.Models.Payment.Request.PaymentSpecificParameters;
-using Mollie.Api.Models.Mandate.Response.PaymentSpecificParameters;
 using ITfoxtec.Identity;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
@@ -30,16 +30,16 @@ namespace FoxIDs.Controllers
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly ICustomerClient customerClient;
         private readonly IPaymentClient paymentClient;
-        private readonly IMandateClient mandateClient;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TMyMollieFirstPaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICustomerClient customerClient, IPaymentClient paymentClient, IMandateClient mandateClient) : base(logger)
+        public TMyMollieFirstPaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICustomerClient customerClient, IPaymentClient paymentClient, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
             this.customerClient = customerClient;
             this.paymentClient = paymentClient;
-            this.mandateClient = mandateClient;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
@@ -94,24 +94,14 @@ namespace FoxIDs.Controllers
             mTenant.Payment.IsActive = false;
             if (!mTenant.Payment.MandateId.IsNullOrWhiteSpace())
             {
-                await RevokeMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId);
+                await usageMolliePaymentLogic.RevokePaymentMandateAsync(mTenant);
             }
             mTenant.Payment.MandateId = paymentResponse.MandateId;
-            var mandateResponse = await mandateClient.GetMandateAsync(mTenant.Payment.CustomerId, mTenant.Payment.MandateId) as CreditCardMandateResponse;
-            var cardExpiryDate = DateTime.Parse(mandateResponse.Details.CardExpiryDate);
-            mTenant.Payment.CardHolder = mandateResponse.Details.CardHolder;
-            mTenant.Payment.CardNumberInfo = mandateResponse.Details.CardNumber;
-            mTenant.Payment.CardLabel = mandateResponse.Details.CardLabel;
-            mTenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
-            mTenant.Payment.CardExpiryYear = cardExpiryDate.Year;
             await tenantDataRepository.UpdateAsync(mTenant);
 
-            return Ok(new Api.MollieFirstPaymentResponse { CheckoutUrl = paymentResponse.Links?.Checkout?.Href });  
-        }
+            await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
 
-        private async Task RevokeMandateAsync(string customerId, string mandateId)
-        {
-            await mandateClient.RevokeMandate(customerId, mandateId);
+            return Ok(new Api.MollieFirstPaymentResponse { CheckoutUrl = paymentResponse.Links?.Checkout?.Href });  
         }
     }
 }

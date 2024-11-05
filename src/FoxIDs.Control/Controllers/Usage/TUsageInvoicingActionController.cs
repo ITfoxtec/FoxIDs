@@ -24,16 +24,18 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly UsageInvoicingLogic usageInvoicingLogic;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
         public object MTenant { get; private set; }
 
-        public TUsageInvoicingActionController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic) : base(logger)
+        public TUsageInvoicingActionController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.usageInvoicingLogic = usageInvoicingLogic;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(action)) return BadRequest(ModelState);
                 action.TenantName = action.TenantName.ToLower();
 
-                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(action.TenantName, action.PeriodYear, action.PeriodMonth));
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(action.TenantName, action.PeriodBeginDate.Year, action.PeriodBeginDate.Month));
 
                 if (action.DoSendInvoiceAgain)
                 {
@@ -84,8 +86,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Do '{typeof(Api.Used).Name}' action by tenant name '{action.TenantName}', year '{action.PeriodYear}' and month '{action.PeriodMonth}'.");
-                    return NotFound(typeof(Api.Used).Name, $"{action.TenantName}/{action.PeriodYear}/{action.PeriodMonth}");
+                    logger.Warning(ex, $"NotFound, Do '{typeof(Api.Used).Name}' action by tenant name '{action.TenantName}', year '{action.PeriodBeginDate.Year}' and month '{action.PeriodBeginDate.Month}'.");
+                    return NotFound(typeof(Api.Used).Name, $"{action.TenantName}/{action.PeriodBeginDate.Year}/{action.PeriodBeginDate.Month}");
                 }
                 throw;
             }
@@ -96,7 +98,14 @@ namespace FoxIDs.Controllers
             if (mUsed.IsInvoiceReady)
             {
                 var invoice = mUsed.Invoices.Last();
-                await usageInvoicingLogic.SendInvoiceAsync(mUsed, invoice);
+                if(!invoice.IsCardPayment || mUsed.PaymentStatus == UsagePaymentStatus.Paid)
+                {
+                    await usageInvoicingLogic.SendInvoiceAsync(mUsed, invoice);
+                }
+                else
+                {
+                    throw new Exception("The invoice is not paid and is not ready and can not be send again.");
+                }
             }
             else
             {
@@ -106,7 +115,7 @@ namespace FoxIDs.Controllers
 
         private async Task DoCreditNote(Used mUsed)
         {
-            if (mUsed.IsInvoiceReady)
+            if (mUsed.IsInvoiceReady && mUsed.PaymentStatus == UsagePaymentStatus.None || mUsed.PaymentStatus.PaymentStatusIsGenerallyFailed())
             {
                 await usageInvoicingLogic.CreateAndSendCreditNoteAsync(mUsed);
             }
@@ -137,7 +146,7 @@ namespace FoxIDs.Controllers
                 {
                     var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
                     var invoice = mUsed.Invoices.Last();
-                    await usageInvoicingLogic.DoPaymentAsync(mTenant, mUsed, invoice);
+                    await usageMolliePaymentLogic.DoPaymentAsync(mTenant, mUsed, invoice);
                 }
                 else
                 {

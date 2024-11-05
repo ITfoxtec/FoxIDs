@@ -19,6 +19,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Custom domain is verified")]
         public bool CustomDomainVerified { get; set; }
 
+        [Display(Name = "Enable usage")]
+        public bool EnableUsage { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>

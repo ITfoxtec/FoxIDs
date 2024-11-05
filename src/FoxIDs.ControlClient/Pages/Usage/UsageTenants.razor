@@ -14,6 +14,17 @@
 </ul>
 
 <div class="tab-content">
+    <div class="d-flex pt-2">
+        <div class="info-text mr-auto">
+            Add usage tenants that can only be used to register usage.
+        </div>
+        <div class="py-2">
+            <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateTenant())">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Tenant
+            </button>
+        </div>
+    </div>
+
     <PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnTenantFilterValidSubmitAsync">
         <FInputTextFilter @bind-Value="searchTenantForm.Model.FilterValue" For="@(() => searchTenantForm.Model.FilterValue)" />
     </PageEditForm>
@@ -39,8 +50,14 @@
                                     Tenant
                                 </div>
                                 <div class="modal-body">
-                                    <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
-                                    <input type="hidden" @bind="tenant.Form.Model.Name" />
+                                    @if (tenant.CreateMode)
+                                    {
+                                        <FInputText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" Focus="true" />
+                                    }
+                                    else
+                                    {
+                                        <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
+                                    }
 
                                     <FInputSelect @bind-Value="tenant.Form.Model.Currency" For="@(() => tenant.Form.Model.Currency)" ShowDefaultOption=true>
                                         <option value="@Constants.Models.Currency.Eur">@Constants.Models.Currency.Eur</option>
@@ -54,7 +71,7 @@
                                     </FInputSelect>
                                     <FInputToggle @bind-Value="tenant.Form.Model.IncludeVat" For="@(() => tenant.Form.Model.IncludeVat)" TextType="y.n" />
 
-                                    @if (!string.IsNullOrEmpty(tenant.Form.Model.Name) && !Constants.Routes.MasterTenantName.Equals(tenant.Form.Model.Name, StringComparison.OrdinalIgnoreCase) && ClientSettings.EnablePayment)
+                                    @if (tenant.Form.Model.Customer == null)
                                     {
                                         tenant.Form.Model.Customer ??= new Customer();
                                     }
@@ -129,12 +146,12 @@
                                     }
                                 </div>
 
-                                @if (tenant.DeleteAcknowledge)
+                                @if (!tenant.CreateMode && tenant.DeleteAcknowledge)
                                 {
                                     <div class="modal-footer">
                                         <div class="alert alert-danger" role="alert">
                                             <div>
-                                                You are about to delete tenant "@tenant.Name" possible including tracks and user repositories which will also be deleted. There is no way back a tenant can not be restored! Are you sure?
+                                                You are about to delete the usage tenant "@tenant.Name". There is no way back a tenant can not be restored! Are you sure?
                                             </div>
 
                                             <div class="mt-3">
@@ -145,13 +162,12 @@
                                     </div>
                                 }
                                 <div class="modal-footer">
-                                    @if (tenant.Name != Constants.Routes.MasterTenantName)
+                                    @if (!tenant.CreateMode)
                                     {
-                                        <a class="btn btn-link @(tenantWorking ? "disabled" : "")" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                                        <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                                     }
-                                    <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                                     <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
-                                    <button type="button" class="btn btn-secondary @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.Edit = false)">Close</button>
+                                    <button type="button" class="btn btn-secondary @(tenantWorking ? "disabled" : "")" @onclick="@(() => TenantCancel(tenant))">@(tenant.CreateMode ? "Cancel" : "Close")</button>
                                 </div>
                             </PageEditForm>
                         }

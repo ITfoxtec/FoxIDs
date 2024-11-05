@@ -24,10 +24,10 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "issue_date")]
-        public DateTime IssueDate { get; set; }
+        public DateOnly IssueDate { get; set; }
 
         [JsonProperty(PropertyName = "due_date")]
-        public DateTime? DueDate { get; set; }
+        public DateOnly? DueDate { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]

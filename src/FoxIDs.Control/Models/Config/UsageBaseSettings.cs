@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// The usage calculator background service wait period in seconds.
         /// </summary>
-        public int BackgroundServiceWaitPeriod { get; set; } = 7200; // 2 hours
+        public int BackgroundServiceWaitPeriod { get; set; } = 14400; // 4 hours
 
         [Required]
         public UsageSellerSettings Seller { get; set; }

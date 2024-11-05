@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Services
         private const string usageSettingsApiUri = "api/@master/!usagesettings";
         private const string filterUsageApiUri = "api/{tenant}/master/!filterusage";
         private const string usageApiUri = "api/{tenant}/master/!usage";
-        private const string usageInvoicingActionApiUri = "pi/{tenant}/master/!usageinvoicingaction";
+        private const string usageInvoicingActionApiUri = "api/{tenant}/master/!usageinvoicingaction";
 
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -25,7 +25,7 @@ namespace FoxIDs.Client.Services
         public async Task<IEnumerable<Tenant>> FilterUsageTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterUsageTenantApiUri, filterValue, parmValue2: filterValue, parmName2: "filterCustomDomain");
 
         public async Task<TenantResponse> GetTenantAsync(string name) => await GetAsync<TenantResponse>(apiUri, name);
-        public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
+        public async Task<TenantResponse> CreateTenantAsync(CreateTenantRequest tenant) => await PostResponseAsync<CreateTenantRequest, TenantResponse>(apiUri, tenant);
         public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
 

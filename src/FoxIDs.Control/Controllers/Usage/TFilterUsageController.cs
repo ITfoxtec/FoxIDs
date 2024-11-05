@@ -23,14 +23,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly UsageInvoicingLogic usageInvoicingLogic;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic) : base(logger)
+        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
-            this.usageInvoicingLogic = usageInvoicingLogic;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
@@ -54,17 +54,27 @@ namespace FoxIDs.Controllers
                 }
 
                 (var mUsedList, _) = filterTenantName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodMonth == month && u.PeriodYear == year) :
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodMonth == month && u.PeriodYear == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
+                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year) :
+                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
 
                 var aUsedList = new HashSet<Api.UsedBase>(mUsedList.Count());
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))
                 {
                     if(mUsed.PaymentStatus == UsagePaymentStatus.Open || mUsed.PaymentStatus == UsagePaymentStatus.Pending || mUsed.PaymentStatus == UsagePaymentStatus.Authorized)
                     {
-                        await usageInvoicingLogic.UpdatePaymentAsync(mUsed);
+                        await usageMolliePaymentLogic.UpdatePaymentAsync(mUsed);
                     }
-                    aUsedList.Add(mapper.Map<Api.UsedBase>(mUsed));
+                    var aUsed = mapper.Map<Api.UsedBase>(mUsed);
+                    var mLastInvoice = mUsed.Invoices?.LastOrDefault();
+                    if(mLastInvoice != null)
+                    {
+                        var aLastInvoice = mapper.Map<Api.Invoice>(mLastInvoice);
+                        aLastInvoice.Lines = null;
+                        aLastInvoice.TimeItems = null;
+                        aUsed.Invoices = [aLastInvoice];
+
+                    }
+                    aUsedList.Add(aUsed);
                 }
                 return Ok(aUsedList);
             }

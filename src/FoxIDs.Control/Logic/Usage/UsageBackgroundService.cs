@@ -6,7 +6,6 @@ using FoxIDs.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +17,6 @@ namespace FoxIDs.Logic.Usage
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ICacheProvider cacheProvider;
-        private IEnumerable<object> usedList;
 
         public UsageBackgroundService(FoxIDsControlSettings settings, TelemetryLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider)
         {
@@ -42,12 +40,12 @@ namespace FoxIDs.Logic.Usage
                             var now = DateTime.Now;
                             var endOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0).AddMonths(1).AddSeconds(-1);
                             var timeSpanToEndOfMonth = endOfMonth - now;
-                            var waitPeriod = timeSpanToEndOfMonth + TimeSpan.FromSeconds(settings.Usage.BackgroundServiceWaitPeriod);
+                            var waitPeriod = timeSpanToEndOfMonth + TimeSpan.FromSeconds(OneHourWaitPeriodInSeconds);
                             await Task.Delay(waitPeriod, stoppingToken);
                         }
                         else
                         {
-                            await Task.Delay(TimeSpan.FromSeconds(settings.Usage.BackgroundServiceWaitPeriod), stoppingToken);
+                            await Task.Delay(TimeSpan.FromSeconds(OneHourWaitPeriodInSeconds), stoppingToken);
                         }
                     }
                     while (!stoppingToken.IsCancellationRequested);
@@ -67,15 +65,22 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
+        private int OneHourWaitPeriodInSeconds => 60 * 60;
+
+        private int OneDayLifetimeInSeconds => 60 * 60 * 24;
+
+        private int TwoMonthLifetimeInSeconds => 60 * 60 * 24 * 62;
+
         private async Task<bool> DoWorkAsync(CancellationToken stoppingToken)
         {
-            var datePointer = DateTimeOffset.Now.AddMonths(-1);
+            var now = DateTime.Now;
+            var datePointer = new DateOnly(now.Year, now.Month, 1).AddMonths(-1);
             if (await cacheProvider.ExistsAsync(UsageMonthDoneKey(datePointer)))
             {
                 return true;
             }
 
-            if (!await cacheProvider.ExistsAsync(UsageDoWorkKey(datePointer)))
+            if (!await cacheProvider.ExistsAsync(UsageDoWorkKey(datePointer)) && !await cacheProvider.ExistsAsync(UsageDoWorkWaitKey(datePointer)))
             {
                 try
                 {
@@ -101,12 +106,13 @@ namespace FoxIDs.Logic.Usage
                 finally
                 {
                     await cacheProvider.DeleteAsync(UsageDoWorkKey(datePointer));
+                    await cacheProvider.SetFlagAsync(UsageDoWorkWaitKey(datePointer), settings.Usage.BackgroundServiceWaitPeriod);
                 }
             }
             return false;
         }
 
-        private async Task<bool> DoWorkByTenantAsync(DateTimeOffset datePointer, CancellationToken stoppingToken)
+        private async Task<bool> DoWorkByTenantAsync(DateOnly datePointer, CancellationToken stoppingToken)
         {
             (var calculatonTasksDone, var invoicingTasksDone) = await DoWorkScopeByTenantAsync(datePointer, stoppingToken);
             if (calculatonTasksDone && invoicingTasksDone)
@@ -121,7 +127,7 @@ namespace FoxIDs.Logic.Usage
             return false;
         }
 
-        private async Task<bool> DoWorkByUsedAsync(DateTimeOffset datePointer, CancellationToken stoppingToken)
+        private async Task<bool> DoWorkByUsedAsync(DateOnly datePointer, CancellationToken stoppingToken)
         {
             var tasksDone = await DoWorkScopeByUsedAsync(stoppingToken);
             if (tasksDone)
@@ -132,11 +138,7 @@ namespace FoxIDs.Logic.Usage
             return false;
         }
 
-        private int OneDayLifetimeInSeconds => 60 * 60 * 24;
-
-        private int TwoMonthLifetimeInSeconds => 60 * 60 * 24 * 62;
-
-        private async Task<(bool calculatonTasksDone, bool invoicingTasksDone)> DoWorkScopeByTenantAsync(DateTimeOffset datePointer, CancellationToken stoppingToken)
+        private async Task<(bool calculatonTasksDone, bool invoicingTasksDone)> DoWorkScopeByTenantAsync(DateOnly datePointer, CancellationToken stoppingToken)
         {
             using (IServiceScope scope = serviceProvider.CreateScope())
             {
@@ -146,7 +148,8 @@ namespace FoxIDs.Logic.Usage
                     var calculatonTasksDone = true;
                     var invoicingTasksDone = true;
                     scopedLogger.SetScopeProperty(Constants.Logs.TenantName, Constants.Routes.MasterTenantName);
-                    scopedLogger.Event("Usage calculation and invoicing stated by tenant.");
+                    scopedLogger.SetScopeProperty(Constants.Logs.TrackName, Constants.Routes.MasterTrackName);
+                    scopedLogger.Event("Usage calculation and invoicing stated by list of tenants.");
 
                     var tenantDataRepository = scope.ServiceProvider.GetRequiredService<ITenantDataRepository>();
                     string paginationToken = null;
@@ -240,7 +243,8 @@ namespace FoxIDs.Logic.Usage
                 {
                     var tasksDone = true;
                     scopedLogger.SetScopeProperty(Constants.Logs.TenantName, Constants.Routes.MasterTenantName);
-                    scopedLogger.Event("Usage invoicing stated by used.");
+                    scopedLogger.SetScopeProperty(Constants.Logs.TrackName, Constants.Routes.MasterTrackName);
+                    scopedLogger.Event("Usage invoicing stated by list of used items.");
 
                     var tenantDataRepository = scope.ServiceProvider.GetRequiredService<ITenantDataRepository>();
                     string paginationToken = null;
@@ -308,23 +312,28 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private string UsageDoWorkKey(DateTimeOffset datePointer)
+        private string UsageDoWorkKey(DateOnly datePointer)
         {
             return $"usage_do_work_{SubKey(datePointer)}";
         }
 
-        private string UsageMonthCalculatedKey(DateTimeOffset datePointer)
+        private string UsageDoWorkWaitKey(DateOnly datePointer)
+        {
+            return $"usage_do_work_wait_{SubKey(datePointer)}";
+        }
+
+        private string UsageMonthCalculatedKey(DateOnly datePointer)
         {
             return $"usage_month_calculated_{SubKey(datePointer)}";
         }
 
-        private string UsageMonthDoneKey(DateTimeOffset datePointer)
+        private string UsageMonthDoneKey(DateOnly datePointer)
         {
             return $"usage_month_done_{SubKey(datePointer)}";
         }
 
 
-        private string SubKey(DateTimeOffset datePointer)
+        private string SubKey(DateOnly datePointer)
         {
             return $"{datePointer.Year}-{datePointer.Month}";
         }

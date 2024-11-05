@@ -90,6 +90,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddHostedService<UsageBackgroundService>();
             services.AddTransient<UsageCalculatorLogic>();
             services.AddTransient<UsageInvoicingLogic>();
+            services.AddTransient<UsageMolliePaymentLogic>();
 
             return services;
         }

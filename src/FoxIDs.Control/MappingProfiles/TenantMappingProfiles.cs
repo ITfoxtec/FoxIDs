@@ -42,6 +42,8 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Customer, Api.Customer>()
                 .ReverseMap();
+            CreateMap<Address, Api.Address>()
+                .ReverseMap();
 
             CreateMap<UsageSellerSettings, Seller>();
 
@@ -53,7 +55,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items != null && s.Items.Any() ? s.Items.OrderBy(i => i.Day) : null))
                 .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.PeriodYear, s.PeriodMonth).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.PeriodBeginDate.Year, s.PeriodBeginDate.Month).GetAwaiter().GetResult()));
             CreateMap<UsedItem, Api.UsedItem>()
                 .ReverseMap();
             CreateMap<Invoice, Api.Invoice>();

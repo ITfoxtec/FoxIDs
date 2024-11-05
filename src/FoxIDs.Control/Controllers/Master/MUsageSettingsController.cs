@@ -66,6 +66,10 @@ namespace FoxIDs.Controllers
 
                 var mUsageSettings = await LoadAndCreateUsageSettings();
                 mUsageSettings.CurrencyExchanges = mapper.Map<List<UsageCurrencyExchange>>(usageSettings.CurrencyExchanges);
+                foreach (var currencyExchange in mUsageSettings.CurrencyExchanges)
+                {
+                    currencyExchange.Currency = currencyExchange.Currency.ToUpper();
+                }
                 mUsageSettings.InvoiceNumber = usageSettings.InvoiceNumber;
                 mUsageSettings.InvoiceNumberPrefix = usageSettings.InvoiceNumberPrefix;
                 await masterDataRepository.UpdateAsync(mUsageSettings);

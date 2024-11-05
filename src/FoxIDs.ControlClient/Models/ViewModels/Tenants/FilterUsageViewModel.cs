@@ -7,10 +7,12 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         [Required]
         [Min(Constants.Models.Used.PeriodYearMin)]
+        [Display(Name = "Year")]
         public int PeriodYear { get; set; }
 
         [Required]
         [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
+        [Display(Name = "Month")]
         public int PeriodMonth { get; set; }
 
         /// <summary>

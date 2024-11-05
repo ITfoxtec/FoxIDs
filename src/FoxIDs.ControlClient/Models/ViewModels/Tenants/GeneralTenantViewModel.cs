@@ -15,6 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
             CustomDomainVerified = tenant.CustomDomainVerified;
         }
 
+        public bool CreateMode { get; set; }
+
         public bool Edit { get; set; }
 
         public bool ShowAdvanced { get; set; }

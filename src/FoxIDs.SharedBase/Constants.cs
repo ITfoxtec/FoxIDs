@@ -206,13 +206,16 @@ namespace FoxIDs
                 public const string TimeGenerated = "TimeGenerated";
                 public const string OperationId = "OperationId";
                 public const string RequestId = "RequestId";
-                public const string RequestPath = "RequestPath";                
+                public const string RequestPath = "RequestPath";
+                public const string MachineName = "MachineName";
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
                 public const string UserAgent = "UserAgent";
                 public const string AppRoleInstance = "AppRoleInstance";
                 public const string UpPartyId = "UpPartyId";
                 public const string DownPartyId = "DownPartyId";
+                public const string UserId = "UserId";
+                public const string Email = "Email";
             }
 
             public static class IndexName

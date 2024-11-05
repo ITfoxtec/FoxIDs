@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.ExternalInvoices
 {
-    public class InvoiceRequest
+    public class InvoiceRequest : IValidatableObject
     {
         public bool SendInvoice { get; set; }
 
@@ -18,15 +18,15 @@ namespace FoxIDs.Models.ExternalInvoices
         public string InvoiceNumber { get; set; }
 
         [Required]
-        public DateTime IssueDate { get; set; }
+        public DateOnly IssueDate { get; set; }
 
-        public DateTime? DueDate { get; set; }
-
-        [Required]
-        public DateTime PeriodBeginDate { get; set; }
+        public DateOnly? DueDate { get; set; }
 
         [Required]
-        public DateTime PeriodEndDate { get; set; }
+        public DateOnly PeriodBeginDate { get; set; }
+
+        [Required]
+        public DateOnly PeriodEndDate { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Currency.CurrencyLength)]
@@ -61,6 +61,11 @@ namespace FoxIDs.Models.ExternalInvoices
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (PeriodBeginDate.Year != PeriodEndDate.Year || PeriodBeginDate.Month != PeriodEndDate.Month)
+            {
+                results.Add(new ValidationResult($"The {nameof(PeriodBeginDate)} and {nameof(PeriodEndDate)} need to be in the same year and month.", [nameof(PeriodBeginDate), nameof(PeriodEndDate)]));
+            }
+
             if (TimeItems?.Count() > 0)
             {
                 if (TimeItems.Where(i => i.Type != UsedItemTypes.Hours).Any())

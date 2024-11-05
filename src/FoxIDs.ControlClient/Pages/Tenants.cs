@@ -50,14 +50,13 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            usageSettings = await TenantService.GetUsageSettingsAsync();
             await DefaultLoadAsync();
             NotificationLogic.OnTenantUpdatedAsync += OnTenantUpdatedAsync;
         }
 
         private async Task OnTenantUpdatedAsync()
         {
-            await DefaultLoadAsync();
+            await DefaultTenantLoadAsync();
             StateHasChanged();
         }
 
@@ -81,6 +80,23 @@ namespace FoxIDs.Client.Pages
         }
 
         private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                await DefaultTenantLoadAsync();
+                usageSettings = await TenantService.GetUsageSettingsAsync();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                searchTenantForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task DefaultTenantLoadAsync()
         {
             try
             {

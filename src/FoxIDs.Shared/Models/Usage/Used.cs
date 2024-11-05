@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Used : DataDocument
+    public class Used : DataDocument, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -45,25 +45,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "tenant_name")]
         public string TenantName { get; set; }
 
-        #region period
-        [Required]
-        [Min(Constants.Models.Used.PeriodYearMin)]
-        [JsonProperty(PropertyName = "period_year")]
-        public int PeriodYear { get; set; }
-
-        [Required]
-        [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
-        [JsonProperty(PropertyName = "period_month")]
-        public int PeriodMonth { get; set; }
-
         [Required]
         [JsonProperty(PropertyName = "period_begin_date")]
-        public DateTime PeriodBeginDate { get; set; }
+        public DateOnly PeriodBeginDate { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "period_end_date")]
-        public DateTime PeriodEndDate { get; set; } 
-        #endregion
+        public DateOnly PeriodEndDate { get; set; } 
 
         [JsonProperty(PropertyName = "is_usage_calculated")]
         public bool IsUsageCalculated { get; set; }
@@ -76,6 +64,9 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "is_done")]
         public bool IsDone { get; set; }
+
+        [JsonProperty(PropertyName = "has_error")]
+        public bool HasError { get; set; }
 
         [JsonProperty(PropertyName = "payment_id")]
         public string PaymentId { get; set; }
@@ -115,6 +106,16 @@ namespace FoxIDs.Models
             [Required]
             [Range(Constants.Models.Used.PeriodMonthMin, Constants.Models.Used.PeriodMonthMax)]
             public int PeriodMonth { get; set; }
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (PeriodBeginDate.Year != PeriodEndDate.Year || PeriodBeginDate.Month != PeriodEndDate.Month)
+            {
+                results.Add(new ValidationResult($"The {nameof(PeriodBeginDate)} and {nameof(PeriodEndDate)} need to be in the same year and month.", [nameof(PeriodBeginDate), nameof(PeriodEndDate)]));
+            }
+            return results;
         }
     }
 }

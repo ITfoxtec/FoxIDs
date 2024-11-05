@@ -89,9 +89,9 @@ namespace FoxIDs.Client.Pages.Usage
             usedList.Add(used);
         }
 
-        public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady;
+        public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady && (!used.Invoices?.LastOrDefault()?.IsCardPayment != true || used.PaymentStatus == UsagePaymentStatus.Paid);
 
-        public bool ShowDoCreditNoteButton(GeneralUsedViewModel used) => used.IsInvoiceReady;
+        public bool ShowDoCreditNoteButton(GeneralUsedViewModel used) => used.IsInvoiceReady && used.PaymentStatus == UsagePaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed();
 
         public bool ShowSendCreditNoteAgainButton(GeneralUsedViewModel used) => !used.IsInvoiceReady && used.Invoices?.LastOrDefault()?.IsCreditNote == true;
 
@@ -106,7 +106,7 @@ namespace FoxIDs.Client.Pages.Usage
 
             try
             {
-                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth });
+                var used = await TenantService.GetUsageAsync(new UsageRequest { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate });
                 await generalUsed.Form.InitAsync(used.Map<UsedViewModel>());
             }
             catch (TokenUnavailableException)
@@ -123,10 +123,10 @@ namespace FoxIDs.Client.Pages.Usage
         {
             var invoice = generalUsed.Invoices?.LastOrDefault();
             var invoiceSendState = invoice?.SendStatus;
-            var statusText = generalUsed.IsDone ? ", DONE" : $"{(generalUsed.IsUsageCalculated ? ", usage calculated" : string.Empty)}{(generalUsed.IsInvoiceReady ? ", invoice is ready" : string.Empty)}{(invoiceSendState > 0 ? $", invoice {invoiceSendState}" : string.Empty)}{(generalUsed.PaymentStatus > 0 ? $", payment {generalUsed.PaymentStatus}" : string.Empty)}";
-            var price = invoice?.TotalPrice;
+            var statusText = generalUsed.IsDone ? ", DONE" : $"{(generalUsed.IsUsageCalculated ? ", usage calculated" : string.Empty)}{(generalUsed.IsInvoiceReady ? ", invoice is ready" : string.Empty)}{(invoiceSendState.HasValue ? $", invoice {invoiceSendState}" : string.Empty)}{(generalUsed.PaymentStatus != UsagePaymentStatus.None ? $", payment {generalUsed.PaymentStatus}" : string.Empty)}";
+            var price = invoice?.Price;
             var priceText = $"{(price > 0 ? $", price: {invoice?.Currency}{price}" : string.Empty)}";
-            return $"Tenant {generalUsed.TenantName}{statusText}{priceText}";
+            return $"Tenant {generalUsed.TenantName}{statusText}{priceText}{(generalUsed.HasError ? ", ERROR" : string.Empty)}";
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
@@ -159,6 +159,8 @@ namespace FoxIDs.Client.Pages.Usage
         {
             if (generalUsed.CreateMode)
             {
+                used.PeriodBeginDate = new DateOnly(searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, 1);
+                used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
             }
         }
 
@@ -220,7 +222,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoSendInvoiceAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendInvoiceAgain = true });
                 generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
                 generalUsed.Invoices = usedResult.Invoices;
             }
@@ -240,7 +242,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoCreditNote = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoCreditNote = true });
                 generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
                 generalUsed.Invoices = usedResult.Invoices;
             }
@@ -260,7 +262,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoSendCreditNoteAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoSendCreditNoteAgain = true });
                 generalUsed.IsInvoiceReady = usedResult.IsInvoiceReady;
                 generalUsed.Invoices = usedResult.Invoices;
             }
@@ -280,7 +282,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodYear = generalUsed.PeriodYear, PeriodMonth = generalUsed.PeriodMonth, DoPaymentAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoPaymentAgain = true });
                 generalUsed.PaymentStatus = usedResult.PaymentStatus;
             }
             catch (TokenUnavailableException)

@@ -263,6 +263,11 @@ namespace FoxIDs.Client.Shared
             }
             else
             {
+                if(TrackSelectedLogic.Track.Name != Constants.Routes.MasterTrackName)
+                {
+                    var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName);
+                    await TrackSelectedLogic.TrackSelectedAsync(masterTrack);
+                }
                 NavigationManager.NavigateTo($"{await RouteBindingLogic.GetTenantNameAsync()}/tenant");
             }
         }

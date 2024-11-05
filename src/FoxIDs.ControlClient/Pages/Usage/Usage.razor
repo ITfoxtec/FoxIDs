@@ -52,19 +52,33 @@
                 {
                     <PageEditForm @ref="used.Form" TModel="UsedViewModel" OnAfterInit="@(m => UsedViewModelAfterInit(used, m))" OnValidSubmit="@(async (editContext) => await OnEditUsedValidSubmitAsync(used, editContext))">
                         <div class="modal-header">
-                            User
+                            Used
                         </div>
                         <div class="modal-body">
-                            @if (used.CreateMode)
-                            {
-                                <div class="row">
-                                    <div class="col-6">
-                                        <FInputNumber @bind-Value="used.Form.Model.PeriodYear" For="@(() => used.Form.Model.PeriodYear)" />
-                                    </div>
-                                    <div class="col-6">
-                                        <FInputNumber @bind-Value="used.Form.Model.PeriodMonth" For="@(() => used.Form.Model.PeriodMonth)" />
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                @used.Form.Model.PeriodBeginDate.ToString()
+                                            </div>
+                                        </div>
+                                        <label class="label-control">Period from</label>
                                     </div>
                                 </div>
+                                <div class="col-6">
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                @used.Form.Model.PeriodEndDate.ToString()
+                                            </div>
+                                        </div>
+                                        <label class="label-control">Period to</label>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (used.CreateMode)
+                            {
                                 <FInputText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" Focus="true" />
                             }
                             else
@@ -72,7 +86,7 @@
                                 <FFieldText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" />
                             }
 
-                            <div class="form-group active-group active">
+                            <div class="active-group active pt-0">
                                 <div class="info-text mr-auto">
                                     Add items and register time spend.
                                 </div>
@@ -128,13 +142,13 @@
                             {
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
-                                    <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
+                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
                                         Send invoice again
                                     </button>
                                 }
                                 else
                                 {
-                                    <button type="button" class="btn btn-outline-dark" disabled="disabled">
+                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
                                         Send invoice again
                                     </button>
                                 }
@@ -185,7 +199,7 @@
                                 }
                             }
                             <button type="submit" class="btn btn-primary">@(used.CreateMode ? "Create" : "Update")</button>
-                            <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(@used.CreateMode ? "Cancel" : "Close")</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(used.CreateMode ? "Cancel" : "Close")</button>
                         </div>
                     </PageEditForm>
                 }
@@ -198,13 +212,13 @@
                     {
                         @if (!used.InvoicingActionButtonDisabled)
                         {
-                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
                                 Send invoice again
                             </button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
                                 Send invoice again
                             </button>
                         }

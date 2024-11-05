@@ -330,12 +330,12 @@
                     {
                         <div class="form-group active-group">
                             <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnContextComparisonViewModel" For="@(() => samlUpParty.Form.Model.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
-                            <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
-                            <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
-                            <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
-                            <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
-                            <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
-                        </FInputSelect>
+                                <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
+                                <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
+                                <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
+                                <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
+                                <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
+                            </FInputSelect>
                         </div>
                         <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
                         <FInputTextArea @bind-Value="samlUpParty.Form.Model.AuthnRequestExtensionsXml" For="@(() => samlUpParty.Form.Model.AuthnRequestExtensionsXml)" />

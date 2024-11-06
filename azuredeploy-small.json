@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "appServicePlanSize": {
-      "defaultValue": "P1V3",
+      "defaultValue": "P0V3",
       "allowedValues": [
         "F1",
         "B1",
@@ -71,8 +71,7 @@
     "foxidsDefaultName": "[toLower(concat(variables('prefixName'), variables('suffix')))]",
     "foxidsControlSiteName": "[toLower(concat(variables('prefixName'), 'control', variables('suffix')))]",
     "foxidsSiteEndpoint": "[concat('https://', variables('foxidsDefaultName'), '.azurewebsites.net')]",
-    "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]",
-    "privateEndpointCache": "[concat(variables('foxidsDefaultName'), '-cache')]"
+    "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]"
   },
   "resources": [
     {
@@ -152,28 +151,6 @@
         "RetentionInDays": 90,
         "WorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]",
         "IngestionMode": "LogAnalytics"
-      }
-    },
-    {
-      "type": "Microsoft.Cache/Redis",
-      "apiVersion": "2022-05-01",
-      "name": "[variables('foxidsDefaultName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "redisVersion": "6.0",
-        "sku": {
-          "name": "Standard",
-          "family": "C",
-          "capacity": 0
-        },
-        "enableNonSslPort": false,
-        "minimumTlsVersion": "1.2",
-        "publicNetworkAccess": "Disabled",
-        "redisConfiguration": {
-          "maxmemory-reserved": "30",
-          "maxfragmentationmemory-reserved": "30",
-          "maxmemory-delta": "30"
-        }
       }
     },
     {
@@ -347,8 +324,8 @@
         "Settings__Options__Log": "ApplicationInsights",
         "Settings__Options__DataStorage": "CosmosDb",
         "Settings__Options__KeyStorage": "KeyVault",
-        "Settings__Options__Cache": "Redis",
-        "Settings__Options__DataCache": "Default",
+        "Settings__Options__Cache": "Memory",
+        "Settings__Options__DataCache": "None",
         "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
@@ -378,24 +355,12 @@
         "Settings__Options__Log": "ApplicationInsights",
         "Settings__Options__DataStorage": "CosmosDb",
         "Settings__Options__KeyStorage": "KeyVault",
-        "Settings__Options__Cache": "Redis",
-        "Settings__Options__DataCache": "Default",
+        "Settings__Options__Cache": "Memory",
+        "Settings__Options__DataCache": "None",
         "Settings__MasterSeedEnabled": true,
         "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
         "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
-      }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2016-10-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/Settings--RedisCache--ConnectionString')]",
-      "dependsOn": [
-        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
-        "[concat('Microsoft.Cache/Redis/', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "value": "[concat(variables('foxidsDefaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName')), '2015-08-01').primaryKey)]"
       }
     },
     {
@@ -470,15 +435,6 @@
               "privateLinkServiceNetworkPolicies": "Enabled"
             },
             "type": "Microsoft.Network/virtualNetworks/subnets"
-          },
-          {
-            "name": "subnet-cache",
-            "properties": {
-              "addressPrefix": "10.1.1.0/24",
-              "privateEndpointNetworkPolicies": "Disabled",
-              "privateLinkServiceNetworkPolicies": "Enabled"
-            },
-            "type": "Microsoft.Network/virtualNetworks/subnets"
           }
         ]
       }
@@ -517,20 +473,6 @@
           }
         ],
         "privateEndpointNetworkPolicies": "Enabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2022-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/subnet-cache')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
-      ],
-      "properties": {
-        "addressPrefix": "10.1.1.0/24",
-        "privateEndpointNetworkPolicies": "Disabled",
         "privateLinkServiceNetworkPolicies": "Enabled"
       }
     },
@@ -670,85 +612,6 @@
       "location": "global",
       "dependsOn": [
         "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]",
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "registrationEnabled": false,
-        "virtualNetwork": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateEndpoints",
-      "apiVersion": "2022-01-01",
-      "name": "[variables('privateEndpointCache')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-cache')]"
-      ],
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "privateLinkServiceConnections": [
-          {
-            "name": "[variables('privateEndpointCache')]",
-            "properties": {
-              "privateLinkServiceId": "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]",
-              "groupIds": [
-                "redisCache"
-              ],
-              "privateLinkServiceConnectionState": {
-                "status": "Approved",
-                "description": "Auto-Approved",
-                "actionsRequired": "None"
-              }
-            }
-          }
-        ],
-        "customNetworkInterfaceName": "[concat(variables('privateEndpointCache'), '-nic')]",
-        "subnet": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-cache')]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-      "apiVersion": "2022-01-01",
-      "name": "[concat(variables('privateEndpointCache'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointCache'))]",
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
-      ],
-      "properties": {
-        "privateDnsZoneConfigs": [
-          {
-            "name": "privatelink.redis.cache.windows.net",
-            "properties": {
-              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones",
-      "apiVersion": "2018-09-01",
-      "name": "privatelink.redis.cache.windows.net",
-      "location": "global",
-      "properties": {
-        "maxNumberOfRecordSets": 25000,
-        "maxNumberOfVirtualNetworkLinks": 1000,
-        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.redis.cache.windows.net', '/link_to_', variables('foxidsDefaultName'))]",
-      "location": "global",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]",
         "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
       ],
       "properties": {

@@ -270,6 +270,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{93A3AF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{376A9D7A-D64B-4526-8EFC-D21A3B77612B}"
 	ProjectSection(SolutionItems) = preProject
+		azuredeploy-small.json = azuredeploy-small.json
 		azuredeploy.json = azuredeploy.json
 	EndProjectSection
 EndProject

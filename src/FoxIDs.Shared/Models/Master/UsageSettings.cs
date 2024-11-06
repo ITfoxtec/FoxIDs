@@ -31,6 +31,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "currency_exchanges")]
         public List<UsageCurrencyExchange> CurrencyExchanges { get; set; }
 
+        [Min(Constants.Models.UsageSettings.HourPriceMin)]
+        [JsonProperty(PropertyName = "hour_price")]
+        public decimal HourPrice { get; set; }
+
         /// <summary>
         /// The current / last used invoice number.
         /// </summary>

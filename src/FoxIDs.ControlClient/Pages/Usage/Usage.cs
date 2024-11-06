@@ -7,6 +7,7 @@ using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -23,6 +24,7 @@ namespace FoxIDs.Client.Pages.Usage
     {
         private string usageTenantsHref;
         private string usageSettingsHref;
+        private FoxIDs.Models.Api.UsageSettings usageSettings;
         private PageEditForm<FilterUsageViewModel> searchUsageForm;
         private List<GeneralUsedViewModel> usedList = new List<GeneralUsedViewModel>();
 
@@ -58,6 +60,7 @@ namespace FoxIDs.Client.Pages.Usage
             {
                 var lastMonth = DateTimeOffset.Now.AddMonths(-1);
                 SetGeneralUsageList(await TenantService.FilterUsageAsync(null, lastMonth.Year, lastMonth.Month));
+                usageSettings = await TenantService.GetUsageSettingsAsync();
             }
             catch (TokenUnavailableException)
             {
@@ -89,7 +92,7 @@ namespace FoxIDs.Client.Pages.Usage
             usedList.Add(used);
         }
 
-        public bool ShowDoInvoicingAgainButton(GeneralUsedViewModel used) => used.IsUsageCalculated && !used.IsDone;
+        public bool ShowDoInvoicingAgainButton(GeneralUsedViewModel used) => (used.IsUsageCalculated || used.HasItems) && !used.IsDone;
 
         public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady && (!used.Invoices?.LastOrDefault()?.IsCardPayment != true || used.PaymentStatus == UsagePaymentStatus.Paid);
 
@@ -157,12 +160,41 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
-        private void UsedViewModelAfterInit(GeneralUsedViewModel generalUsed, UsedViewModel used)
+        private async Task UsedViewModelAfterInitAsync(GeneralUsedViewModel generalUsed, UsedViewModel used)
         {
             if (generalUsed.CreateMode)
             {
-                used.PeriodBeginDate = new DateOnly(searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, 1);
-                used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
+                generalUsed.PeriodBeginDate = used.PeriodBeginDate = new DateOnly(searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, 1);
+                generalUsed.PeriodEndDate = used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
+            }
+
+            var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
+            if(tenant.HourPrice > 0)
+            {
+                generalUsed.HourPrice = tenant.HourPrice.Value;
+            }
+            else
+            {
+                var rate = GetExchangesRate(tenant.Currency, usageSettings.CurrencyExchanges);
+                generalUsed.HourPrice = decimal.Round(usageSettings.HourPrice * rate, 2);
+            }
+        }
+
+        private decimal GetExchangesRate(string currency, List<UsageCurrencyExchange> currencyExchanges)
+        {
+            if (currency.IsNullOrEmpty() || currency == Constants.Models.Currency.Eur)
+            {
+                return 1;
+            }
+            else
+            {
+                var currencyExchange = currencyExchanges?.Where(e => e.Currency == currency).FirstOrDefault();
+                if (currencyExchange == null)
+                {
+                    throw new Exception($"Missing currency exchange for '{currency}'.");
+                }
+
+                return currencyExchange.Rate;
             }
         }
 
@@ -178,9 +210,14 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
-        private void AddItem(MouseEventArgs e, List<UsedItem> items, UsedItemTypes type)
+        private void AddItem(MouseEventArgs e, GeneralUsedViewModel generalUsed, List<UsedItem> items, UsedItemTypes type)
         {
-            items.Add(new UsedItem { Type = type });
+            var item = new UsedItem { Type = type };
+            if (type == UsedItemTypes.Hours)
+            {
+                item.UnitPrice = generalUsed.HourPrice;
+            }
+            items.Add(item);
         }
 
         private void RemoveItem(MouseEventArgs e, List<UsedItem> items, UsedItem item)
@@ -216,6 +253,24 @@ namespace FoxIDs.Client.Pages.Usage
                 {
                     throw;
                 }
+            }
+        }
+
+        private async Task DeleteUsedAsync(GeneralUsedViewModel generalUsed)
+        {
+            try
+            {
+                generalUsed.DeleteAcknowledge = false;
+                await TenantService.DeleteUsageAsync(generalUsed.Name);
+                usedList.Remove(generalUsed);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                generalUsed.Form.SetError(ex.Message);
             }
         }
 
@@ -320,6 +375,7 @@ namespace FoxIDs.Client.Pages.Usage
             generalUsed.IsUsageCalculated = usedResult.IsUsageCalculated;
             generalUsed.IsDone = usedResult.IsDone;
             generalUsed.Invoices = usedResult.Invoices;
+            generalUsed.HasItems = usedResult.HasItems;
             generalUsed.PaymentStatus = usedResult.PaymentStatus;
         }
     }

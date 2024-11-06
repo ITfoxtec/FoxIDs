@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
@@ -30,5 +31,8 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Include VAT")]
         public bool IncludeVat { get; set; }
+
+        [Min(Constants.Models.UsageSettings.HourPriceMin)]
+        public decimal? HourPrice { get; set; }
     }
 }

@@ -49,8 +49,10 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Payment, Api.Payment>();
 
-            CreateMap<Used, Api.UsedBase>();
-            CreateMap<Used, Api.Used>();
+            CreateMap<Used, Api.UsedBase>()
+                .ForMember(d => d.HasItems, opt => opt.MapFrom(s => s.Items != null && s.Items.Count() > 0));
+            CreateMap<Used, Api.Used>()
+                .ForMember(d => d.HasItems, opt => opt.MapFrom(s => s.Items != null && s.Items.Count() > 0));
             CreateMap<Used, Api.UpdateUsageRequest>()
                 .ReverseMap()
                 .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items != null && s.Items.Any() ? s.Items.OrderBy(i => i.Day) : null))

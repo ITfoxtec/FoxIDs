@@ -11,6 +11,7 @@ using FoxIDs.Infrastructure.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -45,8 +46,13 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(usageRequest)) return BadRequest(ModelState);
                 usageRequest.TenantName = usageRequest.TenantName?.ToLower();
 
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(usageRequest.TenantName));
+
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.PeriodBeginDate.Year, usageRequest.PeriodBeginDate.Month));
-                return Ok(mapper.Map<Api.Used>(mUsed));
+
+                var aUsed = mapper.Map<Api.Used>(mUsed);
+                aUsed.Currency = GetCulture(mTenant);
+                return Ok(aUsed);
             }
             catch (FoxIDsDataException ex)
             {
@@ -71,17 +77,21 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(usageRequest)) return BadRequest(ModelState);
-                usageRequest.TenantName = usageRequest.TenantName.ToLower();      
+                usageRequest.TenantName = usageRequest.TenantName.ToLower();
+
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(usageRequest.TenantName));
 
                 var mUsed = mapper.Map<Used>(usageRequest);
                 if(!usageRequest.PeriodEndDate.HasValue)
                 {
                     mUsed.PeriodEndDate = mUsed.PeriodBeginDate.AddMonths(1).AddDays(-1);
                 }
-                mUsed.Items = mUsed.Items?.OrderBy(i => i.Day).ToList();
+                mUsed.Items = mUsed.Items?.OrderBy(i => i.Type).ThenBy(i => i.Day).ToList();
                 await tenantDataRepository.CreateAsync(mUsed);
 
-                return Created(mapper.Map<Api.Used>(mUsed));
+                var aUsed = mapper.Map<Api.Used>(mUsed);
+                aUsed.Currency = GetCulture(mTenant);
+                return Created(aUsed);
             }
             catch (FoxIDsDataException ex)
             {
@@ -108,10 +118,12 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(usageRequest)) return BadRequest(ModelState);
                 usageRequest.TenantName = usageRequest.TenantName.ToLower();
 
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(usageRequest.TenantName));
+
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.PeriodBeginDate.Year, usageRequest.PeriodBeginDate.Month));
                 if (usageRequest.Items?.Count() > 0) 
                 {
-                    mUsed.Items = mapper.Map<List<UsedItem>>(usageRequest.Items).OrderBy(i => i.Day).ToList();
+                    mUsed.Items = mapper.Map<List<UsedItem>>(usageRequest.Items).OrderBy(i => i.Type).ThenBy(i => i.Day).ToList();
                 }
                 else
                 {
@@ -119,7 +131,9 @@ namespace FoxIDs.Controllers
                 }
                 await tenantDataRepository.UpdateAsync(mUsed);
 
-                return Ok(mapper.Map<Api.Used>(mUsed));
+                var aUsed = mapper.Map<Api.Used>(mUsed);
+                aUsed.Currency = GetCulture(mTenant);
+                return Ok(aUsed);
             }
             catch (FoxIDsDataException ex)
             {
@@ -127,6 +141,51 @@ namespace FoxIDs.Controllers
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Used).Name}' by tenant name '{usageRequest.TenantName}', year '{usageRequest.PeriodBeginDate.Year}' and month '{usageRequest.PeriodBeginDate.Month}'.");
                     return NotFound(typeof(Api.Used).Name, $"{usageRequest.TenantName}/{usageRequest.PeriodBeginDate.Year}/{usageRequest.PeriodBeginDate.Month}");
+                }
+                throw;
+            }
+        }
+
+        private string GetCulture(Tenant mTenant)
+        {
+            return mTenant.Currency.IsNullOrEmpty() ? Constants.Models.Currency.Eur : mTenant.Currency;
+        }
+
+        /// <summary>
+        /// Delete usage.
+        /// </summary>
+        /// <param name="name">Usage name.</param>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteUsage(string name)
+        {
+            try
+            {
+                if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
+
+                var nameSplit = name.Split('/');
+                var year = 0;
+                var month = 0;
+                if (nameSplit.Length != 3 || !int.TryParse(nameSplit[1], out year) || !int.TryParse(nameSplit[2], out month))
+                {
+                    throw new ArgumentException($"Invalid name '{name}' format.", nameof(name));
+                }
+                var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(nameSplit[0], year, month));
+                if (mUsed.IsUsageCalculated || mUsed.Invoices?.Count() > 0)
+                {
+                    throw new Exception($"Used item '{name}' cannot be deleted");
+                }
+
+                await tenantDataRepository.DeleteAsync<Used>(await Used.IdFormatAsync(nameSplit[0], year, month));
+                return NoContent();
+            }
+            catch (FoxIDsDataException ex)
+            {
+                if (ex.StatusCode == DataStatusCode.NotFound)
+                {
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Used).Name}' by name '{name}'.");
+                    return NotFound(typeof(Api.Used).Name, name);
                 }
                 throw;
             }

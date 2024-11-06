@@ -23,5 +23,9 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.UsageSettings.InvoiceNumberPrefixRegExPattern)]
         [Display(Name = "Invoice number prefix")]
         public string InvoiceNumberPrefix { get; set; }
+
+        [Min(Constants.Models.UsageSettings.HourPriceMin)]
+        [Display(Name = "Hour price")]
+        public decimal HourPrice { get; set; }
     }
 }

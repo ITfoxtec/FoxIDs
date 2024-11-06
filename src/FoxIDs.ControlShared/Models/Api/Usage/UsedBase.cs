@@ -29,6 +29,10 @@ namespace FoxIDs.Models.Api
 
         public bool IsDone { get; set; }
 
+        public bool HasItems { get; set; }
+
+        public string Currency { get; set; }
+
         [ListLength(Constants.Models.Used.InvoicesMin, Constants.Models.Used.InvoicesMax)]
         public List<Invoice> Invoices { get; set; }
 

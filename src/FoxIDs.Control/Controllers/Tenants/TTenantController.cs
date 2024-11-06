@@ -213,6 +213,7 @@ namespace FoxIDs.Controllers
                 mTenant.EnableUsage = tenant.EnableUsage;
                 mTenant.Currency = tenant.Currency;
                 mTenant.IncludeVat = tenant.IncludeVat;
+                mTenant.HourPrice = tenant.HourPrice;
                 mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 

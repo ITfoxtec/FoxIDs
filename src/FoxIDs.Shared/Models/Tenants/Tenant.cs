@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -62,6 +63,10 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "include_vat")]
         public bool IncludeVat { get; set; }
+
+        [Min(Constants.Models.UsageSettings.HourPriceMin)]
+        [JsonProperty(PropertyName = "hour_price")]
+        public decimal? HourPrice { get; set; }
 
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
         [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]

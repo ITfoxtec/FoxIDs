@@ -17,7 +17,7 @@ namespace FoxIDs.Models
 
         [Min(Constants.Models.Used.QuantityMin)]
         [JsonProperty(PropertyName = "quantity")]
-        public decimal? Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
         [JsonProperty(PropertyName = "unit_price")]
@@ -29,27 +29,11 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (UnitPrice == 0)
-            {
-                results.Add(new ValidationResult($"The {nameof(UnitPrice)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(UnitPrice), nameof(Type)]));
-            }
-
-            if (Type == UsedItemTypes.Text)
-            {
-                if (Quantity > 0)
-                {
-                    results.Add(new ValidationResult($"The {nameof(Quantity)} field can not be used if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
-                }
-            }
-            else if (Type == UsedItemTypes.Hours)
+            if (Type == UsedItemTypes.Hours)
             {
                 if (Day == 0)
                 {
                     results.Add(new ValidationResult($"The {nameof(Day)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Day), nameof(Type)]));
-                }
-                if (Quantity == 0)
-                {
-                    results.Add(new ValidationResult($"The {nameof(Quantity)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
                 }
             }
             return results;

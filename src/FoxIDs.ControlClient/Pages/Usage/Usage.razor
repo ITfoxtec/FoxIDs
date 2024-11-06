@@ -50,7 +50,7 @@
                 }
                 @if (used.Edit)
                 {
-                    <PageEditForm @ref="used.Form" TModel="UsedViewModel" OnAfterInit="@(m => UsedViewModelAfterInit(used, m))" OnValidSubmit="@(async (editContext) => await OnEditUsedValidSubmitAsync(used, editContext))">
+                    <PageEditForm @ref="used.Form" TModel="UsedViewModel" OnAfterInit="@(async m => await UsedViewModelAfterInitAsync(used, m))" OnValidSubmit="@(async (editContext) => await OnEditUsedValidSubmitAsync(used, editContext))">
                         <div class="modal-header">
                             Used
                         </div>
@@ -86,6 +86,45 @@
                                 <FFieldText @bind-Value="used.Form.Model.TenantName" For="@(() => used.Form.Model.TenantName)" />
                             }
 
+                            <FFieldText @bind-Value="used.Form.Model.Currency" For="@(() => used.Form.Model.Currency)" />
+
+                            @if (used.Form.Model.Tracks > 0)
+                            {
+                                <div class="pt-2">
+                                    <div class="active-group active">
+                                        <div class="card">
+                                            <div class="card-body mt-2">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.Tracks" For="@(() => used.Form.Model.Tracks)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.Users" For="@(() => used.Form.Model.Users)" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.Logins" For="@(() => used.Form.Model.Logins)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.TokenRequests" For="@(() => used.Form.Model.TokenRequests)" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.ControlApiGets" For="@(() => used.Form.Model.ControlApiGets)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.ControlApiUpdates" For="@(() => used.Form.Model.ControlApiUpdates)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="label-control">Used</label>
+                                    </div>
+                                </div>
+                            }
+
                             <div class="active-group active pt-0">
                                 <div class="info-text mr-auto">
                                     Add items and register time spend.
@@ -106,18 +145,21 @@
                                                                 <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
                                                             </div>
                                                             <div class="col-2">
-                                                                <FInputNumberDN @bind-Value="item.Quantity" For="@(() => item.Quantity)" />
+                                                                <FInputNumberD @bind-Value="item.Quantity" For="@(() => item.Quantity)" LabelText="Hours" />
                                                             </div>
                                                             <div class="col-2">
-                                                                <FInputNumberD @bind-Value="item.UnitPrice" For="@(() => item.UnitPrice)" />
+                                                                <FInputNumberD @bind-Value="item.UnitPrice" For="@(() => item.UnitPrice)" LabelText="Hour price" />
                                                             </div>
                                                         </div>
                                                     }
                                                     else
                                                     {
                                                         <div class="row">
-                                                            <div class="col-10">
+                                                            <div class="col-8">
                                                                 <FInputText @bind-Value="item.Text" For="@(() => item.Text)" />
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <FInputNumberD @bind-Value="item.Quantity" For="@(() => item.Quantity)" />
                                                             </div>
                                                             <div class="col-2">
                                                                 <FInputNumberD @bind-Value="item.UnitPrice" For="@(() => item.UnitPrice)" />
@@ -133,10 +175,25 @@
                                     }
                                 </ul>
                                 <ValidationMessage For="@(() => used.Form.Model.Items)" />
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items, UsedItemTypes.Text))"><span class="oi oi-plus" aria-hidden="true"></span> Add Text item</button>
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used.Form.Model.Items, UsedItemTypes.Hours))"><span class="oi oi-plus" aria-hidden="true"></span> Add Hours</button>
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used, used.Form.Model.Items, UsedItemTypes.Text))"><span class="oi oi-plus" aria-hidden="true"></span> Add Text item</button>
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddItem(e, used, used.Form.Model.Items, UsedItemTypes.Hours))"><span class="oi oi-plus" aria-hidden="true"></span> Add Hours</button>
                             </div>
                         </div>
+                        @if (!used.CreateMode && !used.IsUsageCalculated && used.DeleteAcknowledge)
+                        {
+                            <div class="modal-footer">
+                                <div class="alert alert-danger" role="alert">
+                                    <div>
+                                        You are about to delete the used item "@used.Name". Are you sure?
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteUsedAsync(used))">Yes delete used item</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => used.DeleteAcknowledge = false)">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                         <div class="modal-footer">
                             @if (ShowDoInvoicingAgainButton(used))
                             {
@@ -212,6 +269,10 @@
                                         Do payment again
                                     </button>
                                 }
+                            }
+                            @if (!used.CreateMode && !used.IsUsageCalculated)
+                            {
+                                <button type="button" class="btn btn-link" @onclick="@(() => used.DeleteAcknowledge = true)">Delete</button>
                             }
                             <button type="submit" class="btn btn-primary">@(used.CreateMode ? "Create" : "Update")</button>
                             <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(used.CreateMode ? "Cancel" : "Close")</button>

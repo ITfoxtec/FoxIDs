@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models.Api;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
@@ -31,6 +32,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Include VAT")]
         public bool IncludeVat { get; set; }
+
+        [Min(Constants.Models.UsageSettings.HourPriceMin)]
+        [Display(Name = "Hour price")]
+        public decimal? HourPrice { get; set; }
 
         [ValidateComplexType]
         public Customer Customer { get; set; }

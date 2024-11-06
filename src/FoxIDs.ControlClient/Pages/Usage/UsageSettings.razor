@@ -15,11 +15,7 @@
 
 <div class="tab-content">
     <div class="card">
-        <div class="card-body">
-            <div class="info-text py-3">
-                FoxIDs default log warnings, errors, critical errors and events to the log store. The trace level and metrics are configurable.
-            </div>
-
+        <div class="card-body mt-2">
             @if (!generalUsageSettings.Error.IsNullOrWhiteSpace())
             {
                 <div class="alert alert-danger" role="alert">
@@ -31,6 +27,7 @@
                 @if (generalUsageSettings.Form?.Model != null)
                 {
                     <div class="">
+                        <FInputNumberD @bind-Value="generalUsageSettings.Form.Model.HourPrice" For="@(() => generalUsageSettings.Form.Model.HourPrice)" />
                         <FInputNumber @bind-Value="generalUsageSettings.Form.Model.InvoiceNumber" For="@(() => generalUsageSettings.Form.Model.InvoiceNumber)" />
                         <FInputText @bind-Value="generalUsageSettings.Form.Model.InvoiceNumberPrefix" For="@(() => generalUsageSettings.Form.Model.InvoiceNumberPrefix)" />
 

@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
             IsInvoiceReady = used.IsInvoiceReady;
             PaymentStatus = used.PaymentStatus;   
             IsDone = used.IsDone;
+            HasItems = used.HasItems;
             Invoices = used.Invoices;
         }
 
@@ -26,9 +27,13 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool CreateMode { get; set; }
 
+        public bool DeleteAcknowledge { get; set; }
+
         public bool InvoicingActionButtonDisabled { get; set; }
 
         public string Error { get; set; }
+
+        public decimal HourPrice { get; set; }
 
         public PageEditForm<UsedViewModel> Form { get; set; }
     }

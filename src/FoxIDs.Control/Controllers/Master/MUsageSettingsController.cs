@@ -70,6 +70,7 @@ namespace FoxIDs.Controllers
                 {
                     currencyExchange.Currency = currencyExchange.Currency.ToUpper();
                 }
+                mUsageSettings.HourPrice = usageSettings.HourPrice;
                 mUsageSettings.InvoiceNumber = usageSettings.InvoiceNumber;
                 mUsageSettings.InvoiceNumberPrefix = usageSettings.InvoiceNumberPrefix;
                 await masterDataRepository.UpdateAsync(mUsageSettings);

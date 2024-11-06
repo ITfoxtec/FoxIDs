@@ -39,6 +39,7 @@ namespace FoxIDs.Client.Services
         public async Task<Used> GetUsageAsync(UsageRequest usageRequest) => await GetAsync<UsageRequest, Used>(usageApiUri, usageRequest);
         public async Task<Used> CreateUsageAsync(UpdateUsageRequest usageRequest) => await PostResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
         public async Task<Used> UpdateUsageAsync(UpdateUsageRequest usageRequest) => await PutResponseAsync<UpdateUsageRequest, Used>(usageApiUri, usageRequest);
+        public async Task DeleteUsageAsync(string name) => await DeleteAsync(usageApiUri, name);
 
         public async Task<Used> UsageInvoicingActionAsync(UsageInvoicingAction action) => await PostResponseAsync<UsageInvoicingAction, Used>(usageInvoicingActionApiUri, action);
     }

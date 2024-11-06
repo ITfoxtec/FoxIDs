@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
 
         private async Task DoInvoicingAgain(Used mUsed)
         {
-            if (mUsed.IsUsageCalculated && !mUsed.IsDone)
+            if ((mUsed.IsUsageCalculated || mUsed.Items?.Count() > 0) && !mUsed.IsDone)
             {
                 var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
                 using var cancellationTokenSource = new CancellationTokenSource();

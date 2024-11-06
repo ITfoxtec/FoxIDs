@@ -328,10 +328,9 @@ namespace FoxIDs
             {
                 public const int IdLength = 20;
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
-
                 public const int CurrencyExchangesMin = 0;
                 public const int CurrencyExchangesMax = 10;
-
+                public const int HourPriceMin = 0;
                 public const int InvoiceNumberMin = 0;
                 public const int InvoiceNumberPrefixLength = 20;
                 public const string InvoiceNumberPrefixRegExPattern = @"^[\w;:\/\-.,+ ]*$";

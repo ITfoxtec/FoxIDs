@@ -161,7 +161,6 @@ namespace FoxIDs.Client.Pages.Usage
                     var tenantResult = await TenantService.CreateTenantAsync(generalTenant.Form.Model.Map<CreateTenantRequest>(afterMap: afterMap => 
                     {
                         afterMap.ForUsage = true;
-                        afterMap.EnableUsage = true;
                         afterMap.AdministratorEmail = afterMap.Customer.InvoiceEmails.First();
                         afterMap.AdministratorPassword = Util.SecretGenerator.GenerateNewPassword();
                         afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
@@ -175,7 +174,6 @@ namespace FoxIDs.Client.Pages.Usage
                     var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
                     {
                         afterMap.ForUsage = true; 
-                        afterMap.EnableUsage = true;
                     }));
                     generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                     toastService.ShowSuccess("Usage tenant updated.");

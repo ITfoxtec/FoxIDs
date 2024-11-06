@@ -1,0 +1,15 @@
+﻿@inherits FInputBase<Decimal>
+
+<div class="active-group active @Class">
+    <div class="card bg-light">
+        <div class="card-body">
+            @CurrentValue
+        </div>
+    </div>
+    <Label For="@For" class="label-control" />
+</div>
+
+@code {
+    [Parameter]
+    public string Class { get; set; }
+}

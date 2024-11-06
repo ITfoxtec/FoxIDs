@@ -7,15 +7,19 @@ namespace FoxIDs.Models.Api
     public class UsedItem : IValidatableObject
     {
         [MaxLength(Constants.Models.Used.UsedItemTextLength)]
+        [Display(Name = "Text")]
         public string Text { get; set; }
 
         [Range(Constants.Models.Used.DayMin, Constants.Models.Used.DayMax)]
+        [Display(Name = "Day")]
         public int? Day { get; set; }
 
         [Min(Constants.Models.Used.QuantityMin)]
-        public decimal? Quantity { get; set; }
+        [Display(Name = "Quantity")]
+        public decimal Quantity { get; set; }
 
         [Min(Constants.Models.Used.PriceMin)]
+        [Display(Name = "Unit price")]
         public decimal UnitPrice { get; set; }
 
         public UsedItemTypes Type { get; set; }
@@ -23,27 +27,16 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (UnitPrice == 0)
+            if (Quantity == 0)
             {
-                results.Add(new ValidationResult($"The {nameof(UnitPrice)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(UnitPrice), nameof(Type)]));
+                results.Add(new ValidationResult($"The {nameof(Quantity)} field is required.", [nameof(Quantity), nameof(Type)]));
             }
 
-            if (Type == UsedItemTypes.Text)
-            {
-                if (Quantity > 0)
-                {
-                    results.Add(new ValidationResult($"The {nameof(Quantity)} field can not be used if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
-                }
-            }
-            else if (Type == UsedItemTypes.Hours)
+            if (Type == UsedItemTypes.Hours)
             {
                 if (Day == 0)
                 {
                     results.Add(new ValidationResult($"The {nameof(Day)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Day), nameof(Type)]));
-                }
-                if (Quantity == 0)
-                {
-                    results.Add(new ValidationResult($"The {nameof(Quantity)} field is required if the {nameof(Type)} field is '{Type}'.", [nameof(Quantity), nameof(Type)]));
                 }
             }
             return results;

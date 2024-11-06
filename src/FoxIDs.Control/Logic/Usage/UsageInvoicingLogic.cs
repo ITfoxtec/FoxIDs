@@ -240,15 +240,6 @@ namespace FoxIDs.Logic.Usage
 
         private async Task<Invoice> CreateInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken stoppingToken)
         {
-            var plan = await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName));
-
-            if (plan.CostPerMonth <= 0)
-            {
-                throw new Exception($"Tenant '{RouteBinding.TenantName}' plan '{tenant.PlanName}' do not have a cost per month.");
-            }
-
-            stoppingToken.ThrowIfCancellationRequested();
-
             var invoice = new Invoice
             {
                 IsCardPayment = isCardPayment,
@@ -260,6 +251,9 @@ namespace FoxIDs.Logic.Usage
             };
 
             var usageSettings = await GetUsageSettingsAsync();
+            var plan = tenant.PlanName.IsNullOrEmpty() ? null : await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName));
+
+            stoppingToken.ThrowIfCancellationRequested();
             CalculateInvoice(invoice, used, plan, tenant.IncludeVat, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
             if(invoice.Price <= 0)
             {
@@ -332,26 +326,54 @@ namespace FoxIDs.Logic.Usage
 
         private void CalculateInvoice(Invoice invoice, Used used, Plan plan, bool includeVat, decimal exchangeRate)
         {
-            var invoiceDays = used.PeriodEndDate.Day - used.PeriodBeginDate.Day;
-            if (invoiceDays > 10)
+            invoice.Lines = new List<InvoiceLine>();
+
+            if (plan != null)
             {
-                if(used.PeriodBeginDate.Day == 1)
+                var invoiceDays = used.PeriodEndDate.Day - used.PeriodBeginDate.Day;
+                if (invoiceDays > 10)
                 {
-                    invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth, exchangeRate, false);
+                    if (used.PeriodBeginDate.Day == 1)
+                    {
+                        invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth, exchangeRate, false);
+                    }
+                    else
+                    {
+                        invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth / DateTime.DaysInMonth(used.PeriodBeginDate.Year, used.PeriodBeginDate.Month) * invoiceDays, exchangeRate, false);
+                    }
                 }
-                else
-                {
-                    invoice.Price = CurrencyAndRoundPrice(plan.CostPerMonth / DateTime.DaysInMonth(used.PeriodBeginDate.Year, used.PeriodBeginDate.Month) * invoiceDays, exchangeRate, false);
-                }
+
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional environments ({plan.Tracks.Included} included)", $"Additional environments (more then {plan.Tracks.FirstLevelThreshold})", used.Tracks, plan.Tracks, exchangeRate);
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional users ({plan.Users.Included} included)", $"Additional users (more then {plan.Users.FirstLevelThreshold})", used.Users, plan.Users, exchangeRate);
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional logins ({plan.Logins.Included} included)", $"Additional logins (more then {plan.Logins.FirstLevelThreshold})", used.Logins, plan.Logins, exchangeRate);
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional token requests ({plan.TokenRequests.Included} included)", $"Additional token requests (more then {plan.TokenRequests.FirstLevelThreshold})", used.TokenRequests, plan.TokenRequests, exchangeRate);
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional Control API reads ({plan.ControlApiGetRequests.Included} included)", $"Additional Control API reads (more then {plan.ControlApiGetRequests.FirstLevelThreshold})", used.ControlApiGets, plan.ControlApiGetRequests, exchangeRate);
+                invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional Control API updates ({plan.ControlApiUpdateRequests.Included} included)", $"Additional Control API updates (more then {plan.ControlApiUpdateRequests.FirstLevelThreshold})", used.ControlApiUpdates, plan.ControlApiUpdateRequests, exchangeRate);
             }
 
-            invoice.Lines = new List<InvoiceLine>();
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional environments ({plan.Tracks.Included} included)", $"Additional environments (more then {plan.Tracks.FirstLevelThreshold})", used.Tracks, plan.Tracks, exchangeRate);
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional users ({plan.Users.Included} included)", $"Additional users (more then {plan.Users.FirstLevelThreshold})", used.Users, plan.Users, exchangeRate);
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional logins ({plan.Logins.Included} included)", $"Additional logins (more then {plan.Logins.FirstLevelThreshold})", used.Logins, plan.Logins, exchangeRate);
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional token requests ({plan.TokenRequests.Included} included)", $"Additional token requests (more then {plan.TokenRequests.FirstLevelThreshold})", used.TokenRequests, plan.TokenRequests, exchangeRate);
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional Control API reads ({plan.ControlApiGetRequests.Included} included)", $"Additional Control API reads (more then {plan.ControlApiGetRequests.FirstLevelThreshold})", used.ControlApiGets, plan.ControlApiGetRequests, exchangeRate);
-            invoice.Price += AddInvoiceLine(invoice.Lines, $"Additional Control API updates ({plan.ControlApiUpdateRequests.Included} included)", $"Additional Control API updates (more then {plan.ControlApiUpdateRequests.FirstLevelThreshold})", used.ControlApiUpdates, plan.ControlApiUpdateRequests, exchangeRate);
+            if (used.Items?.Count() > 0)
+            {
+                foreach (var item in used.Items.Where(i => i.Type == UsedItemTypes.Text))
+                {
+                    var price = RoundPrice(item.UnitPrice * item.Quantity, false);
+                    invoice.Lines.Add(new InvoiceLine { Text = item.Text, Quantity = item.Quantity, UnitPrice = item.UnitPrice, Price = price });
+                    invoice.Price += price;
+                }
+
+                if (used.Items.Where(i => i.Type == UsedItemTypes.Hours).Count() > 0)
+                {
+                    invoice.TimeItems = new List<UsedItem>();
+                    decimal totalTimePrice = 0;
+                    foreach (var item in used.Items.Where(i => i.Type == UsedItemTypes.Hours))
+                    {
+                        invoice.TimeItems.Add(item);
+                        totalTimePrice += RoundPrice(item.UnitPrice * item.Quantity, true);
+                    }
+                    var price = RoundPrice(totalTimePrice, false);
+                    invoice.Lines.Add(new InvoiceLine { Text = "Time added together", Price = price });
+                    invoice.Price += price;
+                }
+            }
 
             if (includeVat)
             {

@@ -6,7 +6,6 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -36,7 +35,7 @@ namespace FoxIDs.Logic
             await cacheProvider.DeleteAsync(key);
         }
 
-        public async Task<Tenant> GetTenantAsync(string tenantName, bool required = true)
+        public async Task<Tenant> GetTenantAsync(string tenantName)
         {
             var key = CacheTenantNameKey(tenantName);
 
@@ -46,7 +45,11 @@ namespace FoxIDs.Logic
                 return tenantAsString.ToObject<Tenant>();
             }
 
-            var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), required: required);
+            var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName));
+            if (tenant.ForUsage)
+            {
+                throw new FoxIDsDataException(tenant.Id, tenant.PartitionId) { StatusCode = DataStatusCode.NotFound };
+            }
             if (tenant != null)
             {
                 await cacheProvider.SetAsync(key, tenant.ToJson(), settings.Cache.TenantLifetime);
@@ -73,7 +76,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
+                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
             catch (FoxIDsDataException ex)

@@ -32,6 +32,8 @@ namespace FoxIDs.Models.ExternalInvoices
         [MaxLength(Constants.Models.Currency.CurrencyLength)]
         public string Currency { get; set; }
 
+        public bool IncludesUsage { get; set; }
+
         [ListLength(Constants.Models.Used.InvoiceLinesMin, Constants.Models.Used.ItemsMax)]
         public List<InvoiceLine> Lines { get; set; }
 

@@ -330,6 +330,8 @@ namespace FoxIDs.Logic.Usage
 
             if (plan != null)
             {
+                invoice.IncludesUsage = true;
+
                 var invoiceDays = used.PeriodEndDate.Day - used.PeriodBeginDate.Day;
                 if (invoiceDays > 10)
                 {

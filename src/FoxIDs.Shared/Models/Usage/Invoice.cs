@@ -34,6 +34,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
 
+        /// <summary>
+        /// True if the invoice include usage cost from FoxIDs.
+        /// </summary>
+        [JsonProperty(PropertyName = "includes_usage")]
+        public bool IncludesUsage { get; set; }
+
         [ListLength(Constants.Models.Used.InvoiceLinesMin, Constants.Models.Used.ItemsMax)]
         [JsonProperty(PropertyName = "lines")]
         public List<InvoiceLine> Lines { get; set; }

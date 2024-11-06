@@ -12,6 +12,7 @@ using System;
 using FoxIDs.Models.Config;
 using FoxIDs.Logic.Usage;
 using System.Linq;
+using System.Threading;
 
 namespace FoxIDs.Controllers
 {
@@ -59,7 +60,11 @@ namespace FoxIDs.Controllers
 
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(action.TenantName, action.PeriodBeginDate.Year, action.PeriodBeginDate.Month));
 
-                if (action.DoSendInvoiceAgain)
+                if (action.DoInvoicingAgain)
+                {
+                    await DoInvoicingAgain(mUsed);
+                }
+                else if (action.DoSendInvoiceAgain)
                 {
                     await DoSendInvoiceAgain(mUsed);
                 }
@@ -90,6 +95,20 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Used).Name, $"{action.TenantName}/{action.PeriodBeginDate.Year}/{action.PeriodBeginDate.Month}");
                 }
                 throw;
+            }
+        }
+
+        private async Task DoInvoicingAgain(Used mUsed)
+        {
+            if (mUsed.IsUsageCalculated && !mUsed.IsDone)
+            {
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
+                using var cancellationTokenSource = new CancellationTokenSource();
+                await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token);
+            }
+            else
+            {
+                throw new Exception("The usage is not calculated or already done and can not be invoiced again.");
             }
         }
 

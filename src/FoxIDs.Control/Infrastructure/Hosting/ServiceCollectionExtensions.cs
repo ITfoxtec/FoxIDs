@@ -88,6 +88,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadUpLogic>();
 
             services.AddHostedService<UsageBackgroundService>();
+            services.AddTransient<UsageBackgroundWorkLogic>();
             services.AddTransient<UsageCalculatorLogic>();
             services.AddTransient<UsageInvoicingLogic>();
             services.AddTransient<UsageMolliePaymentLogic>();

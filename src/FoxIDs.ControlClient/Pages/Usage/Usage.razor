@@ -138,6 +138,21 @@
                             </div>
                         </div>
                         <div class="modal-footer">
+                            @if (ShowDoInvoicingAgainButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAgainAsync(used))">
+                                        Do invoicing again
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
+                                        Do invoicing again
+                                    </button>
+                                }
+                            }
                             @if (ShowSendInvoiceAgainButton(used))
                             {
                                 @if (!used.InvoicingActionButtonDisabled)
@@ -208,6 +223,22 @@
                     <button class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
                         @UsageInfoText(used)
                     </button>
+
+                    @if (ShowDoInvoicingAgainButton(used))
+                    {
+                        @if (!used.InvoicingActionButtonDisabled)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAgainAsync(used))">
+                                Do invoicing again
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
+                                Do invoicing again
+                            </button>
+                        }
+                    }
                     @if (ShowSendInvoiceAgainButton(used))
                     {
                         @if (!used.InvoicingActionButtonDisabled)

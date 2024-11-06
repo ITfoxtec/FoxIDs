@@ -83,7 +83,7 @@ namespace FoxIDs.Logic.Usage
 
             try
             {
-                logger.Event($"Usage payment card invoice tenant '{used.TenantName}' started.");
+                logger.Event($"Usage, payment 'card' for tenant '{used.TenantName}' started.");
 
                 var paymentRequest = new PaymentRequest
                 {
@@ -100,9 +100,17 @@ namespace FoxIDs.Logic.Usage
                 used.PaymentId = paymentResponse.Id;
                 await tenantDataRepository.UpdateAsync(used);
 
-                logger.Event($"Usage payment card invoice tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
+                logger.Event($"Usage, payment 'card' for tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
 
                 return true;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -113,9 +121,9 @@ namespace FoxIDs.Logic.Usage
                 }
                 catch (Exception saveEx)
                 {
-                    logger.Error(saveEx, $"Unable to save status: {UsagePaymentStatus.Failed}.");
+                    logger.Error(saveEx, $"Usage, unable to save status: {UsagePaymentStatus.Failed}.");
                 }
-                logger.Error(ex, $"Error occurred during tenant '{used.TenantName}' usage payment card invoice.");
+                logger.Error(ex, $"Usage, payment 'card' for tenant '{used.TenantName}' error..");
                 return false;
             }
         }
@@ -129,13 +137,13 @@ namespace FoxIDs.Logic.Usage
 
             try
             {
-                logger.Event($"Usage read payment card invoice tenant '{used.TenantName}' started.");
+                logger.Event($"Usage, read payment 'card' for tenant '{used.TenantName}' started.");
 
                 var paymentResponse = await paymentClient.GetPaymentAsync(used.PaymentId);
                 used.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
                 await tenantDataRepository.UpdateAsync(used);
 
-                logger.Event($"Usage read payment card invoice tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
+                logger.Event($"Usage, read payment 'card' for tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
 
                 return true;
             }
@@ -148,9 +156,9 @@ namespace FoxIDs.Logic.Usage
                 }
                 catch (Exception saveEx)
                 {
-                    logger.Error(saveEx, $"Unable to save status: {UsagePaymentStatus.Failed}.");
+                    logger.Error(saveEx, $"Usage, unable to save status: {UsagePaymentStatus.Failed}.");
                 }
-                logger.Error(ex, $"Error occurred during tenant '{used.TenantName}' usage read payment card invoice.");
+                logger.Error(ex, $"Usage, read payment 'card' for tenant '{used.TenantName}' error.");
                 return false;
             }
         }

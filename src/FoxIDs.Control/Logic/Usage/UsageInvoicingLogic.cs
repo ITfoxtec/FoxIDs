@@ -46,13 +46,14 @@ namespace FoxIDs.Logic.Usage
         {
             if(!tenant.EnableUsage)
             {
+                logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled.");
                 return false;
             }
 
             var taskDone = true;
             var isCardPayment = usageMolliePaymentLogic.HasCardPayment(tenant);
 
-            logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' started.");
+            logger.Event($"Usage, {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' started.");
 
             (var invoiceTaskDone, var invoice) = await GetInvoiceAsync(tenant, used, isCardPayment, stoppingToken);
             if (!invoiceTaskDone)
@@ -123,7 +124,7 @@ namespace FoxIDs.Logic.Usage
             {
                 used.IsDone = true;
                 await tenantDataRepository.UpdateAsync(used);
-                logger.Event($"Usage {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' done.");
+                logger.Event($"Usage, {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' done.");
             }
             return taskDone;
         }
@@ -135,7 +136,7 @@ namespace FoxIDs.Logic.Usage
                 throw new Exception("Invalid payment status.");
             }
 
-            logger.Event($"Usage create and send credit note tenant '{used.TenantName}' started.");
+            logger.Event($"Usage, create and send credit note for tenant '{used.TenantName}' started.");
 
             var invoice = used.Invoices.LastOrDefault();
             if (invoice == null || invoice.IsCreditNote)
@@ -159,26 +160,27 @@ namespace FoxIDs.Logic.Usage
             };
 
             used.IsInvoiceReady = false;
+            used.IsDone = false;
             used.Invoices.Add(creditNote);
             await tenantDataRepository.UpdateAsync(used);
 
-            logger.Event($"Usage create {EventNameText(creditNote.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
+            logger.Event($"Usage, create {EventNameText(creditNote.IsCardPayment)} credit note for tenant '{used.TenantName}' done.");
 
             _ = await SendInvoiceAsync(used, creditNote);
 
-            logger.Event($"Usage send {EventNameText(creditNote.IsCardPayment)} credit note tenant '{used.TenantName}' done.");
+            logger.Event($"Usage, send {EventNameText(creditNote.IsCardPayment)} credit note for tenant '{used.TenantName}' done.");
         }
 
         public async Task<bool> SendInvoiceAsync(Used used, Invoice invoice)
         {
             try
             {
-                logger.Event($"Usage send {EventNameText(invoice.IsCardPayment)} invoice tenant '{used.TenantName}' started.");
+                logger.Event($"Usage, send {EventNameText(invoice.IsCardPayment)} invoice for tenant '{used.TenantName}' started.");
                 await CallExternalMakeInvoiceAsync(used, invoice, sendInvoice: true);
 
                 invoice.SendStatus = UsageInvoiceSendStatus.Send;
                 await tenantDataRepository.UpdateAsync(used);
-                logger.Event($"Usage send {EventNameText(invoice.IsCardPayment)} invoice tenant '{used.TenantName}' done.");
+                logger.Event($"Usage, send {EventNameText(invoice.IsCardPayment)} invoice for tenant '{used.TenantName}' done.");
                 return true;
             }
             catch (Exception ex)
@@ -188,16 +190,22 @@ namespace FoxIDs.Logic.Usage
                     invoice.SendStatus = UsageInvoiceSendStatus.Failed;
                     await tenantDataRepository.UpdateAsync(used);
                 }
+                            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
+            }
                 catch (Exception saveEx)
                 {
-                    logger.Error(saveEx, $"Unable to save status: {UsageInvoiceSendStatus.Failed}.");
+                    logger.Error(saveEx, $"Usage, unable to save status: {UsageInvoiceSendStatus.Failed}.");
                 }
-                logger.Error(ex, $"Error occurred during tenant '{used.TenantName}' usage send {EventNameText(invoice.IsCardPayment)} invoice.");
+                logger.Error(ex, $"Usage, send {EventNameText(invoice.IsCardPayment)} invoice for tenant '{used.TenantName}' error.");
                 return false;
             }
         }
-
-        private string EventNameText(bool isCardPayment) => isCardPayment ? "'card'" : "'payment period'";
 
         private async Task<(bool taskDone, Invoice invoice)> GetInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken stoppingToken)
         {
@@ -209,9 +217,9 @@ namespace FoxIDs.Logic.Usage
                 }
                 else
                 {
-                    logger.Event($"Usage create {EventNameText(isCardPayment)} invoice tenant '{used.TenantName}' started.");
+                    logger.Event($"Usage, create {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}' started.");
                     var invoice = await CreateInvoiceAsync(tenant, used, isCardPayment, stoppingToken);
-                    logger.Event($"Usage create {EventNameText(isCardPayment)} invoice tenant '{used.TenantName}' done.");
+                    logger.Event($"Usage, create {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}' done.");
                     return (true, invoice);
                 }
             }
@@ -225,7 +233,7 @@ namespace FoxIDs.Logic.Usage
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error occurred during tenant '{tenant.Name}' usage {EventNameText(isCardPayment)} invoicing.");
+                logger.Error(ex, $"Usage, create {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}' error.");
                 return (false, null);
             }
         }
@@ -408,7 +416,8 @@ namespace FoxIDs.Logic.Usage
                     var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                     throw new Exception($"Send external invoice request, error '{resultUnexpectedStatus}'. Status code={response.StatusCode}.");
             }
-
         }
+
+        private string EventNameText(bool isCardPayment) => isCardPayment ? "'card'" : "'payment period'";
     }
 }

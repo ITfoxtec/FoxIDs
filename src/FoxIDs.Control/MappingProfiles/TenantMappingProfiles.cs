@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using MSTokens = Microsoft.IdentityModel.Tokens;
+using AutoMapper;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
@@ -335,16 +336,19 @@ namespace FoxIDs.MappingProfiles
 
         private Api.CertificateInfo GetCertificateInfo(JsonWebKey jsonWebKey)
         {
-            var certificate = jsonWebKey.ToX509Certificate();
-            if (certificate != null)
+            if (jsonWebKey.Kty == MSTokens.JsonWebAlgorithmsKeyTypes.RSA && jsonWebKey.X5c?.Count() > 0)
             {
-                return new Api.CertificateInfo
+                var certificate = jsonWebKey.ToX509Certificate();
+                if (certificate != null)
                 {
-                    Subject = certificate.Subject,
-                    ValidFrom = certificate.NotBefore,
-                    ValidTo = certificate.NotAfter,
-                    Thumbprint = certificate.Thumbprint
-                };
+                    return new Api.CertificateInfo
+                    {
+                        Subject = certificate.Subject,
+                        ValidFrom = certificate.NotBefore,
+                        ValidTo = certificate.NotAfter,
+                        Thumbprint = certificate.Thumbprint
+                    };
+                }
             }
             return null;
         }

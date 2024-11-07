@@ -94,7 +94,7 @@ namespace FoxIDs.Client.Pages.Usage
 
         public bool ShowDoInvoicingAgainButton(GeneralUsedViewModel used) => (used.IsUsageCalculated || used.HasItems) && !used.IsDone;
 
-        public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady && (!used.Invoices?.LastOrDefault()?.IsCardPayment != true || used.PaymentStatus == UsagePaymentStatus.Paid);
+        public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady && (used.Invoices?.LastOrDefault()?.IsCardPayment != true || used.PaymentStatus == UsagePaymentStatus.Paid);
 
         public bool ShowDoCreditNoteButton(GeneralUsedViewModel used) => used.IsInvoiceReady && used.PaymentStatus == UsagePaymentStatus.None || used.PaymentStatus.PaymentApiStatusIsGenerallyFailed();
 
@@ -167,9 +167,16 @@ namespace FoxIDs.Client.Pages.Usage
                 generalUsed.PeriodBeginDate = used.PeriodBeginDate = new DateOnly(searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, 1);
                 generalUsed.PeriodEndDate = used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
             }
+            else if (generalUsed.Edit)
+            {
+                await SetHourPrice(generalUsed);
+            }
+        }
 
+        private async Task SetHourPrice(GeneralUsedViewModel generalUsed)
+        {
             var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
-            if(tenant.HourPrice > 0)
+            if (tenant.HourPrice > 0)
             {
                 generalUsed.HourPrice = tenant.HourPrice.Value;
             }
@@ -233,6 +240,9 @@ namespace FoxIDs.Client.Pages.Usage
                 {
                     var usedResult = await TenantService.CreateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>());
                     generalUsed.Form.UpdateModel(usedResult.Map<UsedViewModel>());
+                    generalUsed.TenantName = usedResult.TenantName;
+                    await SetHourPrice(generalUsed);
+                    UpdateGeneralModel(generalUsed, usedResult);
                     generalUsed.CreateMode = false;
                     toastService.ShowSuccess("User created.");
                 }
@@ -240,6 +250,7 @@ namespace FoxIDs.Client.Pages.Usage
                 {
                     var usedResult = await TenantService.UpdateUsageAsync(generalUsed.Form.Model.Map<UpdateUsageRequest>());
                     generalUsed.Form.UpdateModel(usedResult.Map<UsedViewModel>());
+                    UpdateGeneralModel(generalUsed, usedResult);
                     toastService.ShowSuccess("User updated.");
                 }
             }

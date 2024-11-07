@@ -11,7 +11,7 @@ namespace FoxIDs.Models.Api
         public List<string> InvoiceEmails { get; set; }
 
         [MaxLength(Constants.Models.Customer.ReferenceLength)]
-        [Display(Name = "Reference")]
+        [Display(Name = "Your reference")]
         public string Reference { get; set; }
     }
 }

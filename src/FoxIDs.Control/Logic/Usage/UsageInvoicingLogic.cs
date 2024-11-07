@@ -302,7 +302,7 @@ namespace FoxIDs.Logic.Usage
             usageSettings.InvoiceNumber += 1;
             await masterDataRepository.UpdateAsync(usageSettings);
 
-            var fullInvoiceNumber = $"{(usageSettings.InvoiceNumberPrefix.IsNullOrWhiteSpace() ? string.Empty : $"{usageSettings.InvoiceNumberPrefix}-")}{usageSettings.InvoiceNumber}";
+            var fullInvoiceNumber = $"{(usageSettings.InvoiceNumberPrefix.IsNullOrWhiteSpace() ? string.Empty : usageSettings.InvoiceNumberPrefix)}{usageSettings.InvoiceNumber}";
             return fullInvoiceNumber;
         }
 
@@ -357,13 +357,16 @@ namespace FoxIDs.Logic.Usage
                 {
                     invoice.TimeItems = new List<UsedItem>();
                     decimal totalTimePrice = 0;
+                    decimal totalTimeHours = 0;
                     foreach (var item in used.Items.Where(i => i.Type == UsedItemTypes.Hours))
                     {
                         invoice.TimeItems.Add(item);
+                        totalTimeHours += item.Quantity;
                         totalTimePrice += RoundPrice(item.UnitPrice * item.Quantity, true);
                     }
                     var price = RoundPrice(totalTimePrice, false);
-                    invoice.Lines.Add(new InvoiceLine { Text = "Time added together", Price = price });
+                    var unitPrice = RoundPrice(totalTimePrice / totalTimeHours, true);
+                    invoice.Lines.Add(new InvoiceLine { Text = "Time added together", Quantity = totalTimeHours, UnitPrice = unitPrice, Price = price });
                     invoice.Price += price;
                 }
             }

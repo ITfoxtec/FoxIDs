@@ -12,10 +12,17 @@ namespace FoxIDs.Models.ExternalInvoices
 
         public bool IsCardPayment { get; set; }
 
+        public bool IsPaid { get; set; }
+
         public bool IsCreditNote { get; set; }
 
         [Required]
         public string InvoiceNumber { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Tenant.NameLength)]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
+        public string TenantName { get; set; }
 
         [Required]
         public DateOnly IssueDate { get; set; }

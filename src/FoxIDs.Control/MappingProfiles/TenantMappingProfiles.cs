@@ -336,7 +336,7 @@ namespace FoxIDs.MappingProfiles
 
         private Api.CertificateInfo GetCertificateInfo(JsonWebKey jsonWebKey)
         {
-            if (jsonWebKey.Kty == MSTokens.JsonWebAlgorithmsKeyTypes.RSA && jsonWebKey.X5c?.Count() > 0)
+            if (jsonWebKey.X5c?.Count() > 0)
             {
                 var certificate = jsonWebKey.ToX509Certificate();
                 if (certificate != null)

@@ -85,6 +85,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException();
                 }
 
+                mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(action.TenantName, action.PeriodBeginDate.Year, action.PeriodBeginDate.Month));
                 return Ok(mapper.Map<Api.Used>(mUsed));
             }
             catch (FoxIDsDataException ex)

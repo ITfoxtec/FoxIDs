@@ -38,7 +38,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public decimal? HourPrice { get; set; }
 
         [ValidateComplexType]
-        public Customer Customer { get; set; }
+        public CustomerViewModel Customer { get; set; }
 
         public Payment Payment { get; set; }
     }

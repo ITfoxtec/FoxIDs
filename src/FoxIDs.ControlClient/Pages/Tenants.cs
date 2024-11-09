@@ -15,6 +15,7 @@ using Blazored.Toast.Services;
 using System.Net.Http;
 using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
@@ -167,7 +168,16 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
                 tenantWorking = true;
-                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
+                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
+                {
+                    if (afterMap.Customer != null)
+                    {
+                        if (!afterMap.EnableUsage && !(afterMap.Customer.InvoiceEmails?.Count() > 0) && afterMap.Customer.Name.IsNullOrEmpty())
+                        {
+                            afterMap.Customer = null;
+                        }
+                    }
+                }));
                 generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                 toastService.ShowSuccess("Tenant updated.");
 

@@ -85,7 +85,7 @@
 
                                     @if (tenant.Form.Model.Customer == null)
                                     {
-                                        tenant.Form.Model.Customer ??= new Customer();
+                                        tenant.Form.Model.Customer ??= new CustomerViewModel();
                                     }
                                     @if (tenant.Form.Model.Customer != null)
                                     {
@@ -98,7 +98,7 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-md-8">
-                                                                <FInputTextList @bind-ValueList="tenant.Form.Model.Customer.InvoiceEmails" For="@(() => tenant.Form.Model.Customer.InvoiceEmails)" />
+                                                                <FInputTextList @bind-ValueList="tenant.Form.Model.Customer.InvoiceEmails" For="@(() => tenant.Form.Model.Customer.InvoiceEmails)" DynamicFirstRow="true" />
                                                             </div>
                                                         </div>
                                                         <div class="info-text">

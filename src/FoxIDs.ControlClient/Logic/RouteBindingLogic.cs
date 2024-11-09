@@ -57,7 +57,7 @@ namespace FoxIDs.Client.Logic
 
         private async Task UpdatRequestPaymentAsync(TenantResponse myTenant, IEnumerable<PlanInfo> planInfoList = null)
         {
-            if (!myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
+            if (myTenant.EnableUsage && !myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
             {
                 if (planInfoList == null)
                 {

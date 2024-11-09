@@ -1,13 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public abstract class Address
+    public class CustomerViewModel
     {
+        public GeneralTenantViewModel TenantViewModel { get; set; }
+
+        [ListLength(0, Constants.Models.Customer.InvoiceEmailsMax, Constants.Models.User.EmailLength, Constants.Models.User.EmailRegExPattern)]
+        [Display(Name = "Invoice emails")]
+        public List<string> InvoiceEmails { get; set; }
+
+        [MaxLength(Constants.Models.Customer.ReferenceLength)]
+        [Display(Name = "Your reference")]
+        public string Reference { get; set; }
+
         /// <summary>
         /// Company name or name.
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.Address.NameLength)]
         [Display(Name = "Company name / Name")]
         public string Name { get; set; }

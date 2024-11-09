@@ -7,6 +7,7 @@ using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -164,6 +165,14 @@ namespace FoxIDs.Client.Pages.Usage
                         afterMap.AdministratorEmail = afterMap.Customer.InvoiceEmails.First();
                         afterMap.AdministratorPassword = Util.SecretGenerator.GenerateNewPassword();
                         afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
+
+                        if (afterMap.Customer != null)
+                        {
+                            if (!afterMap.EnableUsage && !(afterMap.Customer.InvoiceEmails?.Count() > 0) && afterMap.Customer.Name.IsNullOrEmpty())
+                            {
+                                afterMap.Customer = null;
+                            }
+                        }
                     }));
                     generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                     generalTenant.CreateMode = false;
@@ -173,7 +182,15 @@ namespace FoxIDs.Client.Pages.Usage
                 {
                     var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
                     {
-                        afterMap.ForUsage = true; 
+                        afterMap.ForUsage = true;
+
+                        if (afterMap.Customer != null)
+                        {
+                            if (!afterMap.EnableUsage && !(afterMap.Customer.InvoiceEmails?.Count() > 0) && afterMap.Customer.Name.IsNullOrEmpty())
+                            {
+                                afterMap.Customer = null;
+                            }
+                        }
                     }));
                     generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                     toastService.ShowSuccess("Usage tenant updated.");

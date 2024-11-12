@@ -31,4 +31,4 @@ Claim mapping between SAML 2.0 claim types and JWT claim types can be configured
 
 ![Configure JWT and SAML 2.0 mappings](images/configure-jwt-saml-mappings.png)
 
-If no claim mapping exists for a particular claim. The long SAML 2.0 claim name is kept from claims revived in a SAML 2.0 token instead of a shorter equivalent JWT claim name. The same goes in the opposite direction.
+If no claim mapping exists for a particular claim. The long SAML 2.0 claim name is kept from claims received in a SAML 2.0 token instead of a shorter equivalent JWT claim name. The same goes in the opposite direction.

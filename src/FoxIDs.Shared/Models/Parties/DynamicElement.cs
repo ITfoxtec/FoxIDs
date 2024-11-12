@@ -8,6 +8,7 @@ namespace FoxIDs.Models
     public class DynamicElement : IValidatableObject
     {
         [Required]
+        [JsonProperty(PropertyName = "type")]
         public DynamicElementTypes Type { get; set; }
 
         [Required]

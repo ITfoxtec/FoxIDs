@@ -1,13 +1,15 @@
-﻿<div class="info-text">
-    The external user is linked after the claim transformation on the authentication method has been executed. 
-    <br />
-    Claims on the external user can optionally override revived and transformed claims.
-</div>
+﻿<div class="info-text">The external users are linked with a claim type (e.g. <code>sub</code> or <code>email</code>) after the claim transformation on the authentication method has been performed.</div>
+<FInputText @bind-Value="Model.LinkClaimType" For="@(() => Model.LinkClaimType)" />
 
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
-<div class="info-text">The external user is linked with a claim type (e.g., 'sub' or 'email'). Each user has a unique claim value.</div>
-<FInputText @bind-Value="Model.LinkClaimType" For="@(() => Model.LinkClaimType)" />
+
+<div class="info-text">
+    By default, claims on external users are added to the received claims with the exception of the <code>sub</code> claim, which overrides the received <code>sub</code> claim.
+    <br />
+    Claims on external users can optionally override received and transformed claims.
+</div>
+
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />
 <DynamicElements Model="Model" IncludeEmailElement=true />
 <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>

@@ -122,6 +122,9 @@ namespace FoxIDs.Logic
 
         public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string email)
         {
+            // Handle up-parties with HRD "*" selection last.
+            var toUpPartiesOrdered = toUpParties.OrderBy(u => u.HrdDomains?.Where(h => h == "*").Any() == true);
+
             // 1) Select specified authentication method
             if (!email.IsNullOrWhiteSpace())
             {
@@ -129,7 +132,7 @@ namespace FoxIDs.Logic
                 if (emailSplit.Count() > 1)
                 {
                     var domain = emailSplit[1];
-                    var selectedUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d.Equals(domain, StringComparison.OrdinalIgnoreCase)).Count() > 0).FirstOrDefault();
+                    var selectedUpParty = toUpPartiesOrdered.Where(up => up.HrdDomains?.Where(d => d.Equals(domain, StringComparison.OrdinalIgnoreCase)).Count() > 0).FirstOrDefault();
                     if (selectedUpParty != null)
                     {
                         // A profile is not possible.
@@ -142,7 +145,7 @@ namespace FoxIDs.Logic
             var hrdUpParties = await hrdLogic.GetHrdSelectionAsync();
             if (hrdUpParties?.Count() > 0)
             {
-                var hrdUpParty = hrdUpParties.Where(hu => toUpParties.Any(up => up.Name == hu.SelectedUpPartyName && (hu.SelectedUpPartyProfileName.IsNullOrEmpty() || up.ProfileName == hu.SelectedUpPartyProfileName))).FirstOrDefault();
+                var hrdUpParty = hrdUpParties.Where(hu => toUpPartiesOrdered.Any(up => up.Name == hu.SelectedUpPartyName && (hu.SelectedUpPartyProfileName.IsNullOrEmpty() || up.ProfileName == hu.SelectedUpPartyProfileName))).FirstOrDefault();
                 if (hrdUpParty != null)
                 {
                     return new UpPartyLink { Name = hrdUpParty.SelectedUpPartyName, ProfileName = hrdUpParty.SelectedUpPartyProfileName, Type = hrdUpParty.SelectedUpPartyType };
@@ -150,10 +153,13 @@ namespace FoxIDs.Logic
             }
 
             // 3) Select authentication method by star
-            var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
-            if (starUpParty != null)
+            if (!email.IsNullOrWhiteSpace())
             {
-                return new UpPartyLink { Name = starUpParty.Name, ProfileName = starUpParty.ProfileName, Type = starUpParty.Type };
+                var starUpParty = toUpPartiesOrdered.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
+                if (starUpParty != null)
+                {
+                    return new UpPartyLink { Name = starUpParty.Name, ProfileName = starUpParty.ProfileName, Type = starUpParty.Type };
+                }
             }
 
             return null;

@@ -216,6 +216,17 @@ namespace FoxIDs.Client.Pages.Components
                             claimTransform.Order = order++;
                         }
                     }
+                    if (afterMap.IsTest == true)
+                    { 
+                        if (generalOidcDownParty.Form.Model.TestExpireInSeconds == 0 || generalOidcDownParty.Form.Model.TestExpireInSeconds != 15)
+                        {
+                            afterMap.TestExpireInSeconds = generalOidcDownParty.Form.Model.TestExpireInSeconds;
+                        }
+                        else
+                        {
+                            afterMap.TestExpireInSeconds = null;
+                        }
+                    }
                 });
              
                 var oidcDownPartyResult = await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);

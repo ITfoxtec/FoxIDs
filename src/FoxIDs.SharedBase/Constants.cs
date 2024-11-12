@@ -206,13 +206,16 @@ namespace FoxIDs
                 public const string TimeGenerated = "TimeGenerated";
                 public const string OperationId = "OperationId";
                 public const string RequestId = "RequestId";
-                public const string RequestPath = "RequestPath";                
+                public const string RequestPath = "RequestPath";
+                public const string MachineName = "MachineName";
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
                 public const string UserAgent = "UserAgent";
                 public const string AppRoleInstance = "AppRoleInstance";
                 public const string UpPartyId = "UpPartyId";
                 public const string DownPartyId = "DownPartyId";
+                public const string UserId = "UserId";
+                public const string Email = "Email";
             }
 
             public static class IndexName
@@ -255,6 +258,8 @@ namespace FoxIDs
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
                 public const string DataProtection = "datap";
+                public const string Used = "used";
+                public const string UsageSettings = "uset";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -268,16 +273,94 @@ namespace FoxIDs
 
             public static class Plan
             {
+                public const int PlansMax = 10;
+
                 public const int IdLength = 70;
                 public const int TextLength = 4000;
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
-                public const int CurrencyLength = 10;
-                public const string CurrencyRegExPattern = @"^[\w]*$";
+                public const int DisplayNameLength = 50;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
                 public const int CostPerMonthMin = 0;
                 public const int IncludedMin = 0;
+                public const int LimitedThresholdMin = 0;
                 public const int FirstLevelThresholdMin = 0;
+            }
+
+            public static class Payment
+            {
+                public const int CardTokenLength = 100;
+
+                public const int CustomerIdLength = 100;
+                public const int MandateIdLength = 100;
+                public const int CardHolderLength = 500;
+                public const int CardNumberInfoLength = 10; 
+                public const int CardLabelLength = 100;
+            }
+
+            public static class Address
+            {
+                public const int NameLength = 60;
+                public const int VatNumberLength = 50;
+                public const int AddressLine1Length = 50;
+                public const int AddressLine2Length = 50;
+                public const int PostalCodeLength = 50;
+                public const int CityLength = 50;
+                public const int StateRegionLength = 50;
+                public const int CountryLength = 50;
+            }
+
+            public static class Customer
+            {
+                public const int InvoiceEmailsMin = 1;
+                public const int InvoiceEmailsMax = 5;
+                public const int ReferenceLength = 60;
+            }
+
+            public static class Seller
+            {
+                public const int BccEmailsMin = 1;
+                public const int BccEmailsMax = 5;
+            }
+
+            public static class UsageSettings
+            {
+                public const int IdLength = 20;
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
+                public const int CurrencyExchangesMin = 0;
+                public const int CurrencyExchangesMax = 10;
+                public const int HourPriceMin = 0;
+                public const int InvoiceNumberMin = 0;
+                public const int InvoiceNumberPrefixLength = 20;
+                public const string InvoiceNumberPrefixRegExPattern = @"^[\w;:\/\-.,+ ]*$";
+            }
+
+            public static class Currency
+            {
+                public const int CurrencyLength = 3;
+                public const string Eur = "EUR";
+            }
+
+            public static class Used
+            {
+                public const int IdLength = 80;
+                public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
+
+                public const int PeriodYearMin = 2000;
+                public const int PeriodMonthMin = 1;
+                public const int PeriodMonthMax = 12;
+                public const int ItemsMin = 0;
+                public const int ItemsMax = 1000;
+                public const int DayMin = 0;
+                public const int DayMax = 31;
+                public const int QuantityMin = 0;
+                public const int PriceMin = 0;
+                public const int InvoicesMin = 0;
+                public const int InvoicesMax = 10;
+                public const int InvoiceLinesMin = 1;
+                public const int UsedItemTextLength = 200;
+                public const int InvoiceLineTextLength = 300;
             }
 
             public static class Logging

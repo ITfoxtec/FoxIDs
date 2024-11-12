@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
-        public async Task<Api.LogResponse> QueryLogs(Api.LogRequest logRequest, QueryTimeRange queryTimeRange, int maxResponseLogItems)
+        public async Task<Api.LogResponse> QueryLogsAsync(Api.LogRequest logRequest, QueryTimeRange queryTimeRange, int maxResponseLogItems)
         {
             var responseTruncated = false;
             var items = new List<InternalLogItem>();

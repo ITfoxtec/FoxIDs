@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
@@ -33,25 +32,18 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Filter authentication method.
         /// </summary>
-        /// <param name="filterName">Filter authentication method name.</param>
+        /// <param name="filterName">Filter authentication method by name.</param>
+        /// <param name="filterHrdDomains">Filter authentication method by HRD domains.</param>
         /// <returns>Authentication methods.</returns>
         [ProducesResponseType(typeof(HashSet<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName)
+        public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName, string filterHrdDomains)
         {
             try
             {
-                var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
-                var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
-                    await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) ||
-                          (p.Profiles != null  && p.Profiles.Any(p => p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase))) ||
-                          (doFilterPartyType && p.Type == filterPartyType)));
-             
+                (var mUpPartys, _) = await GetFilterUpPartyInternalAsync(filterName, filterHrdDomains);
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
-                foreach(var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
+                foreach (var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
                 {
                     aUpPartys.Add(mapper.Map<Api.UpParty>(mUpParty));
                 }
@@ -65,6 +57,37 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.UpParty).Name, filterName);
                 }
                 throw;
+            }
+        }
+
+        private async Task<(IReadOnlyCollection<UpPartyWithProfile<UpPartyProfile>> items, string paginationToken)> GetFilterUpPartyInternalAsync(string filterName, string filterHrdDomains)
+        {
+            var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+
+            if (filterName.IsNullOrWhiteSpace() && filterHrdDomains.IsNullOrWhiteSpace())
+            {
+                return await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType));
+            }
+            else if(!filterName.IsNullOrWhiteSpace() && filterHrdDomains.IsNullOrWhiteSpace())
+            {
+                return await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                    (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) ||
+                      (p.Profiles != null && p.Profiles.Any(p => p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase))) ||
+                      (doFilterPartyType && p.Type == filterPartyType)));
+            }
+            else if (filterName.IsNullOrWhiteSpace() && !filterHrdDomains.IsNullOrWhiteSpace())
+            {
+                return await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                    p.HrdDomains.Where(d => d.Contains(filterHrdDomains, StringComparison.CurrentCultureIgnoreCase)).Any());
+            }
+            else
+            {
+                return await tenantDataRepository.GetListAsync<UpPartyWithProfile<UpPartyProfile>>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                    (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) ||
+                      (p.Profiles != null && p.Profiles.Any(p => p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase))) ||
+                      (doFilterPartyType && p.Type == filterPartyType)) ||
+                      p.HrdDomains.Where(d => d.Contains(filterHrdDomains, StringComparison.CurrentCultureIgnoreCase)).Any());
             }
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared.Components
 {
@@ -92,7 +93,7 @@ namespace FoxIDs.Client.Shared.Components
             EditContext.NotifyValidationStateChanged();
         }
 
-        private async Task OnSubmitAsync()
+        public async Task<(bool isValid, string error)> Submit()
         {
             error = null;
             validationMessageStore.Clear();
@@ -104,7 +105,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     await OnValidSubmit.InvokeAsync(EditContext);
                 }
-                catch(TokenUnavailableException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -116,14 +117,26 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     error = aex.Message;
                 }
+                return (isValid, error);
             }
             else
             {
-                foreach(var message in EditContext.GetValidationMessages())
+                var valError = string.Empty;
+                foreach (var message in EditContext.GetValidationMessages())
                 {
+                    if(valError.IsNullOrWhiteSpace())
+                    {
+                        valError = message;
+                    }
                     Console.WriteLine(message);
                 }
+                return (isValid, valError);
             }
+        }
+
+        private async Task OnSubmitAsync()
+        {
+            _ = await Submit();
         }
     }
 }

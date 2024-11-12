@@ -90,13 +90,13 @@ namespace FoxIDs.Controllers
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (plan.Tracks.IsLimited)
+                    if (plan.Tracks.LimitedThreshold > 0)
                     {
                         var count = await tenantDataRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
                         // included + master track
-                        if (count > plan.Tracks.Included) 
+                        if (count > plan.Tracks.LimitedThreshold) 
                         {
-                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master environment not counted.");
+                            throw new Exception($"Maximum number of tracks ({plan.Tracks.LimitedThreshold}) in the '{plan.Name}' plan has been reached. Master environment not counted.");
                         }
                     }
                 }

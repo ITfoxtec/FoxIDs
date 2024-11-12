@@ -8,7 +8,7 @@ A log in request from your app is routed as an external SAML 2.0 log in requests
 ![Bridge SAML 2.0 to OpenID Connect](images/bridge-saml-oidc.svg)
 
 The opposite is likewise possible starting the log in request from a [SAML 2.0 application registration](app-reg-saml-2.0.md) app and routing to an external OpenID Provider (OP) configured as a [OpenID Connect authentication method](auth-method-oidc.md).
-Subsequently, the response is mapped to a SAML 2.0 response.
+Subsequently, the response is converted to a SAML 2.0 response.
 
 ![Bridge OpenID Connect to SAML 2.0](images/bridge-oidc-saml.svg)
 

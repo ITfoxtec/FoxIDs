@@ -12,7 +12,9 @@ The name is configured in the environment settings in [FoxIDs Control Client](co
 
 ## Add browser title, browser icon and CSS
 
-The FoxIDs user interface can be customized per [login authentication method](login). This means that a single FoxIDs environment can support multiple user interface designs with different browser titles, browser icons and CSS.
+The FoxIDs user interface can be customised per [login authentication method](login). This means that a single FoxIDs environment can support multiple user interface designs with different browser titles, browser icons and CSS.
+
+If you do not specify a login authentication method as an allowed authentication method in your application. The default login authentication method is used, and also whatever is customised to it.
 
 > FoxIDs use Bootstrap 4.6 and Flexbox CSS.
 

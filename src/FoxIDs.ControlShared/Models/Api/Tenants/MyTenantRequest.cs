@@ -1,5 +1,10 @@
-﻿namespace FoxIDs.Models.Api
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoxIDs.Models.Api
 {
-    public class MyTenantRequest : BaseTenant
-    { }
+    public class MyTenantRequest : TenantBase
+    {
+        [ValidateComplexType]
+        public Customer Customer { get; set; }
+    }
 }

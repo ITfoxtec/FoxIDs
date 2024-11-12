@@ -78,7 +78,7 @@ namespace FoxIDs.Models
             if (!hasProvider)
             {
                 results.Add(new ValidationResult($"At least one email providers is required. The field {nameof(SendgridApiKey)} or SMTP fields is required.",
-                    new[] { nameof(SendgridApiKey), nameof(SmtpHost), nameof(SmtpPort), nameof(SmtpUsername), nameof(SmtpPassword) }));
+                    [nameof(SendgridApiKey), nameof(SmtpHost), nameof(SmtpPort), nameof(SmtpUsername), nameof(SmtpPassword)]));
 
             }
             return results;

@@ -16,7 +16,6 @@ namespace FoxIDs.Client.Pages.Settings
 {
     public partial class MailSettings
     {
-        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string claimMappingsHref;
         private string textsHref;
@@ -40,11 +39,8 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
-
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/envsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";

@@ -23,7 +23,7 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;
@@ -135,9 +135,9 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private double GetCount(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        private decimal GetCount(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
         {
-            var count = bucketItem.DocCount.HasValue ? Convert.ToDouble(bucketItem.DocCount.Value) : 0.0;
+            var count = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
                 var valueAggregate = bucketItem.Values.First() as ValueAggregate;
@@ -146,12 +146,12 @@ namespace FoxIDs.Logic
                     count += valueAggregate.Value.Value;
                 }
             }
-            return Math.Round(count, 1);
+            return Math.Round(Convert.ToDecimal(count), 1);
         }
 
         private (DateTime start, DateTime end) GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
         {
-            var timePointer = DateTimeOffset.Now;
+            var timePointer = DateTimeOffset.UtcNow;
             if (timeScope == Api.UsageLogTimeScopes.LastMonth)
             {
                 timePointer = timePointer.AddMonths(-1);

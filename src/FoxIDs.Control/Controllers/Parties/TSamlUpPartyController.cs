@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FoxIDs.Logic;
 using FoxIDs.Models.Config;
+using FoxIDs.Logic.Queues;
 
 namespace FoxIDs.Controllers
 {

@@ -81,14 +81,14 @@ namespace FoxIDs.Controllers
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (plan.Users.IsLimited)
+                    if (plan.Users.LimitedThreshold > 0)
                     {
                         Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
                         var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
                         // included + one master user
-                        if (count > plan.Users.Included)
+                        if (count > plan.Users.LimitedThreshold)
                         {
-                            throw new Exception($"Maximum number of users ({plan.Users.Included}) included in the '{plan.Name}' plan has been reached.");
+                            throw new Exception($"Maximum number of users ({plan.Users.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
                         }
                     }
                 }

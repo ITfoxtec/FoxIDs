@@ -1,8 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
-using FoxIDs.Models.Queue;
+using FoxIDs.Models.Queues;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Logic
+namespace FoxIDs.Logic.Queues
 {
     public class DownPartyAllowUpPartiesQueueLogic : LogicBase
     {
@@ -202,6 +201,14 @@ namespace FoxIDs.Logic
                     await DoWorkAsync(routeBinding.TenantName, routeBinding.TrackName, upPartyName, messages, stoppingToken);
                     logger.Event($"Done processing '{info}'.");
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Background queue error.");
@@ -216,7 +223,6 @@ namespace FoxIDs.Logic
             while (!stoppingToken.IsCancellationRequested) 
             {
                 (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == upPartyName).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
-                stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();

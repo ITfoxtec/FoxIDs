@@ -65,6 +65,7 @@ namespace FoxIDs.Logic.Seed
                 mainTenant.CustomDomain = foxIDsEndpoint.UrlToDomain();
                 mainTenant.CustomDomainVerified = true;
             }
+            mainTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             await tenantDataRepository.CreateAsync(mainTenant);
             return true;
         }

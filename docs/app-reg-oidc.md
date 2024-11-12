@@ -8,10 +8,10 @@ Your application become a Relying Party (RP) and FoxIDs acts as an OpenID Provid
 
 FoxIDs support [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) where your application can discover the OpenID Provider.
 
-FoxIDs support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout.  
+FoxIDs support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session id is included in the ID token. The session is invalidated on logout.  
 FoxIDs can show a logout confirmation dialog depending on configuration and rather an ID token is included in the logout request or not.
 
-Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
+Default both ID token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
 Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as [OAuth 2.0 resources](app-reg-oauth-2.0.md#oauth-20-resource).  
 The application can then call an API securing the call with the access token using the [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).
 

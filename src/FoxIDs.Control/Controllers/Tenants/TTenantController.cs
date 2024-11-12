@@ -13,6 +13,7 @@ using System;
 using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
@@ -29,8 +30,9 @@ namespace FoxIDs.Controllers
         private readonly MasterTenantLogic masterTenantLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -41,6 +43,7 @@ namespace FoxIDs.Controllers
             this.masterTenantLogic = masterTenantLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
@@ -48,17 +51,21 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="name">Tenant name.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> GetTenant(string name)
+        public async Task<ActionResult<Api.TenantResponse>> GetTenant(string name)
         {
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MTenant = await tenantDataRepository.GetTenantByNameAsync(name);
-                return Ok(mapper.Map<Api.Tenant>(MTenant));
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(name);
+                if (!mTenant.ForUsage)
+                {
+                    await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
+                }
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {
@@ -76,50 +83,63 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.Tenant>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
                 tenant.Name = tenant.Name.ToLower();
-                tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
-                if (tenant.Name == Constants.Routes.ControlSiteName || tenant.Name == Constants.Routes.HealthController)
+                if (!tenant.ForUsage)
                 {
-                    throw new FoxIDsDataException($"A tenant can not have the name '{tenant.Name}'.") { StatusCode = DataStatusCode.Conflict };
-                }
+                    tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
-                (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
-                if (!validPlan) return BadRequest(ModelState);
-
-                if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
-                {
-                    if (!plan.EnableCustomDomain)
+                    if (tenant.Name == Constants.Routes.ControlSiteName || tenant.Name == Constants.Routes.HealthController)
                     {
-                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
+                        throw new FoxIDsDataException($"A tenant can not have the name '{tenant.Name}'.") { StatusCode = DataStatusCode.Conflict };
                     }
                 }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
-                await tenantDataRepository.CreateAsync(mTenant);
+                mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
+                mTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-                await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
-                if (!string.IsNullOrEmpty(tenant.CustomDomain))
+                if (!tenant.ForUsage)
                 {
-                    await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
+                    (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
+                    if (!validPlan) return BadRequest(ModelState);
+
+                    if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
+                    {
+                        if (!plan.EnableCustomDomain)
+                        {
+                            throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
+                        }
+                    }
+                    mTenant.PlanName = plan?.Name;
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
-                var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
-                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
-                await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
-                await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
+                await tenantDataRepository.CreateAsync(mTenant);
 
-                await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
+                if (!tenant.ForUsage)
+                {
+                    await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
+                    if (!string.IsNullOrEmpty(tenant.CustomDomain))
+                    {
+                        await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
+                    }
 
-                return Created(mapper.Map<Api.Tenant>(mTenant));
+                    await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
+                    var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
+                    await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
+                    await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
+                    await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
+
+                    await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name);
+                }
+                return Created(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (AccountException aex)
             {
@@ -161,9 +181,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> PutTenant([FromBody] Api.TenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PutTenant([FromBody] Api.TenantRequest tenant)
         {
             try
             {
@@ -171,32 +191,44 @@ namespace FoxIDs.Controllers
                 tenant.Name = tenant.Name.ToLower();
 
                 var mTenant = await tenantDataRepository.GetTenantByNameAsync(tenant.Name);
-
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
-                (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
-                if (!validPlan) return BadRequest(ModelState);
-
-                mTenant.PlanName = tenant.PlanName;
-                
-                if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
+                if (!tenant.ForUsage)
                 {
-                    if (!plan.EnableCustomDomain)
+                    (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
+                    if (!validPlan) return BadRequest(ModelState);
+
+                    mTenant.PlanName = plan?.Name;
+
+                    if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
                     {
-                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
+                        if (!plan.EnableCustomDomain)
+                        {
+                            throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
+                        }
                     }
+                    mTenant.CustomDomain = tenant.CustomDomain;
+                    mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
                 }
-                mTenant.CustomDomain = tenant.CustomDomain;
-                mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                mTenant.EnableUsage = tenant.EnableUsage;
+                mTenant.Currency = tenant.Currency;
+                mTenant.IncludeVat = tenant.IncludeVat;
+                mTenant.HourPrice = tenant.HourPrice;
+                mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
-                if (!invalidateCustomDomainInCache.IsNullOrEmpty())
+                if (!tenant.ForUsage)
                 {
-                    await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
+                    if (!invalidateCustomDomainInCache.IsNullOrEmpty())
+                    {
+                        await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
+                    }
+
+                    await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
                 }
 
-                return Ok(mapper.Map<Api.Tenant>(mTenant));
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {

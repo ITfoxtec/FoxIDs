@@ -12,45 +12,54 @@ using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Config;
+using System.Linq;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
     public class TMyTenantController :  ApiController
     {
-        private readonly Settings settings;
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly IMapper mapper;
+        private readonly IMasterDataRepository masterDataRepository;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
+        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TMyTenantController(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.mapper = mapper;
+            this.masterDataRepository = masterDataRepository;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
+            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
         /// Get my tenant.
         /// </summary>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> GetMyTenant()
+        public async Task<ActionResult<Api.TenantResponse>> GetMyTenant()
         {
             try
             {
-                var MTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
-                return Ok(mapper.Map<Api.Tenant>(MTenant));
+                var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
+
+                await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
+
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {
@@ -68,9 +77,9 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
-        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.TenantResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.Tenant>> PutMyTenant([FromBody] Api.MyTenantRequest tenant)
+        public async Task<ActionResult<Api.TenantResponse>> PutMyTenant([FromBody] Api.MyTenantRequest tenant)
         {
             try
             {
@@ -87,8 +96,31 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                try
+                {
+                    if (settings.Payment.EnablePayment == true && settings.Usage?.EnableInvoice == true && !tenant.PlanName.IsNullOrEmpty())
+                    {
+                        tenant.PlanName = tenant.PlanName.ToLower();
+                        if (tenant.PlanName != RouteBinding.PlanName)
+                        {
+                            var mPlans = await masterDataRepository.GetListAsync<Plan>();
+                            decimal currentCost = RouteBinding.PlanName.IsNullOrEmpty() ? 0 : mPlans.Where(p => p.Name == RouteBinding.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
+                            decimal updateCost = mPlans.Where(p => p.Name == tenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
+                            if (updateCost >= currentCost)
+                            {
+                                mTenant.PlanName = tenant.PlanName;
+                            }
+                        }
+                    }
+                }
+                catch (Exception exp)
+                {
+                    logger.Error(exp, "Unable to update plan in tenant.");
+                }
+
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = false;
+                mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 
                 await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
@@ -97,7 +129,9 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
                 }
 
-                return Ok(mapper.Map<Api.Tenant>(mTenant));
+                await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
+
+                return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
             catch (FoxIDsDataException ex)
             {

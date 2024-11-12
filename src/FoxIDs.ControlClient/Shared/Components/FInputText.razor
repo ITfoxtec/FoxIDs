@@ -1,6 +1,6 @@
 ﻿@inherits FInputBase<string>
 
-<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty) @Class">
     <input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />
     <Label For="@For" LabelText="@LabelText" class="label-control" />
     <ValidationMessage For="@For" />
@@ -12,4 +12,7 @@
 
     [Parameter]
     public string LabelText { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
 }

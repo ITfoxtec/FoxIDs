@@ -33,7 +33,8 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Filter tenant.
         /// </summary>
-        /// <param name="filterName">Filter tenant name.</param>
+        /// <param name="filterName">Filter by tenant name.</param>
+        /// <param name="filterCustomDomain">Filter by custom domain.</param>
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

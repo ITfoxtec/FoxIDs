@@ -38,6 +38,9 @@
             }
             @if (UpParty.ShowAdvanced)
             {
+                <div class="info-text">
+                    Choose to use a URL binding pattern that is supported by the Identity Provider. The different binding pattern is used for interoperability.
+                </div>
                 <FInputSelect @bind-Value="samlUpParty.Form.Model.PartyBindingPattern" For="@(() => samlUpParty.Form.Model.PartyBindingPattern)">
                     <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(auth-method)/... - default</option>
                     <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~auth-method~/...</option>

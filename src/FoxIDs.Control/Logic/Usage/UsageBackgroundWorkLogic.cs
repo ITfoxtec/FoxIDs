@@ -18,6 +18,9 @@ namespace FoxIDs.Logic.Usage
         private const int notUseToManyResourcesInSeconds = 5;
         private const int loadPageSize = 10;
 
+        private readonly DateTimeOffset currentMonthPointer;
+        private readonly DateOnly invoicingDatePointer;
+
         private readonly TelemetryScopedLogger scopedLogger;
         private readonly FoxIDsControlSettings settings;
         private readonly ICacheProvider cacheProvider;
@@ -35,7 +38,8 @@ namespace FoxIDs.Logic.Usage
             this.usageInvoicingLogic = usageInvoicingLogic;
 
             var now = DateTime.Now;
-            DatePointer = new DateOnly(now.Year, now.Month, 1).AddMonths(-1);
+            currentMonthPointer = new DateTimeOffset(new DateTime(now.Year, now.Month, 1, 0, 0, 0));
+            invoicingDatePointer = new DateOnly(now.Year, now.Month, 1).AddMonths(-1);
         }
 
         public async Task<bool> DoWorkAsync(CancellationToken stoppingToken)
@@ -136,13 +140,14 @@ namespace FoxIDs.Logic.Usage
                 string paginationToken = null;
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free", pageSize: loadPageSize, paginationToken: paginationToken);
+                    var currentMonthStartingPoint = currentMonthPointer.ToUnixTimeSeconds();
+                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" && t.CreateTime < currentMonthStartingPoint, pageSize: loadPageSize, paginationToken: paginationToken);
                     foreach (var tenant in tenants)
                     {
                         try
                         {
                             stoppingToken.ThrowIfCancellationRequested();
-                            var used = await usageCalculatorLogic.DoCalculationAsync(DatePointer, tenant, stoppingToken);
+                            var used = await usageCalculatorLogic.DoCalculationAsync(invoicingDatePointer, tenant, stoppingToken);
                             calculatonTasksDone = true;
 
                             stoppingToken.ThrowIfCancellationRequested();
@@ -279,8 +284,6 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private DateOnly DatePointer { get; init; }
-
         private string UsageDoWorkKey => $"usage_do_work_{SubKey}";
 
         private string UsageDoWorkWaitKey => $"usage_do_work_wait_{SubKey}";
@@ -289,6 +292,6 @@ namespace FoxIDs.Logic.Usage
 
         private string UsageMonthDoneKey => $"usage_month_done_{SubKey}";
 
-        private string SubKey => $"y:{DatePointer.Year}-m:{DatePointer.Month}";
+        private string SubKey => $"y:{invoicingDatePointer.Year}-m:{invoicingDatePointer.Month}";
     }
 }

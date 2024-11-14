@@ -16,8 +16,20 @@
                 <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
                 <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
                
-                @if (ClientSettings.EnablePayment)
+                @if (!ClientSettings.EnablePayment)
                 {
+                    tenantSettingsForm.Model.Customer = null;
+                    tenantSettingsForm.Model.Payment = null;
+
+                    <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(tenantSettingsForm.Model.Name))
+                    {
+                        tenantSettingsForm.Model.Customer ??= new Customer();
+                    }
+
                     <div class="info-text">
                         You can change the plan to a higher plan.
                     </div>
@@ -127,10 +139,6 @@
                             <label class="label-control">Payment method</label>
                         </div>
                     </div>
-                }
-                else
-                {
-                    <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
                 }
 
                 @if (deleteTenantAcknowledge)

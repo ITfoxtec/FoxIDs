@@ -125,12 +125,12 @@ namespace FoxIDs.Logic
 
         private decimal GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
-            var count = row.GetDecimal("UsageCount");
+            var count = row.GetDouble("UsageCount");
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
-                count += row.GetDecimal("UsageAddRating");
+                count += row.GetDouble("UsageAddRating");
             }
-            return Math.Round(count.HasValue ? count.Value : 0, 1);
+            return count.HasValue ? Math.Round(Convert.ToDecimal(count.Value), 1) : 0.0M;
         }
 
         private DateTime GetDate(LogsTableRow row)

@@ -29,9 +29,8 @@ namespace FoxIDs.Controllers
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
-        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
+        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -42,7 +41,6 @@ namespace FoxIDs.Controllers
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
-            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace FoxIDs.Controllers
             {
                 var mTenant = await tenantDataRepository.GetTenantByNameAsync(RouteBinding.TenantName);
 
-                await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
+                await UpdatePaymentMandate(mTenant);
 
                 return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
@@ -129,7 +127,7 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
                 }
 
-                await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
+                await UpdatePaymentMandate(mTenant);
 
                 return Ok(mapper.Map<Api.TenantResponse>(mTenant));
             }
@@ -141,6 +139,15 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Tenant).Name, RouteBinding.TenantName);
                 }
                 throw;
+            }
+        }
+
+        private async Task UpdatePaymentMandate(Tenant mTenant)
+        {
+            if (settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
+            {
+                var usageMolliePaymentLogic = serviceProvider.GetService<UsageMolliePaymentLogic>();
+                await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
             }
         }
 

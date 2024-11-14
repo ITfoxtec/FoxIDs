@@ -31,7 +31,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services, Settings settings)
+        public static IServiceCollection AddLogic(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             services.AddSharedLogic(settings);
 
@@ -87,16 +87,19 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 
-            services.AddHostedService<UsageBackgroundService>();
-            services.AddTransient<UsageBackgroundWorkLogic>();
-            services.AddTransient<UsageCalculatorLogic>();
-            services.AddTransient<UsageInvoicingLogic>();
-            services.AddTransient<UsageMolliePaymentLogic>();
+            if (settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
+            {
+                services.AddHostedService<UsageBackgroundService>();
+                services.AddTransient<UsageBackgroundWorkLogic>();
+                services.AddTransient<UsageCalculatorLogic>();
+                services.AddTransient<UsageInvoicingLogic>();
+                services.AddTransient<UsageMolliePaymentLogic>();
+            }
 
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
+        public static IServiceCollection AddRepository(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             services.AddSharedRepository(settings);
 

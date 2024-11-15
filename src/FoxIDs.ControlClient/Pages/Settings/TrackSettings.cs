@@ -10,6 +10,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -24,6 +25,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
         private bool trackWorking;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }

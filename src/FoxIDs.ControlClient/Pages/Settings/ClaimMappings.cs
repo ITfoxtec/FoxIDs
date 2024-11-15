@@ -12,6 +12,7 @@ using FoxIDs.Client.Logic;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components.Web;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -24,6 +25,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string riskPasswordsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }

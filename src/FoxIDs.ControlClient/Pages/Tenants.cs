@@ -136,7 +136,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                if (planInfoList == null)
+                if (ClientSettings.EnablePayment && planInfoList == null)
                 {
                     planInfoList = await HelpersService.GetPlanInfoAsync();
                 }

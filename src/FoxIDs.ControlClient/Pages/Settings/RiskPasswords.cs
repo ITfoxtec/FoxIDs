@@ -9,6 +9,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -23,6 +24,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string riskPasswordLoadError;
         private RiskPasswordInfo uploadRiskPassword { get; set; }
         private PageEditForm<TestRiskPasswordViewModel> testRiskPasswordForm { get; set; }
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }

@@ -105,7 +105,7 @@ namespace FoxIDs.Client.Pages
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
 
-                var planInfoList = await HelpersService.GetPlanInfoAsync();
+                var planInfoList = ClientSettings.EnablePayment ? await HelpersService.GetPlanInfoAsync() : null;
 
                 var myTenant = await MyTenantService.GetTenantAsync();
                 await RouteBindingLogic.SetMyTenantAsync(myTenant, planInfoList);
@@ -114,10 +114,13 @@ namespace FoxIDs.Client.Pages
                 
                 await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
                 {
-                    afterMap.PlanInfoList = planInfoList;
-                    if (!afterMap.PlanName.IsNullOrWhiteSpace())
+                    if(planInfoList != null)
                     {
-                        afterMap.PlanDisplayName = afterMap.CurrentPlanInfo?.DisplayName ?? afterMap.PlanName;
+                        afterMap.PlanInfoList = planInfoList;
+                        if (!afterMap.PlanName.IsNullOrWhiteSpace())
+                        {
+                            afterMap.PlanDisplayName = afterMap.CurrentPlanInfo?.DisplayName ?? afterMap.PlanName;
+                        }
                     }
                 }));
             }

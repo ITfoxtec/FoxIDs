@@ -28,15 +28,6 @@
                             <div class="modal-body">
                                 <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
                                 <input type="hidden" @bind="tenant.Form.Model.Name" />
-                                @if (planInfoList != null)
-                                {
-                                    <FInputSelect @bind-Value="tenant.Form.Model.PlanName" For="@(() => tenant.Form.Model.PlanName)">
-                                        @foreach (var planInfo in planInfoList)
-                                        {
-                                            <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
-                                        }
-                                    </FInputSelect>
-                                }
                                 <FInputText @bind-Value="tenant.Form.Model.CustomDomain" For="@(() => tenant.Form.Model.CustomDomain)" Focus="true" />
                                 <FInputToggle @bind-Value="tenant.Form.Model.CustomDomainVerified" For="@(() => tenant.Form.Model.CustomDomainVerified)" TextType="y.n" />
 
@@ -47,6 +38,16 @@
                                 }
                                 else
                                 {
+                                    @if (planInfoList != null)
+                                    {
+                                        <FInputSelect @bind-Value="tenant.Form.Model.PlanName" For="@(() => tenant.Form.Model.PlanName)">
+                                            @foreach (var planInfo in planInfoList)
+                                            {
+                                                <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
+                                            }
+                                        </FInputSelect>
+                                    }
+
                                     <div class="pt-2">
                                         <div class="active-group active">
                                             <div class="card">

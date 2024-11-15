@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using ITfoxtec.Identity;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -24,6 +25,9 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<MailSettingsViewModel> mailSettingsForm;
         private string deleteMailError;
         private bool deleteMailAcknowledge = false;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }

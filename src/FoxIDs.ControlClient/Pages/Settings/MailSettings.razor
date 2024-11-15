@@ -16,9 +16,12 @@
     </li>
     @if (IsMasterTenant)
     {
-        <li class="nav-item">
-            <a class="nav-link" href="@plansHref">Plans</a>
-        </li>
+        if (ClientSettings.EnablePayment)
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="@plansHref">Plans</a>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
         </li>

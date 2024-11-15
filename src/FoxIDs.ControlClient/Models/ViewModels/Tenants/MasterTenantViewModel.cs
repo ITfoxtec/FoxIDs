@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string PlanDisplayName { get; set; }
 
         public IEnumerable<PlanInfo> PlanInfoList { get; set; }
-        public PlanInfo CurrentPlanInfo => PlanInfoList.Where(p => p.Name == PlanName).FirstOrDefault();
+        public PlanInfo CurrentPlanInfo => PlanInfoList?.Where(p => p.Name == PlanName).FirstOrDefault();
 
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
         [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]

@@ -2,7 +2,7 @@
 @inherits PageBase
 
 <div class="tab-content">
-    <PageEditForm @ref="tenantSettingsForm" TModel="MasterTenantViewModel" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
+    <PageEditForm @ref="tenantSettingsForm" TModel="MasterTenantViewModel" OnAfterInit="@(async m => await OnUpdateTenantViewModelAfterInitAsync(m))" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
         @if (TrackSelectedLogic.IsTrackSelected)
         {
             <div class="modal-body px-0">
@@ -15,7 +15,7 @@
                 <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
                 <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
                 <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
-               
+
                 @if (!ClientSettings.EnablePayment)
                 {
                     tenantSettingsForm.Model.Customer = null;
@@ -31,112 +31,122 @@
                     <div class="info-text">
                         You can change the plan to a higher plan.
                     </div>
-                    @if (tenantSettingsForm.Model.PlanInfoList != null)
+                    @if (planInfoList != null)
                     {
                         <FInputSelect @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)">
-                            @foreach (var planInfo in tenantSettingsForm.Model.PlanInfoList)
+                            @if (tenantSettingsForm.Model.PlanName.IsNullOrEmpty())
+                            {
+                                <option value=""></option>
+                            }
+                            @foreach (var planInfo in planInfoList)
                             {
                                 <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
                             }
-                        </FInputSelect> 
+                        </FInputSelect>
                     }
 
-                    <div class="pt-2">
-                        <div class="active-group active">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="info-text">
-                                        The invoice emails will receive the monthly invoices.
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputTextList @bind-ValueList="tenantSettingsForm.Model.Customer.InvoiceEmails" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmails)" />
+                    @if (tenantSettingsForm.Model.Customer != null)
+                    {
+                        <div class="pt-2">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="info-text">
+                                            The invoice emails will receive the monthly invoices.
                                         </div>
-                                    </div>
-                                    <div class="info-text">
-                                        Optionally add a reference (e.g., email or username) that is included in the invoice.
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Reference" For="@(() => tenantSettingsForm.Model.Customer.Reference)" />
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputTextList @bind-ValueList="tenantSettingsForm.Model.Customer.InvoiceEmails" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmails)" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="info-text">
-                                        Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                        <div class="info-text">
+                                            Optionally add a reference (e.g., email or username) that is included in the invoice.
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.VatNumber" For="@(() => tenantSettingsForm.Model.Customer.VatNumber)" />
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Reference" For="@(() => tenantSettingsForm.Model.Customer.Reference)" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine1" For="@(() => tenantSettingsForm.Model.Customer.AddressLine1)" />
+                                        <div class="info-text">
+                                            Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine2" For="@(() => tenantSettingsForm.Model.Customer.AddressLine2)" />
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.PostalCode" For="@(() => tenantSettingsForm.Model.Customer.PostalCode)" />
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.VatNumber" For="@(() => tenantSettingsForm.Model.Customer.VatNumber)" />
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.City" For="@(() => tenantSettingsForm.Model.Customer.City)" />
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine1" For="@(() => tenantSettingsForm.Model.Customer.AddressLine1)" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.StateRegion" For="@(() => tenantSettingsForm.Model.Customer.StateRegion)" />
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine2" For="@(() => tenantSettingsForm.Model.Customer.AddressLine2)" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Country" For="@(() => tenantSettingsForm.Model.Customer.Country)" />
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.PostalCode" For="@(() => tenantSettingsForm.Model.Customer.PostalCode)" />
+                                            </div>
+                                            <div class="col-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.City" For="@(() => tenantSettingsForm.Model.Customer.City)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.StateRegion" For="@(() => tenantSettingsForm.Model.Customer.StateRegion)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Country" For="@(() => tenantSettingsForm.Model.Customer.Country)" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <label class="label-control">Customer information</label>
                             </div>
-                            <label class="label-control">Customer information</label>
                         </div>
-                    </div>
+                    }
 
-                    <div class="pt-2">
-                        <div class="active-group active">
-                            <div class="card">
-                                <div class="card-body">
-                                    @if (tenantSettingsForm.Model.Payment == null)
-                                    {
-                                        <div>There is not registered a payment method.</div>
-                                    }
-                                    else
-                                    {
-                                        @if (!tenantSettingsForm.Model.Payment.IsActive) 
+                    @if (tenantSettingsForm.Model.Payment != null)
+                    {
+                        <div class="pt-2">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        @if (tenantSettingsForm.Model.Payment == null)
                                         {
-                                            <div class="validation-message">Not active</div>
+                                            <div>There is not registered a payment method.</div>
                                         }
-                                        @if (!tenantSettingsForm.Model.Payment.CardNumberInfo.IsNullOrWhiteSpace())
+                                        else
                                         {
-                                            <div class="font-weight-bold">@tenantSettingsForm.Model.Payment.CardLabel ****@tenantSettingsForm.Model.Payment.CardNumberInfo</div>
+                                            @if (!tenantSettingsForm.Model.Payment.IsActive)
+                                            {
+                                                <div class="validation-message">Not active</div>
+                                            }
+                                            @if (!tenantSettingsForm.Model.Payment.CardNumberInfo.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="font-weight-bold">@tenantSettingsForm.Model.Payment.CardLabel ****@tenantSettingsForm.Model.Payment.CardNumberInfo</div>
+                                            }
+                                            @if (!tenantSettingsForm.Model.Payment.CardHolder.IsNullOrWhiteSpace())
+                                            {
+                                                <div>@tenantSettingsForm.Model.Payment.CardHolder</div>
+                                            }
+                                            <div>Expiry date: @tenantSettingsForm.Model.Payment.CardExpiryMonth/@tenantSettingsForm.Model.Payment.CardExpiryYear</div>
                                         }
-                                        @if (!tenantSettingsForm.Model.Payment.CardHolder.IsNullOrWhiteSpace())
-                                        {
-                                            <div>@tenantSettingsForm.Model.Payment.CardHolder</div>
-                                        }
-                                        <div>Expiry date: @tenantSettingsForm.Model.Payment.CardExpiryMonth/@tenantSettingsForm.Model.Payment.CardExpiryYear</div>
-                                    }
+                                    </div>
                                 </div>
+                                <label class="label-control">Payment method</label>
                             </div>
-                            <label class="label-control">Payment method</label>
                         </div>
-                    </div>
+                    }
                 }
 
                 @if (deleteTenantAcknowledge)

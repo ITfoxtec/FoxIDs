@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Shared
     {
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
+        private IEnumerable<PlanInfo> planInfoList;
         private bool createTenantWorking;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
@@ -67,6 +68,9 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public IToastService ToastService { get; set; }
@@ -141,8 +145,13 @@ namespace FoxIDs.Client.Shared
             await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
         }
 
-        private void ShowCreateTenantModal()
+        private async Task ShowCreateTenantModalAsync()
         {
+            if (ClientSettings.EnablePayment && planInfoList == null)
+            {
+                planInfoList = await HelpersService.GetPlanInfoAsync();
+            }
+
             createTenantWorking = false;
             createTenantDone = false;
             createTenantReceipt = new List<string>();

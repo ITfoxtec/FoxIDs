@@ -6,8 +6,6 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class CustomerViewModel
     {
-        public GeneralTenantViewModel TenantViewModel { get; set; }
-
         [ListLength(0, Constants.Models.Customer.InvoiceEmailsMax, Constants.Models.User.EmailLength, Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Invoice emails")]
         public List<string> InvoiceEmails { get; set; }

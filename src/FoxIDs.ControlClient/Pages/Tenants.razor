@@ -41,6 +41,10 @@
                                     @if (planInfoList != null)
                                     {
                                         <FInputSelect @bind-Value="tenant.Form.Model.PlanName" For="@(() => tenant.Form.Model.PlanName)">
+                                            @if (tenant.Form.Model.PlanName.IsNullOrEmpty())
+                                            {
+                                                <option value=""></option>
+                                            }
                                             @foreach (var planInfo in planInfoList)
                                             {
                                                 <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>

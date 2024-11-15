@@ -14,6 +14,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Infrastructure;
 using Microsoft.JSInterop;
+using System.Collections.Generic;
 
 namespace FoxIDs.Client.Pages
 {
@@ -28,6 +29,9 @@ namespace FoxIDs.Client.Pages
         private Modal changePaymentModal;
         private Modal tenantDeletedModal;
         private bool tenantWorking;
+        private TenantResponse myTenant;
+        private IEnumerable<PlanInfo> planInfoList;
+
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -105,24 +109,12 @@ namespace FoxIDs.Client.Pages
                 deleteTenantError = null;
                 deleteTenantAcknowledge = false;
 
-                var planInfoList = ClientSettings.EnablePayment ? await HelpersService.GetPlanInfoAsync() : null;
-
-                var myTenant = await MyTenantService.GetTenantAsync();
-                await RouteBindingLogic.SetMyTenantAsync(myTenant, planInfoList);
+                myTenant = await MyTenantService.GetTenantAsync();
+                await RouteBindingLogic.SetMyTenantAsync(myTenant);
 
                 savedCustomDomain = myTenant.CustomDomain;
                 
-                await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>(afterMap: afterMap => 
-                {
-                    if(planInfoList != null)
-                    {
-                        afterMap.PlanInfoList = planInfoList;
-                        if (!afterMap.PlanName.IsNullOrWhiteSpace())
-                        {
-                            afterMap.PlanDisplayName = afterMap.CurrentPlanInfo?.DisplayName ?? afterMap.PlanName;
-                        }
-                    }
-                }));
+                await tenantSettingsForm.InitAsync(myTenant.Map<MasterTenantViewModel>());
             }
             catch (TokenUnavailableException)
             {
@@ -131,6 +123,15 @@ namespace FoxIDs.Client.Pages
             catch (Exception ex)
             {
                 tenantSettingsForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task OnUpdateTenantViewModelAfterInitAsync(MasterTenantViewModel model)
+        {
+            if (ClientSettings.EnablePayment && planInfoList == null)
+            {
+                planInfoList = await HelpersService.GetPlanInfoAsync();
+                await RouteBindingLogic.SetMyTenantAsync(myTenant, planInfoList);
             }
         }
 

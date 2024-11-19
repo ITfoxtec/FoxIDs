@@ -195,18 +195,18 @@
                             </div>
                         }
                         <div class="modal-footer">
-                            @if (ShowDoInvoicingAgainButton(used))
+                            @if (ShowDoInvoicingButton(used))
                             {
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
-                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAgainAsync(used))">
-                                        Do invoicing again
+                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAsync(used))">
+                                        Do invoicing
                                     </button>
                                 }
                                 else
                                 {
                                     <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
-                                        Do invoicing again
+                                        Do invoicing
                                     </button>
                                 }
                             }
@@ -285,18 +285,18 @@
                         @UsageInfoText(used)
                     </button>
 
-                    @if (ShowDoInvoicingAgainButton(used))
+                    @if (ShowDoInvoicingButton(used))
                     {
                         @if (!used.InvoicingActionButtonDisabled)
                         {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAgainAsync(used))">
-                                Do invoicing again
+                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAsync(used))">
+                                Do invoicing
                             </button>
                         }
                         else
                         {
                             <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
-                                Do invoicing again
+                                Do invoicing
                             </button>
                         }
                     }

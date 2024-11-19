@@ -92,7 +92,7 @@ namespace FoxIDs.Client.Pages.Usage
             usedList.Add(used);
         }
 
-        public bool ShowDoInvoicingAgainButton(GeneralUsedViewModel used) => (used.IsUsageCalculated || used.HasItems) && !used.IsDone;
+        public bool ShowDoInvoicingButton(GeneralUsedViewModel used) => (used.IsUsageCalculated || used.HasItems) && !used.IsDone;
 
         public bool ShowSendInvoiceAgainButton(GeneralUsedViewModel used) => used.IsInvoiceReady && (used.Invoices?.LastOrDefault()?.IsCardPayment != true || used.PaymentStatus == UsagePaymentStatus.Paid);
 
@@ -285,12 +285,12 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
-        private async Task DoInvoicingAgainAsync(GeneralUsedViewModel generalUsed)
+        private async Task DoInvoicingAsync(GeneralUsedViewModel generalUsed)
         {
             generalUsed.InvoicingActionButtonDisabled = true;
             try
             {
-                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoInvoicingAgain = true });
+                var usedResult = await TenantService.UsageInvoicingActionAsync(new UsageInvoicingAction { TenantName = generalUsed.TenantName, PeriodBeginDate = generalUsed.PeriodBeginDate, PeriodEndDate = generalUsed.PeriodEndDate, DoInvoicing = true });
                 UpdateGeneralModel(generalUsed, usedResult);
             }
             catch (TokenUnavailableException)

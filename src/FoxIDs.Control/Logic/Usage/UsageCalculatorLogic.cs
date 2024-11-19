@@ -44,9 +44,9 @@ namespace FoxIDs.Logic.Usage
 
                 used.PeriodBeginDate = new DateOnly(datePointer.Year, datePointer.Month, 1);
                 used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
-                if (tenant.CreateTime > 0)
+                if (tenant.CreateTime.HasValue && tenant.CreateTime.Value > 0)
                 {
-                    var tenantCreateDate = DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeSeconds(tenant.CreateTime).LocalDateTime);
+                    var tenantCreateDate = DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeSeconds(tenant.CreateTime.Value).LocalDateTime);
                     used.PeriodBeginDate = used.PeriodBeginDate < tenantCreateDate && tenantCreateDate < used.PeriodEndDate ? tenantCreateDate : used.PeriodBeginDate;
                 }
             }

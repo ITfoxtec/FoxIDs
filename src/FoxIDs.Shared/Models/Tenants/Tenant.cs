@@ -41,7 +41,7 @@ namespace FoxIDs.Models
         public string Name { get; set; }
 
         [JsonProperty(PropertyName = "ct")]
-        public long CreateTime { get; set; }
+        public long? CreateTime { get; set; }
 
         [MaxLength(Constants.Models.Plan.NameLength)]
         [RegularExpression(Constants.Models.Plan.NameRegExPattern)]

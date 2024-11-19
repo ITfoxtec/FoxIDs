@@ -58,8 +58,8 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                var lastMonth = DateTimeOffset.Now.AddMonths(-1);
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(null, lastMonth.Year, lastMonth.Month));
+                var thisMonth = DateTimeOffset.Now;
+                SetGeneralUsageList(await TenantService.FilterUsageAsync(null, thisMonth.Year, thisMonth.Month));
                 usageSettings = await TenantService.GetUsageSettingsAsync();
             }
             catch (TokenUnavailableException)
@@ -136,9 +136,9 @@ namespace FoxIDs.Client.Pages.Usage
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)
         {
-            var lastMonth = DateTimeOffset.Now.AddMonths(-1);
-            filterUsage.PeriodYear = lastMonth.Year;
-            filterUsage.PeriodMonth = lastMonth.Month;
+            var thisMonth = DateTimeOffset.Now;
+            filterUsage.PeriodYear = thisMonth.Year;
+            filterUsage.PeriodMonth = thisMonth.Month;
         }
 
         private async Task OnUsageFilterValidSubmitAsync(EditContext editContext)

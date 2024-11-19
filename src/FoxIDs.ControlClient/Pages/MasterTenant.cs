@@ -128,11 +128,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnUpdateTenantViewModelAfterInitAsync(MasterTenantViewModel model)
         {
-            if (ClientSettings.EnablePayment && planInfoList == null)
-            {
-                planInfoList = await HelpersService.GetPlanInfoAsync();
-                await RouteBindingLogic.SetMyTenantAsync(myTenant, planInfoList);
-            }
+            planInfoList = await HelpersService.GetPlanInfoAsync();
         }
 
         private async Task OnUpdateTenantValidSubmitAsync(EditContext editContext)

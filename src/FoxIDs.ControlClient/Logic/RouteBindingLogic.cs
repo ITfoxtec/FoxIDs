@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 
 namespace FoxIDs.Client.Logic
 {
@@ -45,25 +44,22 @@ namespace FoxIDs.Client.Logic
 
         public bool RequestPayment { get; private set; }
 
-        public async Task SetMyTenantAsync(TenantResponse tenant, IEnumerable<PlanInfo> planInfoList = null)
+        public async Task SetMyTenantAsync(TenantResponse tenant)
         {
             myTenant = tenant;
 
             if (!IsMasterTenant && clientSettings.EnablePayment)
             {
-                await UpdatRequestPaymentAsync(myTenant, planInfoList);
+                await UpdatRequestPaymentAsync(myTenant);
             }
         }
 
-        private async Task UpdatRequestPaymentAsync(TenantResponse myTenant, IEnumerable<PlanInfo> planInfoList = null)
+        private async Task UpdatRequestPaymentAsync(TenantResponse myTenant)
         {
             if (myTenant.EnableUsage && !myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
             {
-                if (planInfoList == null)
-                {
-                    var helpersService = serviceProvider.GetService<HelpersService>();
-                    planInfoList = await helpersService.GetPlanInfoAsync();
-                }
+                var helpersService = serviceProvider.GetService<HelpersService>();
+                var planInfoList = await helpersService.GetPlanInfoAsync();
 
                 decimal planCost = planInfoList.Where(p => p.Name == myTenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
                 if (planCost > 0)

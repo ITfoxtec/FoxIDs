@@ -26,7 +26,7 @@ spec:
             name: foxids
             port:
               number: 8800
-  - host: control.itfoxtec.com
+  - host: control.itfoxtec.com   # change to your domain -  control.my-domain.com
     http:
       paths:
       - path: /

@@ -14,17 +14,27 @@ using FoxIDs.Client.Infrastructure.Security;
 using Blazored.Toast.Services;
 using System.Net.Http;
 using ITfoxtec.Identity;
+using FoxIDs.Client.Models.Config;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class Tenants : IDisposable 
     {
+        private UsageSettings usageSettings;
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
         private bool tenantWorking;
+        private IEnumerable<PlanInfo> planInfoList;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
@@ -47,7 +57,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnTenantUpdatedAsync()
         {
-            await DefaultLoadAsync();
+            await DefaultTenantLoadAsync();
             StateHasChanged();
         }
 
@@ -71,6 +81,23 @@ namespace FoxIDs.Client.Pages
         }
 
         private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                await DefaultTenantLoadAsync();
+                usageSettings = await TenantService.GetUsageSettingsAsync();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                searchTenantForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task DefaultTenantLoadAsync()
         {
             try
             {
@@ -109,8 +136,13 @@ namespace FoxIDs.Client.Pages
 
             try
             {
+                if (ClientSettings.EnablePayment && planInfoList == null)
+                {
+                    planInfoList = await HelpersService.GetPlanInfoAsync();
+                }
+
                 var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
-                await generalTenant.Form.InitAsync(tenant);
+                await generalTenant.Form.InitAsync(tenant.Map<TenantViewModel>());
             }
             catch (TokenUnavailableException)
             {
@@ -124,7 +156,7 @@ namespace FoxIDs.Client.Pages
 
         private string TenantInfoText(GeneralTenantViewModel generalTenant)
         {
-            return $"{generalTenant.Name}{(!generalTenant.CustomDomain.IsNullOrEmpty() ? $" - Custom domain: '{generalTenant.CustomDomain}'{(generalTenant.CustomDomainVerified ? " verified" : string.Empty)}" : string.Empty)}";
+            return $"{generalTenant.Name}{(!generalTenant.CustomDomain.IsNullOrEmpty() ? $" - custom domain: '{generalTenant.CustomDomain}'{(generalTenant.CustomDomainVerified ? " verified" : string.Empty)}" : string.Empty)}";
         }
 
         private async Task OnEditTenantValidSubmitAsync(GeneralTenantViewModel generalTenant, EditContext editContext)
@@ -136,8 +168,17 @@ namespace FoxIDs.Client.Pages
                     return;
                 }
                 tenantWorking = true;
-                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
-                generalTenant.Form.UpdateModel(tenantResult);
+                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>(afterMap: afterMap => 
+                {
+                    if (afterMap.Customer != null)
+                    {
+                        if (!afterMap.EnableUsage && !(afterMap.Customer.InvoiceEmails?.Count() > 0) && afterMap.Customer.Name.IsNullOrEmpty())
+                        {
+                            afterMap.Customer = null;
+                        }
+                    }
+                }));
+                generalTenant.Form.UpdateModel(tenantResult.Map<TenantViewModel>());
                 toastService.ShowSuccess("Tenant updated.");
 
                 generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;

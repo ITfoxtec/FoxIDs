@@ -11,13 +11,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Included")]
         public long Included { get; set; }
 
-        [Required]
-        [Display(Name = "Is limited")]
-        public bool IsLimited { get; set; }
+        [Min(Constants.Models.Plan.LimitedThresholdMin)]
+        [Display(Name = "Limited threshold")]
+        public long? LimitedThreshold { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "First level cost per instance")] 
+        [Display(Name = "First level cost per instance in EUR")] 
         public decimal FirstLevelCost { get; set; }
 
         [Min(Constants.Models.Plan.FirstLevelThresholdMin)]
@@ -25,7 +25,7 @@ namespace FoxIDs.Models.Api
         public long? FirstLevelThreshold { get; set; }
 
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "Second level cost per instance")]
+        [Display(Name = "Second level cost per instance in EUR")]
         public decimal? SecondLevelCost { get; set; }
     }
 }

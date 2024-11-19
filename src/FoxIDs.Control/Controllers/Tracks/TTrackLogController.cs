@@ -70,7 +70,7 @@ namespace FoxIDs.Controllers
                 case LogOptions.OpenSearchAndStdoutErrors:
                     return Ok(await serviceProvider.GetService<LogOpenSearchLogic>().QueryLogs(logRequest, (start.DateTime, end.DateTime), maxResponseLogItems));
                 case LogOptions.ApplicationInsights:
-                    return Ok(await serviceProvider.GetService<LogApplicationInsightsLogic>().QueryLogs(logRequest, new QueryTimeRange(start, end), maxResponseLogItems));
+                    return Ok(await serviceProvider.GetService<LogApplicationInsightsLogic>().QueryLogsAsync(logRequest, new QueryTimeRange(start, end), maxResponseLogItems));
                 default:
                     throw new NotSupportedException();
             }

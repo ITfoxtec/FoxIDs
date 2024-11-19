@@ -4,7 +4,6 @@ using Api = FoxIDs.Models.Api;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using System.Linq;
@@ -77,10 +76,14 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(plan)) return BadRequest(ModelState);
                 plan.Name = plan.Name.ToLower();
 
+                var count = await masterDataRepository.CountAsync<Plan>();
+                if (count >= Constants.Models.Plan.PlansMax)
+                {
+                    throw new Exception($"Maximum number of plans ({Constants.Models.Plan.PlansMax}) has been reached.");
+                }
+
                 var mPlan = mapper.Map<Plan>(plan);
                 await masterDataRepository.CreateAsync(mPlan);
-
-                await planCacheLogic.InvalidatePlanCacheAsync(plan.Name);
 
                 return Created(mapper.Map<Api.Plan>(mPlan));
             }

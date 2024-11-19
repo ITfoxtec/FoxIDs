@@ -10,12 +10,12 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
     public partial class TrackSettings
     {
-        private string tenantSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
         private string textsHref;
@@ -25,6 +25,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
         private bool trackWorking;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -40,11 +43,10 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";

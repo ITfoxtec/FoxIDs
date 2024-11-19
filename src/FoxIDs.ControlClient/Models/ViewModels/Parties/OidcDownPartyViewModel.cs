@@ -77,6 +77,12 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         public long TestExpireAt { get; set; }
 
+        /// <summary>
+        /// Test expiration in seconds.
+        /// </summary>
+        [Display(Name = "Expiration time in seconds (0 to disable)")]
+        public int TestExpireInSeconds { get; set; } = 900;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
 
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
-            var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
+            var logResponse = await usageLogLogic.GetTrackUsageLogAsync(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
             return Ok(logResponse);
         }
     }

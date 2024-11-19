@@ -166,11 +166,15 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
 
+            ConnectionMultiplexer connectionMultiplexer = null;
+            if (settings.Options.Cache == CacheOptions.Redis)
+            {
+                connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
+                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+            }
+
             if (settings.Options.DataStorage == DataStorageOptions.CosmosDb && settings.Options.Cache == CacheOptions.Redis)
             {
-                var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
-                services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
-
                 services.AddDataProtection()
                     .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
             }

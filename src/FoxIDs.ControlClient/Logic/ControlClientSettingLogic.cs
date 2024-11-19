@@ -9,11 +9,13 @@ namespace FoxIDs.Client.Logic
     {
         private readonly ClientSettings clientSettings;
         private readonly ClientService clientService;
+        private readonly NotificationLogic notificationLogic;
 
-        public ControlClientSettingLogic(ClientSettings clientSettings, ClientService clientService)
+        public ControlClientSettingLogic(ClientSettings clientSettings, ClientService clientService, NotificationLogic notificationLogic)
         {
             this.clientSettings = clientSettings;
             this.clientService = clientService;
+            this.notificationLogic = notificationLogic;
         }
 
         public async Task InitLoadAsync()
@@ -26,6 +28,11 @@ namespace FoxIDs.Client.Logic
                 clientSettings.FullVersion = controlClientSettings.FullVersion;
                 clientSettings.LogOption = controlClientSettings.LogOption;
                 clientSettings.KeyStorageOption = controlClientSettings.KeyStorageOption;
+                clientSettings.EnablePayment = controlClientSettings.EnablePayment;
+                clientSettings.PaymentTestMode = controlClientSettings.PaymentTestMode;
+                clientSettings.MollieProfileId = controlClientSettings.MollieProfileId;
+                
+                notificationLogic.ClientSettingLoaded();
             }
         }
     }

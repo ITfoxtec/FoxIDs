@@ -41,15 +41,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Plan.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Plan.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
+
         [MaxLength(Constants.Models.Plan.TextLength)]
         [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
-
-        [Required]
-        [MaxLength(Constants.Models.Plan.CurrencyLength)]
-        [RegularExpression(Constants.Models.Plan.CurrencyRegExPattern)]
-        [JsonProperty(PropertyName = "currency")]
-        public string Currency { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]

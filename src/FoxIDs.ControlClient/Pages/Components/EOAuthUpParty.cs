@@ -12,16 +12,11 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Net.Http;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOAuthUpParty : UpPartyBase
     {
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
-
         protected List<string> responseTypeItems = new List<string> (Constants.OAuth.DefaultResponseTypes);
 
         protected override async Task OnInitializedAsync()

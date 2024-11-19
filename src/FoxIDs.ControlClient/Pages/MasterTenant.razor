@@ -1,0 +1,266 @@
+﻿@page "/{tenantName}/tenant"
+@inherits PageBase
+
+<div class="tab-content">
+    <PageEditForm @ref="tenantSettingsForm" TModel="MasterTenantViewModel" OnAfterInit="@(async m => await OnUpdateTenantViewModelAfterInitAsync(m))" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected)
+        {
+            <div class="modal-body px-0">
+                @if (!deleteTenantError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @deleteTenantError
+                    </div>
+                }
+                <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
+                <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
+                <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
+
+                @if (!ClientSettings.EnablePayment)
+                {
+                    tenantSettingsForm.Model.Customer = null;
+                    tenantSettingsForm.Model.Payment = null;
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(tenantSettingsForm.Model.Name))
+                    {
+                        tenantSettingsForm.Model.Customer ??= new Customer();
+                    }
+
+                    <div class="info-text">
+                        You can change the plan to a higher plan.
+                    </div>
+                    @if (planInfoList != null)
+                    {
+                        <FInputSelect @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)">
+                            @if (tenantSettingsForm.Model.PlanName.IsNullOrEmpty())
+                            {
+                                <option value=""></option>
+                            }
+                            @foreach (var planInfo in planInfoList)
+                            {
+                                <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
+                            }
+                        </FInputSelect>
+                    }
+
+                    @if (tenantSettingsForm.Model.Customer != null)
+                    {
+                        <div class="pt-2">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="info-text">
+                                            The invoice emails will receive the monthly invoices.
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputTextList @bind-ValueList="tenantSettingsForm.Model.Customer.InvoiceEmails" For="@(() => tenantSettingsForm.Model.Customer.InvoiceEmails)" />
+                                            </div>
+                                        </div>
+                                        <div class="info-text">
+                                            Optionally add a reference (e.g., email or username) that is included in the invoice.
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Reference" For="@(() => tenantSettingsForm.Model.Customer.Reference)" />
+                                            </div>
+                                        </div>
+                                        <div class="info-text">
+                                            Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Name" For="@(() => tenantSettingsForm.Model.Customer.Name)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.VatNumber" For="@(() => tenantSettingsForm.Model.Customer.VatNumber)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine1" For="@(() => tenantSettingsForm.Model.Customer.AddressLine1)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.AddressLine2" For="@(() => tenantSettingsForm.Model.Customer.AddressLine2)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.PostalCode" For="@(() => tenantSettingsForm.Model.Customer.PostalCode)" />
+                                            </div>
+                                            <div class="col-6">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.City" For="@(() => tenantSettingsForm.Model.Customer.City)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.StateRegion" For="@(() => tenantSettingsForm.Model.Customer.StateRegion)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <FInputText @bind-Value="tenantSettingsForm.Model.Customer.Country" For="@(() => tenantSettingsForm.Model.Customer.Country)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="label-control">Customer information</label>
+                            </div>
+                        </div>
+                    }
+
+                    @if (tenantSettingsForm.Model.Payment != null)
+                    {
+                        <div class="pt-2">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        @if (tenantSettingsForm.Model.Payment == null)
+                                        {
+                                            <div>There is not registered a payment method.</div>
+                                        }
+                                        else
+                                        {
+                                            @if (!tenantSettingsForm.Model.Payment.IsActive)
+                                            {
+                                                <div class="validation-message">Not active</div>
+                                            }
+                                            @if (!tenantSettingsForm.Model.Payment.CardNumberInfo.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="font-weight-bold">@tenantSettingsForm.Model.Payment.CardLabel ****@tenantSettingsForm.Model.Payment.CardNumberInfo</div>
+                                            }
+                                            @if (!tenantSettingsForm.Model.Payment.CardHolder.IsNullOrWhiteSpace())
+                                            {
+                                                <div>@tenantSettingsForm.Model.Payment.CardHolder</div>
+                                            }
+                                            <div>Expiry date: @tenantSettingsForm.Model.Payment.CardExpiryMonth/@tenantSettingsForm.Model.Payment.CardExpiryYear</div>
+                                        }
+                                    </div>
+                                </div>
+                                <label class="label-control">Payment method</label>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (deleteTenantAcknowledge)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <div>
+                            You are about to delete your tenant. All tracks and user repositories will also be deleted, there is no way back a tenant can not be restored! Are you sure?
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteTenantAsync">Yes delete tenant</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTenantAcknowledge = false)">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer px-0">
+                @if (ClientSettings.EnablePayment)
+                {
+                    <button class="btn btn-secondary mr-auto" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
+                }
+                <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+                <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
+            </div>
+        }
+    </PageEditForm>
+</div>
+
+<Modal @ref="changePaymentModal" Title="Payment" DisableClose="true">
+     <div class="modal-body">
+        <form id="mollieform">
+            <div class="modal-body">
+                <div class="mr-auto info-text pt-0 pb-3">
+                    <div>
+                        Register your card for the tenant subscription.
+                    </div>
+                    <div class="font-italic pt-1 small">
+                        Your card is register with a zero amount payment and no money will be withdrawn from you card or account in advance.
+                    </div>
+                </div>
+
+                @if (!changePaymentError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @changePaymentError
+                    </div>
+                }
+    
+                <div class="">
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="card-number"></div>
+                            </div>
+                        </div>
+                        <div id="card-number-error" class="validation-message"></div>
+                        <label for="card-number" class="label-control">Card number</label>
+                    </div>
+                </div>
+
+                <div class="">
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="card-holder"></div>
+                            </div>
+                        </div>
+                        <div id="card-holder-error" class="validation-message"></div>
+                        <label for="card-holder" class="label-control">Card holder</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="expiry-date"></div>
+                                    </div>
+                                </div>
+                                <div id="expiry-date-error" class="validation-message"></div>
+                                <label for="expiry-date" class="label-control">Expiry date</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="verification-code"></div>
+                                    </div>
+                                </div>
+                                    <div id="verification-code-error" class="validation-message"></div>
+                                <label for="verification-code" class="label-control">CVV</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary @(changePaymentWorking ? "disabled" : "")" @onclick="SubmitMollieAsync">Register payment</button>
+                <button type="button" class="btn btn-secondary @(changePaymentWorking ? "disabled" : "")" @onclick="HidePaymentModalAsync">Cancel</button>
+            </div>
+        </form>
+    </div>
+</Modal>
+
+<Modal @ref="tenantDeletedModal" Title="Deleted" DisableClose="true">
+    <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+            Your tenant including all content has been deleted.
+        </div>
+    </div>
+</Modal>

@@ -5,16 +5,27 @@
 <div class="min-vh-100 d-flex flex-column justify-content-between">
     <div class=container-fluid>
 
+        <AuthorizeView>
+            <Authorized>
+                @if (!IsMasterTenant && RequestPayment)
+                {
+                    <div class="alert alert-warning text-center" role="alert">
+                        Please register a <a href="" class="alert-link" @onclick="OpenPaymentMethodAsync" @onclick:preventDefault>payment method</a> for the tenant subscription.
+                    </div>
+                }
+            </Authorized>
+        </AuthorizeView>
+
         <nav class="navbar navbar-expand navbar-light bg-light navbar-main nav-fill">
             <a class="navbar-brand mr-auto"><img class="logo" src="images/foxids_logo.svg" /></a>
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav nav-item dropdown-nav-item">
-                        @if (RouteBindingLogic.IsMasterTenant)
+                        @if (IsMasterTenant)
                         {
                             <li class="nav-item pt-2">
                                 <strong class="align-middle">Master tenant</strong>
-                                <button class="btn btn-primary ml-4" type="button" @onclick="ShowCreateTenantModal"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
+                                <button class="btn btn-primary ml-4" type="button" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
                             </li>
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
@@ -122,7 +133,7 @@
         <AuthorizeView>
             <Authorized>
                 <div class="navbar-outline">
-                    <nav class="container-lg navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
+                    <nav class="container-lg navbar @(IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
                         <div class="align-text-top">
                             <button class="navbar-toggler my-2 mr-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
@@ -130,17 +141,23 @@
                         </div>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav">
-                                @if (RouteBindingLogic.IsMasterTenant)
+                                @if (IsMasterTenant)
                                 {
                                     <TenantLiNavLink Href="tenants">
                                         Tenants
+                                    </TenantLiNavLink>
+                                }
+                                else if (IsMasterTrack)
+                                {
+                                    <TenantLiNavLink Href="tenant">
+                                        Tenant
                                     </TenantLiNavLink>
                                 }
                                 <TenantLiNavLink Href="applications">
                                     Applications
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="authentication">
-                                    Authentication Methods
+                                    Authentication
                                 </TenantLiNavLink>
                                 <TenantLiNavLink Href="users" SubPages="externalusers">
                                     Users
@@ -148,9 +165,15 @@
                                 <TenantLiNavLink Href="certificates">
                                     Certificates
                                 </TenantLiNavLink>
-                                @if (clientSettings.LogOption != LogOptions.Stdout)
+                                @if (IsMasterTenant && ClientSettings.EnablePayment)
                                 {
-                                    <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
+                                    <TenantLiNavLink Href="usage" SubPages="usagetenats,usagesettings">
+                                        Usage
+                                    </TenantLiNavLink>
+                                }
+                                @if (ClientSettings.LogOption != LogOptions.Stdout)
+                                {
+                                    <TenantLiNavLink Href="logusage" SubPages="logs,logsettings">
                                         Logs
                                     </TenantLiNavLink>
                                 }
@@ -181,7 +204,16 @@
                             <FInputToggle @bind-Value="createTenantForm.Model.ChangeAdministratorPassword" For="@(() => createTenantForm.Model.ChangeAdministratorPassword)" />
                             <FInputToggle @bind-Value="createTenantForm.Model.ConfirmAdministratorAccount" For="@(() => createTenantForm.Model.ConfirmAdministratorAccount)" />
 
-                            <FInputText @bind-Value="createTenantForm.Model.PlanName" For="@(() => createTenantForm.Model.PlanName)" />
+                            @if (ClientSettings.EnablePayment && planInfoList != null)
+                            {
+                                <FInputSelect @bind-Value="createTenantForm.Model.PlanName" For="@(() => createTenantForm.Model.PlanName)">
+                                    <option value=""></option>
+                                    @foreach (var planInfo in planInfoList)
+                                    {
+                                        <option value="@planInfo.Name">@(planInfo.DisplayName ?? planInfo.Name)</option>
+                                    }
+                                </FInputSelect>
+                            }
 
                             <ul class="list-group list-group-flush">
                                 @foreach (var receipt in createTenantReceipt)
@@ -313,7 +345,7 @@
                     <ActivateLogin />
                 </NotAuthorized>
             </AuthorizeView>
-            @if (RouteBindingLogic.IsMasterTenant || TrackSelectedLogic.IsTrackSelected)
+            @if (IsMasterTenant || TrackSelectedLogic.IsTrackSelected)
             {
                 @Body
             }            
@@ -321,7 +353,7 @@
     </div>
 
     <footer class="footer-container">
-        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {clientSettings.FullVersion}")">@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
+        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {ClientSettings.FullVersion}")">@(ClientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {ClientSettings.Version}")</small></span>
     </footer>
 </div>
 

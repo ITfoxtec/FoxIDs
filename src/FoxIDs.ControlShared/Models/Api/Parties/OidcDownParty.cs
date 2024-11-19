@@ -60,10 +60,11 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
+        #region TestApp
         /// <summary>
         /// Is test.
         /// </summary>
-        public bool IsTest { get; set; }
+        public bool? IsTest { get; set; }
 
         /// <summary>
         /// Test URL
@@ -74,7 +75,13 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Test expiration time.
         /// </summary>
-        public long TestExpireAt { get; set; }
+        public long? TestExpireAt { get; set; }
+
+        /// <summary>
+        /// 0 to disable expiration.
+        /// </summary>
+        public int? TestExpireInSeconds { get; set; }
+        #endregion
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

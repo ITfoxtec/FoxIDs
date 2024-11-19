@@ -37,5 +37,8 @@ namespace FoxIDs.Models.Api
         [Required]
         [MaxLength(Constants.Models.Track.MasterTrackControlClientBaseUri)]
         public string ControlClientBaseUri { get; set; }
+
+        [ValidateComplexType]
+        public Customer Customer { get; set; }
     }
 }

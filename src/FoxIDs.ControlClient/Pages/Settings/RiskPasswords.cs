@@ -9,12 +9,12 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
     public partial class RiskPasswords
     {
-        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
@@ -24,6 +24,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string riskPasswordLoadError;
         private RiskPasswordInfo uploadRiskPassword { get; set; }
         private PageEditForm<TestRiskPasswordViewModel> testRiskPasswordForm { get; set; }
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -36,11 +39,8 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
-
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";

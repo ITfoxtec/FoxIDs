@@ -54,6 +54,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_usage")]
         public bool EnableUsage { get; set; }
 
+        [JsonProperty(PropertyName = "do_payment")]
+        public bool DoPayment { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>

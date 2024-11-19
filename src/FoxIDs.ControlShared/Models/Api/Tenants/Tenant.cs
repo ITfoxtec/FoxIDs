@@ -22,6 +22,8 @@ namespace FoxIDs.Models.Api
 
         public bool EnableUsage { get; set; }
 
+        public bool DoPayment { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>

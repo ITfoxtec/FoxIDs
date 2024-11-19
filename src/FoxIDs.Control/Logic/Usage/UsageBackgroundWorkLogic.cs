@@ -141,7 +141,7 @@ namespace FoxIDs.Logic.Usage
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var currentMonthStartingPoint = currentMonthPointer.ToUnixTimeSeconds();
-                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" && t.CreateTime < currentMonthStartingPoint, pageSize: loadPageSize, paginationToken: paginationToken);
+                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" && (!t.CreateTime.HasValue || t.CreateTime.Value < currentMonthStartingPoint), pageSize: loadPageSize, paginationToken: paginationToken);
                     foreach (var tenant in tenants)
                     {
                         try

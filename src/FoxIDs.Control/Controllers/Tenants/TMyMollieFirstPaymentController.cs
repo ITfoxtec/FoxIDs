@@ -82,7 +82,7 @@ namespace FoxIDs.Controllers
             var paymentRequest = new CreditCardPaymentRequest
             {
                 Amount = new Amount("EUR", "0.00"),
-                RedirectUrl = $"{HttpContext.GetHost()}{RouteBinding.TenantName}/tenant",
+                RedirectUrl = $"{HttpContext.GetHost()}{RouteBinding.TenantName}/tenantpaymentresponse",
                 Description = "Zero amount registration payment",
                 CustomerId = mTenant.Payment.CustomerId,
                 SequenceType = SequenceType.First,

@@ -60,9 +60,9 @@ namespace FoxIDs.Controllers
 
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(action.TenantName, action.PeriodBeginDate.Year, action.PeriodBeginDate.Month));
 
-                if (action.DoInvoicingAgain)
+                if (action.DoInvoicing)
                 {
-                    await DoInvoicingAgain(mUsed);
+                    await DoInvoicing(mUsed);
                 }
                 else if (action.DoSendInvoiceAgain)
                 {
@@ -99,17 +99,37 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task DoInvoicingAgain(Used mUsed)
+        private async Task DoInvoicing(Used mUsed)
         {
-            if ((mUsed.IsUsageCalculated || mUsed.Items?.Count() > 0) && !mUsed.IsDone)
+            var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
+
+            if (mTenant.EnableUsage)
             {
-                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
-                using var cancellationTokenSource = new CancellationTokenSource();
-                await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token);
+                if ((mUsed.IsUsageCalculated || mUsed.Items?.Count() > 0) && !mUsed.IsDone)
+                {
+                    using var cancellationTokenSource = new CancellationTokenSource();
+                    await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token);
+                }
+                else
+                {
+                    throw new Exception("The usage is not calculated or no items exits or it is already done and can not be invoiced.");
+                }
             }
             else
             {
-                throw new Exception("The usage is not calculated or already done and can not be invoiced again.");
+                if(mUsed.IsDone)
+                {
+                    throw new Exception("The usage is already done and can not be invoiced.");
+                }
+                else if (mUsed.Items?.Count() > 0)
+                {
+                    using var cancellationTokenSource = new CancellationTokenSource();
+                    await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token, doInvoicing: true);
+                }
+                else
+                {
+                    logger.Event($"Usage, no items to invoice for tenant '{mUsed.TenantName}'.");
+                }
             }
         }
 

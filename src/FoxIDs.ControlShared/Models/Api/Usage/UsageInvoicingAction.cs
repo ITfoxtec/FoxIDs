@@ -2,7 +2,7 @@
 {
     public class UsageInvoicingAction : UsageRequest
     {
-        public bool DoInvoicingAgain { get; set; }
+        public bool DoInvoicing { get; set; }
 
         public bool DoSendInvoiceAgain { get; set; }
 

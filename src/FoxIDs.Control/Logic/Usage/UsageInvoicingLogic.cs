@@ -42,9 +42,9 @@ namespace FoxIDs.Logic.Usage
             this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
-        public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
+        public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken, bool doInvoicing = false)
         {
-            if(!tenant.EnableUsage)
+            if(!doInvoicing && !tenant.EnableUsage)
             {
                 logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled.");
                 return false;
@@ -251,14 +251,10 @@ namespace FoxIDs.Logic.Usage
             };
 
             var usageSettings = await GetUsageSettingsAsync();
-            var plan = tenant.PlanName.IsNullOrEmpty() ? null : await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName));
+            var plan = tenant.EnableUsage && !tenant.PlanName.IsNullOrEmpty() ? await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName)) : null;
 
             stoppingToken.ThrowIfCancellationRequested();
             CalculateInvoice(used, plan, invoice, tenant.IncludeVat, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
-            if(invoice.Price <= 0)
-            {
-                return null;
-            }
 
             invoice.InvoiceNumber = await GetInvoiceNumberAsync(usageSettings);
 

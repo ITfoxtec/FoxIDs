@@ -23,6 +23,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Enable usage")]
         public bool EnableUsage { get; set; }
 
+        [Display(Name = "Do payment")]
+        public bool DoPayment { get; set; }
+
         /// <summary>
         /// Default EUR if empty.
         /// </summary>

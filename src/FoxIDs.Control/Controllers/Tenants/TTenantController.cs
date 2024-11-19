@@ -209,6 +209,7 @@ namespace FoxIDs.Controllers
                     mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
                 }
                 mTenant.EnableUsage = tenant.EnableUsage;
+                mTenant.DoPayment = tenant.DoPayment;
                 mTenant.Currency = tenant.Currency;
                 mTenant.IncludeVat = tenant.IncludeVat;
                 mTenant.HourPrice = tenant.HourPrice;

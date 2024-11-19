@@ -168,18 +168,25 @@ namespace FoxIDs.Client.Pages
 
         private async Task ShowPaymentModalAsync()
         {
-            (var isValid, var error) = await tenantSettingsForm.Submit();
-            if(isValid)
+            try
             {
-                changePaymentError = null;
-                changePaymentWorking = false;
-                changePaymentModal.Show();
+                (var isValid, var error) = await tenantSettingsForm.Submit();
+                if (isValid)
+                {
+                    changePaymentError = null;
+                    changePaymentWorking = false;
+                    changePaymentModal.Show();
 
-                await LoadMollieAsync();
+                    await LoadMollieAsync();
+                }
+                else if (!error.IsNullOrWhiteSpace())
+                {
+                    ToastService.ShowError(error);
+                }
             }
-            else if(!error.IsNullOrWhiteSpace())
+            catch (TokenUnavailableException)
             {
-                ToastService.ShowError(error);
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
         }
 

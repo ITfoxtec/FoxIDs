@@ -253,6 +253,12 @@
                 <button type="button" class="btn btn-primary @(changePaymentWorking ? "disabled" : "")" @onclick="SubmitMollieAsync">Register payment</button>
                 <button type="button" class="btn btn-secondary @(changePaymentWorking ? "disabled" : "")" @onclick="HidePaymentModalAsync">Cancel</button>
             </div>
+            <div class="footer-container text-center">
+                <div class="footer-content">
+                    <a href="https://www.mollie.com/" target="_blank"><i class="bi bi-lock"></i>Payment secured and provided by <strong>mollie</strong></a>
+                </div>
+            </div>
+           
         </form>
     </div>
 </Modal>

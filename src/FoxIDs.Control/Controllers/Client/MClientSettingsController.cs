@@ -33,7 +33,10 @@ namespace FoxIDs.Controllers.Client
                 Version = version.ToString(2),
                 FullVersion = version.ToString(3),
                 LogOption = mapper.Map<Api.LogOptions>(settings.Options.Log),
-                KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage)
+                KeyStorageOption = mapper.Map<Api.KeyStorageOptions>(settings.Options.KeyStorage),
+                EnablePayment = settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true,
+                PaymentTestMode = settings.Payment != null ? settings.Payment.TestMode : true,
+                MollieProfileId = settings.Payment?.MollieProfileId,
             });
         }
     }

@@ -45,6 +45,9 @@
             }
             @if (UpParty.ShowAdvanced)
             {
+                <div class="info-text">
+                    Choose to use a URL binding pattern that is supported by the OpenID Provider / Identity Provider. The different binding pattern is used for interoperability.
+                </div>
                 <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
                     <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(auth-method)/... - default</option>
                     <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~auth-method~/...</option>

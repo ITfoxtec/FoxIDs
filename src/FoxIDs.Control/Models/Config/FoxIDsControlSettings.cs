@@ -34,6 +34,12 @@ namespace FoxIDs.Models.Config
         [Required]
         public int DownPartyTestLifetime { get; set; } = 900; // 15 minutes
 
+        [ValidateComplexType]
+        public PaymentSettings Payment { get; set; } 
+
+        [ValidateComplexType]
+        public UsageBaseSettings Usage { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = base.Validate(validationContext).ToList();

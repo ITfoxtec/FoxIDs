@@ -26,7 +26,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri, true.ToString(), parmName: "isUpParty"))?.Name;
 
-        public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);
+        public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterValue) => await FilterAsync<UpParty>(filterApiUri, filterValue, parmValue2: filterValue, parmName2: "filterHrdDomains");
 
         public async Task<LoginUpParty> GetLoginUpPartyAsync(string name) => await GetAsync<LoginUpParty>(loginApiUri, name);
         public async Task<LoginUpParty> CreateLoginUpPartyAsync(LoginUpParty party) => await PostResponseAsync<LoginUpParty, LoginUpParty>(loginApiUri, party);

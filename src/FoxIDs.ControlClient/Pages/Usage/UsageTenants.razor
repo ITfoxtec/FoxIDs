@@ -1,0 +1,204 @@
+﻿@page "/{tenantName}/usagetenants"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@usageHref">Usage</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Usage tenants</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@usageSettingsHref">Usage settings</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="d-flex pt-2">
+        <div class="info-text mr-auto">
+            Add usage tenants that can only be used to register usage.
+        </div>
+        <div class="py-2">
+            <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateTenant())">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Tenant
+            </button>
+        </div>
+    </div>
+
+    <PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnTenantFilterValidSubmitAsync">
+        <FInputTextFilter @bind-Value="searchTenantForm.Model.FilterValue" For="@(() => searchTenantForm.Model.FilterValue)" />
+    </PageEditForm>
+
+    <ul class="list-group">
+        @if (tenants != null)
+        {
+            @if (tenants.Count() > 0)
+            {
+                @foreach (var tenant in tenants)
+                {
+                    <li class="list-group-item @(tenant.Edit ? "active" : "d-flex justify-content-between align-items-center")">
+                        @if (!tenant.Error.IsNullOrWhiteSpace())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @tenant.Error
+                            </div>
+                        }
+                        @if (tenant.Edit)
+                        {
+                            <PageEditForm @ref="tenant.Form" TModel="TenantViewModel" OnValidSubmit="@(async (editContext) => await OnEditTenantValidSubmitAsync(tenant, editContext))">
+                                <div class="modal-header">
+                                    Tenant
+                                </div>
+                                <div class="modal-body">
+                                    @if (tenant.CreateMode)
+                                    {
+                                        <FInputText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" Focus="true" />
+                                    }
+                                    else
+                                    {
+                                        <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
+                                    }
+
+                                    <div class="pt-2">
+                                        <div class="active-group active">
+                                            <div class="card">
+                                                <div class="card-body mt-2">
+                                                    <FInputSelect @bind-Value="tenant.Form.Model.Currency" For="@(() => tenant.Form.Model.Currency)">
+                                                        <option value="@string.Empty"></option>
+                                                        <option value="@Constants.Models.Currency.Eur">@Constants.Models.Currency.Eur</option>
+                                                        @if (usageSettings.CurrencyExchanges?.Count() > 0)
+                                                        {
+                                                            @foreach (var ce in usageSettings.CurrencyExchanges)
+                                                            {
+                                                                <option value="@ce.Currency">@ce.Currency</option>
+                                                            }
+                                                        }
+                                                    </FInputSelect>
+                                                    <FInputToggle @bind-Value="tenant.Form.Model.IncludeVat" For="@(() => tenant.Form.Model.IncludeVat)" TextType="y.n" />
+                                                    <FInputNumberDN @bind-Value="tenant.Form.Model.HourPrice" For="@(() => tenant.Form.Model.HourPrice)" />
+                                                </div>
+                                            </div>
+                                            <label class="label-control">Usage</label>
+                                        </div>
+                                    </div>
+
+                                    @if (tenant.Form.Model.Customer == null)
+                                    {
+                                        tenant.Form.Model.Customer ??= new CustomerViewModel();
+                                    }
+                                    @if (tenant.Form.Model.Customer != null)
+                                    {
+                                        <div class="pt-2">
+                                            <div class="active-group active">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="info-text">
+                                                            The invoice emails will receive the monthly invoices.
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputTextList @bind-ValueList="tenant.Form.Model.Customer.InvoiceEmails" For="@(() => tenant.Form.Model.Customer.InvoiceEmails)" DynamicFirstRow="true" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="info-text">
+                                                            Optionally add a reference (e.g., email or username) that is included in the invoice.
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.Reference" For="@(() => tenant.Form.Model.Customer.Reference)" LabelText="Customer reference" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="info-text">
+                                                            Add your company name and VAT number (e.g., DK24610452) and address in order to avoid Danish VAT.
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.Name" For="@(() => tenant.Form.Model.Customer.Name)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.VatNumber" For="@(() => tenant.Form.Model.Customer.VatNumber)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.AddressLine1" For="@(() => tenant.Form.Model.Customer.AddressLine1)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.AddressLine2" For="@(() => tenant.Form.Model.Customer.AddressLine2)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.PostalCode" For="@(() => tenant.Form.Model.Customer.PostalCode)" />
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.City" For="@(() => tenant.Form.Model.Customer.City)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.StateRegion" For="@(() => tenant.Form.Model.Customer.StateRegion)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <FInputText @bind-Value="tenant.Form.Model.Customer.Country" For="@(() => tenant.Form.Model.Customer.Country)" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label class="label-control">Customer information</label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                @if (!tenant.CreateMode && tenant.DeleteAcknowledge)
+                                {
+                                    <div class="modal-footer">
+                                        <div class="alert alert-danger" role="alert">
+                                            <div>
+                                                You are about to delete the usage tenant "@tenant.Name". There is no way back a tenant can not be restored! Are you sure?
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteTenantAsync(tenant))">Yes delete tenant</button>
+                                                <button type="button" class="btn btn-secondary" @onclick="@(() => tenant.DeleteAcknowledge = false)">No</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="modal-footer">
+                                    @if (!tenant.CreateMode)
+                                    {
+                                        <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
+                                    }
+                                    <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
+                                    <button type="button" class="btn btn-secondary @(tenantWorking ? "disabled" : "")" @onclick="@(() => TenantCancel(tenant))">@(tenant.CreateMode ? "Cancel" : "Close")</button>
+                                </div>
+                            </PageEditForm>
+                        }
+                        else
+                        {
+                            <button class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
+                                @tenant.Name
+                            </button>
+                            @if (tenant.Name != Constants.Routes.MasterTenantName)
+                            {
+                                <a class="btn btn-sm btn-outline-dark" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                            }
+                        }
+                    </li>
+                }
+            }
+            else if (!searchTenantForm.Model.FilterValue.IsNullOrWhiteSpace())
+            {
+                <div class="font-italic pl-1">No match</div>
+            }
+        }
+    </ul>
+</div>

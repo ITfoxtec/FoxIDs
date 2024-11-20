@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public interface IUpPartyHrd
     {
-        [Display(Name = "HRD Domains (use * to accept all domains)")]
+        [Display(Name = "HRD Domains (use * to accept all domains not configured on another authentication method)")]
         public List<string> HrdDomains { get; set; }
 
         [Display(Name = "Show HRD button together with HRD domain")]

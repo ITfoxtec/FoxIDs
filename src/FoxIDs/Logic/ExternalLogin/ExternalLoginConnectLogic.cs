@@ -4,7 +4,6 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +15,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Ext = FoxIDs.Models.ExternalLogin;
 using System.Net.Mime;
+using FoxIDs.Util;
 
 namespace FoxIDs.Logic
 {
     public class ExternalLoginConnectLogic : LogicSequenceBase
     {
-        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
-
         private readonly TelemetryScopedLogger logger;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly FailingLoginLogic failingLoginLogic;
@@ -115,7 +109,7 @@ namespace FoxIDs.Logic
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
             
-            var content = new StringContent(JsonConvert.SerializeObject(requestDictionary, jsonSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var content = new StringContent(JsonConvert.SerializeObject(requestDictionary, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
             using var response = await httpClient.PostAsync(authenticationApiUrl, content);
             switch (response.StatusCode)
             {

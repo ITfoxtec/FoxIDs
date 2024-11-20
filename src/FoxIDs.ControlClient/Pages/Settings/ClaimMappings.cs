@@ -12,12 +12,12 @@ using FoxIDs.Client.Logic;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components.Web;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
     public partial class ClaimMappings
     {
-        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string textsHref;
@@ -25,6 +25,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string riskPasswordsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -40,11 +43,8 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
-
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             textsHref = $"{TenantName}/texts";

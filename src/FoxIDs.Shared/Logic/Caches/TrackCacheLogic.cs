@@ -51,11 +51,6 @@ namespace FoxIDs.Logic
             return track;
         }
 
-        public async Task<Track> GetTrackAsync(string trackName, string tenantName = null, bool required = true)
-        {
-            return await GetTrackAsync(GetTrackIdKey(trackName, tenantName), required);
-        }
-
         private string CacheTrackNameKey(Track.IdKey trackIdKey)
         {
             return $"track_cache_name_{trackIdKey.TenantName}_{trackIdKey.TrackName}";

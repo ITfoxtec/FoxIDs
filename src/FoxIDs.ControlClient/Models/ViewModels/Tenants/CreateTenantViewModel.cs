@@ -44,12 +44,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Confirm administrator account")]
         public bool ConfirmAdministratorAccount { get; set; } = true;
 
-        /// <summary>
-        /// Plan (optional).
-        /// </summary>
-        [MaxLength(Constants.Models.Plan.NameLength)]
-        [RegularExpression(Constants.Models.Plan.NameRegExPattern)]
-        [Display(Name = "Plan (optional)")]
+        [Display(Name = "Plan")]
         public string PlanName { get; set; }
     }
 }

@@ -36,6 +36,8 @@ All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to FoxIDs
 
 Configure [OpenID Connect](auth-method-oidc.md) which trust an external OpenID Provider (OP) - *an Identity Provider (IdP) is called an OpenID Provider (OP) if configured with OpenID Connect*.
 
+> You should always ask for the `sub` claim, even if you use the `email` claim or e.g. another custom user ID claim.
+
 How to guides:
 
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
@@ -49,6 +51,9 @@ How to guides:
 ### SAML 2.0
 
 Configure [SAML 2.0](auth-method-saml-2.0.md) which trust an external Identity Provider (IdP).
+
+> You should always ask for the `NameID` claim, even if you use the email (`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`) claim or e.g. another custom user ID claim. SAML 2.0 can not do logout without the `NameID` claim.  
+> You should prefer to do SAML 2.0 connects with the use of the authentication methods metadata, then the customer's IdP can automatically download the certificate(s). And request for an online IdP metadata from the customer.
 
 How to guides:
 

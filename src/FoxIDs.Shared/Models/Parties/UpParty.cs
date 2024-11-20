@@ -86,7 +86,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_single_logout")]
         public bool DisableSingleLogout { get; set; }
 
-        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern, Constants.Models.UpParty.HrdDomainTotalMax)]
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }
 

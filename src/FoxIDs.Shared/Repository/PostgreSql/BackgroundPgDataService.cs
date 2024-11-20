@@ -26,13 +26,13 @@ namespace FoxIDs.Repository
         {
             do
             {
-                await DoWorkAsync();
+                await DoWorkAsync(stoppingToken);
                 await Task.Delay(settings.FileData.BackgroundServiceWaitPeriod = 1000, stoppingToken);
             }
             while (!stoppingToken.IsCancellationRequested);
         }
 
-        private async Task DoWorkAsync()
+        private async Task DoWorkAsync(CancellationToken stoppingToken)
         {
             try
             {
@@ -62,6 +62,14 @@ namespace FoxIDs.Repository
                                 scopedLogger.Event("Done processing cache PostgreSQL data.");
                             }
                         }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        throw;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        throw;
                     }
                     catch (Exception ex)
                     {

@@ -24,5 +24,10 @@ namespace FoxIDs.Models.Api
         /// Test expiration time in Unix time seconds.
         /// </summary>
         public long TestExpireAt { get; set; }
+
+        /// <summary>
+        /// 0 to disable expiration.
+        /// </summary>
+        public int TestExpireInSeconds { get; set; }
     }
 }

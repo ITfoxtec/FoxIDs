@@ -254,7 +254,7 @@ namespace FoxIDs.Logic
 
         private string GetIndexName()
         {
-            return $"{Constants.Logs.LogName}*";
+            return $"{settings.OpenSearch.LogName}*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)

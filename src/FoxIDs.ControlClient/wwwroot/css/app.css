@@ -79,6 +79,9 @@ h4 {
     line-height: normal;
     letter-spacing: normal;
 }
+    .footer-container a {
+        color: #666;
+    }
 
 .footer-content {
     padding-left: 1rem;

@@ -311,7 +311,7 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
-                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex &&
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Saml2ClaimTypes.NameId &&
                     c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthProfileMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
                     c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);

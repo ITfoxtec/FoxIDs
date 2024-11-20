@@ -10,3 +10,71 @@
 function readError() {
     return document.getElementById('error').textContent;    
 }
+
+var mollie = null;
+var cardNumber = null;
+var cardHolder = null;
+var expiryDate = null;
+var verificationCode = null;
+function loadMollie(profileId, testmode) {
+    mollie = Mollie(profileId, { locale: 'en_GB', testmode: testmode });
+
+    cardNumber = mollie.createComponent('cardNumber');
+    cardNumber.mount('#card-number');
+
+    cardHolder = mollie.createComponent('cardHolder');
+    cardHolder.mount('#card-holder');
+
+    expiryDate = mollie.createComponent('expiryDate');
+    expiryDate.mount('#expiry-date');
+
+    verificationCode = mollie.createComponent('verificationCode');
+    verificationCode.mount('#verification-code');
+
+    var cardNumberError = document.querySelector('#card-number-error');
+    cardNumber.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            cardNumberError.textContent = event.error;
+        } else {
+            cardNumberError.textContent = '';
+        }
+    });
+
+    var cardHolderError = document.querySelector('#card-holder-error');
+    cardHolder.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            cardHolderError.textContent = event.error;
+        } else {
+            cardHolderError.textContent = '';
+        }
+    });
+
+    var expiryDateError = document.querySelector('#expiry-date-error');
+    expiryDate.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            expiryDateError.textContent = event.error;
+        } else {
+            expiryDateError.textContent = '';
+        }
+    });
+
+    var verificationCodeError = document.querySelector('#verification-code-error');
+    verificationCode.addEventListener('change', event => {
+        if (event.error && event.touched) {
+            verificationCodeError.textContent = event.error;
+        } else {
+            verificationCodeError.textContent = '';
+        }
+    });
+}
+
+function unloadMollie() {
+    cardNumber.unmount();
+    cardHolder.unmount();
+    expiryDate.unmount();
+    verificationCode.unmount();
+}
+
+async function submitMollie() {
+    return await mollie.createToken();
+}

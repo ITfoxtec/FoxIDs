@@ -228,22 +228,20 @@ Create the claims which has to be issued to Context Handler in claim transforms.
 2. Select the **Claim transforms** tab
 3. Add a **Constant** claim `https://data.gov.dk/model/core/specVersion` with the value `OIO-SAML-3.0`
 4. Add a **Constant** claim `https://data.gov.dk/model/core/kombitSpecVer` with the value `2.0`
-  
-5. Add the spec. ver. `https://data.gov.dk/model/core/specVersion` and Kombit spec. ver. `https://data.gov.dk/model/core/kombitSpecVer` as constant claims
-6. Add a **Constant** levels of assurance (loa) claim `https://data.gov.dk/concept/core/nsis/loa` with e.g. the value `Substantial` or read the claim through the claims pipeline
+5. Add a **Constant** levels of assurance (loa) claim `https://data.gov.dk/concept/core/nsis/loa` with e.g. the value `Substantial` or read the claim through the claims pipeline
 
 ![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-app-ct1.png)
 
-7. Add a **Concatenated** claim to replace the NameID `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim which a concatenated version of the CVR number, display name and unique user ID
-8. Select **Action** **Replace claim**
-9. Concatenate claims:
+6. Add a **Concatenated** claim to replace the NameID `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim which a concatenated version of the CVR number, display name and unique user ID
+7. Select **Action** **Replace claim**
+8. Concatenate claims:
     - `https://data.gov.dk/model/core/eid/professional/cvr`
     - `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname`
     - `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname`
     - `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier`
-10. Set the **Concatenate format string** to `C=DK,O={0},CN={1} {2},Serial={3}`
+9. Set the **Concatenate format string** to `C=DK,O={0},CN={1} {2},Serial={3}`
 ![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-app-ct2.png)
-11. Click **Update**
+10. Click **Update**
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 

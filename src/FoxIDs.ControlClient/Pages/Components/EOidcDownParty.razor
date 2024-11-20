@@ -25,10 +25,17 @@
             <div class="pt-5 text-break">
                 <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.TestUrl" For="@(() => oidcDownParty.Form.Model.TestUrl)" />
             </div>
-            <div class="pt-2 pb-4 font-italic">
-                The test application is valid until @DateTimeOffset.FromUnixTimeSeconds(oidcDownParty.Form.Model.TestExpireAt).LocalDateTime.ToShortTimeString().
-                The valid period is extended to 15 minutes with each update.
-            </div>
+            @if(oidcDownParty.Form.Model.TestExpireAt > 0)
+            {
+                <div class="pt-2 pb-4 font-italic">
+                    The test application is valid until @DateTimeOffset.FromUnixTimeSeconds(oidcDownParty.Form.Model.TestExpireAt).LocalDateTime.ToShortTimeString().
+                    The valid period is extended to minimum 15 minutes with each update.
+                </div>
+            }
+            @if (oidcDownParty.ShowAdvanced)
+            {
+                <FInputNumber @bind-Value="oidcDownParty.Form.Model.TestExpireInSeconds" For="@(() => oidcDownParty.Form.Model.TestExpireInSeconds)" />
+            }
         }
 
         @if (!oidcDownParty.Form.Model.IsTest || oidcDownParty.ShowAdvanced)

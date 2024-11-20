@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
                 logRequest.TrackName = null;
             }
 
-            var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, logRequest.TrackName, isMasterTrack: true);
+            var logResponse = await usageLogLogic.GetTrackUsageLogAsync(logRequest, RouteBinding.TenantName, logRequest.TrackName, isMasterTrack: true);
             return Ok(logResponse);
         }
     }

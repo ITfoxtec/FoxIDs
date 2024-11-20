@@ -16,6 +16,7 @@ using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
 using ITfoxtec.Identity;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Shared
 {
@@ -23,6 +24,7 @@ namespace FoxIDs.Client.Shared
     {
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
+        private IEnumerable<PlanInfo> planInfoList;
         private bool createTenantWorking;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
@@ -50,7 +52,10 @@ namespace FoxIDs.Client.Shared
         public AuthenticationStateProvider authenticationStateProvider { get; set; }
 
         [Inject]
-        public ClientSettings clientSettings { get; set; }
+        public ClientSettings ClientSettings { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -63,6 +68,12 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public UserProfileLogic UserProfileLogic { get; set; }
@@ -82,12 +93,27 @@ namespace FoxIDs.Client.Shared
         [Inject]
         public UserService UserService { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
+
+        private bool RequestPayment => RouteBindingLogic.RequestPayment;
+
         protected override async Task OnInitializedAsync()
         {
             await ControlClientSettingLogic.InitLoadAsync();
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;
+            NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;
+            NotificationLogic.OnRequestPaymentUpdated += OnRequestPaymentUpdated;
+        }
+
+        protected void Dispose()
+        {
+            TrackSelectedLogic.OnSelectTrackAsync -= OnSelectTrackAsync;
+            NotificationLogic.OnClientSettingLoaded -= OnClientSettingLoaded;
+            NotificationLogic.OnRequestPaymentUpdated -= OnRequestPaymentUpdated;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -119,8 +145,13 @@ namespace FoxIDs.Client.Shared
             await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
         }
 
-        private void ShowCreateTenantModal()
+        private async Task ShowCreateTenantModalAsync()
         {
+            if (ClientSettings.EnablePayment && planInfoList == null)
+            {
+                planInfoList = await HelpersService.GetPlanInfoAsync();
+            }
+
             createTenantWorking = false;
             createTenantDone = false;
             createTenantReceipt = new List<string>();
@@ -221,6 +252,33 @@ namespace FoxIDs.Client.Shared
         {
             await LoadAndSelectTracAsync(forceSelect: true);
             StateHasChanged();
+        }  
+
+        private void OnClientSettingLoaded()
+        {
+            StateHasChanged();
+        }
+
+        private void OnRequestPaymentUpdated()
+        {
+            StateHasChanged();
+        }
+
+        private async Task OpenPaymentMethodAsync()
+        {
+            if (NavigationManager.Uri.EndsWith("tenant", StringComparison.OrdinalIgnoreCase))
+            {
+                await NotificationLogic.OpenPaymentMethodAsync();
+            }
+            else
+            {
+                if(TrackSelectedLogic.Track.Name != Constants.Routes.MasterTrackName)
+                {
+                    var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName);
+                    await TrackSelectedLogic.TrackSelectedAsync(masterTrack);
+                }
+                NavigationManager.NavigateTo($"{await RouteBindingLogic.GetTenantNameAsync()}/tenant");
+            }
         }
 
         private async Task LoadAndSelectTracAsync(bool forceSelect = false)
@@ -293,16 +351,20 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
             }
-            catch (FoxIDsApiException ex)
+            catch (FoxIDsApiException aex)
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (aex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), ex.Message);
+                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), aex.Message);
                 }
                 else
                 {
-                    throw;
+                    ToastService.ShowError(aex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError(ex.Message);
             }
         }
 

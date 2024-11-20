@@ -26,26 +26,29 @@ namespace FoxIDs.Logic
             this.tenantDataRepository = tenantDataRepository;
         }
 
-        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
+        public async Task<Api.UsageLogResponse> GetTrackUsageLogAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
         {
-            var items = await QueryDb(logRequest, tenantName, trackName, isMasterTenant, isMasterTrack);
+            var items = await QueryDbAsync(logRequest, tenantName, trackName, isMasterTenant, isMasterTrack);
 
-            switch (settings.Options.Log)
+            if (!logRequest.OnlyDbQuery)
             {
-                case LogOptions.OpenSearchAndStdoutErrors:
-                    items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogs(logRequest, tenantName, trackName, items);
-                    break;
-                case LogOptions.ApplicationInsights:
-                    items = await serviceProvider.GetService<UsageLogApplicationInsightsLogic>().QueryLogs(logRequest, tenantName, trackName, isMasterTenant, items);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                switch (settings.Options.Log)
+                {
+                    case LogOptions.OpenSearchAndStdoutErrors:
+                        items = await serviceProvider.GetService<UsageLogOpenSearchLogic>().QueryLogsAsync(logRequest, tenantName, trackName, items);
+                        break;
+                    case LogOptions.ApplicationInsights:
+                        items = await serviceProvider.GetService<UsageLogApplicationInsightsLogic>().QueryLogsAsync(logRequest, tenantName, trackName, isMasterTenant, items);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
             }
 
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
 
-        private async Task<List<Api.UsageLogItem>> QueryDb(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, bool isMasterTrack)
+        private async Task<List<Api.UsageLogItem>> QueryDbAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, bool isMasterTrack)
         {
             var items = new List<Api.UsageLogItem>();
             if (logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)

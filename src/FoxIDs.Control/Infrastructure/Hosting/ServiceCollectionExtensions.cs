@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Azure.Identity;
-using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Queues;
 using FoxIDs.Logic.Seed;
+using FoxIDs.Logic.Usage;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
@@ -16,6 +17,8 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Mollie.Api;
+using Mollie.Api.Framework;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using System;
@@ -28,7 +31,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services, Settings settings)
+        public static IServiceCollection AddLogic(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             services.AddSharedLogic(settings);
 
@@ -38,6 +41,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();
 
+            services.AddSingleton<BackgroundQueue>();
+            services.AddHostedService<QueueBackgroundService>();
             services.AddTransient<DownPartyAllowUpPartiesQueueLogic>();
 
             services.AddTransient<BaseAccountLogic>();
@@ -82,10 +87,19 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 
+            if (settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
+            {
+                services.AddHostedService<UsageBackgroundService>();
+                services.AddTransient<UsageBackgroundWorkLogic>();
+                services.AddTransient<UsageCalculatorLogic>();
+                services.AddTransient<UsageInvoicingLogic>();
+                services.AddTransient<UsageMolliePaymentLogic>();
+            }
+
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services, Settings settings)
+        public static IServiceCollection AddRepository(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             services.AddSharedRepository(settings);
 
@@ -107,9 +121,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
             services.AddScoped<FoxIDsClientRouteTransformer>();
-
-            services.AddSingleton<BackgroundQueue>();
-            services.AddHostedService<BackgroundQueueService>();
 
             if (settings.Options.Log == LogOptions.ApplicationInsights || settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
             {
@@ -138,6 +149,14 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddApiSwagger();
             services.AddAutoMapper();
+
+            if(settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
+            {
+                services.AddMollieApi(options => {
+                    options.ApiKey = settings.Payment.MollieApiKey;
+                    options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
+                });
+            }
 
             return services;
         }
@@ -230,6 +249,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
                     mc.AddProfile(new MasterMappingProfile());
                     mc.AddProfile(new TenantMappingProfiles(httpContextAccessor));
+                    mc.AddProfile(new ExternalMappingProfile());
                 });
 
                 return mappingConfig.CreateMapper();

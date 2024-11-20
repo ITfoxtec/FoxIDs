@@ -2,6 +2,11 @@
 
 <div class="form-group active-group">
     <input @ref="inputElement" type="number" step="0.000001" @bind="@CurrentValue" class="form-control input-control" />
-    <Label For="@For" class="label-control" />
+    <Label For="@For" LabelText="@LabelText" class="label-control" />
     <ValidationMessage For="@For" />
 </div>
+
+@code {
+    [Parameter]
+    public string LabelText { get; set; }
+}

@@ -1,4 +1,16 @@
-﻿<div class="info-text">The external users are linked with a claim type (e.g. <code>sub</code> or <code>email</code>) after the claim transformation on the authentication method has been performed.</div>
+﻿<div class="info-text">
+    The external users are linked with a claim type (e.g. <code>sub</code> or <code>email</code>) after the claim transformation on the authentication method has been performed.
+    @if (IsSaml)
+    {
+        <div class="small">
+            Optionally use corresponding SAML 2.0 claims:<br />
+            <ul>
+                <li><code>sub</code> equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code></li>
+                <li><code>email</code> equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress</code></li>
+            </ul>
+        </div>
+    }
+</div>
 <FInputText @bind-Value="Model.LinkClaimType" For="@(() => Model.LinkClaimType)" />
 
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
@@ -18,4 +30,7 @@
 @code {
     [Parameter]
     public ILinkExternalUser Model { get; set; }
+
+    [Parameter]
+    public bool IsSaml { get; set; }
 }

@@ -57,6 +57,7 @@ namespace FoxIDs.Logic.Seed
                 return false;
             }
 
+            masterTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             await tenantDataRepository.CreateAsync(masterTenant);
             return true;
         }

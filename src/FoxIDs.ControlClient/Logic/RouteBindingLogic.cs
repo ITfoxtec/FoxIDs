@@ -17,20 +17,22 @@ namespace FoxIDs.Client.Logic
     {
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
-        private Tenant myTenant;
+        private TenantResponse myTenant;
         private bool? isMasterTenant;
         private readonly ClientSettings clientSettings;
         private readonly IServiceProvider serviceProvider;
         private readonly TrackSelectedLogic trackSelectedLogic;
+        private readonly NotificationLogic notificationLogic;
         private readonly NavigationManager navigationManager;
         private readonly ISessionStorageService sessionStorage;
         private readonly AuthenticationStateProvider authenticationStateProvider;
 
-        public RouteBindingLogic(ClientSettings clientSettings, IServiceProvider serviceProvider, TrackSelectedLogic trackSelectedLogic, NavigationManager navigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
+        public RouteBindingLogic(ClientSettings clientSettings, IServiceProvider serviceProvider, TrackSelectedLogic trackSelectedLogic, NotificationLogic notificationLogic, NavigationManager navigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
         {
             this.clientSettings = clientSettings;
             this.serviceProvider = serviceProvider;
             this.trackSelectedLogic = trackSelectedLogic;
+            this.notificationLogic = notificationLogic;
             this.navigationManager = navigationManager;
             this.sessionStorage = sessionStorage;
             this.authenticationStateProvider = authenticationStateProvider;
@@ -38,11 +40,43 @@ namespace FoxIDs.Client.Logic
 
         public bool IsMasterTenant => (isMasterTenant ?? (isMasterTenant = Constants.Routes.MasterTenantName.Equals(tenantName, StringComparison.OrdinalIgnoreCase))).Value;
 
-        private bool IsMasterTrack => trackSelectedLogic.Track != null && Constants.Routes.MasterTrackName.Equals(trackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+        public bool IsMasterTrack => trackSelectedLogic.Track != null && Constants.Routes.MasterTrackName.Equals(trackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
 
-        public void SetMyTenant(Tenant tenant)
+        public bool RequestPayment { get; private set; }
+
+        public async Task SetMyTenantAsync(TenantResponse tenant)
         {
             myTenant = tenant;
+
+            if (!IsMasterTenant && clientSettings.EnablePayment)
+            {
+                await UpdatRequestPaymentAsync(myTenant);
+            }
+        }
+
+        private async Task UpdatRequestPaymentAsync(TenantResponse myTenant)
+        {
+            if (myTenant.EnableUsage && myTenant.DoPayment && !myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
+            {
+                var helpersService = serviceProvider.GetService<HelpersService>();
+                var planInfoList = await helpersService.GetPlanInfoAsync();
+
+                decimal planCost = planInfoList.Where(p => p.Name == myTenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
+                if (planCost > 0)
+                {
+                    RequestPayment = true;
+                }
+                else
+                {
+                    RequestPayment = false;
+                }
+            }
+            else
+            {
+                RequestPayment = false;
+            }
+
+            notificationLogic.RequestPaymentUpdated();
         }
 
         public async Task<string> GetTenantNameAsync()
@@ -118,7 +152,7 @@ namespace FoxIDs.Client.Logic
             if (authenticationState.User.Identity.IsAuthenticated && !IsMasterTenant)
             {
                 var myTenantService = serviceProvider.GetService<MyTenantService>();
-                myTenant = await myTenantService.GetTenantAsync();
+                await SetMyTenantAsync(await myTenantService.GetTenantAsync());
             }
         }
     }

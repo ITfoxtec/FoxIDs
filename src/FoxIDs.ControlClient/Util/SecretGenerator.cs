@@ -8,5 +8,10 @@ namespace FoxIDs.Client.Util
         {
             return RandomGenerator.Generate(32);
         }
+
+        public static string GenerateNewPassword()
+        {
+            return RandomGenerator.GenerateSimplePassword(8);
+        }
     }
 }

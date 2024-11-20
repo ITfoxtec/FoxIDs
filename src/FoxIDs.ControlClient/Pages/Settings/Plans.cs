@@ -18,7 +18,6 @@ namespace FoxIDs.Client.Pages.Settings
 {
     public partial class Plans
     {
-        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
@@ -42,11 +41,8 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
-
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
@@ -162,10 +158,6 @@ namespace FoxIDs.Client.Pages.Settings
 
         private void PlanViewModelAfterInit(GeneralPlanViewModel generalPlan, PlanViewModel plan)
         {
-            if (generalPlan.CreateMode)
-            {
-                plan.Currency = "EUR";
-            }
             plan.Users = plan.Users ?? new PlanItem();
             plan.Logins = plan.Logins ?? new PlanItem();
             plan.TokenRequests = plan.TokenRequests ?? new PlanItem();
@@ -175,7 +167,12 @@ namespace FoxIDs.Client.Pages.Settings
 
         private string PlanInfoText(GeneralPlanViewModel generalPlan)
         {
-            return $"Plan - {generalPlan.Name}";
+            return $"Plan - {PlanDisplayName(generalPlan)}";
+        }
+
+        private string PlanDisplayName(GeneralPlanViewModel generalPlan)
+        {
+            return generalPlan.DisplayName ?? generalPlan.Name;
         }
 
         private void PlanCancel(GeneralPlanViewModel plan)
@@ -219,6 +216,7 @@ namespace FoxIDs.Client.Pages.Settings
                 }
 
                 generalPlan.Name = generalPlan.Form.Model.Name;
+                generalPlan.DisplayName = generalPlan.Form.Model.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

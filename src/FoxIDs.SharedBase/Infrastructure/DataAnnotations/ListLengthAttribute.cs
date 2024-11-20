@@ -52,9 +52,13 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         /// <param name="maxListLangth">Max number of items in the list.</param>
         /// <param name="maxStringLenght">Max string length per item.</param>
         /// <param name="regExPattern">RegEx validation of each item in the list.</param>
-        public ListLengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, string regExPattern) : this(minListLength, maxListLangth, maxStringLenght)
+        public ListLengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, string regExPattern, int totalMaxStringLenght = -1) : this(minListLength, maxListLangth, maxStringLenght)
         {
             this.regExPattern = regExPattern;
+            if (totalMaxStringLenght > 0)
+            {
+                this.totalMaxStringLenght = totalMaxStringLenght;
+            }
         }
 
         public override bool IsValid(object value)

@@ -81,8 +81,21 @@
     {
         <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name)</div>
 
-        <div>@Constants.Logs.Results.ClientIp.GetDisplayLogKey(): @Item.Values.GetValue(Constants.Logs.Results.ClientIp).GetDisplayLogValue()</div>
-        <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @Item.Values.GetValue(Constants.Logs.Results.UserAgent).GetDisplayLogValue()</div>
+        var machineName = @Item.Values.GetValue(Constants.Logs.Results.MachineName);
+        if (!machineName.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.MachineName.GetDisplayLogKey(): @machineName.GetDisplayLogValue()</div>
+        }
+        var clientIp = @Item.Values.GetValue(Constants.Logs.Results.ClientIp);
+        if (!clientIp.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.ClientIp.GetDisplayLogKey(): @clientIp.GetDisplayLogValue()</div>
+        }
+        var userAgent = @Item.Values.GetValue(Constants.Logs.Results.UserAgent);
+        if (!userAgent.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @userAgent.GetDisplayLogValue()</div>
+        }
 
         var appId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
         if(!appId.IsNullOrWhiteSpace())
@@ -93,6 +106,16 @@
         if (!authMethodId.IsNullOrWhiteSpace())
         {
             <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @authMethodId.GetDisplayLogValue()</div>
+        }
+        var userId = @Item.Values.GetValue(Constants.Logs.Results.UserId);
+        if (!userId.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.UserId.GetDisplayLogKey(): @userId.GetDisplayLogValue()</div>
+        }
+        var email = @Item.Values.GetValue(Constants.Logs.Results.Email);
+        if (!email.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.Email.GetDisplayLogKey(): @email.GetDisplayLogValue()</div>
         }
     }
     else if (Item.Type == LogItemTypes.Metric)
@@ -108,8 +131,21 @@
             <div>Sum: @metricsValue</div>
         }
 
-        <div>@Constants.Logs.Results.ClientIp.GetDisplayLogKey(): @Item.Values.GetValue(Constants.Logs.Results.ClientIp).GetDisplayLogValue()</div>
-        <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @Item.Values.GetValue(Constants.Logs.Results.UserAgent).GetDisplayLogValue()</div>
+        var machineName = @Item.Values.GetValue(Constants.Logs.Results.MachineName);
+        if (!machineName.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.MachineName.GetDisplayLogKey(): @machineName.GetDisplayLogValue()</div>
+        }
+        var clientIp = @Item.Values.GetValue(Constants.Logs.Results.ClientIp);
+        if (!clientIp.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.ClientIp.GetDisplayLogKey(): @clientIp.GetDisplayLogValue()</div>
+        }
+        var userAgent = @Item.Values.GetValue(Constants.Logs.Results.UserAgent);
+        if (!userAgent.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @userAgent.GetDisplayLogValue()</div>
+        }
 
         var appId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
         if (!appId.IsNullOrWhiteSpace())

@@ -101,6 +101,7 @@ namespace FoxIDs.Controllers
                     IsTest = true,
                     TestUrl = testUrl,
                     TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds(),
+                    TestExpireInSeconds = settings.DownPartyTestLifetime,
                     Nonce = authenticationRequest.Nonce,
                     CodeVerifier = codeVerifier,                    
                     AllowUpParties = testDownPartyRequest.UpParties.Select(p => new UpPartyLink { Name = p.Name.ToLower(), ProfileName = p.ProfileName?.ToLower()  }).ToList(),
@@ -151,6 +152,7 @@ namespace FoxIDs.Controllers
                     DisplayName = mParty.DisplayName,
                     TestUrl = testUrl,
                     TestExpireAt = mParty.TestExpireAt.Value,
+                    TestExpireInSeconds = mParty.TestExpireInSeconds.Value,
                 });
             }
             catch (ValidationException)

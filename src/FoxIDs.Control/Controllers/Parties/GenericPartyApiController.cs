@@ -12,6 +12,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using System.Linq;
+using FoxIDs.Logic.Queues;
 
 namespace FoxIDs.Controllers
 {
@@ -205,7 +206,27 @@ namespace FoxIDs.Controllers
                         {
                             mOidcDownParty.TestUrl = mOidcDownParty.TestUrl.Replace(party.Name, party.NewName);
                         }
-                        mOidcDownParty.TestExpireAt = DateTimeOffset.UtcNow.AddSeconds(settings.DownPartyTestLifetime).ToUnixTimeSeconds();
+
+                        var downPartyTestLifetime = party is Api.OidcDownParty aOidcDownParty && aOidcDownParty?.TestExpireInSeconds != null ? aOidcDownParty.TestExpireInSeconds.Value : settings.DownPartyTestLifetime;
+                        if (downPartyTestLifetime > 0)
+                        {
+                            mOidcDownParty.TestExpireInSeconds = downPartyTestLifetime;
+                            var newTestExpireAt = DateTimeOffset.UtcNow.AddSeconds(downPartyTestLifetime).ToUnixTimeSeconds();
+                            if (newTestExpireAt > tempMParty.TestExpireAt)
+                            {
+                                mOidcDownParty.TestExpireAt = newTestExpireAt;
+                            }
+                            else
+                            {
+                                mOidcDownParty.TestExpireAt = tempMParty.TestExpireAt;
+                            }
+                        }
+                        else
+                        {
+                            mOidcDownParty.TestExpireInSeconds = 0;
+                            mOidcDownParty.TestExpireAt = -1;
+                        }
+
                         mOidcDownParty.CodeVerifier = tempMParty.CodeVerifier;
                         mOidcDownParty.Nonce = tempMParty.Nonce;
                     }

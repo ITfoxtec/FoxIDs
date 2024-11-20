@@ -239,7 +239,6 @@ namespace FoxIDs.Logic
                 ClaimTypes.AuthenticationMethod => true,
                 _ => false
             };
-
         }
 
         private List<Claim> TruncateJwtClaimValues(IEnumerable<Claim> jwtClaims)

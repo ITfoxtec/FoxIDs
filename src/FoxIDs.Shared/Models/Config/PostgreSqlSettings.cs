@@ -11,6 +11,11 @@ namespace FoxIDs.Models.Config
         [Required]
         public string ConnectionString { get; set; }
         /// <summary>
+        /// Schema name.
+        /// </summary>
+        [Required]
+        public string SchemaName { get; set; } = "foxids";
+        /// <summary>
         /// Table name.
         /// </summary>
         [Required]

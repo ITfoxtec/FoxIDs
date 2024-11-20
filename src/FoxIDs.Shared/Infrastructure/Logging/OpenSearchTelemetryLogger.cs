@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using OpenSearch.Net;
 using System.Net;
 using System.Linq;
-using static FoxIDs.Constants.Logs;
 
 namespace FoxIDs.Infrastructure.Logging
 {
@@ -50,7 +49,7 @@ namespace FoxIDs.Infrastructure.Logging
 
         private void AddMapping()
         {
-            var policyPath = $"_index_template/{Constants.Logs.LogName}-template";
+            var policyPath = $"_index_template/{settings.OpenSearch.LogName}-template";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -58,7 +57,7 @@ namespace FoxIDs.Infrastructure.Logging
                 openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
                      PostData.Serializable(new
                      {
-                         index_patterns = new[] { $"{Constants.Logs.LogName}*" },
+                         index_patterns = new[] { $"{settings.OpenSearch.LogName}*" },
                          template = new
                          {
                              mappings = new
@@ -78,8 +77,8 @@ namespace FoxIDs.Infrastructure.Logging
         private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
         {
             var lifetime = (int)logLifetime;
-            var policyPath = $"_plugins/_ism/policies/{Constants.Logs.LogName}-{lifetime}d";
-            var indexPattern = $"{Constants.Logs.LogName}-{lifetime}d*";
+            var policyPath = $"_plugins/_ism/policies/{settings.OpenSearch.LogName}-{lifetime}d";
+            var indexPattern = $"{settings.OpenSearch.LogName}-{lifetime}d*";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -227,7 +226,7 @@ namespace FoxIDs.Infrastructure.Logging
                 lifetime = routeBinding.PlanLogLifetime.Value.GetLifetimeInDays();
             }
 
-            return $"{Constants.Logs.LogName}-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
+            return $"{settings.OpenSearch.LogName}-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
         }        
 
         private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)

@@ -8,7 +8,7 @@ A log in request from your app is routed as an external SAML 2.0 log in requests
 ![Bridge SAML 2.0 to OpenID Connect](images/bridge-saml-oidc.svg)
 
 The opposite is likewise possible starting the log in request from a [SAML 2.0 application registration](app-reg-saml-2.0.md) app and routing to an external OpenID Provider (OP) configured as a [OpenID Connect authentication method](auth-method-oidc.md).
-Subsequently, the response is mapped to a SAML 2.0 response.
+Subsequently, the response is converted to a SAML 2.0 response.
 
 ![Bridge OpenID Connect to SAML 2.0](images/bridge-oidc-saml.svg)
 
@@ -29,4 +29,4 @@ Subsequently, your OAuth 2.0 enable API can be called in the context of the user
 ## Claim mappings
 FoxIDs use JWT claims inside and [maps SAML 2.0 claims](saml-2.0.md#claim-mappings) to JWT claims. Default, a set of standard JWT to SAML 2.0 claims is mapped like; `sub` to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier`, `email` to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress` etc.
 You can possible add additional JWT to SAML 2.0 claim mappings.  
-If no claim mapping exists for a particular claim. The long SAML 2.0 claim name is kept from claims revived in a SAML 2.0 token instead of a shorter equivalent JWT claim name. The same goes in the opposite direction.
+If no claim mapping exists for a particular claim. The long SAML 2.0 claim name is kept from claims received in a SAML 2.0 token instead of a shorter equivalent JWT claim name. The same goes in the opposite direction.

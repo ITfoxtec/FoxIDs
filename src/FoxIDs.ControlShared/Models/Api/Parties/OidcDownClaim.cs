@@ -17,9 +17,9 @@ namespace FoxIDs.Models.Api
         public List<string> Values { get; set; }
 
         /// <summary>
-        /// Claim also in id token, default false.
+        /// Claim also in ID token, default false.
         /// </summary>
-        [Display(Name = "Include in id token")]
+        [Display(Name = "Include in ID token")]
         public bool? InIdToken { get; set; } = false;
     }
 }

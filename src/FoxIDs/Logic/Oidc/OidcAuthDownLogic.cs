@@ -143,7 +143,7 @@ namespace FoxIDs.Logic
                 var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(party.Client as TClient, authenticationRequest.IdTokenHint, validateLifetime: false);
                 if (claimsPrincipal == null)
                 {
-                    throw new OAuthRequestException("Invalid id token hint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    throw new OAuthRequestException("Invalid ID token hint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                 }
                 loginRequest.UserId = claimsPrincipal.FindFirst(JwtClaimTypes.Subject).Value;
             }

@@ -14,12 +14,12 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Pages.Settings
 {
     public partial class Text
     {
-        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
@@ -31,6 +31,9 @@ namespace FoxIDs.Client.Pages.Settings
 
         private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
         private Modal textSettingsModal;
+
+        [Inject]
+        public ClientSettings ClientSettings { get; set; }
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -46,11 +49,8 @@ namespace FoxIDs.Client.Pages.Settings
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
-
         protected override async Task OnInitializedAsync()
         {
-            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";

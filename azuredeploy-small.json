@@ -1,0 +1,625 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanSize": {
+      "defaultValue": "P0V3",
+      "allowedValues": [
+        "F1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1V2",
+        "P2V2",
+        "P3V2",
+        "P0V3",
+        "P1V3",
+        "P2V3",
+        "P3V3"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The instance size of the App Service Plan."
+      }
+    },
+    "appServicePlanSku": {
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The pricing tier of the App Service plan."
+      }
+    },
+    "keyVaultSkuName": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Specifies whether the key vault is a standard vault or a premium vault."
+      }
+    },
+    "sendgridFromEmail": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional, Sendgrid from email address."
+      }
+    },
+    "sendgridApiKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional, Sendgrid API key."
+      }
+    }
+  },
+  "variables": {
+    "prefixName": "foxids",
+    "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
+    "foxidsDefaultName": "[toLower(concat(variables('prefixName'), variables('suffix')))]",
+    "foxidsControlSiteName": "[toLower(concat(variables('prefixName'), 'control', variables('suffix')))]",
+    "foxidsSiteEndpoint": "[concat('https://', variables('foxidsDefaultName'), '.azurewebsites.net')]",
+    "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2022-08-15",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
+      ],
+      "tags": {
+        "defaultExperience": "DocumentDB"
+      },
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": true,
+        "virtualNetworkRules": [
+          {
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+            "ignoreMissingVNetServiceEndpoint": false
+          }
+        ],
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "provisioningState": "Succeeded",
+            "failoverPriority": 0
+          }
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "type": "microsoft.operationalinsights/workspaces",
+      "apiVersion": "2021-12-01-preview",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "pergb2018"
+        },
+        "retentionInDays": 30,
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        },
+        "workspaceCapping": {
+          "dailyQuotaGb": -1
+        }
+      }
+    },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsDefaultName'))]": "Resource",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsControlSiteName'))]": "Resource"
+      },
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Flow_Type": "Redfield",
+        "Request_Source": "IbizaAIExtension",
+        "DisableIpMasking": true,
+        "RetentionInDays": 90,
+        "WorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]",
+        "IngestionMode": "LogAnalytics"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2022-07-01",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+        "[resourceId('Microsoft.Web/sites', variables('foxidsDefaultName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]"
+      ],
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "[parameters('keyVaultSkuName')]"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": [
+            {
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+              "ignoreMissingVnetServiceEndpoint": false
+            }
+          ]
+        },
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsDefaultName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Decrypt",
+                "Sign"
+              ],
+              "secrets": [
+                "get",
+                "List",
+                "Set"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Create"
+              ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List"
+              ],
+              "secrets": [
+                "get",
+                "List",
+                "Set",
+                "Delete"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Create",
+                "Delete",
+                "Import",
+                "Update"
+              ]
+            }
+          }
+        ],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
+        "enableSoftDelete": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('appServicePlanSize')]",
+        "tier": "[parameters('appServicePlanSku')]",
+        "capacity": 1
+      },
+      "properties": {
+        "name": "[variables('foxidsDefaultName')]",
+        "workerSize": "0",
+        "numberOfWorkers": "1",
+        "reserved": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2023-01-01",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+        "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[variables('foxidsDefaultName')]",
+        "siteConfig": {
+          "linuxFxVersion": "DOCKER|foxids/foxids:latest",
+          "ftpsState": "Disabled",
+          "alwaysOn": true
+        },
+        "reserved": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
+        "clientAffinityEnabled": false,
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2023-01-01",
+      "name": "[variables('foxidsControlSiteName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "app,linux,container",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
+        "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[variables('foxidsControlSiteName')]",
+        "siteConfig": {
+          "linuxFxVersion": "DOCKER|foxids/foxids-control:latest",
+          "ftpsState": "Disabled",
+          "alwaysOn": true
+        },
+        "reserved": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
+        "clientAffinityEnabled": false,
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/appsettings')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]",
+        "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
+        "DOCKER_ENABLE_CI": true,
+        "ASPNETCORE_URLS": "http://+",
+        "Settings__UseHttp": true,
+        "Settings__TrustProxySchemeHeader": true,
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Memory",
+        "Settings__Options__DataCache": "None",
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__Sendgrid__FromEmail": "[parameters('sendgridFromEmail')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(variables('foxidsControlSiteName'), '/appsettings')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
+        "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "WEBSITES_ENABLE_APP_SERVICE_STORAGE": false,
+        "ApplicationInsights__ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "DOCKER_REGISTRY_SERVER_URL": "https://index.docker.io/v1",
+        "DOCKER_ENABLE_CI": true,
+        "ASPNETCORE_URLS": "http://+",
+        "Settings__UseHttp": true,
+        "Settings__TrustProxySchemeHeader": true,
+        "Settings__FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings__FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
+        "Settings__Options__Log": "ApplicationInsights",
+        "Settings__Options__DataStorage": "CosmosDb",
+        "Settings__Options__KeyStorage": "KeyVault",
+        "Settings__Options__Cache": "Memory",
+        "Settings__Options__DataCache": "None",
+        "Settings__MasterSeedEnabled": true,
+        "Settings__CosmosDb__EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
+        "Settings__KeyVault__EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
+        "Settings__ApplicationInsights__WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--CosmosDb--PrimaryKey')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('foxidsDefaultName')), '2015-11-06').primaryMasterKey]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/Settings--Sendgrid--ApiKey')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "value": "[parameters('sendgridApiKey')]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[guid(uniqueString(variables('foxidsDefaultName'), 'read', variables('foxidsControlSiteName')))]",
+      "scope": "[format('microsoft.operationalinsights/workspaces/{0}', variables('foxidsDefaultName'))]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+        "principalId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]",
+        "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2022-01-01",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.1.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "subnet-data",
+            "properties": {
+              "addressPrefix": "10.1.0.0/24",
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.AzureCosmosDB",
+                  "locations": [
+                    "[resourceGroup().location]"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[resourceGroup().location]"
+                  ]
+                }
+              ],
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2022-01-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/subnet-data')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "10.1.0.0/24",
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.AzureCosmosDB",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          },
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          }
+        ],
+        "delegations": [
+          {
+            "name": "delegation",
+            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data'), '/delegations/delegation')]",
+            "properties": {
+              "serviceName": "Microsoft.Web/serverfarms"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+          }
+        ],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "microsoft.insights/privatelinkscopes",
+      "apiVersion": "2021-07-01-preview",
+      "name": "[variables('foxidsDefaultName')]",
+      "location": "global",
+      "properties": {
+        "accessModeSettings": {
+          "exclusions": [],
+          "queryAccessMode": "PrivateOnly",
+          "ingestionAccessMode": "PrivateOnly"
+        }
+      }
+    },
+    {
+      "type": "microsoft.insights/privatelinkscopes/scopedresources",
+      "apiVersion": "2021-07-01-preview",
+      "name": "[concat(variables('foxidsDefaultName'), '/scoped-', variables('foxidsDefaultName'), '-insights')]",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/privatelinkscopes', variables('foxidsDefaultName'))]",
+        "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "linkedResourceId": "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]"
+      }
+    },
+    {
+      "type": "microsoft.insights/privatelinkscopes/scopedresources",
+      "apiVersion": "2021-07-01-preview",
+      "name": "[concat(variables('foxidsDefaultName'), '/scoped-', variables('foxidsDefaultName'), '-workspaces')]",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/privatelinkscopes', variables('foxidsDefaultName'))]",
+        "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "linkedResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2018-09-01",
+      "name": "privatelink.oms.opinsights.azure.com",
+      "location": "global",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.oms.opinsights.azure.com', '/link_to_', variables('foxidsDefaultName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.oms.opinsights.azure.com')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2018-09-01",
+      "name": "privatelink.ods.opinsights.azure.com",
+      "location": "global",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.ods.opinsights.azure.com', '/link_to_', variables('foxidsDefaultName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.ods.opinsights.azure.com')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2018-09-01",
+      "name": "privatelink.agentsvc.azure-automation.net",
+      "location": "global",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.agentsvc.azure-automation.net', '/link_to_', variables('foxidsDefaultName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.agentsvc.azure-automation.net')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2018-09-01",
+      "name": "privatelink.blob.core.windows.net",
+      "location": "global",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.blob.core.windows.net', '/link_to_', variables('foxidsDefaultName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+        }
+      }
+    }
+  ]
+}

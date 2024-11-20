@@ -28,10 +28,10 @@ A claim has both at type and a value. The claim types maximum allowed length is 
 When a token and thereby claim values is processed by FoxIDs the maximum length per value and combined length is 200,000 characters.
 
 **Tokens**   
-A JWT (access tokens, ID tokens and refresh token) revived by FoxIDs is a allowed to have a maximum length of 256,000 characters. Claims revived is truncated if they exceed the maximum allowed lengths.  
+A JWT (access tokens, ID tokens and refresh token) received by FoxIDs is a allowed to have a maximum length of 256,000 characters. Claims received is truncated if they exceed the maximum allowed lengths.  
 FoxIDs can create larger tokens, where each claim is capped instead of the entire token.
 
 If a JWT is included as a claim it is truncated if it exceeds the maximum allowed claim value length. 
 
 A SAML 2.0 request / response is allowed to have a maximum length of 256,000 characters. The request is indirectly limited if it is send using a redirect binding in the URL query string. 
-Claims revived in a SAML 2.0 authn response (SAML 2.0 token) is truncated if they exceed the maximum allowed lengths.
+Claims received in a SAML 2.0 authn response (SAML 2.0 token) is truncated if they exceed the maximum allowed lengths.

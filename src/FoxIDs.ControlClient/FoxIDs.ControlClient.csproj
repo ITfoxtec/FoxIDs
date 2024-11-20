@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<Version>1.10.13</Version>
+		<Version>1.11.21</Version>
 		<RootNamespace>FoxIDs.Client</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.Toast" Version="4.2.1" />
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
-    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.6.6.0" />
+    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.6.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
     <PackageReference Include="Tewr.Blazor.FileReader" Version="3.3.2.23201" />

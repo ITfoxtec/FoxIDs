@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
-        public async Task<List<Api.UsageLogItem>> QueryLogs(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
+        public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant, List<Api.UsageLogItem> items)
         {
             var dayPointer = 0;
             var hourPointer = 0;
@@ -123,14 +123,14 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private double GetCount(LogsTableRow row, Api.UsageLogTypes logType)
+        private decimal GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
             var count = row.GetDouble("UsageCount");
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
                 count += row.GetDouble("UsageAddRating");
             }
-            return Math.Round(count.HasValue ? count.Value : 0, 1);
+            return count.HasValue ? Math.Round(Convert.ToDecimal(count.Value), 1) : 0.0M;
         }
 
         private DateTime GetDate(LogsTableRow row)

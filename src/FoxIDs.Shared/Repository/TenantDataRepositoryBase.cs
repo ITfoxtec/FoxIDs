@@ -28,6 +28,10 @@ namespace FoxIDs.Repository
             {
                 return Tenant.PartitionIdFormat();
             }
+            else if (typeof(T).Equals(typeof(Used)))
+            {
+                return Used.PartitionIdFormat();
+            }
             else if (typeof(T).Equals(typeof(Track)))
             {
                 if (idKey == null) new ArgumentNullException(nameof(idKey));

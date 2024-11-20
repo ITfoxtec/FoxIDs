@@ -22,7 +22,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Link claim")]
         public string LinkClaimType { get; set; }
 
-        [Display(Name = "Overwrite revived claims")]
+        [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
 
         /// <summary>

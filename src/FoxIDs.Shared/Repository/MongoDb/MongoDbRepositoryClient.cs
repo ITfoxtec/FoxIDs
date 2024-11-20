@@ -31,6 +31,10 @@ namespace FoxIDs.Repository
             };
             ConventionRegistry.Register(nameof(MongoDbRepositoryClient), pack, t => true);
 
+            //Mongo CamelCaseElementNameConvention for DateOnly do not work in DateOnly "MongoDB.Driver" version 3.0.0.
+            var camelCaseConventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+            ConventionRegistry.Register("camelCase", camelCaseConventionPack, t => t == typeof(DateOnly));
+
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
             if (settings.Options.DataStorage == DataStorageOptions.MongoDb)

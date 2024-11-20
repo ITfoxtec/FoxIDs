@@ -50,7 +50,7 @@ namespace FoxIDs.Controllers
                 logRequest.TrackName = null;
             }
 
-            var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, logRequest.TenantName, logRequest.TrackName, isMasterTenant: true);
+            var logResponse = await usageLogLogic.GetTrackUsageLogAsync(logRequest, logRequest.TenantName, logRequest.TrackName, isMasterTenant: true);
             return Ok(logResponse);
         }
     }

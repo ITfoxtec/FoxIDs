@@ -55,6 +55,12 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "test_expire_at")]
         public long? TestExpireAt { get; set; }
+
+        /// <summary>
+        /// 0 to disable expiration.
+        /// </summary>
+        [JsonProperty(PropertyName = "test_expire_in_seconds")]
+        public int? TestExpireInSeconds { get; set; }
         #endregion
 
         public async Task SetIdAsync(IdKey idKey)

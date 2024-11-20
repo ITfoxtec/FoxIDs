@@ -129,7 +129,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = id.IdToTenantPartitionId();
+            var partitionId = id.IdToMasterPartitionId();
 
             if(!await db.RemoveAsync(id, partitionId))
             {

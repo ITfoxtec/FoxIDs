@@ -44,7 +44,7 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (AutoCreateUser && RequireUser)
             {
-                results.Add(new ValidationResult($"Both the {nameof(AutoCreateUser)} and the {nameof(RequireUser)} can not be enabled at the same time.", new[] { nameof(AutoCreateUser), nameof(RequireUser) }));
+                results.Add(new ValidationResult($"Both the {nameof(AutoCreateUser)} and the {nameof(RequireUser)} can not be enabled at the same time.", [nameof(AutoCreateUser), nameof(RequireUser)]));
             }
             return results;
         }

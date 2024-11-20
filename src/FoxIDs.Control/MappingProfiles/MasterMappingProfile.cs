@@ -22,18 +22,20 @@ namespace FoxIDs.MappingProfiles
                .ForMember(d => d.Id, opt => opt.MapFrom(s => Plan.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
             CreateMap<PlanItem, Api.PlanItem>()
                 .ReverseMap();
+            CreateMap<Plan, Api.PlanInfo>();
 
             CreateMap<ResourceEnvelope, Api.Resource>()
                 .ReverseMap();
             CreateMap<ResourceName, Api.ResourceName>()
                 .ReverseMap();
-            CreateMap<ResourceItem, Api.ResourceItem>()
-                .ReverseMap();
-            CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
-                .ReverseMap();
+     
 
             CreateMap<RiskPassword, Api.RiskPassword>()
                 .ForMember(d => d.PasswordSha1Hash, opt => opt.MapFrom(s => s.Id.Substring(s.Id.LastIndexOf(':') + 1)))
+                .ReverseMap();
+
+            CreateMap<UsageSettings, Api.UsageSettings>();
+            CreateMap<UsageCurrencyExchange, Api.UsageCurrencyExchange>()
                 .ReverseMap();
         }
     }

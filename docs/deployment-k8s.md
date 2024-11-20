@@ -7,9 +7,9 @@ This is a description of how to make a default [deployment](#deployment), [log i
 Pre requirements:
 - You have a Kubernetes cluster or Docker Desktop with Kubernetes enabled. 
 - You have basic knowledge about Kubernetes.
-- You have `kubectl` installer on your workstation.
-- You have [Helm](https://docs.helm.sh/) installer on your workstation and your cluster.  
-  Install Helm on windows with this CMD command `winget install Helm.Helm` 
+- You have `kubectl` installer.
+- You have [Helm](https://docs.helm.sh/) installer.  
+  *Install Helm on windows with this CMD command `winget install Helm.Helm`*
 
 > This is a list of [useful commands](#useful-commands) in the end of this description.
 

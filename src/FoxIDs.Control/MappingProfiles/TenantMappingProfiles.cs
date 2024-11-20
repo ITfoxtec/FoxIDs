@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using MSTokens = Microsoft.IdentityModel.Tokens;
+using AutoMapper;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,34 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
+
+            CreateMap<Tenant, Api.TenantResponse>()
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
+
+            CreateMap<Customer, Api.Customer>()
+                .ReverseMap();
+            CreateMap<Address, Api.Address>()
+                .ReverseMap();
+
+            CreateMap<UsageSellerSettings, Seller>();
+
+            CreateMap<Payment, Api.Payment>();
+
+            CreateMap<Used, Api.UsedBase>()
+                .ForMember(d => d.HasItems, opt => opt.MapFrom(s => s.Items != null && s.Items.Count() > 0));
+            CreateMap<Used, Api.Used>()
+                .ForMember(d => d.HasItems, opt => opt.MapFrom(s => s.Items != null && s.Items.Count() > 0));
+            CreateMap<Used, Api.UpdateUsageRequest>()
+                .ReverseMap()
+                .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items != null && s.Items.Any() ? s.Items.OrderBy(i => i.Day) : null))
+                .ForMember(d => d.TenantName, opt => opt.MapFrom(s => s.TenantName.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => Used.IdFormatAsync(s.TenantName.ToLower(), s.PeriodBeginDate.Year, s.PeriodBeginDate.Month).GetAwaiter().GetResult()));
+            CreateMap<UsedItem, Api.UsedItem>()
+                .ReverseMap();
+            CreateMap<Invoice, Api.Invoice>();
+            CreateMap<InvoiceLine, Api.InvoiceLine>();
 
             CreateMap<Track, Api.Track>()
                 .ReverseMap()
@@ -335,16 +365,19 @@ namespace FoxIDs.MappingProfiles
 
         private Api.CertificateInfo GetCertificateInfo(JsonWebKey jsonWebKey)
         {
-            var certificate = jsonWebKey.ToX509Certificate();
-            if (certificate != null)
+            if (jsonWebKey.X5c?.Count() > 0)
             {
-                return new Api.CertificateInfo
+                var certificate = jsonWebKey.ToX509Certificate();
+                if (certificate != null)
                 {
-                    Subject = certificate.Subject,
-                    ValidFrom = certificate.NotBefore,
-                    ValidTo = certificate.NotAfter,
-                    Thumbprint = certificate.Thumbprint
-                };
+                    return new Api.CertificateInfo
+                    {
+                        Subject = certificate.Subject,
+                        ValidFrom = certificate.NotBefore,
+                        ValidTo = certificate.NotAfter,
+                        Thumbprint = certificate.Thumbprint
+                    };
+                }
             }
             return null;
         }

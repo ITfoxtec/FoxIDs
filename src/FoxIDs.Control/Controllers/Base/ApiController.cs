@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace FoxIDs.Controllers
 {
@@ -49,7 +50,7 @@ namespace FoxIDs.Controllers
             return new CreatedResult(uriBuilder.Uri, value);
         }
 
-        public virtual NotFoundObjectResult NotFound(string typeName, string name, string fieldName = null)
+        public virtual NotFoundObjectResult NotFound(string typeName, string name, string fieldName = null, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             try
             {
@@ -57,7 +58,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                logger.Warning(ex);
+                logger.Warning(ex, GetMessage("Not found", memberName, sourceFilePath, sourceLineNumber));
                 if (!fieldName.IsNullOrWhiteSpace())
                 {
                     Response.Headers["field"] = fieldName;
@@ -66,7 +67,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public virtual ConflictObjectResult Conflict(string typeName, string name, string fieldName = null)
+        public virtual ConflictObjectResult Conflict(string typeName, string name, string fieldName = null, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             try
             {
@@ -74,7 +75,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                logger.Warning(ex);
+                logger.Warning(ex, GetMessage("Conflict", memberName, sourceFilePath, sourceLineNumber));
                 if (!fieldName.IsNullOrWhiteSpace())
                 {
                     Response.Headers["field"] = fieldName;
@@ -83,7 +84,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public BadRequestObjectResult BadRequest(ModelStateDictionary modelState, Exception innerEx = null)
+        public BadRequestObjectResult BadRequest(ModelStateDictionary modelState, Exception innerEx = null, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             try
             {
@@ -92,13 +93,18 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                logger.Error(ex);
+                logger.Error(ex, GetMessage("Bad request", memberName, sourceFilePath, sourceLineNumber));
                 if (modelState.Keys.Count() == 1)
                 {
                     Response.Headers["field"] = modelState.Keys.First();
                 }
                 return base.BadRequest(ex.Message);
             }
+        }
+
+        private string GetMessage(string message, string memberName, string sourceFilePath, int sourceLineNumber)
+        {
+            return $"{message} at {memberName} in {sourceFilePath}:line {sourceLineNumber}";
         }
     }
 }

@@ -6,8 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
-using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
 using System;
 using FoxIDs.Logic;

@@ -18,5 +18,11 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public LogLifetimeOptions LogLifetime { get; set; } = LogLifetimeOptions.Max180Days;
+
+        /// <summary>
+        /// Default log Name.
+        /// </summary>
+        [Required]
+        public string LogName { get; set; } = Constants.Logs.LogName;
     }
 }

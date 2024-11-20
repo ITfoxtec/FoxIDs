@@ -33,7 +33,8 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Filter tenant.
         /// </summary>
-        /// <param name="filterName">Filter tenant name.</param>
+        /// <param name="filterName">Filter by tenant name.</param>
+        /// <param name="filterCustomDomain">Filter by custom domain.</param>
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,19 +65,19 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>();
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName);
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
             else
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

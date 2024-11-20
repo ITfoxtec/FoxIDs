@@ -49,7 +49,7 @@ namespace FoxIDs.Models
         public string PlanName { get; set; }
 
         [JsonProperty(PropertyName = "for_usage")]
-        public bool ForUsage { get; set; }
+        public bool? ForUsage { get; set; }
 
         [JsonProperty(PropertyName = "enable_usage")]
         public bool EnableUsage { get; set; }

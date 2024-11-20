@@ -32,7 +32,7 @@
 		<!--Mongo CamelCaseElementNameConvention for DateOnly do not work in DateOnly "MongoDB.Driver" version 3.0.0.-->
 		<PackageReference Include="MongoDB.Driver" Version="2.30.0" />
 		<PackageReference Include="OpenSearch.Client" Version="1.8.0" />
-		<PackageReference Include="PgKeyValueDB" Version="0.10.0" />
+		<PackageReference Include="PgKeyValueDB" Version="1.0.0" />
 		<PackageReference Include="RSAKeyVaultProvider" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.8" />

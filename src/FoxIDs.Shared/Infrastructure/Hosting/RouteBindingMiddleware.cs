@@ -81,7 +81,9 @@ namespace FoxIDs.Infrastructure.Hosting
         private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool useCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
         {
             var tenant = await GetTenantAsync(requestServices, useCustomDomain, customDomain, trackIdKey.TenantName);
-            if (useCustomDomain)
+
+            var useCustomDomainVerified = useCustomDomain && !tenant.CustomDomain.IsNullOrEmpty() && tenant.CustomDomainVerified;
+            if (useCustomDomainVerified)
             {
                 trackIdKey.TenantName = tenant.Name;
             }
@@ -89,21 +91,20 @@ namespace FoxIDs.Infrastructure.Hosting
             var plan = await GetPlanAsync(requestServices, tenant.PlanName);
             if (plan != null)
             {
-                if (useCustomDomain && !plan.EnableCustomDomain)
+                if (useCustomDomainVerified && !plan.EnableCustomDomain)
                 {
                     throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                 }
             }
 
-            var track = await GetTrackAsync(scopedLogger, requestServices, trackIdKey, useCustomDomain);
+            var track = await GetTrackAsync(scopedLogger, requestServices, trackIdKey, useCustomDomainVerified);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
             {
-                UseCustomDomain = useCustomDomain,
+                UseCustomDomain = useCustomDomainVerified,
                 CustomDomain = tenant.CustomDomain,
-                CustomDomainVerified = tenant.CustomDomainVerified,
-                RouteUrl = $"{(!useCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
+                RouteUrl = $"{(!useCustomDomainVerified ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 PlanName = plan?.Name,
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,

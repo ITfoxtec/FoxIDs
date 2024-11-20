@@ -59,7 +59,7 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var mTenant = await tenantDataRepository.GetTenantByNameAsync(name);
-                if (!mTenant.ForUsage)
+                if (mTenant.ForUsage != false)
                 {
                     await UpdatePaymentMandate(mTenant);
                 }

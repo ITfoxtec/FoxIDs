@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum ExternalLoginTypes
+    public enum ExternalConnectTypes
     {
         Api = 100,
     }

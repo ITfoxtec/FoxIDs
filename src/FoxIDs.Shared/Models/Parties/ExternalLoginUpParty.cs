@@ -20,13 +20,13 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "external_login_type")]
-        public ExternalLoginTypes ExternalLoginType { get; set; }
+        public ExternalConnectTypes ExternalLoginType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "username_type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; }
 
-        [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
+        [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [JsonProperty(PropertyName = "api_url")]
         public string ApiUrl { get; set; }
 
@@ -76,7 +76,7 @@ namespace FoxIDs.Models
                 results.AddRange(baseResults);
             }
 
-            if (ExternalLoginType == ExternalLoginTypes.Api)
+            if (ExternalLoginType == ExternalConnectTypes.Api)
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {

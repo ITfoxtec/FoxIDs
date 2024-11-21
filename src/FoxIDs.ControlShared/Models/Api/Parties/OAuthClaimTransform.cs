@@ -10,7 +10,6 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
         public override List<string> ClaimsIn { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         public override string ClaimOut { get; set; }

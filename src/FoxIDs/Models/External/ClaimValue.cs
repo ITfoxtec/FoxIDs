@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.ExternalLogin
+namespace FoxIDs.Models.External
 {
     public class ClaimValue
     {

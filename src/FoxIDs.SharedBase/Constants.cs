@@ -808,7 +808,7 @@ namespace FoxIDs
                 }
             }
 
-            public static class ApiAuthUpParty
+            public static class ExternalApi
             {
                 public const int ApiUrlLength = 500;
             }
@@ -861,6 +861,20 @@ namespace FoxIDs
             }
         }
 
+        public static class ExternalClaims
+        {
+            public static class Api
+            {
+                public const string Claims = "claims";
+                public const string ApiId = "external_claims";
+
+                public static class ErrorCodes
+                {
+                    public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
+                }
+            }
+        }
+
         public static class ExternalLogin
         {
             public static class Api
@@ -870,7 +884,7 @@ namespace FoxIDs
 
                 public static class ErrorCodes
                 {
-                    public const string InvalidAPIIDOrSecret = "invalid_api_id_secret";
+                    public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
                     public const string InvalidUsernameOrPassword = "invalid_username_password";
                 }
             }

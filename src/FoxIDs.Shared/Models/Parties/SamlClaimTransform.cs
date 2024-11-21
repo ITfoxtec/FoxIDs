@@ -11,7 +11,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims_in")]
         public override List<string> ClaimsIn { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "claim_out")]

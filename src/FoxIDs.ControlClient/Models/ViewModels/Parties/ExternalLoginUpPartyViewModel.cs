@@ -53,14 +53,14 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "External login type")]
-        public ExternalLoginTypes ExternalLoginType { get; set; } = ExternalLoginTypes.Api;
+        public ExternalConnectTypes ExternalLoginType { get; set; } = ExternalConnectTypes.Api;
 
         [Required]
         [Display(Name = "Username type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; } = ExternalLoginUsernameTypes.Email;
 
         [Required]
-        [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
+        [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [Display(Name = "API URL")]
         public string ApiUrl { get; set; }
 

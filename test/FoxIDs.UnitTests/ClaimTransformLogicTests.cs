@@ -816,7 +816,7 @@ namespace FoxIDs.UnitTests
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
             var claimTransformValidationLogic = new ClaimTransformValidationLogic(mockHttpContextAccessor);
-            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, mockHttpContextAccessor);
+            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, null, mockHttpContextAccessor);
         }
     }
 }

@@ -162,7 +162,7 @@ namespace FoxIDs.Logic
             }
 
             (var clientId, var clientSecret) = headers.GetAuthorizationHeaderBasic();
-            logger.ScopeTrace(() => $"AppReg, Client credentials basic '{new { ClientId = clientId, ClientSecret = $"{(clientSecret?.Length > 10 ? clientSecret.Substring(0, 3) : string.Empty)}..." }.ToJson()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AppReg, Client credentials basic '{new { ClientId = clientId, ClientSecret = clientSecret?.Length > 10 ? $"{clientSecret.Substring(0, 3)}..." : "hidden" }.ToJson()}'.", traceType: TraceTypes.Message);
             try
             {
                 if (clientId.IsNullOrEmpty() || clientSecret.IsNullOrEmpty()) throw new ArgumentException("Client id or secret is null or empty.");

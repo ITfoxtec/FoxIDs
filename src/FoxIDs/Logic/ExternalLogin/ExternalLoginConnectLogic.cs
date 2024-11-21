@@ -13,7 +13,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Ext = FoxIDs.Models.ExternalLogin;
+using Ext = FoxIDs.Models.External;
 using System.Net.Mime;
 using FoxIDs.Util;
 
@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
         {
             var claims = party.ExternalLoginType switch
             {
-                ExternalLoginTypes.Api => await ValidateUserApiAsync(party, profile, username, password),
+                ExternalConnectTypes.Api => await ValidateUserApiAsync(party, profile, username, password),
                 _ => throw new NotSupportedException()
             };
 
@@ -104,7 +104,7 @@ namespace FoxIDs.Logic
             }
 
             var httpClient = httpClientFactory.CreateClient();
-            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? extLoginUpParty.Secret.Substring(0, 3) : string.Empty)}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
@@ -130,7 +130,11 @@ namespace FoxIDs.Logic
                     var errorResponse = resultError.ToObject<Ext.ErrorResponse>();
                     logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.", traceType: TraceTypes.Message);
 
-                    if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
+                    if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidApiIdOrSecret)
+                    {
+                        throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalLogin.Api.ApiId}' or secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}'. Status code={response.StatusCode}.");
+                    }
+                    else if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
                     {
                         throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}'.");
                     }

@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
         {
             var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
 
-            if (mTenant.EnableUsage)
+            if (mTenant.EnableUsage == true)
             {
                 if ((mUsed.IsUsageCalculated || mUsed.Items?.Count() > 0) && !mUsed.IsDone)
                 {

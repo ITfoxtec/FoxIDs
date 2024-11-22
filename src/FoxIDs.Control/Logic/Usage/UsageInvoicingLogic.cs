@@ -44,7 +44,7 @@ namespace FoxIDs.Logic.Usage
 
         public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken, bool doInvoicing = false)
         {
-            if(!doInvoicing && !tenant.EnableUsage)
+            if(!doInvoicing && tenant.EnableUsage != true)
             {
                 logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled.");
                 return false;
@@ -251,10 +251,10 @@ namespace FoxIDs.Logic.Usage
             };
 
             var usageSettings = await GetUsageSettingsAsync();
-            var plan = tenant.EnableUsage && !tenant.PlanName.IsNullOrEmpty() ? await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName)) : null;
+            var plan = tenant.EnableUsage == true && !tenant.PlanName.IsNullOrEmpty() ? await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName)) : null;
 
             stoppingToken.ThrowIfCancellationRequested();
-            CalculateInvoice(used, plan, invoice, tenant.IncludeVat, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
+            CalculateInvoice(used, plan, invoice, tenant.IncludeVat == true, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
 
             invoice.InvoiceNumber = await GetInvoiceNumberAsync(usageSettings);
 

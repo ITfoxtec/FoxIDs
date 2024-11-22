@@ -1,9 +1,9 @@
 ﻿@using FoxIDs.Util
 <div class="form-group active-group active pt-0">
     <div class="info-text">
-        If selected, the new claims are added to the existing claims with the exception of the <code>sub</code> claim where a replace action is required.
+        <DocsLink Page="claim-transform">Claim transforms</DocsLink> executed in order (use the move up and down arrows to change the order)
         <br />
-        Claim transforms executed in order (use the move up and down arrows to change the order)
+        If selected, the new claims are added to the existing claims with the exception of the <code>sub</code> claim where a replace action is required.
     </div>
     <ul class="list-group">
         @foreach (var claimTransform in Model.ClaimTransforms)

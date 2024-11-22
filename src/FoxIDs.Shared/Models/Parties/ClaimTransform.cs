@@ -113,6 +113,10 @@ namespace FoxIDs.Models
                             {
                                 results.Add(new ValidationResult($"The field {nameof(ApiUrl)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(ApiUrl)]));
                             }
+                            else if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl)]));
+                            }
                             if (Secret.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field {nameof(Secret)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(Secret)]));

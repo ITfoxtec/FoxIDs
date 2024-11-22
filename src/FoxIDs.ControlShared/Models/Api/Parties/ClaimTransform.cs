@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +8,10 @@ namespace FoxIDs.Models.Api
 {
     public abstract class ClaimTransform : IValidatableObject
     {
+        [MaxLength(Constants.Models.Claim.TransformNameLength)]
+        [RegularExpression(Constants.Models.Claim.TransformNameRegExPattern)]
+        public string Name { get; set; }
+
         [Required]
         public ClaimTransformTypes Type { get; set; }
 
@@ -31,7 +34,7 @@ namespace FoxIDs.Models.Api
         public abstract string TransformationExtension { get; set; }
 
         [Display(Name = "External connect type")]
-        public ExternalConnectTypes ExternalConnectType { get; set; }
+        public ExternalConnectTypes? ExternalConnectType { get; set; }
 
         [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [Display(Name = "API URL")]
@@ -40,7 +43,6 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Secret")]
         public string Secret { get; set; }
-
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -91,6 +93,10 @@ namespace FoxIDs.Models.Api
                         }
                         break;
                     case ClaimTransformTypes.ExternalClaims:
+                        if (Name.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Name)} is required for claim transformation type '{Type}'.", [nameof(Name)]));
+                        }
                         if (ClaimsIn?.Count() < 1)
                         {
                             results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
@@ -100,10 +106,6 @@ namespace FoxIDs.Models.Api
                             if (ApiUrl.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field {nameof(ApiUrl)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(ApiUrl)]));
-                            }
-                            if (Secret.IsNullOrWhiteSpace())
-                            {
-                                results.Add(new ValidationResult($"The field {nameof(Secret)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(Secret)]));
                             }
                         }
                         else

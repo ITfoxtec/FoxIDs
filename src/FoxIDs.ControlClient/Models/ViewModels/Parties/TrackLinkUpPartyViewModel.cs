@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackLinkUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class TrackLinkUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
@@ -53,8 +53,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// Default 10 hours.

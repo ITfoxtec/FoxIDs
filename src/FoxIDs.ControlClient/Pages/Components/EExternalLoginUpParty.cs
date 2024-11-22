@@ -70,11 +70,11 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapClaimTransforms();
+                    afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
             });           
         }
@@ -105,26 +105,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if (generalExtLoginUpParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalExtLoginUpParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
-                if (generalExtLoginUpParty.Form.Model.LinkExternalUser?.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalExtLoginUpParty.Form.Model.LinkExternalUser.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalExtLoginUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalExtLoginUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 if(generalExtLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)
                 {
@@ -134,15 +116,11 @@ namespace FoxIDs.Client.Pages.Components
 
                 var extLoginUpParty = generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>
                 {
-                    if (afterMap.ClaimTransforms?.Count() > 0)
-                    {
-                        int order = 1;
-                        foreach (var claimTransform in afterMap.ClaimTransforms)
-                        {
-                            claimTransform.Order = order++;
-                        }
-                    }
+                    afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
+
+                    afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
                 });
+
 
                 if (generalExtLoginUpParty.CreateMode)
                 {

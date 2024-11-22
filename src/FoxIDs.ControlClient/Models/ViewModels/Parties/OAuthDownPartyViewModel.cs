@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames, IOAuthClaimTransformViewModel
+    public class OAuthDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames, IClaimTransformViewModel
     {
         public string InitName { get; set; }
 
@@ -44,8 +44,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// URL binding pattern.

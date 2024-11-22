@@ -1,11 +1,13 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public interface IOAuthClaimTransformViewModel
-    {
+    public interface IClaimTransformViewModel
+    { 
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; }
+        [Display(Name = "Claim transforms executed in order")]
+        List<ClaimTransformViewModel> ClaimTransforms { get; set; }
     }
 }

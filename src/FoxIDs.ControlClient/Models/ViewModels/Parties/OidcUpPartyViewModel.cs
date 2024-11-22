@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
+    public class OidcUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         public string InitName { get; set; }
 
@@ -95,8 +95,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// URL binding pattern.

@@ -533,7 +533,7 @@ namespace FoxIDs
 
             public static class Claim
             {
-                public const int JwtTypeLength = 80;
+                public const int JwtTypeLength = 100;
                 public const string JwtTypeRegExPattern = @"^[\w:\/\-.+]*$";                            
                 public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
                 public const int SamlTypeLength = 300;
@@ -558,6 +558,8 @@ namespace FoxIDs
                 public const int MapMin = 0;
                 public const int MapMax = 100;
 
+                public const int TransformNameLength = 10;
+                public const string TransformNameRegExPattern = @"^[\w\-]*$";
                 public const int TransformsMin = 0;
                 public const int TransformsMax = 100;
                 public const int TransformTransformationLength = 300;

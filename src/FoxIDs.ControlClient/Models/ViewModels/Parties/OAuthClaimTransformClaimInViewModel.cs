@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class OAuthClaimTransformClaimInViewModel : ClaimTransformViewModel
     {
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
-        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "Select claim")]
         public override string ClaimIn { get; set; }
 

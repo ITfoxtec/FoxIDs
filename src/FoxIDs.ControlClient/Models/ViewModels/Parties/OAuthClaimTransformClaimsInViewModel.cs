@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OAuthClaimTransformClaimsInViewModel : ClaimTransformViewModel
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "Select claims")]
         public override List<string> ClaimsIn { get; set; }
 

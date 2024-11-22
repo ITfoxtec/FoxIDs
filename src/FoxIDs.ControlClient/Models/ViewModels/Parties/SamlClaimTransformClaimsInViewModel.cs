@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SamlClaimTransformClaimsInViewModel : ClaimTransformViewModel
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [Display(Name = "Select claim")]
         public override List<string> ClaimsIn { get; set; }
 

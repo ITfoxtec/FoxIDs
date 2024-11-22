@@ -28,11 +28,11 @@ namespace FoxIDs.Logic
             this.externalClaimsConnectLogic = externalClaimsConnectLogic;
         }
 
-        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
+        public async Task<List<Claim>> TransformAsync(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
         {
-            if(claimTransforms == null|| claims == null)
+            if(claimTransforms == null || !(claimTransforms?.Count() > 0))
             {
-                return Task.FromResult(new List<Claim>(claims));
+                return new List<Claim>(claims);
             }
 
             claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                             ConcatenateTransformation(outputClaims, claimTransform);
                             break;
                         case ClaimTransformTypes.ExternalClaims:
-                            ExternalClaimsTransformation(outputClaims, claimTransform);
+                            await ExternalClaimsTransformationAsync(outputClaims, claimTransform);
                             break;
                         case ClaimTransformTypes.DkPrivilege:
                             DkPrivilegeTransformation(outputClaims, claimTransform);
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                     throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
                 }
             }
-            return Task.FromResult(outputClaims);
+            return await Task.FromResult(outputClaims);
         }
 
         private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
@@ -308,20 +308,26 @@ namespace FoxIDs.Logic
             AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
 
-        private async void ExternalClaimsTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        private async Task ExternalClaimsTransformationAsync(List<Claim> claims, ClaimTransform claimTransform)
         {
             var selectedClaims = new List<Claim>();
-            var claimsIn = claimTransform.ClaimsIn.ConcatOnce([JwtClaimTypes.Subject, Constants.JwtClaimTypes.AuthMethod, Constants.JwtClaimTypes.AuthMethodType, Constants.JwtClaimTypes.UpParty, Constants.JwtClaimTypes.UpPartyType]);
-            foreach (var claimIn in claimsIn)
+            if (claimTransform.ClaimsIn.Where(c => c == "*").Any())
             {
-                var claimsResult = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
-                if(claimsResult.Count() > 0)
+                selectedClaims.AddRange(claims);
+            }
+            else
+            {
+                foreach (var claimIn in claimTransform.ClaimsIn)
                 {
-                    selectedClaims.AddRange(claimsResult);
+                    var claimsResult = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
+                    if (claimsResult.Count() > 0)
+                    {
+                        selectedClaims.AddRange(claimsResult);
+                    }
                 }
             }
 
-            var newClaims = await externalClaimsConnectLogic.GetClaimsAsync(claimTransform, selectedClaims);
+            var newClaims = selectedClaims.Count() > 0 ? await externalClaimsConnectLogic.GetClaimsAsync(claimTransform, selectedClaims) : new List<Claim>();
             AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
 

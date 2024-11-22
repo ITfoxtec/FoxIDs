@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Api
 {
     public class SamlClaimTransform : ClaimTransform
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         public override List<string> ClaimsIn { get; set; }
 
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]

@@ -7,7 +7,6 @@ namespace FoxIDs.Client.Models.ViewModels
     public interface IClaimTransformViewModel
     { 
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [Display(Name = "Claim transforms executed in order")]
         List<ClaimTransformViewModel> ClaimTransforms { get; set; }
     }
 }

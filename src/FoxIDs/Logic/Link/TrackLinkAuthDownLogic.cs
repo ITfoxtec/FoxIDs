@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
             if (error.IsNullOrEmpty())
             {
                 logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);

@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class SamlClaimTransformClaimInViewModel : ClaimTransformViewModel, IValidatableObject
     {
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
-        [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
+        [RegularExpression(Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [Display(Name = "Select claim")]
         public override string ClaimIn { get; set; }
 

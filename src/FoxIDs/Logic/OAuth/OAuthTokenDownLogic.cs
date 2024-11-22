@@ -371,7 +371,7 @@ namespace FoxIDs.Logic
                 //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
                 logger.ScopeTrace(() => $"AppReg, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"AppReg, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 logger.SetUserScopeProperty(claims);
 

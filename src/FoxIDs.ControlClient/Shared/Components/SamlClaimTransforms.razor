@@ -1,6 +1,10 @@
 ﻿@using FoxIDs.Util
-<div class="form-group active-group active">
-    <Label For="@(() => Model.ClaimTransforms)" class="label-control" />
+<div class="form-group active-group active pt-0">
+    <div class="info-text">
+        If selected, the new claims are added to the existing claims with the exception of the <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code> (equals to <code>sub</code>) claim where a replace action is required.
+        <br />
+        Claim transforms executed in order (use the move up and down arrows to change the order)
+    </div>
     <ul class="list-group">
         @foreach (var claimTransform in Model.ClaimTransforms)
         {
@@ -193,7 +197,7 @@
                                 case ClaimTransformTypes.ExternalClaims:
                                     <div class="p-0 alert alert-light font-italic small" role="alert">Call external claims API with selected claims and include claims returned from the external claims API.</div>
                                     <div class="form-group active-group">
-                                        <label class="label-control">Select claims</label>
+                                        <label class="label-control">Select claims (user * to select all claims)</label>
                                         <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
                                     </div>
                                     <FInputText @bind-Value="claimTransformClaimsIn.ApiUrl" For="@(() => claimTransformClaimsIn.ApiUrl)" />

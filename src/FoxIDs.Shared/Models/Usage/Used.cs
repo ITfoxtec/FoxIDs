@@ -62,6 +62,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "payment_status")]
         public UsagePaymentStatus PaymentStatus { get; set; }
 
+        [JsonProperty(PropertyName = "is_inactive")]
+        public bool IsInactive { get; set; }
+
         [JsonProperty(PropertyName = "is_done")]
         public bool IsDone { get; set; }
 

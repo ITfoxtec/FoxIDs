@@ -213,7 +213,7 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
             }
 
-            var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
 
             logger.ScopeTrace(() => $"AuthMethod, OAuth output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);

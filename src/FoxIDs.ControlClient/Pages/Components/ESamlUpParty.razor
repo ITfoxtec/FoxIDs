@@ -101,11 +101,11 @@
                 <li class="nav-item">
                     @if (samlUpParty.ShowLinkExternalUserTab)
                     {
-                        <a class="nav-link active">Link External Users</a>
+                        <a class="nav-link active">Create External Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Link External Users</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Create External Users</button>
                     }
                 </li>
                 <li class="nav-item">

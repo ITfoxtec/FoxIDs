@@ -27,7 +27,7 @@ namespace FoxIDs.Repository
             do
             {
                 await DoWorkAsync(stoppingToken);
-                await Task.Delay(settings.FileData.BackgroundServiceWaitPeriod = 1000, stoppingToken);
+                await Task.Delay(settings.PostgreSql.BackgroundServiceWaitPeriod * 1000, stoppingToken);
             }
             while (!stoppingToken.IsCancellationRequested);
         }

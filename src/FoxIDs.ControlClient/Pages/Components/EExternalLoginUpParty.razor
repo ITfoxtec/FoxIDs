@@ -51,11 +51,11 @@
             <li class="nav-item">
                 @if (extLoginUpParty.ShowLinkExternalUserTab)
                 {
-                    <a class="nav-link active">Link External User</a>
+                    <a class="nav-link active">Create External Users</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.LinkExternalUser))">Link External User</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowExternalLoginTab(extLoginUpParty, ExternalLoginTabTypes.LinkExternalUser))">Create External Users</button>
                 }
             </li>
             <li class="nav-item">

@@ -8,8 +8,6 @@ namespace FoxIDs.Models
 
         public string CustomDomain { get; set; }
 
-        public bool CustomDomainVerified { get; set; }
-
         public string PlanName { get; set; }
 
         public string TenantName { get; set; }

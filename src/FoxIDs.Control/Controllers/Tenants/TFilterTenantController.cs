@@ -65,19 +65,19 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName);
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName);
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
             else
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
+                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

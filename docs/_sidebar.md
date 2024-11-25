@@ -11,7 +11,7 @@
   - [OpenID Connect](oidc.md)
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)
-  - [External API Login](external-login.md)
+  - [External Login - API](external-login.md)
   - [Environment Link](howto-environmentlink-foxids.md)
 - [Token exchange](token-exchange.md)
 - [Customization](customization.md)
@@ -27,7 +27,8 @@
   - [Monitoring](monitoring.md)
 - Topics
   - [Users](users.md)
-  - [Claims & Claim transforms](claim.md)
+  - [Claims](claim.md)
+  - [Claim transforms](claim-transform.md)
   - [Certificates](certificates.md)
   - [Logging](logging.md)
   - [Email provider](email.md)

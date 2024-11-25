@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.ExternalLogin
+namespace FoxIDs.Models.External
 {
-    public class AuthenticationResponse
+    public class ClaimsRequest
     {
         [Required]
         public IEnumerable<ClaimValue> Claims { get; set; }

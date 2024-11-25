@@ -58,11 +58,11 @@
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
                     {
-                        <a class="nav-link active">Create User</a>
+                        <a class="nav-link active">Create Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create User</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create Users</button>
                     }
                 </li>
             }
@@ -115,7 +115,7 @@
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {
-                <OAuthClaimTransforms Model="loginUpParty.Form.Model" />
+                <OAuthClaimTransforms Model="loginUpParty.Form.Model" ExcludeDkPrivilege="true" />
             }
             else if (loginUpParty.ShowCreateUserTab)
             {
@@ -126,7 +126,7 @@
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
                     <DynamicElements Model="loginUpParty.Form.Model.CreateUser" IncludeEmailElement=false />
                     <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
-                    <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" />
+                    <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" ExcludeDkPrivilege="true" />
                 }
             }
             else if (loginUpParty.ShowSessionTab)

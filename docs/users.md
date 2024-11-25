@@ -3,7 +3,7 @@ Users are saved in the environment's user repository. To achieve multiple user s
 
 There are two different types of users:
 - [Internal users](#internal-users) which are authenticated using the [login](login.md) authentication method.
-- [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The user is authenticated in an external Identity Provider using an authenticated method: OpenID Connect, SAML 2.0, Environment Link or External Login.
+- [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The user is authenticated in an external Identity Provider using an authenticated method: OpenID Connect, SAML 2.0, External Login or Environment Link.
 
 ## Internal users
 Internal users can be authenticated in all [login](login.md) authentication methods in an environment, making is possible to [customize](customization.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.
@@ -22,7 +22,7 @@ And is then asked to fill out a form to create a user.
 The page is composed by dynamic elements which can be customized per [login](login.md) authentication method.  
 In this example the create user page is composed by a Full name element and the default required Email and password element, ordered with the Full name element at the top.
 
-This is the configuration in the [login](login.md) authentication method. Moreover, the claim `some_custom_claim` is added to each user as a constant in the claim transformation.
+This is the configuration in the [login](login.md) authentication method. Moreover, the claim `some_custom_claim` is added to each user as a constant in the [claim transformation](claim-transform).
 
 ![Login configuration - create an account online](images/user-create-new-account-config.png)
 
@@ -53,7 +53,7 @@ Current supported hash algorithm `P2HS512:10` which is defined as:
 Standard .NET liberals are used to calculate the hash.
 
 ## External users
-An external user is linked to one authentication method and can only be authenticated with that particular authentication method. External users can be linked to the authentication methods: OpenID Connect, SAML 2.0 or Environment Link.  
+An external user is linked to one authentication method and can only be authenticated with that particular authentication method. External users can be linked to the authentication methods: OpenID Connect, SAML 2.0, External Login or Environment Link.  
 It is optional to use external users, they are not created by default.
 
 All external user grouped under a authentication method is linked with the same claim type (e.g. the `sub` or `email` claim type) and the users are separated by unique claim values.
@@ -73,6 +73,8 @@ In this example the create user page is composed by three elements; Email, Given
 This is the configuration in a [OpenID Connect](auth-method-oidc.md) authentication method.
 
 ![OpenID Connect configuration - create an account online](images/user-external-create-new-account-config.png)
+
+[Claim transformations](claim-transform) can be added which are performed just before the external user is created.
 
 > If the login sequence is started base on a [login](login.md) authentication method, it provides the basis for the UI look and feel ([customize](customization.md)). Otherwise, the default [login](login.md) authentication method is selected as the base.
 

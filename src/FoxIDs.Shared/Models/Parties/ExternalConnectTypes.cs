@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum ExternalLoginTypes
+    public enum ExternalConnectTypes
     {
         [EnumMember(Value = "api")]
         Api = 100,

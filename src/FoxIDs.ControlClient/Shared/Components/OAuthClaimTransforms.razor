@@ -1,8 +1,14 @@
-﻿<div class="form-group active-group active">
-    <div class="info-text">Claim transforms executed in order (use the move up and down arrows to change the order)</div>
+﻿@using FoxIDs.Util
+<div class="form-group active-group active pt-0">
+    <div class="info-text">
+        <DocsLink Page="claim-transform">Claim transforms</DocsLink> executed in order (use the move up and down arrows to change the order)
+        <br />
+        If selected, the new claims are added to the existing claims with the exception of the <code>sub</code> claim where a replace action is required.
+    </div>
     <ul class="list-group">
         @foreach (var claimTransform in Model.ClaimTransforms)
         {
+            var claimTransformClaimsIn = claimTransform as OAuthClaimTransformClaimsInViewModel;
             var claimTransformClaimIn = claimTransform as OAuthClaimTransformClaimInViewModel;
             <li class="list-group-item">
                 <div class="row">
@@ -36,7 +42,11 @@
                             case ClaimTransformTypes.Concatenate:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Concatenate</div>
                                 break;
-                            
+
+                            case ClaimTransformTypes.ExternalClaims:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">External claims API</div>
+                                break;
+
                             case ClaimTransformTypes.DkPrivilege:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">DK privilege</div>
                                 break;
@@ -67,18 +77,21 @@
                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-11">
-                        @if (claimTransform.Action != ClaimTransformActions.Remove)
-                        {
-                            <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" LabelText="New claim" />
-                        }
-                        else
-                        {
-                            <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" LabelText="Remove claim" />
-                        }
-                    </div>
+                @if (claimTransform.Type != ClaimTransformTypes.ExternalClaims)
+                {
+                    <div class="row">
+                        <div class="col-11">
+                            @if (claimTransform.Action != ClaimTransformActions.Remove)
+                            {
+                                <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" LabelText="New claim" />
+                            }
+                            else
+                            {
+                                <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" LabelText="Remove claim" />
+                            }
+                        </div>
                 </div>
+                }
                 <div class="row">
                     <div class="col-11">
                         @if (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch)
@@ -177,9 +190,19 @@
                                     <div class="p-0 alert alert-light font-italic small" role="alert">Concatenate values from claims to a new claim. If e.g. concatenating tree claims the format string require tree format elements e.g. like this: {0}-{1}.{2}</div>
                                     <div class="form-group active-group">
                                         <label class="label-control">Concatenate claims</label>
-                                        <FInputTextList @bind-ValueList="claimTransform.ClaimsIn" For="@(() => claimTransform.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                        <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
                                     </div>
-                                    <FInputText @bind-Value="claimTransform.Transformation" For="@(() => claimTransform.Transformation)" LabelText="Concatenate format string" />
+                                    <FInputText @bind-Value="claimTransformClaimsIn.Transformation" For="@(() => claimTransformClaimsIn.Transformation)" LabelText="Concatenate format string" />
+                                    break;
+
+                                case ClaimTransformTypes.ExternalClaims:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Call external claims API with selected claims and include claims returned from the external claims API.</div>
+                                    <div class="form-group active-group">
+                                        <label class="label-control">Select claims (user * to select all claims)</label>
+                                        <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                    </div>
+                                    <FInputText @bind-Value="claimTransformClaimsIn.ApiUrl" For="@(() => claimTransformClaimsIn.ApiUrl)" />
+                                    <FInputText @bind-Value="claimTransformClaimsIn.Secret" For="@(() => claimTransformClaimsIn.Secret)" />
                                     break;
 
                                 case ClaimTransformTypes.DkPrivilege:
@@ -231,14 +254,21 @@
             <h6 class="dropdown-header">Actions: Add/Replace</h6>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.ExternalClaims))">External claims API</button>
+            @if (!ExcludeDkPrivilege)
+            {
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
+            }
         </div>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public IOAuthClaimTransformViewModel Model { get; set; }
+    public IClaimTransformViewModel Model { get; set; }
+
+    [Parameter]
+    public bool ExcludeDkPrivilege { get; set; }
 
     private void AddClaimTransform(ClaimTransformTypes claimTransformType)
     {
@@ -256,15 +286,25 @@
                     });
                 break;
             case ClaimTransformTypes.Constant:
-                Model.ClaimTransforms.Add(new OAuthClaimTransformViewModel
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
                     {
                         ShowDetails = true,
                         Type = claimTransformType
                     });
                 break;
             case ClaimTransformTypes.Concatenate:
-                Model.ClaimTransforms.Add(new OAuthClaimTransformViewModel
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
                     {
+                        ClaimsIn = new List<string> { string.Empty },
+                        ShowDetails = true,
+                        Type = claimTransformType
+                    });
+                break;
+            case ClaimTransformTypes.ExternalClaims:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                    {
+                        Name = RandomName.GenerateDefaultName(),
+                        ExternalConnectType = ExternalConnectTypes.Api,
                         ClaimsIn = new List<string> { string.Empty },
                         ShowDetails = true,
                         Type = claimTransformType
@@ -286,12 +326,12 @@
         }
     }
 
-    private void RemoveClaimTransform(OAuthClaimTransformViewModel claimTransform)
+    private void RemoveClaimTransform(ClaimTransformViewModel claimTransform)
     {
         Model.ClaimTransforms.Remove(claimTransform);
     }
 
-    private void MoveUp(OAuthClaimTransformViewModel claimTransform)
+    private void MoveUp(ClaimTransformViewModel claimTransform)
     {
         var index = Model.ClaimTransforms.IndexOf(claimTransform);
         Model.ClaimTransforms.RemoveAt(index);
@@ -299,7 +339,7 @@
         StateHasChanged();
     }
 
-    private void MoveDown(OAuthClaimTransformViewModel claimTransform)
+    private void MoveDown(ClaimTransformViewModel claimTransform)
     {
         var index = Model.ClaimTransforms.IndexOf(claimTransform);
         Model.ClaimTransforms.RemoveAt(index);

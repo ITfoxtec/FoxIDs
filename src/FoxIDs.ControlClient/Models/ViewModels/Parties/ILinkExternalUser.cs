@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public interface ILinkExternalUser : IOAuthClaimTransformViewModel, IDynamicElementsViewModel
+    public interface ILinkExternalUser : IClaimTransformViewModel, IDynamicElementsViewModel
     {
         [Display(Name = "Optional create/provision external users automatically")]
         public bool AutoCreateUser { get; set; }

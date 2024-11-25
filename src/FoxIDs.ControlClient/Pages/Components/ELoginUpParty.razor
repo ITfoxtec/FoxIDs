@@ -58,11 +58,11 @@
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
                     {
-                        <a class="nav-link active">Create User</a>
+                        <a class="nav-link active">Create Users</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create User</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create Users</button>
                     }
                 </li>
             }

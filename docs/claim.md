@@ -1,6 +1,6 @@
 # Claims
 
-Claims are processed first in the [authentication method](#authentication-method) and then the [application registration](#application-registration), where it is possible to decide, which claims are transferred to the next step and to do [claim transforms](claim-transform.md).
+Claims are processed first in the [authentication method](#authentication-method) and then the [application registration](#application-registration), where it is possible to decide, which claims are passed to the next step and to do [claim transforms](claim-transform.md).
 
 > All claim comparisons are case-sensitive.
 

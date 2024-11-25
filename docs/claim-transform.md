@@ -4,6 +4,10 @@ Each FoxIDs authentication method and application registration handle [claims](c
 This means that two sets of claim transforms can be executed on each user authentication. 
 First executing claim transforms on the authentication method and then claim transforms on the application registration. 
 
+Additional subsets of claim transformations can be performed if a user or an external user is created.
+
+![Claim transform flow diagram](images/claim-transform.svg)
+
 If you create a new claim in a claim transform, the claim is send from the authentication method if the claim or `*` is in the `Forward claims` list. 
 The application registration receives the claim and issues the claim if the claim or `*` is in the `Issue claims` list or alternative if the claim is in a requested scope's `Voluntary claims` list. 
 

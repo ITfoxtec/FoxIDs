@@ -7,11 +7,10 @@ namespace FoxIDs.Models
 {
     public class SamlClaimTransform : ClaimTransform
     {
-        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims_in")]
         public override List<string> ClaimsIn { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "claim_out")]

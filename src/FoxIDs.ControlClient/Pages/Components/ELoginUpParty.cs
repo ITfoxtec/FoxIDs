@@ -56,11 +56,11 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.CreateUser?.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapClaimTransforms();
+                    afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
             });           
         }
@@ -82,57 +82,19 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if (generalLoginUpParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalLoginUpParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
-                if (generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalLoginUpParty.Form.Model.CreateUser.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalLoginUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 if (generalLoginUpParty.CreateMode)
                 {
                     var loginUpPartyResult = await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
-                        if (afterMap.ClaimTransforms?.Count() > 0)
-                        {
-                            int order = 1;
-                            foreach (var claimTransform in afterMap.ClaimTransforms)
-                            {
-                                claimTransform.Order = order++;
-                            }
-                        }
+                        afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
+
                         if (afterMap.CreateUser != null)
                         {
-                            if (afterMap.CreateUser.Elements?.Count() > 0)
-                            {
-                                int order = 1;
-                                foreach (var element in afterMap.CreateUser.Elements)
-                                {
-                                    element.Order = order++;
-                                }
-                            }
-                            if (afterMap.CreateUser.ClaimTransforms?.Count() > 0)
-                            {
-                                int order = 1;
-                                foreach (var claimTransform in afterMap.CreateUser.ClaimTransforms)
-                                {
-                                    claimTransform.Order = order++;
-                                }
-                            }
+                            afterMap.CreateUser.Elements.MapLinkExternalUserAfterMap();
+                            afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                         }                        
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
@@ -151,32 +113,11 @@ namespace FoxIDs.Client.Pages.Components
                             afterMap.Name = generalLoginUpParty.Form.Model.InitName;
                         }
 
-                        if (afterMap.ClaimTransforms?.Count() > 0)
-                        {
-                            int order = 1;
-                            foreach (var claimTransform in afterMap.ClaimTransforms)
-                            {
-                                claimTransform.Order = order++;
-                            }
-                        }
+                        afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                         if (afterMap.CreateUser != null)
                         {
-                            if (afterMap.CreateUser.Elements?.Count() > 0)
-                            {
-                                int order = 1;
-                                foreach (var element in afterMap.CreateUser.Elements)
-                                {
-                                    element.Order = order++;
-                                }
-                            }
-                            if (afterMap.CreateUser.ClaimTransforms?.Count() > 0)
-                            {
-                                int order = 1;
-                                foreach (var claimTransform in afterMap.CreateUser.ClaimTransforms)
-                                {
-                                    claimTransform.Order = order++;
-                                }
-                            }
+                            afterMap.CreateUser.Elements.MapLinkExternalUserAfterMap();
+                            afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                         }
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));

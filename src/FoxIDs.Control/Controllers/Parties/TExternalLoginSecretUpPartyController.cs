@@ -77,9 +77,9 @@ namespace FoxIDs.Controllers
                 secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(await UpParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
-                if (extLoginUpParty.ExternalLoginType == ExternalLoginTypes.Api && secretRequest.Secret.IsNullOrEmpty())
+                if (extLoginUpParty.ExternalLoginType == ExternalConnectTypes.Api && secretRequest.Secret.IsNullOrEmpty())
                 {
-                    throw new Exception($"Client secret is require if '{nameof(extLoginUpParty.ExternalLoginType)}' is '{ExternalLoginTypes.Api}'");
+                    throw new Exception($"Client secret is require if '{nameof(extLoginUpParty.ExternalLoginType)}' is '{ExternalConnectTypes.Api}'");
                 }
 
                 extLoginUpParty.Secret = secretRequest.Secret;
@@ -112,9 +112,9 @@ namespace FoxIDs.Controllers
 
                 var partyName = name?.ToLower();
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
-                if (extLoginUpParty.ExternalLoginType == ExternalLoginTypes.Api)
+                if (extLoginUpParty.ExternalLoginType == ExternalConnectTypes.Api)
                 {
-                    throw new Exception($"Client secret is require if '{nameof(extLoginUpParty.ExternalLoginType)}' is '{ExternalLoginTypes.Api}'");
+                    throw new Exception($"Client secret is require if '{nameof(extLoginUpParty.ExternalLoginType)}' is '{ExternalConnectTypes.Api}'");
                 }
 
                 extLoginUpParty.Secret = null;

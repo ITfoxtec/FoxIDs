@@ -270,7 +270,7 @@ namespace FoxIDs.Logic
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true);
 
-            claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig)
             {

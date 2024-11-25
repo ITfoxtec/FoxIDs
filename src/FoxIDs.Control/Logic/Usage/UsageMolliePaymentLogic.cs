@@ -162,5 +162,17 @@ namespace FoxIDs.Logic.Usage
                 return false;
             }
         }
+
+        public async Task MarkAsPaidAsync(Used used)
+        {
+            used.PaymentStatus = UsagePaymentStatus.Paid;
+            await tenantDataRepository.UpdateAsync(used);
+        }
+
+        public async Task MarkAsNotPaidAsync(Used used)
+        {
+            used.PaymentStatus = UsagePaymentStatus.None;
+            await tenantDataRepository.UpdateAsync(used);
+        }
     }
 }

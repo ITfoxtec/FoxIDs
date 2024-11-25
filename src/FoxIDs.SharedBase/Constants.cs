@@ -533,7 +533,7 @@ namespace FoxIDs
 
             public static class Claim
             {
-                public const int JwtTypeLength = 80;
+                public const int JwtTypeLength = 100;
                 public const string JwtTypeRegExPattern = @"^[\w:\/\-.+]*$";                            
                 public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
                 public const int SamlTypeLength = 300;
@@ -558,6 +558,8 @@ namespace FoxIDs
                 public const int MapMin = 0;
                 public const int MapMax = 100;
 
+                public const int TransformNameLength = 10;
+                public const string TransformNameRegExPattern = @"^[\w\-]*$";
                 public const int TransformsMin = 0;
                 public const int TransformsMax = 100;
                 public const int TransformTransformationLength = 300;
@@ -808,7 +810,7 @@ namespace FoxIDs
                 }
             }
 
-            public static class ApiAuthUpParty
+            public static class ExternalApi
             {
                 public const int ApiUrlLength = 500;
             }
@@ -861,6 +863,20 @@ namespace FoxIDs
             }
         }
 
+        public static class ExternalClaims
+        {
+            public static class Api
+            {
+                public const string Claims = "claims";
+                public const string ApiId = "external_claims";
+
+                public static class ErrorCodes
+                {
+                    public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
+                }
+            }
+        }
+
         public static class ExternalLogin
         {
             public static class Api
@@ -870,7 +886,7 @@ namespace FoxIDs
 
                 public static class ErrorCodes
                 {
-                    public const string InvalidAPIIDOrSecret = "invalid_api_id_secret";
+                    public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
                     public const string InvalidUsernameOrPassword = "invalid_username_password";
                 }
             }

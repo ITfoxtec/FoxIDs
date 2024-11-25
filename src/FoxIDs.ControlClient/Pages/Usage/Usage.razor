@@ -27,11 +27,21 @@
 
     <PageEditForm @ref="searchUsageForm" TModel="FilterUsageViewModel" OnAfterInit="OnUsageFilterAfterInit" OnValidSubmit="OnUsageFilterValidSubmitAsync">
         <div class="row">
-            <div class="col-6">
+            <div class="col-1">
+                <div class="form-group active-group">
+                    <button type="button" class="btn btn-outline-secondary" onclick="@(() => OnUsageStepAsync(false))"><i class="bi bi-caret-left-fill"></i></button>
+                </div>
+            </div>
+            <div class="col-5">
                 <FInputNumber @bind-Value="searchUsageForm.Model.PeriodYear" For="@(() => searchUsageForm.Model.PeriodYear)" />
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <FInputNumber @bind-Value="searchUsageForm.Model.PeriodMonth" For="@(() => searchUsageForm.Model.PeriodMonth)" />
+            </div>
+            <div class="col-1">
+                <div class="form-group active-group">
+                    <button type="button" class="btn btn-outline-secondary" onclick="@(() => OnUsageStepAsync(true))"><i class="bi bi-caret-right-fill"></i></button>
+                </div>
             </div>
         </div>
         <FInputTextFilter @bind-Value="searchUsageForm.Model.FilterTenantValue" For="@(() => searchUsageForm.Model.FilterTenantValue)" />
@@ -195,81 +205,6 @@
                             </div>
                         }
                         <div class="modal-footer">
-                            @if (ShowDoInvoicingButton(used))
-                            {
-                                @if (!used.InvoicingActionButtonDisabled)
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAsync(used))">
-                                        Do invoicing
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
-                                        Do invoicing
-                                    </button>
-                                }
-                            }
-                            @if (ShowSendInvoiceAgainButton(used))
-                            {
-                                @if (!used.InvoicingActionButtonDisabled)
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
-                                        Send invoice again
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
-                                        Send invoice again
-                                    </button>
-                                }
-                            }
-                            @if (ShowDoCreditNoteButton(used))
-                            {
-                                @if (!used.InvoicingActionButtonDisabled)
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await DoCreditNoteAsync(used))">
-                                        Do credit note
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
-                                        Do credit note
-                                    </button>
-                                }
-                            }
-                            @if (ShowSendCreditNoteAgainButton(used))
-                            {
-                                @if (!used.InvoicingActionButtonDisabled)
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" @onclick="@(async () => await SendCreditNoteAgainAsync(used))">
-                                        Send credit note again
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-outline-dark mr-2" disabled="disabled">
-                                        Send credit note again
-                                    </button>
-                                }
-                            }
-                            @if (ShowDoPaymentButton(used))
-                            {
-                                @if (!used.InvoicingActionButtonDisabled)
-                                {
-                                    <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await DoPaymentAgainAsync(used))">
-                                        Do payment again
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="btn btn-outline-dark" disabled="disabled">
-                                        Do payment again
-                                    </button>
-                                }
-                            }
                             @if (!used.CreateMode && !used.IsUsageCalculated)
                             {
                                 <button type="button" class="btn btn-link" @onclick="@(() => used.DeleteAcknowledge = true)">Delete</button>
@@ -282,84 +217,125 @@
                 else
                 {
                     <button class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
-                        @UsageInfoText(used)
+                        Tenant @used.TenantName@UsagePriceText(used)
+                        <br />
+                        @{ (var paid, var statusText) = @UsageInfoText(used); }
+                        <small class="@(paid ? "text-success" : string.Empty)">@statusText</small>
                     </button>
 
-                    @if (ShowDoInvoicingButton(used))
-                    {
-                        @if (!used.InvoicingActionButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await DoInvoicingAsync(used))">
-                                Do invoicing
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
-                                Do invoicing
-                            </button>
-                        }
-                    }
-                    @if (ShowSendInvoiceAgainButton(used))
-                    {
-                        @if (!used.InvoicingActionButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
-                                Send invoice again
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
-                                Send invoice again
-                            </button>
-                        }
-                    }
-                    @if (ShowDoCreditNoteButton(used))
-                    {
-                        @if (!used.InvoicingActionButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await DoCreditNoteAsync(used))">
-                                Do credit note
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
-                                Do credit note
-                            </button>
-                        }
-                    }
-                    @if (ShowSendCreditNoteAgainButton(used))
-                    {
-                        @if (!used.InvoicingActionButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" @onclick="@(async () => await SendCreditNoteAgainAsync(used))">
-                                Send credit note again
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark mr-2" disabled="disabled">
-                                Send credit note again
-                            </button>
-                        }
-                    }
-                    @if (ShowDoPaymentButton(used))
-                    {
-                        @if (!used.InvoicingActionButtonDisabled)
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await DoPaymentAgainAsync(used))">
-                                Do payment again
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-outline-dark" disabled="disabled">
-                                Do payment again
-                            </button>
-                        }
-                    }
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+                            @if (ShowDoInvoicingButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoInvoicingAsync(used))">
+                                        Do invoicing
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Do invoicing
+                                    </button>
+                                }
+                            }
+                            @if (ShowSendInvoiceAgainButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
+                                        Send invoice again
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Send invoice again
+                                    </button>
+                                }
+                            }
+                            @if (ShowDoCreditNoteButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoCreditNoteAsync(used))">
+                                        Do credit note
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Do credit note
+                                    </button>
+                                }
+                            }
+                            @if (ShowSendCreditNoteAgainButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await SendCreditNoteAgainAsync(used))">
+                                        Send credit note again
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Send credit note again
+                                    </button>
+                                }
+                            }
+                            @if (ShowDoPaymentButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoPaymentAgainAsync(used))">
+                                        Do payment again
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Do payment again
+                                    </button>
+                                }
+                            }
+                            @if (ShowMarkAsPaidButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoMarkAsPaidAsync(used))">
+                                        Mark as paid
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Mark as paid
+                                    </button>
+                                }
+                            }    
+                            @if (ShowMarkAsNotPaidButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoMarkAsNotPaidAsync(used))">
+                                        Mark as not paid
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" disabled="disabled">
+                                        Mark as not paid
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+
                 }
             </li>
         }

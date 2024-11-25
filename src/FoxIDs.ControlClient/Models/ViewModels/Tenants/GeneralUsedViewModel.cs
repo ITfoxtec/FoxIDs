@@ -15,7 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
             PeriodEndDate = used.PeriodEndDate;
             IsUsageCalculated = used.IsUsageCalculated;
             IsInvoiceReady = used.IsInvoiceReady;
-            PaymentStatus = used.PaymentStatus;   
+            PaymentStatus = used.PaymentStatus;
+            IsInactive = used.IsInactive;
             IsDone = used.IsDone;
             HasItems = used.HasItems;
             Invoices = used.Invoices;

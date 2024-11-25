@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlClaimTransformViewModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
+    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, IClaimTransformViewModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
         public string InitName { get; set; }
 
@@ -41,8 +41,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<SamlClaimTransformViewModel> ClaimTransforms { get; set; } = new List<SamlClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]

@@ -52,10 +52,10 @@ namespace FoxIDs.Models
         public bool? ForUsage { get; set; }
 
         [JsonProperty(PropertyName = "enable_usage")]
-        public bool EnableUsage { get; set; }
+        public bool? EnableUsage { get; set; }
 
         [JsonProperty(PropertyName = "do_payment")]
-        public bool DoPayment { get; set; }
+        public bool? DoPayment { get; set; }
 
         /// <summary>
         /// Default EUR if empty.
@@ -65,7 +65,7 @@ namespace FoxIDs.Models
         public string Currency { get; set; }
 
         [JsonProperty(PropertyName = "include_vat")]
-        public bool IncludeVat { get; set; }
+        public bool? IncludeVat { get; set; }
 
         [Min(Constants.Models.UsageSettings.HourPriceMin)]
         [JsonProperty(PropertyName = "hour_price")]

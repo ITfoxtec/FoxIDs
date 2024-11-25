@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
 
             dynamicElementClaims = dynamicElementClaims ?? new List<Claim>();
-            var transformedClaims = await claimTransformLogic.Transform(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims);
+            var transformedClaims = await claimTransformLogic.TransformAsync(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims);
 
             var externalUser = new ExternalUser
             {

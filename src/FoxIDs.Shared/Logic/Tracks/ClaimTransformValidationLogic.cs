@@ -27,23 +27,26 @@ namespace FoxIDs.Logic
 
                 foreach (var claimTransform in addActionClaimTransform)
                 {
-                    if (claimTransform is OAuthClaimTransform)
+                    if (claimTransform.Type != ClaimTransformTypes.ExternalClaims)
                     {
-                        if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                        if (claimTransform is OAuthClaimTransform)
                         {
-                            claimTransform.Action = ClaimTransformActions.Replace;
+                            if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                claimTransform.Action = ClaimTransformActions.Replace;
+                            }
                         }
-                    }
-                    else if (claimTransform is SamlClaimTransform)
-                    {
-                        if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                        else if (claimTransform is SamlClaimTransform)
                         {
-                            claimTransform.Action = ClaimTransformActions.Replace;
+                            if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                claimTransform.Action = ClaimTransformActions.Replace;
+                            }
                         }
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
                     }
                 }
             }

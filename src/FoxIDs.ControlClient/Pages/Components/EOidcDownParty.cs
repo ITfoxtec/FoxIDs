@@ -111,7 +111,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
             });
         }
@@ -177,16 +177,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if(generalOidcDownParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalOidcDownParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalOidcDownParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
                 {
@@ -208,14 +199,7 @@ namespace FoxIDs.Client.Pages.Components
                     {
                         afterMap.Client.Scopes = generalOidcDownParty.Form.Model.Client.ScopesViewModel.Map<List<OidcDownScope>>();
                     }
-                    if (afterMap.ClaimTransforms?.Count() > 0)
-                    {
-                        int order = 1;
-                        foreach (var claimTransform in afterMap.ClaimTransforms)
-                        {
-                            claimTransform.Order = order++;
-                        }
-                    }
+                    afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     if (afterMap.IsTest == true)
                     { 
                         if (generalOidcDownParty.Form.Model.TestExpireInSeconds == 0 || generalOidcDownParty.Form.Model.TestExpireInSeconds != 15)

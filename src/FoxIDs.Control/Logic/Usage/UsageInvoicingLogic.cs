@@ -46,12 +46,14 @@ namespace FoxIDs.Logic.Usage
         {
             if(!doInvoicing && tenant.EnableUsage != true)
             {
-                logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled.");
-                return false;
+                used.IsInactive = true;
+                await tenantDataRepository.UpdateAsync(used);
+                logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled, set to inactive.");
+                return true;
             }
 
             var taskDone = true;
-            var isCardPayment = usageMolliePaymentLogic.HasCardPayment(tenant);
+            var isCardPayment = tenant.DoPayment == true || usageMolliePaymentLogic.HasActiveCardPayment(tenant);
 
             logger.Event($"Usage, {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' started.");
 
@@ -68,6 +70,8 @@ namespace FoxIDs.Logic.Usage
                 {
                     if (!usageMolliePaymentLogic.HasActiveCardPayment(tenant))
                     {
+                        used.PaymentStatus = UsagePaymentStatus.Failed;
+                        await tenantDataRepository.UpdateAsync(used);
                         try
                         {
                             throw new Exception("Card payment NOT active.");
@@ -122,6 +126,7 @@ namespace FoxIDs.Logic.Usage
 
             if(taskDone)
             {
+                used.IsInactive = false;
                 used.IsDone = true;
                 await tenantDataRepository.UpdateAsync(used);
                 logger.Event($"Usage, {EventNameText(isCardPayment)} invoicing for tenant '{used.TenantName}' done.");
@@ -211,17 +216,18 @@ namespace FoxIDs.Logic.Usage
         {
             try
             {
-                if (used.IsInvoiceReady)
+                (bool taskDone, Invoice invoice) = await GetInvoiceInternalAsync(tenant, used, stoppingToken);
+                invoice.IsCardPayment = isCardPayment;
+                if (isCardPayment)
                 {
-                    return (true, used.Invoices.Last());
+                    invoice.DueDate = null;
                 }
                 else
                 {
-                    logger.Event($"Usage, create {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}' started.");
-                    var invoice = await CreateInvoiceAsync(tenant, used, isCardPayment, stoppingToken);
-                    logger.Event($"Usage, create {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}' done.");
-                    return (true, invoice);
+                    invoice.DueDate = invoice.IssueDate.AddDays(settings.Usage.Seller.PaymentDueDays);
                 }
+                logger.Event($"Usage, get {EventNameText(isCardPayment)} invoice for tenant '{used.TenantName}'.");
+                return (taskDone, invoice);
             }
             catch (OperationCanceledException)
             {
@@ -238,11 +244,24 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private async Task<Invoice> CreateInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken stoppingToken)
+        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceInternalAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
+        {
+            if (used.IsInvoiceReady)
+            {
+                return (true, used.Invoices.Last());
+            }
+            else
+            {
+                logger.Event($"Usage, create invoice for tenant '{used.TenantName}'.");
+                var invoice = await CreateInvoiceAsync(tenant, used, stoppingToken);
+                return (true, invoice);
+            }
+        }
+
+        private async Task<Invoice> CreateInvoiceAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
         {
             var invoice = new Invoice
             {
-                IsCardPayment = isCardPayment,
                 IssueDate = DateOnly.FromDateTime(DateTime.Now),
                 Seller = mapper.Map<Seller>(settings.Usage.Seller),
                 Customer = tenant.Customer,
@@ -257,11 +276,6 @@ namespace FoxIDs.Logic.Usage
             CalculateInvoice(used, plan, invoice, tenant.IncludeVat == true, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
 
             invoice.InvoiceNumber = await GetInvoiceNumberAsync(usageSettings);
-
-            if (!isCardPayment)
-            {
-                invoice.DueDate = invoice.IssueDate.AddDays(settings.Usage.Seller.PaymentDueDays);
-            }
 
             await invoice.ValidateObjectAsync();
             used.IsInvoiceReady = true;

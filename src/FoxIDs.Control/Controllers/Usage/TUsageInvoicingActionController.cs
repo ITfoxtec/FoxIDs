@@ -80,6 +80,14 @@ namespace FoxIDs.Controllers
                 {
                     await DoPaymentAgain(mUsed);
                 }
+                else if (action.MarkAsPaid)
+                {
+                    await MarkAsPaid(mUsed);
+                }
+                else if (action.MarkAsNotPaid)
+                {
+                    await MarkAsNotPaid(mUsed);
+                }
                 else
                 {
                     throw new InvalidOperationException();
@@ -196,6 +204,30 @@ namespace FoxIDs.Controllers
             else
             {
                 throw new Exception("The invoice is not ready and payment is not possible.");
+            }
+        }   
+        
+        private async Task MarkAsPaid(Used mUsed)
+        {
+            if (mUsed.IsInvoiceReady)
+            {
+                await usageMolliePaymentLogic.MarkAsPaidAsync(mUsed);
+            }
+            else
+            {
+                throw new Exception("The invoice is not ready and it is not possible to make as paid.");
+            }
+        }
+
+        private async Task MarkAsNotPaid(Used mUsed)
+        {
+            if (mUsed.IsInvoiceReady && mUsed.PaymentStatus == UsagePaymentStatus.Paid)
+            {
+                await usageMolliePaymentLogic.MarkAsNotPaidAsync(mUsed);
+            }
+            else
+            {
+                throw new Exception("The invoice is not ready and it is not possible to make as paid.");
             }
         }
     }

@@ -40,7 +40,7 @@ namespace FoxIDs.Models.Api
         public string ApiUrl { get; set; }
 
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [Display(Name = "Secret")]
+        [Display(Name = "API secret")]
         public string Secret { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]

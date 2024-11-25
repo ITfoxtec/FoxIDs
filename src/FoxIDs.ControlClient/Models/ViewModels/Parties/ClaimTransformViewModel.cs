@@ -44,7 +44,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string ApiUrl { get; set; }
 
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [Display(Name = "Secret")]
+        [Display(Name = "API secret")]
         public string Secret { get; set; }
 
         public bool ShowDetails { get; set; }

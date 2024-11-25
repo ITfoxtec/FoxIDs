@@ -54,8 +54,113 @@ Claim transform types that support `Add claim` and `Replace claim` actions:
 
 - `Constant` - always do the action (add/replace a claim with a constant value)
 - `Concatenate` - do the action if one or more of the claim types match, then concatenate the claim values to a new claim
-- `External claims API` - Call an external API with the selected claims to add/replace claims with external claims
+- `External claims API` - Call an [external API](#external-claims---api) with the selected claims to add/replace claims with external claims
 - `DK XML privilege to JSON` - Converting the [DK privilege to JSON](claim-transform-dk-privilege). 
+
+
+## External claims - API
+You can [call your own API](#implement-api) from FoxIDs with a claim transformation. The API is called with claims and the claims returned form the API can be added with a add or replace action. 
+The API is only called if at least one selected claim exists. You can use `*` to select and send all claims to your API.
+
+Use case sceneries
+- Call your API from an authentication method each time a user is authenticated either in FoxIDs or with an external identity provider. 
+  You can then find the user in your database and return a user ID and maybe a customer ID or basically anything of relevance. For example, you can also create the user in your database.
+- Call your API from an application registration with the user ID (`sub`) and query the users' roles in your database. You API would then either return an empty list or a list of role claims or maybe a more complex rights structurer. 
+
+### Implement API
+
+You need to implement a simple API that FoxIDs calls when the claim transformation is executed.  
+Please have a look at the [sample code](#api-sample).
+
+The API has a base URL and the functionality is divided into folders. Currently, only the `claims` folder (functionality) for requesting a list of claims is support.  
+
+If the base URL for the API is `https://somewhere.org/myclaimsstore` the URL for the `claims` folder will be `https://somewhere.org/myclaimsstore/claims`.
+
+> FoxIDs cloud call the API from the IP address `57.128.60.142`.
+
+#### Request
+The API call is secured with [HTTP Basic authentication scheme](https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1) where FoxIDs sends the ID `external_claims` as the username and the configured secret as the password.
+
+The API is called with HTTP POST and a JSON body.
+
+This is a request JSON body with two input claims:
+```JSON
+{
+ "claims": [
+        {
+            "type": "sub",
+            "value": "1b1ac05e-5937-4939-a49c-0e84a89662df"
+        },
+        {
+            "type": "email",
+            "value": "some@test.org"
+        }
+    ]
+}
+```
+
+#### Response - Success
+On success the API should return HTTP code 200 and a list of `claims` (the list can be empty).
+
+For example, the user's sub (user ID / username), customer ID and roles:
+```JSON
+{
+    "claims": [
+        {
+            "type": "sub",
+            "value": "somewhere/external-some@test.org"
+        },
+        {
+            "type": "customer_id",
+            "value": "1234abcd"
+        },
+        {
+            "type": "role",
+            "value": "admin_access"
+        },
+        {
+            "type": "role",
+            "value": "read_access"
+        },
+        {
+            "type": "role",
+            "value": "write_access"
+        }
+    ]
+}
+```
+
+#### Response - Error 
+The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `errorDescription`.
+```JSON
+{
+    "error": "invalid_api_id_secret",
+    "errorDescription": "Invalid API ID or secret"
+}
+```
+
+If other errors occur, the API should return HTTP code 500 or another appropriate error code. 
+It is recommended to add a technical error message in to the return body. The error message can then later be found in the FoxIDs logs.  
+
+> Error messages returned from the API is NOT displayed for the user only logged.
+
+### API Sample
+The sample [ExternalClaimsApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample) show how to implement the API in ASP.NET Core 8.
+
+You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample/external-claims-api.postman_collection.json) to call and test the sample with [Postman](https://www.postman.com/downloads/).
+
+### Configure 
+Configure to call your API in a claims transformation in [FoxIDs Control Client](control.md#foxids-control-client).
+
+ 1. Navigate to the **Claim Transform** section
+ 2. Click **Add claim transform**
+ 3. Click **External claims API**
+ 4. Select **Add claim** or **Replace claim**
+ 5. Add the selected claims e.g. `sub` in **Select claims**
+ 6. Add the base API URL without the `claims` folder in **API URL**
+ 7. Add the **API secret**
+    ![Configure an external claims API claims transformation](images/configure-external-claims-config.png)
+ 8. Click **Update**
 
 ## Claim transform examples
 

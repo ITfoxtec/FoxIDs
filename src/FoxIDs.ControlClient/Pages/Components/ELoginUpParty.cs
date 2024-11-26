@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Client.Models.ViewModels;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Client.Services;
@@ -8,9 +7,9 @@ using Microsoft.AspNetCore.Components.Forms;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Models.Api;
-using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -62,7 +61,19 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
-            });           
+
+                if (afterMap.CreateUser?.Elements?.Count > 0)
+                {
+                    foreach (var element in afterMap.CreateUser.Elements)
+                    {
+                        if (element.Type == DynamicElementTypes.EmailAndPassword)
+                        {
+                            element.IsStaticRequired = true;
+                            element.Required = true;
+                        }
+                    }
+                }
+            });
         }
 
         private async Task LoginUpPartyViewModelAfterInitAsync(GeneralLoginUpPartyViewModel loginParty, LoginUpPartyViewModel model)

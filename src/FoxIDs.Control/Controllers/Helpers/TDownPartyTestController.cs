@@ -271,21 +271,20 @@ namespace FoxIDs.Controllers
                 throw;
             }
         }
-        private string GetAuthority(string partyName, bool backendCall = false)
+        private string GetAuthority(string partyName)
         {
             var routeBinding = RouteBinding;
-            var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
-            var useValidCustomDomain = !routeBinding.TrackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase) && routeBinding.UseCustomDomain;
+            var useValidCustomDomain = !routeBinding.TrackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase) && routeBinding.HasVerifiedCustomDomain;
 
             var urlItems = new List<string>();
-            if (useBackendCall || !useValidCustomDomain)
+            if (!useValidCustomDomain)
             {
                 urlItems.Add(routeBinding.TenantName);
             }
             urlItems.Add(routeBinding.TrackName);
             urlItems.Add($"{partyName}(*)");
 
-            return UrlCombine.Combine(useBackendCall ? settings.FoxIDsBackendEndpoint : (useValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint), urlItems.ToArray());
+            return UrlCombine.Combine(useValidCustomDomain ? $"{HttpContext.Request.Scheme}://{routeBinding.CustomDomain}" : settings.FoxIDsEndpoint, urlItems.ToArray());
         }
 
         private async Task<(TokenResponse tokenResponse, ClaimsPrincipal idTokenPrincipal, ClaimsPrincipal accessTokenPrincipal)> AcquireTokensAsync(OidcDownParty mParty, string clientSecret, string nonce, string code)
@@ -308,7 +307,7 @@ namespace FoxIDs.Controllers
                 CodeVerifier = mParty.CodeVerifier,
             };
 
-            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(GetAuthority(mParty.Name, backendCall: true));
+            (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(GetAuthority(mParty.Name));
 
             var requestDictionary = tokenRequest.ToDictionary().AddToDictionary(clientCredentials).AddToDictionary(codeVerifierSecret);
 

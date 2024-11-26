@@ -179,7 +179,7 @@ namespace FoxIDs.Logic
             {
                 return new SendEmail
                 {
-                    FromName =settings.Smtp.FromName,
+                    FromName = settings.Smtp.FromName,
                     FromEmail = settings.Smtp.FromEmail,
                     SmtpHost = settings.Smtp.Host,
                     SmtpPort = settings.Smtp.Port,

@@ -130,6 +130,7 @@ namespace FoxIDs.Client.Pages.Components
                     if (element.Type == DynamicElementTypes.EmailAndPassword)
                     {
                         element.IsStaticRequired = true;
+                        element.Required = true;
                     }
                 }
             }

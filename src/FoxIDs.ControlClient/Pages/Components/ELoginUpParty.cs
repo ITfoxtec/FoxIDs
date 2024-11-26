@@ -62,7 +62,7 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
 
-                if (afterMap.CreateUser.Elements?.Any() == true)
+                if (afterMap.CreateUser?.Elements?.Count > 0)
                 {
                     foreach (var element in afterMap.CreateUser.Elements)
                     {
@@ -73,7 +73,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }
                 }
-            });           
+            });
         }
 
         private async Task LoginUpPartyViewModelAfterInitAsync(GeneralLoginUpPartyViewModel loginParty, LoginUpPartyViewModel model)

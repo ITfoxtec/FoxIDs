@@ -249,15 +249,22 @@ namespace FoxIDs.Client.Pages.Usage
 
         private async Task SetHourPrice(GeneralUsedViewModel generalUsed)
         {
-            var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
-            if (tenant.HourPrice > 0)
+            try
             {
-                generalUsed.HourPrice = tenant.HourPrice.Value;
+                var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
+                if (tenant.HourPrice > 0)
+                {
+                    generalUsed.HourPrice = tenant.HourPrice.Value;
+                }
+                else
+                {
+                    var rate = GetExchangesRate(tenant.Currency, usageSettings.CurrencyExchanges);
+                    generalUsed.HourPrice = decimal.Round(usageSettings.HourPrice * rate, 2);
+                }
             }
-            else
+            catch (TokenUnavailableException)
             {
-                var rate = GetExchangesRate(tenant.Currency, usageSettings.CurrencyExchanges);
-                generalUsed.HourPrice = decimal.Round(usageSettings.HourPrice * rate, 2);
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
         }
 

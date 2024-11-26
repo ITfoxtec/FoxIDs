@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
             }
 
             var tenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName));
-            if (tenant.ForUsage)
+            if (tenant.ForUsage == true)
             {
                 throw new FoxIDsDataException(tenant.Id, tenant.PartitionId) { StatusCode = DataStatusCode.NotFound };
             }
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !t.ForUsage && t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
+                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !(t.ForUsage == true) && t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
             catch (FoxIDsDataException ex)

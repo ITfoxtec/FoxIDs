@@ -27,6 +27,8 @@ namespace FoxIDs.Models.Api
 
         public UsagePaymentStatus PaymentStatus { get; set; }
 
+        public bool IsInactive { get; set; }
+
         public bool IsDone { get; set; }
 
         public bool HasItems { get; set; }

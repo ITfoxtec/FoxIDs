@@ -27,7 +27,7 @@ namespace FoxIDs.UnitTests
                 Transformation = constandValue 
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -45,7 +45,7 @@ namespace FoxIDs.UnitTests
                 Transformation = constandValue
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -102,7 +102,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -123,7 +123,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -144,7 +144,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -165,7 +165,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -183,7 +183,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -205,7 +205,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension 
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -230,7 +230,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -255,7 +255,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -281,7 +281,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -303,7 +303,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -325,7 +325,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -348,7 +348,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -372,7 +372,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -396,7 +396,7 @@ namespace FoxIDs.UnitTests
                 TransformationExtension = transformationExtension
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -418,7 +418,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -436,7 +436,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -456,7 +456,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -488,7 +488,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -533,7 +533,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -554,7 +554,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -588,7 +588,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -635,7 +635,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -659,7 +659,7 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
@@ -719,7 +719,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             if (hasResult)
             {
                 var results = GetDkPrivilegeTestJson(withConstraints);
@@ -751,7 +751,7 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut
             } };
             var claimTransformLogic = ClaimTransformLogicInstance();
-            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            var claimsResult = await claimTransformLogic.TransformAsync(claimTransformations, claims);
             if (hasResult)
             {
                 var results = GetDkPrivilegeTestJson(withConstraints);
@@ -816,7 +816,7 @@ namespace FoxIDs.UnitTests
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
             var claimTransformValidationLogic = new ClaimTransformValidationLogic(mockHttpContextAccessor);
-            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, mockHttpContextAccessor);
+            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, null, mockHttpContextAccessor);
         }
     }
 }

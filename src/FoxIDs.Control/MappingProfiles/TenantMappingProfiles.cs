@@ -1,5 +1,4 @@
-﻿using MSTokens = Microsoft.IdentityModel.Tokens;
-using AutoMapper;
+﻿using AutoMapper;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
@@ -110,10 +109,12 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<OAuthClaimTransform, Api.OAuthClaimTransform>()
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
+                .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret != null && s.Secret.Length > 20 ? s.Secret.Substring(0, 3) : s.Secret))
                 .ReverseMap();
 
             CreateMap<SamlClaimTransform, Api.SamlClaimTransform>()
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
+                .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret != null && s.Secret.Length > 20 ? s.Secret.Substring(0, 3) : s.Secret))
                 .ReverseMap();
 
             CreateMap<DynamicElement, Api.DynamicElement>()
@@ -211,6 +212,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
             CreateMap<OidcUpClient, Api.OidcUpClient>()
+                .ForMember(d => d.ClientSecret, opt => opt.MapFrom(s => s.ClientSecret != null && s.ClientSecret.Length > 20 ? s.ClientSecret.Substring(0, 3) : s.ClientSecret))
                .ReverseMap()
                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(s => s)))
                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
@@ -256,6 +258,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<ExternalLoginUpParty, Api.ExternalLoginUpParty>()
+                .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret != null && s.Secret.Length > 20 ? s.Secret.Substring(0, 3) : s.Secret))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))

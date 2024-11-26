@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
             });
         }
@@ -91,27 +91,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if(generalTrackLinkDownParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalTrackLinkDownParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalTrackLinkDownParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var trackLinkDownParty = generalTrackLinkDownParty.Form.Model.Map<TrackLinkDownParty>(afterMap: afterMap =>
                 {
-                    if (afterMap.ClaimTransforms?.Count() > 0)
-                    {
-                        int order = 1;
-                        foreach (var claimTransform in afterMap.ClaimTransforms)
-                        {
-                            claimTransform.Order = order++;
-                        }
-                    }
+                    afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                 });
 
                 var trackLinkDownPartyResult = await DownPartyService.UpdateTrackLinkDownPartyAsync(trackLinkDownParty);

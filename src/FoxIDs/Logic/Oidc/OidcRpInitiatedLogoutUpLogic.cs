@@ -121,12 +121,15 @@ namespace FoxIDs.Logic
             };
             logger.ScopeTrace(() => $"AuthMethod, End session request '{rpInitiatedLogoutRequest.ToJson()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
+
             if(party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
             {
                 nameValueCollection.Add("logout_uri", rpInitiatedLogoutRequest.PostLogoutRedirectUri);
-                await stateUpPartyLogic.CreateOrUpdateStateCookieAsync(party, rpInitiatedLogoutRequest.State);
-                logger.ScopeTrace(() => $"AuthMethod, End session add custom 'logout_uri={rpInitiatedLogoutRequest.PostLogoutRedirectUri}' parameter and state cookie for Amazon AWS Cognito.");
+                logger.ScopeTrace(() => $"AuthMethod, End session add custom 'logout_uri={rpInitiatedLogoutRequest.PostLogoutRedirectUri}' parameter for Amazon AWS Cognito.");
             }
+
+            await stateUpPartyLogic.CreateOrUpdateStateCookieAsync(party, rpInitiatedLogoutRequest.State);
+
             logger.ScopeTrace(() => $"AuthMethod, End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace(() => "AuthMethod, Sending OIDC End session request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl, RouteBinding.DisplayName);
@@ -158,11 +161,14 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, End session response '{rpInitiatedLogoutResponse.ToJson()}'.", traceType: TraceTypes.Message);
             rpInitiatedLogoutResponse.Validate();
 
-            if (party.Issuers.Any(i => i.Contains("amazonaws.com", StringComparison.OrdinalIgnoreCase)))
+            if (rpInitiatedLogoutResponse.State.IsNullOrEmpty())
             {
                 rpInitiatedLogoutResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
             }
-            if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
+            else
+            {
+                await stateUpPartyLogic.DeleteStateCookieAsync(party);
+            }
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
             logger.ScopeTrace(() => "AuthMethod, Successful OIDC End session response.", triggerEvent: true);

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthUpPartyViewModel : IOAuthClaimTransformViewModel, IValidatableObject
+    public class OAuthUpPartyViewModel : IClaimTransformViewModel, IValidatableObject
     {
         public string InitName { get; set; }
 
@@ -69,8 +69,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         [Display(Name = "User authentication trust")]
         public bool DisableUserAuthenticationTrust { get; set; }

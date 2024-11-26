@@ -98,11 +98,12 @@ namespace FoxIDs.Infrastructure.Hosting
             var track = await GetTrackAsync(scopedLogger, requestServices, trackIdKey, useCustomDomain);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
+            var hasVerifiedCustomDomain = !tenant.CustomDomain.IsNullOrEmpty() && tenant.CustomDomainVerified;
             var routeBinding = new RouteBinding
             {
-                UseCustomDomain = useCustomDomain,
+                HasVerifiedCustomDomain = hasVerifiedCustomDomain,
+                UseCustomDomain = useCustomDomain && hasVerifiedCustomDomain,
                 CustomDomain = tenant.CustomDomain,
-                CustomDomainVerified = tenant.CustomDomainVerified,
                 RouteUrl = $"{(!useCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 PlanName = plan?.Name,
                 TenantName = trackIdKey.TenantName,

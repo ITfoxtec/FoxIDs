@@ -19,18 +19,20 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
+        private readonly ExternalClaimsConnectLogic externalClaimsConnectLogic;
 
-        public ClaimTransformLogic(TelemetryScopedLogger logger, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClaimTransformLogic(TelemetryScopedLogger logger, ClaimTransformValidationLogic claimTransformValidationLogic, ExternalClaimsConnectLogic externalClaimsConnectLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.claimTransformValidationLogic = claimTransformValidationLogic;
+            this.externalClaimsConnectLogic = externalClaimsConnectLogic;
         }
 
-        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
+        public async Task<List<Claim>> TransformAsync(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
         {
-            if(claimTransforms == null|| claims == null)
+            if(claimTransforms == null || !(claimTransforms?.Count() > 0))
             {
-                return Task.FromResult(new List<Claim>(claims));
+                return new List<Claim>(claims);
             }
 
             claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
@@ -65,6 +67,9 @@ namespace FoxIDs.Logic
                         case ClaimTransformTypes.Concatenate:
                             ConcatenateTransformation(outputClaims, claimTransform);
                             break;
+                        case ClaimTransformTypes.ExternalClaims:
+                            await ExternalClaimsTransformationAsync(outputClaims, claimTransform);
+                            break;
                         case ClaimTransformTypes.DkPrivilege:
                             DkPrivilegeTransformation(outputClaims, claimTransform);
                             break;
@@ -77,7 +82,7 @@ namespace FoxIDs.Logic
                     throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
                 }
             }
-            return Task.FromResult(outputClaims);
+            return await Task.FromResult(outputClaims);
         }
 
         private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
@@ -300,6 +305,29 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
+            AddOrReplaceClaims(claims, claimTransform, newClaims);
+        }
+
+        private async Task ExternalClaimsTransformationAsync(List<Claim> claims, ClaimTransform claimTransform)
+        {
+            var selectedClaims = new List<Claim>();
+            if (claimTransform.ClaimsIn.Where(c => c == "*").Any())
+            {
+                selectedClaims.AddRange(claims);
+            }
+            else
+            {
+                foreach (var claimIn in claimTransform.ClaimsIn)
+                {
+                    var claimsResult = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
+                    if (claimsResult.Count() > 0)
+                    {
+                        selectedClaims.AddRange(claimsResult);
+                    }
+                }
+            }
+
+            var newClaims = selectedClaims.Count() > 0 ? await externalClaimsConnectLogic.GetClaimsAsync(claimTransform, selectedClaims) : new List<Claim>();
             AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
 

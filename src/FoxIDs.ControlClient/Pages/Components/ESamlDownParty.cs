@@ -92,7 +92,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapSamlClaimTransforms();
                 }
             });
         }
@@ -212,16 +212,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if (generalSamlDownParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalSamlDownParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is SamlClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalSamlDownParty.Form.Model.ClaimTransforms.MapSamlClaimTransformsBeforeMap();
 
                 if(!generalSamlDownParty.Form.Model.EncryptAuthnResponse)
                 {
@@ -236,14 +227,7 @@ namespace FoxIDs.Client.Pages.Components
                         afterMap.Name = generalSamlDownParty.Form.Model.InitName;
                     }
 
-                    if (afterMap.ClaimTransforms?.Count() > 0)
-                    {
-                        int order = 1;
-                        foreach (var claimTransform in afterMap.ClaimTransforms)
-                        {
-                            claimTransform.Order = order++;
-                        }
-                    }
+                    afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();
                 });
 
                 var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);

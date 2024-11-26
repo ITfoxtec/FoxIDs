@@ -11,9 +11,20 @@ namespace FoxIDs.Models.Config
         [Required]
         public string ConnectionString { get; set; }
         /// <summary>
+        /// Schema name.
+        /// </summary>
+        [Required]
+        public string SchemaName { get; set; } = "foxids";
+        /// <summary>
         /// Table name.
         /// </summary>
         [Required]
         public string TableName { get; set; } = "foxids";
+
+        /// <summary>
+        /// The background file data service wait period in seconds.
+        /// </summary>
+        [Required]
+        public int BackgroundServiceWaitPeriod { get; set; } = 900; // 15 minutes
     }
 }

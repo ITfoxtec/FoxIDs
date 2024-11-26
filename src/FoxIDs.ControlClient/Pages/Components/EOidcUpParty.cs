@@ -146,11 +146,11 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
-                    afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapClaimTransforms();
+                    afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
             });
         }
@@ -188,63 +188,16 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                if(generalOidcUpParty.Form.Model.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalOidcUpParty.Form.Model.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
-                if (generalOidcUpParty.Form.Model.LinkExternalUser?.ClaimTransforms?.Count() > 0)
-                {
-                    foreach (var claimTransform in generalOidcUpParty.Form.Model.LinkExternalUser.ClaimTransforms)
-                    {
-                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
-                        {
-                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                        }
-                    }
-                }
+                generalOidcUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalOidcUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
 
-                    if (afterMap.ClaimTransforms?.Count() > 0)
-                    {
-                        int order = 1;
-                        foreach (var claimTransform in afterMap.ClaimTransforms)
-                        {
-                            claimTransform.Order = order++;
-                        }
-                    }
-                    
-                    if (string.IsNullOrWhiteSpace(afterMap.LinkExternalUser?.LinkClaimType) && !(afterMap.LinkExternalUser?.AutoCreateUser == true || afterMap.LinkExternalUser?.RequireUser == true))
-                    {
-                        afterMap.LinkExternalUser = null;
-                    }
-                    if (afterMap.LinkExternalUser != null)
-                    {
-                        if (afterMap.LinkExternalUser.Elements?.Count() > 0)
-                        {
-                            int order = 1;
-                            foreach (var element in afterMap.LinkExternalUser.Elements)
-                            {
-                                element.Order = order++;
-                            }
-                        }
-                        if (afterMap.LinkExternalUser.ClaimTransforms?.Count() > 0)
-                        {
-                            int order = 1;
-                            foreach (var claimTransform in afterMap.LinkExternalUser.ClaimTransforms)
-                            {
-                                claimTransform.Order = order++;
-                            }
-                        }
-                    }
+                    afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
+
+                    afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
                 });
 
                 if (generalOidcUpParty.CreateMode)

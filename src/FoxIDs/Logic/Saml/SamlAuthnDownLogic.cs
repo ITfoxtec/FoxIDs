@@ -234,7 +234,7 @@ namespace FoxIDs.Logic
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
                 logger.ScopeTrace(() => $"AppReg, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"AppReg, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);

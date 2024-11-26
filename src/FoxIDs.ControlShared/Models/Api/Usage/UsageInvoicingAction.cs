@@ -11,5 +11,9 @@
         public bool DoSendCreditNoteAgain { get; set; }
 
         public bool DoPaymentAgain { get; set; }
+
+        public bool MarkAsPaid { get; set; }
+
+        public bool MarkAsNotPaid { get; set; }
     }
 }

@@ -9,6 +9,7 @@
         Map = 30,
         RegexMap = 35,
         Concatenate = 40,
+        ExternalClaims = 50,
         DkPrivilege = 1010
     }
 }

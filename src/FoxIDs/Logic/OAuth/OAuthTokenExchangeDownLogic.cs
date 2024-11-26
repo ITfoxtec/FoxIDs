@@ -90,7 +90,7 @@ namespace FoxIDs.Logic
                 {
                     claims.AddClaim(JwtClaimTypes.Actor, GetPartyActorClaims(party).ToJson());
                 }
-                var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"AppReg, OAuth output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 logger.SetUserScopeProperty(transformedClaims);
 

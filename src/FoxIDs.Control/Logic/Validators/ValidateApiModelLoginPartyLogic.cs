@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using FoxIDs.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -17,12 +15,14 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly PlanCacheLogic planCacheLogic;
+        private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.planCacheLogic = planCacheLogic;
+            this.validateApiModelGenericPartyLogic = validateApiModelGenericPartyLogic;
             this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
@@ -76,37 +76,14 @@ namespace FoxIDs.Logic
                         isValid = false;
                     }
 
-                    if (!ValidateApiModelCreateUserClaimTransforms(modelState, party.CreateUser.ClaimTransforms))
+                    if (!validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.CreateUser.ClaimTransforms, errorFieldName: nameof(Api.LoginUpParty.CreateUser.ClaimTransforms)))
                     {
                         isValid = false;
                     }
                 }
             }
 
-            return isValid;
-        }
-
-        public bool ValidateApiModelCreateUserClaimTransforms(ModelStateDictionary modelState, List<Api.OAuthClaimTransform> claimTransforms) 
-        {
-            var isValid = true;
-            try
-            {
-                if (claimTransforms?.Count() > 0)
-                {
-                    var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                    if (duplicatedOrderNumber >= 0)
-                    {
-                        throw new ValidationException($"Duplicated create user claim transform order number '{duplicatedOrderNumber}'");
-                    }
-                }
-            }
-            catch (ValidationException vex)
-            {
-                isValid = false;
-                logger.Warning(vex);
-                modelState.TryAddModelError(nameof(Api.LoginUpParty.CreateUser.ClaimTransforms).ToCamelCase(), vex.Message);
-            }
-            return isValid;
+            return await Task.FromResult(isValid);
         }
     }
 }

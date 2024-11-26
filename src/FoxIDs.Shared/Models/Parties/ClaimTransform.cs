@@ -9,6 +9,11 @@ namespace FoxIDs.Models
 {
     public abstract class ClaimTransform : IValidatableObject
     {
+        [MaxLength(Constants.Models.Claim.TransformNameLength)]
+        [RegularExpression(Constants.Models.Claim.TransformNameRegExPattern)]
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "type")]
         public ClaimTransformTypes Type { get; set; }
@@ -20,7 +25,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims_in")]
         public abstract List<string> ClaimsIn { get; set; }
 
-        [Required]
         [JsonProperty(PropertyName = "claim_out")]
         public abstract string ClaimOut { get; set; }
 
@@ -34,9 +38,25 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "transformation_extension")]
         public abstract string TransformationExtension { get; set; }
 
+        [JsonProperty(PropertyName = "external_connect_type")]
+        public ExternalConnectTypes? ExternalConnectType { get; set; }
+
+        [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
+        [JsonProperty(PropertyName = "api_url")]
+        public string ApiUrl { get; set; }
+
+        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [JsonProperty(PropertyName = "secret")]
+        public string Secret { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
+            if(Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(ClaimOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimOut)]));
+            }
 
             if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
             {
@@ -75,6 +95,36 @@ namespace FoxIDs.Models
                         if (Transformation.IsNullOrWhiteSpace())
                         {
                             results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
+                        }
+                        break;
+
+                    case ClaimTransformTypes.ExternalClaims:
+                        if (Name.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Name)} is required for claim transformation type '{Type}'.", [nameof(Name)]));
+                        }
+                        if (ClaimsIn?.Count() < 1)
+                        {
+                            results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
+                        }
+                        if (ExternalConnectType == ExternalConnectTypes.Api)
+                        {
+                            if (ApiUrl.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field {nameof(ApiUrl)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(ApiUrl)]));
+                            }
+                            else if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl)]));
+                            }
+                            if (Secret.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field {nameof(Secret)} is required for claim transformation type '{Type}' and external connect type '{ExternalConnectType}'.", [nameof(Secret)]));
+                            }
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Claim transformation type '{Type}' and external connect type '{ExternalConnectType}' not supported.");
                         }
                         break;
 

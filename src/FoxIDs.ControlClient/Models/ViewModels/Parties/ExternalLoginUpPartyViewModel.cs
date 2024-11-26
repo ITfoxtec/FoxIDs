@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class ExternalLoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
+    public class ExternalLoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
     {
         public string InitName { get; set; }
 
@@ -53,20 +53,20 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "External login type")]
-        public ExternalLoginTypes ExternalLoginType { get; set; } = ExternalLoginTypes.Api;
+        public ExternalConnectTypes ExternalLoginType { get; set; } = ExternalConnectTypes.Api;
 
         [Required]
         [Display(Name = "Username type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; } = ExternalLoginUsernameTypes.Email;
 
         [Required]
-        [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
+        [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [Display(Name = "API URL")]
         public string ApiUrl { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [Display(Name = "API Secret")]
+        [Display(Name = "API secret")]
         public string Secret { get; set; }
         public string SecretLoaded { get; set; }
 
@@ -88,8 +88,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// Default if required.

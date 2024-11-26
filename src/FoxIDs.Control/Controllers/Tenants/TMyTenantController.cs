@@ -116,8 +116,12 @@ namespace FoxIDs.Controllers
                     logger.Error(exp, "Unable to update plan in tenant.");
                 }
 
-                mTenant.CustomDomain = tenant.CustomDomain;
-                mTenant.CustomDomainVerified = false;
+                if(!mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase))
+                {
+                    mTenant.CustomDomain = tenant.CustomDomain?.ToLower();
+                    mTenant.CustomDomainVerified = false;
+                }
+
                 mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 await tenantDataRepository.UpdateAsync(mTenant);
 

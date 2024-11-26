@@ -24,16 +24,7 @@ namespace FoxIDs.Repository
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
         {
             var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
-            if (whereQuery == null)
-            {
-                return (int) await db.CountAsync(partitionId);
-            }
-            else
-            {
-                var dataItems = await db.GetHashSetAsync<T>(partitionId);
-                var lambda = whereQuery.Compile();
-                return dataItems.Where(d => lambda(d)).Count();
-            }
+            return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
         public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
@@ -91,24 +82,30 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
-            //TODO pagination
+            var offset = GetOffset(paginationToken, pageSize);
             var partitionId = PartitionIdFormat<T>(idKey);
-            var dataItems = await db.GetHashSetAsync<T>(partitionId, pageSize);
-            paginationToken = null;
-            if (whereQuery == null)
-            {
-                var items = dataItems;
-                await items.ValidateObjectAsync();
-                return (items, paginationToken);
-            }
-            else
-            {
-                var lambda = whereQuery.Compile();
-                var items = dataItems.Where(d => lambda(d)).ToHashSet();
-                await items.ValidateObjectAsync();
-                return (items, paginationToken);
-            }
+            var dataItems = await db.GetListAsync(partitionId, whereQuery, pageSize + 1, offset).ToListAsync();
+            paginationToken = NextPaginationToken(paginationToken, pageSize, dataItems.Count);
+            var items = dataItems;
+            await items.ValidateObjectAsync();
+            return (items, paginationToken);
             throw new NotImplementedException();
+        }
+
+        private static int GetOffset(string paginationToken, int pageSize)
+        {
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+                return (pageNumber - 1) * pageSize;
+            return 0;
+        }
+
+        private static string NextPaginationToken(string paginationToken, int pageSize, int itemCount)
+        {
+            if (itemCount < pageSize)
+                return null;
+            if (!paginationToken.IsNullOrEmpty() && int.TryParse(paginationToken, out int pageNumber))
+                return (pageNumber + 1).ToString();
+            return "1";
         }
 
         public override async ValueTask CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null)
@@ -176,22 +173,7 @@ namespace FoxIDs.Repository
 
             await idKey.ValidateObjectAsync();
             var partitionId = PartitionIdFormat<T>(idKey);
-
-            if (whereQuery == null)
-            {
-                return await db.RemoveAllAsync(partitionId);
-            }
-            else
-            {
-                var dataItems = await db.GetHashSetAsync<T>(partitionId);
-                var lambda = whereQuery.Compile();
-                var deleteItems = dataItems.Where(d => lambda(d));
-                foreach (var item in deleteItems)
-                {
-                    _ = await db.RemoveAsync(item.Id, item.PartitionId);
-                }
-                return deleteItems.Count();
-            }
+            return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
         public async Task RemoveAllExpiredAsync()

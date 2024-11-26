@@ -59,7 +59,7 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var mTenant = await tenantDataRepository.GetTenantByNameAsync(name);
-                if (!mTenant.ForUsage)
+                if (mTenant.ForUsage != false)
                 {
                     await UpdatePaymentMandate(mTenant);
                 }
@@ -101,6 +101,10 @@ namespace FoxIDs.Controllers
                 }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
+
+                mTenant.CustomDomain = tenant.CustomDomain?.ToLower();
+                mTenant.CustomDomainVerified = !string.IsNullOrWhiteSpace(tenant.CustomDomain) && tenant.CustomDomainVerified;
+
                 mTenant.Customer = mapper.Map<Customer>(tenant.Customer);
                 mTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -205,8 +209,8 @@ namespace FoxIDs.Controllers
                             throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                         }
                     }
-                    mTenant.CustomDomain = tenant.CustomDomain;
-                    mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                    mTenant.CustomDomain = tenant.CustomDomain?.ToLower();
+                    mTenant.CustomDomainVerified = !string.IsNullOrWhiteSpace(tenant.CustomDomain) && tenant.CustomDomainVerified;
                 }
                 mTenant.EnableUsage = tenant.EnableUsage;
                 mTenant.DoPayment = tenant.DoPayment;

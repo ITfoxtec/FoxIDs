@@ -55,16 +55,7 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var mParty = await tenantDataRepository.GetAsync<MParty>(await GetId(name));
-                if (mParty is DownParty mDownParty)
-                {
-                    if (mDownParty.IsTest == true)
-                    {
-                        var mDownPartyTest = await tenantDataRepository.GetAsync<OidcDownParty>(await GetId(name));
-                        var arDownPartyTest = mapper.Map<Api.OidcDownParty>(mDownPartyTest);
-                        return base.Ok(arDownPartyTest);
-                    }
-                }
-                return base.Ok(ModelToApiMap(mParty));
+                return base.Ok(mapper.Map<AParty>(mParty));
             }
             catch (FoxIDsDataException ex)
             {
@@ -123,13 +114,13 @@ namespace FoxIDs.Controllers
 
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
-                if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
+                if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 await tenantDataRepository.CreateAsync(mParty);
 
-                return Created(ModelToApiMap(mParty));
+                return Created(mapper.Map<AParty>(mParty));
             }
             catch (FoxIDsDataException ex)
             {
@@ -187,7 +178,7 @@ namespace FoxIDs.Controllers
 
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
-                if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
+                if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 if (mParty is OidcDownParty mOidcDownParty)
@@ -284,7 +275,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
                 }
 
-                return Ok(ModelToApiMap(mParty));
+                return Ok(mapper.Map<AParty>(mParty));
             }
             catch (FoxIDsDataException ex)
             {
@@ -377,42 +368,6 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(AParty).Name, name);
                 }
                 throw;
-            }
-        }
-
-        private AParty ModelToApiMap(MParty mParty)
-        {
-            var apiParty = mapper.Map<AParty>(mParty);
-            if (apiParty is Api.OidcUpParty apiOidcUpParty)
-            {
-                OidcUpPartyMapSecret(apiOidcUpParty);
-            }
-            else if (apiParty is Api.ExternalLoginUpParty apiExtLoginUpParty)
-            {
-                ExternalLoginUpPartyMapSecret(apiExtLoginUpParty);
-            }
-            return apiParty;
-        }
-
-        private void OidcUpPartyMapSecret(Api.OidcUpParty apiOidcUpParty)
-        {
-            if (apiOidcUpParty.Client?.ClientSecret != null)
-            {
-                if (apiOidcUpParty.Client.ClientSecret.Length > 20)
-                {
-                    apiOidcUpParty.Client.ClientSecret = apiOidcUpParty.Client.ClientSecret.Substring(0, 3);
-                }
-            }
-        }
-
-        private void ExternalLoginUpPartyMapSecret(Api.ExternalLoginUpParty apiExtLoginUpParty)
-        {
-            if (apiExtLoginUpParty.Secret != null)
-            {
-                if (apiExtLoginUpParty.Secret.Length > 20)
-                {
-                    apiExtLoginUpParty.Secret = apiExtLoginUpParty.Secret.Substring(0, 3);
-                }
             }
         }
 

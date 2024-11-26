@@ -12,27 +12,14 @@ namespace FoxIDs
         public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null, bool useConfig = false)
         {
             var routeBinding = context.GetRouteBinding();
-            if (!context.GetUseCustomDomain(routeBinding, useConfig))
+            if (!routeBinding.UseCustomDomain)
             {
-                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), routeBinding.TenantName, trackName ?? routeBinding.TrackName); ;
+                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }
             else
             {
                 return UrlCombine.Combine(context.GetHost(useConfig: useConfig), trackName ?? routeBinding.TrackName);
             }
-        }
-
-        private static bool GetUseCustomDomain(this HttpContext context, RouteBinding routeBinding, bool useConfig)
-        {
-            if (useConfig)
-            {
-                if (!routeBinding.CustomDomain.IsNullOrEmpty() && routeBinding.CustomDomainVerified)
-                {
-                    return true;
-                }
-            }
-
-            return routeBinding.UseCustomDomain;
         }
 
         public static CultureInfo GetCulture(this HttpContext context)

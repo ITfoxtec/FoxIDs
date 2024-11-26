@@ -16,12 +16,14 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ValidateModelGenericPartyLogic(TelemetryScopedLogger logger, UpPartyCacheLogic upPartyCacheLogic, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateModelGenericPartyLogic(TelemetryScopedLogger logger, UpPartyCacheLogic upPartyCacheLogic, ITenantDataRepository tenantDataRepository, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.upPartyCacheLogic = upPartyCacheLogic;
+            this.tenantDataRepository = tenantDataRepository;
             this.claimTransformValidationLogic = claimTransformValidationLogic;
         }
 
@@ -85,33 +87,61 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        public bool ValidateModelClaimTransforms<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
+        public async Task<bool> ValidateModelClaimTransformsAsync<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
         {
             if (mParty is LoginUpParty loginUpParty)
             {
-                return ValidateModelClaimTransforms(modelState, loginUpParty.ClaimTransforms);
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms, position: ClaimTransformationPosition.CreateUser);
+            }
+            else if (mParty is ExternalLoginUpParty externalLoginUpParty)
+            {
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is OAuthUpParty oauthUpParty)
             {
-                return ValidateModelClaimTransforms(modelState, oauthUpParty.ClaimTransforms);
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+            }
+            else if (mParty is OidcUpParty oidchUpParty)
+            {
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is SamlUpParty samlUpParty)
             {
-                return ValidateModelClaimTransforms(modelState, samlUpParty.ClaimTransforms);
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+            }
+            else if (mParty is TrackLinkUpParty trackLinkUpParty)
+            {
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is OAuthDownParty oauthDownParty)
             {
-                return ValidateModelClaimTransforms(modelState, oauthDownParty.ClaimTransforms);
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthDownParty.ClaimTransforms);
+            }
+            else if (mParty is OidcDownParty oidcDownParty)
+            {
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, oidcDownParty.ClaimTransforms);
             }
             else if (mParty is SamlDownParty samlDownParty)
             {
-                return ValidateModelClaimTransforms(modelState, samlDownParty.ClaimTransforms);
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, samlDownParty.ClaimTransforms);
             }
-
-            return true;
+            else if (mParty is TrackLinkDownParty trackLinkDownParty)
+            {
+                return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkDownParty.ClaimTransforms);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public bool ValidateModelClaimTransforms<MClaimTransform>(ModelStateDictionary modelState, List<MClaimTransform> claimTransforms) where MClaimTransform : ClaimTransform
+        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms, ClaimTransformationPosition position = ClaimTransformationPosition.party) where MParty : Party where MClaimTransform : ClaimTransform
         {
             if (claimTransforms != null)
             {
@@ -148,6 +178,13 @@ namespace FoxIDs.Logic
 
                             case ClaimTransformTypes.Concatenate:
                                 claimTransform.TransformationExtension = null;
+                                break;
+
+                            case ClaimTransformTypes.ExternalClaims:
+                                claimTransform.ClaimOut = null;
+                                claimTransform.Transformation = null;
+                                claimTransform.TransformationExtension = null;
+                                await HandleClaimTransformationSecretAsync(mParty, claimTransform, position);
                                 break;
 
                             default:
@@ -213,6 +250,149 @@ namespace FoxIDs.Logic
             return true;
         }
 
+        private async Task HandleClaimTransformationSecretAsync<MParty, MClaimTransform>(MParty mParty, MClaimTransform claimTransform, ClaimTransformationPosition position) where MParty : Party where MClaimTransform : ClaimTransform
+        {
+            if(!(claimTransform.Type == ClaimTransformTypes.ExternalClaims && claimTransform.ExternalConnectType == ExternalConnectTypes.Api))
+            {
+                throw new Exception("Claim transform type and external connect type not supported.");
+            }
+            if (claimTransform.ApiUrl.IsNullOrWhiteSpace())
+            {
+                throw new Exception("Claim transform API URL is empty.");
+            }
+
+            if (!claimTransform.Secret.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            if (mParty is LoginUpParty)
+            {
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(loginUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.CreateUser)
+                {
+                    SetSecret(loginUpParty.CreateUser?.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is ExternalLoginUpParty)
+            {
+                var externalLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(externalLoginUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.LinkExternalUser)
+                {
+                    SetSecret(externalLoginUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is OAuthUpParty)
+            {
+                var oauthUpParty = await tenantDataRepository.GetAsync<OAuthUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(oauthUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.LinkExternalUser)
+                {
+                    SetSecret(oauthUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is OidcUpParty)
+            {
+                var oidcUpParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(oidcUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.LinkExternalUser)
+                {
+                    SetSecret(oidcUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is SamlUpParty)
+            {
+                var samlUpParty = await tenantDataRepository.GetAsync<SamlUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(samlUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.LinkExternalUser)
+                {
+                    SetSecret(samlUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is TrackLinkUpParty)
+            {
+                var trackLinkUpParty = await tenantDataRepository.GetAsync<TrackLinkUpParty>(mParty.Id);
+                if (position == ClaimTransformationPosition.party)
+                {
+                    SetSecret(trackLinkUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.LinkExternalUser)
+                {
+                    SetSecret(trackLinkUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else if (mParty is OAuthDownParty)
+            {
+                var oauthDownParty = await tenantDataRepository.GetAsync<OAuthDownParty>(mParty.Id);
+                SetSecret(oauthDownParty.ClaimTransforms, claimTransform);
+            }
+            else if (mParty is OidcDownParty)
+            {
+                var oidcDownParty = await tenantDataRepository.GetAsync<OidcDownParty>(mParty.Id);
+                SetSecret(oidcDownParty.ClaimTransforms, claimTransform);
+            }
+            else if (mParty is SamlDownParty)
+            {
+                var samlDownParty = await tenantDataRepository.GetAsync<SamlDownParty>(mParty.Id);
+                SetSecret(samlDownParty.ClaimTransforms, claimTransform);
+            }
+            else if (mParty is TrackLinkDownParty)
+            {
+                var trackLinkDownParty = await tenantDataRepository.GetAsync<TrackLinkDownParty>(mParty.Id);
+                SetSecret(trackLinkDownParty.ClaimTransforms, claimTransform);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private void SetSecret<MClaimTransformDatabase, MClaimTransform>(List<MClaimTransformDatabase> claimTransformsDatabase, MClaimTransform claimTransform) where MClaimTransformDatabase : ClaimTransform where MClaimTransform : ClaimTransform
+        {
+            claimTransform.Secret = claimTransformsDatabase.Where(c => c.Name == claimTransform.Name).Select(c => c.Secret).FirstOrDefault();
+        }
+
         public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, IEnumerable<UpPartyProfile> profiles)
         {
             var isValid = true;
@@ -234,6 +414,13 @@ namespace FoxIDs.Logic
                 modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
             }
             return isValid;
+        }
+
+        enum ClaimTransformationPosition
+        {
+            party,
+            CreateUser,
+            LinkExternalUser,
         }
     }
 }

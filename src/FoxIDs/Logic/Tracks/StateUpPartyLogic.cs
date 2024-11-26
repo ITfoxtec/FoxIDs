@@ -56,5 +56,12 @@ namespace FoxIDs.Logic
             }
             return stateCookie.State;            
         }
+
+        public async Task DeleteStateCookieAsync<T>(T upParty) where T : UpParty
+        {
+            logger.ScopeTrace(() => $"Delete authentication method state cookie, Route '{RouteBinding.Route}'.");
+
+            await stateCookieRepository.DeleteAsync(upParty);
+        }
     }
 }

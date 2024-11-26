@@ -111,7 +111,7 @@ namespace FoxIDs.Logic
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, extLoginUpParty.Type.GetPartyTypeValue());
             logger.ScopeTrace(() => $"AuthMethod, External login, with added JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.Transform((extLoginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var transformedClaims = await claimTransformLogic.TransformAsync((extLoginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(extLoginUpParty.Claims, transformedClaims);
             logger.ScopeTrace(() => $"AuthMethod, External login, transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);

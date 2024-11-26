@@ -17,7 +17,7 @@
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
 
 <div class="info-text">
-    By default, claims on external users are added to the received claims with the exception of the <code>sub</code> claim, which overrides the received <code>sub</code> claim.
+    By default, claims on external users are added to the received claims with the exception of the <code>sub</code>@(IsSaml ? " (equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code>)" : string.Empty) claim, which overrides the received <code>sub</code> claim.
     <br />
     Claims on external users can optionally override received and transformed claims.
 </div>

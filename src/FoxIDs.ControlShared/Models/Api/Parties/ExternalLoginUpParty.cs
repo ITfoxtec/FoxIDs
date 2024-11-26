@@ -29,18 +29,18 @@ namespace FoxIDs.Models.Api
 
         [Required] 
         [Display(Name = "External login type")]
-        public ExternalLoginTypes ExternalLoginType { get; set; }
+        public ExternalConnectTypes ExternalLoginType { get; set; }
 
         [Required]
         [Display(Name = "Username type")]
         public ExternalLoginUsernameTypes UsernameType { get; set; }
 
-        [MaxLength(Constants.Models.ApiAuthUpParty.ApiUrlLength)]
+        [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [Display(Name = "API URL")]
         public string ApiUrl { get; set; }
 
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [Display(Name = "Secret")]
+        [Display(Name = "API secret")]
         public string Secret { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
@@ -143,7 +143,7 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
-            if (ExternalLoginType == ExternalLoginTypes.Api)
+            if (ExternalLoginType == ExternalConnectTypes.Api)
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {

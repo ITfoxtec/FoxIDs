@@ -102,6 +102,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"
 	ProjectSection(SolutionItems) = preProject
 		docs\images\bridge.vsdx = docs\images\bridge.vsdx
+		docs\images\claim-transform.svg = docs\images\claim-transform.svg
+		docs\images\claims.vsdx = docs\images\claims.vsdx
 		docs\images\configuration.svg = docs\images\configuration.svg
 		docs\images\configuration.vsdx = docs\images\configuration.vsdx
 		docs\images\configure-authorization-code-flow-pkce.png = docs\images\configure-authorization-code-flow-pkce.png

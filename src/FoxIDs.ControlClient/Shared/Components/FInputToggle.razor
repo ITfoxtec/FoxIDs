@@ -74,6 +74,11 @@
 
     private async Task ToggleCurrentValueAsync()
     {
+        if (Disabled) 
+        {
+            return;
+        }
+
         var oldCurrentValue = CurrentValue;
         if (CurrentValue == true)
         {

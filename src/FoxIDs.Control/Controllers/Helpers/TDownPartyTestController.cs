@@ -275,7 +275,7 @@ namespace FoxIDs.Controllers
         {
             var routeBinding = RouteBinding;
             var useBackendCall = backendCall && !settings.FoxIDsBackendEndpoint.IsNullOrWhiteSpace();
-            var useValidCustomDomain = !routeBinding.TrackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase) && routeBinding.UseCustomDomain;
+            var useValidCustomDomain = !routeBinding.TrackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase) && routeBinding.HasVerifiedCustomDomain;
 
             var urlItems = new List<string>();
             if (useBackendCall || !useValidCustomDomain)

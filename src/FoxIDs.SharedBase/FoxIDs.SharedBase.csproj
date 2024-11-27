@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Version>1.12.10</Version>
+		<TargetFramework>net9.0</TargetFramework>
+		<Version>1.13.0</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -10,11 +10,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ITfoxtec.Identity" Version="2.11.2" />
-		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.13.3" />
+		<PackageReference Include="ITfoxtec.Identity" Version="2.12.1" />
+		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.14.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
-		<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
+		<PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
 	</ItemGroup>
 
 </Project>

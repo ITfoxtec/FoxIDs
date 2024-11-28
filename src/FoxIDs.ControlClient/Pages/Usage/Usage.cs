@@ -27,6 +27,7 @@ namespace FoxIDs.Client.Pages.Usage
         private FoxIDs.Models.Api.UsageSettings usageSettings;
         private PageEditForm<FilterUsageViewModel> searchUsageForm;
         private List<GeneralUsedViewModel> usedList = new List<GeneralUsedViewModel>();
+        private string paginationToken;
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -59,7 +60,7 @@ namespace FoxIDs.Client.Pages.Usage
             try
             {
                 var thisMonth = DateTimeOffset.Now;
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(null, thisMonth.Year, thisMonth.Month));
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(null, thisMonth.Year, thisMonth.Month));
                 usageSettings = await TenantService.GetUsageSettingsAsync();
             }
             catch (TokenUnavailableException)
@@ -72,14 +73,22 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
-        private void SetGeneralUsageList(IEnumerable<UsedBase> filterUsedList)
+        private void SetGeneralUsageList(PaginationResponse<UsedBase> filterUsedList, bool addTenants = false)
         {
             var gul = new List<GeneralUsedViewModel>();
-            foreach (var u in filterUsedList)
+            foreach (var u in filterUsedList.Data)
             {
                 gul.Add(new GeneralUsedViewModel(u));
             }
-            usedList = gul;
+            if (usedList != null && addTenants)
+            {
+                usedList.AddRange(gul);
+            }
+            else
+            {
+                usedList = gul;
+            }
+            paginationToken = filterUsedList.PaginationToken;
         }
 
         private void ShowCreateUsage()
@@ -203,7 +212,7 @@ namespace FoxIDs.Client.Pages.Usage
                 }
                 searchUsageForm.Model.PeriodYear = date.Year;
                 searchUsageForm.Model.PeriodMonth = date.Month;
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
             }
             catch (TokenUnavailableException)
             {
@@ -219,7 +228,30 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralUsageList(await TenantService.FilterUsageAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth));
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    searchUsageForm.SetFieldError(nameof(searchUsageForm.Model.FilterTenantValue), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task LoadMoreUsagesAsync()
+        {
+            try
+            {
+                SetGeneralUsageList(await TenantService.GetUsagesAsync(searchUsageForm.Model.FilterTenantValue, searchUsageForm.Model.PeriodYear, searchUsageForm.Model.PeriodMonth, paginationToken: paginationToken), addTenants: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (FoxIDsApiException ex)
             {

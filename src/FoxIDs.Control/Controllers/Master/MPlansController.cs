@@ -18,14 +18,13 @@ namespace FoxIDs.Controllers
     [RequireMasterTenant]
     [MasterScopeAuthorize]
 
-    [Obsolete($"Use {nameof(MPlansController)} instead.")]
-    public class MFilterPlanController : ApiController
+    public class MPlansController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly IMasterDataRepository masterDataRepository;
 
-        public MFilterPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
+        public MPlansController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -34,25 +33,28 @@ namespace FoxIDs.Controllers
 
 
         /// <summary>
-        /// Obsolete please use 'Plans' instead.
-        /// Filter plan.
+        /// Get plans.
         /// </summary>
         /// <param name="filterName">Filter plan name.</param>
+        /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Plans.</returns>
-        [Obsolete($"Use {nameof(MPlansController)} instead.")]
-        [ProducesResponseType(typeof(HashSet<Api.Plan>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.Plan>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.Plan>>> GetFilterPlan(string filterName)
+        public async Task<ActionResult<Api.PaginationResponse<Api.Plan>>> GetPlans(string filterName, string paginationToken = null)
         {
             try
             {
                 var mPlans = await GetFilterPlanInternalAsync(filterName);
-                var aPlans = new HashSet<Api.Plan>(mPlans.Count());
+
+                var response = new Api.PaginationResponse<Api.Plan>
+                {
+                    Data = new HashSet<Api.Plan>(mPlans.Count()),
+                };
                 foreach (var mPlan in mPlans.OrderBy(p => p.CostPerMonth).ThenBy(t => t.Name))
                 {
-                    aPlans.Add(mapper.Map<Api.Plan>(mPlan));
+                    response.Data.Add(mapper.Map<Api.Plan>(mPlan));
                 }
-                return Ok(aPlans);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

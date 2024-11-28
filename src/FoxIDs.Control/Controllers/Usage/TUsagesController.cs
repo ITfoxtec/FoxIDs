@@ -18,15 +18,14 @@ namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
     [MasterScopeAuthorize]
-    [Obsolete($"Use {nameof(TUsagesController)} instead.")]
-    public class TFilterUsageController : ApiController
+    public class TUsagesController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
 
-        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
+        public TUsagesController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -35,17 +34,16 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Obsolete please use 'Usages' instead.
-        /// Filter Usage.
+        /// Get Usages.
         /// </summary>
         /// <param name="filterTenantName">Filter by tenant name.</param>
         /// <param name="year">The year.</param>
         /// <param name="month">The month.</param>
+        /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Tenants.</returns>
-        [ProducesResponseType(typeof(HashSet<Api.UsedBase>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.UsedBase>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete($"Use {nameof(TUsagesController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.UsedBase>>> GetFilterUsage(string filterTenantName, int year, int month)
+        public async Task<ActionResult<Api.PaginationResponse<Api.UsedBase>>> GetUsages(string filterTenantName, int year, int month, string paginationToken = null)
         {
             try
             {
@@ -56,11 +54,15 @@ namespace FoxIDs.Controllers
                     month = now.Month;
                 }
 
-                (var mUsedList, _) = filterTenantName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year) :
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
+                (var mUsedList, var nextPaginationToken) = filterTenantName.IsNullOrWhiteSpace() ? 
+                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year, paginationToken: paginationToken) :
+                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
 
-                var aUsedList = new HashSet<Api.UsedBase>(mUsedList.Count());
+                var response = new Api.PaginationResponse<Api.UsedBase>
+                {
+                    Data = new HashSet<Api.UsedBase>(mUsedList.Count()),
+                    PaginationToken = nextPaginationToken,
+                };
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))
                 {
                     if(mUsed.PaymentStatus == UsagePaymentStatus.Open || mUsed.PaymentStatus == UsagePaymentStatus.Pending || mUsed.PaymentStatus == UsagePaymentStatus.Authorized)
@@ -77,9 +79,9 @@ namespace FoxIDs.Controllers
                         aUsed.Invoices = [aLastInvoice];
 
                     }
-                    aUsedList.Add(aUsed);
+                    response.Data.Add(aUsed);
                 }
-                return Ok(aUsedList);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

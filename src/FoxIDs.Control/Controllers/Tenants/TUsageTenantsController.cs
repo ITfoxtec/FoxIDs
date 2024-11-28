@@ -17,14 +17,13 @@ namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
     [MasterScopeAuthorize]
-    [Obsolete($"Use {nameof(TUsageTenantsController)} instead.")]
-    public class TFilterUsageTenantController : ApiController
+    public class TUsageTenantsController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterUsageTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TUsageTenantsController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -32,28 +31,31 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Obsolete please use 'UsageTenants' instead.
-        /// Filter usage tenant.
+        /// Get usage tenants.
         /// </summary>
         /// <param name="filterName">Filter usage tenant name.</param>
+        /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Tenants.</returns>
-        [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete($"Use {nameof(TUsageTenantsController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterUsageTenant(string filterName)
+        public async Task<ActionResult<Api.PaginationResponse<Api.Tenant>>> GetUsageTenants(string filterName, string paginationToken = null)
         {
             try
             {
-                (var mTenants, _) = filterName.IsNullOrWhiteSpace() ?
-                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName) :
-                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
+                (var mTenants, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ?
+                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken) :
+                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
 
-                var aTenants = new HashSet<Api.Tenant>(mTenants.Count());
+                var response = new Api.PaginationResponse<Api.Tenant>
+                {
+                    Data = new HashSet<Api.Tenant>(mTenants.Count()),
+                    PaginationToken = nextPaginationToken,
+                };
                 foreach (var mTenant in mTenants.OrderBy(t => t.Name))
                 {
-                    aTenants.Add(mapper.Map<Api.Tenant>(mTenant));
+                    response.Data.Add(mapper.Map<Api.Tenant>(mTenant));
                 }
-                return Ok(aTenants);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

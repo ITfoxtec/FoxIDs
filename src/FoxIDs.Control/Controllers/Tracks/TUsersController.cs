@@ -15,15 +15,14 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
-    [Obsolete($"Use {nameof(TUsersController)} instead.")]
-    public class TFilterUserController : ApiController
+    public class TUsersController : ApiController
     {
         private const string dataType = Constants.Models.DataType.User;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TUsersController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -31,30 +30,33 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Obsolete please use 'Users' instead.
-        /// Filter user.
+        /// Get users.
         /// </summary>
         /// <param name="filterEmail">Filter user email.</param>
+        /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(HashSet<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete($"Use {nameof(TUsersController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.User>>> GetFilterUser(string filterEmail)
+        public async Task<ActionResult<HashSet<Api.User>>> GetUsers(string filterEmail, string paginationToken = null)
         {
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mUsers, _) = filterEmail.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
+                (var mUsers, var nextPaginationToken) = filterEmail.IsNullOrWhiteSpace() ? 
+                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 
                     await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase));
-              
-                var aUsers = new HashSet<Api.User>(mUsers.Count());
+                        u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+
+                var response = new Api.PaginationResponse<Api.User>
+                {
+                    Data = new HashSet<Api.User>(mUsers.Count()),
+                    PaginationToken = nextPaginationToken,
+                };
                 foreach(var mUser in mUsers.OrderBy(t => t.Email))
                 {
-                    aUsers.Add(mapper.Map<Api.User>(mUser));
+                    response.Data.Add(mapper.Map<Api.User>(mUser));
                 }
-                return Ok(aUsers);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

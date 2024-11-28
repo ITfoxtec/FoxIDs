@@ -31,9 +31,11 @@
             {
                 <div class="mb-3 alert alert-info" role="alert">
                     @{
-                        var samlMetadata = @MetadataLogic.GetUpSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern);
+                        (var samlMetadata, var samlEntityId, var samlAcs) = @MetadataLogic.GetUpSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern);
                     }
-                    <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
+                    <div>Metadata URL: <FTextLinkClipboard Text="@samlMetadata" /></div>
+                    <div>Entity ID: <FTextClipboard Text="@(string.IsNullOrWhiteSpace(samlUpParty.Form?.Model?.SpIssuer) ? samlEntityId : samlUpParty.Form.Model.SpIssuer)" /></div>
+                    <div>ACS URL: <FTextClipboard Text="@samlAcs" /></div>
                 </div>
             }
             @if (UpParty.ShowAdvanced)
@@ -155,7 +157,7 @@
                 {
                     <label class="btn btn-link pl-0">
                         Read metadata from file
-                        <input hidden type="file" @ref=readMetadataFileElement @onchange="@(async () => await OnReadMetadataFileAsync(samlUpParty))" />
+                        <InputFile hidden OnChange="@(async (e) => await OnReadMetadataFileAsync(samlUpParty, e))" />
                     </label>
                 }
                 else
@@ -180,7 +182,7 @@
                         @if (samlUpParty.Form.Model.IsManual)
                         {
                             <div class="drag-drop-zone input-control">
-                                <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnSamlUpPartyCertificateFileSelectedAsync(samlUpParty, files))" />
+                                <InputFile OnChange="@(async (e) => await OnSamlUpPartyCertificateFileSelectedAsync(samlUpParty, e))" multiple />
                                 @samlUpParty.CertificateFileStatus
                             </div>
                         }

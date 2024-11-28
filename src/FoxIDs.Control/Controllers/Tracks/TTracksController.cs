@@ -15,15 +15,14 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
-    [Obsolete($"Use {nameof(TTracksController)} instead.")]
-    public class TFilterTrackController : ApiController
+    public class TTracksController : ApiController
     {
         private const string dataType = Constants.Models.DataType.Track;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public TFilterTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TTracksController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -31,30 +30,33 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Obsolete please use 'Tracks' instead.
-        /// Filter track.
+        /// Get environments.
         /// </summary>
         /// <param name="filterName">Filter environment name.</param>
-        /// <returns>Tracks.</returns>
-        [ProducesResponseType(typeof(HashSet<Api.Track>), StatusCodes.Status200OK)]
+        /// <param name="paginationToken">The pagination token.</param>
+        /// <returns>Environments.</returns>
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.Track>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete($"Use {nameof(TTracksController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.Track>>> GetFilterTrack(string filterName)
+        public async Task<ActionResult<Api.PaginationResponse<Api.Track>>> GetTracks(string filterName, string paginationToken = null)
         {
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mTracks, _) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
+                (var mTracks, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ? 
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) : 
                     await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)));
-               
-                var aTracks = new HashSet<Api.Track>(mTracks.Count());
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
+
+                var response = new Api.PaginationResponse<Api.Track>
+                {
+                    Data = new HashSet<Api.Track>(mTracks.Count()),
+                    PaginationToken = nextPaginationToken,
+                };                
                 foreach(var mTrack in mTracks.OrderBy(t => t.Name))
                 {
-                    aTracks.Add(mapper.Map<Api.Track>(mTrack));
+                    response.Data.Add(mapper.Map<Api.Track>(mTrack));
                 }
-                return Ok(aTracks);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

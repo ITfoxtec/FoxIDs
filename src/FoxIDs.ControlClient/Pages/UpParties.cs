@@ -22,6 +22,7 @@ namespace FoxIDs.Client.Pages
         private DownPartyTestViewModel testDownPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
+        private string paginationToken;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -72,7 +73,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UpPartyService.FilterUpPartyAsync(null));
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -88,7 +89,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UpPartyService.FilterUpPartyAsync(upPartyFilterForm.Model.FilterName));
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -103,10 +104,33 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralUpParties(IEnumerable<UpParty> dataUpParties)
+        private async Task LoadMorePartiesAsync()
+        {
+            try
+            {
+                SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(upPartyFilterForm.Model.FilterName, paginationToken: paginationToken), addParties: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    upPartyFilterForm.SetFieldError(nameof(upPartyFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void SetGeneralUpParties(PaginationResponse<UpParty> dataUpParties, bool addParties = false)
         {
             var ups = new List<GeneralUpPartyViewModel>();
-            foreach (var dp in dataUpParties)
+            foreach (var dp in dataUpParties.Data)
             {
                 if (dp.Type == PartyTypes.Login)
                 {
@@ -133,7 +157,16 @@ namespace FoxIDs.Client.Pages
                     ups.Add(new GeneralExternalLoginUpPartyViewModel(dp));
                 }
             }
-            upParties = ups;
+
+            if (upParties != null && addParties)
+            {
+                upParties.AddRange(ups);
+            }
+            else
+            {
+                upParties = ups;
+            }
+            paginationToken = dataUpParties.PaginationToken;
         }
 
         private void ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
@@ -308,7 +341,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                var selectTrackTasks = (await TrackService.FilterTrackAsync(filterName)).OrderTracks();
+                var selectTrackTasks = (await TrackService.GetTracksAsync(filterName)).Data.OrderTracks();
                 newUpPartyModal.SelectTracks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
             }
             catch (FoxIDsApiException ex)

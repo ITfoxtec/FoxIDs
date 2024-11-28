@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,14 +8,14 @@ namespace FoxIDs.Client.Services
     public class UserService : BaseService
     {
         private const string apiUri = "api/{tenant}/{track}/!user";
-        private const string filterApiUri = "api/{tenant}/{track}/!filteruser";
+        private const string listApiUri = "api/{tenant}/{track}/!users";
         private const string myUserApiUri = "api/{tenant}/master/!myuser";
         private const string userControlProfileApiUri = "api/{tenant}/master/!usercontrolprofile";
 
         public UserService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<IEnumerable<User>> FilterUserAsync(string filterEmail) => await FilterAsync<User>(filterApiUri, filterEmail, parmName1: nameof(filterEmail));
+        public async Task<PaginationResponse<User>> GetUsersAsync(string filterEmail, string paginationToken = null) => await GetListAsync<User>(listApiUri, filterEmail, parmName1: nameof(filterEmail), paginationToken: paginationToken);
 
         public async Task<User> GetUserAsync(string email) => await GetAsync<User>(apiUri, email, parmName: nameof(email));
         public async Task<User> CreateUserAsync(CreateUserRequest user) => await PostResponseAsync<CreateUserRequest, User>(apiUri, user);

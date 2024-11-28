@@ -16,8 +16,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
-    [Obsolete($"Use {nameof(TDownPartiesController)} instead.")]
-    public class TFilterDownPartyController : ApiController
+    public class TDownPartiesController : ApiController
     {
         private const string dataType = Constants.Models.DataType.DownParty;
         private readonly TelemetryScopedLogger logger;
@@ -25,7 +24,7 @@ namespace FoxIDs.Controllers
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PartyLogic partyLogic;
 
-        public TFilterDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic) : base(logger)
+        public TDownPartiesController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PartyLogic partyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -34,15 +33,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Obsolete please use 'DownParties' instead.
-        /// Filter application registration.
+        /// Get application registrations.
         /// </summary>
         /// <param name="filterName">Filter application registration name.</param>
+        /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Application registrations.</returns>
-        [ProducesResponseType(typeof(HashSet<Api.DownParty>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.DownParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Obsolete($"Use {nameof(TDownPartiesController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)
+        public async Task<ActionResult<Api.PaginationResponse<Api.DownParty>>> GetDownParties(string filterName, string paginationToken = null)
         {
             await partyLogic.DeleteExporedDownParties();
 
@@ -50,17 +48,21 @@ namespace FoxIDs.Controllers
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mDownPartys, _) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
+                (var mDownPartys, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ? 
+                    await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) : 
                     await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)), paginationToken: paginationToken);
 
-                var aDownPartys = new HashSet<Api.DownParty>(mDownPartys.Count());
+                var response = new Api.PaginationResponse<Api.DownParty>
+                {
+                    Data = new HashSet<Api.DownParty>(mDownPartys.Count()),
+                    PaginationToken = nextPaginationToken,
+                };
                 foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
                 {
-                    aDownPartys.Add(mapper.Map<Api.DownParty>(mDownParty));
+                    response.Data.Add(mapper.Map<Api.DownParty>(mDownParty));
                 }
-                return Ok(aDownPartys);
+                return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {

@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Services
     public class DownPartyService : BaseService
     {
         private const string newPartyNameApiUri = "api/{tenant}/{track}/!newpartyname";
-        private const string filterApiUri = "api/{tenant}/{track}/!filterdownparty";
+        private const string listApiUri = "api/{tenant}/{track}/!downparties";
         private const string oauthApiUri = "api/{tenant}/{track}/!oauthdownparty";
         private const string oauthclientsecretApiUri = "api/{tenant}/{track}/!oauthclientsecretdownparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcdownparty";
@@ -22,7 +22,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri))?.Name;
 
-        public async Task<IEnumerable<DownParty>> FilterDownPartyAsync(string filterName) => await FilterAsync<DownParty>(filterApiUri, filterName);
+        public async Task<PaginationResponse<DownParty>> GetDownPartiesAsync(string filterName, string paginationToken = null) => await GetListAsync<DownParty>(listApiUri, filterName, paginationToken: paginationToken);
 
         public async Task<OAuthDownParty> GetOAuthDownPartyAsync(string name) => await GetAsync<OAuthDownParty>(oauthApiUri, name);
         public async Task<OAuthDownParty> CreateOAuthDownPartyAsync(OAuthDownParty party) => await PostResponseAsync<OAuthDownParty, OAuthDownParty>(oauthApiUri, party);

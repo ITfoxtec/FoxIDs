@@ -31,9 +31,11 @@
             {
                 <div class="mb-3 alert alert-info" role="alert">
                     @{
-                        var samlMetadata = @MetadataLogic.GetUpSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern);
+                        (var samlMetadata, var samlEntityId, var samlAcs) = @MetadataLogic.GetUpSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern);
                     }
-                    <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
+                    <div>Metadata URL: <FTextLinkClipboard Text="@samlMetadata" /></div>
+                    <div>Entity ID: <FTextClipboard Text="@(string.IsNullOrWhiteSpace(samlUpParty.Form?.Model?.SpIssuer) ? samlEntityId : samlUpParty.Form.Model.SpIssuer)" /></div>
+                    <div>ACS URL: <FTextClipboard Text="@samlAcs" /></div>
                 </div>
             }
             @if (UpParty.ShowAdvanced)

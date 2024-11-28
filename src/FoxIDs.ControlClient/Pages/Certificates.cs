@@ -1,5 +1,4 @@
-﻿using BlazorInputFile;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -182,49 +181,47 @@ namespace FoxIDs.Client.Pages
             generalCertificate.Edit = false;
         }
 
-        private async Task OnCertificateFileSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, IFileListEntry[] files)
+        private async Task OnCertificateFileSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, InputFileChangeEventArgs e)
         {
             try
             {
                 generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
-                foreach (var file in files)
+                if (e.File.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
                 {
-                    if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
-                    {
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
-                        return;
-                    }
-
-                    generalCertificate.CertificateFileStatus = "Loading...";
-
-                    byte[] certificateBytes;
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await file.Data.CopyToAsync(memoryStream);
-                        certificateBytes = memoryStream.ToArray();
-                    }
-
-                    var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
-                    
-                    if (!jwkWithCertificateInfo.HasPrivateKey())
-                    {
-                        generalCertificate.Form.Model.Subject = null;
-                        generalCertificate.Form.Model.Key = null;
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
-                        generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
-                        return;
-                    }
-
-                    generalCertificate.Form.Model.Subject = jwkWithCertificateInfo.CertificateInfo.Subject;
-                    generalCertificate.Form.Model.ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom;
-                    generalCertificate.Form.Model.ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo;
-                    generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
-                    generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
-                    generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
-
-                    generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
+                    return;
                 }
+
+                generalCertificate.CertificateFileStatus = "Loading...";
+
+                byte[] certificateBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
+                    certificateBytes = memoryStream.ToArray();
+                }
+
+                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
+                    
+                if (!jwkWithCertificateInfo.HasPrivateKey())
+                {
+                    generalCertificate.Form.Model.Subject = null;
+                    generalCertificate.Form.Model.Key = null;
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
+                    generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                    return;
+                }
+
+                generalCertificate.Form.Model.Subject = jwkWithCertificateInfo.CertificateInfo.Subject;
+                generalCertificate.Form.Model.ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom;
+                generalCertificate.Form.Model.ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo;
+                generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
+                generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
+                generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
+
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
             }
             catch (TokenUnavailableException)
             {

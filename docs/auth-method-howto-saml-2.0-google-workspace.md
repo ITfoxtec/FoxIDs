@@ -55,3 +55,5 @@ This guide describe how to setup Google Workspace as a SAML 2.0 Identity Provide
 2. Click **Create**
 3. Click **Test authentication** to test the Google Workspace connection  
    *You can log in with your Google Workspace account and se how the SAML 2.0 claims is converted to JWT claims*
+
+> Google Workspace do not support logout.

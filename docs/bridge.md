@@ -2,8 +2,8 @@
 
 By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
-If you configure a [SAML 2.0 authentication method](auth-method-saml-2.0.md) to an external Identity Provider (IdP) and connect your app as a [OpenID Connect application registration](app-reg-oidc.md) where you select the SAML 2.0 authentication method. 
-A log in request from your app is routed as an external SAML 2.0 log in requests. The SAML 2.0 log in response is subsequently mapped to an OpenID Connect response for your app.
+If you configure a [SAML 2.0 authentication method](auth-method-saml-2.0.md) to an external Identity Provider (IdP) and connect your app as a [OpenID Connect application](app-reg-oidc.md) where you select the SAML 2.0 authentication method. 
+A log in request from your app is routed as an external SAML 2.0 log in requests. The SAML 2.0 log in response is subsequently mapped to a OpenID Connect response for your app. SAML 2.0 claims are automatically convert to JWT (OAuth 2.0) claims.
 
 ![Bridge SAML 2.0 to OpenID Connect](images/bridge-saml-oidc.svg)
 

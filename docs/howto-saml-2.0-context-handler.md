@@ -78,7 +78,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 
 **1 - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select the **Authentication methods** tab
+1. Select the **Authentication** tab
 2. Click **New authentication** and then **Identity Provider (SAML 2.0)**
 3. Add the **Name** e.g. `Context Handler`
 4. Add the Context Handler IdP metadata in the **Metadata URL** field  

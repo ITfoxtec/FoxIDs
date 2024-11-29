@@ -1,4 +1,4 @@
-# Connect NemLog-in as authentication method
+# Connect NemLog-in with SAML 2.0
 
 You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
@@ -60,7 +60,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 **1) - Start by creating an SAML 2.0 authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select the Authentication methods tab
+1. Select the Authentication tab
 2. Click New authentication and then SAML 2.0
 3. Add the name
 4. Select show advanced

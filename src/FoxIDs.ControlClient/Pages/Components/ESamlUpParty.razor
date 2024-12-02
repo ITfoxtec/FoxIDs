@@ -347,6 +347,11 @@
 
                         <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableLoginHint" For="@(() => samlUpParty.Form.Model.DisableLoginHint)" Negation="true" TextType="e.d" />
                     }
+
+                    <FInputSelect @bind-Value="samlUpParty.Form.Model.XmlCanonicalizationMethod" For="@(() => samlUpParty.Form.Model.XmlCanonicalizationMethod)">
+                        <option value="@Constants.Saml.XmlCanonicalizationMethod.XmlDsigExcC14NTransformUrl">@Constants.Saml.XmlCanonicalizationMethod.XmlDsigExcC14NTransformUrl</option>
+                        <option value="@Constants.Saml.XmlCanonicalizationMethod.XmlDsigExcC14NWithCommentsTransformUrl">@Constants.Saml.XmlCanonicalizationMethod.XmlDsigExcC14NWithCommentsTransformUrl</option>
+                    </FInputSelect>
                     <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
                         <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
                         <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>

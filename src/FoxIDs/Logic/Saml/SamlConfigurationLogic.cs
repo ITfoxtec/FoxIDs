@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -62,6 +63,10 @@ namespace FoxIDs.Logic
             }
             if (party != null)
             {
+                if (!party.XmlCanonicalizationMethod.IsNullOrWhiteSpace())
+                {
+                    samlConfig.XmlCanonicalizationMethod = party.XmlCanonicalizationMethod;
+                }
                 samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
                 samlConfig.SignAuthnRequest = party.SignAuthnRequest;
 

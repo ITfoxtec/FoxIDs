@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure.Logging;
-using FoxIDs.Models.Config;
+﻿using FoxIDs.Models.Config;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using System;

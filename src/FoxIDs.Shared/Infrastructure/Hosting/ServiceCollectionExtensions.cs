@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure.Logging;
-using FoxIDs.Logic;
+﻿using FoxIDs.Logic;
 using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;

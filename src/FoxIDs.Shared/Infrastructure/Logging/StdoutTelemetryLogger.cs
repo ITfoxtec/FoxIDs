@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using ITfoxtec.Identity;
 
-namespace FoxIDs.Infrastructure.Logging
+namespace FoxIDs.Infrastructure
 {
     public class StdoutTelemetryLogger
     {

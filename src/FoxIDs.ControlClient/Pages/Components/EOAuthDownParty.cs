@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
 using System.Net.Http;
 using FoxIDs.Client.Util;
-using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 
@@ -308,14 +307,14 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private async Task OnClientCertificateFileSelectedAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty, IFileListEntry[] files)
+        private async Task OnClientCertificateFileSelectedAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty, InputFileChangeEventArgs e)
         {
             if (generalOAuthDownParty.Form.Model.Client.ClientKeys == null)
             {
                 generalOAuthDownParty.Form.Model.Client.ClientKeys = new List<JwkWithCertificateInfo>();
             }
             generalOAuthDownParty.Form.ClearFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys));
-            foreach (var file in files)
+            foreach (var file in e.GetMultipleFiles())
             {
                 if (file.Size > GeneralSamlUpPartyViewModel.CertificateMaxFileSize)
                 {
@@ -327,7 +326,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await file.Data.CopyToAsync(memoryStream);
+                    using var fileStream = file.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
 
                     try
                     {

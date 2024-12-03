@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages
         private UsageSettings usageSettings;
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
+        private string paginationToken;
         private bool tenantWorking;
         private IEnumerable<PlanInfo> planInfoList;
 
@@ -65,7 +66,30 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterTenantAsync(searchTenantForm.Model.FilterValue));
+                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue));
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.FilterValue), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task LoadMoreTenantsAsync()
+        {
+            try
+            {
+                SetGeneralTenants(await TenantService.GetTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken), addTenants: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (FoxIDsApiException ex)
             {
@@ -101,7 +125,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterTenantAsync(null));
+                SetGeneralTenants(await TenantService.GetTenantsAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -113,17 +137,25 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralTenants(IEnumerable<Tenant> dataTenans)
+        private void SetGeneralTenants(PaginationResponse<Tenant> dataTenans, bool addTenants = false)
         {
             var tes = new List<GeneralTenantViewModel>();
-            foreach (var dp in dataTenans)
+            foreach (var dp in dataTenans.Data)
             {
                 tes.Add(new GeneralTenantViewModel(dp) 
                 {
                     LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{dp.Name}".ToLower()
                 });
             }
-            tenants = tes;
+            if (tenants != null && addTenants)
+            {
+                tenants.AddRange(tes);
+            }
+            else
+            {
+                tenants = tes;
+            }
+            paginationToken = dataTenans.PaginationToken;
         }
 
         private async Task ShowUpdateTenantAsync(GeneralTenantViewModel generalTenant)

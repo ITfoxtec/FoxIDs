@@ -10,7 +10,7 @@ using OpenSearch.Net;
 using System.Net;
 using System.Linq;
 
-namespace FoxIDs.Infrastructure.Logging
+namespace FoxIDs.Infrastructure
 {
     public class OpenSearchTelemetryLogger
     {

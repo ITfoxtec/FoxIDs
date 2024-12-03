@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,7 +8,7 @@ namespace FoxIDs.Client.Services
     public class UpPartyService : BaseService
     {
         private const string newPartyNameApiUri = "api/{tenant}/{track}/!newpartyname";
-        private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
+        private const string listApiUri = "api/{tenant}/{track}/!upparties";
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
         private const string oauthApiUri = "api/{tenant}/{track}/!oauthupparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
@@ -26,7 +25,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri, true.ToString(), parmName: "isUpParty"))?.Name;
 
-        public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterValue) => await FilterAsync<UpParty>(filterApiUri, filterValue, parmValue2: filterValue, parmName2: "filterHrdDomains");
+        public async Task<PaginationResponse<UpParty>> GetUpPartiesAsync(string filterValue, string paginationToken = null) => await GetListAsync<UpParty>(listApiUri, filterValue, parmValue2: filterValue, parmName2: "filterHrdDomains", paginationToken: paginationToken);
 
         public async Task<LoginUpParty> GetLoginUpPartyAsync(string name) => await GetAsync<LoginUpParty>(loginApiUri, name);
         public async Task<LoginUpParty> CreateLoginUpPartyAsync(LoginUpParty party) => await PostResponseAsync<LoginUpParty, LoginUpParty>(loginApiUri, party);

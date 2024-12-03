@@ -11,9 +11,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
-using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
-using Tewr.Blazor.FileReader;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http;
@@ -24,13 +22,8 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlUpParty : UpPartyBase
     {
-        private ElementReference readMetadataFileElement;
-
         [Inject]
         public HelpersService HelpersService { get; set; }
-
-        [Inject]
-        public IFileReaderService fileReaderService { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -154,26 +147,19 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private async Task OnReadMetadataFileAsync(GeneralSamlUpPartyViewModel generalSamlUpParty)
+        private async Task OnReadMetadataFileAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, InputFileChangeEventArgs e)
         {
             generalSamlUpParty.Form.ClearError();
             try
             {
-                var files = await fileReaderService.CreateReference(readMetadataFileElement).EnumerateFilesAsync();
-                var file = files.FirstOrDefault();
-                if (file == null)
+                byte[] metadataXmlBytes;
+                using (var memoryStream = new MemoryStream())
                 {
-                    return;
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
+                    metadataXmlBytes = memoryStream.ToArray();
                 }
-
-                string metadataXml;
-                await using (var stream = await file.OpenReadAsync())
-                {
-                    byte[] resultBytes = new byte[stream.Length];
-                    await stream.ReadAsync(resultBytes, 0, (int)stream.Length);
-
-                    metadataXml = Encoding.ASCII.GetString(resultBytes);
-                }
+                var metadataXml = Encoding.ASCII.GetString(metadataXmlBytes);
 
                 var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml });
 
@@ -222,14 +208,14 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private async Task OnSamlUpPartyCertificateFileSelectedAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, IFileListEntry[] files)
+        private async Task OnSamlUpPartyCertificateFileSelectedAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, InputFileChangeEventArgs e)
         {
             if (generalSamlUpParty.Form.Model.Keys == null)
             {
                 generalSamlUpParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
             }
             generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
-            foreach (var file in files)
+            foreach (var file in e.GetMultipleFiles())
             {
                 if (file.Size > GeneralSamlUpPartyViewModel.CertificateMaxFileSize)
                 {
@@ -241,7 +227,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await file.Data.CopyToAsync(memoryStream);
+                    using var fileStream = file.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
 
                     try
                     {

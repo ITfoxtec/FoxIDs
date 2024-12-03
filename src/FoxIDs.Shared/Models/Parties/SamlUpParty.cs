@@ -42,6 +42,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
+        [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
+        [JsonProperty(PropertyName = "xml_canonicalization_method")]
+        public string XmlCanonicalizationMethod { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         [JsonProperty(PropertyName = "signature_algorithm")]

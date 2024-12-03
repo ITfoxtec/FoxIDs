@@ -145,7 +145,9 @@ namespace FoxIDs.Controllers
         {
             if (mUsed.IsInvoiceReady)
             {
+                var mTenant = await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(mUsed.TenantName));
                 var invoice = mUsed.Invoices.Last();
+                invoice.Customer = mTenant.Customer;
                 if(!invoice.IsCardPayment || mUsed.PaymentStatus == UsagePaymentStatus.Paid)
                 {
                     await usageInvoicingLogic.SendInvoiceAsync(mUsed, invoice);

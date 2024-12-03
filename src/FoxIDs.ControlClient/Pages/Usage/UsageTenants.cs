@@ -7,7 +7,6 @@ using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
-using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -26,6 +25,7 @@ namespace FoxIDs.Client.Pages.Usage
         private FoxIDs.Models.Api.UsageSettings usageSettings;
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private List<GeneralTenantViewModel> tenants;
+        private string paginationToken;
         private bool tenantWorking;
 
         [Inject]
@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages.Usage
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterUsageTenantAsync(searchTenantForm.Model.FilterValue));
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -74,11 +74,35 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
+        private async Task LoadMoreTenantAsync()
+        {
+            try
+            {
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(searchTenantForm.Model.FilterValue, paginationToken: paginationToken), addTenants: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.FilterValue), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
         private async Task DefaultLoadAsync()
         {
             try
             {
-                SetGeneralTenants(await TenantService.FilterUsageTenantAsync(null));
+                SetGeneralTenants(await TenantService.GetUsageTenantsAsync(null));
                 usageSettings = await TenantService.GetUsageSettingsAsync();
             }
             catch (TokenUnavailableException)
@@ -91,14 +115,22 @@ namespace FoxIDs.Client.Pages.Usage
             }
         }
 
-        private void SetGeneralTenants(IEnumerable<Tenant> dataTenans)
+        private void SetGeneralTenants(PaginationResponse<Tenant> dataTenans, bool addTenants = false)
         {
             var tes = new List<GeneralTenantViewModel>();
-            foreach (var dp in dataTenans)
+            foreach (var dp in dataTenans.Data)
             {
                 tes.Add(new GeneralTenantViewModel(dp));
             }
-            tenants = tes;
+            if (tenants != null && addTenants)
+            {
+                tenants.AddRange(tes);
+            }
+            else
+            {
+                tenants = tes;
+            }
+            paginationToken = dataTenans.PaginationToken;
         }
 
         private async Task ShowUpdateTenantAsync(GeneralTenantViewModel generalTenant)
@@ -162,7 +194,7 @@ namespace FoxIDs.Client.Pages.Usage
                     var tenantResult = await TenantService.CreateTenantAsync(generalTenant.Form.Model.Map<CreateTenantRequest>(afterMap: afterMap => 
                     {
                         afterMap.ForUsage = true;
-                        afterMap.AdministratorEmail = afterMap.Customer.InvoiceEmails.First();
+                        afterMap.AdministratorEmail = afterMap.Customer?.InvoiceEmails?.FirstOrDefault();
                         afterMap.AdministratorPassword = Util.SecretGenerator.GenerateNewPassword();
                         afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
                     }));

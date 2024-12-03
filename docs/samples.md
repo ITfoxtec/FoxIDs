@@ -18,7 +18,7 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
 **Sample index**
 
 - ASP.NET Core - OpenID Connect - application registration
-    -  [AspNetCoreOidcAuthCodeAllUpPartiesSample](#aspnetcoreoidcauthcodealluppartiessample) ([online](https://aspnetcoreoidcallupsample.itfoxtec.com/)) <- *Good starting point!*
+    -  [AspNetCoreOidcAuthCodeAllUpPartiesSample](#aspnetcoreoidcauthcodealluppartiessample) ([online](https://aspnetoidcsample.itfoxtec.com)) <- *Good starting point!*
     -  [AspNetCoreOidcAuthorizationCodeSample](#AspNetCoreOidcAuthorizationCodeSample)
     -  [AspNetCoreOidcImplicitSample](#aspnetcoreoidcimplicitsample)
 
@@ -40,8 +40,8 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
 
 - ASP.NET Core API - OAuth 2.0 - application registration
 
-    -  [AspNetCoreApi1Sample](#aspnetcoreapi1sample) ([online](https://aspnetcoreoauthapi1sample.itfoxtec.com/))
-    -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
+    -  [AspNetCoreApi1Sample](#aspnetcoreapi1sample) ([online](https://aspnetapi1sample.itfoxtec.com))
+    -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetapi2sample.itfoxtec.com))
     -  [AspNetCoreApiOAuthTwoIdPsSample](#aspnetcoreapioauthtwoidpssample)
 
 - ASP.NET Core - OpenID Connect - authentication method
@@ -50,11 +50,11 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
 
 - ASP.NET Core - SAML 2.0 - authentication method
   
-    -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
+    -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetsamlidpsample.itfoxtec.com))
 
 - ASP.NET Core - External login API - authentication method
   
-    -  [ExternalLoginApiSample](#externalloginapisample)
+    -  [ExternalLoginApiSample](#externalloginapisample) ([online](https://externalloginsample.itfoxtec.com))
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
@@ -66,7 +66,7 @@ The samples show different applications which trust FoxIDs as an IdP.
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all authentication methods.  
 
-You can test this [sample online](https://aspnetcoreoidcallupsample.itfoxtec.com/).
+You can test this [sample online](https://aspnetoidcsample.itfoxtec.com).
 
 > This sample is a good starting point!
 
@@ -159,7 +159,7 @@ Local development domain and port: `https://localhost:44347`
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreApi1Sample)) API showing how to secure an API with an access token and how to restrict access by scopes.
 
-You can call this [sample online](https://aspnetcoreoauthapi1sample.itfoxtec.com/).
+You can call this [sample online](https://aspnetapi1sample.itfoxtec.com).
 
 The API calls [API2 sample](#aspnetcoreapi2sample) secured with an access token obtained by token exchange where the client use client authentication method private_key_jwt (certificate).
 
@@ -169,7 +169,7 @@ Local development domain and port: `https://localhost:44344`
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreApi2Sample)) API showing how to secure an API with an access token and how to restrict access by a scope.
 
-You can call this [sample online](https://aspnetcoreoauthapi2sample.itfoxtec.com/).
+You can call this [sample online](https://aspnetapi2sample.itfoxtec.com).
 
 Local development domain and port: `https://localhost:44351`
 
@@ -191,7 +191,7 @@ The authentication methods samples show different IdPs connected to FoxIDs, wher
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 authentication method in FoxIDs.
 
-You can test this [sample online](https://aspnetcoresamlidpsample.itfoxtec.com/).
+You can test this [sample online](https://aspnetsamlidpsample.itfoxtec.com).
 
 Local development domain and port: `https://localhost:44342`
 

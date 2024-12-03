@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
         {
             var secretClient = new SecretClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
             KeyVaultSecret keyVaultSecret = secretClient.GetSecret(clientKey.ExternalName);
-            var certificate = new X509Certificate2(Convert.FromBase64String(keyVaultSecret.Value), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+            var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(keyVaultSecret.Value), string.Empty, keyStorageFlags: X509KeyStorageFlags.Exportable);
             if (certificate == null)
             {
                 throw new Exception($"External client key certificate '{clientKey.ExternalName}' from Key Vault is null.");
@@ -143,7 +143,7 @@ namespace FoxIDs.Logic
                 {
                     throw new Exception($"Track key external certificate '{track.Key.ExternalName}' version '{keyItem.ExternalId}' from Key Vault is null.");
                 }
-                keyItem.Key = await new X509Certificate2(certificateRawValue).ToFTJsonWebKeyAsync();
+                keyItem.Key = await X509CertificateLoader.LoadCertificate(certificateRawValue).ToFTJsonWebKeyAsync();
             }
 
             return trackKeyExternal;

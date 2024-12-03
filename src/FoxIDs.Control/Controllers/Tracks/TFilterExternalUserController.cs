@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
@@ -16,6 +15,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
+    [Obsolete($"Use {nameof(TExternalUsersController)} instead.")]
     public class TFilterExternalUserController : ApiController
     {
         private const string dataType = Constants.Models.DataType.ExternalUser;
@@ -31,12 +31,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'ExternalUsers' instead.
         /// Filter external user.
         /// </summary>
         /// <param name="filterValue">Filter external user by link claim or user ID.</param>
         /// <returns>External users.</returns>
         [ProducesResponseType(typeof(HashSet<Api.ExternalUser>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TExternalUsersController)} instead.")]
         public async Task<ActionResult<HashSet<Api.ExternalUser>>> GetFilterExternalUser(string filterValue)
         {
             try

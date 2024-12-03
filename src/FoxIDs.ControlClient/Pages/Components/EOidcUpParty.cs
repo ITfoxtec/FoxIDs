@@ -13,7 +13,6 @@ using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Net.Http;
 using FoxIDs.Client.Shared.Components;
-using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 using Microsoft.AspNetCore.Components;
@@ -194,6 +193,11 @@ namespace FoxIDs.Client.Pages.Components
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
+                    afterMap.Authority = afterMap.Authority.Trim();
+                    if(afterMap.Authority.EndsWith(IdentityConstants.OidcDiscovery.Path))
+                    {
+                        afterMap.Authority = afterMap.Authority.Remove(afterMap.Authority.Length - IdentityConstants.OidcDiscovery.Path.Length);
+                    }
 
                     afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
 
@@ -297,47 +301,46 @@ namespace FoxIDs.Client.Pages.Components
             importClientKeyModal.Show();
         }
 
-        private async Task OnImportClientKeyFileAsync(GeneralOidcUpPartyViewModel oidcUpParty, IFileListEntry[] files)
+        private async Task OnImportClientKeyFileAsync(GeneralOidcUpPartyViewModel oidcUpParty, InputFileChangeEventArgs e)
         {
             try
             {
                 importClientKeyForm.ClearFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus));
-                foreach (var file in files)
+                
+                if (e.File.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
                 {
-                    if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
-                    {
-                        importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
-                        return;
-                    }
-
-                    importClientKeyForm.Model.ClientKeyFileStatus = "Loading...";
-
-                    byte[] certificateBytes;
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await file.Data.CopyToAsync(memoryStream);
-                        certificateBytes = memoryStream.ToArray();
-                    }
-
-                    var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
-
-                    oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
-                    {
-                        Subject = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Subject,
-                        ValidFrom = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidFrom,
-                        ValidTo = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidTo,
-                        IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
-                        Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
-                        KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
-                        Key = clientKeyResponse.PrimaryKey.PublicKey,
-                        Name = clientKeyResponse.Name
-                    };
-
-                    importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
-                    importClientKeyModal.Hide();
-                    toastService.ShowSuccess("Authentication method client key imported.");
+                    importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
+                    return;
                 }
+
+                importClientKeyForm.Model.ClientKeyFileStatus = "Loading...";
+
+                byte[] certificateBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
+                    certificateBytes = memoryStream.ToArray();
+                }
+
+                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+
+                oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
+                {
+                    Subject = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Subject,
+                    ValidFrom = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidFrom,
+                    ValidTo = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidTo,
+                    IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
+                    Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
+                    KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
+                    Key = clientKeyResponse.PrimaryKey.PublicKey,
+                    Name = clientKeyResponse.Name
+                };
+
+                importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                importClientKeyModal.Hide();
+                toastService.ShowSuccess("Authentication method client key imported.");
             }
             catch (TokenUnavailableException)
             {

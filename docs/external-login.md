@@ -124,7 +124,7 @@ You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Sample
 ## Configure 
 Configure an external login authentication method to call your API in [FoxIDs Control Client](control.md#foxids-control-client).
 
- 1. Navigate to the **Authentication Methods** tab
+ 1. Navigate to the **Authentication** tab
  2. Click **New authentication**
  3. Select **Show advanced**
  4. Select **External Login**

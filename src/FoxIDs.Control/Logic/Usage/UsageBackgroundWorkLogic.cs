@@ -223,7 +223,7 @@ namespace FoxIDs.Logic.Usage
                 string paginationToken = null;
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    (var usedList, paginationToken) = await tenantDataRepository.GetListAsync<Used>(whereQuery: u => !u.IsInactive || !u.IsDone , pageSize: loadPageSize, paginationToken: paginationToken);
+                    (var usedList, paginationToken) = await tenantDataRepository.GetListAsync<Used>(whereQuery: u => !u.IsInactive && !u.IsDone && u.PeriodEndDate.Month == invoicingDatePointer.Month && u.PeriodEndDate.Year == invoicingDatePointer.Year, pageSize: loadPageSize, paginationToken: paginationToken);
                     foreach (var used in usedList)
                     {
                         try

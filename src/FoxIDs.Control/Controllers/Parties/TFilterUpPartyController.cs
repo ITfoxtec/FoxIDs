@@ -15,6 +15,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    [Obsolete($"Use {nameof(TUpPartiesController)} instead.")]
     public class TFilterUpPartyController : ApiController
     {
         private const string dataType = Constants.Models.DataType.UpParty;
@@ -30,6 +31,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'UpParties' instead.
         /// Filter authentication method.
         /// </summary>
         /// <param name="filterName">Filter authentication method by name.</param>
@@ -37,6 +39,7 @@ namespace FoxIDs.Controllers
         /// <returns>Authentication methods.</returns>
         [ProducesResponseType(typeof(HashSet<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TUpPartiesController)} instead.")]
         public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName, string filterHrdDomains)
         {
             try

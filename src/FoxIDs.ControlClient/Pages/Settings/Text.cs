@@ -80,7 +80,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralResources(await TrackService.FilterResourceNameAsync(null));
+                SetGeneralResources(await TrackService.GetResourceNamesAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -96,7 +96,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralResources(await TrackService.FilterResourceNameAsync(resourceFilterForm.Model.FilterName));
+                SetGeneralResources(await TrackService.GetResourceNamesAsync(resourceFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -111,10 +111,10 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void SetGeneralResources(IEnumerable<ResourceName> resourceNames)
+        private void SetGeneralResources(PaginationResponse<ResourceName> resourceNames)
         {
             resources.Clear();
-            foreach(var resourceName in resourceNames)
+            foreach(var resourceName in resourceNames.Data)
             {
                 resources.Add(new GeneralResourceViewModel(resourceName));
             }

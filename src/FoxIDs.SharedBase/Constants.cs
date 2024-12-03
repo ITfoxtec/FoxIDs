@@ -4,6 +4,7 @@ using ITfoxtec.Identity.Saml2.Claims;
 using System.Net.Http;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.Xml;
 
 namespace FoxIDs
 {
@@ -772,6 +773,7 @@ namespace FoxIDs
                 public const int MetadataRequestedAttributesMin = 1;
                 public const int MetadataRequestedAttributesMax = 100;
 
+                public const int XmlCanonicalizationMethod = 100;
                 public const int SignatureAlgorithmLength = 100;
                 public const int KeysMax = 10;
 
@@ -939,6 +941,12 @@ namespace FoxIDs
             public static class AuthnContextClassTypes
             {
                 public const string Mfa = "urn:foxids:mfa";
+            }
+
+            public static class XmlCanonicalizationMethod
+            {
+                public const string XmlDsigExcC14NTransformUrl = SignedXml.XmlDsigExcC14NTransformUrl;
+                public const string XmlDsigExcC14NWithCommentsTransformUrl = SignedXml.XmlDsigExcC14NWithCommentsTransformUrl;
             }
         }
 

@@ -436,7 +436,7 @@
             <FInputPassword @bind-Value="importClientKeyForm.Model.Password" For="@(() => importClientKeyForm.Model.Password)" />
             <div class="form-group active-group active">
                 <div class="drag-drop-zone input-control">
-                    <BlazorInputFile.InputFile OnChange="@(async (files) => await OnImportClientKeyFileAsync(oidcUpParty, files))" />
+                    <InputFile OnChange="@(async (e) => await OnImportClientKeyFileAsync(oidcUpParty, e))" />
                     @importClientKeyForm.Model.ClientKeyFileStatus
                 </div>
                 <label class="label-control">Certificate</label>

@@ -94,7 +94,7 @@
                                     <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" />
                                     <div class="form-group active-group active">
                                         <div class="drag-drop-zone input-control">
-                                            <BlazorInputFile.InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
+                                            <InputFile OnChange="@(async (e) => await OnCertificateFileSelectedAsync(certificate, e))" />
                                             @certificate.CertificateFileStatus
                                         </div>
                                         <label class="label-control">Certificate</label>

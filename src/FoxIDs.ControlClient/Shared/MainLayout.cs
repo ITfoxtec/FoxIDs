@@ -333,7 +333,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();                
+                selectTrackTasks = (await TrackService.GetTracksAsync(null)).Data.OrderTracks();                
             }
             catch (TokenUnavailableException)
             {
@@ -349,7 +349,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
+                selectTrackTasks = (await TrackService.GetTracksAsync(selectTrackFilterForm.Model.FilterName)).Data.OrderTracks();
             }
             catch (FoxIDsApiException aex)
             {

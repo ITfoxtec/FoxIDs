@@ -57,6 +57,9 @@ namespace FoxIDs.Client.Pages
         [Inject]
         public MyTenantService MyTenantService { get; set; }
 
+        [Inject]
+        public TrackService TrackService { get; set; }
+
         [Parameter]
         public string TenantName { get; set; }
 
@@ -77,6 +80,11 @@ namespace FoxIDs.Client.Pages
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;
             NotificationLogic.OnOpenPaymentMethodAsync += OnOpenPaymentMethodAsync;
+            if (TrackSelectedLogic.Track.Name != Constants.Routes.MasterTrackName)
+            {
+                var masterTrack = await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName);
+                await TrackSelectedLogic.TrackSelectedAsync(masterTrack);
+            }
             if (TrackSelectedLogic.IsTrackSelected)
             {
                 await DefaultLoadAsync();
@@ -110,7 +118,7 @@ namespace FoxIDs.Client.Pages
                 deleteTenantAcknowledge = false;
 
                 myTenant = await MyTenantService.GetTenantAsync();
-                await RouteBindingLogic.SetMyTenantAsync(myTenant);
+                RouteBindingLogic.SetMyTenant(myTenant);
 
                 savedCustomDomain = myTenant.CustomDomain;
                 
@@ -146,7 +154,7 @@ namespace FoxIDs.Client.Pages
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;
-                await RouteBindingLogic.SetMyTenantAsync(myTenant);
+                RouteBindingLogic.SetMyTenant(myTenant);
                 tenantWorking = false;
             }
             catch (Exception ex)

@@ -23,7 +23,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Enable usage")]
         public bool EnableUsage { get; set; }
 
-        [Display(Name = "Do payment")]
+        [Display(Name = "Do card payment")]
         public bool DoPayment { get; set; }
 
         /// <summary>

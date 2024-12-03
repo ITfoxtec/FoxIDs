@@ -135,7 +135,7 @@
                     {
                         <div class="form-group active-group active">
                             <div class="drag-drop-zone input-control">
-                                <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnClientCertificateFileSelectedAsync(oauthDownParty, files))" />
+                                <InputFile OnChange="@(async (e) => await OnClientCertificateFileSelectedAsync(oauthDownParty, e))" multiple />
                                 @oauthDownParty.ClientCertificateFileStatus
                             </div>
                             <Label For="@(() => oauthDownParty.Form.Model.Client.ClientKeys)" class="label-control" />

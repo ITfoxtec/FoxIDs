@@ -116,7 +116,7 @@ namespace FoxIDs.Controllers
                     logger.Error(exp, "Unable to update plan in tenant.");
                 }
 
-                if(!mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase))
+                if(mTenant.CustomDomain.IsNullOrEmpty() || !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase))
                 {
                     mTenant.CustomDomain = tenant.CustomDomain?.ToLower();
                     mTenant.CustomDomainVerified = false;

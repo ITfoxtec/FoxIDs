@@ -11,7 +11,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
-using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http;
@@ -97,10 +96,10 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private async Task OnSamlDownPartyEncryptionCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
+        private async Task OnSamlDownPartyEncryptionCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, InputFileChangeEventArgs e)
         {
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.EncryptionKey));
-            foreach (var file in files)
+            foreach (var file in e.GetMultipleFiles())
             {
                 if (file.Size > GeneralSamlDownPartyViewModel.CertificateMaxFileSize)
                 {
@@ -112,7 +111,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await file.Data.CopyToAsync(memoryStream);
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
 
                     try
                     {
@@ -147,14 +147,14 @@ namespace FoxIDs.Client.Pages.Components
         }
 
 
-        private async Task OnSamlDownPartyCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
+        private async Task OnSamlDownPartyCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, InputFileChangeEventArgs e)
         {
             if (generalSamlDownParty.Form.Model.Keys == null)
             {
                 generalSamlDownParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
             }
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
-            foreach (var file in files)
+            foreach (var file in e.GetMultipleFiles())
             {
                 if (file.Size > GeneralSamlDownPartyViewModel.CertificateMaxFileSize)
                 {
@@ -166,7 +166,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    await file.Data.CopyToAsync(memoryStream);
+                    using var fileStream = e.File.OpenReadStream();
+                    await fileStream.CopyToAsync(memoryStream);
 
                     try
                     {

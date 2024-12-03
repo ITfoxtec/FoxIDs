@@ -1,9 +1,6 @@
-﻿using FoxIDs.Infrastructure.Logging;
-using FoxIDs.Models.Config;
+﻿using FoxIDs.Models.Config;
 using Microsoft.ApplicationInsights;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 

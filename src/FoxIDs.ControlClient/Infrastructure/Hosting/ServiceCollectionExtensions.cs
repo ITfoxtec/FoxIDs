@@ -6,7 +6,6 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Tewr.Blazor.FileReader;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Infrastructure.Security;
 using Blazored.SessionStorage;
@@ -71,8 +70,6 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddTenantOpenidConnectPkce();
             services.AddTransient<CheckResponseMessageHandler>();
-
-            services.AddFileReaderService(options => options.UseWasmSharedBuffer = false);
 
             services.AddBlazoredToast();
 

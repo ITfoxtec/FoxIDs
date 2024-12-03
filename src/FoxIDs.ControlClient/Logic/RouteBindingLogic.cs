@@ -44,32 +44,21 @@ namespace FoxIDs.Client.Logic
 
         public bool RequestPayment { get; private set; }
 
-        public async Task SetMyTenantAsync(TenantResponse tenant)
+        public void SetMyTenant(TenantResponse tenant)
         {
             myTenant = tenant;
 
             if (!IsMasterTenant && clientSettings.EnablePayment)
             {
-                await UpdatRequestPaymentAsync(myTenant);
+                UpdatRequestPayment(myTenant);
             }
         }
 
-        private async Task UpdatRequestPaymentAsync(TenantResponse myTenant)
+        private void UpdatRequestPayment(TenantResponse myTenant)
         {
-            if (myTenant.EnableUsage && myTenant.DoPayment && !myTenant.PlanName.IsNullOrEmpty() && "free" != myTenant.PlanName && myTenant.Payment?.IsActive != true)
+            if (myTenant.DoPayment && myTenant.Payment?.IsActive != true)
             {
-                var helpersService = serviceProvider.GetService<HelpersService>();
-                var planInfoList = await helpersService.GetPlanInfoAsync();
-
-                decimal planCost = planInfoList.Where(p => p.Name == myTenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
-                if (planCost > 0)
-                {
-                    RequestPayment = true;
-                }
-                else
-                {
-                    RequestPayment = false;
-                }
+                RequestPayment = true;
             }
             else
             {
@@ -152,7 +141,7 @@ namespace FoxIDs.Client.Logic
             if (authenticationState.User.Identity.IsAuthenticated && !IsMasterTenant)
             {
                 var myTenantService = serviceProvider.GetService<MyTenantService>();
-                await SetMyTenantAsync(await myTenantService.GetTenantAsync());
+                SetMyTenant(await myTenantService.GetTenantAsync());
             }
         }
     }

@@ -9,5 +9,5 @@ Sample code:
     var certificateFileName = "some-service-provider";
     var password = "Abcd#1234";
 
-    var certificate = new X509Certificate2($"{certificateFileName}.p12", password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
+    var certificate = X509CertificateLoader.LoadPkcs12FromFile($"{certificateFileName}.p12", password, X509KeyStorageFlags.Exportable);
     File.WriteAllBytes($"{certificateFileName}.pfx", certificate.Export(X509ContentType.Pfx, password));

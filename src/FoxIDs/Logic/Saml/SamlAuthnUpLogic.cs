@@ -261,10 +261,17 @@ namespace FoxIDs.Logic
                 }
             }
 
+            logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument?.OuterXml}'.", traceType: TraceTypes.Message);
+            logger.SetScopeProperty(Constants.Logs.UpPartyStatus, saml2AuthnResponse.Status.ToString());
+            logger.ScopeTrace(() => "AuthMethod, SAML Authn response.", triggerEvent: true);
+
             SamlUpSequenceData sequenceData = null;
             try
             {
-                if (samlHttpRequest.Binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), samlHttpRequest.Binding.GetTypeName());
+                if (samlHttpRequest.Binding.RelayState.IsNullOrEmpty())
+                {
+                    throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the sequence ID and it is required. Binding: {samlHttpRequest.Binding.GetTypeName()}.{(saml2AuthnResponse.Status == Saml2StatusCodes.Success ? " IdPInitiated login is not supported." : string.Empty)}");
+                }
 
                 await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
                 sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
@@ -277,10 +284,6 @@ namespace FoxIDs.Logic
 
             try
             {
-                logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
-                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, saml2AuthnResponse.Status.ToString());
-                logger.ScopeTrace(() => "AuthMethod, SAML Authn response.", triggerEvent: true);
-
                 if (saml2AuthnResponse.Status != Saml2StatusCodes.Success)
                 {
                     throw new SamlRequestException("Unsuccessful Authn response.") { RouteBinding = RouteBinding, Status = saml2AuthnResponse.Status };
@@ -293,7 +296,15 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    var invalidCertificateException = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (invalidCertificateException != null)
+                    {
+                        throw invalidCertificateException;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 if (!(saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() > 0))

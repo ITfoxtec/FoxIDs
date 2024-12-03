@@ -17,6 +17,7 @@ namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
     [MasterScopeAuthorize]
+    [Obsolete($"Use {nameof(TTenantsController)} instead.")]
     public class TFilterTenantController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
@@ -31,6 +32,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'Tenants' instead.
         /// Filter tenant.
         /// </summary>
         /// <param name="filterName">Filter by tenant name.</param>
@@ -38,6 +40,7 @@ namespace FoxIDs.Controllers
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TTenantsController)} instead.")]
         public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName, string filterCustomDomain)
         {
             try

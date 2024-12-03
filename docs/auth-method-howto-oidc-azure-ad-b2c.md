@@ -1,4 +1,4 @@
-﻿# Connect Azure AD B2C as authentication method
+﻿# Connect Azure AD B2C with OpenID Connect
 
 FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
 

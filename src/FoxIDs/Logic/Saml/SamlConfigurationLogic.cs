@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -62,6 +63,10 @@ namespace FoxIDs.Logic
             }
             if (party != null)
             {
+                if (!party.XmlCanonicalizationMethod.IsNullOrWhiteSpace())
+                {
+                    samlConfig.XmlCanonicalizationMethod = party.XmlCanonicalizationMethod;
+                }
                 samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
                 samlConfig.SignAuthnRequest = party.SignAuthnRequest;
 
@@ -93,9 +98,11 @@ namespace FoxIDs.Logic
                             samlConfig.InvalidSignatureValidationCertificates.Add(partyCertificate);
                         }
                     }
-                    if (samlConfig.SignatureValidationCertificates.Count() <= 0)
+
+                    var invalidCertificateException = GetInvalidSignatureValidationCertificateException(samlConfig);
+                    if (invalidCertificateException != null)
                     {
-                        throw GetInvalidSignatureValidationCertificateException(samlConfig);
+                        throw invalidCertificateException;
                     }
                 }
 
@@ -128,10 +135,12 @@ namespace FoxIDs.Logic
                 var certInfo = samlConfig.InvalidSignatureValidationCertificates.Select(c => $"'{c.Subject}, Valid from {c.NotBefore.ToShortDateString()} to {c.NotAfter.ToShortDateString()}, Thumbprint: {c.Thumbprint}'");
                 return new Exception($"Invalid signature validation certificates {string.Join(", ", certInfo)}.", ex);
             }
-            else
+            else if (samlConfig.SignatureValidationCertificates.Count() <= 0)
             {
                 return new Exception($"A signature validation certificate is not configured.", ex);
             }
+
+            return null;
         }
     }
 }

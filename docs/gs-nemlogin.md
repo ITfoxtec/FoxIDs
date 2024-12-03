@@ -14,7 +14,7 @@ FoxIDs is developed in Denmark and hosted in Netherlands, ownership and data is 
 You can [get started](https://www.foxids.com/action/createtenant) for free and optionally continue to use a Free plan.
 
 ## Online test
-Test NemLog-in with the <a href="https://aspnetcoreoidcallupsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish NemLog-in` or `Danish NemLog-in TEST` for the test environment.  
+Test NemLog-in with the <a href="https://aspnetoidcsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish NemLog-in` or `Danish NemLog-in TEST` for the test environment.  
 The OpenID Connect test app call FoxIDs and FoxIDs call NemLog-in to let the user authenticate with MitID.
 
 ## NemLog-in details

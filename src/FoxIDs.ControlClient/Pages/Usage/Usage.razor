@@ -219,8 +219,11 @@
                     <button class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
                         Tenant @used.TenantName@UsagePriceText(used)
                         <br />
-                        @{ (var paid, var statusText) = @UsageInfoText(used); }
-                        <small class="@(paid ? "text-success" : string.Empty)">@statusText</small>
+                        @{ 
+                            (var sendItemsInvoice, var failed, var paid, var statusText) = @UsageInfoText(used);
+                            var textClass = sendItemsInvoice ? "text-primary" : failed ? "text-danger font-weight-bold" : paid ? "text-success" : string.Empty;
+                        }
+                        <small class="@textClass">@statusText</small>
                     </button>
 
                     <div class="btn-group" role="group">

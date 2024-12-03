@@ -143,7 +143,7 @@ namespace FoxIDs.Client.Pages.Usage
             return $"{(price > 0 ? $", price: {invoice?.Currency}{price}" : string.Empty)}";
         }
 
-        private (bool paid, string statusText) UsageInfoText(GeneralUsedViewModel generalUsed)
+        private (bool sendItemsInvoice, bool failed, bool paid, string statusText) UsageInfoText(GeneralUsedViewModel generalUsed)
         {
             var invoice = generalUsed.Invoices?.LastOrDefault();
             var invoiceSendState = invoice?.SendStatus;
@@ -187,7 +187,9 @@ namespace FoxIDs.Client.Pages.Usage
                 }
             }
 
-            return (generalUsed.PaymentStatus == UsagePaymentStatus.Paid, $"Status: {string.Join(", ", statusTest)}");
+            var sendItemsInvoice = generalUsed.HasItems && invoice?.SendStatus != UsageInvoiceSendStatus.Send;
+            var failed = invoice?.SendStatus == UsageInvoiceSendStatus.Failed || generalUsed?.PaymentStatus.PaymentApiStatusIsGenerallyFailed() == true;
+            return (sendItemsInvoice, failed, generalUsed.PaymentStatus == UsagePaymentStatus.Paid, $"Status: {string.Join(", ", statusTest)}");
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)

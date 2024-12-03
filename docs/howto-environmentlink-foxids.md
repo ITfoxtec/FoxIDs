@@ -17,7 +17,7 @@ The following describes how to connect two environments called `Environment X` a
 
 **Select in the `Environment X` environment in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select the **Authentication Methods** tab
+1. Select the **Authentication** tab
 2. Click **New authentication**
 3. Select **Show advanced**  
 4. Select **Environment Link**     

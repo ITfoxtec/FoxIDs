@@ -92,6 +92,12 @@ namespace FoxIDs.Logic
                     }
                     party.LogoutBinding.RequestBinding = GetSamlBindingTypes(singleLogoutDestination.Binding?.OriginalString);
                 }
+                else
+                {
+                    party.LogoutUrl = null;
+                    party.SingleLogoutResponseUrl = null;
+                    party.LogoutBinding = null;
+                }
 
                 if (entityDescriptor.IdPSsoDescriptor.SigningCertificates?.Count() > 0)
                 {
@@ -105,6 +111,10 @@ namespace FoxIDs.Logic
                 if (entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.HasValue)
                 {
                     party.SignAuthnRequest = entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.Value;
+                }
+                else
+                {
+                    party.SignAuthnRequest = false;
                 }
 
                 return party;

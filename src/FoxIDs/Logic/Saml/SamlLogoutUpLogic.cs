@@ -87,7 +87,16 @@ namespace FoxIDs.Logic
             }
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
-            ValidatePartyLogoutSupport(party);
+
+            try
+            {
+                ValidatePartyLogoutSupport(party);
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+                return await LogoutResponseInternalAsync(party, samlUpSequenceData);
+            }
 
             switch (party.LogoutBinding.RequestBinding)
             {
@@ -232,26 +241,18 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
-                }
-
-                if (party.DisableSingleLogout)
-                {
-                    return await LogoutResponseDownAsync(sequenceData);
-                }
-                else
-                {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
-                    if (doSingleLogout)
+                    var invalidCertificateException = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (invalidCertificateException != null)
                     {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        throw invalidCertificateException;
                     }
                     else
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
-                        return await LogoutResponseDownAsync(sequenceData);
+                        throw;
                     }
                 }
+
+                return await LogoutResponseInternalAsync(party, sequenceData);
             }
             catch (StopSequenceException)
             {
@@ -266,6 +267,27 @@ namespace FoxIDs.Logic
             {
                 logger.Error(ex);
                 return await LogoutResponseDownAsync(sequenceData, status: Saml2StatusCodes.Responder);
+            }
+        }
+
+        private async Task<IActionResult> LogoutResponseInternalAsync(SamlUpParty party, SamlUpSequenceData sequenceData)
+        {
+            if (party.DisableSingleLogout)
+            {
+                return await LogoutResponseDownAsync(sequenceData);
+            }
+            else
+            {
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
+                if (doSingleLogout)
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                }
+                else
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                    return await LogoutResponseDownAsync(sequenceData);
+                }
             }
         }
 
@@ -369,7 +391,15 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    var invalidCertificateException = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (invalidCertificateException != null)
+                    {
+                        throw invalidCertificateException;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 var sequenceData = await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData

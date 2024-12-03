@@ -296,7 +296,15 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    throw saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    var invalidCertificateException = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (invalidCertificateException != null)
+                    {
+                        throw invalidCertificateException;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 if (!(saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() > 0))

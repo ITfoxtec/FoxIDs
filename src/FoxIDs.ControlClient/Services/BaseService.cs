@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
@@ -54,10 +55,28 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
-        protected async Task<IEnumerable<T>> FilterAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null) 
+        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string paginationToken = null)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={parmValue1}{((!parmValue2.IsNullOrEmpty() && !parmName2.IsNullOrEmpty()) ? $"&{parmName2}={parmValue2}" : string.Empty)}{((!parmValue3.IsNullOrEmpty() && !parmName3.IsNullOrEmpty()) ? $"&{parmName3}={parmValue3}" : string.Empty)}");
-            return await response.ToObjectAsync<IEnumerable<T>>();
+            var parms = new List<string>();
+            if (!parmValue1.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName1}={parmValue1}");
+            }
+            if (!parmValue2.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName2}={parmValue2}");
+            }
+            if (!parmValue3.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName3}={parmValue3}");
+            }
+            if (!paginationToken.IsNullOrWhiteSpace())
+            {
+                parms.Add($"paginationToken={paginationToken}");
+            }
+
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
+            return await response.ToObjectAsync<PaginationResponse<T>>();
         }
 
         protected async Task<T> GetAsync<T>(string url)

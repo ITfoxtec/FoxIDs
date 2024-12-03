@@ -1,4 +1,4 @@
-# Connect Microsoft AD FS as authentication method
+# Connect Microsoft AD FS with SAML 2.0
 
 FoxIDs can be connected to AD FS with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
  
@@ -15,7 +15,7 @@ Recommended SAML 2.0 bindings:
 Remark; The authn request redirect binding can result in a long query string which can cause problems I some devices. Therefore post binding is preferable.
 
 > Take a look at the AD FS sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication methods` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication` tab.
 
 The following screen shot show the basic FoxIDs SAML 2.0 authentication method configuration using AD FS metadata in [FoxIDs Control Client](control.md#foxids-control-client).
 

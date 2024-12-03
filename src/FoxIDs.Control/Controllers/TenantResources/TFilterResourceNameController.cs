@@ -5,7 +5,6 @@ using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
@@ -16,6 +15,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
+    [Obsolete($"Use {nameof(TResourceNamesController)} instead.")]
     public class TFilterResourceNameController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
@@ -30,12 +30,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'ResourceNames' instead.
         /// Filter resource name or ID.
         /// </summary>
         /// <param name="filterName">Filter resource name or ID.</param>
         /// <returns>Resource name.</returns>
         [ProducesResponseType(typeof(List<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TResourceNamesController)} instead.")]
         public ActionResult<List<Api.ResourceName>> GetFilterResourceName(string filterName)
         {
             try

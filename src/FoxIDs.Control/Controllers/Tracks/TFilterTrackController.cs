@@ -15,6 +15,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
+    [Obsolete($"Use {nameof(TTracksController)} instead.")]
     public class TFilterTrackController : ApiController
     {
         private const string dataType = Constants.Models.DataType.Track;
@@ -30,12 +31,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'Tracks' instead.
         /// Filter track.
         /// </summary>
         /// <param name="filterName">Filter environment name.</param>
         /// <returns>Tracks.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Track>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TTracksController)} instead.")]
         public async Task<ActionResult<HashSet<Api.Track>>> GetFilterTrack(string filterName)
         {
             try

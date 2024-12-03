@@ -72,6 +72,13 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<string> Claims { get; set; }
 
         /// <summary>
+        /// Default.
+        /// </summary>
+        [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
+        [Display(Name = "XML canonicalization method")]
+        public string XmlCanonicalizationMethod { get; set; } = Constants.Saml.XmlCanonicalizationMethod.XmlDsigExcC14NTransformUrl;
+
+        /// <summary>
         /// Default SHA256.
         /// </summary>
         [Required]

@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
@@ -16,6 +15,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
+    [Obsolete($"Use {nameof(TUsersController)} instead.")]
     public class TFilterUserController : ApiController
     {
         private const string dataType = Constants.Models.DataType.User;
@@ -31,12 +31,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'Users' instead.
         /// Filter user.
         /// </summary>
         /// <param name="filterEmail">Filter user email.</param>
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(HashSet<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TUsersController)} instead.")]
         public async Task<ActionResult<HashSet<Api.User>>> GetFilterUser(string filterEmail)
         {
             try

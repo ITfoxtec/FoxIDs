@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Pages
         private IEnumerable<UpParty> selectUpParties;
         private PageEditForm<FilterExternalUserViewModel> externalUserFilterForm;
         private List<GeneralExternalUserViewModel> externalUsers = new List<GeneralExternalUserViewModel>();
+        private string paginationToken;
         private string usersHref;
 
         [Inject]
@@ -69,7 +70,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.FilterExternalUserAsync(null));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -86,7 +87,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await SetGeneralExternalUsersAsync(await ExternalUserService.FilterExternalUserAsync(externalUserFilterForm.Model.FilterValue));
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
@@ -101,10 +102,36 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task SetGeneralExternalUsersAsync(IEnumerable<ExternalUser> dataExternalUsers)
+        private async Task LoadMoreExternalUsersAsync()
         {
-            externalUsers.Clear();
-            foreach (var dp in dataExternalUsers)
+            try
+            {
+                await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(externalUserFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    externalUserFilterForm.SetFieldError(nameof(externalUserFilterForm.Model.FilterValue), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task SetGeneralExternalUsersAsync(PaginationResponse<ExternalUser> dataExternalUsers, bool addUsers = false)
+        {
+            if(!addUsers)
+            {
+                externalUsers.Clear();
+            }
+            foreach (var dp in dataExternalUsers.Data)
             {
                 externalUsers.Add(new GeneralExternalUserViewModel(dp));
             }
@@ -121,7 +148,7 @@ namespace FoxIDs.Client.Pages
                     }
                     else
                     {
-                        var subUps = await UpPartyService.FilterUpPartyAsync(externalUser.UpPartyName);
+                        var subUps = (await UpPartyService.GetUpPartiesAsync(externalUser.UpPartyName)).Data;
                         if(subUps.Count() > 0)
                         {
                             externalUser.UpPartyDisplayName = subUps.Where(u => u.Name == externalUser.UpPartyName).Select(u => u.DisplayName).FirstOrDefault();
@@ -129,6 +156,8 @@ namespace FoxIDs.Client.Pages
                     }
                 }
             }
+
+            paginationToken = dataExternalUsers.PaginationToken;
         }
 
         private void ShowCreateExternalUser()
@@ -205,7 +234,7 @@ namespace FoxIDs.Client.Pages
         {
             if (force || !(selectUpParties?.Count() > 0) || !filterName.IsNullOrEmpty())
             {
-                var sup = await UpPartyService.FilterUpPartyAsync(filterName);
+                var sup = (await UpPartyService.GetUpPartiesAsync(filterName)).Data;
                 selectUpParties = sup.Where(u => u.Type != PartyTypes.Login && u.Type != PartyTypes.OAuth2);
             }
         }

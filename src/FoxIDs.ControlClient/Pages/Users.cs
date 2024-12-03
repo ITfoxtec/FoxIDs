@@ -21,6 +21,7 @@ namespace FoxIDs.Client.Pages
     {
         private PageEditForm<FilterUserViewModel> userFilterForm;
         private List<GeneralUserViewModel> users = new List<GeneralUserViewModel>();
+        private string paginationToken;
         private string externalUsersHref;
 
         [Inject]
@@ -62,7 +63,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.FilterUserAsync(null));
+                SetGeneralUsers(await UserService.GetUsersAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -79,7 +80,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.FilterUserAsync(userFilterForm.Model.FilterEmail));
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail));
             }
             catch (FoxIDsApiException ex)
             {
@@ -94,13 +95,41 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralUsers(IEnumerable<User> dataUsers)
+        private async Task LoadMoreUsersAsync()
         {
-            users.Clear();
-            foreach (var dp in dataUsers)
+            try
+            {
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail, paginationToken: paginationToken), addUsers: true);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterEmail), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void SetGeneralUsers(PaginationResponse<User> dataUsers, bool addUsers = false)
+        {
+            if (!addUsers)
+            {
+                users.Clear();
+            }
+            foreach (var dp in dataUsers.Data)
             {
                 users.Add(new GeneralUserViewModel(dp));
             }
+
+            paginationToken = dataUsers.PaginationToken;
         }
 
         private void ShowCreateUser()

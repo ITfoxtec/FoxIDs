@@ -16,6 +16,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    [Obsolete($"Use {nameof(TDownPartiesController)} instead.")]
     public class TFilterDownPartyController : ApiController
     {
         private const string dataType = Constants.Models.DataType.DownParty;
@@ -33,12 +34,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Obsolete please use 'DownParties' instead.
         /// Filter application registration.
         /// </summary>
         /// <param name="filterName">Filter application registration name.</param>
         /// <returns>Application registrations.</returns>
         [ProducesResponseType(typeof(HashSet<Api.DownParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Obsolete($"Use {nameof(TDownPartiesController)} instead.")]
         public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)
         {
             await partyLogic.DeleteExporedDownParties();

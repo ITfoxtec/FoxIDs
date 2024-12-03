@@ -200,8 +200,12 @@ namespace FoxIDs.Logic
             rpInitiatedLogoutRequest.Validate();
 
             if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
-                !client.RedirectUris.Any(u => client.DisableAbsoluteUris ? rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
-                !(client.DisableAbsoluteUris ? rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(client.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true : client.PostLogoutRedirectUri?.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true))
+                !client.RedirectUris.Any(u => client.DisableAbsoluteUris ? 
+                    rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : 
+                    u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
+                !(client.DisableAbsoluteUris ?
+                    client.PostLogoutRedirectUri != null && rpInitiatedLogoutRequest.PostLogoutRedirectUri?.StartsWith(client.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true : 
+                    client.PostLogoutRedirectUri?.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase) == true))
             {
                 throw new OAuthRequestException($"Invalid post logout redirect URI '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
             }

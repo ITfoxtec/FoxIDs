@@ -72,7 +72,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralPlans(await PlanService.FilterPlanAsync(null));
+                SetGeneralPlans(await PlanService.GetPlansAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralPlans(await PlanService.FilterPlanAsync(planFilterForm.Model.FilterName));
+                SetGeneralPlans(await PlanService.GetPlansAsync(planFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -104,10 +104,10 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private void SetGeneralPlans(IEnumerable<Plan> dataPlans)
+        private void SetGeneralPlans(PaginationResponse<Plan> dataPlans)
         {
             plans.Clear();
-            foreach (var dp in dataPlans)
+            foreach (var dp in dataPlans.Data)
             {
                 plans.Add(new GeneralPlanViewModel(dp));
             }

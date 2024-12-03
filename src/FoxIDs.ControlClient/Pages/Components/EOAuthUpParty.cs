@@ -138,6 +138,11 @@ namespace FoxIDs.Client.Pages.Components
                 var oauthUpParty = generalOAuthUpParty.Form.Model.Map<OAuthUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
+                    afterMap.Authority = afterMap.Authority.Trim();
+                    if (afterMap.Authority.EndsWith(IdentityConstants.OidcDiscovery.Path))
+                    {
+                        afterMap.Authority = afterMap.Authority.Remove(afterMap.Authority.Length - IdentityConstants.OidcDiscovery.Path.Length);
+                    }
 
                     afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                 });

@@ -18,6 +18,7 @@ namespace FoxIDs.Controllers
     [RequireMasterTenant]
     [MasterScopeAuthorize]
 
+    [Obsolete($"Use {nameof(MPlansController)} instead.")]
     public class MFilterPlanController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
@@ -33,10 +34,12 @@ namespace FoxIDs.Controllers
 
 
         /// <summary>
+        /// Obsolete please use 'Plans' instead.
         /// Filter plan.
         /// </summary>
         /// <param name="filterName">Filter plan name.</param>
         /// <returns>Plans.</returns>
+        [Obsolete($"Use {nameof(MPlansController)} instead.")]
         [ProducesResponseType(typeof(HashSet<Api.Plan>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.Plan>>> GetFilterPlan(string filterName)

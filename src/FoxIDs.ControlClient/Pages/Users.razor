@@ -121,3 +121,11 @@
         </li>
     }
 </ul>
+@if (paginationToken != null)
+{
+    <div class="pl-3 pt-3">
+        <button class="btn btn-secondary" @onclick="LoadMoreUsersAsync">
+            Load more
+        </button>
+    </div>
+}

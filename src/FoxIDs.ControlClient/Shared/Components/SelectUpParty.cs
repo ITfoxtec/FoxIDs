@@ -76,7 +76,7 @@ namespace FoxIDs.Client.Shared.Components
         {
             try
             {
-                var ups = await UpPartyService.FilterUpPartyAsync(filterName);
+                var ups = (await UpPartyService.GetUpPartiesAsync(filterName)).Data;
                 if (upParties?.Count() > 0)
                 {
                     foreach(var up in ups)

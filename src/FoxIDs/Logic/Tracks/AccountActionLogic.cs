@@ -59,9 +59,18 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
-                Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
+                Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{AddTextToDisplayName(RouteBinding.DisplayName)} - "],
+                Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {AddTextToDisplayName(RouteBinding.DisplayName)} ", code]
             };
+        }
+
+        private string AddTextToDisplayName(string displayName)
+        {
+            if (Constants.Routes.MasterTenantName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+            {
+                return $"FoxIDs {displayName}";
+            }
+            return displayName;
         }
 
         public Task<ConfirmationCodeSendStatus> SendResetPasswordCodeAsync(string email, bool forceNewCode)

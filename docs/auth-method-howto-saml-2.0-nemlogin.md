@@ -93,7 +93,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
  12. Set Login hint in Authn request in Subject NameID to Disabled
- 13. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform. The OCES3 root certificate is NOT trusted in Azure  
+ 13. In production only! optionally the Certificate validation mode to `Chain trust` if the OCES3 root certificate is trusted on your platform  
      Set the Certificate revocation mode to `Online`
  14. Select to include the encryption certificate in metadata
  15. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
@@ -176,10 +176,7 @@ The SAML 2.0 authentication method can now be used as an authentication method f
 NemLog-in requires requests and responses to be logged including the signature proof and stored for half a year (180 days). It is also required to log which identity has login and logout of which session, at what time and the IP address.  
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
-> With an Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
-> If you are using a Free or Pro plan, you can send logs to your own Application Insights with a [log stream](logging.md#log-stream) and thereby save the logs for 180 days.
-
-It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
+> With a Pro and Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
 
 The log level NemLog-in require is configured in the FoxIDs log settings:
 

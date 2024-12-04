@@ -46,7 +46,7 @@ namespace FoxIDs.Infrastructure.Filters
             protected virtual void SetHeaders(HttpContext httpContext)
             {
                 httpContext.Response.SetHeader("X-Content-Type-Options", "nosniff");
-                httpContext.Response.SetHeader("Referrer-Policy", "no-referrer");
+                httpContext.Response.SetHeader("Referrer-Policy", "strict-origin");
                 httpContext.Response.SetHeader("X-XSS-Protection", "1; mode=block");
 
                 if (isHtmlContent)

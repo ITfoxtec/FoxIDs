@@ -4,14 +4,15 @@ FoxIDs default log errors and events including the time and the client IP addres
 
 The two supported log options `Settings__Options:Log` is:
 
-- `Stdout` which logs to the console output. This log options are used for Deploy / Kubernetes (k8s) deployment.
-- `ApplicationInsights` which sends logs to [Application Insights](#application-insights) and the logs can subsequently be view in FoxIDs Control.
+- `Stdout` which logs to the console output. This log options are used for small Docker / Kubernetes (k8s) deployment.
+- `OpenSearchAndStdoutErrors` which logs to OpenSearch and send errors logs to the console output. The OpenSearch logs can subsequently be view in FoxIDs Control. This log options are used for Kubernetes (k8s) deployment.
+- `ApplicationInsights` which sends logs to Azure Application Insights and the logs can subsequently be view in FoxIDs Control. This log options are used for Azure deployment.
 
 The [log settings](#log-settings) and [log stream](#log-stream) are available for both log options.
 
-## Application Insights
+## Logs in FoxIDs Control
 
-The logs are sent to Application Insights which is part of the FoxIDs cloud deployment.
+The logs can be viewed in FoxIDs Control if you use the log option `OpenSearchAndStdoutErrors` or `ApplicationInsights`.
 
 ### Usage
 
@@ -46,7 +47,7 @@ The log level can be configured per FoxIDs environment:
 
 It can be configured which logs should be logged to an external repository with a log stream.
 
-Add external Application Insights with a log stream and select which logs should be sent.
+Add external Azure Application Insights with a log stream and select which logs should be sent.
 
 ![Log stream - Application Insights](images/configure-log-stream-appinsight.png)
 

@@ -209,6 +209,21 @@
                             {
                                 <button type="button" class="btn btn-link" @onclick="@(() => used.DeleteAcknowledge = true)">Delete</button>
                             }
+                            @if (ShowDoInvoicingButton(used))
+                            {
+                                @if (!used.InvoicingActionButtonDisabled)
+                                {
+                                    <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await SaveAndDoInvoicingAsync(used))">
+                                        Do invoicing
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-outline-dark" disabled="disabled">
+                                        Do invoicing
+                                    </button>
+                                }
+                            }
                             <button type="submit" class="btn btn-primary">@(used.CreateMode ? "Create" : "Update")</button>
                             <button type="button" class="btn btn-secondary" @onclick="@(() => UsedCancel(used))">@(used.CreateMode ? "Cancel" : "Close")</button>
                         </div>

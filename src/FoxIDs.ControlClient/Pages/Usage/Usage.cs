@@ -187,6 +187,11 @@ namespace FoxIDs.Client.Pages.Usage
                 }
             }
 
+            if(statusTest.Count() <= 0)
+            {
+                statusTest.Add("registered");
+            }
+
             var sendItemsInvoice = generalUsed.HasItems && invoice?.SendStatus != UsageInvoiceSendStatus.Send;
             var failed = invoice?.SendStatus == UsageInvoiceSendStatus.Failed || generalUsed?.PaymentStatus.PaymentApiStatusIsGenerallyFailed() == true;
             return (sendItemsInvoice, failed, generalUsed.PaymentStatus == UsagePaymentStatus.Paid, $"Status: {string.Join(", ", statusTest)}");
@@ -397,6 +402,26 @@ namespace FoxIDs.Client.Pages.Usage
             catch (Exception ex)
             {
                 generalUsed.Form.SetError(ex.Message);
+            }
+        }
+
+        private async Task SaveAndDoInvoicingAsync(GeneralUsedViewModel generalUsed)
+        {
+            try
+            {
+                (var isValid, var error) = await generalUsed.Form.Submit();
+                if (isValid)
+                {
+                    await DoInvoicingAsync(generalUsed);
+                }
+                else if (!error.IsNullOrWhiteSpace())
+                {
+                    toastService.ShowError(error);
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
         }
 

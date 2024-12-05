@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                 LoginEmailHint = loginRequest.EmailHint
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
@@ -194,18 +194,7 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            else if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            return binding.ToSamlActionResult();
         }
 
         private SamlUpPartyProfile GetProfile(SamlUpParty party, SamlUpSequenceData samlUpSequenceData)

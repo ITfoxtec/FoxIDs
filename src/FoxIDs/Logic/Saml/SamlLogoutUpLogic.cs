@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -179,18 +179,7 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            else if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            return binding.ToSamlActionResult();
         }
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
@@ -413,7 +402,7 @@ namespace FoxIDs.Logic
 
                 if (samlHttpRequest.Binding is Saml2PostBinding)
                 {
-                    return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
                 }
                 else
                 {
@@ -519,18 +508,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            return binding.ToSamlActionResult();
         }
     }
 }

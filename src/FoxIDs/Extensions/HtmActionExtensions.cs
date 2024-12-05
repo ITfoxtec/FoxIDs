@@ -1,7 +1,7 @@
 ﻿using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FoxIDs
 {
@@ -10,38 +10,36 @@ namespace FoxIDs
     /// </summary>
     public static class HtmActionExtensions
     {
-        private const string defaultTitle = "FoxIDs";
-
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a HTML Post ContentResult.
+        /// Converts URL and Dictionary&lt;string, string&gt; to a HTML Post ContentResult.
         /// </summary>
-        public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url, string title)
+        public static ContentResult ToHtmlPostContentResult(this string url, Dictionary<string, string> items)
         {
-            return items.ToHtmlPostPage(url, title: title ?? defaultTitle).ToContentResultAsync();
+            return url.ToHtmlPostPage(items).ToContentResult();
         }
 
         /// <summary>
-        /// Converts a URL to a redirect ContentResult.
+        /// Converts a URL to a RedirectResult.
         /// </summary>
-        public static ContentResult ToRedirectResult(this string url, string title)
+        public static IActionResult ToRedirectResult(this string url)
         {
-            return url.HtmRedirectActionPage(title: title ?? defaultTitle).ToContentResult();
+            return new RedirectResult(url);
         }
 
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a redirect ContentResult.
+        /// Converts URL and Dictionary&lt;string, string&gt; to a RedirectResult.
         /// </summary>
-        public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url, string title)
+        public static IActionResult ToRedirectResult(this string url, Dictionary<string, string> items)
         {
-            return items.ToHtmlGetPage(url, title: title ?? defaultTitle).ToContentResultAsync();
+            return new RedirectResult(QueryHelpers.AddQueryString(url, items));
         }
 
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a fragment ContentResult.
+        /// Converts URL and Dictionary&lt;string, string&gt; to a RedirectResult.
         /// </summary>
-        public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url, string title)
+        public static IActionResult ToFragmentResult(this string url, Dictionary<string, string> items)
         {
-            return items.ToHtmlFragmentPage(url, title: title ?? defaultTitle).ToContentResultAsync();
+            return new RedirectResult(url.AddFragment(items));
         }
 
         /// <summary>
@@ -54,14 +52,6 @@ namespace FoxIDs
                 ContentType = "text/html",
                 Content = html,
             };
-        }
-
-        /// <summary>
-        /// HTML to ContentResult.
-        /// </summary>
-        public static Task<ContentResult> ToContentResultAsync(this string html)
-        {
-            return Task.FromResult(html.ToContentResult());
         }
     }
 }

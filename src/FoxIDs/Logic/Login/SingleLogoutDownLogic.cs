@@ -125,15 +125,15 @@ namespace FoxIDs.Logic
             switch (upPartyType)
             {
                 case PartyTypes.Login:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Oidc:
                     var oidcUpParty = await tenantDataRepository.GetAsync<UpParty>(partyId);
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult();
                 case PartyTypes.Saml2:
                     var samlUpParty = await tenantDataRepository.GetAsync<UpParty>(partyId);
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult();
                 case PartyTypes.TrackLink:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
 
                 default:
                     throw new NotSupportedException();

@@ -97,3 +97,5 @@ And user's is added with their known email as the redemption claim value.
 ![External user redemption](images/user-external-redemption.png)
 
 In this example the user is connected to Google Workspace with an OpenID Connect authentication method and a `app_user_id` claim is added with an internal user ID.
+
+> You can reset a redeemed user by deleting the link claim value and, if necessary, also changing the redemption claim value. The external user is then redeemed again next time the user logs in.

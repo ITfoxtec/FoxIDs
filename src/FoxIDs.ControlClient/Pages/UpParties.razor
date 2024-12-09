@@ -62,7 +62,7 @@
                         }
                         else
                         {
-                            <button class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
+                            <button type="button" class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
                                 @UpPartyInfoText(upParty)
                             </button>
                             @if (upParty.Type != PartyTypes.OAuth2)
@@ -86,7 +86,7 @@
     @if (paginationToken != null)
     {
         <div class="pl-3 pt-3">
-            <button class="btn btn-secondary" @onclick="LoadMorePartiesAsync">
+            <button type="button" class="btn btn-secondary" @onclick="LoadMorePartiesAsync">
                 Load more
             </button>
         </div>
@@ -211,7 +211,7 @@
                                                                 Your tenant access is configured in the master environment.
                                                             </div>
                                                         }
-                                                        <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrack(track))">
+                                                        <button type="button" class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrack(track))">
                                                             @if (track.DisplayName.IsNullOrWhiteSpace())
                                                             {
                                                                 @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
@@ -243,7 +243,7 @@
                                 {
                                     <FFieldText Class="pb-0" @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName)" />
                                 }
-                                <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectTrack(newUpPartyModal.EnvironmentLinkForm.Model))">Link to a different environment</button>
+                                <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectTrack(newUpPartyModal.EnvironmentLinkForm.Model))">Link to a different environment</button>
                             }
                         </div>
                     }

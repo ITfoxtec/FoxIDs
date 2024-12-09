@@ -280,7 +280,7 @@ namespace FoxIDs.Client.Pages
             {
                 if(generalCertificate.Form.Model.Key == null)
                 {
-                    throw new ArgumentNullException("Model.Key");
+                    throw new Exception("Please add the certificate.");
                 }
 
                 _ = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
@@ -300,8 +300,12 @@ namespace FoxIDs.Client.Pages
                 }
                 else
                 {
-                    throw;
+                    generalCertificate.Form.SetError(ex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                generalCertificate.Form.SetError(ex.Message);
             }
         }
 

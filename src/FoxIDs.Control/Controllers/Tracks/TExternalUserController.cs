@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure.Security;
 using System;
+using System.Linq;
 using FoxIDs.Logic;
 using ITfoxtec.Identity;
 
@@ -41,15 +42,25 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
-                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)));
+                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)), required: !userRequest.LinkClaimValue.IsNullOrWhiteSpace());
+                if (mExternalUser == null)
+                {
+                    var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                    (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
+                    mExternalUser = mExternalUsers?.FirstOrDefault();
+                    if (mExternalUser == null)
+                    {
+                        throw new FoxIDsDataException() { StatusCode = DataStatusCode.NotFound };
+                    }
+                }
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
-                    return NotFound(typeof(Api.ExternalUser).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.ExternalUser).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUser).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
                 }
                 throw;
             }
@@ -80,8 +91,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
-                    return Conflict(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
+                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
+                    return Conflict(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
                 }
                 throw;
             }
@@ -103,7 +114,15 @@ namespace FoxIDs.Controllers
                 var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)));
 
                 mExternalUser.LinkClaimValue = userRequest.UpdateLinkClaimValue;
+                if(mExternalUser.LinkClaimValue.IsNullOrWhiteSpace())
+                {
+                    mExternalUser.LinkClaimValue = null;
+                }
                 mExternalUser.RedemptionClaimValue = userRequest.UpdateRedemptionClaimValue;
+                if (mExternalUser.RedemptionClaimValue.IsNullOrWhiteSpace())
+                {
+                    mExternalUser.RedemptionClaimValue = null;
+                }
                 mExternalUser.DisableAccount = userRequest.DisableAccount;
                 var tempMExternalUser = mapper.Map<ExternalUser>(userRequest);
                 mExternalUser.Claims = tempMExternalUser.Claims;
@@ -127,8 +146,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
-                    return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
                 }
                 throw;
             }
@@ -152,8 +171,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}'.");
-                    return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{userRequest.LinkClaimValue}");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
+                    return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
                 }
                 throw;
             }

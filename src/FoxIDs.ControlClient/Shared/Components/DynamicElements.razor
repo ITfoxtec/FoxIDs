@@ -82,19 +82,19 @@
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
                 @if (IncludeEmailElement && !Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any())
                 {
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Email))">Email (@JwtClaimTypes.Email claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Email))">Email (@JwtClaimTypes.Email claim)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any())
                 {
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (@JwtClaimTypes.Name claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (@JwtClaimTypes.Name claim)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any())
                 {
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (@JwtClaimTypes.GivenName claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (@JwtClaimTypes.GivenName claim)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any())
                 {
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (@JwtClaimTypes.FamilyName claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (@JwtClaimTypes.FamilyName claim)</button>
                 }
             </div>
         </div>

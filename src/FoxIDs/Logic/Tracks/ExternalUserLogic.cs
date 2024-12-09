@@ -51,12 +51,14 @@ namespace FoxIDs.Logic
                     if (!redemptionClaimValue.IsNullOrWhiteSpace())
                     {
                         externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await redemptionClaimValue.HashIdStringAsync()), required: false);
-
-                        // Change to use a link claim type instead of redemption claim type.
-                        await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
-                        externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
-                        externalUser.LinkClaimValue = linkClaimValue;
-                        await tenantDataRepository.CreateAsync(externalUser);
+                        if (externalUser != null)
+                        {
+                            // Change to use a link claim type instead of redemption claim type.
+                            await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
+                            externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
+                            externalUser.LinkClaimValue = linkClaimValue;
+                            await tenantDataRepository.CreateAsync(externalUser);
+                        }
                     }
                     else
                     {

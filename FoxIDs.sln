@@ -278,7 +278,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateTool", "src\FoxIDs.ResourceTranslateTool\FoxIDs.ResourceTranslateTool.csproj", "{B63EC694-505A-4730-92B7-6827B8E61A6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateTool", "tools\FoxIDs.ResourceTranslateTool\FoxIDs.ResourceTranslateTool.csproj", "{B63EC694-505A-4730-92B7-6827B8E61A6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{93A3AFF1-8A33-4CA6-8F25-EECD477D73D1}"
 	ProjectSection(SolutionItems) = preProject

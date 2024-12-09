@@ -44,8 +44,11 @@
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
                         {
-                            <div class="info-text">The external user is linked with a claim type (e.g., 'sub' or 'email'). Add a unique claim value for this user.</div>
-                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" Focus="true" />
+                            <div class="info-text">The external user can be redeemed by a redemption claim type (e.g. <code>email</code>) and the user are then automatically linked with the link claim type. You should know the redemption claim value in advanced.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+
+                            <div class="info-text">The external user are linked with the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can add the value if you know it.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
 
                             <ValidationMessage For="@(() => externalUser.Form.Model.UpPartyName)" />
                             <div class="pt-2">                                
@@ -95,7 +98,10 @@
                         }
                         else
                         {
-                            <FFieldText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
+                            <div class="info-text">You can change the redemption claim value, but it will not have effect unless the link claim value is empty.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
+
                             @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())
                             {
                                 <FFieldText @bind-Value="externalUser.Form.Model.UpPartyDisplayName" For="@(() => externalUser.Form.Model.UpPartyDisplayName)" />
@@ -158,7 +164,7 @@
             else
             {
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @externalUser.LinkClaimValue (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                    @(externalUser.LinkClaimValue ?? externalUser.RedemptionClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
                 </button>
             }
         </li>

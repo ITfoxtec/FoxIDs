@@ -47,7 +47,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var responseQuery = GetResponseQuery(navigationManager.Uri);
-                if (responseQuery.Count() > 0)
+                if (responseQuery?.Count() > 0)
                 {
                     var authenticationResponse = responseQuery.ToObject<AuthenticationResponse>();
                     authenticationResponse.Validate();
@@ -86,7 +86,7 @@ namespace FoxIDs.Client.Pages
             var rUri = new Uri(responseUrl);
             if (rUri.Query.IsNullOrWhiteSpace() && rUri.Fragment.IsNullOrWhiteSpace())
             {
-                throw new SecurityException("Invalid response URL.");
+                return null;
             }
             return QueryHelpers.ParseQuery(!rUri.Query.IsNullOrWhiteSpace() ? rUri.Query.TrimStart('?') : rUri.Fragment.TrimStart('#')).ToDictionary();
         }

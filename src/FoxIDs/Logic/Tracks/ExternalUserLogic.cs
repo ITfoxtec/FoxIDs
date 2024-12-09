@@ -33,26 +33,44 @@ namespace FoxIDs.Logic
 
         public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction) where TProfile : UpPartyProfile
         {
-            if (string.IsNullOrWhiteSpace(party.LinkExternalUser?.LinkClaimType))
+            if (party.LinkExternalUser == null || (party.LinkExternalUser.LinkClaimType.IsNullOrWhiteSpace() && party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace()))
             {
                 return (null, null);
             }
 
-            var linkClaimType = party.LinkExternalUser.LinkClaimType;
-            if (party.Type == PartyTypes.Saml2)
-            {
-                var jwtLinkClaimTypes = claimsDownLogic.FromSamlToJwtInfoClaimType(linkClaimType);
-                if (jwtLinkClaimTypes.Count() > 0)
-                {
-                    linkClaimType = jwtLinkClaimTypes.First();
-                }
-            }
-
-            var linkClaimValue = GetLinkClaim(linkClaimType, claims);
+            var linkClaimValue = GetLinkClaim(GetJwtClaimType(party, party.LinkExternalUser.LinkClaimType), claims);
             logger.ScopeTrace(() => $"Validating external user, link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
             if (!linkClaimValue.IsNullOrWhiteSpace())
             {
                 var externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync()), required: false);
+
+                if (externalUser == null && !party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace())
+                {
+                    var redemptionClaimValue = GetLinkClaim(GetJwtClaimType(party, party.LinkExternalUser.RedemptionClaimType), claims);
+                    logger.ScopeTrace(() => $"Validating external user, redemption claim type '{party.LinkExternalUser.RedemptionClaimType}' and value '{redemptionClaimValue}', Route '{RouteBinding?.Route}'.");
+                    if (!redemptionClaimValue.IsNullOrWhiteSpace())
+                    {
+                        externalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await redemptionClaimValue.HashIdStringAsync()), required: false);
+
+                        // Change to use a link claim type instead of redemption claim type.
+                        await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
+                        externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
+                        externalUser.LinkClaimValue = linkClaimValue;
+                        await tenantDataRepository.CreateAsync(externalUser);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            throw new EndpointException($"External user, redemption claim value is empty for link claim type '{party.LinkExternalUser.RedemptionClaimType}'.") { RouteBinding = RouteBinding };
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Warning(ex);
+                        }
+                    }
+                }
+
                 if (externalUser != null)
                 {
                     if (!externalUser.DisableAccount)
@@ -80,7 +98,7 @@ namespace FoxIDs.Logic
 
                 if (party.LinkExternalUser.RequireUser)
                 {
-                    requireUserExceptionAction($"Require external user for link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}'.");
+                    requireUserExceptionAction($"Require external user for link claim type '{party.LinkExternalUser.LinkClaimType}' and value '{linkClaimValue}'{(party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace() ? string.Empty : $" or redemption claim type '{party.LinkExternalUser.RedemptionClaimType}'")}.");
                 }
             }
             else
@@ -96,6 +114,19 @@ namespace FoxIDs.Logic
             }
 
             return (null, null);
+        }
+
+        private string GetJwtClaimType<TProfile>(UpPartyWithExternalUser<TProfile> party, string claimType) where TProfile : UpPartyProfile
+        {
+            if (party.Type == PartyTypes.Saml2)
+            {
+                var jwtLinkClaimTypes = claimsDownLogic.FromSamlToJwtInfoClaimType(claimType);
+                if (jwtLinkClaimTypes.Count() > 0)
+                {
+                    return jwtLinkClaimTypes.First();
+                }
+            }
+            return claimType;
         }
 
         public async Task<IEnumerable<Claim>> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile

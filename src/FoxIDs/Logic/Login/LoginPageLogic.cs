@@ -81,21 +81,21 @@ namespace FoxIDs.Logic
             if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.EmailVerified)
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
                 if (!user.EmailVerified)
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
                 }
 
                 if (RegisterTwoFactor(user))
                 {
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
                 }
                 else
                 {
@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
                     }
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
                 }
             }
             else

@@ -46,11 +46,13 @@ namespace FoxIDs.Controllers
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mExternalUsers, _) = filterValue.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 
-                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        (u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase) || u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)));
+                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) &&
+                        ((u.LinkClaimValue != null && u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) ||
+                        (u.RedemptionClaimValue != null && u.RedemptionClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) ||
+                        u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)));
 
                 var aExternalUsers = new HashSet<Api.ExternalUser>(mExternalUsers.Count());
-                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue))
+                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue ?? t.RedemptionClaimValue))
                 {
                     aExternalUsers.Add(mapper.Map<Api.ExternalUser>(mUser));
                 }

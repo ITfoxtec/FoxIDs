@@ -252,7 +252,7 @@ namespace FoxIDs.Controllers
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
                     }
                     catch (InvalidRecoveryCodeException rcex)
                     {

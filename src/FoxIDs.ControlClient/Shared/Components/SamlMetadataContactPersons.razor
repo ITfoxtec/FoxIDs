@@ -72,11 +72,11 @@
             <span class="oi oi-plus" aria-hidden="true"></span> Add contact person
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Technical))">Technical</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Support))">Support</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Administrative))">Administrative</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Billing))">Billing</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Other))">Other</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Technical))">Technical</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Support))">Support</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Administrative))">Administrative</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Billing))">Billing</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Other))">Other</button>
         </div>
     </div>
 </div>

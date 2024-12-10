@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
                 selectedUpParties = profile.SelectedUpParties;
             }
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthRequest, includeKeySequence: true).ToRedirectResult();
         }
 
         private TrackLinkUpPartyProfile GetProfile(TrackLinkUpParty party, string profileName)

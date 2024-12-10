@@ -10,7 +10,7 @@
                     @item.Effect
                 </div>
                 <div>
-                    <button class="btn btn-link" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                    <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
                 </div>
             </div>
             <Label For="@For" class="label-control" />
@@ -22,7 +22,7 @@
                     @item.Effect
                 </div>
                 <div>
-                    <button class="btn btn-link" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                    <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
                 </div>
             </div>
         }

@@ -45,14 +45,16 @@ namespace FoxIDs.Controllers
                 (var mExternalUsers, var nextPaginationToken) = filterValue.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 
                     await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        (u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase) || u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
+                        ((u.LinkClaimValue != null && u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) || 
+                        (u.RedemptionClaimValue != null && u.RedemptionClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) || 
+                        u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
 
                 var response = new Api.PaginationResponse<Api.ExternalUser>
                 {
                     Data = new HashSet<Api.ExternalUser>(mExternalUsers.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue))
+                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue ?? t.RedemptionClaimValue))
                 {
                     response.Data.Add(mapper.Map<Api.ExternalUser>(mUser));
                 }

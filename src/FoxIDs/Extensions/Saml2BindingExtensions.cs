@@ -1,37 +1,26 @@
-﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2;
+﻿using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.MvcCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 
 namespace FoxIDs
 {
     public static class Saml2BindingExtensions
     {
-        public static Task<ContentResult> ToActionFormResultAsync(this Saml2RedirectBinding binding)
+        public static IActionResult ToSamlActionResult(this Saml2Binding binding)
         {
-            var urlSplit = binding.RedirectLocation.OriginalString.Split('?');
-            if(urlSplit?.Count() != 2)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                throw new InvalidSaml2BindingException($"Invalid Saml2RedirectBinding URL '{binding.RedirectLocation.OriginalString}'.");
+                return saml2RedirectBinding.ToActionResult();
             }
-            var nameValueCollection = QueryHelpers.ParseQuery(urlSplit[1]).ToDictionary();
-
-            return Task.FromResult(new ContentResult
+            else if (binding is Saml2PostBinding saml2PostBinding)
             {
-                ContentType = "text/html",
-                Content = nameValueCollection.ToHtmlGetPage(urlSplit[0]),
-            });
-        }
-
-        public static Task<ContentResult> ToActionFormResultAsync(this Saml2PostBinding binding)
-        {
-            return Task.FromResult(new ContentResult
+                return saml2PostBinding.ToActionResult();
+            }
+            else
             {
-                ContentType = "text/html",
-                Content = binding.PostContent,
-            });
+                throw new NotSupportedException();
+            }
         }
     }
 }

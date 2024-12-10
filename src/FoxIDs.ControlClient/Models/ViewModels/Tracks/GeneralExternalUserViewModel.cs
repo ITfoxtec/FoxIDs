@@ -12,6 +12,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             UpPartyName = externalUser.UpPartyName;
             LinkClaimValue = externalUser.LinkClaimValue;
+            RedemptionClaimValue = externalUser.RedemptionClaimValue;
         }
 
         public string UpPartyDisplayName { get; set; }

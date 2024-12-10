@@ -24,14 +24,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
+        private readonly UsageInvoicingLogic usageInvoicingLogic;
 
-        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
+        public TFilterUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
-            this.usageMolliePaymentLogic = usageMolliePaymentLogic;
+            this.usageInvoicingLogic = usageInvoicingLogic;
         }
 
         /// <summary>
@@ -63,10 +63,8 @@ namespace FoxIDs.Controllers
                 var aUsedList = new HashSet<Api.UsedBase>(mUsedList.Count());
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))
                 {
-                    if(mUsed.PaymentStatus == UsagePaymentStatus.Open || mUsed.PaymentStatus == UsagePaymentStatus.Pending || mUsed.PaymentStatus == UsagePaymentStatus.Authorized)
-                    {
-                        await usageMolliePaymentLogic.UpdatePaymentAsync(mUsed);
-                    }
+                    await usageInvoicingLogic.UpdatePaymentAndSendInvoiceAsync(mUsed);
+
                     var aUsed = mapper.Map<Api.UsedBase>(mUsed);
                     var mLastInvoice = mUsed.Invoices?.LastOrDefault();
                     if(mLastInvoice != null)

@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,6 +20,11 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [Display(Name = "Link claim")]
         public string LinkClaimType { get; set; }
+
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [Display(Name = "Redemption claim")]
+        public string RedemptionClaimType { get; set; }
 
         [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
@@ -44,7 +48,7 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (AutoCreateUser && RequireUser)
             {
-                results.Add(new ValidationResult($"Both the {nameof(AutoCreateUser)} and the {nameof(RequireUser)} can not be enabled at the same time.", new[] { nameof(AutoCreateUser), nameof(RequireUser) }));
+                results.Add(new ValidationResult($"Both the {nameof(AutoCreateUser)} and the {nameof(RequireUser)} can not be enabled at the same time.", [nameof(AutoCreateUser), nameof(RequireUser)]));
             }
             return results;
         }

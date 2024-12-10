@@ -2,10 +2,10 @@
 
 <AuthorizeView>
     <Authorized>
-        <button class="dropdown-item btn btn-link" @onclick="LogoutAsync">Logout</button>
+        <button type="button" class="dropdown-item btn btn-link" @onclick="LogoutAsync">Logout</button>
     </Authorized>
     <NotAuthorized>
-        <button class="dropdown-item btn btn-link" @onclick="LoginAsync">Login</button>
+        <button type="button" class="dropdown-item btn btn-link" @onclick="LoginAsync">Login</button>
     </NotAuthorized>
 </AuthorizeView>
 

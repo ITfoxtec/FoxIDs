@@ -44,8 +44,11 @@
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
                         {
-                            <div class="info-text">The external user is linked with a claim type (e.g., 'sub' or 'email'). Add a unique claim value for this user.</div>
-                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" Focus="true" />
+                            <div class="info-text">The external user can be redeemed by a redemption claim type (e.g. <code>email</code>) and the user are then automatically linked with the link claim type. You should know the redemption claim value in advanced.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+
+                            <div class="info-text">The external user are linked with the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can add the value if you know it.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
 
                             <ValidationMessage For="@(() => externalUser.Form.Model.UpPartyName)" />
                             <div class="pt-2">                                
@@ -66,7 +69,7 @@
                                                 {
                                                     @foreach (var upParty in selectUpParties)
                                                     {
-                                                        <button class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
+                                                        <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
                                                             @(upParty.DisplayName ?? upParty.Name)
                                                         </button>
                                                     }
@@ -89,13 +92,16 @@
                                     {
                                         <FFieldText Class="pb-0" @bind-Value="externalUser.Form.Model.UpPartyName" For="@(() => externalUser.Form.Model.UpPartyName)" />
                                     }
-                                    <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectUpParty(externalUser))">Link to a different authentication method</button>
+                                    <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectUpParty(externalUser))">Link to a different authentication method</button>
                                 }
                             </div>
                         }
                         else
                         {
-                            <FFieldText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
+                            <div class="info-text">You can change the redemption claim value, but it will not have effect unless the link claim value is empty.</div>
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+                            <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
+
                             @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())
                             {
                                 <FFieldText @bind-Value="externalUser.Form.Model.UpPartyDisplayName" For="@(() => externalUser.Form.Model.UpPartyDisplayName)" />
@@ -157,8 +163,8 @@
             }
             else
             {
-                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @externalUser.LinkClaimValue (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
+                    @(!externalUser.LinkClaimValue.IsNullOrWhiteSpace() ? externalUser.LinkClaimValue : externalUser.RedemptionClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
                 </button>
             }
         </li>
@@ -167,7 +173,7 @@
 @if (paginationToken != null)
 {
     <div class="pl-3 pt-3">
-        <button class="btn btn-secondary" @onclick="LoadMoreExternalUsersAsync">
+        <button type="button" class="btn btn-secondary" @onclick="LoadMoreExternalUsersAsync">
             Load more
         </button>
     </div>

@@ -97,7 +97,7 @@ The administrator role `foxids:tenant.admin` grants access to all data in a tena
 #### Tenant access rights
 The tenant access rights is at the same time both scopes and roles.
 
-> If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope. The same goes for roles which has to be defined on the user or the calling client.
+> If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope.
 
 The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
 

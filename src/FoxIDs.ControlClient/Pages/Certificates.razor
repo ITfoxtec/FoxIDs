@@ -155,7 +155,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-link text-left p-0 btn-wrap" @onclick="@(() => ShowUpdateCertificate(certificate))">
+                                <button type="button" class="btn btn-link text-left p-0 btn-wrap" @onclick="@(() => ShowUpdateCertificate(certificate))">
                                     <strong>@certificate.Subject</strong>
                                 </button><br />
                                 <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />

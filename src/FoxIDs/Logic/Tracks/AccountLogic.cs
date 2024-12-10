@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
+        public override async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
         {
             email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Change password user '{email}', Route '{RouteBinding?.Route}'.");
@@ -108,24 +108,6 @@ namespace FoxIDs.Logic
             {
                 throw new InvalidPasswordException($"Current password invalid, user '{email}'.");
             }
-        }
-
-        public async Task SetPasswordUser(User user, string newPassword)
-        {
-            logger.ScopeTrace(() => $"Set password user '{user.Email}', Route '{RouteBinding?.Route}'.");
-
-            if (user.DisableAccount)
-            {
-                throw new UserNotExistsException($"User '{user.Email}' is disabled, trying to set password.");
-            }
-
-            await ValidatePasswordPolicy(user.Email, newPassword);
-
-            await secretHashLogic.AddSecretHashAsync(user, newPassword);
-            user.ChangePassword = false;
-            await tenantDataRepository.SaveAsync(user);
-
-            logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
         }
     }
 }

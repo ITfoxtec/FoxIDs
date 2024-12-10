@@ -1,6 +1,7 @@
 ﻿using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,21 +16,44 @@ namespace FoxIDs.Infrastructure.Security
         {
             if (context.User != null && context.Resource is HttpContext httpContext)
             {
-                var executingEnpoint = httpContext.GetEndpoint();
-                var scopeAuthorizeAttribute = executingEnpoint.Metadata.OfType<Tsc>().FirstOrDefault();
-                if (scopeAuthorizeAttribute != null)
+                var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                try
                 {
-                    var userScopes = context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Scope, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault().ToSpaceList();
-                    var userRoles = context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Role, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).ToList();
-                    if (userScopes?.Count() > 0 && userRoles?.Count > 0)
+                    var executingEnpoint = httpContext.GetEndpoint();
+                    var scopeAuthorizeAttribute = executingEnpoint.Metadata.OfType<Tsc>().FirstOrDefault();
+                    if (scopeAuthorizeAttribute == null)
                     {
-                        (var acceptedScopes, var acceptedRoles) = GetAcceptedScopesAndRoles(scopeAuthorizeAttribute.Segments, httpContext.GetRouteBinding()?.TrackName, httpContext.Request?.Method);
-
-                        if (userScopes.Where(us => acceptedScopes.Any(s => s.Equals(us, StringComparison.Ordinal))).Any() && userRoles.Where(ur => acceptedRoles.Any(r => r.Equals(ur, StringComparison.Ordinal))).Any())
+                        throw new Exception($"Scope authorize attribute '{typeof(Tsc)}' is null");
+                    }
+                    else
+                    {
+                        var userScopes = context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Scope, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault().ToSpaceList();
+                        var userRoles = context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Role, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).ToList();
+                        if (userScopes?.Count() > 0 && userRoles?.Count > 0)
                         {
-                            context.Succeed(requirement);
+                            (var acceptedScopes, var acceptedRoles) = GetAcceptedScopesAndRoles(scopeAuthorizeAttribute.Segments, httpContext.GetRouteBinding().TrackName, httpContext.Request?.Method);
+
+                            if (userScopes.Where(us => acceptedScopes.Any(s => s.Equals(us, StringComparison.Ordinal))).Any() && userRoles.Where(ur => acceptedRoles.Any(r => r.Equals(ur, StringComparison.Ordinal))).Any())
+                            {
+                                context.Succeed(requirement);
+                            }
+                            else
+                            {
+                                scopedLogger.ScopeTrace(() => $"Control API, Users scope '{(userScopes != null ? string.Join(", ", userScopes) : string.Empty)}' and role '{(userRoles != null ? string.Join(", ", userRoles) : string.Empty)}'.");
+                                scopedLogger.ScopeTrace(() => $"Control API, Accepted scope '{(acceptedScopes != null ? string.Join(", ", acceptedScopes) : string.Empty)}'.");
+                                scopedLogger.ScopeTrace(() => $"Control API, Accepted role '{(acceptedRoles != null ? string.Join(", ", acceptedRoles) : string.Empty)}'.");
+                                throw new Exception("Users scope and role not accepted.");
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Users scope or role is empty.");
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    scopedLogger.Error(ex, "Control API access denied.");
                 }
             }
 

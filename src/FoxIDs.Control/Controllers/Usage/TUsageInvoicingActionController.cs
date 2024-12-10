@@ -13,6 +13,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Logic.Usage;
 using System.Linq;
 using System.Threading;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -223,13 +224,13 @@ namespace FoxIDs.Controllers
 
         private async Task MarkAsNotPaid(Used mUsed)
         {
-            if (mUsed.IsInvoiceReady && mUsed.PaymentStatus == UsagePaymentStatus.Paid)
+            if (mUsed.PaymentId.IsNullOrEmpty() && mUsed.IsInvoiceReady && mUsed.PaymentStatus == UsagePaymentStatus.Paid)
             {
                 await usageMolliePaymentLogic.MarkAsNotPaidAsync(mUsed);
             }
             else
             {
-                throw new Exception("The invoice is not ready and it is not possible to make as paid.");
+                throw new Exception("The invoice is not ready and/or it is not possible to make as paid.");
             }
         }
     }

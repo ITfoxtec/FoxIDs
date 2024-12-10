@@ -242,19 +242,19 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
             <h6 class="dropdown-header">Actions: Add/Replace/If not/Remove</h6>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim))">Match claim</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match claim and value</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim))">Match claim</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match claim and value</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Actions: Add/Replace/If not</h6>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Actions: Add/Replace</h6>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.ExternalClaims))">External claims API</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.ExternalClaims))">External claims API</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
         </div>
     </div>
 </div>

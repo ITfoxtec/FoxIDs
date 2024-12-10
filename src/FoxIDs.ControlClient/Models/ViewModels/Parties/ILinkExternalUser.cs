@@ -16,6 +16,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Link claim type")]
         public string LinkClaimType { get; set; }
 
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [Display(Name = "Redemption claim type (inactive if empty)")]
+        public string RedemptionClaimType { get; set; }
+
         [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
     }

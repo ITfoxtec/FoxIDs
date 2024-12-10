@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkRpLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkRpLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
                 selectedUpParties = profile.SelectedUpParties;
             }
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, selectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, selectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult();
         }
 
         private TrackLinkUpPartyProfile GetProfile(TrackLinkUpParty party, TrackLinkUpSequenceData trackLinkUpSequenceData)

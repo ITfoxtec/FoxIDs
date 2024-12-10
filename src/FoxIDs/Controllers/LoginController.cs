@@ -808,7 +808,7 @@ namespace FoxIDs.Controllers
             sequenceData.Email = email;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
         private void PopulateCreateUserDefault(LoginUpParty loginUpParty)

@@ -25,7 +25,7 @@
                         {
                             <li class="nav-item pt-2">
                                 <strong class="align-middle">Master tenant</strong>
-                                <button class="btn btn-primary ml-4" type="button" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
+                                <button type="button" class="btn btn-primary ml-4" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
                             </li>
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
@@ -59,7 +59,7 @@
                                                         An <DocsLink Page="foxids-inside" Fragment="structure">environment</DocsLink> is an Identity Provider with a unique ID, certificate and user store.
                                                     </div>
                                                     <div class="py-2">
-                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New environment</button>
+                                                        <button type="button" class="btn btn-primary" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New environment</button>
                                                     </div>
                                                 </div>
                                                 <div class="form-group active-group pb-2">
@@ -82,7 +82,7 @@
                                                                         Your tenant access is configured in the master environment.
                                                                     </div>
                                                                 }
-                                                                <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
+                                                                <button type="button" class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
                                                                     @if (track.DisplayName.IsNullOrWhiteSpace())
                                                                     {
                                                                         @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
@@ -117,7 +117,7 @@
                                 <span class="oi oi-person" aria-hidden="true"></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="meNavbarDropdown">
-                                <button class="dropdown-item btn btn-link" @onclick="@(() => { myProfileError = null; showMyProfileClaims = false; myProfileModal.Show(); })">
+                                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => { myProfileError = null; showMyProfileClaims = false; myProfileModal.Show(); })">
                                     My Profile<br />
                                     <small>@context.User.Claims.Where(c => c.Type == JwtClaimTypes.Email).Select(c => c.Value).FirstOrDefault()</small>
                                 </button>
@@ -135,7 +135,7 @@
                 <div class="navbar-outline">
                     <nav class="container-lg navbar @(IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
                         <div class="align-text-top">
-                            <button class="navbar-toggler my-2 mr-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <button type="button" class="navbar-toggler my-2 mr-3" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                         </div>
@@ -306,7 +306,7 @@
                                     @if (!showMyProfileClaims)
                                     {
                                         <div class="info-text pl-3">
-                                            <a href="" type="button" @onclick="@(() => { showMyProfileClaims = true; })" @onclick:preventDefault>Show my claims</a> <span>issued to this Control Client by FoxIDs.</span>
+                                            <a href="" @onclick="@(() => { showMyProfileClaims = true; })" @onclick:preventDefault>Show my claims</a> <span>issued to this Control Client by FoxIDs.</span>
                                         </div>
                                     }
                                     else
@@ -331,7 +331,7 @@
                         </div>
                         <div class="row">
                             <div class="col text-center">
-                                <button class="btn btn-secondary" @onclick="LogoutAsync">Logout</button>
+                                <button type="button" class="btn btn-secondary" @onclick="LogoutAsync">Logout</button>
                             </div>
                         </div>
                     </div>

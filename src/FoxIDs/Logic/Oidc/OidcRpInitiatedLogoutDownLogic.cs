@@ -238,7 +238,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
+            return sequenceData.RedirectUri.ToRedirectResult(nameValueCollection);
         }
     }
 }

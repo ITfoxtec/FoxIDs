@@ -62,7 +62,7 @@ namespace FoxIDs.Logic
                 Acr = loginRequest.Acr
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.ExtLoginController, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.ExtLoginController, includeSequence: true).ToRedirectResult();
         }
         public async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, List<Claim> claims)
         {

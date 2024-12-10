@@ -29,8 +29,8 @@ namespace FoxIDs.Infrastructure.Security
                         else
                         {
                             AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, httpMethod, 
-                                    $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}", 
-                                    Constants.ControlApi.Access.Tenant,
+                                    $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                                    $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}",
                                     segment);
                         }       
                     }
@@ -38,8 +38,8 @@ namespace FoxIDs.Infrastructure.Security
                 else
                 {
                     AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, httpMethod, 
-                        $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}", 
-                        Constants.ControlApi.Access.Tenant);
+                        $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                        $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}");
                 }
             }
 

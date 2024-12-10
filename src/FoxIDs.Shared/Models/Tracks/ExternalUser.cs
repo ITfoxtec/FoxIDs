@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class ExternalUser : DataDocument
+    public class ExternalUser : DataDocument, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -45,10 +46,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "user_id")]
         public string UserId { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [JsonProperty(PropertyName = "link_claim_value")]
         public string LinkClaimValue { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "redemption_claim_value")]
+        public string RedemptionClaimValue { get; set; }
 
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
@@ -66,6 +70,16 @@ namespace FoxIDs.Models
             [Required]
             [MaxLength(Constants.Models.ExternalUser.LinkClaimValueHashLength)]
             public string LinkClaimValueHash { get; set; }
+        }
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (LinkClaimValue.IsNullOrWhiteSpace() && RedemptionClaimValue.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(LinkClaimValue)} is required if the field {nameof(RedemptionClaimValue)} is empty.", [nameof(LinkClaimValue), nameof(RedemptionClaimValue)]));
+            }
+            return results;
         }
     }
 }

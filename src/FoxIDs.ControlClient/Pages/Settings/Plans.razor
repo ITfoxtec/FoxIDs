@@ -156,7 +156,7 @@
             }
             else
             {
-                <button class="btn btn-link" @onclick="@(async () => await ShowUpdatePlanAsync(plan))">
+                <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdatePlanAsync(plan))">
                     @PlanInfoText(plan)
                 </button>
             }

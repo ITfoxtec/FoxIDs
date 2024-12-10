@@ -20,12 +20,12 @@ namespace FoxIDs.Infrastructure.Security
     {
         public const string AuthenticationScheme = "bearer-multiple-tenants";
 
-        public JwtBearerMultipleTenantsHandler(IOptionsMonitor<JwtBearerMultipleTenantsOptions> options, ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder)
-        {
-        }
+        public JwtBearerMultipleTenantsHandler(IOptionsMonitor<JwtBearerMultipleTenantsOptions> options, ILoggerFactory loggerFactory, UrlEncoder encoder) : base(options, loggerFactory, encoder)
+        { }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var scopedLogger = Context.RequestServices.GetService<TelemetryScopedLogger>();
             try
             {
                 var accessToken = GetAccessTokenFromHeader();
@@ -63,15 +63,13 @@ namespace FoxIDs.Infrastructure.Security
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
                 }
 
-                var logger = Context.RequestServices.GetService<TelemetryScopedLogger>();
-                logger.SetUserScopeProperty(principal.Claims);
-
+                scopedLogger.SetUserScopeProperty(principal.Claims);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, ex.Message);
+                scopedLogger.Error(ex);
                 return AuthenticateResult.Fail(ex.Message);
             }
         }

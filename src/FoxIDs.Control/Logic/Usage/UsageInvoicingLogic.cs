@@ -134,6 +134,29 @@ namespace FoxIDs.Logic.Usage
             return taskDone;
         }
 
+        public async Task UpdatePaymentAndSendInvoiceAsync(Used used, Tenant tenant = null)
+        {
+            if (!used.PaymentId.IsNullOrEmpty() && (used.PaymentStatus == UsagePaymentStatus.Open || used.PaymentStatus == UsagePaymentStatus.Pending || used.PaymentStatus == UsagePaymentStatus.Authorized))
+            {
+                var oldPaymentStatus = used.PaymentStatus;
+
+                if (await usageMolliePaymentLogic.UpdatePaymentAsync(used))
+                {
+                    if (oldPaymentStatus != UsagePaymentStatus.Paid && used.PaymentStatus == UsagePaymentStatus.Paid)
+                    {
+                        logger.Event($"Usage, update payment and send invoice 'card' for tenant '{used.TenantName}'.");
+
+                        tenant = tenant ?? await tenantDataRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(used.TenantName));
+                        (var invoiceTaskDone, var invoice) = await GetInvoiceAsync(tenant, used, true);
+                        if (invoiceTaskDone && invoice.SendStatus == UsageInvoiceSendStatus.None)
+                        {
+                            await SendInvoiceAsync(used, invoice);
+                        }
+                    }
+                }
+            }
+        }
+
         public async Task CreateAndSendCreditNoteAsync(Used used)
         {
             if (used.PaymentStatus != UsagePaymentStatus.None && !used.PaymentStatus.PaymentStatusIsGenerallyFailed())
@@ -195,7 +218,7 @@ namespace FoxIDs.Logic.Usage
                     invoice.SendStatus = UsageInvoiceSendStatus.Failed;
                     await tenantDataRepository.UpdateAsync(used);
                 }
-                            catch (OperationCanceledException)
+            catch (OperationCanceledException)
             {
                 throw;
             }
@@ -212,7 +235,7 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken stoppingToken)
+        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceAsync(Tenant tenant, Used used, bool isCardPayment, CancellationToken? stoppingToken = null)
         {
             try
             {
@@ -244,7 +267,7 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceInternalAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
+        private async Task<(bool taskDone, Invoice invoice)> GetInvoiceInternalAsync(Tenant tenant, Used used, CancellationToken? stoppingToken)
         {
             if (used.IsInvoiceReady)
             {
@@ -258,7 +281,7 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-        private async Task<Invoice> CreateInvoiceAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
+        private async Task<Invoice> CreateInvoiceAsync(Tenant tenant, Used used, CancellationToken? stoppingToken)
         {
             var invoice = new Invoice
             {
@@ -272,7 +295,7 @@ namespace FoxIDs.Logic.Usage
             var usageSettings = await GetUsageSettingsAsync();
             var plan = tenant.EnableUsage == true && !tenant.PlanName.IsNullOrEmpty() ? await masterDataRepository.GetAsync<Plan>(await Plan.IdFormatAsync(tenant.PlanName)) : null;
 
-            stoppingToken.ThrowIfCancellationRequested();
+            if(stoppingToken.HasValue) stoppingToken.Value.ThrowIfCancellationRequested();
             CalculateInvoice(used, plan, invoice, tenant.IncludeVat == true, GetExchangesRate(invoice.Currency, usageSettings.CurrencyExchanges));
 
             invoice.InvoiceNumber = await GetInvoiceNumberAsync(usageSettings);
@@ -287,7 +310,7 @@ namespace FoxIDs.Logic.Usage
             {
                 used.Invoices = [invoice];
             }
-            stoppingToken.ThrowIfCancellationRequested(); 
+            if (stoppingToken.HasValue) stoppingToken.Value.ThrowIfCancellationRequested();
             await tenantDataRepository.UpdateAsync(used);
             return invoice;
         }

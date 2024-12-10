@@ -60,6 +60,66 @@ namespace FoxIDs.Logic
             return user;
         }
 
+        public virtual async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
+        {
+            email = email?.ToLowerInvariant();
+            logger.ScopeTrace(() => $"Change password user '{email}', Route '{RouteBinding?.Route}'.");
+
+            ValidateEmail(email);
+
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var user = await tenantDataRepository.GetAsync<User>(id, required: false);
+
+            if (user == null || user.DisableAccount)
+            {
+                await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
+                throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to change password.");
+            }
+
+            logger.ScopeTrace(() => $"User '{email}' exists, with user id '{user.UserId}', trying to change password.");
+            if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
+            {
+                logger.ScopeTrace(() => $"User '{email}', current password valid, changing password.", triggerEvent: true);
+
+                if (currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{email}'.");
+                }
+
+                await ValidatePasswordPolicy(email, newPassword);
+
+                await secretHashLogic.AddSecretHashAsync(user, newPassword);
+                user.ChangePassword = false;
+                await tenantDataRepository.SaveAsync(user);
+
+                logger.ScopeTrace(() => $"User '{email}', password changed.", triggerEvent: true);
+                return user;
+            }
+            else
+            {
+                throw new InvalidPasswordException($"Current password invalid, user '{email}'.");
+            }
+        }
+
+        public async Task SetPasswordUser(User user, string newPassword)
+        {
+            logger.ScopeTrace(() => $"Set password user '{user.Email}', Route '{RouteBinding?.Route}'.");
+
+            if (user.DisableAccount)
+            {
+                throw new UserNotExistsException($"User '{user.Email}' is disabled, trying to set password.");
+            }
+
+            await ValidatePasswordPolicy(user.Email, newPassword);
+
+            await secretHashLogic.AddSecretHashAsync(user, newPassword);
+            user.ChangePassword = false;
+            await tenantDataRepository.SaveAsync(user);
+
+            logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
+        }
+
+
         protected void ValidateEmail(string email)
         {
             if (!new EmailAddressAttribute().IsValid(email))

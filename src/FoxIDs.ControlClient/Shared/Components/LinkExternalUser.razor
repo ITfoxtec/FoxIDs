@@ -1,5 +1,7 @@
 ﻿<div class="info-text">
-    The external users are linked with a claim type (e.g. <code>sub</code> or <code>email</code>) after the claim transformation on the authentication method has been performed.
+    The external users can be redeemed by a redemption claim type (e.g. <code>email</code>) and they are then automatically linked with the link claim type. You should know the redemption claim value and can possible create users in advanced.
+    <br />
+    The external user are linked with the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can possible create users if you know the value.
     @if (IsSaml)
     {
         <div class="small">
@@ -10,14 +12,26 @@
             </ul>
         </div>
     }
+    else
+    {
+        <br />
+    }
+    The external users are linked after the claim transformation on the authentication method has been performed.
 </div>
+
+<FInputText @bind-Value="Model.RedemptionClaimType" For="@(() => Model.RedemptionClaimType)" />
 <FInputText @bind-Value="Model.LinkClaimType" For="@(() => Model.LinkClaimType)" />
 
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
 
 <div class="info-text">
-    By default, claims on external users are added to the received claims with the exception of the <code>sub</code>@(IsSaml ? " (equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code>)" : string.Empty) claim, which overrides the received <code>sub</code> claim.
+    By default, claims on external users are added to the received claims with the exception of the <code>sub</code>
+    @if (IsSaml)
+    {
+        <span> (equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code>)</span>
+    }
+    claim, which overrides the received <code>sub</code> claim.
     <br />
     Claims on external users can optionally override received and transformed claims.
 </div>

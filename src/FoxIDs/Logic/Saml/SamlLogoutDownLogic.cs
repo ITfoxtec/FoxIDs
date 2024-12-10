@@ -228,18 +228,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            return binding.ToSamlActionResult();
         }
 
         public async Task<IActionResult> SingleLogoutRequestAsync(string partyId, SingleLogoutSequenceData sequenceData)
@@ -301,18 +290,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+            return binding.ToSamlActionResult();
         }
 
         public async Task<IActionResult> SingleLogoutResponseAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)

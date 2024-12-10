@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
+using FoxIDs.Logic.Usage;
 
 namespace FoxIDs.Controllers
 {
@@ -22,14 +23,16 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly UsageInvoicingLogic usageInvoicingLogic;
 
         public object MTenant { get; private set; }
 
-        public TUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TUsageController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, UsageInvoicingLogic usageInvoicingLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.usageInvoicingLogic = usageInvoicingLogic;
         }
 
         /// <summary>
@@ -50,8 +53,10 @@ namespace FoxIDs.Controllers
 
                 var mUsed = await tenantDataRepository.GetAsync<Used>(await Used.IdFormatAsync(usageRequest.TenantName, usageRequest.PeriodBeginDate.Year, usageRequest.PeriodBeginDate.Month));
 
+                await usageInvoicingLogic.UpdatePaymentAndSendInvoiceAsync(mUsed);
+
                 var aUsed = mapper.Map<Api.Used>(mUsed);
-                aUsed.Currency = GetCulture(mTenant);
+                aUsed.Currency = GetCurrency(mTenant);
                 return Ok(aUsed);
             }
             catch (FoxIDsDataException ex)
@@ -90,7 +95,7 @@ namespace FoxIDs.Controllers
                 await tenantDataRepository.CreateAsync(mUsed);
 
                 var aUsed = mapper.Map<Api.Used>(mUsed);
-                aUsed.Currency = GetCulture(mTenant);
+                aUsed.Currency = GetCurrency(mTenant);
                 return Created(aUsed);
             }
             catch (FoxIDsDataException ex)
@@ -132,7 +137,7 @@ namespace FoxIDs.Controllers
                 await tenantDataRepository.UpdateAsync(mUsed);
 
                 var aUsed = mapper.Map<Api.Used>(mUsed);
-                aUsed.Currency = GetCulture(mTenant);
+                aUsed.Currency = GetCurrency(mTenant);
                 return Ok(aUsed);
             }
             catch (FoxIDsDataException ex)
@@ -146,7 +151,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private string GetCulture(Tenant mTenant)
+        private string GetCurrency(Tenant mTenant)
         {
             return mTenant.Currency.IsNullOrEmpty() ? Constants.Models.Currency.Eur : mTenant.Currency;
         }

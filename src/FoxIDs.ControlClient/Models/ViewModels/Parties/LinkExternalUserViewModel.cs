@@ -18,8 +18,13 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Link claim")]
-        public string LinkClaimType { get; set; } = JwtClaimTypes.Subject;
+        [Display(Name = "Link claim type")]
+        public string LinkClaimType { get; set; }
+
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [Display(Name = "Redemption claim (inactive if empty)")]
+        public string RedemptionClaimType { get; set; }
 
         [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
@@ -37,7 +42,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if ((AutoCreateUser || RequireUser) && LinkClaimType.IsNullOrWhiteSpace())
+            if ((AutoCreateUser || RequireUser || !RedemptionClaimType.IsNullOrWhiteSpace()) && LinkClaimType.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The link claim type is required.", [nameof(LinkClaimType)]));
             }

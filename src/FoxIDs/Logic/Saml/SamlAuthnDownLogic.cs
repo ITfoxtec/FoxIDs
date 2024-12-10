@@ -262,7 +262,7 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnResponse);
-            var actionResult = await GetAuthnResponseActionResult(binding);
+            var actionResult = binding.ToSamlActionResult();
             if (samlConfig.EncryptionCertificate != null)
             {
                 // Re-bind to log unencrypted XML.
@@ -282,22 +282,6 @@ namespace FoxIDs.Logic
                 securityHeaderLogic.AddFormActionAllowAll();
             }
             return actionResult;
-        }
-
-        private static async Task<IActionResult> GetAuthnResponseActionResult(Saml2Binding binding)
-        {
-            if (binding is Saml2RedirectBinding saml2RedirectBinding)
-            {
-                return await saml2RedirectBinding.ToActionFormResultAsync();
-            }
-            else if (binding is Saml2PostBinding saml2PostBinding)
-            {
-                return await saml2PostBinding.ToActionFormResultAsync();
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
         }
     }
 }

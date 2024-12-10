@@ -166,7 +166,7 @@
             <div class="modal-footer px-0">
                 @if (ClientSettings.EnablePayment)
                 {
-                    <button class="btn btn-secondary mr-auto" type="button" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
+                    <button type="button" class="btn btn-secondary mr-auto" @onclick="ShowPaymentModalAsync"> @(tenantSettingsForm.Model.Payment == null ? "Register" : "Change") payment</button>
                 }
                 <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
                 <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>

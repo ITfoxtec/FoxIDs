@@ -22,6 +22,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "link_claim_type")]
         public string LinkClaimType { get; set; }
 
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
+        [JsonProperty(PropertyName = "redemption_claim_type")]
+        public string RedemptionClaimType { get; set; }
+
         [JsonProperty(PropertyName = "overwrite_claims")]
         public bool OverwriteClaims { get; set; }
 

@@ -33,7 +33,7 @@
         The texts are used in the FoxIDs login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
     </div>
     <div class="py-2">
-        <button class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+        <button type="button" class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
             Text settings
         </button>
     </div>
@@ -148,7 +148,7 @@
             }
             else
             {
-                <button class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
+                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
                     @resource.Name
                 </button><br />
                 <span>ID: @resource.Id</span>

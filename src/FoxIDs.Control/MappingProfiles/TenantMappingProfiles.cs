@@ -146,7 +146,10 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Name.ToLower().GetFirstInDotList()));
 
-            CreateMap<Api.TrackResourceItem, ResourceItem>()
+            CreateMap<ResourceItem, Api.ResourceItem>();
+            CreateMap<ResourceItem, Api.TrackResourceItem>()
+                .ReverseMap();
+            CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
                 .ReverseMap();
 
             CreateMap<Api.SendEmail, SendEmail>()

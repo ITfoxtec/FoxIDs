@@ -4,6 +4,8 @@ Connect Google Workspace to FoxIDs with an [SAML 2.0 authentication method](auth
 
 By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect and automatically convert SAML 2.0 claims to JWT (OAuth 2.0) claims.
 
+> The Google Workspace OpenID Connect implementation is lacking, mostly because it does not support any custom claims or group claims. It is therefor recommended to use Google Workspace with SAML 2.0.
+
 ## Configuring Google Workspace
 This guide describe how to setup Google Workspace as a SAML 2.0 Identity Provider.
 

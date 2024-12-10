@@ -137,13 +137,13 @@ namespace FoxIDs.Logic.Usage
 
             try
             {
-                logger.Event($"Usage, read payment 'card' for tenant '{used.TenantName}' started.");
+                logger.Event($"Usage, update payment 'card' for tenant '{used.TenantName}' started.");
 
                 var paymentResponse = await paymentClient.GetPaymentAsync(used.PaymentId);
                 used.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
                 await tenantDataRepository.UpdateAsync(used);
 
-                logger.Event($"Usage, read payment 'card' for tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
+                logger.Event($"Usage, update payment 'card' for tenant '{used.TenantName}' status '{used.PaymentStatus}'.");
 
                 return true;
             }
@@ -171,6 +171,11 @@ namespace FoxIDs.Logic.Usage
 
         public async Task MarkAsNotPaidAsync(Used used)
         {
+            if (!used.PaymentId.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Has a payment id and can not be marked as not paid.");
+            }
+
             used.PaymentStatus = UsagePaymentStatus.None;
             await tenantDataRepository.UpdateAsync(used);
         }

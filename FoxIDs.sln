@@ -320,6 +320,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", 
 		Kubernetes\k8s-redis-pvc-dynamic.yaml = Kubernetes\k8s-redis-pvc-dynamic.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.PGMigrator", "tools\FoxIDs.PGMigrator\FoxIDs.PGMigrator.csproj", "{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -366,6 +368,10 @@ Global
 		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -386,6 +392,7 @@ Global
 		{376A9D7A-D64B-4526-8EFC-D21A3B77612B} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

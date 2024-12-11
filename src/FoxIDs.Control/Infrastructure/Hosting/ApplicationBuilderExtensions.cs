@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ITfoxtec.Identity.Util;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
                 {
-                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = httpRequest.HttpContext.GetHost(addTrailingSlash: false) } };
+                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = UrlCombine.Combine(httpRequest.HttpContext.GetHost(addTrailingSlash: false), Constants.Routes.ApiPath) } };
                 });
                 c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });
@@ -20,7 +21,6 @@ namespace FoxIDs.Infrastructure.Hosting
             builder.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint($"/api/swagger/{Constants.ControlApi.Version}/swagger.json", "FoxIDs Control API");
-                c.RoutePrefix = "api";
             });
 #endif
         }

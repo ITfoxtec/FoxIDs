@@ -46,6 +46,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "user_id")]
         public string UserId { get; set; }
 
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [JsonProperty(PropertyName = "up_party_name")]
+        public string UpPartyName { get; set; }
+
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [JsonProperty(PropertyName = "link_claim_value")]
         public string LinkClaimValue { get; set; }

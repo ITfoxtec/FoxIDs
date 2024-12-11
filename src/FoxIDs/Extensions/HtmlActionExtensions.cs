@@ -8,7 +8,7 @@ namespace FoxIDs
     /// <summary>
     /// Extension methods for HTML form and redirect actions.
     /// </summary>
-    public static class HtmActionExtensions
+    public static class HtmlActionExtensions
     {
         /// <summary>
         /// Converts URL and Dictionary&lt;string, string&gt; to a HTML Post ContentResult.

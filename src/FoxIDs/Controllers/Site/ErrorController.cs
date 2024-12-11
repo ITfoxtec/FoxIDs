@@ -58,8 +58,7 @@ namespace FoxIDs.Controllers
             var exception = exceptionHandlerPathFeature?.Error;
 
             if (exceptionHandlerPathFeature != null && exception != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
-            {
-                logger.Error(exception);
+            {                
                 return HandleOAuthTokenException(exception);
             }
             else
@@ -257,18 +256,29 @@ namespace FoxIDs.Controllers
                 var oauthRequestException = FindException<OAuthRequestException>(exception);
                 if (oauthRequestException != null)
                 {
+                    if (oauthRequestException is OAuthRefreshTokenGrantNotFoundException)
+                    {
+                        logger.Warning(exception);
+                    }
+                    else
+                    {
+                        logger.Error(exception);
+                    }
                     return TokenResponseResult(error: oauthRequestException.Error, errorDescription: oauthRequestException.ErrorDescription);
                 }
 
                 var routeCreationException = FindException<RouteCreationException>(exception);
                 if (routeCreationException != null)
                 {
+                    logger.Error(exception);
                     return TokenResponseResult(errorDescription: routeCreationException.Message);
-                }                
+                }
 
+                logger.Error(exception);
                 return TokenResponseResult(errorDescription: exception.GetAllMessagesJoined());
             }
-            
+
+            logger.Error(exception);
             return TokenResponseResult();
         }
 

@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
             {
                 await stateCookieRepository.DeleteAsync(upParty);
             }
-            return stateCookie.State;            
+            return stateCookie?.State;            
         }
 
         public async Task DeleteStateCookieAsync<T>(T upParty) where T : UpParty

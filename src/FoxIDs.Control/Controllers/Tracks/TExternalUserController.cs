@@ -41,18 +41,8 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
-
-                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)), required: !userRequest.LinkClaimValue.IsNullOrWhiteSpace());
-                if (mExternalUser == null)
-                {
-                    var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                    (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
-                    mExternalUser = mExternalUsers?.FirstOrDefault();
-                    if (mExternalUser == null)
-                    {
-                        throw new FoxIDsDataException() { StatusCode = DataStatusCode.NotFound };
-                    }
-                }
+                
+                var mExternalUser = await GetExternalUserAsync(userRequest);
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
             catch (FoxIDsDataException ex)
@@ -100,6 +90,9 @@ namespace FoxIDs.Controllers
 
         /// <summary>
         /// Update external user.
+        /// 
+        /// Select which external user to update with the attributes 'LinkClaimValue' and / or 'RedemptionClaimValue' and set the new values with the attributes 'UpdateLinkClaimValue' and 'UpdateLinkRedemptionClaimValue'.
+        /// If there are no changes to the attributes 'LinkClaimValue' and 'RedemptionClaimValue' they should be equal to the attributes 'UpdateLinkClaimValue' and 'UpdateLinkRedemptionClaimValue'.
         /// </summary>
         /// <param name="userRequest">External user.</param>
         /// <returns>External user.</returns>
@@ -111,7 +104,7 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
-                var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)));
+                var mExternalUser = await GetExternalUserAsync(userRequest);
 
                 mExternalUser.LinkClaimValue = userRequest.UpdateLinkClaimValue;
                 if(mExternalUser.LinkClaimValue.IsNullOrWhiteSpace())
@@ -164,7 +157,8 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
 
-                await tenantDataRepository.DeleteAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)));
+                var mExternalUser = await GetExternalUserAsync(userRequest);
+                await tenantDataRepository.DeleteAsync<ExternalUser>(mExternalUser.Id);
                 return NoContent();
             }
             catch (FoxIDsDataException ex)
@@ -176,6 +170,23 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<ExternalUser> GetExternalUserAsync(Api.ExternalUserId userRequest)
+        {
+            var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)), required: !userRequest.LinkClaimValue.IsNullOrWhiteSpace());
+            if (mExternalUser == null)
+            {
+                var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
+                mExternalUser = mExternalUsers?.FirstOrDefault();
+                if (mExternalUser == null)
+                {
+                    throw new FoxIDsDataException() { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+
+            return mExternalUser;
         }
 
         private Task<string> GetLinkClaimHashAsync(string linkClaimValue, string redemptionClaimValue)

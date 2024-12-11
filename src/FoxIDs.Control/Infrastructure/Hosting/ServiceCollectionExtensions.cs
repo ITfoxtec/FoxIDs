@@ -147,7 +147,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 services.AddSingleton(new OpenSearchClientQueryLog(openSearchQueryLogSettings));
             }
 
-            services.AddApiSwagger();
+            services.AddApiSwagger(settings);
             services.AddAutoMapper();
 
             if(settings.Payment?.EnablePayment == true && settings.Usage?.EnableInvoice == true)
@@ -181,7 +181,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddApiSwagger(this IServiceCollection services)
+        public static IServiceCollection AddApiSwagger(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             services.AddSwaggerGen(c =>
             {

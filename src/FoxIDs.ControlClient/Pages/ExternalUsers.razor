@@ -164,7 +164,7 @@
             else
             {
                 <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @(!externalUser.LinkClaimValue.IsNullOrWhiteSpace() ? externalUser.LinkClaimValue : externalUser.RedemptionClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                    @(!externalUser.RedemptionClaimValue.IsNullOrWhiteSpace() ? externalUser.RedemptionClaimValue : externalUser.LinkClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
                 </button>
             }
         </li>

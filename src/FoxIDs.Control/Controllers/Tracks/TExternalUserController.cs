@@ -100,6 +100,9 @@ namespace FoxIDs.Controllers
 
         /// <summary>
         /// Update external user.
+        /// 
+        /// Select which external user to update with the attributes 'LinkClaimValue' and / or 'RedemptionClaimValue' and set the new values with the attributes 'UpdateLinkClaimValue' and 'UpdateLinkRedemptionClaimValue'.
+        /// If there are no changes to the attributes 'LinkClaimValue' and 'RedemptionClaimValue' they should be equal to the attributes 'UpdateLinkClaimValue' and 'UpdateLinkRedemptionClaimValue'.
         /// </summary>
         /// <param name="userRequest">External user.</param>
         /// <returns>External user.</returns>

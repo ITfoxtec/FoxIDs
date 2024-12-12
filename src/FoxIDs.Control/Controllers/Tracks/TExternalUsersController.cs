@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.ExternalUser>(mExternalUsers.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue ?? t.RedemptionClaimValue))
+                foreach(var mUser in mExternalUsers.OrderBy(t => t.RedemptionClaimValue ?? t.LinkClaimValue))
                 {
                     response.Data.Add(mapper.Map<Api.ExternalUser>(mUser));
                 }

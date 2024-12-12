@@ -47,7 +47,7 @@ namespace FoxIDs.Logic.Usage
 
         public async Task UpdatePaymentMandate(Tenant tenant)
         {
-            if (tenant.Payment != null && string.IsNullOrEmpty(tenant.Payment.CardNumberInfo) && !string.IsNullOrEmpty(tenant.Payment.MandateId))
+            if (tenant.Payment != null && !tenant.Payment.IsActive && !string.IsNullOrEmpty(tenant.Payment.MandateId))
             {
                 var mandateResponse = await mandateClient.GetMandateAsync(tenant.Payment.CustomerId, tenant.Payment.MandateId) as CreditCardMandateResponse;
                 if ("valid".Equals(mandateResponse.Status, StringComparison.OrdinalIgnoreCase))
@@ -60,7 +60,10 @@ namespace FoxIDs.Logic.Usage
                     tenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
                     tenant.Payment.CardExpiryYear = cardExpiryDate.Year;
 
+                    tenant.DoPayment = true;
                     await tenantDataRepository.UpdateAsync(tenant);
+
+                    logger.Event($"Usage, payment 'card' for tenant '{tenant.Name}' valid.");
                 }
             }
         }

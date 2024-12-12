@@ -16,6 +16,7 @@ using Mollie.Api.Models.Customer.Request;
 using Mollie.Api.Models.Payment.Request.PaymentSpecificParameters;
 using ITfoxtec.Identity;
 using FoxIDs.Logic.Usage;
+using FoxIDs.Logic.Logs;
 
 namespace FoxIDs.Controllers
 {
@@ -31,8 +32,9 @@ namespace FoxIDs.Controllers
         private readonly ICustomerClient customerClient;
         private readonly IPaymentClient paymentClient;
         private readonly UsageMolliePaymentLogic usageMolliePaymentLogic;
+        private readonly SendEventEmailLogic sendEventEmailLogic;
 
-        public TMyMollieFirstPaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICustomerClient customerClient, IPaymentClient paymentClient, UsageMolliePaymentLogic usageMolliePaymentLogic) : base(logger)
+        public TMyMollieFirstPaymentController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICustomerClient customerClient, IPaymentClient paymentClient, UsageMolliePaymentLogic usageMolliePaymentLogic, SendEventEmailLogic sendEventEmailLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -40,6 +42,7 @@ namespace FoxIDs.Controllers
             this.customerClient = customerClient;
             this.paymentClient = paymentClient;
             this.usageMolliePaymentLogic = usageMolliePaymentLogic;
+            this.sendEventEmailLogic = sendEventEmailLogic;
         }
 
         /// <summary>
@@ -98,6 +101,8 @@ namespace FoxIDs.Controllers
             }
             mTenant.Payment.MandateId = paymentResponse.MandateId;
             await tenantDataRepository.UpdateAsync(mTenant);
+
+            await sendEventEmailLogic.SendEventEmailAsync($"Payment card added - '{mTenant.Name}'.", $"Payment card added to tenant '{mTenant.Name}'. Plan: '{mTenant.PlanName}', Enable usage: '{mTenant.EnableUsage}', Do payment: '{mTenant.DoPayment}'.");
 
             await usageMolliePaymentLogic.UpdatePaymentMandate(mTenant);
 

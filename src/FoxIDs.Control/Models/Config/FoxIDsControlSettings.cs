@@ -40,6 +40,8 @@ namespace FoxIDs.Models.Config
         [ValidateComplexType]
         public UsageBaseSettings Usage { get; set; }
 
+        public string SupportEmail { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = base.Validate(validationContext).ToList();

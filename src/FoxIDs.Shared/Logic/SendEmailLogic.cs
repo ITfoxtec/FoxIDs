@@ -18,17 +18,15 @@ using System.Web;
 
 namespace FoxIDs.Logic
 {
-    public class SendEmailLogic : LogicSequenceBase
+    public class SendEmailLogic : LogicBase
     {
-        private readonly FoxIDsSettings settings;
+        private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public SendEmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendEmailLogic(Settings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent, string fromName = null)
@@ -46,12 +44,12 @@ namespace FoxIDs.Logic
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "environment")} settings.");
-                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
+                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent));
                 }
                 else if (!emailSettings.SmtpHost.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "environment")} settings.");
-                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
+                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent));
                 }
                 else
                 {
@@ -66,7 +64,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetBodyHtml(string body)
+        private string GetBodyHtml(EmailContent emailContent)
         {
             var bodyHtml = string.Format(
 @"<!DOCTYPE html>
@@ -96,7 +94,7 @@ namespace FoxIDs.Logic
     </style>
   </head>
   <body>{1}</body>
-</html>", httpContextAccessor.HttpContext.GetCultureParentName(), BodyHtmlEncode(body)); 
+</html>", emailContent.ParentCulture, BodyHtmlEncode(emailContent.Body)); 
             return bodyHtml;
         }
 

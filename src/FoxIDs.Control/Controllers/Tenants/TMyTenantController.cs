@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Config;
 using System.Linq;
 using FoxIDs.Logic.Usage;
+using FoxIDs.Logic.Logs;
 
 namespace FoxIDs.Controllers
 {
@@ -29,8 +30,9 @@ namespace FoxIDs.Controllers
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
+        private readonly SendEventEmailLogic sendEventEmailLogic;
 
-        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TMyTenantController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, IMasterDataRepository masterDataRepository, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, SendEventEmailLogic sendEventEmailLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -41,6 +43,7 @@ namespace FoxIDs.Controllers
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
+            this.sendEventEmailLogic = sendEventEmailLogic;
         }
 
         /// <summary>
@@ -106,6 +109,7 @@ namespace FoxIDs.Controllers
                             decimal updateCost = mPlans.Where(p => p.Name == tenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
                             if (updateCost >= currentCost)
                             {
+                                await sendEventEmailLogic.SendEventEmailAsync($"Plan changed - '{mTenant.Name}'.", $"My tenant service. Plan changed for tenant '{mTenant.Name}'. Old plan: '{mTenant.PlanName}', New plan: '{tenant.PlanName}', Enable usage: '{mTenant.EnableUsage}', Do payment: '{mTenant.DoPayment}'.");
                                 mTenant.PlanName = tenant.PlanName;
                             }
                         }

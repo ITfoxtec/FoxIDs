@@ -59,6 +59,7 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
+                ParentCulture = HttpContext.GetCultureParentName(),
                 Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{AddTextToDisplayName(RouteBinding.DisplayName)} - "],
                 Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {AddTextToDisplayName(RouteBinding.DisplayName)} ", code]
             };
@@ -92,6 +93,7 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
+                ParentCulture = HttpContext.GetCultureParentName(),
                 Subject = localizer["{0}Reset password", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
                 Body = localizer["Your{0}reset password confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
@@ -123,6 +125,8 @@ namespace FoxIDs.Logic
             {
                 throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to send {logText} confirmation code.");
             }
+
+            var d = HttpContext.GetCultureParentName();
 
             await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), emailContent(confirmationCode), fromName: RouteBinding.DisplayName);
 

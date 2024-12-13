@@ -7509,7 +7509,7 @@
         },
         {
           "culture": "en",
-          "value": "Email confirmation",
+          "value": "Email Confirmation",
           "edit_level": 100
         },
         {
@@ -14633,9 +14633,134 @@
       "id": 107,
       "items": [
         {
+          "culture": "bg",
+          "value": "Този имейл е изпратен от <a href=\"{0}\">FoxIDs</a> европейската услуга за идентификация, предоставяна от <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Aquest correu electrònic s'envia des de <a href=\"{0}\">FoxIDs</a>, el servei d'identitat europea proporcionat per <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Tento e-mail je zasílán z <a href=\"{0}\">FoxIDs</a> evropské služby identit poskytované společností <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Denne e-mail er sendt fra <a href=\"{0}\">FoxIDs</a>, den europæiske identitetstjeneste, der leveres af <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Diese E-Mail wird von <a href=\"{0}\">FoxIDs</a> gesendet, dem europäischen Identitätsdienst von <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου αποστέλλεται από την <a href=\"{0}\">FoxIDs</a>, την ευρωπαϊκή υπηρεσία ταυτότητας που παρέχεται από την <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
-          "value": "This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by <a href=\"{0}\">ITfoxtec</a>.",
+          "value": "This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by <a href=\"{1}\">ITfoxtec</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Este correo electrónico se envía desde <a href=\"{0}\">FoxIDs</a> el servicio de identidad europeo proporcionado por <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "See e-kiri on saadetud <a href=\"{0}\">FoxIDs</a> Euroopa identiteediteenuselt, mida pakub <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tämän sähköpostin lähettää <a href=\"{0}\">FoxIDs</a>, <a href=\"{1}\">ITfoxtec</a> tarjoama eurooppalainen tunnistuspalvelu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Cet e-mail est envoyé par <a href=\"{0}\">FoxIDs</a> le service d'identité européen fourni par <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Ova e-poruka poslana je s <a href=\"{0}\">FoxIDs</a> europske usluge identiteta koju pruža <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Þessi tölvupóstur er sendur frá <a href=\"{0}\">FoxIDs</a> evrópsku auðkennisþjónustunni sem <a href=\"{1}\">ITfoxtec</a> veitir.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Questa e-mail viene inviata da <a href=\"{0}\">FoxIDs</a>, il servizio di identità europeo fornito da <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Šis el. laiškas siunčiamas iš <a href=\"{0}\">FoxIDs</a> Europos tapatybės nustatymo paslaugos, kurią teikia <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Šis e-pasts ir nosūtīts no <a href=\"{0}\">FoxIDs</a> Eiropas identitātes pakalpojuma, ko nodrošina <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Denne e-posten er sendt fra <a href=\"{0}\">FoxIDs</a>, den europeiske identitetstjenesten levert av <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Deze e-mail is verstuurd vanuit <a href=\"{0}\">FoxIDs</a> de Europese identiteitsdienst aangeboden door <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Ta wiadomość e-mail została wysłana przez <a href=\"{0}\">FoxIDs</a>, europejską usługę tożsamości świadczoną przez <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Esta mensagem de correio eletrónico é enviada por <a href=\"{0}\">FoxIDs</a>, o serviço de identidade europeu fornecido pela <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Acest e-mail este trimis de <a href=\"{0}\">FoxIDs</a> serviciul european de identitate furnizat de <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Tento e-mail je odoslaný z <a href=\"{0}\">FoxIDs</a> európskej identifikačnej služby, ktorú poskytuje <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "To e-poštno sporočilo je poslano iz <a href=\"{0}\">FoxIDs</a> evropske identitetne storitve, ki jo zagotavlja <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Detta e-postmeddelande skickas från <a href=\"{0}\">FoxIDs</a>, den europeiska identitetstjänsten som tillhandahålls av <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Bu e-posta, <a href=\"{1}\">ITfoxtec</a> tarafından sağlanan Avrupa kimlik hizmeti <a href=\"{0}\">FoxIDs</a>'den gönderilmektedir.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Цей лист надіслано з <a href=\"{0}\">FoxIDs</a>, європейського сервісу ідентифікації, що надається <a href=\"{1}\">ITfoxtec</a>.",
+          "edit_level": 40
         }
       ]
     }

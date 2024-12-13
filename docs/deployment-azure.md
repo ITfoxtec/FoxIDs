@@ -5,7 +5,7 @@ FoxIDs is deployed in the resource group `FoxIDs` (optional name) where you need
 
 [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
-> You can do a [small deployment to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy-small.json) with low resource consumption at an Azure price of around €100 to €140.
+> You can do a [small deployment to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy-small.json) with low resource consumption at an Azure price of around €80 to €100 per month.
 
 The Azure container deployment include:
 

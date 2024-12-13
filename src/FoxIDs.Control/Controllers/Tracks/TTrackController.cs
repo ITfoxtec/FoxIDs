@@ -135,6 +135,13 @@ namespace FoxIDs.Controllers
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 mTrack.DisplayName = track.DisplayName;
+                mTrack.CompanyName = track.CompanyName;
+                mTrack.AddressLine1 = track.AddressLine1;
+                mTrack.AddressLine2 = track.AddressLine2;
+                mTrack.PostalCode = track.PostalCode;
+                mTrack.City = track.City;
+                mTrack.StateRegion = track.StateRegion;
+                mTrack.Country = track.Country;
                 mTrack.SequenceLifetime = track.SequenceLifetime;
                 mTrack.AutoMapSamlClaims = track.AutoMapSamlClaims;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;

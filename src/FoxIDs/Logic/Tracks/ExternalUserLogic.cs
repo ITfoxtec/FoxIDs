@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
 
                 if (externalUser == null && !party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace())
                 {
-                    var redemptionClaimValue = GetLinkClaim(GetJwtClaimType(party, party.LinkExternalUser.RedemptionClaimType), claims);
+                    var redemptionClaimValue = GetLinkClaim(GetJwtClaimType(party, party.LinkExternalUser.RedemptionClaimType), claims)?.ToLower();
                     logger.ScopeTrace(() => $"Validating external user, redemption claim type '{party.LinkExternalUser.RedemptionClaimType}' and value '{redemptionClaimValue}', Route '{RouteBinding?.Route}'.");
                     if (!redemptionClaimValue.IsNullOrWhiteSpace())
                     {
@@ -54,10 +54,11 @@ namespace FoxIDs.Logic
                         if (externalUser != null)
                         {
                             // Change to use a link claim type instead of redemption claim type.
-                            await tenantDataRepository.DeleteAsync<ExternalUser>(externalUser.Id);
+                            var oldExternalIserId = externalUser.Id;
                             externalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, party.Name, await linkClaimValue.HashIdStringAsync());
                             externalUser.LinkClaimValue = linkClaimValue;
                             await tenantDataRepository.CreateAsync(externalUser);
+                            await tenantDataRepository.DeleteAsync<ExternalUser>(oldExternalIserId);
                         }
                     }
                     else

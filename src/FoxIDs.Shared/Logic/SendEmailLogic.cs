@@ -18,40 +18,34 @@ using System.Web;
 
 namespace FoxIDs.Logic
 {
-    public class SendEmailLogic : LogicSequenceBase
+    public class SendEmailLogic : LogicBase
     {
-        private readonly FoxIDsSettings settings;
+        private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public SendEmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendEmailLogic(Settings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent, string fromName = null)
+        public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent)
         {
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
             try
             {
                 var emailSettings = GetSettings();
-                if (emailSettings.FromName.IsNullOrEmpty() && !fromName.IsNullOrWhiteSpace())
-                {
-                    emailSettings.FromName = fromName;
-                }
 
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "environment")} settings.");
-                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
+                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent));
                 }
                 else if (!emailSettings.SmtpHost.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "environment")} settings.");
-                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
+                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent));
                 }
                 else
                 {
@@ -66,7 +60,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetBodyHtml(string body)
+        private string GetBodyHtml(EmailContent emailContent)
         {
             var bodyHtml = string.Format(
 @"<!DOCTYPE html>
@@ -95,16 +89,59 @@ namespace FoxIDs.Logic
       }}
     </style>
   </head>
-  <body>{1}</body>
-</html>", httpContextAccessor.HttpContext.GetCultureParentName(), BodyHtmlEncode(body)); 
+  <body>
+    <table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
+      <tbody>
+        <tr>
+            <td>
+{1}
+              <table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
+                <tbody>
+                  <tr><td style=""height: 40px;"">&nbsp;</td></tr>
+                  {2}
+                  <tr>
+                    <td>
+                      <div align=""center"" style=""color:#8f8f8f"">
+                        {3}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>", emailContent.ParentCulture, BodyHtmlEncode(emailContent.Body), BodyHtmlEncode(GetInfoHtml(emailContent.Info)), emailContent.Address); 
             return bodyHtml;
+        }
+
+        private string GetInfoHtml(string info)
+        {
+            if(info.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            var infoWithLinks = string.Format(info, "https://www.foxids.com/", "https://www.itfoxtec.com/");
+
+            var infoHtml = string.Format(
+@"                  <tr>
+                    <td>
+                      <div align=""center"" style=""color:#8f8f8f"">
+                        {0}
+                      </div>
+                    </td>
+                  </tr>", info);
+            return infoHtml;
         }
 
         private string BodyHtmlEncode(string body)
         {
-            body = HttpUtility.HtmlEncode(body);
-            body = body.Replace("&lt;", "<");
-            body = body.Replace("&gt;", ">");
+            //body = HttpUtility.HtmlEncode(body);
+            //body = body.Replace("&lt;", "<");
+            //body = body.Replace("&gt;", ">");
             return body;
         }
 

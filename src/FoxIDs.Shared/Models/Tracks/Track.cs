@@ -124,6 +124,34 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Address.NameLength)]
+        [JsonProperty(PropertyName = "company_name")]
+        public string CompanyName { get; set; }
+
+        [MaxLength(Constants.Models.Address.AddressLine1Length)]
+        [JsonProperty(PropertyName = "address_line_1")]
+        public string AddressLine1 { get; set; }
+
+        [MaxLength(Constants.Models.Address.AddressLine2Length)]
+        [JsonProperty(PropertyName = "address_line_2")]
+        public string AddressLine2 { get; set; }
+
+        [MaxLength(Constants.Models.Address.PostalCodeLength)]
+        [JsonProperty(PropertyName = "postal_code")]
+        public string PostalCode { get; set; }
+
+        [MaxLength(Constants.Models.Address.CityLength)]
+        [JsonProperty(PropertyName = "city")]
+        public string City { get; set; }
+
+        [MaxLength(Constants.Models.Address.StateRegionLength)]
+        [JsonProperty(PropertyName = "state_region")]
+        public string StateRegion { get; set; }
+
+        [MaxLength(Constants.Models.Address.CountryLength)]
+        [JsonProperty(PropertyName = "country")]
+        public string Country { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

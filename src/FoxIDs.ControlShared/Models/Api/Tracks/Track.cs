@@ -23,6 +23,34 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
         public string DisplayName { get; set; }
 
+        [MaxLength(Constants.Models.Address.NameLength)]
+        [Display(Name = "Company name / System name")]
+        public string CompanyName { get; set; }
+
+        [MaxLength(Constants.Models.Address.AddressLine1Length)]
+        [Display(Name = "Address line 1")]
+        public string AddressLine1 { get; set; }
+
+        [MaxLength(Constants.Models.Address.AddressLine2Length)]
+        [Display(Name = "Address line 2")]
+        public string AddressLine2 { get; set; }
+
+        [MaxLength(Constants.Models.Address.PostalCodeLength)]
+        [Display(Name = "Postal code")]
+        public string PostalCode { get; set; }
+
+        [MaxLength(Constants.Models.Address.CityLength)]
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [MaxLength(Constants.Models.Address.StateRegionLength)]
+        [Display(Name = "State / Region")]
+        public string StateRegion { get; set; }
+
+        [MaxLength(Constants.Models.Address.CountryLength)]
+        [Display(Name = "Country")]
+        public string Country { get; set; }
+
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours. Default 2 hours.
         public int SequenceLifetime { get; set; } = Constants.TrackDefaults.DefaultSequenceLifetime;
 

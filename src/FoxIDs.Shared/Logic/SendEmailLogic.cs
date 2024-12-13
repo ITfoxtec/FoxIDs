@@ -14,7 +14,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace FoxIDs.Logic
 {
@@ -113,7 +112,7 @@ namespace FoxIDs.Logic
       </tbody>
     </table>
   </body>
-</html>", emailContent.ParentCulture, BodyHtmlEncode(emailContent.Body), BodyHtmlEncode(GetInfoHtml(emailContent.Info)), emailContent.Address); 
+</html>", emailContent.ParentCulture, emailContent.Body, GetInfoHtml(emailContent.Info), emailContent.Address); 
             return bodyHtml;
         }
 
@@ -133,16 +132,8 @@ namespace FoxIDs.Logic
                         {0}
                       </div>
                     </td>
-                  </tr>", info);
+                  </tr>", infoWithLinks);
             return infoHtml;
-        }
-
-        private string BodyHtmlEncode(string body)
-        {
-            //body = HttpUtility.HtmlEncode(body);
-            //body = body.Replace("&lt;", "<");
-            //body = body.Replace("&gt;", ">");
-            return body;
         }
 
         private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailboxAddress toEmail, string subject, string body)

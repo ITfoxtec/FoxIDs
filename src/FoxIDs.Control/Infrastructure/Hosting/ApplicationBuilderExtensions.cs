@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -9,6 +10,14 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         public static void UseApiSwagger(this IApplicationBuilder builder)
         {
+            builder.Use((context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api/swagger", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                }
+                return next.Invoke();
+            });
             builder.UseSwagger(c =>
             {
                 c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>

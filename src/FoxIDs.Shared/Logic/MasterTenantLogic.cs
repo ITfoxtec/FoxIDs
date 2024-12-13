@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
 using static ITfoxtec.Identity.IdentityConstants;
+using FoxIDs.Util;
 
 namespace FoxIDs.Logic
 {
@@ -44,7 +45,7 @@ namespace FoxIDs.Logic
             };
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = trackName });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, trackName);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
         }
 
         public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
@@ -53,7 +54,7 @@ namespace FoxIDs.Logic
 
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = mTrack.Name });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, mTrack.Name);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
         }
 
         public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)
@@ -242,7 +243,7 @@ namespace FoxIDs.Logic
 
         public async Task CreateDefaultTracksDocmentsAsync(string tenantName)
         {
-            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, Constants.TrackDefaults.DefaultTrackTestName);
+            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, RandomName.GenerateDefaultName());
             await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName);
         }
 

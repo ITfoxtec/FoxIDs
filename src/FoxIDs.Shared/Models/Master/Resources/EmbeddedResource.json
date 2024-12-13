@@ -447,6 +447,10 @@
     {
       "name": "Wrong username or password",
       "id": 106
+    },
+    {
+      "name": "This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by <a href=\"{0}\">ITfoxtec</a>.",
+      "id": 107
     }
   ],
   "resources": [
@@ -14622,6 +14626,16 @@
           "culture": "uk",
           "value": "Неправильне ім'я користувача або пароль",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "items": [
+        {
+          "culture": "en",
+          "value": "This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by <a href=\"{0}\">ITfoxtec</a>.",
+          "edit_level": 100
         }
       ]
     }

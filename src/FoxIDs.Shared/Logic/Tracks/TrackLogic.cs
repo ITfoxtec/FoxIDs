@@ -15,7 +15,7 @@ namespace FoxIDs.Logic
             this.tenantDataRepository = tenantDataRepository;
         }
 
-        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
+        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null)
         {
             var certificateItem = await (tenantName ?? RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync(mTrack.KeyValidityInMonths);
             mTrack.Key = new TrackKey()

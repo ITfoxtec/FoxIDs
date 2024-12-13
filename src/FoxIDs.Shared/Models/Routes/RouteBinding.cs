@@ -18,6 +18,8 @@ namespace FoxIDs.Models
 
         public string DisplayName { get; set; }
 
+        public string CompanyName { get; set; }        
+
         public string RouteUrl { get; set; }
 
         public string TenantNameDotTrackName { get { return $"{TenantName}.{TrackName}"; } }

@@ -139,6 +139,7 @@ namespace FoxIDs.Infrastructure.Hosting
         protected override async ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)
         {
             routeBinding.DisplayName = track.DisplayName;
+            routeBinding.CompanyName = track.CompanyName;
             routeBinding.PartyNameAndBinding = partyNameAndBinding;
             routeBinding.Key = await trackKeyLogic.LoadTrackKeyAsync(scopedLogger, trackIdKey, track);
             routeBinding.ClaimMappings = track.ClaimMappings;

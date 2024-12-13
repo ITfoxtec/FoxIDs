@@ -29,17 +29,13 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent, string fromName = null)
+        public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent)
         {
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
             try
             {
                 var emailSettings = GetSettings();
-                if (emailSettings.FromName.IsNullOrEmpty() && !fromName.IsNullOrWhiteSpace())
-                {
-                    emailSettings.FromName = fromName;
-                }
 
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
@@ -93,16 +89,59 @@ namespace FoxIDs.Logic
       }}
     </style>
   </head>
-  <body>{1}</body>
-</html>", emailContent.ParentCulture, BodyHtmlEncode(emailContent.Body)); 
+  <body>
+    <table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
+      <tbody>
+        <tr>
+            <td>
+{1}
+              <table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
+                <tbody>
+                  <tr><td style=""height: 40px;"">&nbsp;</td></tr>
+                  {2}
+                  <tr>
+                    <td>
+                      <div align=""center"" style=""color:#8f8f8f"">
+                        {3}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>", emailContent.ParentCulture, BodyHtmlEncode(emailContent.Body), BodyHtmlEncode(GetInfoHtml(emailContent.Info)), emailContent.Address); 
             return bodyHtml;
+        }
+
+        private string GetInfoHtml(string info)
+        {
+            if(info.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            var infoWithLinks = string.Format(info, "https://www.foxids.com/", "https://www.itfoxtec.com/");
+
+            var infoHtml = string.Format(
+@"                  <tr>
+                    <td>
+                      <div align=""center"" style=""color:#8f8f8f"">
+                        {0}
+                      </div>
+                    </td>
+                  </tr>", info);
+            return infoHtml;
         }
 
         private string BodyHtmlEncode(string body)
         {
-            body = HttpUtility.HtmlEncode(body);
-            body = body.Replace("&lt;", "<");
-            body = body.Replace("&gt;", ">");
+            //body = HttpUtility.HtmlEncode(body);
+            //body = body.Replace("&lt;", "<");
+            //body = body.Replace("&gt;", ">");
             return body;
         }
 

@@ -46,6 +46,10 @@
                                                 {
                                                     @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
                                                 }
+                                                else if (!TrackSelectedLogic.Track.Name.Equals(TrackSelectedLogic.Track.DisplayName, StringComparison.InvariantCultureIgnoreCase))
+                                                {
+                                                    @TrackSelectedLogic.Track.DisplayName <small class="text-muted">(@TrackSelectedLogic.Track.Name)</small>
+                                                }
                                                 else
                                                 {
                                                     @TrackSelectedLogic.Track.DisplayName
@@ -86,6 +90,10 @@
                                                                     @if (track.DisplayName.IsNullOrWhiteSpace())
                                                                     {
                                                                         @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
+                                                                    }
+                                                                    else if (!track.Name.Equals(track.DisplayName, StringComparison.InvariantCultureIgnoreCase))
+                                                                    {
+                                                                        @track.DisplayName <small class="text-muted">(@track.Name)</small>
                                                                     }
                                                                     else
                                                                     {

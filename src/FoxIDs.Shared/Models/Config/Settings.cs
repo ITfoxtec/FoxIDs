@@ -20,6 +20,19 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public bool UseHttp { get; set; }
 
+        [ValidateComplexType]
+        public AddressSettings Address { get; set; }
+
+        /// <summary>
+        /// Sendgrid configuration.
+        /// </summary>
+        public SendgridSettings Sendgrid { get; set; }
+
+        /// <summary>
+        /// SMTP configuration.
+        /// </summary>
+        public SmtpSettings Smtp { get; set; }
+
         /// <summary>
         /// OpenSearch configuration.
         /// </summary>

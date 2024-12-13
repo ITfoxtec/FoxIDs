@@ -13,6 +13,7 @@ using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace FoxIDs.Logic
 {
@@ -27,8 +28,9 @@ namespace FoxIDs.Logic
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, TrackCacheLogic trackCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -39,6 +41,7 @@ namespace FoxIDs.Logic
             this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.sendEmailLogic = sendEmailLogic;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         public Task<ConfirmationCodeSendStatus> SendEmailConfirmationCodeAsync(string email, bool forceNewCode)
@@ -59,18 +62,10 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{AddTextToDisplayName(RouteBinding.DisplayName)} - "],
-                Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {AddTextToDisplayName(RouteBinding.DisplayName)} ", code]
+                ParentCulture = HttpContext.GetCultureParentName(),
+                Subject = localizer["{0}Email confirmation", $"{GetCompanyName()} - "],
+                Body = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
             };
-        }
-
-        private string AddTextToDisplayName(string displayName)
-        {
-            if (Constants.Routes.MasterTenantName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
-            {
-                return $"FoxIDs {displayName}";
-            }
-            return displayName;
         }
 
         public Task<ConfirmationCodeSendStatus> SendResetPasswordCodeAsync(string email, bool forceNewCode)
@@ -92,9 +87,34 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = localizer["{0}Reset password", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
-                Body = localizer["Your{0}reset password confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
+                ParentCulture = HttpContext.GetCultureParentName(),
+                Subject = localizer["{0}Reset password", $"{GetCompanyName()} - "],
+                Body = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
             };
+        }
+
+        private string GetCompanyName()
+        {
+            return HttpUtility.HtmlEncode(RouteBinding.CompanyName.IsNullOrWhiteSpace() ? "FoxIDs" : RouteBinding.CompanyName);
+        }
+
+        private string GetCodeHtml(string code)
+        {
+            var codeHtml = string.Format(
+@"<table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
+  <tbody>
+    <tr><td style=""height: 20px;"">&nbsp;</td></tr>
+      <tr>
+        <td>
+          <div align=""center"">
+            <strong>{0}</strong>
+        </div>
+    </td>
+    </tr>
+    <tr><td style=""height: 20px;"">&nbsp;</td></tr>
+</tbody>
+</table>", code);
+            return codeHtml;
         }
 
         private async Task<ConfirmationCodeSendStatus> SendEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, string email, bool forceNewCode, string logText)
@@ -124,9 +144,75 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to send {logText} confirmation code.");
             }
 
-            await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), emailContent(confirmationCode), fromName: RouteBinding.DisplayName);
+            await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(emailContent(confirmationCode)));
 
             logger.ScopeTrace(() => $"Email with {logText} confirmation code send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
+        }
+
+        private async Task<EmailContent> AddAddressAndInfoAsync(EmailContent emailContent)
+        {
+            if (!RouteBinding.CompanyName.IsNullOrWhiteSpace())
+            {
+                var track = await trackCacheLogic.GetTrackAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var aList = new List<string>
+                {
+                    RouteBinding.CompanyName
+                };
+                if (!track.AddressLine1.IsNullOrWhiteSpace())
+                {
+                    aList.Add(track.AddressLine1);
+                }
+                if (!track.AddressLine2.IsNullOrWhiteSpace())
+                {
+                    aList.Add(track.AddressLine2);
+                }
+                if (!track.PostalCode.IsNullOrWhiteSpace() && !track.City.IsNullOrWhiteSpace())
+                {
+                    aList.Add($"{track.PostalCode} {track.City}");
+                }
+                if (!track.StateRegion.IsNullOrWhiteSpace())
+                {
+                    aList.Add(track.StateRegion);
+                }
+                if (!track.Country.IsNullOrWhiteSpace())
+                {
+                    aList.Add(track.Country);
+                }
+
+                emailContent.Address = HttpUtility.HtmlEncode(string.Join(" - ", aList));
+            }
+            else if (!string.IsNullOrWhiteSpace(settings.Address?.CompanyName))
+            {
+                var aList = new List<string>
+                {
+                    settings.Address.CompanyName
+                };
+                if (!settings.Address.AddressLine1.IsNullOrWhiteSpace())
+                {
+                    aList.Add(settings.Address.AddressLine1);
+                }
+                if (!settings.Address.AddressLine2.IsNullOrWhiteSpace())
+                {
+                    aList.Add(settings.Address.AddressLine2);
+                }
+                if (!settings.Address.PostalCode.IsNullOrWhiteSpace() && !settings.Address.City.IsNullOrWhiteSpace())
+                {
+                    aList.Add($"{settings.Address.PostalCode} {settings.Address.City}");
+                }
+                if (!settings.Address.StateRegion.IsNullOrWhiteSpace())
+                {
+                    aList.Add(settings.Address.StateRegion);
+                }
+                if (!settings.Address.Country.IsNullOrWhiteSpace())
+                {
+                    aList.Add(settings.Address.Country);
+                }
+
+                emailContent.Address = HttpUtility.HtmlEncode(string.Join(" - ", aList));
+                emailContent.Info = localizer[@"This email is send from <a href=""{0}"">FoxIDs</a> the European identity service provided by <a href=""{0}"">ITfoxtec</a>."];
+            }
+
+            return emailContent;
         }
 
         private async Task<User> VerifyEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, Func<User, Task> onSuccess, string email, string code, string logText)

@@ -9,6 +9,7 @@ using Mollie.Api.Models.Payment;
 using System;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Logs;
 
 namespace FoxIDs.Logic.Usage
 {
@@ -18,13 +19,15 @@ namespace FoxIDs.Logic.Usage
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly IMandateClient mandateClient;
         private readonly IPaymentClient paymentClient;
+        private readonly SendEventEmailLogic sendEventEmailLogic;
 
-        public UsageMolliePaymentLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMandateClient mandateClient, IPaymentClient paymentClient)
+        public UsageMolliePaymentLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMandateClient mandateClient, IPaymentClient paymentClient, SendEventEmailLogic sendEventEmailLogic)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
             this.mandateClient = mandateClient;
             this.paymentClient = paymentClient;
+            this.sendEventEmailLogic = sendEventEmailLogic;
         }
 
         public bool HasCardPayment(Tenant tenant)
@@ -47,7 +50,7 @@ namespace FoxIDs.Logic.Usage
 
         public async Task UpdatePaymentMandate(Tenant tenant)
         {
-            if (tenant.Payment != null && string.IsNullOrEmpty(tenant.Payment.CardNumberInfo) && !string.IsNullOrEmpty(tenant.Payment.MandateId))
+            if (tenant.Payment != null && !tenant.Payment.IsActive && !string.IsNullOrEmpty(tenant.Payment.MandateId))
             {
                 var mandateResponse = await mandateClient.GetMandateAsync(tenant.Payment.CustomerId, tenant.Payment.MandateId) as CreditCardMandateResponse;
                 if ("valid".Equals(mandateResponse.Status, StringComparison.OrdinalIgnoreCase))
@@ -60,7 +63,11 @@ namespace FoxIDs.Logic.Usage
                     tenant.Payment.CardExpiryMonth = cardExpiryDate.Month;
                     tenant.Payment.CardExpiryYear = cardExpiryDate.Year;
 
+                    tenant.DoPayment = true;
                     await tenantDataRepository.UpdateAsync(tenant);
+
+                    logger.Event($"Usage, payment 'card' for tenant '{tenant.Name}' valid.");
+                    await sendEventEmailLogic.SendEventEmailAsync($"Payment card valid - '{tenant.Name}'.", $"Payment card valid for tenant '{tenant.Name}'. Plan: '{tenant.PlanName}', Enable usage: '{tenant.EnableUsage}', Do payment: '{tenant.DoPayment}'.");
                 }
             }
         }

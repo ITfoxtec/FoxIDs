@@ -3,6 +3,7 @@ using Azure.Core;
 using Azure.Identity;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Logs;
 using FoxIDs.Logic.Queues;
 using FoxIDs.Logic.Seed;
 using FoxIDs.Logic.Usage;
@@ -37,6 +38,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<EmbeddedResourceLogic>();
 
+            services.AddTransient<SendEventEmailLogic>();
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();

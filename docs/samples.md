@@ -52,9 +52,14 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
   
     -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetsamlidpsample.itfoxtec.com))
 
-- ASP.NET Core - External login API - authentication method
+- ASP.NET Core - External APIs
   
     -  [ExternalLoginApiSample](#externalloginapisample) ([online](https://externalloginsample.itfoxtec.com))
+    -  [ExternalClaimsApiSample](#externalclaimsapisample)
+
+- Console app - FoxIDs Control API
+  
+    -  [FoxIDsControlApiSample](#foxidscontrolapisample)
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
@@ -212,6 +217,10 @@ Local development domain and port: `https://localhost:44352`
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalClaimsApiSample)) application implementing an external claims API which can be configured and called from a claims transform. The external claims API can then add external claims to the issued claims.
 
 Local development domain and port: `https://localhost:44353`
+
+### FoxIDsControlApiSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/FoxIDs.ControlApiSample)) console application showing how to call FoxIDs Control API.
 
 ## Configure samples in FoxIDs environment
 

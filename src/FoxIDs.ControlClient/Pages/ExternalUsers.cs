@@ -295,10 +295,16 @@ namespace FoxIDs.Client.Pages
                 {
                     var externalUserResult = await ExternalUserService.UpdateExternalUserAsync(generalExternalUser.Form.Model.Map<ExternalUserUpdateRequest>(afterMap: afterMap => 
                     {
-                        afterMap.UpdateLinkClaimValue = afterMap.LinkClaimValue;
-                        afterMap.UpdateRedemptionClaimValue = afterMap.RedemptionClaimValue;
+                        if (afterMap.RedemptionClaimValue != generalExternalUser.RedemptionClaimValue)
+                        {
+                            afterMap.UpdateRedemptionClaimValue = afterMap.RedemptionClaimValue;
+                        }
+                        if (afterMap.LinkClaimValue != generalExternalUser.LinkClaimValue)
+                        {
+                            afterMap.UpdateLinkClaimValue = afterMap.LinkClaimValue;
+                        }
+                        afterMap.RedemptionClaimValue = generalExternalUser.RedemptionClaimValue;
                         afterMap.LinkClaimValue = generalExternalUser.LinkClaimValue;
-                        afterMap.RedemptionClaimValue= generalExternalUser.RedemptionClaimValue;
                     }));
                     toastService.ShowSuccess("External user updated.");
                     generalExternalUser.LinkClaimValue = externalUserResult.LinkClaimValue;

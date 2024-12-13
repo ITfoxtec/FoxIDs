@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
                         u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)));
 
                 var aExternalUsers = new HashSet<Api.ExternalUser>(mExternalUsers.Count());
-                foreach(var mUser in mExternalUsers.OrderBy(t => t.LinkClaimValue ?? t.RedemptionClaimValue))
+                foreach(var mUser in mExternalUsers.OrderBy(t => t.RedemptionClaimValue ?? t.LinkClaimValue))
                 {
                     aExternalUsers.Add(mapper.Map<Api.ExternalUser>(mUser));
                 }

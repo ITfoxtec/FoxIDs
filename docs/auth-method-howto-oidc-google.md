@@ -1,4 +1,4 @@
-﻿# Connect Google with OpenID Connect
+﻿# Connect to Google with OpenID Connect
 
 FoxIDs can be connected to Google with OpenID Connect and authenticate users with Google login.
 
@@ -57,7 +57,8 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  8. Disable the **Front channel logout session required** switch
  ![Configuration in FoxIDs](images/howto-oidc-google-config.png)
  9. Click **Create**
-
+ 10. Click **Test authentication** to test the Facebook connection  
+  
 That's it, you are done.
  
 Your new Google authentication method can be selected as an allowed authentication method in an application registration.

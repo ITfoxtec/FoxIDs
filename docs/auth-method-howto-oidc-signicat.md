@@ -1,4 +1,4 @@
-﻿# Connect Signicat with OpenID Connect
+﻿# Connect to Signicat with OpenID Connect
 
 FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
 

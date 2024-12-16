@@ -146,7 +146,7 @@ namespace FoxIDs.Controllers
                 if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace() && userRequest.UpPartyName != userRequest.UpdateUpPartyName ||                                                            // if up-party change
                     userRequest.UpdateLinkClaimValue != null && userRequest.LinkClaimValue != userRequest.UpdateLinkClaimValue ||                                                                 // if link claim change
                     userRequest.LinkClaimValue.IsNullOrWhiteSpace() && !userRequest.UpdateLinkClaimValue.IsNullOrWhiteSpace() ||                                                                  // if link claim is added
-                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.RedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)    // if link claim not set and redemption claim change
+                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.UpdateRedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)    // if link claim not set and redemption claim change
                 {
                     var oldExternalIserId = mExternalUser.Id;
                     mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(mExternalUser.LinkClaimValue, mExternalUser.RedemptionClaimValue));

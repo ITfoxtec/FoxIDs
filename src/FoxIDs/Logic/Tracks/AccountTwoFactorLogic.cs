@@ -12,6 +12,7 @@ namespace FoxIDs.Logic
 {
     public class AccountTwoFactorLogic : LogicSequenceBase
     {
+        private static TimeSpan timeTolerance = TimeSpan.FromMinutes(2);
         private const int secretAndRecoveryCodeLength = 30;
         protected readonly TelemetryScopedLogger logger;
         protected readonly ITenantDataRepository tenantDataRepository;
@@ -49,7 +50,7 @@ namespace FoxIDs.Logic
             var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
 
             var twoFactor = new TwoFactorAuthenticator();
-            bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, false));
+            bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, timeTolerance, false));
 
             if (isValid)
             {

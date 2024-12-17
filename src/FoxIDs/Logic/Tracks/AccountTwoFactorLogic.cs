@@ -122,7 +122,5 @@ namespace FoxIDs.Logic
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{email}'.");
             }
         }
-
-        
     }
 }

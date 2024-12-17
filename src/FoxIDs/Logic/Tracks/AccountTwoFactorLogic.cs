@@ -6,29 +6,22 @@ using System;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
-using FoxIDs.Models.Config;
-using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {
     public class AccountTwoFactorLogic : LogicSequenceBase
     {
         private const int secretAndRecoveryCodeLength = 30;
-        private const string secretName = "2fa";
-        private readonly Settings settings;
         protected readonly TelemetryScopedLogger logger;
-        private readonly IServiceProvider serviceProvider;
         protected readonly ITenantDataRepository tenantDataRepository;
         protected readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.settings = settings;
             this.logger = logger;
-            this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
@@ -53,19 +46,19 @@ namespace FoxIDs.Logic
         public async Task ValidateTwoFactorBySecretAsync(string email, string secret, string appCode)
         {
             email = email?.ToLowerInvariant();
-            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
 
             var twoFactor = new TwoFactorAuthenticator();
             bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, false));
 
             if (isValid)
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(email);
+                await failingLoginLogic.ResetFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"User '{email}' two-factor app code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
             }
             else 
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidAppCodeException($"Invalid two-factor app code, user '{email}'.");
             }
@@ -103,7 +96,7 @@ namespace FoxIDs.Logic
             email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Validating two-factor app recovery code user '{email}', Route '{RouteBinding?.Route}'.");
 
-            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
 
             var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
@@ -118,13 +111,13 @@ namespace FoxIDs.Logic
 
             if (await secretHashLogic.ValidateSecretAsync(user.TwoFactorAppRecoveryCode, twoFactorAppRecoveryCode))
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(email);
+                await failingLoginLogic.ResetFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"User '{email}' two-factor app recovery code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
                 return user;
             }
             else
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app recovery code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{email}'.");
             }

@@ -217,7 +217,7 @@ namespace FoxIDs.Logic
 
         private async Task<User> VerifyEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, Func<User, Task> onSuccess, string email, string code, string logText)
         {
-            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
 
             var key = EmailConfirmationCodeCacheKey(keyElement, email);
             var confirmationCodeValue = await cacheProvider.GetAsync(key);
@@ -226,7 +226,7 @@ namespace FoxIDs.Logic
                 var confirmationCode = confirmationCodeValue.ToObject<ConfirmationCode>();
                 if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code.ToUpper()))
                 {
-                    await failingLoginLogic.ResetFailingLoginCountAsync(email);
+                    await failingLoginLogic.ResetFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
 
                     var user = await accountLogic.GetUserAsync(email);
                     if (user == null || user.DisableAccount)
@@ -249,7 +249,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
                     logger.ScopeTrace(() => $"Failing count increased for user '{email}', {logText} confirmation code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                     throw new InvalidCodeException($"Invalid {logText} confirmation code, user '{email}'.");
                 }

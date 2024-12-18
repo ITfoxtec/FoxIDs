@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Ext = FoxIDs.Models.External;
 using System.Net.Mime;
 using FoxIDs.Util;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {
@@ -107,7 +108,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
-            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, isExternalLogin: true);
+            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
 
             try
             {
@@ -120,7 +121,7 @@ namespace FoxIDs.Logic
                         var authenticationResponse = result.ToObject<Ext.AuthenticationResponse>();
                         logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
-                        await failingLoginLogic.ResetFailingLoginCountAsync(username, isExternalLogin: true);
+                        await failingLoginLogic.ResetFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
                         logger.ScopeTrace(() => $"AuthMethod, External login, User '{username}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
 
                         return authenticationResponse.Claims?.Select(c => new Claim(c.Type, c.Value))?.ToList();

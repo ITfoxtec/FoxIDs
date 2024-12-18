@@ -1,4 +1,4 @@
-﻿# Connect Nets eID Broker with OpenID Connect
+﻿# Connect to Nets eID Broker with OpenID Connect
 
 FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
 

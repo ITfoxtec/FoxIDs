@@ -64,6 +64,43 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             }
         }
 
+        public void TranslateAllByInput()
+        {
+            var languageCodes = GetLanguageCodes();
+            resourceLogic.UpdateSupportedCultures(languageCodes);
+
+            Console.WriteLine($"Translate by hand from: https://translate.google.com/");
+            Console.WriteLine(string.Empty);
+
+            foreach (var resource in resourceLogic.ResourceEnvelope.Resources)
+            {
+                var text = resource.Items.Where(i => i.Culture == LanguageCode.English).Select(i => i.Value).Single();
+                Console.WriteLine($"Translating EN resource: {text}");
+
+                var cultures = resource.Items.Select(i => i.Culture);
+                var resourceLanguageCodes = languageCodes.Where(c => !cultures.Contains(c)).ToList();
+                
+                foreach (var languageCode in resourceLanguageCodes)
+                {
+                    var culture = new CultureInfo(languageCode).TwoLetterISOLanguageName;
+                    Console.WriteLine($"To language codes: {culture} - {LanguageName(culture)}");
+                    Console.Write("Translated text: ");
+
+                    resource.Items.Add(new ResourceCultureItem
+                    {
+                        EditLevel = ResourceEditLevels.MachineGoogle,
+                        Culture = culture,
+                        Value = Console.ReadLine()
+                    });
+                    Console.WriteLine(string.Empty);
+                }
+
+                resource.Items = resource.Items.OrderBy(i => i.Culture).ToList();
+                Console.WriteLine($" - done.");
+                Console.WriteLine(string.Empty);
+            }
+        }
+
         private async Task<string> TranslateTextAsync(TranslationServiceClient client, string text, string languageCode)
         {
             var request = new TranslateTextRequest
@@ -83,6 +120,21 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             yield return "ca"; // Catalan
             yield return "hr"; // Croatian
             yield return "is"; // Icelandic
+        }
+
+        private string LanguageName(string culture)
+        {
+            switch (culture)
+            {
+                case "ca":
+                    return "Catalan";
+                case "hr":
+                    return "Croatian";
+                case "is":
+                    return "Icelandic";
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }

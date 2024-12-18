@@ -1,4 +1,4 @@
-﻿# Connect IdentityServer with OpenID Connect
+﻿# Connect to IdentityServer with OpenID Connect
 
 FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 

@@ -17,7 +17,19 @@ try
 
     Console.WriteLine(string.Empty);
     Console.WriteLine("Google");
-    await serviceProvider.GetService<GoogleTranslateLogic>().TranslateAllAsync();
+    var googleTranslateLogic = serviceProvider.GetService<GoogleTranslateLogic>();
+    try
+    {
+        await googleTranslateLogic.TranslateAllAsync();
+    }
+    catch (Exception iex)
+    {
+        Console.WriteLine(string.Empty);
+        Console.WriteLine($"Error: {iex}");
+        Console.WriteLine(string.Empty);
+
+        googleTranslateLogic.TranslateAllByInput();
+    }
     await resourceLogic.SaveResourcesAsync();
 
 }

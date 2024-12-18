@@ -1,4 +1,4 @@
-# Connect PingIdentity / PingOne with SAML 2.0
+# Connect to PingIdentity / PingOne with SAML 2.0
 
 FoxIDs can be connected to PingOne with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
 

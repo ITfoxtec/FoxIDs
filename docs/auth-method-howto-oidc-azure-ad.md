@@ -1,4 +1,4 @@
-﻿# Connect Microsoft Entra ID with OpenID Connect
+﻿# Connect to Microsoft Entra ID with OpenID Connect
 
 FoxIDs can be connected to Microsoft Entra ID (Azure AD) with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
 

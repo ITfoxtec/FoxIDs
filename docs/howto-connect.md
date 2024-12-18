@@ -29,6 +29,7 @@ How to guides:
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
+- Connect [Amazon Cognito](auth-method-howto-oidc-amazon-cognito.md)
 - Connect [Google](auth-method-howto-oidc-google.md)
 - Connect [Facebook](auth-method-howto-oidc-facebook.md)
 - Connect [Signicat](auth-method-howto-oidc-signicat.md)
@@ -47,7 +48,7 @@ How to guides:
 - Connect [Google Workspace](auth-method-howto-saml-2.0-google-workspace.md)
 - Connect [Microsoft AD FS](auth-method-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in (Danish IdP)](auth-method-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish identity broker, DK name: Fælleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md)
+- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
 ## How to connect applications
 When you register an application with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
@@ -61,7 +62,8 @@ Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 
-- Connect test IdP on [Context Handler (Danish identity broker, DK name: Fælleskommunal Adgangsstyring)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-test-relying-party)
+- Connect [Amazon IAM Identity Center](auth-method-howto-saml-amazon-iam-identity-center.md)
+- Connect [Context Handler test IdP (Danish identity broker)](howto-saml-2.0-context-handler#configuring-test-identity-provider-for-context-handler)
 
 ## Connect FoxIDs environments
 

@@ -1,4 +1,4 @@
-﻿# Connect Facebook with OpenID Connect
+﻿# Connect to Facebook with OpenID Connect
 
 FoxIDs can be connected to Facebook with OpenID Connect and authenticate users with Facebook login or Facebook Limited login.
 
@@ -54,18 +54,16 @@ This chapter describes how to configure a connection with OpenID Connect Authori
  **3 - Go back to the FoxIDs authentication method in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Click **Show advanced** in the top right corner of this configuration section
- 2. Disable the **Single logout** switch
- 3. Add the **Optional custom SP client ID** from Facebook called **App ID**
- 4. Add the two **scopes** `email` and `public_profile`
- 5. Set the **Use PKCE** switch to **No**
- 6. Add the **Client secret** from Facebook called **App Secret**
- 7. Set the **Read claims from the ID token instead of the access token** switch to **Yes**
- 8. As **Response mode** select **query**
- 9. Disable the **Front channel logout** switch
- 10. Disable the **Front channel logout session required** switch
+ 2. Add the **Optional custom SP client ID** from Facebook called **App ID**
+ 3. Add the two **scopes** `email` and `public_profile`
+ 4. Set the **Use PKCE** switch to **No**
+ 5. Add the **Client secret** from Facebook called **App Secret**
+ 6. Set the **Read claims from the ID token instead of the access token** switch to **Yes**
+ 7. As **Response mode** select **query**
  ![Configuration in FoxIDs](images/howto-oidc-facebook-config.png)
- 11. Click **Create**
-
+ 8. Click **Create**
+ 9. Click **Test authentication** to test the Facebook connection  
+ 
 That's it, you are done.
  
 Your new Facebook authentication method can be selected as an allowed authentication method in an application registration.

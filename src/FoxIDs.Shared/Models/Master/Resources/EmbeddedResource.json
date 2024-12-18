@@ -14772,9 +14772,134 @@
       "id": 108,
       "items": [
         {
+          "culture": "bg",
+          "value": "Невалиден код за възстановяване, моля, опитайте още веднъж.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi de recuperació no vàlid, si us plau, prova-ho una vegada més.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Neplatný kód obnovení, zkuste to prosím ještě jednou.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Ugyldig gendannelseskode, prøv venligst en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ungültiger Wiederherstellungscode, bitte versuchen Sie es noch einmal.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μη έγκυρος κωδικός ανάκτησης, δοκιμάστε άλλη μια φορά.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Invalid recovery code, please try one more time.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código de recuperación inválido, por favor inténtelo una vez más.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vigane taastamiskood, palun proovige veel kord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Virheellinen palautuskoodi, yritä vielä kerran.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code de récupération invalide, veuillez réessayer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nevazeci kod za oporavak, pokusajte jos jednom.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ógildur endurheimtarkóði, vinsamlegast reyndu einu sinni enn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice di recupero non valido, provare ancora una volta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Netinkamas atkūrimo kodas, bandykite dar kartą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nederīgs atkopšanas kods, lūdzu, mēģiniet vēlreiz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Ugyldig gjenopprettingskode, vennligst prøv en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Ongeldige herstelcode, probeer het nog een keer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowy kod odzyskiwania, spróbuj ponownie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código de recuperação inválido, tente mais uma vez.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Cod de recuperare invalid, vă rugăm să mai încercați o dată.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Neplatný kód obnovenia, skúste to ešte raz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Neveljavna koda za obnovitev, poskusite še enkrat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ogiltig återställningskod, försök en gång till.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Geçersiz kurtarma kodu, lütfen bir kez daha deneyin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний код відновлення, спробуйте ще раз.",
+          "edit_level": 40
         }
       ]
     }

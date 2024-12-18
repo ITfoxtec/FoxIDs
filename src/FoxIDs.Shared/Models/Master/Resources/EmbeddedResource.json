@@ -451,6 +451,10 @@
     {
       "name": "This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by ITfoxtec.",
       "id": 107
+    },
+    {
+      "name": "Invalid recovery code, please try one more time.",
+      "id": 108
     }
   ],
   "resources": [
@@ -14761,6 +14765,16 @@
           "culture": "uk",
           "value": "Цей лист надіслано з <a href=\"{0}\">FoxIDs</a>, європейського сервісу ідентифікації, що надається ITfoxtec.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid recovery code, please try one more time.",
+          "edit_level": 100
         }
       ]
     }

@@ -22,6 +22,7 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
 using ITfoxtec.Identity.Util;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Logic
 {
@@ -79,7 +80,7 @@ namespace FoxIDs.Logic
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
-                LoginEmailHint = loginRequest.EmailHint
+                LoginHint = loginRequest.LoginHint
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
@@ -115,9 +116,9 @@ namespace FoxIDs.Logic
 
             binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
-            if (!party.DisableLoginHint && !samlUpSequenceData.LoginEmailHint.IsNullOrWhiteSpace())
+            if (!party.DisableLoginHint && !samlUpSequenceData.LoginHint.IsNullOrWhiteSpace())
             {
-                saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginEmailHint, Format = NameIdentifierFormats.Email.OriginalString } };
+                saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginHint, Format = new EmailAddressAttribute().IsValid(samlUpSequenceData.LoginHint) ? NameIdentifierFormats.Email.OriginalString : NameIdentifierFormats.Persistent.OriginalString } };
             }
 
             saml2AuthnRequest.AssertionConsumerServiceUrl = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));

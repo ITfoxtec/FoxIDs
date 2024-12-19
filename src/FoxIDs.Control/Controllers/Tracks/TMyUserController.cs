@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
@@ -42,7 +41,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email }));
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -73,7 +72,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email }));
                 mUser.ChangePassword = user.ChangePassword;
                 await tenantDataRepository.UpdateAsync(mUser);
 

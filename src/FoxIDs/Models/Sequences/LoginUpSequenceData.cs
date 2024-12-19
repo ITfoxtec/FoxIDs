@@ -17,8 +17,8 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "srl")]
         public bool DoSessionUserRequireLogin { get; set; }
 
-        [JsonProperty(PropertyName = "e")]
-        public string Email { get; set; }
+        [JsonProperty(PropertyName = "ui")]
+        public string UserIdentifier { get; set; }
 
         [JsonProperty(PropertyName = "ev")]
         public bool EmailVerified { get; set; }

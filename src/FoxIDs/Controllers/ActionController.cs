@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
 
-                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
+                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.UserIdentifier, newCode);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = codeSendStatus,
-                    Email = sequenceData.Email
+                    Email = sequenceData.UserIdentifier
                 });
             }
             catch (Exception ex)
@@ -99,7 +99,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
+                    var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.UserIdentifier, emailConfirmation.ConfirmationCode);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaStep);
                 }
                 catch (CodeNotExistsException cneex)
@@ -147,7 +147,7 @@ namespace FoxIDs.Controllers
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendResetPasswordCodeAsync(sequenceData.Email, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendResetPasswordCodeAsync(sequenceData.UserIdentifier, newCode);
                 }
                 catch (UserNotExistsException uex)
                 {
@@ -163,7 +163,7 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
-                    Email = sequenceData.Email
+                    Email = sequenceData.UserIdentifier
                 });
             }
             catch (Exception ex)
@@ -209,7 +209,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.Email, resetPassword.ConfirmationCode, resetPassword.NewPassword);                    
+                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);                    
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (CodeNotExistsException cneex)

@@ -4,11 +4,26 @@ namespace FoxIDs.Models.ViewModels
 {
     public class LoginViewModel : ViewModel
     {
-        [Display(Name = "Email")]
-        [Required]
-        [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
-        public string Email { get; set; }
+        [ValidateComplexType]
+        public EmailIdentifierViewModel EmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhoneIdentifierViewModel PhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameIdentifierViewModel UsernameIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameEmailIdentifierViewModel UsernameEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneIdentifierViewModel UsernamePhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhoneEmailIdentifierViewModel PhoneEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneEmailIdentifierViewModel UsernamePhoneEmailIdentifier { get; set; }
 
         [Display(Name = "Password")]
         [Required]

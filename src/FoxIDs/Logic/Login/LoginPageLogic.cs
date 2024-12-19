@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
         {
             var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
 
-            sequenceData.Email = user.Email;
+            sequenceData.UserIdentifier = user.Email;
             sequenceData.EmailVerified = user.EmailVerified;
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.EmailVerified)

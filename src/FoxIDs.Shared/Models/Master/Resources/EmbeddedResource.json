@@ -117,7 +117,7 @@
       "id": 23
     },
     {
-      "name": "Wrong email or password",
+      "name": "Wrong email or password.",
       "id": 24
     },
     {
@@ -369,7 +369,7 @@
       "id": 86
     },
     {
-      "name": "There is no account connected to this email.",
+      "name": "It is not possible to find this account.",
       "id": 87
     },
     {
@@ -445,7 +445,7 @@
       "id": 105
     },
     {
-      "name": "Wrong username or password",
+      "name": "Wrong username or password.",
       "id": 106
     },
     {
@@ -455,6 +455,50 @@
     {
       "name": "Invalid recovery code, please try one more time.",
       "id": 108
+    },
+    {
+      "name": "Wrong username, phone number, email or password. A phone number must include the country code.",
+      "id": 109
+    },
+    {
+      "name": "Wrong phone number, email or password. A phone number must include the country code.",
+      "id": 110
+    },
+    {
+      "name": "Wrong username, phone number or password. A phone number must include the country code.",
+      "id": 111
+    },
+    {
+      "name": "Wrong username, email or password.",
+      "id": 112
+    },
+    {
+      "name": "Wrong phone number or password. A phone number must include the country code.",
+      "id": 113
+    },
+    {
+      "name": "Change phone",
+      "id": 114
+    },
+    {
+      "name": "Change username",
+      "id": 115
+    },
+    {
+      "name": "Change username or phone or email",
+      "id": 116
+    },
+    {
+      "name": "Change phone or email",
+      "id": 117
+    },
+    {
+      "name": "Change username or phone",
+      "id": 118
+    },
+    {
+      "name": "Change username or email",
+      "id": 119
     }
   ],
   "resources": [
@@ -3433,132 +3477,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Грешен имейл или парола",
+          "value": "Грешен имейл или парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Correu electrònic o contrasenya incorrectes",
+          "value": "Correu electrònic o contrasenya incorrectes.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Špatný e-mail nebo heslo",
+          "value": "Špatný e-mail nebo heslo.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Forkert e-mail eller kodeord",
+          "value": "Forkert e-mail eller kodeord.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Falsche E-Mail oder falsches Passwort",
+          "value": "Falsche E-Mail oder falsches Passwort.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Λάθος email ή κωδικός πρόσβασης",
+          "value": "Λάθος email ή κωδικός πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Wrong email or password",
+          "value": "Wrong email or password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Correo electrónico o contraseña incorrectos",
+          "value": "Correo electrónico o contraseña incorrectos.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Vale e-posti aadress või salasõna",
+          "value": "Vale e-posti aadress või salasõna.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Väärä sähköpostiosoite tai salasana",
+          "value": "Väärä sähköpostiosoite tai salasana.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Courriel ou mot de passe erroné",
+          "value": "Courriel ou mot de passe erroné.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Pogrešna adresa e-pošte ili lozinka",
+          "value": "Pogrešna adresa e-pošte ili lozinka.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Rangt netfang eða lykilorð",
+          "value": "Rangt netfang eða lykilorð.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Email o password errata",
+          "value": "Email o password errata.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Neteisingas el. pašto adresas arba slaptažodis",
+          "value": "Neteisingas el. pašto adresas arba slaptažodis.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Nepareizs e-pasts vai parole",
+          "value": "Nepareizs e-pasts vai parole.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Feil e-post eller passord",
+          "value": "Feil e-post eller passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Verkeerde e-mail of wachtwoord",
+          "value": "Verkeerde e-mail of wachtwoord.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Nieprawidłowy adres e-mail lub hasło",
+          "value": "Nieprawidłowy adres e-mail lub hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "E-mail ou palavra-passe errados",
+          "value": "E-mail ou palavra-passe errados.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Email sau parolă greșită",
+          "value": "Email sau parolă greșită.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Nesprávny e-mail alebo heslo",
+          "value": "Nesprávny e-mail alebo heslo.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Napačno e-poštno sporočilo ali geslo",
+          "value": "Napačno e-poštno sporočilo ali geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Fel e-post eller lösenord",
+          "value": "Fel e-post eller lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Yanlış e-posta veya şifre",
+          "value": "Yanlış e-posta veya şifre.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Неправильна адреса електронної пошти або пароль",
+          "value": "Неправильна адреса електронної пошти або пароль.",
           "edit_level": 40
         }
       ]
@@ -11938,132 +11982,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Няма акаунт, свързан с този имейл.",
+          "value": "Не е възможно да се намери тази сметка.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "No hi ha cap compte connectat a aquest correu electrònic.",
+          "value": "No és possible trobar aquest compte.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "K tomuto e-mailu není připojen žádný účet.",
+          "value": "Tento účet není možné najít.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Der er ingen konto knyttet til denne e-mail.",
-          "edit_level": 100
+          "value": "Det er ikke muligt at finde denne konto.",
+          "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Es gibt kein Konto, das mit dieser E-Mail verbunden ist.",
+          "value": "Es ist nicht möglich, dieses Konto zu finden.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Δεν υπάρχει λογαριασμός συνδεδεμένος με αυτό το email.",
+          "value": "Δεν είναι δυνατόν να βρεθεί αυτός ο λογαριασμός.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "There is no account connected to this email.",
+          "value": "It is not possible to find this account.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "No hay ninguna cuenta conectada a este correo electrónico.",
+          "value": "No es posible encontrar esta cuenta.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Selle e-posti aadressiga ei ole seotud ühtegi kontot.",
+          "value": "Seda kontot ei ole võimalik leida.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Tähän sähköpostiin ei ole liitetty tiliä.",
+          "value": "Tätä tiliä ei ole mahdollista löytää.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Il n'y a pas de compte lié à cet e-mail.",
+          "value": "Il n'est pas possible de trouver ce compte.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Ne postoji račun povezan s ovom e-poštom.",
+          "value": "Nije moguce pronaci ovaj racun.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Það er enginn reikningur tengdur þessum tölvupósti.",
+          "value": "Það er ekki hægt að finna þennan reikning.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Non c'è nessun account collegato a questa e-mail.",
+          "value": "Non è possibile trovare questo conto.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Su šiuo el. paštu nėra susieta jokia paskyra.",
+          "value": "Šios sąskaitos rasti neįmanoma.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Ar šo e-pastu nav saistīts neviens konts.",
+          "value": "Šo kontu nav iespējams atrast.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Det er ingen konto knyttet til denne e-posten.",
+          "value": "Det er ikke mulig å finne denne kontoen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Er is geen account gekoppeld aan deze e-mail.",
+          "value": "Het is niet mogelijk om deze rekening te vinden.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Z tym adresem e-mail nie jest powiązane żadne konto.",
+          "value": "Nie jest możliwe znalezienie tego konta.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Não existe nenhuma conta associada a este correio eletrónico.",
+          "value": "Não é possível encontrar esta conta.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Nu există niciun cont conectat la acest e-mail.",
+          "value": "Nu este posibil să găsiți acest cont.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "K tomuto e-mailu nie je pripojené žiadne konto.",
+          "value": "Tento účet nie je možné nájsť.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "S tem e-poštnim sporočilom ni povezan noben račun.",
+          "value": "Tega računa ni mogoče najti.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Det finns inget konto kopplat till detta e-postmeddelande.",
+          "value": "Det är inte möjligt att hitta detta konto.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Bu e-postaya bağlı bir hesap yok.",
+          "value": "Bu hesabı bulmak mümkün değildir.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "До цього емейлу не прив'язано жодного облікового запису.",
+          "value": "Знайти цей акаунт неможливо.",
           "edit_level": 40
         }
       ]
@@ -14503,132 +14547,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Грешно потребителско име или парола",
+          "value": "Грешно потребителско име или парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Nom d'usuari o contrasenya incorrectes",
+          "value": "Nom d'usuari o contrasenya incorrectes.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Špatné uživatelské jméno nebo heslo",
+          "value": "Špatné uživatelské jméno nebo heslo.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Forkert brugernavn eller adgangskode",
+          "value": "Forkert brugernavn eller adgangskode.",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Falscher Benutzername oder falsches Passwort",
+          "value": "Falscher Benutzername oder falsches Passwort.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Λάθος όνομα χρήστη ή κωδικός πρόσβασης",
+          "value": "Λάθος όνομα χρήστη ή κωδικός πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Wrong username or password",
+          "value": "Wrong username or password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Nombre de usuario o contraseña incorrectos",
+          "value": "Nombre de usuario o contraseña incorrectos.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Vale kasutajanimi või parool",
+          "value": "Vale kasutajanimi või parool.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Väärä käyttäjätunnus tai salasana",
+          "value": "Väärä käyttäjätunnus tai salasana.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Nom d'utilisateur ou mot de passe incorrect",
+          "value": "Nom d'utilisateur ou mot de passe incorrect.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Pogrešno korisničko ime ili lozinka",
+          "value": "Pogrešno korisničko ime ili lozinka.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Rangt notendanafn eða lykilorð",
+          "value": "Rangt notendanafn eða lykilorð.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Nome utente o password errati",
+          "value": "Nome utente o password errati.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Neteisingas naudotojo vardas arba slaptažodis",
+          "value": "Neteisingas naudotojo vardas arba slaptažodis.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Nepareizs lietotājvārds vai parole",
+          "value": "Nepareizs lietotājvārds vai parole.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Feil brukernavn eller passord",
+          "value": "Feil brukernavn eller passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Verkeerde gebruikersnaam of wachtwoord",
+          "value": "Verkeerde gebruikersnaam of wachtwoord.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Nieprawidłowa nazwa użytkownika lub hasło",
+          "value": "Nieprawidłowa nazwa użytkownika lub hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Nome de utilizador ou palavra-passe errados",
+          "value": "Nome de utilizador ou palavra-passe errados.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Nume de utilizator sau parolă greșite",
+          "value": "Nume de utilizator sau parolă greșite.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Nesprávne používateľské meno alebo heslo",
+          "value": "Nesprávne používateľské meno alebo heslo.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Napačno uporabniško ime ali geslo",
+          "value": "Napačno uporabniško ime ali geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Fel användarnamn eller lösenord",
+          "value": "Fel användarnamn eller lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Yanlış kullanıcı adı veya şifre",
+          "value": "Yanlış kullanıcı adı veya şifre.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Неправильне ім'я користувача або пароль",
+          "value": "Неправильне ім'я користувача або пароль.",
           "edit_level": 40
         }
       ]

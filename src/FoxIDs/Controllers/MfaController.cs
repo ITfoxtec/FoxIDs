@@ -52,14 +52,14 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
+                    throw new InvalidOperationException($"Users email '{sequenceData.UserIdentifier}' not verified, required in two factor registration.");
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.Email);
+                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.UserIdentifier);
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
@@ -111,7 +111,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, registerTwoFactor.AppCode);
+                    await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, registerTwoFactor.AppCode);
 
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
                     sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorLogic.CreateRecoveryCode();
@@ -168,7 +168,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
-                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
             }
@@ -192,7 +192,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
+                    throw new InvalidOperationException($"Users email '{sequenceData.UserIdentifier}' not verified, required in two factor login.");
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -248,7 +248,7 @@ namespace FoxIDs.Controllers
                     // Is recovery code
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.Email, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.UserIdentifier, registerTwoFactor.AppCode);
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -271,10 +271,10 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
 
-                        var user = await accountLogic.GetUserAsync(sequenceData.Email);
-                        var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                        var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+                        var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
                     }
                     catch (InvalidAppCodeException acex)

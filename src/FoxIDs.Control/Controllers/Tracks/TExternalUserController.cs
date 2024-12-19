@@ -203,7 +203,7 @@ namespace FoxIDs.Controllers
             if (mExternalUser == null)
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
+                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
                 mExternalUser = mExternalUsers?.FirstOrDefault();
                 if (mExternalUser == null)
                 {

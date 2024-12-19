@@ -10,15 +10,67 @@
 
 <div class="row page-container name-identifier">
     <div class="col-md page-content">
-        @if (Model.ShowEmailSelection)
+        @if (Model.ShowUserIdentifierSelection)
         {
             <form method="post">
                 <div asp-validation-summary="ModelOnly"></div>
-                <div class="form-group active-group">
-                    <input asp-for="Email" autocomplete="username" class="form-control input-control" autofocus />
-                    <label asp-for="Email" class="label-control"></label>
-                    <span asp-validation-for="Email"></span>
-                </div>
+                @if (Model.EmailIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="EmailIdentifier.Email" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="EmailIdentifier.Email" class="label-control"></label>
+                        <span asp-validation-for="EmailIdentifier.Email"></span>
+                    </div>
+                }
+                else if (Model.PhoneIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="PhoneIdentifier.Phone" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="PhoneIdentifier.Phone" class="label-control"></label>
+                        <span asp-validation-for="PhoneIdentifier.Phone"></span>
+                    </div>
+                }
+                else if (Model.UsernameIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="UsernameIdentifier.Username" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="UsernameIdentifier.Username" class="label-control"></label>
+                        <span asp-validation-for="UsernameIdentifier.Username"></span>
+                    </div>
+                }
+                else if (Model.UsernameEmailIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="UsernameEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="UsernameEmailIdentifier.UserIdentifier" class="label-control"></label>
+                        <span asp-validation-for="UsernameEmailIdentifier.UserIdentifier"></span>
+                    </div>
+                }
+                else if (Model.UsernamePhoneIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="UsernamePhoneIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="UsernamePhoneIdentifier.UserIdentifier" class="label-control"></label>
+                        <span asp-validation-for="UsernamePhoneIdentifier.UserIdentifier"></span>
+                    </div>
+                }
+                else if (Model.PhoneEmailIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="PhoneEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="PhoneEmailIdentifier.UserIdentifier" class="label-control"></label>
+                        <span asp-validation-for="PhoneEmailIdentifier.UserIdentifier"></span>
+                    </div>
+                }
+                else if (Model.UsernamePhoneEmailIdentifier != null)
+                {
+                    <div class="form-group active-group">
+                        <input asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
+                        <label asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" class="label-control"></label>
+                        <span asp-validation-for="UsernamePhoneEmailIdentifier.UserIdentifier"></span>
+                    </div>
+                }
+
                 <div class="form-group button-group">
                     <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
                     @if (Model.EnableCancelLogin)
@@ -39,12 +91,12 @@
         @if (Model.UpPatries?.Count() > 0)
         {
             <form id="form-filter">
-                @if (Model.ShowEmailSelection)
+                @if (Model.ShowUserIdentifierSelection)
                 {
                     <hr class="dividing-line">
                 }
                 <div class="info-message info-message-filter">
-                    @if (Model.ShowEmailSelection)
+                    @if (Model.ShowUserIdentifierSelection)
                     {
                         @Localizer["OR select where to log in"]
                     }

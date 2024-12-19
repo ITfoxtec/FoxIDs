@@ -496,12 +496,22 @@ namespace FoxIDs
             {
                 public const int IdLength = 180;
                 public const string IdRegExPattern = @"^[\w:\-.+@]*$";
+
+
+                public const int AdditionalIdsMin = 0;
+                public const int AdditionalIdsMax = 2;
+
                 public const int UserIdLength = 40;
+                public const string UserIdRegExPattern = @"^[\w\-]*$";
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
-                public const int ConfirmationCodeLength = 8;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
+                public const int UsernameLength = 60;
+                public const string UsernameRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
+                public const int PhoneLength = 30;
+                public const string PhoneRegExPattern = @"^\+[0-9]*$";
+                public const int ConfirmationCodeLength = 8;
                 public const int TwoFactorAppCodeLength = 50;
             }
 

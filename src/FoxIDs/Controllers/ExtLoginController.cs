@@ -207,8 +207,8 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(() => aex.Message, triggerEvent: true);
                         var wrongErrorText = extLoginUpParty.UsernameType switch
                         {
-                            ExternalLoginUsernameTypes.Email => "Wrong email or password",
-                            ExternalLoginUsernameTypes.Text => "Wrong username or password",
+                            ExternalLoginUsernameTypes.Email => "Wrong email or password.",
+                            ExternalLoginUsernameTypes.Text => "Wrong username or password.",
                             _ => throw new NotSupportedException()
                         };
                         ModelState.AddModelError(string.Empty,  localizer[wrongErrorText]);

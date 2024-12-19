@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using DeepL;
+using FoxIDs.Models;
 using FoxIDs.ResourceTranslateTool.Models;
 using ITfoxtec.Identity;
 using System.Globalization;
@@ -35,6 +36,24 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             var isoLanguageCodes = languageCodes.Select(l => new CultureInfo(l).TwoLetterISOLanguageName);
             ResourceEnvelope.SupportedCultures.ConcatOnce(isoLanguageCodes);
             ResourceEnvelope.SupportedCultures = ResourceEnvelope.SupportedCultures.OrderBy(c => c).ToList();
+        }
+
+        public bool AddDefaultEnResource()
+        {
+            var updated = false;
+            foreach (var nameItem in ResourceEnvelope.Names)
+            {
+                if (!ResourceEnvelope.Resources.Where(r => r.Id == nameItem.Id).Any())
+                {
+                    ResourceEnvelope.Resources.Add(new ResourceItem
+                    {
+                        Id = nameItem.Id,
+                        Items = [new ResourceCultureItem {  Culture = LanguageCode.English, EditLevel = ResourceEditLevels.Human, Value = nameItem.Name }]
+                    });
+                    updated = true;
+                }
+            }
+            return updated;
         }
     }
 }

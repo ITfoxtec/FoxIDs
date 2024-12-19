@@ -12,6 +12,19 @@ namespace FoxIDs.Models
             Type = PartyTypes.Login;
         }
 
+        [JsonProperty(PropertyName = "enable_email_identifier")]
+        public bool EnableEmailIdentifier { get; set; } = true;
+
+        [JsonProperty(PropertyName = "enable_phone_identifier")]
+        public bool EnablePhoneIdentifier { get; set; }
+
+        [JsonProperty(PropertyName = "enable_username_identifier")]
+        public bool EnableUsernameIdentifier { get; set; }
+
+        //[ListLength(Constants.Models.LoginUpParty.UserIdentifierTypesMin, Constants.Models.LoginUpParty.UserIdentifierTypesMax)]
+        //[JsonProperty(PropertyName = "user_identifier_types")]
+        //public List<UserIdentifierTypes> UserIdentifierTypes { get; set; } = [Models.UserIdentifierTypes.Email];
+
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }

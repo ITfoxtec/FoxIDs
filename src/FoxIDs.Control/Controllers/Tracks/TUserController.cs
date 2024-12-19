@@ -50,7 +50,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email?.ToLower() }));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -143,7 +143,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
                 user.Email = user.Email?.ToLower();
 
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email }));
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = user.EmailVerified;
@@ -198,7 +198,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email }));
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

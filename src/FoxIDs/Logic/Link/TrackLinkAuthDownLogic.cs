@@ -90,7 +90,7 @@ namespace FoxIDs.Logic
                 LoginAction = keySequenceData.LoginAction,
                 UserId = keySequenceData.UserId,
                 MaxAge = keySequenceData.MaxAge,
-                EmailHint = keySequenceData.LoginEmailHint,
+                LoginHint = keySequenceData.LoginHint,
                 Acr = keySequenceData.Acr
             };
         }

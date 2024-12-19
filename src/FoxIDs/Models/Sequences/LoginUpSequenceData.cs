@@ -17,7 +17,7 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "srl")]
         public bool DoSessionUserRequireLogin { get; set; }
 
-        [JsonProperty(PropertyName = "ui")]
+        [JsonProperty(PropertyName = "uin")]
         public string UserIdentifier { get; set; }
 
         [JsonProperty(PropertyName = "ev")]

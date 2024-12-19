@@ -90,31 +90,31 @@ namespace FoxIDs.Controllers
                 {
                     if (login.EmailIdentifier != null)
                     {
-                        ModelState[nameof(login.EmailIdentifier.Email)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.EmailIdentifier)}.{nameof(login.EmailIdentifier.Email)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.PhoneIdentifier != null)
                     {
-                        ModelState[nameof(login.PhoneIdentifier.Phone)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.PhoneIdentifier)}.{nameof(login.PhoneIdentifier.Phone)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.UsernameIdentifier != null)
                     {
-                        ModelState[nameof(login.UsernameIdentifier.Username)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.UsernameIdentifier)}.{nameof(login.UsernameIdentifier.Username)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.UsernameEmailIdentifier != null)
                     {
-                        ModelState[nameof(login.UsernameEmailIdentifier.UserIdentifier)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.UsernameEmailIdentifier)}.{nameof(login.UsernameEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.UsernamePhoneIdentifier != null)
                     {
-                        ModelState[nameof(login.UsernamePhoneIdentifier.UserIdentifier)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.UsernamePhoneIdentifier)}.{nameof(login.UsernamePhoneIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.PhoneEmailIdentifier != null)
                     {
-                        ModelState[nameof(login.PhoneEmailIdentifier.UserIdentifier)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.PhoneEmailIdentifier)}.{nameof(login.PhoneEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
                     }
                     else if (login.UsernamePhoneEmailIdentifier != null)
                     {
-                        ModelState[nameof(login.UsernamePhoneEmailIdentifier.UserIdentifier)].ValidationState = ModelValidationState.Valid;
+                        ModelState[$"{nameof(login.UsernamePhoneEmailIdentifier)}.{nameof(login.UsernamePhoneEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
                     }
                     return await PasswordInternalAsync(sequenceData, login);
                 }

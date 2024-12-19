@@ -14946,6 +14946,1491 @@
           "edit_level": 40
         }
       ]
+    },
+    {
+      "id": 109,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешно потребителско име, телефонен номер, имейл или парола. Телефонният номер трябва да включва кода на страната.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d&#39;usuari, número de telèfon, correu electrònic o contrasenya incorrectes. Un número de telèfon ha d&#39;incloure el codi del país.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné uživatelské jméno, telefonní číslo, e-mail nebo heslo. Telefonní číslo musí obsahovat předvolbu země.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert brugernavn, telefonnummer, e-mail eller adgangskode. Et telefonnummer skal indeholde landekoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falscher Benutzername, Telefonnummer, E-Mail oder Passwort. Eine Telefonnummer muss die Landesvorwahl enthalten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος όνομα χρήστη, αριθμός τηλεφώνου, email ή κωδικός πρόσβασης. Ο αριθμός τηλεφώνου πρέπει να περιλαμβάνει τον κωδικό χώρας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number, email or password. A phone number must include the country code.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario, número de teléfono, correo electrónico o contraseña incorrectos. Un número de teléfono debe incluir el código de país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale kasutajanimi, telefoninumber, e-posti aadress või salasõna. Telefoninumber peab sisaldama riigi koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä käyttäjätunnus, puhelinnumero, sähköpostiosoite tai salasana. Puhelinnumerossa on oltava maakoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur, numéro de téléphone, courriel ou mot de passe incorrect. Un numéro de téléphone doit inclure l'indicatif du pays.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešno korisničko ime, telefonski broj, email ili lozinka. Telefonski broj mora sadržavati pozivni broj zemlje.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt notendanafn, símanúmer, netfang eða lykilorð. Símanúmer verður að innihalda landsnúmerið.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente, numero di telefono, e-mail o password errati. Il numero di telefono deve includere il prefisso internazionale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas naudotojo vardas, telefono numeris, el. pašto adresas arba slaptažodis. Į telefono numerį turi būti įtrauktas šalies kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs lietotājvārds, tālruņa numurs, e-pasta adrese vai parole. Tālruņa numurā jānorāda valsts kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil brukernavn, telefonnummer, e-post eller passord. Et telefonnummer må inneholde landskoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerde gebruikersnaam, telefoonnummer, e-mail of wachtwoord. Een telefoonnummer moet de landcode bevatten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowa nazwa użytkownika, numer telefonu, adres e-mail lub hasło. Numer telefonu musi zawierać numer kierunkowy kraju.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador, número de telefone, e-mail ou palavra-passe errados. Um número de telefone tem de incluir o indicativo do país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume de utilizator, număr de telefon, e-mail sau parolă greșite. Un număr de telefon trebuie să includă codul de țară.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne používateľské meno, telefónne číslo, e-mail alebo heslo. Telefónne číslo musí obsahovať predvoľbu krajiny.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačno uporabniško ime, telefonska številka, e-pošta ali geslo. Telefonska številka mora vsebovati kodo države.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel användarnamn, telefonnummer, e-postadress eller lösenord. Ett telefonnummer måste innehålla landskod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış kullanıcı adı, telefon numarası, e-posta veya şifre. Bir telefon numarası ülke kodunu içermelidir.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильне ім'я користувача, номер телефону, електронна пошта або пароль. Номер телефону повинен містити код країни.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешен телефонен номер, имейл или парола. Телефонният номер трябва да включва кода на страната.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Número de telèfon, correu electrònic o contrasenya incorrectes. Un número de telèfon ha d&#39;incloure el codi del país.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné telefonní číslo, e-mail nebo heslo. Telefonní číslo musí obsahovat předvolbu země.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert telefonnummer, e-mail eller adgangskode. Et telefonnummer skal indeholde landekoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falsche Telefonnummer, E-Mail oder Passwort. Eine Telefonnummer muss die Landesvorwahl enthalten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος αριθμός τηλεφώνου, email ή κωδικός πρόσβασης. Ο αριθμός τηλεφώνου πρέπει να περιλαμβάνει τον κωδικό χώρας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong phone number, email or password. A phone number must include the country code.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Número de teléfono, correo electrónico o contraseña incorrectos. Un número de teléfono debe incluir el código de país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale telefoninumber, e-posti aadress või salasõna. Telefoninumber peab sisaldama riigi koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä puhelinnumero, sähköpostiosoite tai salasana. Puhelinnumerossa on oltava maakoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Numéro de téléphone, courriel ou mot de passe erroné. Le numéro de téléphone doit inclure l'indicatif du pays.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešan telefonski broj, email ili lozinka. Telefonski broj mora sadržavati pozivni broj zemlje.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt símanúmer, netfang eða lykilorð. Símanúmer verður að innihalda landsnúmerið.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Numero di telefono, e-mail o password errati. Il numero di telefono deve includere il prefisso internazionale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas telefono numeris, el. pašto adresas arba slaptažodis. Į telefono numerį turi būti įtrauktas šalies kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs tālruņa numurs, e-pasta adrese vai parole. Tālruņa numurā jānorāda valsts kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil telefonnummer, e-postadresse eller passord. Et telefonnummer må inneholde landskoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerd telefoonnummer, e-mailadres of wachtwoord. Een telefoonnummer moet de landcode bevatten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowy numer telefonu, adres e-mail lub hasło. Numer telefonu musi zawierać numer kierunkowy kraju.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Número de telefone, e-mail ou palavra-passe errados. Um número de telefone tem de incluir o indicativo do país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Numărul de telefon, adresa de e-mail sau parola sunt greșite. Un număr de telefon trebuie să includă codul de țară.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne telefónne číslo, e-mail alebo heslo. Telefónne číslo musí obsahovať predvoľbu krajiny.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačna telefonska številka, e-pošta ali geslo. Telefonska številka mora vsebovati kodo države.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel telefonnummer, e-postadress eller lösenord. Ett telefonnummer måste innehålla landskod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış telefon numarası, e-posta veya şifre. Bir telefon numarası ülke kodunu içermelidir.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний номер телефону, електронна пошта або пароль. Номер телефону повинен містити код країни.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешно потребителско име, телефонен номер или парола. Телефонният номер трябва да включва кода на страната.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d&#39;usuari, número de telèfon o contrasenya incorrectes. Un número de telèfon ha d&#39;incloure el codi del país.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné uživatelské jméno, telefonní číslo nebo heslo. Telefonní číslo musí obsahovat předvolbu země.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert brugernavn, telefonnummer eller adgangskode. Et telefonnummer skal indeholde landekoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falscher Benutzername, falsche Telefonnummer oder falsches Passwort. Eine Telefonnummer muss die Landesvorwahl enthalten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος όνομα χρήστη, αριθμός τηλεφώνου ή κωδικός πρόσβασης. Ο αριθμός τηλεφώνου πρέπει να περιλαμβάνει τον κωδικό χώρας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number or password. A phone number must include the country code.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario, número de teléfono o contraseña incorrectos. Un número de teléfono debe incluir el código de país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale kasutajanimi, telefoninumber või salasõna. Telefoninumber peab sisaldama riigi koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä käyttäjätunnus, puhelinnumero tai salasana. Puhelinnumerossa on oltava maakoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur, numéro de téléphone ou mot de passe incorrect. Le numéro de téléphone doit inclure l'indicatif du pays.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešno korisničko ime, broj telefona ili lozinka. Telefonski broj mora sadržavati pozivni broj zemlje.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt notendanafn, símanúmer eða lykilorð. Símanúmer verður að innihalda landsnúmerið.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente, numero di telefono o password errati. Il numero di telefono deve includere il prefisso internazionale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas naudotojo vardas, telefono numeris arba slaptažodis. Į telefono numerį turi būti įtrauktas šalies kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs lietotājvārds, tālruņa numurs vai parole. Tālruņa numurā jānorāda valsts kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil brukernavn, telefonnummer eller passord. Et telefonnummer må inneholde landskoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerde gebruikersnaam, telefoonnummer of wachtwoord. Een telefoonnummer moet de landcode bevatten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowa nazwa użytkownika, numer telefonu lub hasło. Numer telefonu musi zawierać numer kierunkowy kraju.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador, número de telefone ou palavra-passe errados. Um número de telefone tem de incluir o indicativo do país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume de utilizator, număr de telefon sau parolă greșite. Un număr de telefon trebuie să includă codul de țară.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne používateľské meno, telefónne číslo alebo heslo. Telefónne číslo musí obsahovať predvoľbu krajiny.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačno uporabniško ime, telefonska številka ali geslo. Telefonska številka mora vsebovati kodo države.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel användarnamn, telefonnummer eller lösenord. Ett telefonnummer måste innehålla landskod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış kullanıcı adı, telefon numarası veya şifre. Bir telefon numarası ülke kodunu içermelidir.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильне ім'я користувача, номер телефону або пароль. Номер телефону повинен містити код країни.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешно потребителско име, имейл или парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d&#39;usuari, correu electrònic o contrasenya incorrectes.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné uživatelské jméno, e-mail nebo heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert brugernavn, e-mail eller adgangskode.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falscher Benutzername, E-Mail oder Passwort.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος όνομα χρήστη, email ή κωδικός πρόσβασης.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong username, email or password.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario, correo electrónico o contraseña incorrectos.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale kasutajanimi, e-posti aadress või salasõna.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä käyttäjätunnus, sähköpostiosoite tai salasana.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur, email ou mot de passe erroné.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešno korisničko ime, email ili lozinka.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt notendanafn, netfang eða lykilorð.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente, e-mail o password errati.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas naudotojo vardas, el. pašto adresas arba slaptažodis.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs lietotājvārds, e-pasta adrese vai parole.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil brukernavn, e-postadresse eller passord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerde gebruikersnaam, e-mailadres of wachtwoord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowa nazwa użytkownika, adres e-mail lub hasło.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador, e-mail ou palavra-passe errados.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume de utilizator, e-mail sau parolă greșite.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne používateľské meno, e-mail alebo heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačno uporabniško ime, e-pošta ali geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel användarnamn, e-postadress eller lösenord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış kullanıcı adı, e-posta veya şifre.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильне ім'я користувача, адреса електронної пошти або пароль.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Грешен телефонен номер или парола. Телефонният номер трябва да включва кода на страната.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Número de telèfon o contrasenya incorrectes. Un número de telèfon ha d&#39;incloure el codi del país.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné telefonní číslo nebo heslo. Telefonní číslo musí obsahovat předvolbu země.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert telefonnummer eller adgangskode. Et telefonnummer skal indeholde landekoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falsche Rufnummer oder falsches Passwort. Eine Telefonnummer muss die Landesvorwahl enthalten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος αριθμός τηλεφώνου ή κωδικός πρόσβασης. Ο αριθμός τηλεφώνου πρέπει να περιλαμβάνει τον κωδικό χώρας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Wrong phone number or password. A phone number must include the country code.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Número de teléfono o contraseña incorrectos. Un número de teléfono debe incluir el código de país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale telefoninumber või salasõna. Telefoninumber peab sisaldama riigi koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä puhelinnumero tai salasana. Puhelinnumerossa on oltava maakoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Mauvais numéro de téléphone ou mauvais mot de passe. Le numéro de téléphone doit inclure l'indicatif du pays.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešan broj telefona ili lozinka. Telefonski broj mora sadržavati pozivni broj zemlje.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt símanúmer eða lykilorð. Símanúmer verður að innihalda landsnúmerið.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Numero di telefono o password errati. Il numero di telefono deve includere il prefisso internazionale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas telefono numeris arba slaptažodis. Į telefono numerį turi būti įtrauktas šalies kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs tālruņa numurs vai parole. Tālruņa numurā jānorāda valsts kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil telefonnummer eller passord. Et telefonnummer må inneholde landskoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerd telefoonnummer of wachtwoord. Een telefoonnummer moet de landcode bevatten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowy numer telefonu lub hasło. Numer telefonu musi zawierać numer kierunkowy kraju.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Número de telefone ou palavra-passe incorrecta. Um número de telefone tem de incluir o indicativo do país.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Număr de telefon sau parolă greșite. Un număr de telefon trebuie să includă codul de țară.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne telefónne číslo alebo heslo. Telefónne číslo musí obsahovať predvoľbu krajiny.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačna telefonska številka ali geslo. Telefonska številka mora vsebovati kodo države.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel telefonnummer eller lösenord. Ett telefonnummer måste innehålla landskod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış telefon numarası veya şifre. Bir telefon numarası ülke kodunu içermelidir.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний номер телефону або пароль. Номер телефону повинен містити код країни.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на телефона",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canviar de telèfon",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna telefonu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Telefon ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή τηλεφώνου",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change phone",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar teléfono",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Muuda telefoni",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda puhelin",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Changer de téléphone",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promijeni telefon",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Skiptu um síma",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Cambia telefono",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Keisti telefoną",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt tālruni",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Telefoon wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmień telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o telefone",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați telefonul",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena telefónu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba telefona",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Byt telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonu değiştir",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змініть телефон.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на потребителското име",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canvia el nom d&#39;usuari",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna uživatelského jména",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift brugernavn",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Benutzernamen ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή ονόματος χρήστη",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change username",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar nombre de usuario",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Muuda kasutajanime",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda käyttäjänimi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Changer de nom d'utilisateur",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promjena korisničkog imena",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Breyta notendanafni",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Modifica del nome utente",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Keisti vartotojo vardą",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt lietotājvārdu",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre brukernavn",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruikersnaam wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmień nazwę użytkownika",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o nome de utilizador",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați numele de utilizator",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena používateľského mena",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba uporabniškega imena",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ändra användarnamn",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kullanıcı adını değiştir",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змінити ім'я користувача",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на потребителско име, телефон или имейл",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canvia el nom d&#39;usuari, el telèfon o el correu electrònic",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna uživatelského jména, telefonu nebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift brugernavn, telefon eller e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Benutzernamen, Telefon oder E-Mail ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή ονόματος χρήστη ή τηλεφώνου ή email",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change username or phone or email",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar nombre de usuario, teléfono o correo electrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Muuda kasutajanime või telefoni või e-posti aadressi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda käyttäjätunnus tai puhelin tai sähköpostiosoite",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Changement de nom d'utilisateur, de téléphone ou d'adresse électronique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promijenite korisničko ime ili telefon ili e-mail",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Breyta notendanafni eða síma eða netfangi",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Cambiare nome utente, telefono o e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Pakeisti naudotojo vardą, telefoną arba el. pašto adresą",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt lietotājvārdu vai tālruņa vai e-pasta adresi",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre brukernavn, telefon eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruikersnaam, telefoon of e-mail wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmiana nazwy użytkownika, telefonu lub adresu e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o nome de utilizador, o telefone ou o correio eletrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați numele de utilizator sau telefonul sau adresa de e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena používateľského mena, telefónu alebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba uporabniškega imena ali telefona ali e-pošte",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ändra användarnamn eller telefon eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kullanıcı adını veya telefonu ya da e-postayı değiştirme",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змінити ім'я користувача або телефон чи електронну пошту",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на телефон или имейл",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canviar de telèfon o correu electrònic",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna telefonu nebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift telefon eller e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Telefon oder E-Mail ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή τηλεφώνου ή email",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change phone or email",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar teléfono o correo electrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Muuda telefoni või e-posti aadressi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda puhelin tai sähköpostiosoite",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Changement de téléphone ou d'adresse électronique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promijenite telefon ili email",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Skiptu um síma eða tölvupóst",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Cambiare telefono o e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Pakeisti telefoną arba el. paštą",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt tālruni vai e-pasta adresi",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre telefon eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Telefoon of e-mail wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmiana telefonu lub adresu e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o telefone ou o correio eletrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați telefonul sau adresa de e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena telefónu alebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba telefona ali e-pošte",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ändra telefon eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefon veya e-posta değiştirme",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змінити телефон або електронну пошту",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на потребителско име или телефон",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canvia el nom d&#39;usuari o el telèfon",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna uživatelského jména nebo telefonu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift brugernavn eller telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Benutzernamen oder Telefon ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή ονόματος χρήστη ή τηλεφώνου",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change username or phone",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar nombre de usuario o teléfono",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutajanime või telefoni muutmine",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda käyttäjätunnus tai puhelin",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Changer de nom d'utilisateur ou de téléphone",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promjena korisničkog imena ili telefona",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Breyta notendanafni eða síma",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Cambiare nome utente o telefono",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Keisti naudotojo vardą arba telefoną",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt lietotājvārdu vai tālruni",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre brukernavn eller telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruikersnaam of telefoon wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmiana nazwy użytkownika lub telefonu",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o nome de utilizador ou o telefone",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați numele de utilizator sau telefonul",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena používateľského mena alebo telefónu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba uporabniškega imena ali telefona",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ändra användarnamn eller telefon",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kullanıcı adını veya telefonu değiştirme",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змінити ім'я користувача або телефон",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Промяна на потребителско име или имейл",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Canvia el nom d&#39;usuari o el correu electrònic",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Změna uživatelského jména nebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Skift brugernavn eller e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Benutzernamen oder E-Mail ändern",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αλλαγή ονόματος χρήστη ή email",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Change username or email",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Cambiar nombre de usuario o correo electrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Muuda kasutajanime või e-posti aadressi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda käyttäjätunnus tai sähköpostiosoite",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Modifier le nom d'utilisateur ou l'adresse électronique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Promjena korisničkog imena ili e-pošte",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Breyta notendanafni eða netfangi",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Modifica del nome utente o dell'e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Keisti naudotojo vardą arba el. pašto adresą",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Mainīt lietotājvārdu vai e-pasta adresi",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Endre brukernavn eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruikersnaam of e-mailadres wijzigen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Zmiana nazwy użytkownika lub adresu e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Alterar o nome de utilizador ou o e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Schimbați numele de utilizator sau adresa de e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zmena používateľského mena alebo e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Sprememba uporabniškega imena ali e-pošte",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ändra användarnamn eller e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kullanıcı adını veya e-postayı değiştirme",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Змінити ім'я користувача або електронну пошту",
+          "edit_level": 40
+        }
+      ]
     }
   ]
 }

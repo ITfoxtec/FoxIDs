@@ -221,7 +221,7 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     EnableCreateUser = loginUpParty.EnableCreateUser,
-                    ShowUserIdentifierSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                    ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
                     UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                 };
 
@@ -268,7 +268,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private bool ShowEmailSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
+        private bool ShowUserIdentifierSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
             if (sequenceData.ToUpParties.Where(up => up.Name == currentUpPartyName || up.HrdDomains?.Count() > 0).Any())
             {
@@ -331,7 +331,7 @@ namespace FoxIDs.Controllers
                         Css = loginUpParty.Css,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableCreateUser = loginUpParty.EnableCreateUser,
-                        ShowUserIdentifierSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                        ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
                         UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                     };
                     if (login.EmailIdentifier != null)
@@ -483,7 +483,7 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -636,7 +636,7 @@ namespace FoxIDs.Controllers
                 catch (ChangePasswordException cpex)
                 {
                     logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
-                    return await StartChangePassword(sequenceData.UserIdentifier, sequenceData);
+                    return StartChangePassword();
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -788,7 +788,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.EmailClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.UserIdClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -1074,12 +1074,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> StartChangePassword(string email, LoginUpSequenceData sequenceData)
-        {
-            sequenceData.UserIdentifier = email;
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return new RedirectResult($"../{Constants.Endpoints.ChangePassword}/_{SequenceString}");
-        }
+        private IActionResult StartChangePassword() => new RedirectResult($"../{Constants.Endpoints.ChangePassword}/_{SequenceString}");
 
         public async Task<IActionResult> ChangePassword()
         {
@@ -1096,16 +1091,50 @@ namespace FoxIDs.Controllers
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 _ = loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
 
-                logger.ScopeTrace(() => "Show change password dialog.");
-                return View(nameof(ChangePassword), new ChangePasswordViewModel
+                var changePasswordViewModel = new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    Email = sequenceData.UserIdentifier,
-                });
+                };
+
+                if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+                {
+                    changePasswordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                if (loginUpParty.EnableEmailIdentifier)
+                {
+                    changePasswordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier)
+                {
+                    changePasswordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                logger.ScopeTrace(() => "Show change password dialog.");
+                return View(nameof(ChangePassword), changePasswordViewModel);
             }
             catch (Exception ex)
             {
@@ -1144,7 +1173,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await accountLogic.ChangePasswordUser(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException uoex)

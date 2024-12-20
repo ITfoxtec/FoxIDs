@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
 
             var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount, RequireMultiFactor = requireMultiFactor };
-            var userIdKey = new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() };
+            var userIdKey = new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, UserIdentifier = email?.ToLower() };
             await user.SetIdAsync(userIdKey);
 
             await secretHashLogic.AddSecretHashAsync(user, password);
@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
 
             ValidateEmail(email);
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = email });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)

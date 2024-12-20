@@ -17,11 +17,11 @@ namespace FoxIDs.Logic
             this.failingLoginLogic = failingLoginLogic;
         }
 
-        public async Task<User> GetUserAsync(string email)
+        public async Task<User> GetUserAsync(string userIdentifier)
         {
-            email = email?.ToLowerInvariant();
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            return await tenantDataRepository.GetAsync<User>(id, required: false);
+            userIdentifier = userIdentifier?.ToLowerInvariant();
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
+            return await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
         }
 
         public async Task<User> ValidateUser(string userIdentifier, string password)
@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
             ValidateEmail(userIdentifier);
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.Login);
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = userIdentifier });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.Login);
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = email });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)

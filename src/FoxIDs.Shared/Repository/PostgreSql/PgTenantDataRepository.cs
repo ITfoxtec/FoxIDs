@@ -27,21 +27,32 @@ namespace FoxIDs.Repository
             return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
-        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var item = await db.GetAsync<T>(id, partitionId);
-            if (required && item == null)
-            { 
-                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            }
-            if (item != null)
+            if (!queryAdditionalIds)
             {
+                var item = await db.GetAsync<T>(id, partitionId);
+                if (required && item == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
                 await item.ValidateObjectAsync();
+                return item;
             }
-            return item;
+            else
+            {
+                Expression<Func<T, bool>> whereQuery = q => q.Id == id || q.AdditionalIds.Contains(id);
+                var item = await db.GetListAsync(partitionId, whereQuery, 1).FirstOrDefaultAsync();
+                if (required && item == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                await item.ValidateObjectAsync();
+                return item;
+            }
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -55,10 +66,7 @@ namespace FoxIDs.Repository
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
-            if (item != null)
-            {
-                await item.ValidateObjectAsync();
-            }
+            await item.ValidateObjectAsync();
             return item;
         }
 
@@ -73,10 +81,7 @@ namespace FoxIDs.Repository
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
-            if (item != null)
-            {
-                await item.ValidateObjectAsync();
-            }
+            await item.ValidateObjectAsync();
             return item;
         }
 
@@ -89,7 +94,6 @@ namespace FoxIDs.Repository
             var items = dataItems;
             await items.ValidateObjectAsync();
             return (items, paginationToken);
-            throw new NotImplementedException();
         }
 
         private static int GetOffset(string paginationToken, int pageSize)

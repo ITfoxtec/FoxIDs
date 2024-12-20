@@ -41,16 +41,25 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var item = (await fileDataRepository.GetAsync(id, partitionId, required, delete)).DataJsonToObject<T>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required && !queryAdditionalIds, delete)).DataJsonToObject<T>();
+            if (queryAdditionalIds && item == null)
+            {
+                Expression<Func<T, bool>> whereQuery = q => q.AdditionalIds.Contains(id);
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
+                item = dataItems.Where(d => whereQuery.Compile()(d)).FirstOrDefault();
+                if (item == null && required)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
             await item.ValidateObjectAsync();
             return item;
         }
-
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));

@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email }));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = email }));
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("Authenticated users email claim is empty.");
                 }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email }));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = email }));
                 mUser.ChangePassword = user.ChangePassword;
                 await tenantDataRepository.UpdateAsync(mUser);
 

@@ -185,15 +185,15 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var username = extLoginUpParty.UsernameType switch
+                    var userIdentifier = extLoginUpParty.UsernameType switch
                     {
                         ExternalLoginUsernameTypes.Email => extLogin.Email,
                         ExternalLoginUsernameTypes.Text => extLogin.Username,
                         _ => throw new NotSupportedException()
                     };
                     var profile = GetProfile(extLoginUpParty, sequenceData);
-                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, username, extLogin.Password);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
+                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, userIdentifier, extLogin.Password);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, userIdentifier, claims);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -270,7 +270,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
@@ -283,7 +283,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     _ = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
-                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{session.EmailClaim}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -324,7 +324,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
-                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.EmailClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(extLoginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)

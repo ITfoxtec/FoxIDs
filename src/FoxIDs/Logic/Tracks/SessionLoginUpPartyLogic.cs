@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +26,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateSessionAsync(IUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, IEnumerable<Claim> claims)
+        public async Task CreateSessionAsync(IUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, UserIdentifiers userIdentifiers, IEnumerable<Claim> claims)
         {
             if(SessionEnabled(loginUpParty))
             {
@@ -33,13 +34,14 @@ namespace FoxIDs.Logic
 
                 var session = new SessionLoginUpPartyCookie
                 {
-                    Claims = claims.ToClaimAndValues(),      
+                    Claims = claims.ToClaimAndValues(),
                 };
                 AddDownPartyLink(session, newDownPartyLink);
                 session.CreateTime = authTime;
                 session.LastUpdated = authTime;
+                SetUserIdentifiers(session, userIdentifiers);
                 await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                logger.ScopeTrace(() => $"Session created, User id '{session.UserId}', Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                logger.ScopeTrace(() => $"Session created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
             }
             else
             {
@@ -47,7 +49,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<bool> UpdateSessionAsync(IUpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, IEnumerable<Claim> claims = null)
+        public async Task<bool> UpdateSessionAsync(IUpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, UserIdentifiers userIdentifiers = null, IEnumerable<Claim> claims = null)
         {
             logger.ScopeTrace(() => $"Update session, Route '{RouteBinding.Route}'.");
 
@@ -62,15 +64,28 @@ namespace FoxIDs.Logic
                 {
                     session.Claims = UpdateClaims(session, claims);
                 }
+                if (userIdentifiers != null)
+                {
+                    SetUserIdentifiers(session, userIdentifiers);
+                }
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
-                logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
                 return true;
             }
 
             SetScopeProperty(session, includeSessionId: false);
             await sessionCookieRepository.DeleteAsync(upParty);
-            logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+            logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
             return false;
+        }
+
+        private void SetUserIdentifiers(SessionLoginUpPartyCookie session, UserIdentifiers userIdentifiers)
+        {
+            session.UserId = userIdentifiers.UserId;
+            session.Email = userIdentifiers.Email;
+            session.Phone = userIdentifiers.Phone;
+            session.UserIdentifier = userIdentifiers.Username;
+            session.UserIdentifier = userIdentifiers.UserIdentifier;
         }
 
         private IEnumerable<ClaimAndValues> UpdateClaims(SessionLoginUpPartyCookie session, IEnumerable<Claim> claims)
@@ -109,24 +124,24 @@ namespace FoxIDs.Logic
                 var sessionEnabled = SessionEnabled(loginUpParty);
                 var sessionValid = SessionValid(session, loginUpParty);
 
-                logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = session.Email });
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email, UserId = session.UserId });
                     var user = await tenantDataRepository.GetAsync<User>(id, false);
                     if (user != null && !user.DisableAccount)
                     {
                         AddDownPartyLink(session, newDownPartyLink);
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                        logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                        logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
                         return (session, user);
                     }
                 }
 
                 SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(loginUpParty);
-                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
             }
             else
             {                
@@ -146,19 +161,19 @@ namespace FoxIDs.Logic
                 var sessionEnabled = SessionEnabled(extLoginUpParty);
                 var sessionValid = SessionValid(session, extLoginUpParty);
 
-                logger.ScopeTrace(() => $"User id '{session.UserId}' session (external login) exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session (external login) exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
                     AddDownPartyLink(session, newDownPartyLink);
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(extLoginUpParty, session, GetPersistentCookieExpires(extLoginUpParty, session.CreateTime));
-                    logger.ScopeTrace(() => $"Session (external login) updated, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                    logger.ScopeTrace(() => $"Session (external login) updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
                     return session;
                 }
 
                 SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(extLoginUpParty);
-                logger.ScopeTrace(() => $"Session (external login) deleted, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session (external login) deleted, Session id '{session.SessionIdClaim}'.");
             }
             else
             {
@@ -178,7 +193,7 @@ namespace FoxIDs.Logic
                 var sessionEnabled = SessionEnabled(upParty);
                 var sessionValid = SessionValid(session, upParty);
 
-                logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
                     SetScopeProperty(session);
@@ -187,7 +202,7 @@ namespace FoxIDs.Logic
 
                 SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
             }
             else
             {
@@ -204,7 +219,7 @@ namespace FoxIDs.Logic
             if (session != null)
             {
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
                 return session;
             }
             else

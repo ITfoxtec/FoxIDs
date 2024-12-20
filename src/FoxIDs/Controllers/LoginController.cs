@@ -198,7 +198,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -207,7 +207,7 @@ namespace FoxIDs.Controllers
                 if (validSession && sequenceData.LoginAction == LoginAction.SessionUserRequireLogin)
                 {
                     sequenceData.DoLoginIdentifierStep = false;
-                    sequenceData.UserIdentifier = email;
+                    sequenceData.UserIdentifier = sessionUserIdentifier;
                     sequenceData.DoSessionUserRequireLogin = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return await PasswordInternalAsync();
@@ -543,21 +543,21 @@ namespace FoxIDs.Controllers
             return View("Password",passwordViewModel);
         }
 
-        public async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, upParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, user?.Email, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, user?.Email, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
             }
 
-            return (validSession, user?.Email, null);
+            return (validSession, session?.UserIdentifier, null);
         }
 
         private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)
@@ -734,7 +734,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
@@ -747,7 +747,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     _ = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{session.UserIdClaim}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -788,7 +788,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.EmailClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)

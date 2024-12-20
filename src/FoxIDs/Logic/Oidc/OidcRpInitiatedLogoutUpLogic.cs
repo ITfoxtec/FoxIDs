@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!oidcUpSequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match authentication method session ID.");
                 }

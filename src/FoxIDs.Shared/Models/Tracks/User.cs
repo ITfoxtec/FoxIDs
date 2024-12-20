@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.User}:{idKey.TenantName}:{idKey.TrackName}:{(!idKey.UserIdentifier.IsNullOrEmpty() ? idKey.UserIdentifier : idKey.UserId)}";
+            return $"{Constants.Models.DataType.User}:{idKey.TenantName}:{idKey.TrackName}:{(!idKey.UserIdentifier.IsNullOrEmpty() ? idKey.UserIdentifier : (!idKey.Email.IsNullOrEmpty() ? idKey.Email : idKey.UserId))}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, IdKey idKey)
@@ -87,6 +87,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "email_verified")]
         public bool EmailVerified { get; set; }
 
+        [JsonProperty(PropertyName = "phone_verified")]
+        public bool PhoneVerified { get; set; }
+
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
 
@@ -132,6 +135,10 @@ namespace FoxIDs.Models
             [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
             public string UserIdentifier { get; set; }
 
+            [MaxLength(Constants.Models.User.EmailLength)]
+            [RegularExpression(Constants.Models.User.EmailRegExPattern)]
+            public string Email { get; set; }
+
             [MaxLength(Constants.Models.User.UserIdLength)]
             [RegularExpression(Constants.Models.User.UserIdRegExPattern)]
             public string UserId { get; set; }
@@ -140,9 +147,9 @@ namespace FoxIDs.Models
             {
                 var results = new List<ValidationResult>();
 
-                if (UserIdentifier.IsNullOrEmpty() && UserId.IsNullOrEmpty())
+                if (Email.IsNullOrEmpty() && UserIdentifier.IsNullOrEmpty() && UserId.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(UserIdentifier)} or the field {nameof(UserId)} is required.", [nameof(UserIdentifier), nameof(UserId)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(UserIdentifier)} or the field {nameof(UserId)} is required.", [nameof(UserIdentifier), nameof(UserId)]));
                 }
 
                 return results;

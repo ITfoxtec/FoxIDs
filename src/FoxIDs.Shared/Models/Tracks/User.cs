@@ -128,8 +128,8 @@ namespace FoxIDs.Models
 
         public class IdKey : Track.IdKey, IValidatableObject
         {
-            [MaxLength(Constants.Models.User.EmailLength)]
-            [RegularExpression(Constants.Models.User.EmailRegExPattern)]
+            [MaxLength(Constants.Models.User.UsernameLength)]
+            [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
             public string UserIdentifier { get; set; }
 
             [MaxLength(Constants.Models.User.UserIdLength)]

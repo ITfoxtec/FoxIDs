@@ -267,9 +267,20 @@ namespace FoxIDs.Logic
                 claims.AddRange(acrClaims);
             }
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
-            claims.AddClaim(JwtClaimTypes.Email, user.Email);
-            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            if (user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.Email, user.Email);
+                claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            }
+            if (user.Phone.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PhoneNumber, user.Phone);
+                claims.AddClaim(JwtClaimTypes.PhoneNumberVerified, user.PhoneVerified.ToString().ToLower());
+            }
+            if (user.Username.IsNullOrEmpty() || user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Username ?? user.Email);
+            }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, loginUpParty.Name);
             if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
             {

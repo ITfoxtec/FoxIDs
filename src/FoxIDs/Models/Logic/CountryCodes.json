@@ -1,0 +1,1938 @@
+[
+  {
+    "CountryName": "Afghanistan",
+    "Iso2": "AF",
+    "Iso3": "AFG",
+    "Fips": "AF",
+    "PhoneCode": 93,
+    "LanguageCodes": "fa-AF"
+  },
+  {
+    "CountryName": "Albania",
+    "Iso2": "AL",
+    "Iso3": "ALB",
+    "Fips": "AL",
+    "PhoneCode": 355,
+    "LanguageCodes": "sq"
+  },
+  {
+    "CountryName": "Algeria",
+    "Iso2": "DZ",
+    "Iso3": "DZA",
+    "Fips": "AG",
+    "PhoneCode": 213,
+    "LanguageCodes": "ar-DZ"
+  },
+  {
+    "CountryName": "American Samoa",
+    "Iso2": "AS",
+    "Iso3": "ASM",
+    "Fips": "AQ",
+    "PhoneCode": 1684,
+    "LanguageCodes": "en-AS"
+  },
+  {
+    "CountryName": "Andorra",
+    "Iso2": "AD",
+    "Iso3": "AND",
+    "Fips": "AN",
+    "PhoneCode": 376,
+    "LanguageCodes": "ca"
+  },
+  {
+    "CountryName": "Angola",
+    "Iso2": "AO",
+    "Iso3": "AGO",
+    "Fips": "AO",
+    "PhoneCode": 244,
+    "LanguageCodes": "pt-AO"
+  },
+  {
+    "CountryName": "Anguilla",
+    "Iso2": "AI",
+    "Iso3": "AIA",
+    "Fips": "AV",
+    "PhoneCode": 1264,
+    "LanguageCodes": "en-AI"
+  },
+  {
+    "CountryName": "Antarctica",
+    "Iso2": "AQ",
+    "Iso3": "ATA",
+    "Fips": "AY",
+    "PhoneCode": 672,
+    "LanguageCodes": ""
+  },
+  {
+    "CountryName": "Antigua and Barbuda",
+    "Iso2": "AG",
+    "Iso3": "ATG",
+    "Fips": "AC",
+    "PhoneCode": 1268,
+    "LanguageCodes": "en-AG"
+  },
+  {
+    "CountryName": "Argentina",
+    "Iso2": "AR",
+    "Iso3": "ARG",
+    "Fips": "AR",
+    "PhoneCode": 54,
+    "LanguageCodes": "es-AR"
+  },
+  {
+    "CountryName": "Armenia",
+    "Iso2": "AM",
+    "Iso3": "ARM",
+    "Fips": "AM",
+    "PhoneCode": 374,
+    "LanguageCodes": "hy"
+  },
+  {
+    "CountryName": "Aruba",
+    "Iso2": "AW",
+    "Iso3": "ABW",
+    "Fips": "AA",
+    "PhoneCode": 297,
+    "LanguageCodes": "nl-AW"
+  },
+  {
+    "CountryName": "Australia",
+    "Iso2": "AU",
+    "Iso3": "AUS",
+    "Fips": "AS",
+    "PhoneCode": 61,
+    "LanguageCodes": "en-AU"
+  },
+  {
+    "CountryName": "Austria",
+    "Iso2": "AT",
+    "Iso3": "AUT",
+    "Fips": "AU",
+    "PhoneCode": 43,
+    "LanguageCodes": "de-AT"
+  },
+  {
+    "CountryName": "Azerbaijan",
+    "Iso2": "AZ",
+    "Iso3": "AZE",
+    "Fips": "AJ",
+    "PhoneCode": 994,
+    "LanguageCodes": "az"
+  },
+  {
+    "CountryName": "Bahamas",
+    "Iso2": "BS",
+    "Iso3": "BHS",
+    "Fips": "BF",
+    "PhoneCode": 1242,
+    "LanguageCodes": "en-BS"
+  },
+  {
+    "CountryName": "Bahrain",
+    "Iso2": "BH",
+    "Iso3": "BHR",
+    "Fips": "BA",
+    "PhoneCode": 973,
+    "LanguageCodes": "ar-BH"
+  },
+  {
+    "CountryName": "Bangladesh",
+    "Iso2": "BD",
+    "Iso3": "BGD",
+    "Fips": "BG",
+    "PhoneCode": 880,
+    "LanguageCodes": "bn-BD"
+  },
+  {
+    "CountryName": "Barbados",
+    "Iso2": "BB",
+    "Iso3": "BRB",
+    "Fips": "BB",
+    "PhoneCode": 1246,
+    "LanguageCodes": "en-BB"
+  },
+  {
+    "CountryName": "Belarus",
+    "Iso2": "BY",
+    "Iso3": "BLR",
+    "Fips": "BO",
+    "PhoneCode": 375,
+    "LanguageCodes": "be"
+  },
+  {
+    "CountryName": "Belgium",
+    "Iso2": "BE",
+    "Iso3": "BEL",
+    "Fips": "BE",
+    "PhoneCode": 32,
+    "LanguageCodes": "nl-BE"
+  },
+  {
+    "CountryName": "Belize",
+    "Iso2": "BZ",
+    "Iso3": "BLZ",
+    "Fips": "BH",
+    "PhoneCode": 501,
+    "LanguageCodes": "en-BZ"
+  },
+  {
+    "CountryName": "Benin",
+    "Iso2": "BJ",
+    "Iso3": "BEN",
+    "Fips": "BN",
+    "PhoneCode": 229,
+    "LanguageCodes": "fr-BJ"
+  },
+  {
+    "CountryName": "Bermuda",
+    "Iso2": "BM",
+    "Iso3": "BMU",
+    "Fips": "BD",
+    "PhoneCode": 1441,
+    "LanguageCodes": "en-BM"
+  },
+  {
+    "CountryName": "Bhutan",
+    "Iso2": "BT",
+    "Iso3": "BTN",
+    "Fips": "BT",
+    "PhoneCode": 975,
+    "LanguageCodes": "dz"
+  },
+  {
+    "CountryName": "Bolivia",
+    "Iso2": "BO",
+    "Iso3": "BOL",
+    "Fips": "BL",
+    "PhoneCode": 591,
+    "LanguageCodes": "es-BO"
+  },
+  {
+    "CountryName": "Bosnia and Herzegovina",
+    "Iso2": "BA",
+    "Iso3": "BIH",
+    "Fips": "BK",
+    "PhoneCode": 387,
+    "LanguageCodes": "bs"
+  },
+  {
+    "CountryName": "Botswana",
+    "Iso2": "BW",
+    "Iso3": "BWA",
+    "Fips": "BC",
+    "PhoneCode": 267,
+    "LanguageCodes": "en-BW"
+  },
+  {
+    "CountryName": "Brazil",
+    "Iso2": "BR",
+    "Iso3": "BRA",
+    "Fips": "BR",
+    "PhoneCode": 55,
+    "LanguageCodes": "pt-BR"
+  },
+  {
+    "CountryName": "British Indian Ocean Territory",
+    "Iso2": "IO",
+    "Iso3": "IOT",
+    "Fips": "IO",
+    "PhoneCode": 246,
+    "LanguageCodes": "en-IO"
+  },
+  {
+    "CountryName": "British Virgin Islands",
+    "Iso2": "VG",
+    "Iso3": "VGB",
+    "Fips": "VI",
+    "PhoneCode": 1284,
+    "LanguageCodes": "en-VG"
+  },
+  {
+    "CountryName": "Brunei",
+    "Iso2": "BN",
+    "Iso3": "BRN",
+    "Fips": "BX",
+    "PhoneCode": 673,
+    "LanguageCodes": "ms-BN"
+  },
+  {
+    "CountryName": "Bulgaria",
+    "Iso2": "BG",
+    "Iso3": "BGR",
+    "Fips": "BU",
+    "PhoneCode": 359,
+    "LanguageCodes": "bg"
+  },
+  {
+    "CountryName": "Burkina Faso",
+    "Iso2": "BF",
+    "Iso3": "BFA",
+    "Fips": "UV",
+    "PhoneCode": 226,
+    "LanguageCodes": "fr-BF"
+  },
+  {
+    "CountryName": "Burundi",
+    "Iso2": "BI",
+    "Iso3": "BDI",
+    "Fips": "BY",
+    "PhoneCode": 257,
+    "LanguageCodes": "fr-BI"
+  },
+  {
+    "CountryName": "Cambodia",
+    "Iso2": "KH",
+    "Iso3": "KHM",
+    "Fips": "CB",
+    "PhoneCode": 855,
+    "LanguageCodes": "km"
+  },
+  {
+    "CountryName": "Cameroon",
+    "Iso2": "CM",
+    "Iso3": "CMR",
+    "Fips": "CM",
+    "PhoneCode": 237,
+    "LanguageCodes": "en-CM"
+  },
+  {
+    "CountryName": "Canada",
+    "Iso2": "CA",
+    "Iso3": "CAN",
+    "Fips": "CA",
+    "PhoneCode": 1,
+    "LanguageCodes": "en-CA"
+  },
+  {
+    "CountryName": "Cape Verde",
+    "Iso2": "CV",
+    "Iso3": "CPV",
+    "Fips": "CV",
+    "PhoneCode": 238,
+    "LanguageCodes": "pt-CV"
+  },
+  {
+    "CountryName": "Cayman Islands",
+    "Iso2": "KY",
+    "Iso3": "CYM",
+    "Fips": "CJ",
+    "PhoneCode": 1345,
+    "LanguageCodes": "en-KY"
+  },
+  {
+    "CountryName": "Central African Republic",
+    "Iso2": "CF",
+    "Iso3": "CAF",
+    "Fips": "CT",
+    "PhoneCode": 236,
+    "LanguageCodes": "fr-CF"
+  },
+  {
+    "CountryName": "Chad",
+    "Iso2": "TD",
+    "Iso3": "TCD",
+    "Fips": "CD",
+    "PhoneCode": 235,
+    "LanguageCodes": "fr-TD"
+  },
+  {
+    "CountryName": "Chile",
+    "Iso2": "CL",
+    "Iso3": "CHL",
+    "Fips": "CI",
+    "PhoneCode": 56,
+    "LanguageCodes": "es-CL"
+  },
+  {
+    "CountryName": "China",
+    "Iso2": "CN",
+    "Iso3": "CHN",
+    "Fips": "CH",
+    "PhoneCode": 86,
+    "LanguageCodes": "zh-CN"
+  },
+  {
+    "CountryName": "Christmas Island",
+    "Iso2": "CX",
+    "Iso3": "CXR",
+    "Fips": "KT",
+    "PhoneCode": 61,
+    "LanguageCodes": "en"
+  },
+  {
+    "CountryName": "Cocos Islands",
+    "Iso2": "CC",
+    "Iso3": "CCK",
+    "Fips": "CK",
+    "PhoneCode": 61,
+    "LanguageCodes": "ms-CC"
+  },
+  {
+    "CountryName": "Colombia",
+    "Iso2": "CO",
+    "Iso3": "COL",
+    "Fips": "CO",
+    "PhoneCode": 57,
+    "LanguageCodes": "es-CO"
+  },
+  {
+    "CountryName": "Comoros",
+    "Iso2": "KM",
+    "Iso3": "COM",
+    "Fips": "CN",
+    "PhoneCode": 269,
+    "LanguageCodes": "ar"
+  },
+  {
+    "CountryName": "Cook Islands",
+    "Iso2": "CK",
+    "Iso3": "COK",
+    "Fips": "CW",
+    "PhoneCode": 682,
+    "LanguageCodes": "en-CK"
+  },
+  {
+    "CountryName": "Costa Rica",
+    "Iso2": "CR",
+    "Iso3": "CRI",
+    "Fips": "CS",
+    "PhoneCode": 506,
+    "LanguageCodes": "es-CR"
+  },
+  {
+    "CountryName": "Croatia",
+    "Iso2": "HR",
+    "Iso3": "HRV",
+    "Fips": "HR",
+    "PhoneCode": 385,
+    "LanguageCodes": "hr-HR"
+  },
+  {
+    "CountryName": "Cuba",
+    "Iso2": "CU",
+    "Iso3": "CUB",
+    "Fips": "CU",
+    "PhoneCode": 53,
+    "LanguageCodes": "es-CU"
+  },
+  {
+    "CountryName": "Curacao",
+    "Iso2": "CW",
+    "Iso3": "CUW",
+    "Fips": "UC",
+    "PhoneCode": 599,
+    "LanguageCodes": "nl"
+  },
+  {
+    "CountryName": "Cyprus",
+    "Iso2": "CY",
+    "Iso3": "CYP",
+    "Fips": "CY",
+    "PhoneCode": 357,
+    "LanguageCodes": "el-CY"
+  },
+  {
+    "CountryName": "Czech Republic",
+    "Iso2": "CZ",
+    "Iso3": "CZE",
+    "Fips": "EZ",
+    "PhoneCode": 420,
+    "LanguageCodes": "cs"
+  },
+  {
+    "CountryName": "Democratic Republic of the Congo",
+    "Iso2": "CD",
+    "Iso3": "COD",
+    "Fips": "CG",
+    "PhoneCode": 243,
+    "LanguageCodes": "fr-CD"
+  },
+  {
+    "CountryName": "Denmark",
+    "Iso2": "DK",
+    "Iso3": "DNK",
+    "Fips": "DA",
+    "PhoneCode": 45,
+    "LanguageCodes": "da-DK"
+  },
+  {
+    "CountryName": "Djibouti",
+    "Iso2": "DJ",
+    "Iso3": "DJI",
+    "Fips": "DJ",
+    "PhoneCode": 253,
+    "LanguageCodes": "fr-DJ"
+  },
+  {
+    "CountryName": "Dominica",
+    "Iso2": "DM",
+    "Iso3": "DMA",
+    "Fips": "DO",
+    "PhoneCode": 1767,
+    "LanguageCodes": "en-DM"
+  },
+  {
+    "CountryName": "Dominican Republic",
+    "Iso2": "DO",
+    "Iso3": "DOM",
+    "Fips": "DR",
+    "PhoneCode": 1809,
+    "LanguageCodes": "es-DO"
+  },
+  {
+    "CountryName": "Dominican Republic",
+    "Iso2": "DO",
+    "Iso3": "DOM",
+    "Fips": "DR",
+    "PhoneCode": 1829,
+    "LanguageCodes": "es-DO"
+  },
+  {
+    "CountryName": "Dominican Republic",
+    "Iso2": "DO",
+    "Iso3": "DOM",
+    "Fips": "DR",
+    "PhoneCode": 1849,
+    "LanguageCodes": "es-DO"
+  },
+  {
+    "CountryName": "East Timor",
+    "Iso2": "TL",
+    "Iso3": "TLS",
+    "Fips": "TT",
+    "PhoneCode": 670,
+    "LanguageCodes": "tet"
+  },
+  {
+    "CountryName": "Ecuador",
+    "Iso2": "EC",
+    "Iso3": "ECU",
+    "Fips": "EC",
+    "PhoneCode": 593,
+    "LanguageCodes": "es-EC"
+  },
+  {
+    "CountryName": "Egypt",
+    "Iso2": "EG",
+    "Iso3": "EGY",
+    "Fips": "EG",
+    "PhoneCode": 20,
+    "LanguageCodes": "ar-EG"
+  },
+  {
+    "CountryName": "El Salvador",
+    "Iso2": "SV",
+    "Iso3": "SLV",
+    "Fips": "ES",
+    "PhoneCode": 503,
+    "LanguageCodes": "es-SV"
+  },
+  {
+    "CountryName": "Equatorial Guinea",
+    "Iso2": "GQ",
+    "Iso3": "GNQ",
+    "Fips": "EK",
+    "PhoneCode": 240,
+    "LanguageCodes": "es-GQ"
+  },
+  {
+    "CountryName": "Eritrea",
+    "Iso2": "ER",
+    "Iso3": "ERI",
+    "Fips": "ER",
+    "PhoneCode": 291,
+    "LanguageCodes": "aa-ER"
+  },
+  {
+    "CountryName": "Estonia",
+    "Iso2": "EE",
+    "Iso3": "EST",
+    "Fips": "EN",
+    "PhoneCode": 372,
+    "LanguageCodes": "et"
+  },
+  {
+    "CountryName": "Ethiopia",
+    "Iso2": "ET",
+    "Iso3": "ETH",
+    "Fips": "ET",
+    "PhoneCode": 251,
+    "LanguageCodes": "am"
+  },
+  {
+    "CountryName": "Falkland Islands",
+    "Iso2": "FK",
+    "Iso3": "FLK",
+    "Fips": "FK",
+    "PhoneCode": 500,
+    "LanguageCodes": "en-FK"
+  },
+  {
+    "CountryName": "Faroe Islands",
+    "Iso2": "FO",
+    "Iso3": "FRO",
+    "Fips": "FO",
+    "PhoneCode": 298,
+    "LanguageCodes": "fo"
+  },
+  {
+    "CountryName": "Fiji",
+    "Iso2": "FJ",
+    "Iso3": "FJI",
+    "Fips": "FJ",
+    "PhoneCode": 679,
+    "LanguageCodes": "en-FJ"
+  },
+  {
+    "CountryName": "Finland",
+    "Iso2": "FI",
+    "Iso3": "FIN",
+    "Fips": "FI",
+    "PhoneCode": 358,
+    "LanguageCodes": "fi-FI"
+  },
+  {
+    "CountryName": "France",
+    "Iso2": "FR",
+    "Iso3": "FRA",
+    "Fips": "FR",
+    "PhoneCode": 33,
+    "LanguageCodes": "fr-FR"
+  },
+  {
+    "CountryName": "French Polynesia",
+    "Iso2": "PF",
+    "Iso3": "PYF",
+    "Fips": "FP",
+    "PhoneCode": 689,
+    "LanguageCodes": "fr-PF"
+  },
+  {
+    "CountryName": "Gabon",
+    "Iso2": "GA",
+    "Iso3": "GAB",
+    "Fips": "GB",
+    "PhoneCode": 241,
+    "LanguageCodes": "fr-GA"
+  },
+  {
+    "CountryName": "Gambia",
+    "Iso2": "GM",
+    "Iso3": "GMB",
+    "Fips": "GA",
+    "PhoneCode": 220,
+    "LanguageCodes": "en-GM"
+  },
+  {
+    "CountryName": "Georgia",
+    "Iso2": "GE",
+    "Iso3": "GEO",
+    "Fips": "GG",
+    "PhoneCode": 995,
+    "LanguageCodes": "ka"
+  },
+  {
+    "CountryName": "Germany",
+    "Iso2": "DE",
+    "Iso3": "DEU",
+    "Fips": "GM",
+    "PhoneCode": 49,
+    "LanguageCodes": "de"
+  },
+  {
+    "CountryName": "Ghana",
+    "Iso2": "GH",
+    "Iso3": "GHA",
+    "Fips": "GH",
+    "PhoneCode": 233,
+    "LanguageCodes": "en-GH"
+  },
+  {
+    "CountryName": "Gibraltar",
+    "Iso2": "GI",
+    "Iso3": "GIB",
+    "Fips": "GI",
+    "PhoneCode": 350,
+    "LanguageCodes": "en-GI"
+  },
+  {
+    "CountryName": "Greece",
+    "Iso2": "GR",
+    "Iso3": "GRC",
+    "Fips": "GR",
+    "PhoneCode": 30,
+    "LanguageCodes": "el-GR"
+  },
+  {
+    "CountryName": "Greenland",
+    "Iso2": "GL",
+    "Iso3": "GRL",
+    "Fips": "GL",
+    "PhoneCode": 299,
+    "LanguageCodes": "kl"
+  },
+  {
+    "CountryName": "Grenada",
+    "Iso2": "GD",
+    "Iso3": "GRD",
+    "Fips": "GJ",
+    "PhoneCode": 1473,
+    "LanguageCodes": "en-GD"
+  },
+  {
+    "CountryName": "Guam",
+    "Iso2": "GU",
+    "Iso3": "GUM",
+    "Fips": "GQ",
+    "PhoneCode": 1671,
+    "LanguageCodes": "en-GU"
+  },
+  {
+    "CountryName": "Guatemala",
+    "Iso2": "GT",
+    "Iso3": "GTM",
+    "Fips": "GT",
+    "PhoneCode": 502,
+    "LanguageCodes": "es-GT"
+  },
+  {
+    "CountryName": "Guernsey",
+    "Iso2": "GG",
+    "Iso3": "GGY",
+    "Fips": "GK",
+    "PhoneCode": 44,
+    "LanguageCodes": "en"
+  },
+  {
+    "CountryName": "Guinea",
+    "Iso2": "GN",
+    "Iso3": "GIN",
+    "Fips": "GV",
+    "PhoneCode": 224,
+    "LanguageCodes": "fr-GN"
+  },
+  {
+    "CountryName": "Guinea-Bissau",
+    "Iso2": "GW",
+    "Iso3": "GNB",
+    "Fips": "PU",
+    "PhoneCode": 245,
+    "LanguageCodes": "pt-GW"
+  },
+  {
+    "CountryName": "Guyana",
+    "Iso2": "GY",
+    "Iso3": "GUY",
+    "Fips": "GY",
+    "PhoneCode": 592,
+    "LanguageCodes": "en-GY"
+  },
+  {
+    "CountryName": "Haiti",
+    "Iso2": "HT",
+    "Iso3": "HTI",
+    "Fips": "HA",
+    "PhoneCode": 509,
+    "LanguageCodes": "ht"
+  },
+  {
+    "CountryName": "Honduras",
+    "Iso2": "HN",
+    "Iso3": "HND",
+    "Fips": "HO",
+    "PhoneCode": 504,
+    "LanguageCodes": "es-HN"
+  },
+  {
+    "CountryName": "Hong Kong",
+    "Iso2": "HK",
+    "Iso3": "HKG",
+    "Fips": "HK",
+    "PhoneCode": 852,
+    "LanguageCodes": "zh-HK"
+  },
+  {
+    "CountryName": "Hungary",
+    "Iso2": "HU",
+    "Iso3": "HUN",
+    "Fips": "HU",
+    "PhoneCode": 36,
+    "LanguageCodes": "hu-HU"
+  },
+  {
+    "CountryName": "Iceland",
+    "Iso2": "IS",
+    "Iso3": "ISL",
+    "Fips": "IC",
+    "PhoneCode": 354,
+    "LanguageCodes": "is"
+  },
+  {
+    "CountryName": "India",
+    "Iso2": "IN",
+    "Iso3": "IND",
+    "Fips": "IN",
+    "PhoneCode": 91,
+    "LanguageCodes": "en-IN"
+  },
+  {
+    "CountryName": "Indonesia",
+    "Iso2": "ID",
+    "Iso3": "IDN",
+    "Fips": "ID",
+    "PhoneCode": 62,
+    "LanguageCodes": "id"
+  },
+  {
+    "CountryName": "Iran",
+    "Iso2": "IR",
+    "Iso3": "IRN",
+    "Fips": "IR",
+    "PhoneCode": 98,
+    "LanguageCodes": "fa-IR"
+  },
+  {
+    "CountryName": "Iraq",
+    "Iso2": "IQ",
+    "Iso3": "IRQ",
+    "Fips": "IZ",
+    "PhoneCode": 964,
+    "LanguageCodes": "ar-IQ"
+  },
+  {
+    "CountryName": "Ireland",
+    "Iso2": "IE",
+    "Iso3": "IRL",
+    "Fips": "EI",
+    "PhoneCode": 353,
+    "LanguageCodes": "en-IE"
+  },
+  {
+    "CountryName": "Isle of Man",
+    "Iso2": "IM",
+    "Iso3": "IMN",
+    "Fips": "IM",
+    "PhoneCode": 44,
+    "LanguageCodes": "en"
+  },
+  {
+    "CountryName": "Israel",
+    "Iso2": "IL",
+    "Iso3": "ISR",
+    "Fips": "IS",
+    "PhoneCode": 972,
+    "LanguageCodes": "he"
+  },
+  {
+    "CountryName": "Italy",
+    "Iso2": "IT",
+    "Iso3": "ITA",
+    "Fips": "IT",
+    "PhoneCode": 39,
+    "LanguageCodes": "it-IT"
+  },
+  {
+    "CountryName": "Ivory Coast",
+    "Iso2": "CI",
+    "Iso3": "CIV",
+    "Fips": "IV",
+    "PhoneCode": 225,
+    "LanguageCodes": "fr-CI"
+  },
+  {
+    "CountryName": "Jamaica",
+    "Iso2": "JM",
+    "Iso3": "JAM",
+    "Fips": "JM",
+    "PhoneCode": 1876,
+    "LanguageCodes": "en-JM"
+  },
+  {
+    "CountryName": "Japan",
+    "Iso2": "JP",
+    "Iso3": "JPN",
+    "Fips": "JA",
+    "PhoneCode": 81,
+    "LanguageCodes": "ja"
+  },
+  {
+    "CountryName": "Jersey",
+    "Iso2": "JE",
+    "Iso3": "JEY",
+    "Fips": "JE",
+    "PhoneCode": 44,
+    "LanguageCodes": "en"
+  },
+  {
+    "CountryName": "Jordan",
+    "Iso2": "JO",
+    "Iso3": "JOR",
+    "Fips": "JO",
+    "PhoneCode": 962,
+    "LanguageCodes": "ar-JO"
+  },
+  {
+    "CountryName": "Kazakhstan",
+    "Iso2": "KZ",
+    "Iso3": "KAZ",
+    "Fips": "KZ",
+    "PhoneCode": 7,
+    "LanguageCodes": "kk"
+  },
+  {
+    "CountryName": "Kenya",
+    "Iso2": "KE",
+    "Iso3": "KEN",
+    "Fips": "KE",
+    "PhoneCode": 254,
+    "LanguageCodes": "en-KE"
+  },
+  {
+    "CountryName": "Kiribati",
+    "Iso2": "KI",
+    "Iso3": "KIR",
+    "Fips": "KR",
+    "PhoneCode": 686,
+    "LanguageCodes": "en-KI"
+  },
+  {
+    "CountryName": "Kosovo",
+    "Iso2": "XK",
+    "Iso3": "XKX",
+    "Fips": "KV",
+    "PhoneCode": 383,
+    "LanguageCodes": "sq"
+  },
+  {
+    "CountryName": "Kuwait",
+    "Iso2": "KW",
+    "Iso3": "KWT",
+    "Fips": "KU",
+    "PhoneCode": 965,
+    "LanguageCodes": "ar-KW"
+  },
+  {
+    "CountryName": "Kyrgyzstan",
+    "Iso2": "KG",
+    "Iso3": "KGZ",
+    "Fips": "KG",
+    "PhoneCode": 996,
+    "LanguageCodes": "ky"
+  },
+  {
+    "CountryName": "Laos",
+    "Iso2": "LA",
+    "Iso3": "LAO",
+    "Fips": "LA",
+    "PhoneCode": 856,
+    "LanguageCodes": "lo"
+  },
+  {
+    "CountryName": "Latvia",
+    "Iso2": "LV",
+    "Iso3": "LVA",
+    "Fips": "LG",
+    "PhoneCode": 371,
+    "LanguageCodes": "lv"
+  },
+  {
+    "CountryName": "Lebanon",
+    "Iso2": "LB",
+    "Iso3": "LBN",
+    "Fips": "LE",
+    "PhoneCode": 961,
+    "LanguageCodes": "ar-LB"
+  },
+  {
+    "CountryName": "Lesotho",
+    "Iso2": "LS",
+    "Iso3": "LSO",
+    "Fips": "LT",
+    "PhoneCode": 266,
+    "LanguageCodes": "en-LS"
+  },
+  {
+    "CountryName": "Liberia",
+    "Iso2": "LR",
+    "Iso3": "LBR",
+    "Fips": "LI",
+    "PhoneCode": 231,
+    "LanguageCodes": "en-LR"
+  },
+  {
+    "CountryName": "Libya",
+    "Iso2": "LY",
+    "Iso3": "LBY",
+    "Fips": "LY",
+    "PhoneCode": 218,
+    "LanguageCodes": "ar-LY"
+  },
+  {
+    "CountryName": "Liechtenstein",
+    "Iso2": "LI",
+    "Iso3": "LIE",
+    "Fips": "LS",
+    "PhoneCode": 423,
+    "LanguageCodes": "de-LI"
+  },
+  {
+    "CountryName": "Lithuania",
+    "Iso2": "LT",
+    "Iso3": "LTU",
+    "Fips": "LH",
+    "PhoneCode": 370,
+    "LanguageCodes": "lt"
+  },
+  {
+    "CountryName": "Luxembourg",
+    "Iso2": "LU",
+    "Iso3": "LUX",
+    "Fips": "LU",
+    "PhoneCode": 352,
+    "LanguageCodes": "lb"
+  },
+  {
+    "CountryName": "Macau",
+    "Iso2": "MO",
+    "Iso3": "MAC",
+    "Fips": "MC",
+    "PhoneCode": 853,
+    "LanguageCodes": "zh"
+  },
+  {
+    "CountryName": "Macedonia",
+    "Iso2": "MK",
+    "Iso3": "MKD",
+    "Fips": "MK",
+    "PhoneCode": 389,
+    "LanguageCodes": "mk"
+  },
+  {
+    "CountryName": "Madagascar",
+    "Iso2": "MG",
+    "Iso3": "MDG",
+    "Fips": "MA",
+    "PhoneCode": 261,
+    "LanguageCodes": "fr-MG"
+  },
+  {
+    "CountryName": "Malawi",
+    "Iso2": "MW",
+    "Iso3": "MWI",
+    "Fips": "MI",
+    "PhoneCode": 265,
+    "LanguageCodes": "ny"
+  },
+  {
+    "CountryName": "Malaysia",
+    "Iso2": "MY",
+    "Iso3": "MYS",
+    "Fips": "MY",
+    "PhoneCode": 60,
+    "LanguageCodes": "ms-MY"
+  },
+  {
+    "CountryName": "Maldives",
+    "Iso2": "MV",
+    "Iso3": "MDV",
+    "Fips": "MV",
+    "PhoneCode": 960,
+    "LanguageCodes": "dv"
+  },
+  {
+    "CountryName": "Mali",
+    "Iso2": "ML",
+    "Iso3": "MLI",
+    "Fips": "ML",
+    "PhoneCode": 223,
+    "LanguageCodes": "fr-ML"
+  },
+  {
+    "CountryName": "Malta",
+    "Iso2": "MT",
+    "Iso3": "MLT",
+    "Fips": "MT",
+    "PhoneCode": 356,
+    "LanguageCodes": "mt"
+  },
+  {
+    "CountryName": "Marshall Islands",
+    "Iso2": "MH",
+    "Iso3": "MHL",
+    "Fips": "RM",
+    "PhoneCode": 692,
+    "LanguageCodes": "mh"
+  },
+  {
+    "CountryName": "Mauritania",
+    "Iso2": "MR",
+    "Iso3": "MRT",
+    "Fips": "MR",
+    "PhoneCode": 222,
+    "LanguageCodes": "ar-MR"
+  },
+  {
+    "CountryName": "Mauritius",
+    "Iso2": "MU",
+    "Iso3": "MUS",
+    "Fips": "MP",
+    "PhoneCode": 230,
+    "LanguageCodes": "en-MU"
+  },
+  {
+    "CountryName": "Mayotte",
+    "Iso2": "YT",
+    "Iso3": "MYT",
+    "Fips": "MF",
+    "PhoneCode": 262,
+    "LanguageCodes": "fr-YT"
+  },
+  {
+    "CountryName": "Mexico",
+    "Iso2": "MX",
+    "Iso3": "MEX",
+    "Fips": "MX",
+    "PhoneCode": 52,
+    "LanguageCodes": "es-MX"
+  },
+  {
+    "CountryName": "Micronesia",
+    "Iso2": "FM",
+    "Iso3": "FSM",
+    "Fips": "FM",
+    "PhoneCode": 691,
+    "LanguageCodes": "en-FM"
+  },
+  {
+    "CountryName": "Moldova",
+    "Iso2": "MD",
+    "Iso3": "MDA",
+    "Fips": "MD",
+    "PhoneCode": 373,
+    "LanguageCodes": "ro"
+  },
+  {
+    "CountryName": "Monaco",
+    "Iso2": "MC",
+    "Iso3": "MCO",
+    "Fips": "MN",
+    "PhoneCode": 377,
+    "LanguageCodes": "fr-MC"
+  },
+  {
+    "CountryName": "Mongolia",
+    "Iso2": "MN",
+    "Iso3": "MNG",
+    "Fips": "MG",
+    "PhoneCode": 976,
+    "LanguageCodes": "mn"
+  },
+  {
+    "CountryName": "Montenegro",
+    "Iso2": "ME",
+    "Iso3": "MNE",
+    "Fips": "MJ",
+    "PhoneCode": 382,
+    "LanguageCodes": "sr"
+  },
+  {
+    "CountryName": "Montserrat",
+    "Iso2": "MS",
+    "Iso3": "MSR",
+    "Fips": "MH",
+    "PhoneCode": 1664,
+    "LanguageCodes": "en-MS"
+  },
+  {
+    "CountryName": "Morocco",
+    "Iso2": "MA",
+    "Iso3": "MAR",
+    "Fips": "MO",
+    "PhoneCode": 212,
+    "LanguageCodes": "ar-MA"
+  },
+  {
+    "CountryName": "Mozambique",
+    "Iso2": "MZ",
+    "Iso3": "MOZ",
+    "Fips": "MZ",
+    "PhoneCode": 258,
+    "LanguageCodes": "pt-MZ"
+  },
+  {
+    "CountryName": "Myanmar",
+    "Iso2": "MM",
+    "Iso3": "MMR",
+    "Fips": "BM",
+    "PhoneCode": 95,
+    "LanguageCodes": "my"
+  },
+  {
+    "CountryName": "Namibia",
+    "Iso2": "NA",
+    "Iso3": "NAM",
+    "Fips": "WA",
+    "PhoneCode": 264,
+    "LanguageCodes": "en-NA"
+  },
+  {
+    "CountryName": "Nauru",
+    "Iso2": "NR",
+    "Iso3": "NRU",
+    "Fips": "NR",
+    "PhoneCode": 674,
+    "LanguageCodes": "na"
+  },
+  {
+    "CountryName": "Nepal",
+    "Iso2": "NP",
+    "Iso3": "NPL",
+    "Fips": "NP",
+    "PhoneCode": 977,
+    "LanguageCodes": "ne"
+  },
+  {
+    "CountryName": "Netherlands",
+    "Iso2": "NL",
+    "Iso3": "NLD",
+    "Fips": "NL",
+    "PhoneCode": 31,
+    "LanguageCodes": "nl-NL"
+  },
+  {
+    "CountryName": "Netherlands Antilles",
+    "Iso2": "AN",
+    "Iso3": "ANT",
+    "Fips": "NT",
+    "PhoneCode": 599,
+    "LanguageCodes": "nl-AN"
+  },
+  {
+    "CountryName": "New Caledonia",
+    "Iso2": "NC",
+    "Iso3": "NCL",
+    "Fips": "NC",
+    "PhoneCode": 687,
+    "LanguageCodes": "fr-NC"
+  },
+  {
+    "CountryName": "New Zealand",
+    "Iso2": "NZ",
+    "Iso3": "NZL",
+    "Fips": "NZ",
+    "PhoneCode": 64,
+    "LanguageCodes": "en-NZ"
+  },
+  {
+    "CountryName": "Nicaragua",
+    "Iso2": "NI",
+    "Iso3": "NIC",
+    "Fips": "NU",
+    "PhoneCode": 505,
+    "LanguageCodes": "es-NI"
+  },
+  {
+    "CountryName": "Niger",
+    "Iso2": "NE",
+    "Iso3": "NER",
+    "Fips": "NG",
+    "PhoneCode": 227,
+    "LanguageCodes": "fr-NE"
+  },
+  {
+    "CountryName": "Nigeria",
+    "Iso2": "NG",
+    "Iso3": "NGA",
+    "Fips": "NI",
+    "PhoneCode": 234,
+    "LanguageCodes": "en-NG"
+  },
+  {
+    "CountryName": "Niue",
+    "Iso2": "NU",
+    "Iso3": "NIU",
+    "Fips": "NE",
+    "PhoneCode": 683,
+    "LanguageCodes": "niu"
+  },
+  {
+    "CountryName": "North Korea",
+    "Iso2": "KP",
+    "Iso3": "PRK",
+    "Fips": "KN",
+    "PhoneCode": 850,
+    "LanguageCodes": "ko-KP"
+  },
+  {
+    "CountryName": "Northern Mariana Islands",
+    "Iso2": "MP",
+    "Iso3": "MNP",
+    "Fips": "CQ",
+    "PhoneCode": 1670,
+    "LanguageCodes": "fil"
+  },
+  {
+    "CountryName": "Norway",
+    "Iso2": "NO",
+    "Iso3": "NOR",
+    "Fips": "NO",
+    "PhoneCode": 47,
+    "LanguageCodes": "no"
+  },
+  {
+    "CountryName": "Oman",
+    "Iso2": "OM",
+    "Iso3": "OMN",
+    "Fips": "MU",
+    "PhoneCode": 968,
+    "LanguageCodes": "ar-OM"
+  },
+  {
+    "CountryName": "Pakistan",
+    "Iso2": "PK",
+    "Iso3": "PAK",
+    "Fips": "PK",
+    "PhoneCode": 92,
+    "LanguageCodes": "ur-PK"
+  },
+  {
+    "CountryName": "Palau",
+    "Iso2": "PW",
+    "Iso3": "PLW",
+    "Fips": "PS",
+    "PhoneCode": 680,
+    "LanguageCodes": "pau"
+  },
+  {
+    "CountryName": "Palestine",
+    "Iso2": "PS",
+    "Iso3": "PSE",
+    "Fips": "WE",
+    "PhoneCode": 970,
+    "LanguageCodes": "ar-PS"
+  },
+  {
+    "CountryName": "Panama",
+    "Iso2": "PA",
+    "Iso3": "PAN",
+    "Fips": "PM",
+    "PhoneCode": 507,
+    "LanguageCodes": "es-PA"
+  },
+  {
+    "CountryName": "Papua New Guinea",
+    "Iso2": "PG",
+    "Iso3": "PNG",
+    "Fips": "PP",
+    "PhoneCode": 675,
+    "LanguageCodes": "en-PG"
+  },
+  {
+    "CountryName": "Paraguay",
+    "Iso2": "PY",
+    "Iso3": "PRY",
+    "Fips": "PA",
+    "PhoneCode": 595,
+    "LanguageCodes": "es-PY"
+  },
+  {
+    "CountryName": "Peru",
+    "Iso2": "PE",
+    "Iso3": "PER",
+    "Fips": "PE",
+    "PhoneCode": 51,
+    "LanguageCodes": "es-PE"
+  },
+  {
+    "CountryName": "Philippines",
+    "Iso2": "PH",
+    "Iso3": "PHL",
+    "Fips": "RP",
+    "PhoneCode": 63,
+    "LanguageCodes": "tl"
+  },
+  {
+    "CountryName": "Pitcairn",
+    "Iso2": "PN",
+    "Iso3": "PCN",
+    "Fips": "PC",
+    "PhoneCode": 64,
+    "LanguageCodes": "en-PN"
+  },
+  {
+    "CountryName": "Poland",
+    "Iso2": "PL",
+    "Iso3": "POL",
+    "Fips": "PL",
+    "PhoneCode": 48,
+    "LanguageCodes": "pl"
+  },
+  {
+    "CountryName": "Portugal",
+    "Iso2": "PT",
+    "Iso3": "PRT",
+    "Fips": "PO",
+    "PhoneCode": 351,
+    "LanguageCodes": "pt-PT"
+  },
+  {
+    "CountryName": "Puerto Rico",
+    "Iso2": "PR",
+    "Iso3": "PRI",
+    "Fips": "RQ",
+    "PhoneCode": 1,
+    "LanguageCodes": "en-PR"
+  },
+  {
+    "CountryName": "Qatar",
+    "Iso2": "QA",
+    "Iso3": "QAT",
+    "Fips": "QA",
+    "PhoneCode": 974,
+    "LanguageCodes": "ar-QA"
+  },
+  {
+    "CountryName": "Republic of the Congo",
+    "Iso2": "CG",
+    "Iso3": "COG",
+    "Fips": "CF",
+    "PhoneCode": 242,
+    "LanguageCodes": "fr-CG"
+  },
+  {
+    "CountryName": "Reunion",
+    "Iso2": "RE",
+    "Iso3": "REU",
+    "Fips": "RE",
+    "PhoneCode": 262,
+    "LanguageCodes": "fr-RE"
+  },
+  {
+    "CountryName": "Romania",
+    "Iso2": "RO",
+    "Iso3": "ROU",
+    "Fips": "RO",
+    "PhoneCode": 40,
+    "LanguageCodes": "ro"
+  },
+  {
+    "CountryName": "Russia",
+    "Iso2": "RU",
+    "Iso3": "RUS",
+    "Fips": "RS",
+    "PhoneCode": 7,
+    "LanguageCodes": "ru"
+  },
+  {
+    "CountryName": "Rwanda",
+    "Iso2": "RW",
+    "Iso3": "RWA",
+    "Fips": "RW",
+    "PhoneCode": 250,
+    "LanguageCodes": "rw"
+  },
+  {
+    "CountryName": "Saint Barthelemy",
+    "Iso2": "BL",
+    "Iso3": "BLM",
+    "Fips": "TB",
+    "PhoneCode": 590,
+    "LanguageCodes": "fr"
+  },
+  {
+    "CountryName": "Saint Helena",
+    "Iso2": "SH",
+    "Iso3": "SHN",
+    "Fips": "SH",
+    "PhoneCode": 290,
+    "LanguageCodes": "en-SH"
+  },
+  {
+    "CountryName": "Saint Kitts and Nevis",
+    "Iso2": "KN",
+    "Iso3": "KNA",
+    "Fips": "SC",
+    "PhoneCode": 1869,
+    "LanguageCodes": "en-KN"
+  },
+  {
+    "CountryName": "Saint Lucia",
+    "Iso2": "LC",
+    "Iso3": "LCA",
+    "Fips": "ST",
+    "PhoneCode": 1758,
+    "LanguageCodes": "en-LC"
+  },
+  {
+    "CountryName": "Saint Martin",
+    "Iso2": "MF",
+    "Iso3": "MAF",
+    "Fips": "RN",
+    "PhoneCode": 590,
+    "LanguageCodes": "fr"
+  },
+  {
+    "CountryName": "Saint Pierre and Miquelon",
+    "Iso2": "PM",
+    "Iso3": "SPM",
+    "Fips": "SB",
+    "PhoneCode": 508,
+    "LanguageCodes": "fr-PM"
+  },
+  {
+    "CountryName": "Saint Vincent and the Grenadines",
+    "Iso2": "VC",
+    "Iso3": "VCT",
+    "Fips": "VC",
+    "PhoneCode": 1784,
+    "LanguageCodes": "en-VC"
+  },
+  {
+    "CountryName": "Samoa",
+    "Iso2": "WS",
+    "Iso3": "WSM",
+    "Fips": "WS",
+    "PhoneCode": 685,
+    "LanguageCodes": "sm"
+  },
+  {
+    "CountryName": "San Marino",
+    "Iso2": "SM",
+    "Iso3": "SMR",
+    "Fips": "SM",
+    "PhoneCode": 378,
+    "LanguageCodes": "it-SM"
+  },
+  {
+    "CountryName": "Sao Tome and Principe",
+    "Iso2": "ST",
+    "Iso3": "STP",
+    "Fips": "TP",
+    "PhoneCode": 239,
+    "LanguageCodes": "pt-ST"
+  },
+  {
+    "CountryName": "Saudi Arabia",
+    "Iso2": "SA",
+    "Iso3": "SAU",
+    "Fips": "SA",
+    "PhoneCode": 966,
+    "LanguageCodes": "ar-SA"
+  },
+  {
+    "CountryName": "Senegal",
+    "Iso2": "SN",
+    "Iso3": "SEN",
+    "Fips": "SG",
+    "PhoneCode": 221,
+    "LanguageCodes": "fr-SN"
+  },
+  {
+    "CountryName": "Serbia",
+    "Iso2": "RS",
+    "Iso3": "SRB",
+    "Fips": "RI",
+    "PhoneCode": 381,
+    "LanguageCodes": "sr"
+  },
+  {
+    "CountryName": "Seychelles",
+    "Iso2": "SC",
+    "Iso3": "SYC",
+    "Fips": "SE",
+    "PhoneCode": 248,
+    "LanguageCodes": "en-SC"
+  },
+  {
+    "CountryName": "Sierra Leone",
+    "Iso2": "SL",
+    "Iso3": "SLE",
+    "Fips": "SL",
+    "PhoneCode": 232,
+    "LanguageCodes": "en-SL"
+  },
+  {
+    "CountryName": "Singapore",
+    "Iso2": "SG",
+    "Iso3": "SGP",
+    "Fips": "SN",
+    "PhoneCode": 65,
+    "LanguageCodes": "cmn"
+  },
+  {
+    "CountryName": "Sint Maarten",
+    "Iso2": "SX",
+    "Iso3": "SXM",
+    "Fips": "NN",
+    "PhoneCode": 1721,
+    "LanguageCodes": "nl"
+  },
+  {
+    "CountryName": "Slovakia",
+    "Iso2": "SK",
+    "Iso3": "SVK",
+    "Fips": "LO",
+    "PhoneCode": 421,
+    "LanguageCodes": "sk"
+  },
+  {
+    "CountryName": "Slovenia",
+    "Iso2": "SI",
+    "Iso3": "SVN",
+    "Fips": "SI",
+    "PhoneCode": 386,
+    "LanguageCodes": "sl"
+  },
+  {
+    "CountryName": "Solomon Islands",
+    "Iso2": "SB",
+    "Iso3": "SLB",
+    "Fips": "BP",
+    "PhoneCode": 677,
+    "LanguageCodes": "en-SB"
+  },
+  {
+    "CountryName": "Somalia",
+    "Iso2": "SO",
+    "Iso3": "SOM",
+    "Fips": "SO",
+    "PhoneCode": 252,
+    "LanguageCodes": "so-SO"
+  },
+  {
+    "CountryName": "South Africa",
+    "Iso2": "ZA",
+    "Iso3": "ZAF",
+    "Fips": "SF",
+    "PhoneCode": 27,
+    "LanguageCodes": "zu"
+  },
+  {
+    "CountryName": "South Korea",
+    "Iso2": "KR",
+    "Iso3": "KOR",
+    "Fips": "KS",
+    "PhoneCode": 82,
+    "LanguageCodes": "ko-KR"
+  },
+  {
+    "CountryName": "South Sudan",
+    "Iso2": "SS",
+    "Iso3": "SSD",
+    "Fips": "OD",
+    "PhoneCode": 211,
+    "LanguageCodes": "en"
+  },
+  {
+    "CountryName": "Spain",
+    "Iso2": "ES",
+    "Iso3": "ESP",
+    "Fips": "SP",
+    "PhoneCode": 34,
+    "LanguageCodes": "es-ES"
+  },
+  {
+    "CountryName": "Sri Lanka",
+    "Iso2": "LK",
+    "Iso3": "LKA",
+    "Fips": "CE",
+    "PhoneCode": 94,
+    "LanguageCodes": "si"
+  },
+  {
+    "CountryName": "Sudan",
+    "Iso2": "SD",
+    "Iso3": "SDN",
+    "Fips": "SU",
+    "PhoneCode": 249,
+    "LanguageCodes": "ar-SD"
+  },
+  {
+    "CountryName": "Suriname",
+    "Iso2": "SR",
+    "Iso3": "SUR",
+    "Fips": "NS",
+    "PhoneCode": 597,
+    "LanguageCodes": "nl-SR"
+  },
+  {
+    "CountryName": "Svalbard and Jan Mayen",
+    "Iso2": "SJ",
+    "Iso3": "SJM",
+    "Fips": "SV",
+    "PhoneCode": 47,
+    "LanguageCodes": "no"
+  },
+  {
+    "CountryName": "Swaziland",
+    "Iso2": "SZ",
+    "Iso3": "SWZ",
+    "Fips": "WZ",
+    "PhoneCode": 268,
+    "LanguageCodes": "en-SZ"
+  },
+  {
+    "CountryName": "Sweden",
+    "Iso2": "SE",
+    "Iso3": "SWE",
+    "Fips": "SW",
+    "PhoneCode": 46,
+    "LanguageCodes": "sv-SE"
+  },
+  {
+    "CountryName": "Switzerland",
+    "Iso2": "CH",
+    "Iso3": "CHE",
+    "Fips": "SZ",
+    "PhoneCode": 41,
+    "LanguageCodes": "de-CH"
+  },
+  {
+    "CountryName": "Syria",
+    "Iso2": "SY",
+    "Iso3": "SYR",
+    "Fips": "SY",
+    "PhoneCode": 963,
+    "LanguageCodes": "ar-SY"
+  },
+  {
+    "CountryName": "Taiwan",
+    "Iso2": "TW",
+    "Iso3": "TWN",
+    "Fips": "TW",
+    "PhoneCode": 886,
+    "LanguageCodes": "zh-TW"
+  },
+  {
+    "CountryName": "Tajikistan",
+    "Iso2": "TJ",
+    "Iso3": "TJK",
+    "Fips": "TI",
+    "PhoneCode": 992,
+    "LanguageCodes": "tg"
+  },
+  {
+    "CountryName": "Tanzania",
+    "Iso2": "TZ",
+    "Iso3": "TZA",
+    "Fips": "TZ",
+    "PhoneCode": 255,
+    "LanguageCodes": "sw-TZ"
+  },
+  {
+    "CountryName": "Thailand",
+    "Iso2": "TH",
+    "Iso3": "THA",
+    "Fips": "TH",
+    "PhoneCode": 66,
+    "LanguageCodes": "th"
+  },
+  {
+    "CountryName": "Togo",
+    "Iso2": "TG",
+    "Iso3": "TGO",
+    "Fips": "TO",
+    "PhoneCode": 228,
+    "LanguageCodes": "fr-TG"
+  },
+  {
+    "CountryName": "Tokelau",
+    "Iso2": "TK",
+    "Iso3": "TKL",
+    "Fips": "TL",
+    "PhoneCode": 690,
+    "LanguageCodes": "tkl"
+  },
+  {
+    "CountryName": "Tonga",
+    "Iso2": "TO",
+    "Iso3": "TON",
+    "Fips": "TN",
+    "PhoneCode": 676,
+    "LanguageCodes": "to"
+  },
+  {
+    "CountryName": "Trinidad and Tobago",
+    "Iso2": "TT",
+    "Iso3": "TTO",
+    "Fips": "TD",
+    "PhoneCode": 1868,
+    "LanguageCodes": "en-TT"
+  },
+  {
+    "CountryName": "Tunisia",
+    "Iso2": "TN",
+    "Iso3": "TUN",
+    "Fips": "TS",
+    "PhoneCode": 216,
+    "LanguageCodes": "ar-TN"
+  },
+  {
+    "CountryName": "Turkey",
+    "Iso2": "TR",
+    "Iso3": "TUR",
+    "Fips": "TU",
+    "PhoneCode": 90,
+    "LanguageCodes": "tr-TR"
+  },
+  {
+    "CountryName": "Turkmenistan",
+    "Iso2": "TM",
+    "Iso3": "TKM",
+    "Fips": "TX",
+    "PhoneCode": 993,
+    "LanguageCodes": "tk"
+  },
+  {
+    "CountryName": "Turks and Caicos Islands",
+    "Iso2": "TC",
+    "Iso3": "TCA",
+    "Fips": "TK",
+    "PhoneCode": 1649,
+    "LanguageCodes": "en-TC"
+  },
+  {
+    "CountryName": "Tuvalu",
+    "Iso2": "TV",
+    "Iso3": "TUV",
+    "Fips": "TV",
+    "PhoneCode": 688,
+    "LanguageCodes": "tvl"
+  },
+  {
+    "CountryName": "U.S. Virgin Islands",
+    "Iso2": "VI",
+    "Iso3": "VIR",
+    "Fips": "VQ",
+    "PhoneCode": 1340,
+    "LanguageCodes": "en-VI"
+  },
+  {
+    "CountryName": "Uganda",
+    "Iso2": "UG",
+    "Iso3": "UGA",
+    "Fips": "UG",
+    "PhoneCode": 256,
+    "LanguageCodes": "en-UG"
+  },
+  {
+    "CountryName": "Ukraine",
+    "Iso2": "UA",
+    "Iso3": "UKR",
+    "Fips": "UP",
+    "PhoneCode": 380,
+    "LanguageCodes": "uk"
+  },
+  {
+    "CountryName": "United Arab Emirates",
+    "Iso2": "AE",
+    "Iso3": "ARE",
+    "Fips": "AE",
+    "PhoneCode": 971,
+    "LanguageCodes": "ar-AE"
+  },
+  {
+    "CountryName": "United Kingdom",
+    "Iso2": "GB",
+    "Iso3": "GBR",
+    "Fips": "UK",
+    "PhoneCode": 44,
+    "LanguageCodes": "en-GB"
+  },
+  {
+    "CountryName": "United States",
+    "Iso2": "US",
+    "Iso3": "USA",
+    "Fips": "US",
+    "PhoneCode": 1,
+    "LanguageCodes": "en-US"
+  },
+  {
+    "CountryName": "Uruguay",
+    "Iso2": "UY",
+    "Iso3": "URY",
+    "Fips": "UY",
+    "PhoneCode": 598,
+    "LanguageCodes": "es-UY"
+  },
+  {
+    "CountryName": "Uzbekistan",
+    "Iso2": "UZ",
+    "Iso3": "UZB",
+    "Fips": "UZ",
+    "PhoneCode": 998,
+    "LanguageCodes": "uz"
+  },
+  {
+    "CountryName": "Vanuatu",
+    "Iso2": "VU",
+    "Iso3": "VUT",
+    "Fips": "NH",
+    "PhoneCode": 678,
+    "LanguageCodes": "bi"
+  },
+  {
+    "CountryName": "Vatican",
+    "Iso2": "VA",
+    "Iso3": "VAT",
+    "Fips": "VT",
+    "PhoneCode": 379,
+    "LanguageCodes": "la"
+  },
+  {
+    "CountryName": "Venezuela",
+    "Iso2": "VE",
+    "Iso3": "VEN",
+    "Fips": "VE",
+    "PhoneCode": 58,
+    "LanguageCodes": "es-VE"
+  },
+  {
+    "CountryName": "Vietnam",
+    "Iso2": "VN",
+    "Iso3": "VNM",
+    "Fips": "VM",
+    "PhoneCode": 84,
+    "LanguageCodes": "vi"
+  },
+  {
+    "CountryName": "Wallis and Futuna",
+    "Iso2": "WF",
+    "Iso3": "WLF",
+    "Fips": "WF",
+    "PhoneCode": 681,
+    "LanguageCodes": "wls"
+  },
+  {
+    "CountryName": "Western Sahara",
+    "Iso2": "EH",
+    "Iso3": "ESH",
+    "Fips": "WI",
+    "PhoneCode": 212,
+    "LanguageCodes": "ar"
+  },
+  {
+    "CountryName": "Yemen",
+    "Iso2": "YE",
+    "Iso3": "YEM",
+    "Fips": "YM",
+    "PhoneCode": 967,
+    "LanguageCodes": "ar-YE"
+  },
+  {
+    "CountryName": "Zambia",
+    "Iso2": "ZM",
+    "Iso3": "ZMB",
+    "Fips": "ZA",
+    "PhoneCode": 260,
+    "LanguageCodes": "en-ZM"
+  },
+  {
+    "CountryName": "Zimbabwe",
+    "Iso2": "ZW",
+    "Iso3": "ZWE",
+    "Fips": "ZI",
+    "PhoneCode": 263,
+    "LanguageCodes": "en-ZW"
+  }
+]

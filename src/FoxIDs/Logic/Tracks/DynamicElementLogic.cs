@@ -13,18 +13,22 @@ namespace FoxIDs.Logic
 {
     public class DynamicElementLogic : LogicBase
     {
-        public DynamicElementLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        private readonly CountryCodesLogic countryCodesLogic;
+
+        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.countryCodesLogic = countryCodesLogic;
         }
 
-        public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, bool requireEmailAndPasswordElement = false, List<Claim> initClaims = null)
+        public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
         {
             if(elements == null)
             {
                 yield break;
             }
 
-            bool hasEmailAndPasswordDElement = false;
+            var countryCode = elements.Where(e => e.Type == DynamicElementTypes.Phone).Any() ? countryCodesLogic.GetCountryCodeStringByCulture() : null;
+
             var i = 0;
             foreach (var element in elements)
             {
@@ -42,9 +46,23 @@ namespace FoxIDs.Logic
                     case DynamicElementTypes.Email:
                         yield return element.Required ? new EmailRequiredDElement { DField1 = valueElement?.DField1 } : new EmailDElement { DField1 = valueElement?.DField1 };
                         break;
+                    case DynamicElementTypes.Phone:
+                        var phoneDField1 = valueElement?.DField1;
+                        if (phoneDField1.IsNullOrWhiteSpace())
+                        {
+                            phoneDField1 = countryCode;
+                        }
+                        yield return element.Required ? new PhoneRequiredDElement { DField1 = phoneDField1 } : new PhoneDElement { DField1 = phoneDField1 };
+                        break;
+                    case DynamicElementTypes.Username:
+                        yield return element.Required ? new UsernameRequiredDElement { DField1 = valueElement?.DField1 } : new UsernameDElement { DField1 = valueElement?.DField1 };
+                        break;
                     case DynamicElementTypes.EmailAndPassword:
-                        hasEmailAndPasswordDElement = true;
-                        yield return new EmailAndPasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2, DField3 = valueElement?.DField3 };
+                        yield return new EmailRequiredDElement { DField1 = valueElement?.DField1 };
+                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
+                        break;
+                    case DynamicElementTypes.Password:
+                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Name:
                         yield return element.Required ? new NameRequiredDElement { DField1 = valueElement?.DField1 } : new NameDElement { DField1 = valueElement?.DField1 };
@@ -59,10 +77,6 @@ namespace FoxIDs.Logic
                         throw new NotImplementedException();
                 }
                 i++;
-            }
-            if (requireEmailAndPasswordElement && !hasEmailAndPasswordDElement)
-            {
-                throw new Exception("The EmailAndPasswordDElement is required.");
             }
         }
 
@@ -94,6 +108,16 @@ namespace FoxIDs.Logic
             if (!string.IsNullOrWhiteSpace(emailDElament?.DField1))
             {
                 claims.AddClaim(JwtClaimTypes.Email, emailDElament.DField1);
+            }
+            var phoneDElament = elements.Where(e => e is PhoneDElement).FirstOrDefault() as PhoneDElement;
+            if (!string.IsNullOrWhiteSpace(phoneDElament?.DField1))
+            {
+                claims.AddClaim(JwtClaimTypes.PhoneNumber, phoneDElament.DField1);
+            }
+            var usernameDElament = elements.Where(e => e is UsernameDElement).FirstOrDefault() as UsernameDElement;
+            if (!string.IsNullOrWhiteSpace(usernameDElament?.DField1))
+            {
+                claims.AddClaim(JwtClaimTypes.PreferredUsername, usernameDElament.DField1);
             }
             var nameDElament = elements.Where(e => e is NameDElement).FirstOrDefault() as NameDElement;
             if (!string.IsNullOrWhiteSpace(nameDElament?.DField1))

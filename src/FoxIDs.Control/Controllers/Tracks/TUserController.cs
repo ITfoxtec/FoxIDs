@@ -14,6 +14,7 @@ using System;
 using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -104,7 +105,7 @@ namespace FoxIDs.Controllers
                         }
                     }
                 }
-                var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
+                var mUser = await accountLogic.CreateUser(new UserIdentifier { Email = createUserRequest.Email }, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
                     confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, disableAccount: createUserRequest.DisableAccount, requireMultiFactor: createUserRequest.RequireMultiFactor);
                 return Created(mapper.Map<Api.User>(mUser));
             }

@@ -2,6 +2,16 @@
 
 By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
+OpenID Connect (OIDC) and SAML 2.0 are both widely used protocols for identity federation, single sign-on (SSO), and user authentication. 
+However, they are fundamentally different in structure and design. Sometimes, you may need to bridge or integrate these protocols, 
+such as enabling an application supporting OpenID Connect to work with an identity provider (IdP) that only support SAML 2.0. 
+
+Key differences of the two protocol types:
+- OIDC: Built on top of OAuth 2.0, it is a modern protocol designed for web and mobile apps with RESTful APIs. Uses JSON Web Tokens (JWT) for identity tokens and access tokens.
+- SAML 2.0: XML-based and focused on browser-based SSO scenarios, often used in enterprise environments. Uses XML-based assertions / tokens.
+
+To connect an OpenID Connect system with a SAML 2.0 system, you need a protocol translation or bridging layer. This can be achieved using an intermediary that acts as both an OpenID Connect Provider (OP) and a SAML Service Provider (SP), or vice versa.
+
 If you configure a [SAML 2.0 authentication method](auth-method-saml-2.0.md) to an external Identity Provider (IdP) and connect your app as a [OpenID Connect application](app-reg-oidc.md) where you select the SAML 2.0 authentication method. 
 A log in request from your app is routed as an external SAML 2.0 log in requests. The SAML 2.0 log in response is subsequently mapped to a OpenID Connect response for your app. SAML 2.0 claims are automatically convert to JWT (OAuth 2.0) claims.
 

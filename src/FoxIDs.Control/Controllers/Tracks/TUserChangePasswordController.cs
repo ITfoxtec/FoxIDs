@@ -79,6 +79,18 @@ namespace FoxIDs.Controllers
                 ModelState.AddModelError(nameof(userRequest.NewPassword), "Please do not use the email or parts of it.");
                 return BadRequest(ModelState, pecex);
             }
+            catch (PasswordPhoneTextComplexityException ppcex)
+            {
+                logger.ScopeTrace(() => ppcex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), "Please do not use the phone number.");
+                return BadRequest(ModelState, ppcex);
+            }
+            catch (PasswordUsernameTextComplexityException pucex)
+            {
+                logger.ScopeTrace(() => pucex.Message);
+                ModelState.AddModelError(nameof(userRequest.NewPassword), "Please do not use the username or parts of it.");
+                return BadRequest(ModelState, pucex);
+            }
             catch (PasswordUrlTextComplexityException pucex)
             {
                 logger.ScopeTrace(() => pucex.Message);

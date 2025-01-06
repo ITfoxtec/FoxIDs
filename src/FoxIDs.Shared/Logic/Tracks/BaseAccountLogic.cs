@@ -1,10 +1,11 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -27,16 +28,30 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false, bool requireMultiFactor = false)
+        public async Task<User> CreateUser(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, bool requireMultiFactor = false)
         {
-            logger.ScopeTrace(() => $"Creating user '{email}', Route '{RouteBinding?.Route}'.");
+            logger.ScopeTrace(() => $"Creating user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
-            email = email?.ToLower();
-            ValidateEmail(email);
+            userIdentifier.Email = userIdentifier.Email.TrimNullable().ToLowerNullable();
+            userIdentifier.Phone = userIdentifier.Phone.TrimNullable();
+            userIdentifier.Username = userIdentifier.Username.TrimNullable().ToLowerNullable();
 
-            var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount, RequireMultiFactor = requireMultiFactor };
-            var userIdKey = new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, UserIdentifier = email?.ToLower() };
-            await user.SetIdAsync(userIdKey);
+            var user = new User
+            {
+                UserId = Guid.NewGuid().ToString(),
+                Email = userIdentifier.Email,
+                Phone = userIdentifier.Phone,
+                Username = userIdentifier.Username,
+                ConfirmAccount = confirmAccount,
+                EmailVerified = emailVerified,
+                PhoneVerified = phoneVerified,
+                DisableAccount = disableAccount,
+                RequireMultiFactor = requireMultiFactor
+            };
+
+            tenantName = tenantName ?? RouteBinding.TenantName;
+            trackName = trackName ?? RouteBinding.TrackName;
+            await SetIdsAsync(user, tenantName, trackName);
 
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)
@@ -44,60 +59,71 @@ namespace FoxIDs.Logic
                 user.Claims = claims.ToClaimAndValues();
             }
 
-            if(checkUserAndPasswordPolicy)
+            if (checkUserAndPasswordPolicy)
             {
-                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(userIdKey)))
+                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username, UserId = user.UserId })))
                 {
-                    throw new UserExistsException($"User '{email}' already exists.") { Email = email };
+                    throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
                 }
-                await ValidatePasswordPolicy(email, password);
+                await ValidatePasswordPolicy(userIdentifier, password);
             }
             user.ChangePassword = changePassword;
             await tenantDataRepository.CreateAsync(user);
 
-            logger.ScopeTrace(() => $"User '{email}' created, with user id '{user.UserId}'.");
+            logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' created, with user id '{user.UserId}'.");
 
             return user;
         }
 
-        public virtual async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
+        private async Task SetIdsAsync(User user, string tenantName, string trackName)
         {
-            email = email?.ToLowerInvariant();
-            logger.ScopeTrace(() => $"Change password user '{email}', Route '{RouteBinding?.Route}'.");
+            await user.SetIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = user.Email, UserId = user.UserId });
+            if (!user.Phone.IsNullOrEmpty())
+            {
+                await user.SetAdditionalIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = user.Phone });
+            }
+            if (!user.Username.IsNullOrEmpty())
+            {
+                await user.SetAdditionalIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = user.Username });
+            }
+        }
 
-            ValidateEmail(email);
+        public virtual async Task<User> ChangePasswordUser(string userIdentifier, string currentPassword, string newPassword)
+        {
+            userIdentifier = userIdentifier?.ToLowerInvariant();
+            logger.ScopeTrace(() => $"Change password user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
-                throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to change password.");
+                throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to change password.");
             }
 
-            logger.ScopeTrace(() => $"User '{email}' exists, with user id '{user.UserId}', trying to change password.");
+            logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}', trying to change password.");
             if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
             {
-                logger.ScopeTrace(() => $"User '{email}', current password valid, changing password.", triggerEvent: true);
+                logger.ScopeTrace(() => $"User '{userIdentifier}', current password valid, changing password.", triggerEvent: true);
 
                 if (currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{email}'.");
+                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicy(email, newPassword);
+                await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
-                logger.ScopeTrace(() => $"User '{email}', password changed.", triggerEvent: true);
+                logger.ScopeTrace(() => $"User '{userIdentifier}', password changed.", triggerEvent: true);
                 return user;
             }
             else
             {
-                throw new InvalidPasswordException($"Current password invalid, user '{email}'.");
+                throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
             }
         }
 
@@ -110,7 +136,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{user.Email}' is disabled, trying to set password.");
             }
 
-            await ValidatePasswordPolicy(user.Email, newPassword);
+            await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.ChangePassword = false;
@@ -119,22 +145,13 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
         }
 
-
-        protected void ValidateEmail(string email)
-        {
-            if (!new EmailAddressAttribute().IsValid(email))
-            {
-                throw new InvalidEmailException($"Email '{email}' is invalid.");
-            }
-        }
-
-        protected async Task ValidatePasswordPolicy(string email, string password)
+        protected async Task ValidatePasswordPolicy(UserIdentifier userIdentifier, string password)
         {
             CheckPasswordLength(password);
 
             if (RouteBinding.CheckPasswordComplexity)
             {
-                CheckPasswordComplexity(email, password);
+                CheckPasswordComplexity(userIdentifier, password);
             }
 
             if (RouteBinding.CheckPasswordRisk)
@@ -151,11 +168,22 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void CheckPasswordComplexity(string email, string password)
+        private void CheckPasswordComplexity(UserIdentifier userIdentifier, string password)
         {
             CheckPasswordComplexityCharRepeat(password);
             CheckPasswordComplexityCharDissimilarity(password);
-            CheckPasswordComplexityContainsEmail(email, password);
+            if (!userIdentifier.Email.IsNullOrEmpty())
+            {
+                CheckPasswordComplexityContainsEmail(userIdentifier.Email, password);
+            }
+            if (!userIdentifier.Phone.IsNullOrEmpty())
+            {
+                CheckPasswordComplexityContainsPhone(userIdentifier.Phone, password);
+            }
+            if (!userIdentifier.Username.IsNullOrEmpty())
+            {
+                CheckPasswordComplexityContainsUsername(userIdentifier.Username, password);
+            }
             CheckPasswordComplexityContainsUrl(password);
         }
 
@@ -191,7 +219,28 @@ namespace FoxIDs.Logic
             {
                 if (es.Length > 3 && password.Contains(es, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordEmailTextComplexityException($"Password contains parts of the e-mail '{email}' which does not comply with complexity requirements.");
+                    throw new PasswordEmailTextComplexityException($"Password contains parts of the email '{email}' which does not comply with complexity requirements.");
+                }
+            }
+        }
+
+        private void CheckPasswordComplexityContainsPhone(string phone, string password)
+        {
+            var phoneTrim = phone.TrimStart('+');
+            if (phoneTrim.Length > 3 && password.Contains(phoneTrim, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new PasswordPhoneTextComplexityException($"Password contains the phone number '{phone}' which does not comply with complexity requirements.");
+            }
+        }
+
+        private void CheckPasswordComplexityContainsUsername(string username, string password)
+        {
+            var usernameSplit = username.Split('@', '.', '-', '_', ':');
+            foreach (var us in usernameSplit)
+            {
+                if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new PasswordUsernameTextComplexityException($"Password contains parts of the username '{username}' which does not comply with complexity requirements.");
                 }
             }
         }

@@ -6,8 +6,6 @@
 
         public virtual string DField2 { get; set; }
 
-        public virtual string DField3 { get; set; }
-
         public virtual bool Required => false;
     }
 }

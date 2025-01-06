@@ -11,9 +11,18 @@
                             case DynamicElementTypes.Email:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email</div>
                                 break;
+                            case DynamicElementTypes.Phone:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Phone</div>
+                                break;
+                            case DynamicElementTypes.Username:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Username</div>
+                                break;
 
                             case DynamicElementTypes.EmailAndPassword:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email and password</div>
+                                break;
+                            case DynamicElementTypes.Password:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Password</div>
                                 break;
 
                             case DynamicElementTypes.Name:
@@ -50,39 +59,41 @@
                             <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
                         }
                     </div>
-                    @if (!element.IsStaticRequired)
-                    {
-                        <div class="col-1 text-right">
-                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                        </div>
-                    }
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-11">
-                        @if (element.IsStaticRequired)
-                        {
-                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" Disabled="true" TextType="y.n" />
-                        }
-                        else
-                        {
-                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
-                        }
+                        <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
                     </div>
                 </div>
             </li>
         }
     </ul>
     <ValidationMessage For="@(() => Model.Elements)" />
-    @if (!((!IncludeEmailElement || Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any()) && Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any()))
+    @if (!(Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.Phone).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.Username).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.Password).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any() && Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any()))
     {
         <div class="btn-group" role="group">
             <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="oi oi-plus" aria-hidden="true"></span> Add dynamic element
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-                @if (IncludeEmailElement && !Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any())
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any())
                 {
                     <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Email))">Email (@JwtClaimTypes.Email claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Phone).Any())
+                {
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Phone))">Phone (@JwtClaimTypes.PhoneNumber claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Username).Any())
+                {
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Username))">Username (@JwtClaimTypes.PreferredUsername claim)</button>
+                }
+                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Password).Any())
+                {
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Password))">Password</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any())
                 {
@@ -105,9 +116,6 @@
     [Parameter]
     public IDynamicElementsViewModel Model { get; set; }
 
-    [Parameter]
-    public bool IncludeEmailElement { get; set; }
-
     private void AddElement(DynamicElementTypes dynamicElementTypes)
     {
         switch (dynamicElementTypes)
@@ -115,14 +123,28 @@
             case DynamicElementTypes.Email:
                 Model.Elements.Add(new DynamicElementViewModel
                     {
-                        Type = DynamicElementTypes.Email
+                        Type = DynamicElementTypes.Email,
+                        Required = true
                     });
                 break;
-            case DynamicElementTypes.EmailAndPassword:
+            case DynamicElementTypes.Phone:
                 Model.Elements.Add(new DynamicElementViewModel
                     {
-                        IsStaticRequired = true,
-                        Type = DynamicElementTypes.EmailAndPassword,
+                        Type = DynamicElementTypes.Phone,
+                        Required = true
+                    });
+                break;
+            case DynamicElementTypes.Username:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Username,
+                        Required = true
+                    });
+                break;
+            case DynamicElementTypes.Password:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Password,
                         Required = true
                     });
                 break;

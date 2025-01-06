@@ -32,10 +32,11 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
+        private readonly CountryCodesLogic countryCodesLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -47,6 +48,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountLogic = accountLogic;
             this.dynamicElementLogic = dynamicElementLogic;
+            this.countryCodesLogic = countryCodesLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
@@ -907,7 +909,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, requireEmailAndPasswordElement: true).ToList()
+                    Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList()
                 });
 
             }
@@ -933,7 +935,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }                
                 PopulateCreateUserDefault(loginUpParty);
-                createUser.Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements, requireEmailAndPasswordElement: true).ToList();
+                createUser.Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -945,7 +947,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                (var email, var password, var emailPasswordI) = await ValidateCreateUserViewModelElementsAsync(createUser.Elements);
+                (var userIdentifier, var password, var passwordIndex) = await ValidateCreateUserViewModelElementsAsync(createUser.Elements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -963,8 +965,24 @@ namespace FoxIDs.Controllers
                 {
                     var claims = dynamicElementLogic.GetClaims(createUser.Elements);
                     claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
+                    var emailClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
+                    if (!emailClaim.IsNullOrWhiteSpace())
+                    {
+                        userIdentifier.Email = emailClaim;
+                    }
+                    var phoneClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PhoneNumber);
+                    if (!phoneClaim.IsNullOrWhiteSpace())
+                    {
+                        userIdentifier.Phone = phoneClaim;
+                    }
+                    var usernameClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PreferredUsername);
+                    if (!usernameClaim.IsNullOrWhiteSpace())
+                    {
+                        userIdentifier.Username = usernameClaim;
+                    }
+                    claims = claims.Where(c => c.Type != JwtClaimTypes.Email && c.Type != JwtClaimTypes.PhoneNumber && c.Type != JwtClaimTypes.PreferredUsername).ToList();
 
-                    var user = await accountLogic.CreateUser(email, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+                    var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
                         return await CreateUserStartLogin(sequenceData, loginUpParty, user.Email);
@@ -973,34 +991,44 @@ namespace FoxIDs.Controllers
                 catch (UserExistsException uex)
                 {
                     logger.ScopeTrace(() => uex.Message, triggerEvent: true);
-                    return await CreateUserStartLogin(sequenceData, loginUpParty, uex.Email);
+                    return await CreateUserStartLogin(sequenceData, loginUpParty, uex.UserIdentifier.Username ?? uex.UserIdentifier.Phone ?? uex.UserIdentifier.Email);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordPhoneTextComplexityException ppcex)
+                {
+                    logger.ScopeTrace(() => ppcex.Message);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the phone number."]);
+                }
+                catch (PasswordUsernameTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(() => pucex.Message);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewError();
@@ -1011,26 +1039,42 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<(string email, string password, int emailPasswordIndex)> ValidateCreateUserViewModelElementsAsync(List<DynamicElementBase> elements)
+        private async Task<(UserIdentifier userIdentifier, string password, int passwordIndex)> ValidateCreateUserViewModelElementsAsync(List<DynamicElementBase> elements)
         {
-            var email = string.Empty;
+            var userIdentifier = new UserIdentifier();
             var password = string.Empty;
-            var emailPasswordIndex = 0;
+            var passwordIndex = 0;
             var index = 0;
             foreach (var element in elements)
             {
-                await dynamicElementLogic.ValidateViewModelElementAsync(ModelState, element, index);
-                if (element is EmailAndPasswordDElement)
+                if (element is PhoneDElement)
                 {
-                    emailPasswordIndex = index;
-                    email = element.DField1;
-                    password = element.DField2;
+                    element.DField1 = countryCodesLogic.ReturnPhoneNotCountryCode(element.DField1);
+                }
+                await dynamicElementLogic.ValidateViewModelElementAsync(ModelState, element, index);
+
+                if (element is EmailDElement)
+                {
+                    userIdentifier.Email = element.DField1;
+                }
+                else if (element is PhoneDElement)
+                {
+                    userIdentifier.Phone = element.DField1;
+                }
+                else if (element is UsernameDElement)
+                {
+                    userIdentifier.Username = element.DField1;
+                }
+                else if (element is PasswordDElement)
+                {
+                    passwordIndex = index;
+                    password = element.DField1;
+                    element.DField1 = null;
                     element.DField2 = null;
-                    element.DField3 = null;
                 }
                 index++;
             }
-            return (email, password, emailPasswordIndex);
+            return (userIdentifier, password, passwordIndex);
         } 
 
         private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string email)
@@ -1049,28 +1093,54 @@ namespace FoxIDs.Controllers
                 {
                     ConfirmAccount = false,
                     RequireMultiFactor = false,
-                    Elements = new List<DynamicElement>
+                    Elements = new List<DynamicElement>()
+                };
+
+                if (loginUpParty.EnableUsernameIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
                     {
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.EmailAndPassword,
-                            Order = 0,
-                            Required = true
-                        },
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.GivenName,
-                            Order = 1,
-                            Required = false
-                        },
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.FamilyName,
-                            Order = 2,
-                            Required = false
-                        }
-                    }
-                };               
+                        Type = DynamicElementTypes.Username,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true
+                    });
+                }
+                if (loginUpParty.EnablePhoneIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Phone,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true
+                    });
+                }
+                if (loginUpParty.EnableEmailIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Email,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true
+                    });
+                }
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.Password,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                    Required = true
+                });
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.GivenName,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                    Required = false
+                });
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.FamilyName,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                    Required = false
+                });
             }
         }
 
@@ -1207,6 +1277,16 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordPhoneTextComplexityException ppcex)
+                {
+                    logger.ScopeTrace(() => ppcex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the phone number."]);
+                }
+                catch (PasswordUsernameTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(() => pucex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {

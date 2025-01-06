@@ -15,7 +15,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.User}:{idKey.TenantName}:{idKey.TrackName}:{(!idKey.UserIdentifier.IsNullOrEmpty() ? idKey.UserIdentifier : (!idKey.Email.IsNullOrEmpty() ? idKey.Email : idKey.UserId))}";
+            return $"{Constants.Models.DataType.User}:{idKey.TenantName}:{idKey.TrackName}:{(!idKey.Email.IsNullOrEmpty() ? idKey.Email : (!idKey.UserIdentifier.IsNullOrEmpty() ? idKey.UserIdentifier : idKey.UserId))}";
         }
 
         public static async Task<string> IdFormatAsync(RouteBinding routeBinding, IdKey idKey)
@@ -27,6 +27,7 @@ namespace FoxIDs.Models
             {
                 TenantName = routeBinding.TenantName,
                 TrackName = routeBinding.TrackName,
+                Email = idKey.Email,
                 UserIdentifier = idKey.UserIdentifier,
                 UserId = idKey.UserId,
             });
@@ -80,7 +81,7 @@ namespace FoxIDs.Models
         [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
         [JsonProperty(PropertyName = "username")]
         public string Username { get; set; }
-
+       
         [JsonProperty(PropertyName = "confirm_account")]
         public bool ConfirmAccount { get; set; }
 
@@ -114,7 +115,18 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormatAsync(idKey);
-            Email = idKey.UserIdentifier; 
+        }
+        
+        public async Task SetAdditionalIdAsync(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+
+            if (AdditionalIds == null)
+            {
+                AdditionalIds = new List<string>();
+            }
+
+            AdditionalIds.Add(await IdFormatAsync(idKey));
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -131,13 +143,13 @@ namespace FoxIDs.Models
 
         public class IdKey : Track.IdKey, IValidatableObject
         {
-            [MaxLength(Constants.Models.User.UsernameLength)]
-            [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
-            public string UserIdentifier { get; set; }
-
             [MaxLength(Constants.Models.User.EmailLength)]
             [RegularExpression(Constants.Models.User.EmailRegExPattern)]
             public string Email { get; set; }
+
+            [MaxLength(Constants.Models.User.UsernameLength)]
+            [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
+            public string UserIdentifier { get; set; }
 
             [MaxLength(Constants.Models.User.UserIdLength)]
             [RegularExpression(Constants.Models.User.UserIdRegExPattern)]
@@ -149,7 +161,7 @@ namespace FoxIDs.Models
 
                 if (Email.IsNullOrEmpty() && UserIdentifier.IsNullOrEmpty() && UserId.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(UserIdentifier)} or the field {nameof(UserId)} is required.", [nameof(UserIdentifier), nameof(UserId)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(UserIdentifier)} or the field {nameof(UserId)} is required.", [nameof(Email), nameof(UserIdentifier), nameof(UserId)]));
                 }
 
                 return results;

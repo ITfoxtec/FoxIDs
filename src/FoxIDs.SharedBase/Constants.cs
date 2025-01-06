@@ -511,7 +511,7 @@ namespace FoxIDs
                 public const int UsernameLength = 60;
                 public const string UsernameRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
                 public const int PhoneLength = 30;
-                public const string PhoneRegExPattern = @"^\+[0-9]*$";
+                public const string PhoneRegExPattern = @"^\+[1-9]{1}[0-9]{1,14}$";
                 public const int ConfirmationCodeLength = 8;
                 public const int TwoFactorAppCodeLength = 50;
             }
@@ -969,20 +969,20 @@ namespace FoxIDs
             /// <summary>
             /// Default ID Token claims.
             /// </summary>
-            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] 
-                { 
+            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
+                [
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, JwtClaimTypes.LocalSub
-                }).ToArray();
+                ]).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
-            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] 
-                { 
+            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
+                [
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
-                }).ToArray();
+                ]).ToArray();
 
             /// <summary>
             /// Default JWT Token authentication method claims.

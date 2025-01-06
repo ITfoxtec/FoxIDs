@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
             session.UserId = userIdentifiers.UserId;
             session.Email = userIdentifiers.Email;
             session.Phone = userIdentifiers.Phone;
-            session.UserIdentifier = userIdentifiers.Username;
+            session.Username = userIdentifiers.Username;
             session.UserIdentifier = userIdentifiers.UserIdentifier;
         }
 
@@ -127,7 +127,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email, UserId = session.UserId });
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email, UserIdentifier = session.UserIdentifier, UserId = session.UserId });
                     var user = await tenantDataRepository.GetAsync<User>(id, false);
                     if (user != null && !user.DisableAccount)
                     {

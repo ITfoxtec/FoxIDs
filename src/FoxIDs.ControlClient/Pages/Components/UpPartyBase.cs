@@ -109,8 +109,12 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     new DynamicElementViewModel
                     {
-                        IsStaticRequired = true,
-                        Type = DynamicElementTypes.EmailAndPassword,
+                        Type = DynamicElementTypes.Email,
+                        Required = true
+                    },
+                    new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Password,
                         Required = true
                     },
                     new DynamicElementViewModel
@@ -122,17 +126,6 @@ namespace FoxIDs.Client.Pages.Components
                         Type = DynamicElementTypes.FamilyName
                     }
                 };
-            }
-            else
-            {
-                foreach (var element in generalLoginUpParty.Form.Model.CreateUser.Elements)
-                {
-                    if (element.Type == DynamicElementTypes.EmailAndPassword)
-                    {
-                        element.IsStaticRequired = true;
-                        element.Required = true;
-                    }
-                }
             }
         }
 

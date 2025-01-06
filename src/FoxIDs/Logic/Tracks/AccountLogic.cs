@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicy(userIdentifier, newPassword);
+                await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;

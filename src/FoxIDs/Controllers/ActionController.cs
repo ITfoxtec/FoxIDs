@@ -244,6 +244,16 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
                 }
+                catch (PasswordPhoneTextComplexityException ppcex)
+                {
+                    logger.ScopeTrace(() => ppcex.Message);
+                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the phone number."]);
+                }
+                catch (PasswordUsernameTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(() => pucex.Message);
+                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);

@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public override async Task<User> ChangePasswordUser(string userIdentifier, string currentPassword, string newPassword)
+        public async Task<User> ValidateUserChangePassword(string userIdentifier, string currentPassword, string newPassword)
         {
             userIdentifier = userIdentifier?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Change password user '{userIdentifier}', Route '{RouteBinding?.Route}'.");

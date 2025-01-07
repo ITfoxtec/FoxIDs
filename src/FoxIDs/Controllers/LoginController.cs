@@ -980,7 +980,6 @@ namespace FoxIDs.Controllers
                     {
                         userIdentifier.Username = usernameClaim;
                     }
-                    claims = claims.Where(c => c.Type != JwtClaimTypes.Email && c.Type != JwtClaimTypes.PhoneNumber && c.Type != JwtClaimTypes.PreferredUsername).ToList();
 
                     var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
@@ -1243,7 +1242,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountLogic.ChangePasswordUser(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException uoex)

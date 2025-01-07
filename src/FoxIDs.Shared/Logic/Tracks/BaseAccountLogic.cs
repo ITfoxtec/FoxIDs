@@ -30,11 +30,10 @@ namespace FoxIDs.Logic
 
         public async Task<User> CreateUser(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, bool requireMultiFactor = false)
         {
+            userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
+            userIdentifier.Phone = userIdentifier.Phone?.Trim();
+            userIdentifier.Username = userIdentifier.Username?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Creating user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
-
-            userIdentifier.Email = userIdentifier.Email.TrimNullable().ToLowerNullable();
-            userIdentifier.Phone = userIdentifier.Phone.TrimNullable();
-            userIdentifier.Username = userIdentifier.Username.TrimNullable().ToLowerNullable();
 
             var user = new User
             {
@@ -56,6 +55,7 @@ namespace FoxIDs.Logic
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)
             {
+                claims = claims.Where(c => c.Type != JwtClaimTypes.Email && c.Type != JwtClaimTypes.PhoneNumber && c.Type != JwtClaimTypes.PreferredUsername).ToList();
                 user.Claims = claims.ToClaimAndValues();
             }
 
@@ -88,61 +88,64 @@ namespace FoxIDs.Logic
             }
         }
 
-        public virtual async Task<User> ChangePasswordUser(string userIdentifier, string currentPassword, string newPassword)
+        public async Task<User> ChangePasswordUser(UserIdentifier userIdentifier, string currentPassword, string newPassword)
         {
-            userIdentifier = userIdentifier?.ToLowerInvariant();
-            logger.ScopeTrace(() => $"Change password user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
+            userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
+            userIdentifier.Phone = userIdentifier.Phone?.Trim();
+            userIdentifier.Username = userIdentifier.Username?.Trim()?.ToLower();
+            logger.ScopeTrace(() => $"Change password user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
-                throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to change password.");
+                throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' do not exist or is disabled, trying to change password.");
             }
 
-            logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}', trying to change password.");
+            logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' exists, with user id '{user.UserId}', trying to change password.");
             if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
             {
-                logger.ScopeTrace(() => $"User '{userIdentifier}', current password valid, changing password.", triggerEvent: true);
+                logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', current password valid, changing password.", triggerEvent: true);
 
                 if (currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
+                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier.ToJson()}'.");
                 }
 
-                await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+                await ValidatePasswordPolicy(userIdentifier, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
                 await tenantDataRepository.SaveAsync(user);
 
-                logger.ScopeTrace(() => $"User '{userIdentifier}', password changed.", triggerEvent: true);
+                logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password changed.", triggerEvent: true);
                 return user;
             }
             else
             {
-                throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
+                throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier.ToJson()}'.");
             }
         }
 
         public async Task SetPasswordUser(User user, string newPassword)
         {
-            logger.ScopeTrace(() => $"Set password user '{user.Email}', Route '{RouteBinding?.Route}'.");
+            var userIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username };
+            logger.ScopeTrace(() => $"Set password user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
             if (user.DisableAccount)
             {
-                throw new UserNotExistsException($"User '{user.Email}' is disabled, trying to set password.");
+                throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
-            await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+            await ValidatePasswordPolicy(userIdentifier, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.ChangePassword = false;
             await tenantDataRepository.SaveAsync(user);
 
-            logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
+            logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
         }
 
         protected async Task ValidatePasswordPolicy(UserIdentifier userIdentifier, string password)

@@ -15,10 +15,12 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.User.PhoneLength)]
         [RegularExpression(Constants.Models.User.PhoneRegExPattern)]
+        [Display(Name = "Phone")]
         public string Phone { get; set; }
 
         [MaxLength(Constants.Models.User.UsernameLength)]
         [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Display(Name = "User must confirm account")]
@@ -26,6 +28,9 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Email verified")]
         public bool EmailVerified { get; set; }
+
+        [Display(Name = "Phone verified")]
+        public bool PhoneVerified { get; set; }
 
         [Display(Name = "User must change password")]
         public bool ChangePassword { get; set; }

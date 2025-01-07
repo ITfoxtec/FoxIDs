@@ -35,10 +35,6 @@ namespace FoxIDs
             return string.Join('.', resultText);
         }
 
-        public static string ToLowerNullable(this string text) => text != null ? text.ToLower() : null;
-
-        public static string TrimNullable(this string text) => text != null ? text.Trim() : null;
-
         public static string PartyIdToName(this string upPartyId)
         {
             if (upPartyId.IsNullOrEmpty())

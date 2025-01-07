@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -36,9 +37,11 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
-                userRequest.Email = userRequest.Email?.ToLower();
+                userRequest.Email = userRequest.Email?.Trim().ToLower();
+                userRequest.Phone = userRequest.Phone?.Trim();
+                userRequest.Username = userRequest.Username?.Trim()?.ToLower();
 
-                var mUser = await accountLogic.ChangePasswordUser(userRequest.Email, userRequest.CurrentPassword, userRequest.NewPassword);
+                var mUser = await accountLogic.ChangePasswordUser(new UserIdentifier { Email = userRequest.Email, Phone = userRequest.Phone, Username = userRequest.Username }, userRequest.CurrentPassword, userRequest.NewPassword);
 
                 return Ok(mapper.Map<Api.User>(mUser));
             }

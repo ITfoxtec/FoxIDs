@@ -984,7 +984,7 @@ namespace FoxIDs.Controllers
                     var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
-                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Email);
+                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
                     }
                 }
                 catch (UserExistsException uex)
@@ -1076,9 +1076,9 @@ namespace FoxIDs.Controllers
             return (userIdentifier, password, passwordIndex);
         } 
 
-        private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string email)
+        private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
-            sequenceData.UserIdentifier = email;
+            sequenceData.UserIdentifier = userIdentifier;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();

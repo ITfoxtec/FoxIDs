@@ -350,6 +350,5 @@ namespace FoxIDs.Logic
             Sms,
             Email
         }
-
     }
 }

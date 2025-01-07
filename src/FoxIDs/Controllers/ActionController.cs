@@ -124,7 +124,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Confirming phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Phone confirming failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -215,15 +215,44 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Confirming email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Email confirming failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> ResetPassword(bool newCode = false)
+        public async Task<IActionResult> ResetPassword()
         {
             try
             {
                 logger.ScopeTrace(() => "Start reset password.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+                if (!string.IsNullOrWhiteSpace(user?.Phone))
+                {
+                    sequenceData.Phone = user.Phone;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneResetPassword, includeSequence: true).ToRedirectResult();
+                }
+                else if (!string.IsNullOrWhiteSpace(user?.Email))
+                {
+                    sequenceData.Email = user.Email;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                }
+                return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.EmailResetPassword, includeSequence: true).ToRedirectResult();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        public async Task<IActionResult> EmailResetPassword(bool newCode = false)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start email reset password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -240,7 +269,7 @@ namespace FoxIDs.Controllers
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendResetPasswordCodeAsync(sequenceData.UserIdentifier, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendResetPasswordCodeAsync(sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
                 }
                 catch (UserNotExistsException uex)
                 {
@@ -248,7 +277,7 @@ namespace FoxIDs.Controllers
                     logger.Warning(uex);
                 }
 
-                return View(new ResetPasswordViewModel
+                return View(new EmailResetPasswordViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
@@ -256,22 +285,22 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
-                    Email = sequenceData.UserIdentifier
+                    Email = sequenceData.Email ?? sequenceData.UserIdentifier
                 });
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Password reset email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPassword)
+        public async Task<IActionResult> EmailResetPassword(EmailResetPasswordViewModel resetPassword)
         {
             try
             {
-                logger.ScopeTrace(() => "Resetting password.");
+                logger.ScopeTrace(() => "Email, resetting password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -302,7 +331,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);
+                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (CodeNotExistsException cneex)
@@ -362,7 +391,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Password reset email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

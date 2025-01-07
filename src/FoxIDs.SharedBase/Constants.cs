@@ -81,6 +81,8 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ResetPassword = "resetpassword";
+            public const string PhoneResetPassword = "phoneresetpassword";
+            public const string EmailResetPassword = "emailresetpassword";
             public const string PhoneConfirmation = "phoneconfirmation";
             public const string EmailConfirmation = "emailconfirmation";
             public const string RegisterTwoFactor = "regtwofactor";

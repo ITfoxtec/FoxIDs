@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
-        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromEmailVerificationStep) 
+        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromPhoneVerificationStep) 
         {
             var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
 
@@ -80,15 +80,15 @@ namespace FoxIDs.Logic
             sequenceData.Phone = user.Phone;
             sequenceData.PhoneVerified = user.PhoneVerified;
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-            if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
-            {
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
-            }
-            else if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
+            if (fromStep <= LoginResponseSequenceSteps.FromPhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+            }
+            else if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
+            {
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
@@ -267,17 +267,17 @@ namespace FoxIDs.Logic
                 claims.AddRange(acrClaims);
             }
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            if (user.Email.IsNullOrEmpty())
+            if (!user.Email.IsNullOrEmpty())
             {
                 claims.AddClaim(JwtClaimTypes.Email, user.Email);
                 claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
             }
-            if (user.Phone.IsNullOrEmpty())
+            if (!user.Phone.IsNullOrEmpty())
             {
                 claims.AddClaim(JwtClaimTypes.PhoneNumber, user.Phone);
                 claims.AddClaim(JwtClaimTypes.PhoneNumberVerified, user.PhoneVerified.ToString().ToLower());
             }
-            if (user.Username.IsNullOrEmpty() || user.Email.IsNullOrEmpty())
+            if (!user.Username.IsNullOrEmpty() || !user.Email.IsNullOrEmpty())
             {
                 claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Username ?? user.Email);
             }

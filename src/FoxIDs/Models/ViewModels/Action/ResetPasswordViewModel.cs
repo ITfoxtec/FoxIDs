@@ -8,10 +8,10 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCancelLogin { get; set; }
 
+        [Display(Name = "Phone")]
+        public string Phone { get; set; }
+
         [Display(Name = "Email")]
-        [Required]
-        [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
         public string Email { get; set; }
 
         [Display(Name = "Confirmation code")]

@@ -63,7 +63,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(null));
+                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -80,13 +80,13 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail));
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterEmail), ex.Message);
+                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterValue), ex.Message);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail, paginationToken: paginationToken), addUsers: true);
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -109,7 +109,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterEmail), ex.Message);
+                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterValue), ex.Message);
                 }
                 else
                 {

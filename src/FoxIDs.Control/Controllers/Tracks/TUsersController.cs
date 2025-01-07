@@ -11,6 +11,7 @@ using System.Linq;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
+using System.Linq.Expressions;
 
 namespace FoxIDs.Controllers
 {
@@ -44,19 +45,29 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                filterEmail = filterEmail.IsNullOrWhiteSpace() ? null : filterEmail;
-                filterPhone = filterEmail.IsNullOrWhiteSpace() ? null : filterPhone;
-                filterUsername = filterEmail.IsNullOrWhiteSpace() ? null : filterUsername;
-                filterUserId = filterEmail.IsNullOrWhiteSpace() ? null : filterUserId;
-
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mUsers, var nextPaginationToken) = 
-                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) &&
-                        (u.Email == null || u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase)) &&
-                        (u.Phone == null || u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase)) &&
-                        (u.Username == null || u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase)) &&
-                        (u.UserId == null || u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
 
+                Expression<Func<User, bool>> whereQuery = u => u.DataType.Equals(dataType);
+                var filterWhereQuerys = GetFilterWhereQuery(filterEmail, filterPhone, filterUsername, filterUserId);
+                if (filterWhereQuerys?.Count() > 0)
+                {
+                    Expression<Func<User, bool>> filterWhereQuery = null; 
+                    foreach (var fwq in filterWhereQuerys)
+                    {
+                        if (filterWhereQuery == null)
+                        {
+                            filterWhereQuery = fwq;
+                        }
+                        else
+                        {
+                            filterWhereQuery = filterWhereQuery.Or(fwq);
+                        }
+                    }
+                    whereQuery = whereQuery.AndAlso(filterWhereQuery);
+                }
+
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetListAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+      
                 var response = new Api.PaginationResponse<Api.User>
                 {
                     Data = new HashSet<Api.User>(mUsers.Count()),
@@ -76,6 +87,26 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.User).Name, filterEmail);
                 }
                 throw;
+            }
+        }
+
+        private IEnumerable<Expression<Func<User, bool>>> GetFilterWhereQuery(string filterEmail, string filterPhone, string filterUsername, string filterUserId)
+        {
+            if (!filterEmail.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterPhone.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterUsername.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterUserId.IsNullOrWhiteSpace())
+            {
+                yield return u => u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase);
             }
         }
     }

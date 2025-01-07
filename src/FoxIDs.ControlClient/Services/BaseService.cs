@@ -55,7 +55,7 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
-        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string paginationToken = null)
+        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
         {
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())
@@ -69,6 +69,10 @@ namespace FoxIDs.Client.Services
             if (!parmValue3.IsNullOrWhiteSpace())
             {
                 parms.Add($"{parmName3}={parmValue3}");
+            }
+            if (!parmValue4.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName4}={parmValue4}");
             }
             if (!paginationToken.IsNullOrWhiteSpace())
             {

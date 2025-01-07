@@ -19,14 +19,14 @@ namespace FoxIDs.Logic
 
         public async Task<User> GetUserAsync(string userIdentifier)
         {
-            userIdentifier = userIdentifier?.ToLowerInvariant();
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             return await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
         }
 
         public async Task<User> ValidateUser(string userIdentifier, string password)
         {
-            userIdentifier = userIdentifier?.ToLowerInvariant();
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Validating user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
 
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> ValidateUserChangePassword(string userIdentifier, string currentPassword, string newPassword)
         {
-            userIdentifier = userIdentifier?.ToLowerInvariant();
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Change password user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
 
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });

@@ -60,6 +60,8 @@ namespace FoxIDs.Logic
                     return "User";
                 case FailingLoginTypes.ExternalLogin:
                     return "External login user";
+                case FailingLoginTypes.SmsCode:
+                    return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
                 case FailingLoginTypes.TwoFactorAuthenticator:
@@ -96,6 +98,8 @@ namespace FoxIDs.Logic
                     return string.Empty;
                 case FailingLoginTypes.ExternalLogin:
                     return "_external_login";
+                case FailingLoginTypes.SmsCode:
+                    return "_sms_code";
                 case FailingLoginTypes.EmailCode:
                     return "_email_code";
                 case FailingLoginTypes.TwoFactorAuthenticator:

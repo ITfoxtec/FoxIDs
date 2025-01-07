@@ -24,7 +24,7 @@
 </div>
 
 <PageEditForm @ref="userFilterForm" TModel="FilterUserViewModel" OnValidSubmit="OnUserFilterValidSubmitAsync">
-    <FInputTextFilter @bind-Value="userFilterForm.Model.FilterEmail" For="@(() => userFilterForm.Model.FilterEmail)" />
+    <FInputTextFilter @bind-Value="userFilterForm.Model.FilterValue" For="@(() => userFilterForm.Model.FilterValue)" />
 </PageEditForm>
 
 <ul class="list-group">

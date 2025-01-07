@@ -27,10 +27,11 @@ namespace FoxIDs.Logic
         private readonly SecretHashLogic secretHashLogic;
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
+        private readonly SendSmsLogic sendSmsLogic;
         private readonly SendEmailLogic sendEmailLogic;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, TrackCacheLogic trackCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, TrackCacheLogic trackCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -40,57 +41,98 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
             this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
+            this.sendSmsLogic = sendSmsLogic;
             this.sendEmailLogic = sendEmailLogic;
             this.trackCacheLogic = trackCacheLogic;
         }
 
+        public Task<ConfirmationCodeSendStatus> SendPhoneConfirmationCodeSmsAsync(string phone, bool forceNewCode)
+        {
+            phone = phone?.Trim();
+            return SendCodeAsync(SmsConfirmationCodeKeyElement, phone, GetSmsSendAction(), forceNewCode, SmsConfirmationCodeLogText);
+        }
+
+        public Task<User> VerifyPhoneConfirmationCodeSmsAsync(string phone, string code)
+        {
+            return VerifyCodeAsync(SendType.Sms, SmsConfirmationCodeKeyElement, phone, code, GetSmsSendAction(), null, SmsConfirmationCodeLogText);
+        }
+
         public Task<ConfirmationCodeSendStatus> SendEmailConfirmationCodeAsync(string email, bool forceNewCode)
         {
-            email = email?.ToLowerInvariant();
-            return SendEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeKeyElement, email, forceNewCode, "email");
+            email = email?.Trim()?.ToLower();
+            return SendCodeAsync(EmailConfirmationCodeKeyElement, email, GetEmailSendAction(), forceNewCode, EmailConfirmationCodeLogText);
         }
 
         public Task<User> VerifyEmailConfirmationCodeAsync(string email, string code)
         {
-            email = email?.ToLowerInvariant();
-            return VerifyEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeKeyElement, null, email, code, "email");
+            email = email?.ToLower();
+            return VerifyCodeAsync(SendType.Email, EmailConfirmationCodeKeyElement, email, code, GetEmailSendAction(), null, EmailConfirmationCodeLogText);
         }
 
+        private string SmsConfirmationCodeLogText => "Phone (SMS) confirmation code";
+        private string SmsConfirmationCodeKeyElement => "sms_confirmation_code";
+
+        private string EmailConfirmationCodeLogText => "Email confirmation code";
         private string EmailConfirmationCodeKeyElement => "email_confirmation_code";
 
-        private Func<string, EmailContent> GetEmailConfirmationCodeEmailContent()
+        private SmsContent GetPhoneConfirmationCodeSms(string confirmationCode)
         {
-            return (code) => new EmailContent
+            return new SmsContent
+            {
+                ParentCulture = HttpContext.GetCultureParentName(),
+                Sms = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", confirmationCode]
+            };
+        }
+
+        private EmailContent GetEmailConfirmationCodeEmailContent(string confirmationCode)
+        {
+            return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
                 Subject = localizer["{0}Email confirmation", $"{GetCompanyName()} - "],
-                Body = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
+                Body = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(confirmationCode)]
             };
+        }
+
+        private Func<User, string, Task> GetSmsSendAction()
+        {
+            return async (user, code) => await sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneConfirmationCodeSms(code));
+        }
+
+        private Func<User, string, Task> GetEmailSendAction()
+        {
+            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailConfirmationCodeEmailContent(code)));
         }
 
         public Task<ConfirmationCodeSendStatus> SendResetPasswordCodeAsync(string email, bool forceNewCode)
         {
-            email = email?.ToLowerInvariant();
-            return SendEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeKeyElement, email, forceNewCode, "reset password");
+            email = email?.Trim()?.ToLower();
+            return SendCodeAsync(EmailResetPasswordCodeKeyElement, email, GetEmailSendResetPasswordAction(), forceNewCode, EmailResetPasswordCodeLogText);
         }
 
         public Task<User> VerifyResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword)
         {
-            email = email?.ToLowerInvariant();
+            email = email?.ToLower();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
-            return VerifyEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeKeyElement, onSuccess, email, code, "reset password");
+            return VerifyCodeAsync(SendType.Email, EmailResetPasswordCodeKeyElement, email, code, GetEmailSendResetPasswordAction(), onSuccess, EmailResetPasswordCodeLogText);
         }
 
-        private string ResetPasswordCodeKeyElement => "reset_password_code";
+        private string EmailResetPasswordCodeLogText => "Email reset password code";
+        private string EmailResetPasswordCodeKeyElement => "reset_password_code";
 
-        private Func<string, EmailContent> GetResetPasswordCodeEmailContent()
+        private EmailContent GetResetPasswordCodeEmailContent(string confirmationCode)
         {
-            return (code) => new EmailContent
+            return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
                 Subject = localizer["{0}Reset password", $"{GetCompanyName()} - "],
-                Body = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
+                Body = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(confirmationCode)]
             };
+        }
+
+        private Func<User, string, Task> GetEmailSendResetPasswordAction()
+        {
+            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetResetPasswordCodeEmailContent(code)));
         }
 
         private string GetCompanyName()
@@ -117,36 +159,35 @@ namespace FoxIDs.Logic
             return codeHtml;
         }
 
-        private async Task<ConfirmationCodeSendStatus> SendEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, string email, bool forceNewCode, string logText)
+        private async Task<ConfirmationCodeSendStatus> SendCodeAsync(string keyElement, string userIdentifier, Func<User, string, Task> sendActionAsync, bool forceNewCode, string logText)
         {
-            var key = EmailConfirmationCodeCacheKey(keyElement, email);
+            var key = CodeCacheKey(keyElement, userIdentifier);
             if (!forceNewCode && await cacheProvider.ExistsAsync(key))
             {
                 return ConfirmationCodeSendStatus.UseExistingCode;
             }
             else
             {
-                await SaveAndSendEmailCode(key, email, emailContent, logText);
+                await SaveAndSendCodeAsync(key, userIdentifier, sendActionAsync, logText);
                 return forceNewCode ? ConfirmationCodeSendStatus.ForceNewCode : ConfirmationCodeSendStatus.NewCode;
             }
         }
 
-        private async Task SaveAndSendEmailCode(string key, string email, Func<string, EmailContent> emailContent, string logText)
+        private async Task SaveAndSendCodeAsync(string key, string userIdentifier, Func<User, string, Task> sendActionAsync, string logText)
         {
             var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.ConfirmationCodeLength).ToUpper();
             var confirmationCodeObj = new ConfirmationCode();
             await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
             await cacheProvider.SetAsync(key, confirmationCodeObj.ToJson(), settings.ConfirmationCodeLifetime);
 
-            var user = await accountLogic.GetUserAsync(email);
+            var user = await accountLogic.GetUserAsync(userIdentifier);
             if (user == null || user.DisableAccount)
             {
-                throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to send {logText} confirmation code.");
+                throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to send {logText}.");
             }
 
-            await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(emailContent(confirmationCode)));
-
-            logger.ScopeTrace(() => $"Email with {logText} confirmation code send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
+            await sendActionAsync(user, confirmationCode);
+            logger.ScopeTrace(() => $"{logText} send to '{userIdentifier}' for user id '{user.UserId}'.", triggerEvent: true);
         }
 
         private async Task<EmailContent> AddAddressAndInfoAsync(EmailContent emailContent)
@@ -215,50 +256,66 @@ namespace FoxIDs.Logic
             return emailContent;
         }
 
-        private async Task<User> VerifyEmailCodeAsync(Func<string, EmailContent> emailContent, string keyElement, Func<User, Task> onSuccess, string email, string code, string logText)
+        private async Task<User> VerifyCodeAsync(SendType sendType, string keyElement, string userIdentifier, string code, Func<User, string, Task> sendActionAsync, Func<User, Task> onSuccess, string logText)
         {
-            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.SmsCode);
 
-            var key = EmailConfirmationCodeCacheKey(keyElement, email);
+            var key = CodeCacheKey(keyElement, userIdentifier);
             var confirmationCodeValue = await cacheProvider.GetAsync(key);
             if (!confirmationCodeValue.IsNullOrEmpty())
             {
                 var confirmationCode = confirmationCodeValue.ToObject<ConfirmationCode>();
                 if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code.ToUpper()))
                 {
-                    await failingLoginLogic.ResetFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
+                    await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, FailingLoginTypes.SmsCode);
 
-                    var user = await accountLogic.GetUserAsync(email);
+                    var user = await accountLogic.GetUserAsync(userIdentifier);
                     if (user == null || user.DisableAccount)
                     {
-                        throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to do {logText} confirmation code.");
+                        throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to do {logText}.");
                     }
-                    if (!user.EmailVerified)
+
+                    switch (sendType)
                     {
-                        user.EmailVerified = true;
-                        await tenantDataRepository.SaveAsync(user);
+                        case SendType.Sms:
+                            if (!user.PhoneVerified)
+                            {
+                                user.PhoneVerified = true;
+                                await tenantDataRepository.SaveAsync(user);
+                            }
+                            break;
+                        case SendType.Email:
+                            if (!user.EmailVerified)
+                            {
+                                user.EmailVerified = true;
+                                await tenantDataRepository.SaveAsync(user);
+                            }
+                            break;
+                        default:
+                            throw new NotSupportedException();
                     }
+                   
                     if (onSuccess != null)
                     {
                         await onSuccess(user);
                     }
 
                     await cacheProvider.DeleteAsync(key);
-                    logger.ScopeTrace(() => $"User '{user.Email}' {logText} confirmation code verified for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{userIdentifier}' {logText} verified for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
                     return user;
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
-                    logger.ScopeTrace(() => $"Failing count increased for user '{email}', {logText} confirmation code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
-                    throw new InvalidCodeException($"Invalid {logText} confirmation code, user '{email}'.");
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.SmsCode);
+                    logger.ScopeTrace(() => $"Failing count increased for user '{userIdentifier}', {logText} invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
+                    throw new InvalidCodeException($"Invalid {logText}, user '{userIdentifier}'.");
                 }
             }
             else
             {
-                logger.ScopeTrace(() => $"There is not a email code to compare with, user '{email}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
-                await SaveAndSendEmailCode(key, email, emailContent, logText);
-                throw new CodeNotExistsException($"{logText} confirmation code not found."); 
+                logger.ScopeTrace(() => $"There is not a {logText} to compare with, user '{userIdentifier}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
+                await SaveAndSendCodeAsync(key, userIdentifier, sendActionAsync, logText);
+                throw new CodeNotExistsException($"{logText} not found.");
             }
         }
 
@@ -283,9 +340,16 @@ namespace FoxIDs.Logic
             return displayName;
         }
 
-        private string EmailConfirmationCodeCacheKey(string keyElement, string email)
+        private string CodeCacheKey(string keyElement, string userIdentifier)
         {
-            return $"{keyElement}_{RouteBinding.TenantNameDotTrackName}_{email}";
-        }      
+            return $"{keyElement}_{RouteBinding.TenantNameDotTrackName}_{userIdentifier}";
+        }
+
+        private enum SendType
+        {
+            Sms,
+            Email
+        }
+
     }
 }

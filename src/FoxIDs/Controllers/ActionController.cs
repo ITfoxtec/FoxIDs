@@ -23,8 +23,9 @@ namespace FoxIDs.Controllers
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly AccountLogic accountLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -33,6 +34,98 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountActionLogic = accountActionLogic;
+            this.accountLogic = accountLogic;
+        }
+
+        public async Task<IActionResult> PhoneConfirmation(bool newCode = false)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start phone confirmation.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                var codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                return View(new PhoneConfirmationViewModel
+                {
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                    ConfirmationCodeSendStatus = codeSendStatus,
+                    Phone = sequenceData.Phone
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Phone confirmation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PhoneConfirmation(PhoneConfirmationViewModel phoneConfirmation)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Confirming phone.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                Func<IActionResult> viewResponse = () =>
+                {
+                    phoneConfirmation.SequenceString = SequenceString;
+                    phoneConfirmation.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
+                    phoneConfirmation.IconUrl = loginUpParty.IconUrl;
+                    phoneConfirmation.Css = loginUpParty.Css;
+                    phoneConfirmation.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    return View(phoneConfirmation);
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    return viewResponse();
+                }
+
+                try
+                {
+                    var user = await accountActionLogic.VerifyPhoneConfirmationCodeSmsAsync(sequenceData.Phone, phoneConfirmation.ConfirmationCode);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromEmailVerificationStep);
+                }
+                catch (CodeNotExistsException cneex)
+                {
+                    logger.ScopeTrace(() => cneex.Message);
+                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your phone."]);
+                }
+                catch (InvalidCodeException pcex)
+                {
+                    logger.ScopeTrace(() => pcex.Message);
+                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer["Invalid phone confirmation code, please try one more time."]);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
+
+                return viewResponse();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Confirming phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
         }
 
         public async Task<IActionResult> EmailConfirmation(bool newCode = false)
@@ -44,7 +137,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
 
-                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.UserIdentifier, newCode);
+                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -58,7 +151,7 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = codeSendStatus,
-                    Email = sequenceData.UserIdentifier
+                    Email = sequenceData.Email
                 });
             }
             catch (Exception ex)
@@ -99,7 +192,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.UserIdentifier, emailConfirmation.ConfirmationCode);
+                    var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaStep);
                 }
                 catch (CodeNotExistsException cneex)
@@ -209,7 +302,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);                    
+                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (CodeNotExistsException cneex)

@@ -27,6 +27,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSingleton<EmbeddedResourceLogic>();
 
+            services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();
             services.AddTransient<PlanUsageLogic>();
             services.AddTransient<ContainedKeyLogic>();

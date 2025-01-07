@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, string userIdentifier, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, newDownPartyLink, session, GetUserIdentifiers(userIdentifier), acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, newDownPartyLink, session, GetLoginUserIdentifier(userIdentifier), acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
@@ -66,15 +66,15 @@ namespace FoxIDs.Logic
                 var sessionId = RandomGenerator.Generate(24);
                 claims = await GetClaimsAsync(extLoginUpParty, userClaims, authTime, sequenceData, sessionId, acrClaims);
 
-                await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, GetUserIdentifiers(userIdentifier), claims);
+                await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
 
             return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, claims);
         }
 
-        private static UserIdentifiers GetUserIdentifiers(string userIdentifier)
+        private static LoginUserIdentifier GetLoginUserIdentifier(string userIdentifier)
         {
-            return new UserIdentifiers { UserIdentifier = userIdentifier };
+            return new LoginUserIdentifier { UserIdentifier = userIdentifier };
         }
 
         public bool ValidSessionUpAgainstSequence(ExternalLoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session) => loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);

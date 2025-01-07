@@ -193,7 +193,7 @@ namespace FoxIDs.Logic
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, GetUserIdentifiers(user, sequenceData.UserIdentifier), acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
@@ -201,15 +201,15 @@ namespace FoxIDs.Logic
             {
                 var sessionId = RandomGenerator.Generate(24);
                 claims = await GetClaimsAsync(loginUpParty, user, authTime, sequenceData, sessionId, acrClaims);
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetUserIdentifiers(user, sequenceData.UserIdentifier), claims);
+                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
             return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(claims);
         }
 
-        private UserIdentifiers GetUserIdentifiers(User user, string userIdentifier)
+        private LoginUserIdentifier GetLoginUserIdentifier(User user, string userIdentifier)
         {
-            return new UserIdentifiers
+            return new LoginUserIdentifier
             {
                 UserId = user.UserId,
                 Email = user.Email,

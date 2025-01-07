@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateSessionAsync(IUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, UserIdentifiers userIdentifiers, IEnumerable<Claim> claims)
+        public async Task CreateSessionAsync(IUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, LoginUserIdentifier loginUserIdentifier, IEnumerable<Claim> claims)
         {
             if(SessionEnabled(loginUpParty))
             {
@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
                 AddDownPartyLink(session, newDownPartyLink);
                 session.CreateTime = authTime;
                 session.LastUpdated = authTime;
-                SetUserIdentifiers(session, userIdentifiers);
+                SetLoginUserIdentifier(session, loginUserIdentifier);
                 await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
             }
@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<bool> UpdateSessionAsync(IUpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, UserIdentifiers userIdentifiers = null, IEnumerable<Claim> claims = null)
+        public async Task<bool> UpdateSessionAsync(IUpParty upParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, LoginUserIdentifier loginUserIdentifier = null, IEnumerable<Claim> claims = null)
         {
             logger.ScopeTrace(() => $"Update session, Route '{RouteBinding.Route}'.");
 
@@ -64,9 +64,9 @@ namespace FoxIDs.Logic
                 {
                     session.Claims = UpdateClaims(session, claims);
                 }
-                if (userIdentifiers != null)
+                if (loginUserIdentifier != null)
                 {
-                    SetUserIdentifiers(session, userIdentifiers);
+                    SetLoginUserIdentifier(session, loginUserIdentifier);
                 }
                 await sessionCookieRepository.SaveAsync(upParty, session, GetPersistentCookieExpires(upParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
@@ -79,13 +79,13 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        private void SetUserIdentifiers(SessionLoginUpPartyCookie session, UserIdentifiers userIdentifiers)
+        private void SetLoginUserIdentifier(SessionLoginUpPartyCookie session, LoginUserIdentifier loginUserIdentifier)
         {
-            session.UserId = userIdentifiers.UserId;
-            session.Email = userIdentifiers.Email;
-            session.Phone = userIdentifiers.Phone;
-            session.Username = userIdentifiers.Username;
-            session.UserIdentifier = userIdentifiers.UserIdentifier;
+            session.UserId = loginUserIdentifier.UserId;
+            session.Email = loginUserIdentifier.Email;
+            session.Phone = loginUserIdentifier.Phone;
+            session.Username = loginUserIdentifier.Username;
+            session.UserIdentifier = loginUserIdentifier.UserIdentifier;
         }
 
         private IEnumerable<ClaimAndValues> UpdateClaims(SessionLoginUpPartyCookie session, IEnumerable<Claim> claims)

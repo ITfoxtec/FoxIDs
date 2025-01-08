@@ -519,6 +519,10 @@
     {
       "name": "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
       "id": 124
+    },
+    {
+      "name": "The {0} field is not a valid phone number.",
+      "id": 125
     }
   ],
   "resources": [
@@ -15123,6 +15127,16 @@
         {
           "culture": "en",
           "value": "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 125,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The {0} field is not a valid phone number.",
           "edit_level": 100
         }
       ]

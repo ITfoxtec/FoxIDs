@@ -58,6 +58,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_custom_domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [JsonProperty(PropertyName = "enable_sms")]
+        public bool EnableSms { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();

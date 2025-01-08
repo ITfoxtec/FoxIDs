@@ -26,8 +26,9 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -35,6 +36,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
+            this.planCacheLogic = planCacheLogic;
         }
 
         public void CheckUpParty(UpSequenceData sequenceData, PartyTypes partyType = PartyTypes.Login)
@@ -80,7 +82,7 @@ namespace FoxIDs.Logic
             sequenceData.Phone = user.Phone;
             sequenceData.PhoneVerified = user.PhoneVerified;
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-            if (fromStep <= LoginResponseSequenceSteps.FromPhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
+            if (fromStep <= LoginResponseSequenceSteps.FromPhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
@@ -137,6 +139,16 @@ namespace FoxIDs.Logic
             {
                 return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
             }
+        }
+
+        private async Task<bool> PlanEnabledSmsAsync()
+        {
+            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            {
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                return plan.EnableSms;
+            }
+            return true;
         }
 
         private bool RegisterTwoFactor(User user)

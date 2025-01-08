@@ -29,6 +29,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [Display(Name = "SMS")]
+        public bool EnableSms { get; set; }
+
         [Required]
         [Display(Name = "Total tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();

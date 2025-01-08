@@ -8,6 +8,7 @@ using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -24,8 +25,9 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly AccountLogic accountLogic;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -35,6 +37,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountActionLogic = accountActionLogic;
             this.accountLogic = accountLogic;
+            this.planCacheLogic = planCacheLogic;
         }
 
         public async Task<IActionResult> PhoneConfirmation(bool newCode = false)
@@ -45,6 +48,15 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
 
                 var codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
 
@@ -79,6 +91,15 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -257,6 +278,15 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
 
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -304,6 +334,15 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);

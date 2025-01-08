@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    throw new InvalidOperationException($"Users email '{sequenceData.UserIdentifier}' not verified, required in two factor registration.");
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -192,7 +192,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    throw new InvalidOperationException($"Users email '{sequenceData.UserIdentifier}' not verified, required in two factor login.");
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);

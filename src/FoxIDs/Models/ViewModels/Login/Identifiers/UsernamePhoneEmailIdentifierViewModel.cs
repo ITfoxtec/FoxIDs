@@ -7,7 +7,6 @@ namespace FoxIDs.Models.ViewModels
         [Display(Name = "Username or Phone or Email")]
         [Required]
         [MaxLength(Constants.Models.User.UsernameLength)]
-        [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
         public string UserIdentifier { get; set; }
     }
 }

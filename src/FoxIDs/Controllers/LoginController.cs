@@ -244,7 +244,7 @@ namespace FoxIDs.Controllers
                 {
                     identifierViewModel.UsernameEmailIdentifier = new UsernameEmailIdentifierViewModel { UserIdentifier = userIdentifier };
                 }
-                if (loginUpParty.EnableEmailIdentifier)
+                else if (loginUpParty.EnableEmailIdentifier)
                 {
                     identifierViewModel.EmailIdentifier = new EmailIdentifierViewModel { Email = userIdentifier };
                 }
@@ -670,15 +670,15 @@ namespace FoxIDs.Controllers
         {
             if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number, email or password. A phone number must include the country code.";
+                return "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number, email or password. A phone number must include the country code.";
+                return "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number or password. A phone number must include the country code.";
+                return "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
@@ -690,7 +690,7 @@ namespace FoxIDs.Controllers
             }
             else if (loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number or password. A phone number must include the country code.";
+                return "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableUsernameIdentifier)
             {

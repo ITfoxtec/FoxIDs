@@ -7,7 +7,6 @@ namespace FoxIDs.Models.ViewModels
         [Display(Name = "Username")]
         [Required]
         [MaxLength(Constants.Models.User.UsernameLength)]
-        [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
         public string Username { get; set; }
     }
 }

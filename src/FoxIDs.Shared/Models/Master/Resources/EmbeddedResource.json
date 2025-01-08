@@ -455,6 +455,70 @@
     {
       "name": "Invalid recovery code, please try one more time.",
       "id": 108
+    },
+    {
+      "name": "Phone",
+      "id": 109
+    },
+    {
+      "name": "The Phone format is invalid, include your country code e.g. +44XXXXXXXXX",
+      "id": 110
+    },
+    {
+      "name": "Change phone",
+      "id": 111
+    },
+    {
+      "name": "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 112
+    },
+    {
+      "name": "Phone or Email",
+      "id": 113
+    },
+    {
+      "name": "Change phone or email",
+      "id": 114
+    },
+    {
+      "name": "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 115
+    },
+    {
+      "name": "Username or Phone or Email",
+      "id": 116
+    },
+    {
+      "name": "Change username or phone or email",
+      "id": 117
+    },
+    {
+      "name": "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 118
+    },
+    {
+      "name": "Username or Email",
+      "id": 119
+    },
+    {
+      "name": "Change username or email",
+      "id": 120
+    },
+    {
+      "name": "Wrong username, email or password.",
+      "id": 121
+    },
+    {
+      "name": "Username or Phone",
+      "id": 122
+    },
+    {
+      "name": "Change username or phone",
+      "id": 123
+    },
+    {
+      "name": "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 124
     }
   ],
   "resources": [
@@ -14900,6 +14964,166 @@
           "culture": "uk",
           "value": "Неправильний код відновлення, спробуйте ще раз.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Phone",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The Phone format is invalid, include your country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change phone",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Phone or Email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change phone or email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Username or Phone or Email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change username or phone or email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Username or Email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change username or email",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 121,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong username, email or password.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 122,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Username or Phone",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change username or phone",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
         }
       ]
     }

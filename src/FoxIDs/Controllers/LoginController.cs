@@ -524,7 +524,7 @@ namespace FoxIDs.Controllers
             {
                 passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
             }
-            if (loginUpParty.EnableEmailIdentifier)
+            else if (loginUpParty.EnableEmailIdentifier)
             {
                 passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
             }
@@ -684,7 +684,7 @@ namespace FoxIDs.Controllers
             {
                 return "Wrong username, email or password.";
             }
-            if (loginUpParty.EnableEmailIdentifier)
+            else if (loginUpParty.EnableEmailIdentifier)
             {
                 return "Wrong email or password.";
             }
@@ -1183,7 +1183,7 @@ namespace FoxIDs.Controllers
                 {
                     changePasswordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
                 }
-                if (loginUpParty.EnableEmailIdentifier)
+                else if (loginUpParty.EnableEmailIdentifier)
                 {
                     changePasswordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
                 }

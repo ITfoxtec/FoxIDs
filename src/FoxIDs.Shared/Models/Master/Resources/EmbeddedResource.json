@@ -455,10 +455,6 @@
     {
       "name": "Invalid recovery code, please try one more time.",
       "id": 108
-    },
-    {
-      "name": "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
-      "id": 109
     }
   ],
   "resources": [
@@ -14904,16 +14900,6 @@
           "culture": "uk",
           "value": "Неправильний код відновлення, спробуйте ще раз.",
           "edit_level": 40
-        }
-      ]
-    },
-    {
-      "id": 109,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX",
-          "edit_level": 100
         }
       ]
     }

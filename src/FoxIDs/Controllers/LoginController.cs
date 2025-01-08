@@ -1131,14 +1131,12 @@ namespace FoxIDs.Controllers
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement
                 {
                     Type = DynamicElementTypes.GivenName,
-                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                    Required = false
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1
                 });
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement
                 {
                     Type = DynamicElementTypes.FamilyName,
-                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                    Required = false
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1
                 });
             }
         }

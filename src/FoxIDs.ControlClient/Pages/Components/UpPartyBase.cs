@@ -105,27 +105,47 @@ namespace FoxIDs.Client.Pages.Components
             }
             if (generalLoginUpParty.Form.Model.CreateUser.Elements?.Any() != true)
             {
-                generalLoginUpParty.Form.Model.CreateUser.Elements = new List<DynamicElementViewModel>
+                generalLoginUpParty.Form.Model.CreateUser.Elements = new List<DynamicElementViewModel>();
+
+                if (generalLoginUpParty.Form.Model.EnableUsernameIdentifier)
                 {
-                    new DynamicElementViewModel
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Username,
+                        Required = true
+                    });
+                }
+                if (generalLoginUpParty.Form.Model.EnablePhoneIdentifier)
+                {
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Phone,
+                        Required = true
+                    });
+                }
+                if (generalLoginUpParty.Form.Model.EnableEmailIdentifier || (!generalLoginUpParty.Form.Model.EnablePhoneIdentifier && !generalLoginUpParty.Form.Model.EnableUsernameIdentifier))
+                {
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Email,
                         Required = true
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.Password,
-                        Required = true
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.GivenName
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.FamilyName
-                    }
-                };
+                    });
+                }
+
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.Password,
+                    Required = true
+                });
+
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.GivenName
+                });
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.FamilyName
+                });
             }
         }
 

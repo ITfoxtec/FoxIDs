@@ -95,23 +95,48 @@
         <div class="tab-content pt-3">
             @if (loginUpParty.ShowLoginTab)
             {
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
-                <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />                
                 @if (loginUpParty.ShowAdvanced)
                 {
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body pb-0">
+                                <div class="info-text">Select which user identifiers it is possible to log in with.</div>
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableEmailIdentifier" For="@(() => loginUpParty.Form.Model.EnableEmailIdentifier)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnablePhoneIdentifier" For="@(() => loginUpParty.Form.Model.EnablePhoneIdentifier)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableUsernameIdentifier" For="@(() => loginUpParty.Form.Model.EnableUsernameIdentifier)" TextType="e.d" />
+                            </div>
+                        </div>
+                        <label class="label-control">User identifiers</label>
+                    </div>
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body pt-2 pb-0">
+                                <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />
+                            </div>
+                        </div>
+                        <label class="label-control">Two-factor</label>
+                    </div>
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                     <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
                         <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
                         <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
                         <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
                     </FInputSelect>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
-                    <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
-                    <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
-                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
                 }
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body pt-2 pb-0">
+                            <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
+                            <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
+                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
+                        </div>
+                    </div>
+                    <label class="label-control">Customize login UI</label>
+                </div>
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {

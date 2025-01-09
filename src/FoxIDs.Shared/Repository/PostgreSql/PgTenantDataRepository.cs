@@ -39,6 +39,13 @@ namespace FoxIDs.Repository
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
                 }
+                if (item != null && delete)
+                {
+                    if (!await db.RemoveAsync(id, partitionId))
+                    {
+                        throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                    }
+                }
                 await item.ValidateObjectAsync();
                 return item;
             }
@@ -49,6 +56,13 @@ namespace FoxIDs.Repository
                 if (required && item == null)
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                if (item != null && delete)
+                {
+                    if (!await db.RemoveAsync(item.Id, partitionId))
+                    {
+                        throw new FoxIDsDataException(item.Id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                    }
                 }
                 await item.ValidateObjectAsync();
                 return item;
@@ -154,15 +168,21 @@ namespace FoxIDs.Repository
             await db.UpsertAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
-            var partitionId = id.IdToTenantPartitionId();
-            if(!await db.RemoveAsync(id, partitionId))
+            if(!queryAdditionalIds)
             {
-                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-
+                var partitionId = id.IdToTenantPartitionId();
+                if (!await db.RemoveAsync(id, partitionId))
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+            else
+            {
+                _ = await GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
             }
         }
 

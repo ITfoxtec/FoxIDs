@@ -78,6 +78,10 @@ namespace FoxIDs.Logic
         private async Task SetIdsAsync(User user, string tenantName, string trackName)
         {
             await user.SetIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = user.Email, UserId = user.UserId });
+            if (!user.Email.IsNullOrEmpty())
+            {
+                await user.SetAdditionalIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = user.Email });
+            }
             if (!user.Phone.IsNullOrEmpty())
             {
                 await user.SetAdditionalIdAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = user.Phone });

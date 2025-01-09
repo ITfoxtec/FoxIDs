@@ -17,10 +17,10 @@ namespace FoxIDs.Client.Services
 
         public async Task<PaginationResponse<User>> GetUsersAsync(string filterEmail, string filterPhone, string filterUsername, string filterUserId, string paginationToken = null) => await GetListAsync<User>(listApiUri, filterEmail, filterPhone, filterUsername, filterUserId, parmName1: nameof(filterEmail), parmName2: nameof(filterPhone), parmName3: nameof(filterUsername), parmName4: nameof(filterUserId), paginationToken: paginationToken);
 
-        public async Task<User> GetUserAsync(string email) => await GetAsync<User>(apiUri, email, parmName: nameof(email));
+        public async Task<User> GetUserAsync(string email, string phone, string username) => await GetAsync<User>(apiUri, email, phone, username, parmName1: nameof(email), parmName2: nameof(phone), parmName3: nameof(username));
         public async Task<User> CreateUserAsync(CreateUserRequest user) => await PostResponseAsync<CreateUserRequest, User>(apiUri, user);
         public async Task<User> UpdateUserAsync(UserRequest user) => await PutResponseAsync<UserRequest, User>(apiUri, user);
-        public async Task DeleteUserAsync(string email) => await DeleteAsync(apiUri, email, parmName: nameof(email));
+        public async Task DeleteUserAsync(string email, string phone, string username) => await DeleteAsync(apiUri, email, phone, username, parmName1: nameof(email), parmName2: nameof(phone), parmName3: nameof(username));
 
         public async Task<MyUser> GetMyUserAsync() => await GetAsync<MyUser>(myUserApiUri);
         public async Task<MyUser> UpdateMyUserAsync(MyUser myUser) => await PutResponseAsync<MyUser, MyUser>(myUserApiUri, myUser);

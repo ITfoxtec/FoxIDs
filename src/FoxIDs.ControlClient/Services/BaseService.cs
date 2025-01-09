@@ -89,9 +89,22 @@ namespace FoxIDs.Client.Services
             return await response.ToObjectAsync<T>();
         }
 
-        protected async Task<T> GetAsync<T>(string url, string value, string parmName = "name")
+        protected async Task<T> GetAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
+            var parms = new List<string>();
+            if (!parmValue1.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName1}={parmValue1}");
+            }
+            if (!parmValue2.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName2}={parmValue2}");
+            }
+            if (!parmValue3.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName3}={parmValue3}");
+            }
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
             return await response.ToObjectAsync<T>();
         }
 
@@ -101,12 +114,6 @@ namespace FoxIDs.Client.Services
             var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url), requestItems);
             using var response = await httpClient.GetAsync(requestUrl);
             return await response.ToObjectAsync<TResponse>();
-        }
-
-        protected async Task<T> GetAsync<T>(string url, string value1, string value2, string parmName1, string parmName2)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
-            return await response.ToObjectAsync<T>();
         }
 
         protected async Task PostAsync<T>(string url, T data)
@@ -136,14 +143,22 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
-        protected async Task DeleteAsync(string url, string value, string parmName = "name")
+        protected async Task DeleteAsync(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
-        }
-
-        protected async Task DeleteAsync(string url, string value1, string value2, string parmName1, string parmName2)
-        {
-            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
+            var parms = new List<string>();
+            if (!parmValue1.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName1}={parmValue1}");
+            }
+            if (!parmValue2.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName2}={parmValue2}");
+            }
+            if (!parmValue3.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName3}={parmValue3}");
+            }
+            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
         }
 
         protected async Task DeleteByRequestObjAsync<TRequest>(string url, TRequest request)

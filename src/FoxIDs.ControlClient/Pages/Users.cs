@@ -150,7 +150,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var user = await UserService.GetUserAsync(generalUser.Email);
+                var user = await UserService.GetUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
                 await generalUser.Form.InitAsync(ToViewModel(user));
             }
             catch (TokenUnavailableException)
@@ -211,13 +211,36 @@ namespace FoxIDs.Client.Pages
                 if (generalUser.CreateMode)
                 {
                     var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>());
+                    generalUser.Email = userResult.Email;
+                    generalUser.Phone = userResult.Phone;
+                    generalUser.Username = userResult.Username;
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     generalUser.CreateMode = false;
                     toastService.ShowSuccess("User created.");
                 }
                 else
                 {
-                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>());
+                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>(afterMap: afterMap =>
+                    {
+                        if (afterMap.Email != generalUser.Email)
+                        {
+                            afterMap.UpdateEmail = afterMap.Email;
+                        }
+                        if (afterMap.Phone != generalUser.Phone)
+                        {
+                            afterMap.UpdatePhone = afterMap.Phone;
+                        }
+                        if (afterMap.Username != generalUser.Username)
+                        {
+                            afterMap.UpdateUsername = afterMap.Username;
+                        }
+                        afterMap.Email = generalUser.Email;
+                        afterMap.Phone = generalUser.Phone;
+                        afterMap.Username = generalUser.Username;
+                    }));
+                    generalUser.Email = userResult.Email;
+                    generalUser.Phone = userResult.Phone;
+                    generalUser.Username = userResult.Username;
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     toastService.ShowSuccess("User updated.");
                 }
@@ -241,7 +264,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await UserService.DeleteUserAsync(generalUser.Email);
+                await UserService.DeleteUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
                 users.Remove(generalUser);
             }
             catch (TokenUnavailableException)

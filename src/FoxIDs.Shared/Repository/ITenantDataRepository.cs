@@ -34,7 +34,7 @@ namespace FoxIDs.Repository
         /// <summary>
         /// Delete document. Throws exception if not already exists.
         /// </summary>
-        ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
+        ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         //ValueTask DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
     }

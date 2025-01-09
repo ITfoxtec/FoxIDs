@@ -234,6 +234,7 @@ namespace FoxIDs
         public static class Models
         {
             public const string CosmosPartitionKeyPath = "/partition_id";
+            public const string CosmosAdditionalIdsPath = "/a_ids";
 
             public const int DefaultNameLength = 8;
             public const int DefaultNameMaxAttempts = 3;
@@ -502,7 +503,7 @@ namespace FoxIDs
 
 
                 public const int AdditionalIdsMin = 0;
-                public const int AdditionalIdsMax = 2;
+                public const int AdditionalIdsMax = 5;
 
                 public const int UserIdLength = 40;
                 public const string UserIdRegExPattern = @"^[\w\-]*$";

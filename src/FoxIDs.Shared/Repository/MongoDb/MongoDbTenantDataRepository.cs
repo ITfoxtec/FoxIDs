@@ -219,7 +219,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -228,7 +228,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && f.Id.Equals(id));
+                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && (f.Id.Equals(id) || (queryAdditionalIds && f.AdditionalIds.Where(a => a.Equals(id)).Any())));
                 if (!result.IsAcknowledged || !(result.DeletedCount > 0))
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };

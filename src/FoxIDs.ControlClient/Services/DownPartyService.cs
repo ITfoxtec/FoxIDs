@@ -29,7 +29,7 @@ namespace FoxIDs.Client.Services
         public async Task<OAuthDownParty> UpdateOAuthDownPartyAsync(OAuthDownParty party) => await PutResponseAsync<OAuthDownParty, OAuthDownParty>(oauthApiUri, party);
         public async Task DeleteOAuthDownPartyAsync(string name) => await DeleteAsync(oauthApiUri, name);
 
-        public async Task<List<OAuthClientSecretResponse>> GetOAuthClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName: nameof(partyName));
+        public async Task<List<OAuthClientSecretResponse>> GetOAuthClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName1: nameof(partyName));
         public async Task CreateOAuthClientSecretDownPartyAsync(OAuthClientSecretRequest clientSecret) => await PostAsync(oauthclientsecretApiUri, clientSecret);
         public async Task DeleteOAuthClientSecretDownPartyAsync(string name) => await DeleteAsync(oauthclientsecretApiUri, name);
 
@@ -38,7 +38,7 @@ namespace FoxIDs.Client.Services
         public async Task<OidcDownParty> UpdateOidcDownPartyAsync(OidcDownParty party) => await PutResponseAsync<OidcDownParty, OidcDownParty>(oidcApiUri, party);
         public async Task DeleteOidcDownPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
-        public async Task<List<OAuthClientSecretResponse>> GetOidcClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName: nameof(partyName));
+        public async Task<List<OAuthClientSecretResponse>> GetOidcClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName1: nameof(partyName));
         public async Task CreateOidcClientSecretDownPartyAsync(OAuthClientSecretRequest clientSecret) => await PostAsync(oidcclientsecretApiUri, clientSecret);
         public async Task DeleteOidcClientSecretDownPartyAsync(string name) => await DeleteAsync(oidcclientsecretApiUri, name);
 

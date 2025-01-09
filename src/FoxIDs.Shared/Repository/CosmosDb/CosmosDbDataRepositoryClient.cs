@@ -14,7 +14,7 @@ namespace FoxIDs.Repository
         }
 
         private async Task InitAsync()
-        {
+        {          
             var databaseResponse = await Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
             if (databaseResponse.StatusCode == HttpStatusCode.Created)
             {
@@ -25,7 +25,8 @@ namespace FoxIDs.Repository
                         {
                             Id = settings.CosmosDb.TtlContainerId,
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
-                            DefaultTimeToLive = -1
+                            DefaultTimeToLive = -1,
+                            UniqueKeyPolicy = GetUniqueKeyPolicy()
                         });
                     logger.Trace("One Cosmos DB Document container created.");
                     SetContainers(container, container);
@@ -35,14 +36,16 @@ namespace FoxIDs.Repository
                     var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
                     {
                         Id = settings.CosmosDb.ContainerId,
-                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
+                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
+                        UniqueKeyPolicy = GetUniqueKeyPolicy()
                     });
                     var ttlContainer = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                         new ContainerProperties
                         {
                             Id = settings.CosmosDb.TtlContainerId,
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
-                            DefaultTimeToLive = -1
+                            DefaultTimeToLive = -1,
+                            UniqueKeyPolicy = GetUniqueKeyPolicy()
                         });
                     logger.Trace("Two Cosmos DB Document containers created.");
                     SetContainers(container, ttlContainer);
@@ -50,6 +53,15 @@ namespace FoxIDs.Repository
 
                 logger.Trace("Cosmos DB Document container(s) seeded.");
             }
+        }
+
+        private UniqueKeyPolicy GetUniqueKeyPolicy()
+        {
+            var uniqueKey = new UniqueKey();
+            uniqueKey.Paths.Add(Constants.Models.CosmosAdditionalIdsPath);
+            var uniqueKeyPolicy = new UniqueKeyPolicy();
+            uniqueKeyPolicy.UniqueKeys.Add(uniqueKey);
+            return uniqueKeyPolicy;
         }
     }
 }

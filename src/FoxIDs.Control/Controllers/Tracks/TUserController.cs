@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
-using System.Security.Claims;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System;
@@ -15,6 +14,7 @@ using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Logic;
+using System.Security.Claims;
 
 namespace FoxIDs.Controllers
 {
@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
                 phone = phone?.Trim();
                 username = username?.Trim()?.ToLower();
 
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -160,11 +160,12 @@ namespace FoxIDs.Controllers
                 user.Phone = user.Phone?.Trim();
                 user.Username = user.Username?.Trim()?.ToLower();
 
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email, UserIdentifier = user.Phone ?? user.Username }));
+                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email, UserIdentifier = user.Phone ?? user.Username }), queryAdditionalIds: true);
 
                 if (user.UpdateEmail != null)
                 {
-                    if (user.UpdateEmail.IsNullOrWhiteSpace())
+                    user.UpdateEmail = user.UpdateEmail?.Trim().ToLower();
+                    if (user.UpdateEmail.IsNullOrEmpty())
                     {
                         mUser.Email = null;
                     }
@@ -175,7 +176,8 @@ namespace FoxIDs.Controllers
                 }
                 if (user.UpdatePhone != null)
                 {
-                    if (user.UpdatePhone.IsNullOrWhiteSpace())
+                    user.UpdatePhone = user.UpdatePhone?.Trim();
+                    if (user.UpdatePhone.IsNullOrEmpty())
                     {
                         mUser.Phone = null;
                     }
@@ -186,7 +188,8 @@ namespace FoxIDs.Controllers
                 }
                 if (user.UpdateUsername != null)
                 {
-                    if (user.UpdateUsername.IsNullOrWhiteSpace())
+                    user.UpdateUsername = user.UpdateUsername?.Trim().ToLower();
+                    if (user.UpdateUsername.IsNullOrEmpty())
                     {
                         mUser.Username = null;
                     }
@@ -197,8 +200,8 @@ namespace FoxIDs.Controllers
                 }
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
-                mUser.EmailVerified = mUser.Email.IsNullOrWhiteSpace() ? false : user.EmailVerified;
-                mUser.PhoneVerified = mUser.Phone.IsNullOrWhiteSpace() ? false : user.PhoneVerified;
+                mUser.EmailVerified = mUser.Email.IsNullOrEmpty() ? false : user.EmailVerified;
+                mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
                 mUser.ChangePassword = user.ChangePassword;
                 mUser.DisableAccount = user.DisableAccount;
                 if (!user.ActiveTwoFactorApp)
@@ -222,8 +225,36 @@ namespace FoxIDs.Controllers
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
                 var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
-                await tenantDataRepository.UpdateAsync(mUser);
 
+                if (user.UpdateEmail != null || user.UpdatePhone != null || user.UpdateUsername != null)
+                {
+                    mUser.AdditionalIds = null;
+                    if (!mUser.Email.IsNullOrEmpty())
+                    {
+                        await mUser.SetAdditionalIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = mUser.Email });
+                    }
+                    if (!mUser.Phone.IsNullOrEmpty())
+                    {
+                        await mUser.SetAdditionalIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = mUser.Phone });
+                    }
+                    if (!mUser.Username.IsNullOrEmpty())
+                    {
+                        await mUser.SetAdditionalIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = mUser.Username });
+                    }
+                }
+                if (user.UpdateEmail != null && user.Email != user.UpdateEmail)
+                {
+                    var newId = await Models.User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = mUser.Email, UserId = mUser.UserId });
+                    if (mUser.Id != newId)
+                    {
+                        await tenantDataRepository.DeleteAsync<User>(mUser.Id);
+                        mUser.Id = newId;
+                        await tenantDataRepository.CreateAsync(mUser);
+                        return Ok(mapper.Map<Api.User>(mUser));
+                    }
+                }
+
+                await tenantDataRepository.UpdateAsync(mUser);
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (FoxIDsDataException ex)
@@ -258,7 +289,7 @@ namespace FoxIDs.Controllers
                 phone = phone?.Trim();
                 username = username?.Trim()?.ToLower();
 
-                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }));
+                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

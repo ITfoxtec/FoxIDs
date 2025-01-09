@@ -13,9 +13,8 @@ namespace FoxIDs.Client.Models.ViewModels
             Claims = new List<ClaimAndValues>();
         }
 
-        [Required]
         [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
+        [EmailAddressEmptyString]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Email")]
         public string Email { get; set; }

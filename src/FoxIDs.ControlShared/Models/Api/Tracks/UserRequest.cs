@@ -17,7 +17,7 @@ namespace FoxIDs.Models.Api
         /// Add a value to change the users email address. The field is set to an empty string if the value should be removed.
         /// </summary>
         [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
+        [EmailAddressEmptyString]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         public string UpdateEmail { get; set; }
 

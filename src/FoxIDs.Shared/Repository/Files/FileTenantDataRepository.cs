@@ -56,6 +56,10 @@ namespace FoxIDs.Repository
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
                 }
+                if (item != null && delete)
+                {
+                    await DeleteAsync<T>(item.Id, scopedLogger: scopedLogger);
+                }
             }
             await item.ValidateObjectAsync();
             return item;
@@ -171,12 +175,19 @@ namespace FoxIDs.Repository
             await fileDataRepository.SaveAsync(item.Id, item.PartitionId, item.ToJson());
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
-            var partitionId = id.IdToTenantPartitionId();
-            await fileDataRepository.DeleteAsync(id, partitionId);
+            if(!queryAdditionalIds)
+            {
+                var partitionId = id.IdToTenantPartitionId();
+                await fileDataRepository.DeleteAsync(id, partitionId);
+            }
+            else
+            {
+                _ = GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+            }
         }
 
         //public override ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)

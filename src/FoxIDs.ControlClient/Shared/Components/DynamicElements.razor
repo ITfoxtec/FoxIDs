@@ -9,32 +9,32 @@
                         @switch (element.Type)
                         {
                             case DynamicElementTypes.Email:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>)</div>
                                 break;
                             case DynamicElementTypes.Phone:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Phone</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Phone (claim: <code>@JwtClaimTypes.PhoneNumber</code>)</div>
                                 break;
                             case DynamicElementTypes.Username:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Username</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Username (claim: <code>@JwtClaimTypes.PreferredUsername</code>)</div>
                                 break;
 
                             case DynamicElementTypes.EmailAndPassword:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email and password</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>) and password</div>
                                 break;
                             case DynamicElementTypes.Password:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Password</div>
                                 break;
 
                             case DynamicElementTypes.Name:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Full name</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Full name (claim: <code>@JwtClaimTypes.Name</code>)</div>
                                 break;
 
                             case DynamicElementTypes.GivenName:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Given name</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Given name (claim: <code>@JwtClaimTypes.GivenName</code>)</div>
                                 break;
 
                             case DynamicElementTypes.FamilyName:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name</div>
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</div>
                                 break;
 
                             default:
@@ -68,6 +68,14 @@
                         <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
                     </div>
                 </div>
+                @if (InternalUsers && (element.Type == DynamicElementTypes.Email || element.Type == DynamicElementTypes.Phone || element.Type == DynamicElementTypes.Username))
+                {
+                    <div class="row">
+                        <div class="col-11">
+                            <FInputToggle @bind-Value="element.IsUserIdentifier" For="@(() => element.IsUserIdentifier)" TextType="y.n" />
+                    </div>
+                </div>
+                }
             </li>
         }
     </ul>
@@ -81,31 +89,31 @@
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Email).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Email))">Email (@JwtClaimTypes.Email claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Email, @InternalUsers))">Email (claim: <code>@JwtClaimTypes.Email</code>)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Phone).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Phone))">Phone (@JwtClaimTypes.PhoneNumber claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Phone, @InternalUsers))">Phone (claim: <code>@JwtClaimTypes.PhoneNumber</code>)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Username).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Username))">Username (@JwtClaimTypes.PreferredUsername claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Username, @InternalUsers))">Username (claim: <code>@JwtClaimTypes.PreferredUsername</code>)</button>
                 }
-                @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Password).Any())
+                @if (InternalUsers && !Model.Elements.Where(e => e.Type == DynamicElementTypes.Password).Any())
                 {
                     <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Password))">Password</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.Name).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (@JwtClaimTypes.Name claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (claim: <code>@JwtClaimTypes.Name</code>)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.GivenName).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (@JwtClaimTypes.GivenName claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (claim: <code>@JwtClaimTypes.GivenName</code>)</button>
                 }
                 @if (!Model.Elements.Where(e => e.Type == DynamicElementTypes.FamilyName).Any())
                 {
-                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (@JwtClaimTypes.FamilyName claim)</button>
+                    <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</button>
                 }
             </div>
         </div>
@@ -116,7 +124,10 @@
     [Parameter]
     public IDynamicElementsViewModel Model { get; set; }
 
-    private void AddElement(DynamicElementTypes dynamicElementTypes)
+    [Parameter]
+    public bool InternalUsers { get; set; }
+
+    private void AddElement(DynamicElementTypes dynamicElementTypes, bool isUserIdentifier = false)
     {
         switch (dynamicElementTypes)
         {
@@ -124,21 +135,24 @@
                 Model.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Email,
-                        Required = true
+                        Required = InternalUsers,
+                        IsUserIdentifier = isUserIdentifier
                     });
                 break;
             case DynamicElementTypes.Phone:
                 Model.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Phone,
-                        Required = true
+                        Required = InternalUsers,
+                        IsUserIdentifier = isUserIdentifier
                     });
                 break;
             case DynamicElementTypes.Username:
                 Model.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Username,
-                        Required = true
+                        Required = InternalUsers,
+                        IsUserIdentifier = isUserIdentifier
                     });
                 break;
             case DynamicElementTypes.Password:

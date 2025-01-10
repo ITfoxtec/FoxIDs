@@ -112,7 +112,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Username,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
                 if (generalLoginUpParty.Form.Model.EnablePhoneIdentifier)
@@ -120,7 +121,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Phone,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
                 if (generalLoginUpParty.Form.Model.EnableEmailIdentifier || (!generalLoginUpParty.Form.Model.EnablePhoneIdentifier && !generalLoginUpParty.Form.Model.EnableUsernameIdentifier))
@@ -128,7 +130,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Email,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
 

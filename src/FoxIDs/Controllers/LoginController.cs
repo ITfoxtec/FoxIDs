@@ -16,6 +16,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Claims;
 
 namespace FoxIDs.Controllers
 {
@@ -947,7 +948,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                (var userIdentifier, var password, var passwordIndex) = await ValidateCreateUserViewModelElementsAsync(createUser.Elements);
+                (var userIdentifier, var password, var passwordIndex) = await dynamicElementLogic.ValidateCreateUserViewModelElementsAsync(ModelState, createUser.Elements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -963,24 +964,13 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var claims = dynamicElementLogic.GetClaims(createUser.Elements);
+                    (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.Elements);
                     claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
-                    var emailClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
-                    if (!emailClaim.IsNullOrWhiteSpace())
-                    {
-                        userIdentifier.Email = emailClaim;
-                    }
-                    var phoneClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PhoneNumber);
-                    if (!phoneClaim.IsNullOrWhiteSpace())
-                    {
-                        userIdentifier.Phone = phoneClaim;
-                    }
-                    var usernameClaim = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PreferredUsername);
-                    if (!usernameClaim.IsNullOrWhiteSpace())
-                    {
-                        userIdentifier.Username = usernameClaim;
-                    }
 
+                    userIdentifier.Email = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.Email, userIdentifier.Email);
+                    userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
+                    userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
+                    
                     var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
@@ -1038,43 +1028,18 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<(UserIdentifier userIdentifier, string password, int passwordIndex)> ValidateCreateUserViewModelElementsAsync(List<DynamicElementBase> elements)
+        private string GetUserIdentifierValue(List<Claim> claims, List<string> userIdentifierClaimTypes, string claimType, string defaultValue)
         {
-            var userIdentifier = new UserIdentifier();
-            var password = string.Empty;
-            var passwordIndex = 0;
-            var index = 0;
-            foreach (var element in elements)
+            if (userIdentifierClaimTypes.Where(t => t == claimType).Any())
             {
-                if (element is PhoneDElement)
+                var claimValue = claims.FindFirstOrDefaultValue(c => c.Type == claimType);
+                if (!claimValue.IsNullOrWhiteSpace())
                 {
-                    element.DField1 = countryCodesLogic.ReturnPhoneNotCountryCode(element.DField1);
+                    return claimValue;
                 }
-                await dynamicElementLogic.ValidateViewModelElementAsync(ModelState, element, index);
-
-                if (element is EmailDElement)
-                {
-                    userIdentifier.Email = element.DField1;
-                }
-                else if (element is PhoneDElement)
-                {
-                    userIdentifier.Phone = element.DField1;
-                }
-                else if (element is UsernameDElement)
-                {
-                    userIdentifier.Username = element.DField1;
-                }
-                else if (element is PasswordDElement)
-                {
-                    passwordIndex = index;
-                    password = element.DField1;
-                    element.DField1 = null;
-                    element.DField2 = null;
-                }
-                index++;
             }
-            return (userIdentifier, password, passwordIndex);
-        } 
+            return defaultValue;
+        }
 
         private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
@@ -1101,7 +1066,8 @@ namespace FoxIDs.Controllers
                     {
                         Type = DynamicElementTypes.Username,
                         Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
                 if (loginUpParty.EnablePhoneIdentifier)
@@ -1110,7 +1076,8 @@ namespace FoxIDs.Controllers
                     {
                         Type = DynamicElementTypes.Phone,
                         Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
                 if (loginUpParty.EnableEmailIdentifier)
@@ -1119,7 +1086,8 @@ namespace FoxIDs.Controllers
                     {
                         Type = DynamicElementTypes.Email,
                         Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                        Required = true
+                        Required = true,
+                        IsUserIdentifier = true
                     });
                 }
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement

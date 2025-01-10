@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             return countryCode;
         }
 
-        public string ReturnPhoneNotCountryCode(string phone)
+        public string ReturnFullPhoneOnly(string phone)
         {
             if (phone.IsNullOrWhiteSpace())
             {

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace FoxIDs.Client.Services
 {
@@ -60,19 +61,19 @@ namespace FoxIDs.Client.Services
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName1}={parmValue1}");
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
             }
             if (!parmValue2.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName2}={parmValue2}");
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
             }
             if (!parmValue3.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName3}={parmValue3}");
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
             }
             if (!parmValue4.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName4}={parmValue4}");
+                parms.Add($"{parmName4}={HttpUtility.UrlEncode(parmValue4)}");
             }
             if (!paginationToken.IsNullOrWhiteSpace())
             {
@@ -94,15 +95,15 @@ namespace FoxIDs.Client.Services
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName1}={parmValue1}");
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
             }
             if (!parmValue2.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName2}={parmValue2}");
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
             }
             if (!parmValue3.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName3}={parmValue3}");
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
             }
             using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
             return await response.ToObjectAsync<T>();
@@ -148,15 +149,15 @@ namespace FoxIDs.Client.Services
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName1}={parmValue1}");
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
             }
             if (!parmValue2.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName2}={parmValue2}");
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
             }
             if (!parmValue3.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName3}={parmValue3}");
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
             }
             using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
         }

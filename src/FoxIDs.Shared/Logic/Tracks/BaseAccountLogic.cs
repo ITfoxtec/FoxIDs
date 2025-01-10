@@ -55,7 +55,20 @@ namespace FoxIDs.Logic
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)
             {
-                claims = claims.Where(c => c.Type != JwtClaimTypes.Email && c.Type != JwtClaimTypes.PhoneNumber && c.Type != JwtClaimTypes.PreferredUsername).ToList();
+                var userIdentifierClaimTypes = new List<string>();
+                if (!userIdentifier.Email.IsNullOrEmpty())
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.Email);
+                }
+                if (!userIdentifier.Phone.IsNullOrEmpty())
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.PhoneNumber);
+                }
+                if (!userIdentifier.Username.IsNullOrEmpty())
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.PreferredUsername);
+                }
+                claims = claims.Where(c => !userIdentifierClaimTypes.Where(t => t == c.Type).Any()).ToList();
                 user.Claims = claims.ToClaimAndValues();
             }
 

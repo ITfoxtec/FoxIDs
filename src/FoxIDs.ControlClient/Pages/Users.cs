@@ -178,6 +178,7 @@ namespace FoxIDs.Client.Pages
             {
                 user.ConfirmAccount = true;
                 user.EmailVerified = false;
+                user.PhoneVerified = false;
                 user.ChangePassword = true;
             }
         }

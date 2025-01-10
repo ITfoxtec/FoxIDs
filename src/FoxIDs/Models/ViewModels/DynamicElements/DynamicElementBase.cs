@@ -7,5 +7,7 @@
         public virtual string DField2 { get; set; }
 
         public virtual bool Required => false;
+
+        public virtual bool IsUserIdentifier { get; set; }
     }
 }

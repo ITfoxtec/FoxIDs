@@ -17,6 +17,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Field is required")]
         public bool Required { get; set; }
 
+        [Display(Name = "Login user identifier")]
+        public bool IsUserIdentifier { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

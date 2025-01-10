@@ -19,6 +19,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "required")]
         public bool Required { get; set; }
 
+        [JsonProperty(PropertyName = "is_user_identifier")]
+        public bool IsUserIdentifier { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

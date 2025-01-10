@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.ViewModels;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
@@ -44,7 +45,7 @@ namespace FoxIDs.Logic
                 switch (element.Type)
                 {
                     case DynamicElementTypes.Email:
-                        yield return element.Required ? new EmailRequiredDElement { DField1 = valueElement?.DField1 } : new EmailDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new EmailDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Phone:
                         var phoneDField1 = valueElement?.DField1;
@@ -52,13 +53,13 @@ namespace FoxIDs.Logic
                         {
                             phoneDField1 = countryCode;
                         }
-                        yield return element.Required ? new PhoneRequiredDElement { DField1 = phoneDField1 } : new PhoneDElement { DField1 = phoneDField1 };
+                        yield return element.Required ? new PhoneRequiredDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier } : new PhoneDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Username:
-                        yield return element.Required ? new UsernameRequiredDElement { DField1 = valueElement?.DField1 } : new UsernameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new UsernameRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new UsernameDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.EmailAndPassword:
-                        yield return new EmailRequiredDElement { DField1 = valueElement?.DField1 };
+                        yield return new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = true };
                         yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Password:
@@ -80,6 +81,49 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<(UserIdentifier userIdentifier, string password, int passwordIndex)> ValidateCreateUserViewModelElementsAsync(ModelStateDictionary modelState, List<DynamicElementBase> elements)
+        {
+            var userIdentifier = new UserIdentifier();
+            var password = string.Empty;
+            var passwordIndex = 0;
+            var index = 0;
+            foreach (var element in elements)
+            {
+                await ValidateViewModelElementAsync(modelState, element, index);
+
+                if (element is EmailDElement)
+                {
+                    if (element.IsUserIdentifier)
+                    {
+                        userIdentifier.Email = element.DField1;
+                    }
+                }
+                else if (element is PhoneDElement)
+                {
+                    if (element.IsUserIdentifier)
+                    {
+                        userIdentifier.Phone = element.DField1;
+                    }
+                }
+                else if (element is UsernameDElement)
+                {
+                    if (element.IsUserIdentifier)
+                    {
+                        userIdentifier.Username = element.DField1;
+                    }
+                }
+                else if (element is PasswordDElement)
+                {
+                    passwordIndex = index;
+                    password = element.DField1;
+                    element.DField1 = null;
+                    element.DField2 = null;
+                }
+                index++;
+            }
+            return (userIdentifier, password, passwordIndex);
+        }
+
         public async Task ValidateViewModelElementsAsync(ModelStateDictionary modelState, List<DynamicElementBase> elements)
         {
             var index = 0;
@@ -91,6 +135,13 @@ namespace FoxIDs.Logic
 
         public async Task ValidateViewModelElementAsync(ModelStateDictionary modelState, DynamicElementBase element, int index)
         {
+            string phoneTempValue = null;
+            if (element is PhoneDElement)
+            {
+                phoneTempValue = element.DField1;
+                element.DField1 = element.DField2 = countryCodesLogic.ReturnFullPhoneOnly(element.DField1);
+            }
+
             var elementValidation = await element.ValidateObjectResultsAsync();
             if (!elementValidation.isValid)
             {
@@ -99,25 +150,43 @@ namespace FoxIDs.Logic
                     modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", result.ErrorMessage);
                 }
             }
+
+            if (element is PhoneDElement)
+            {
+                element.DField1 = phoneTempValue;
+            }
         }
 
-        public List<Claim> GetClaims(List<DynamicElementBase> elements)
+        public (List<Claim>, List<string>) GetClaims(List<DynamicElementBase> elements)
         {
             var claims = new List<Claim>();
+            var userIdentifierClaimTypes = new List<string>();
             var emailDElament = elements.Where(e => e is EmailDElement).FirstOrDefault() as EmailDElement;
             if (!string.IsNullOrWhiteSpace(emailDElament?.DField1))
             {
                 claims.AddClaim(JwtClaimTypes.Email, emailDElament.DField1);
+                if (emailDElament.IsUserIdentifier)
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.Email);
+                }
             }
             var phoneDElament = elements.Where(e => e is PhoneDElement).FirstOrDefault() as PhoneDElement;
-            if (!string.IsNullOrWhiteSpace(phoneDElament?.DField1))
+            if (!string.IsNullOrWhiteSpace(phoneDElament?.DField2)) // Full phone only (DField2)
             {
-                claims.AddClaim(JwtClaimTypes.PhoneNumber, phoneDElament.DField1);
+                claims.AddClaim(JwtClaimTypes.PhoneNumber, phoneDElament.DField2);
+                if (phoneDElament.IsUserIdentifier)
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.PhoneNumber);
+                }
             }
             var usernameDElament = elements.Where(e => e is UsernameDElement).FirstOrDefault() as UsernameDElement;
             if (!string.IsNullOrWhiteSpace(usernameDElament?.DField1))
             {
                 claims.AddClaim(JwtClaimTypes.PreferredUsername, usernameDElament.DField1);
+                if (usernameDElament.IsUserIdentifier)
+                {
+                    userIdentifierClaimTypes.Add(JwtClaimTypes.PreferredUsername);
+                }
             }
             var nameDElament = elements.Where(e => e is NameDElement).FirstOrDefault() as NameDElement;
             if (!string.IsNullOrWhiteSpace(nameDElament?.DField1))
@@ -134,7 +203,7 @@ namespace FoxIDs.Logic
             {
                 claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
             }
-            return claims;
+            return (claims, userIdentifierClaimTypes);
         }
 
         public Claim FilterElementClaim(DynamicElement element, IEnumerable<Claim> claims)
@@ -146,6 +215,10 @@ namespace FoxIDs.Logic
                     case DynamicElementTypes.Email:
                     case DynamicElementTypes.EmailAndPassword:
                         return claims.Where(c => c.Type == JwtClaimTypes.Email).FirstOrDefault();
+                    case DynamicElementTypes.Phone:
+                        return claims.Where(c => c.Type == JwtClaimTypes.PhoneNumber).FirstOrDefault();
+                    case DynamicElementTypes.Username:
+                        return claims.Where(c => c.Type == JwtClaimTypes.PreferredUsername).FirstOrDefault();
                     case DynamicElementTypes.Name:
                         return claims.Where(c => c.Type == JwtClaimTypes.Name).FirstOrDefault();
                     case DynamicElementTypes.GivenName:

@@ -33,7 +33,10 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool ConfirmAccount { get; set; }
 
         [Display(Name = "Email verified")]
-        public bool EmailVerified { get; set; }
+        public bool EmailVerified { get; set; }   
+        
+        [Display(Name = "Phone verified")]
+        public bool PhoneVerified { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]

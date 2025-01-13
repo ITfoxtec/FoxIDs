@@ -156,6 +156,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Api.SendEmail, SendEmail>()
                 .ReverseMap();
 
+            CreateMap<Api.SendSms, SendSms>()
+                .ReverseMap();
+
             CreateMap<Api.LogSettings, ScopedLogger>()
                 .ReverseMap();
 

@@ -4,6 +4,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Session;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -127,7 +128,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email, UserIdentifier = session.UserIdentifier, UserId = session.UserId });
+                    var email = session.Email;
+                    if (session.Email.IsNullOrEmpty() && session.UserIdentifier.IsNullOrEmpty() && session.UserId.IsNullOrEmpty())
+                    {
+                        // For backwards before version 1.15.0 - January 2025, can be deleted in about a year from now.
+                        email = session.EmailClaim;
+                    }
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email, UserIdentifier = session.UserIdentifier, UserId = session.UserId });
                     var user = await tenantDataRepository.GetAsync<User>(id, false);
                     if (user != null && !user.DisableAccount)
                     {

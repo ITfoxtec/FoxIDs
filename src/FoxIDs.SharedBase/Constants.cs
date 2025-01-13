@@ -489,6 +489,12 @@ namespace FoxIDs
                     public const int SmtpUsernameLength = 100;
                     public const int SmtpPasswordLength = 200;
                 }
+                public static class SendSms
+                {
+                    public const int FromNameLength = 100;
+                    public const int ClientIdLength = 300;
+                    public const int ClientSecretLength = 300;
+                }
                 public static class Logging
                 {
                     public const int ScopedStreamLoggersMin = 0;

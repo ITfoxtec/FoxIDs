@@ -74,7 +74,10 @@ namespace FoxIDs.Logic
 
             if (checkUserAndPasswordPolicy)
             {
-                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username, UserId = user.UserId })))
+                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
+                    (userIdentifier.Phone != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Phone }), queryAdditionalIds: true)) ||
+                    (userIdentifier.Username != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Username }), queryAdditionalIds: true)) ||
+                    (user.UserId != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
                 {
                     throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
                 }

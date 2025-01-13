@@ -527,6 +527,34 @@
     {
       "name": "Change username",
       "id": 126
+    },
+    {
+      "name": "Phone confirmation",
+      "id": 127
+    },
+    {
+      "name": "Please verify your phone number with the confirmation code sent to your phone.",
+      "id": 128
+    },
+    {
+      "name": "Please enter a phone confirmation code.",
+      "id": 129
+    },
+    {
+      "name": "Confirm phone",
+      "id": 130
+    },
+    {
+      "name": "A new confirmation code has been sent to your phone. Please verify your phone number with the confirmation code.",
+      "id": 131
+    },
+    {
+      "name": "Your{0}SMS confirmation code: {1}",
+      "id": 132
+    },
+    {
+      "name": "A confirmation code has just been sent to your phone. Please verify your phone number with the confirmation code.",
+      "id": 133
     }
   ],
   "resources": [
@@ -15151,6 +15179,76 @@
         {
           "culture": "en",
           "value": "Change username",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Phone confirmation",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please verify your phone number with the confirmation code sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a phone confirmation code.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirm phone",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 131,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new confirmation code has been sent to your phone. Please verify your phone number with the confirmation code.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your{0}SMS confirmation code: {1}",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 133,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A confirmation code has just been sent to your phone. Please verify your phone number with the confirmation code.",
           "edit_level": 100
         }
       ]

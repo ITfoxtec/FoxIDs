@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -71,6 +72,8 @@ namespace FoxIDs.Logic
 
 
                 var httpClient = httpClientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", smsSettings.ClientSecret);
+
                 try
                 {
                     using var response = await httpClient.PostAsPlainJsonAsync(smsSettings.ApiUrl, smsApiRequest);
@@ -156,6 +159,7 @@ namespace FoxIDs.Logic
                 {
                     Type = settings.Sms.Type,
                     FromName = settings.Sms.FromName,
+                    ApiUrl = settings.Sms.ApiUrl,
                     ClientId = settings.Sms.ClientId,
                     ClientSecret = settings.Sms.ClientSecret,
                 };

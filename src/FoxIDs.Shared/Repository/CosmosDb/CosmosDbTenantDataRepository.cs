@@ -26,11 +26,11 @@ namespace FoxIDs.Repository
             this.dataRepositoryClient = dataRepositoryClient;
         }
 
-        public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false, scopedLogger: scopedLogger);
+            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
             return item != null;
         }
 

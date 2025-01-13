@@ -15,15 +15,15 @@
             <div class="info-message">
                 @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode) 
                 {
-                    @Localizer["A confirmation code has just been sent to your phone. Please verify your phone address with the confirmation code."]
+                    @Localizer["A confirmation code has just been sent to your phone. Please verify your phone number with the confirmation code."]
                 }
                 else if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.ForceNewCode)
                 {
-                    @Localizer["A new confirmation code has been sent to your phone. Please verify your phone address with the confirmation code."]
+                    @Localizer["A new confirmation code has been sent to your phone. Please verify your phone number with the confirmation code."]
                 }
                 else 
                 {
-                    @Localizer["Please verify your phone address with the confirmation code sent to your phone."]
+                    @Localizer["Please verify your phone number with the confirmation code sent to your phone."]
                 }
             </div>
             <input type="hidden" asp-for="Phone" autocomplete="off" />

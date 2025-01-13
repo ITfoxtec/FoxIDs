@@ -18,12 +18,20 @@ namespace FoxIDs.Repository
             this.fileDataRepository = fileDataRepository;
         }
 
-        public override ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            return fileDataRepository.ExistsAsync(id, partitionId);
+            if (!queryAdditionalIds)
+            {
+                return await fileDataRepository.ExistsAsync(id, partitionId);
+            }
+            else
+            {
+                var item = await GetAsync<T>(id, required: false, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                return item != null;
+            }
         }
 
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  

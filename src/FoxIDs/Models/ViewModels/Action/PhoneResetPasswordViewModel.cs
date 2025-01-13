@@ -13,8 +13,8 @@ namespace FoxIDs.Models.ViewModels
 
         [Display(Name = "Confirmation code")]
         [Required]
-        [MinLength(Constants.Models.User.ConfirmationCodeLength, ErrorMessage = "Please enter a reset password confirmation code.")]
-        [MaxLength(Constants.Models.User.ConfirmationCodeLength, ErrorMessage = "Please enter a reset password confirmation code.")]
+        [MinLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a reset password confirmation code.")]
+        [MaxLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a reset password confirmation code.")]
         public string ConfirmationCode { get; set; }
 
         public ConfirmationCodeSendStatus ConfirmationCodeSendStatus { get; set; }

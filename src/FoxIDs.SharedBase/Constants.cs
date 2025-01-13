@@ -521,7 +521,8 @@ namespace FoxIDs
                 public const string UsernameRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
                 public const int PhoneLength = 30;
                 public const string PhoneRegExPattern = @"^\+[1-9]{1}[0-9]{1,14}$";
-                public const int ConfirmationCodeLength = 8;
+                public const int ConfirmationCodeEmailLength = 8;
+                public const int ConfirmationCodeSmsLength = 5;
                 public const int TwoFactorAppCodeLength = 50;
             }
 

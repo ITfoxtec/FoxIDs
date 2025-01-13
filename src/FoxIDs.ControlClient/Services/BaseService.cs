@@ -119,23 +119,23 @@ namespace FoxIDs.Client.Services
 
         protected async Task PostAsync<T>(string url, T data)
         {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PostResponseAsync<T, TResponse>(string url, T data)
         {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task PutAsync<T>(string url, T data)
         {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PutResponseAsync<T, TResponse>(string url, T data)
         {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 

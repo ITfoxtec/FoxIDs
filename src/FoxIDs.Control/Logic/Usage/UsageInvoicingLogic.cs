@@ -477,8 +477,7 @@ namespace FoxIDs.Logic.Usage
 
             var httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{settings.Usage.ExternalInvoiceApiId.OAuthUrlDencode()}:{settings.Usage.ExternalInvoiceApiSecret.OAuthUrlDencode()}".Base64Encode());
-            var content = new StringContent(JsonConvert.SerializeObject(invoiceRequest, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
-            using var response = await httpClient.PostAsync(settings.Usage.ExternalInvoiceApiUrl, content);
+            using var response = await httpClient.PostAsPlainJsonAsync(settings.Usage.ExternalInvoiceApiUrl, invoiceRequest);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

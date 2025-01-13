@@ -20,6 +20,7 @@ namespace FoxIDs.Controllers
             this.serviceProvider = serviceProvider;
         }
 
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> OpenidConfigurationAsync()
         {
             try
@@ -42,7 +43,8 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"OpenID Configuration failed for client id '{RouteBinding.DownParty?.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-    
+
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Client, NoStore = false)]
         public IActionResult Keys()
         {
             try

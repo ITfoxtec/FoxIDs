@@ -75,7 +75,7 @@ The login authentication method interface can be [customized with custom title, 
 ![Configure Login](images/configure-login-customization.png)
 
 ### Configure claims
-You can change the claims the login authentication method pass on with [claim transforms](claim-transform.md).
+You can change the claims the login authentication method forwards with [claim transforms](claim-transform.md).
 
 ### All login configurations
 All login configurations are available after clicking show advanced.

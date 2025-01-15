@@ -95,26 +95,55 @@
         <div class="tab-content pt-3">
             @if (loginUpParty.ShowLoginTab)
             {
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
-                <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />                
                 @if (loginUpParty.ShowAdvanced)
                 {
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body pb-0">
+                                <div class="info-text">Select which user identifier texts to display in the login UI. All user identifiers defined on a user can always be used.</div>
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableEmailIdentifier" For="@(() => loginUpParty.Form.Model.EnableEmailIdentifier)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnablePhoneIdentifier" For="@(() => loginUpParty.Form.Model.EnablePhoneIdentifier)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableUsernameIdentifier" For="@(() => loginUpParty.Form.Model.EnableUsernameIdentifier)" TextType="e.d" />
+                            </div>
+                        </div>
+                        <label class="label-control">User identifiers</label>
+                    </div>
+                    <div class="active-group active">
+                        <div class="card">
+                            <div class="card-body pt-2 pb-0">
+                                <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />
+                            </div>
+                        </div>
+                        <label class="label-control">Two-factor</label>
+                    </div>
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                     <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
                         <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
                         <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
                         <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
                     </FInputSelect>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
-                    <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
-                    <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
-                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
                 }
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body pt-2 pb-0">
+                            <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
+                            <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
+                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
+                        </div>
+                    </div>
+                    <label class="label-control">Customize login UI</label>
+                </div>
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {
+                <div class="mb-3 alert alert-info" role="alert">
+                    If you create a new claim the claim is forwarded to the application registration where you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
+                </div>
+
                 <OAuthClaimTransforms Model="loginUpParty.Form.Model" ExcludeDkPrivilege="true" />
             }
             else if (loginUpParty.ShowCreateUserTab)
@@ -124,9 +153,9 @@
                     <div class="info-text">The user must verify the account as part of multi-factor.</div>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
-                    <DynamicElements Model="loginUpParty.Form.Model.CreateUser" IncludeEmailElement=false />
+                    <DynamicElements Model="loginUpParty.Form.Model.CreateUser" InternalUsers="true" />
                     <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
-                    <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" ExcludeDkPrivilege="true" />
+                    <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" ExcludeDkPrivilege="true" LoginCreateUser="true" />
                 }
             }
             else if (loginUpParty.ShowSessionTab)

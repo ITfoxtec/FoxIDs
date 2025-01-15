@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
 using static ITfoxtec.Identity.IdentityConstants;
 using FoxIDs.Util;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {
@@ -101,7 +102,7 @@ namespace FoxIDs.Logic
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool isMasterTenant = false)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, isMasterTenant ? Constants.ControlApi.Access.TenantAdminRole : Constants.ControlApi.Access.Tenant) };
-            await accountLogic.CreateUser(email, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
+            await accountLogic.CreateUser(new UserIdentifier { Email = email }, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
         }
 
         public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool isMasterTenant = false)

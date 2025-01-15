@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
-                LoginEmailHint = loginRequest.EmailHint,
+                LoginHint = loginRequest.LoginHint,
                 Acr = loginRequest.Acr,
             }, setKeyValidUntil: true);
 

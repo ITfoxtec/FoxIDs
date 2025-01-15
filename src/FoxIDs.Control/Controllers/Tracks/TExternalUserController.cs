@@ -143,21 +143,22 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace() && userRequest.UpPartyName != userRequest.UpdateUpPartyName ||                                                            // if up-party change
-                    userRequest.UpdateLinkClaimValue != null && userRequest.LinkClaimValue != userRequest.UpdateLinkClaimValue ||                                                                 // if link claim change
-                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && !userRequest.UpdateLinkClaimValue.IsNullOrWhiteSpace() ||                                                                  // if link claim is added
-                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.UpdateRedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)    // if link claim not set and redemption claim change
+                if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace() && userRequest.UpPartyName != userRequest.UpdateUpPartyName ||                                                                 // if up-party change
+                    userRequest.UpdateLinkClaimValue != null && userRequest.LinkClaimValue != userRequest.UpdateLinkClaimValue ||                                                                      // if link claim change
+                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && !userRequest.UpdateLinkClaimValue.IsNullOrWhiteSpace() ||                                                                       // if link claim is added
+                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.UpdateRedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)   // if link claim not set and redemption claim change
                 {
-                    var oldExternalIserId = mExternalUser.Id;
-                    mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(mExternalUser.LinkClaimValue, mExternalUser.RedemptionClaimValue));
-                    await tenantDataRepository.CreateAsync(mExternalUser);
-                    await tenantDataRepository.DeleteAsync<ExternalUser>(oldExternalIserId);
-                }
-                else
-                {
-                    await tenantDataRepository.SaveAsync(mExternalUser);
+                    var newId = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(mExternalUser.LinkClaimValue, mExternalUser.RedemptionClaimValue));
+                    if (mExternalUser.Id != newId)
+                    {
+                        await tenantDataRepository.DeleteAsync<ExternalUser>(mExternalUser.Id);
+                        mExternalUser.Id = newId;
+                        await tenantDataRepository.CreateAsync(mExternalUser);
+                        return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
+                    }
                 }
 
+                await tenantDataRepository.UpdateAsync(mExternalUser);
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
             catch (FoxIDsDataException ex)
@@ -203,7 +204,7 @@ namespace FoxIDs.Controllers
             if (mExternalUser == null)
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
+                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
                 mExternalUser = mExternalUsers?.FirstOrDefault();
                 if (mExternalUser == null)
                 {

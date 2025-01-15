@@ -188,7 +188,7 @@ namespace FoxIDs.Logic
 
             if (!string.IsNullOrWhiteSpace(saml2AuthnRequest.Subject?.NameID?.ID) && saml2AuthnRequest.Subject.NameID.Format == NameIdentifierFormats.Email.OriginalString)
             {
-                loginRequest.EmailHint = saml2AuthnRequest.Subject.NameID.ID;
+                loginRequest.LoginHint = saml2AuthnRequest.Subject.NameID.ID;
             }
 
             if (saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef?.Count() > 0)

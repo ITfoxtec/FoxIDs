@@ -16,6 +16,6 @@ namespace FoxIDs.Models.Sequences
         LoginAction LoginAction { get; set; }
         string UserId { get; set; }
         int? MaxAge { get; set; }
-        string LoginEmailHint { get; set; }
+        string LoginHint { get; set; }
     }
 }

@@ -3,7 +3,14 @@
     <div class="info-text">
         <DocsLink Page="claim-transform">Claim transforms</DocsLink> executed in order (use the move up and down arrows to change the order)
         <br />
-        If selected, the new claims are added to the existing claims with the exception of the <code>sub</code> claim where a replace action is required.
+        @if (LoginCreateUser) 
+        {
+            <span>The new claims are added to the existing claims or otherwise replaced.</span>
+        }
+        else
+        {
+            <span>If selected, the new claims are added to the existing claims with the exception of the <code>sub</code> claim where a replace action is required.</span>
+        }        
     </div>
     <ul class="list-group">
         @foreach (var claimTransform in Model.ClaimTransforms)
@@ -269,6 +276,9 @@
 
     [Parameter]
     public bool ExcludeDkPrivilege { get; set; }
+
+    [Parameter]
+    public bool LoginCreateUser { get; set; }
 
     private void AddClaimTransform(ClaimTransformTypes claimTransformType)
     {

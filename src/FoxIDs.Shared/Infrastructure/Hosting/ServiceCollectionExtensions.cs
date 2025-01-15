@@ -25,6 +25,9 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         public static IServiceCollection AddSharedLogic(this IServiceCollection services, Settings settings)
         {
+            services.AddSingleton<EmbeddedResourceLogic>();
+
+            services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();
             services.AddTransient<PlanUsageLogic>();
             services.AddTransient<ContainedKeyLogic>();

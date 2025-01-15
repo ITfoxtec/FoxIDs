@@ -61,18 +61,6 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransforms();
                 }
-
-                if (afterMap.CreateUser?.Elements?.Count > 0)
-                {
-                    foreach (var element in afterMap.CreateUser.Elements)
-                    {
-                        if (element.Type == DynamicElementTypes.EmailAndPassword)
-                        {
-                            element.IsStaticRequired = true;
-                            element.Required = true;
-                        }
-                    }
-                }
             });
         }
 

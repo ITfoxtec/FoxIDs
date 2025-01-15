@@ -57,9 +57,9 @@ namespace FoxIDs.Logic
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
-                Email = loginRequest.EmailHint,
+                LoginHint = loginRequest.LoginHint,
                 Acr = loginRequest.Acr,
-                DoLoginIdentifierStep = loginRequest.EmailHint.IsNullOrWhiteSpace()
+                DoLoginIdentifierStep = loginRequest.LoginHint.IsNullOrWhiteSpace()
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SetUiUpPartyIdAsync(partyId);
 
             var hrdUpParties = ToHrdUpPartis(toUpParties);
-            var autoSelectedUpParty = await AutoSelectUpPartyAsync(hrdUpParties, loginRequest.EmailHint);
+            var autoSelectedUpParty = await AutoSelectUpPartyAsync(hrdUpParties, loginRequest.LoginHint);
             if (autoSelectedUpParty != null && autoSelectedUpParty.Name != loginName)
             {
                 switch (autoSelectedUpParty.Type)
@@ -111,24 +111,24 @@ namespace FoxIDs.Logic
                     LoginAction = loginRequest.LoginAction,
                     UserId = loginRequest.UserId,
                     MaxAge = loginRequest.MaxAge,
-                    Email = loginRequest.EmailHint,
+                    LoginHint = loginRequest.LoginHint,
                     Acr = loginRequest.Acr,
-                    DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.EmailHint.IsNullOrWhiteSpace())
+                    DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.LoginHint.IsNullOrWhiteSpace())
                 });
 
                 return HttpContext.GetUpPartyUrl(loginName, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
             }
         }
 
-        public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string email)
+        public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string userIdentifier)
         {
             // Handle up-parties with HRD "*" selection last.
             var toUpPartiesOrdered = toUpParties.OrderBy(u => u.HrdDomains?.Where(h => h == "*").Any() == true);
 
             // 1) Select specified authentication method
-            if (!email.IsNullOrWhiteSpace())
+            if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
-                var emailSplit = email.Split('@');
+                var emailSplit = userIdentifier.Split('@');
                 if (emailSplit.Count() > 1)
                 {
                     var domain = emailSplit[1];
@@ -153,9 +153,9 @@ namespace FoxIDs.Logic
             }
 
             // 3) Select authentication method by star
-            if (!email.IsNullOrWhiteSpace())
+            if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
-                var starUpParty = toUpPartiesOrdered.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
+                var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Any() == true).FirstOrDefault();
                 if (starUpParty != null)
                 {
                     return new UpPartyLink { Name = starUpParty.Name, ProfileName = starUpParty.ProfileName, Type = starUpParty.Type };

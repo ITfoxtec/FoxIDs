@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class LoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         public string InitName { get; set; }
 
@@ -50,6 +50,15 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Single logout")]
         public bool DisableSingleLogout { get; set; }
+
+        [Display(Name = "Email")]
+        public bool EnableEmailIdentifier { get; set; } = true;
+
+        [Display(Name = "Phone number")]
+        public bool EnablePhoneIdentifier { get; set; }
+
+        [Display(Name = "Username")]
+        public bool EnableUsernameIdentifier { get; set; }
 
         /// <summary>
         /// Default false.
@@ -139,5 +148,15 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         public CreateUserViewModel CreateUser { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
+            {
+                results.Add(new ValidationResult($"At lease one user identifier 'email', 'phone' or 'username' should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+            return results;
+        }
     }
 }

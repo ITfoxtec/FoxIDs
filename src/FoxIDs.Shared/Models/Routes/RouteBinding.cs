@@ -62,6 +62,8 @@ namespace FoxIDs.Models
 
         public SendEmail SendEmail { get; set; }
 
+        public SendSms SendSms { get; set; }
+
         public Logging Logging { get; set; }
 
         public LogLifetimeOptions? PlanLogLifetime { get; set; }

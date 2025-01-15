@@ -21,6 +21,6 @@ namespace FoxIDs.Models
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
-        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+        public List<OAuthClaimTransform> ClaimTransforms { get; set; }  
     }
 }

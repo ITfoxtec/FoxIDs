@@ -26,8 +26,9 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -35,6 +36,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
+            this.planCacheLogic = planCacheLogic;
         }
 
         public void CheckUpParty(UpSequenceData sequenceData, PartyTypes partyType = PartyTypes.Login)
@@ -71,24 +73,36 @@ namespace FoxIDs.Logic
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
-        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromEmailVerificationStep) 
+        public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps fromStep = LoginResponseSequenceSteps.FromPhoneVerificationStep) 
         {
             var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
 
             sequenceData.Email = user.Email;
             sequenceData.EmailVerified = user.EmailVerified;
+            sequenceData.Phone = user.Phone;
+            sequenceData.PhoneVerified = user.PhoneVerified;
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-            if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.EmailVerified)
+            if (fromStep <= LoginResponseSequenceSteps.FromPhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
+            {
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+            }
+            else if (fromStep <= LoginResponseSequenceSteps.FromEmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
-                if (!user.EmailVerified)
+                if (!user.Email.IsNullOrEmpty() && !user.EmailVerified)
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                }
+                if (!user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
                 }
 
                 if (RegisterTwoFactor(user))
@@ -127,6 +141,16 @@ namespace FoxIDs.Logic
             }
         }
 
+        private async Task<bool> PlanEnabledSmsAsync()
+        {
+            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            {
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                return plan.EnableSms;
+            }
+            return true;
+        }
+
         private bool RegisterTwoFactor(User user)
         {
             if (user.TwoFactorAppSecret.IsNullOrEmpty())
@@ -159,7 +183,7 @@ namespace FoxIDs.Logic
         public async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty, string userId)
         {
             var session = await GetSessionAsync(sequenceData, upParty);
-            if (session != null && userId != session.UserId)
+            if (session != null && userId != session.UserIdClaim)
             {
                 logger.ScopeTrace(() => "Authenticated user and session user do not match.");
                 // TODO invalid user login
@@ -181,7 +205,7 @@ namespace FoxIDs.Logic
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
@@ -189,10 +213,22 @@ namespace FoxIDs.Logic
             {
                 var sessionId = RandomGenerator.Generate(24);
                 claims = await GetClaimsAsync(loginUpParty, user, authTime, sequenceData, sessionId, acrClaims);
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
+                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
             return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(claims);
+        }
+
+        private LoginUserIdentifier GetLoginUserIdentifier(User user, string userIdentifier)
+        {
+            return new LoginUserIdentifier
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                Phone = user.Phone,
+                Username = user.Username,
+                UserIdentifier = userIdentifier
+            };
         }
 
         public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
@@ -205,9 +241,9 @@ namespace FoxIDs.Logic
                 return false;
             }
 
-            if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
+            if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserIdClaim.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
             {
-                logger.ScopeTrace(() => $"Session user '{session.UserId}' and requested user '{sequenceData.UserId}' do not match.");
+                logger.ScopeTrace(() => $"Session user '{session.UserIdClaim}' and requested user '{sequenceData.UserId}' do not match.");
                 return false;
             }
 
@@ -243,9 +279,20 @@ namespace FoxIDs.Logic
                 claims.AddRange(acrClaims);
             }
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
-            claims.AddClaim(JwtClaimTypes.Email, user.Email);
-            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            if (!user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.Email, user.Email);
+                claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            }
+            if (!user.Phone.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PhoneNumber, user.Phone);
+                claims.AddClaim(JwtClaimTypes.PhoneNumberVerified, user.PhoneVerified.ToString().ToLower());
+            }
+            if (!user.Username.IsNullOrEmpty() || !user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Username ?? user.Email);
+            }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, loginUpParty.Name);
             if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())
             {

@@ -122,9 +122,11 @@ In the resource configuration tab, the scopes are defined as a list of scope val
 Scopes configured in the client is validated if the scopes exist on the API. If the client and API is configured in the same application registration configuration, scopes added to the client is automatically added to the resource.
 
 ## Scopes
-The scopes can be configured in the client configuration tab. It is possible to define a set of claims which should be issued for at scope as voluntary claims.
+The scopes can be configured in the client configuration tab. It is possible to define new scopes and a sets of claims which should be issued for the scopes in the `Voluntary claims` list.
 
-> Change the claims the application registration pass on with [claim transforms](claim-transform.md).
+> Change the claims the application registration issues with [claim transforms](claim-transform.md).
+
+If you are creating a new claim, add the claim or `*` to the `Issue claims` list or alternatively add the claim to the `Voluntary claims` list and request the scope from your application.
 
 A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 

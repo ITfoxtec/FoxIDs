@@ -206,7 +206,7 @@ namespace FoxIDs.Infrastructure
             Index(GetMetricTelemetryLogString(metricName, value, properties), Constants.Logs.IndexName.Metrics);
         }
 
-        private void Index(OpenSearchLogItem logItem, string indexName)
+        private void Index<T>(T logItem, string indexName) where T : OpenSearchLogItemBase
         {
             try
             {
@@ -238,7 +238,7 @@ namespace FoxIDs.Infrastructure
 
         private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
         {
-            var logItem = CreateLogItem(logType, properties);
+            var logItem = CreateLogItem<OpenSearchLogItem>(logType, properties);
             var messageItems = new List<ErrorMessageItem>();
             if (!message.IsNullOrWhiteSpace())
             {
@@ -267,46 +267,46 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private OpenSearchLogItem GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
+        private OpenSearchEventLogItem GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties) 
         {
-            var logItem = CreateLogItem(LogTypes.Event, properties);
+            var logItem = CreateLogItem<OpenSearchEventLogItem>(LogTypes.Event, properties);
             logItem.Message = eventName;
             return logItem;
         }
 
-        private OpenSearchLogItem GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
+        private OpenSearchTraceLogItem GetTraceTelemetryLogString(string message, IDictionary<string, string> properties)
         {
-            var logItem = CreateLogItem(LogTypes.Trace, properties);
+            var logItem = CreateLogItem<OpenSearchTraceLogItem>(LogTypes.Trace, properties);
             logItem.Message = message;
             return logItem;
         }
 
-        private OpenSearchLogItem GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
+        private OpenSearchMetricLogItem GetMetricTelemetryLogString(string metricName, double value, IDictionary<string, string> properties)
         {
-            var logItem = CreateLogItem(LogTypes.Metric, properties);
+            var logItem = CreateLogItem<OpenSearchMetricLogItem>(LogTypes.Metric, properties);
             logItem.Message = metricName;
             logItem.Value = value;
             return logItem;
         }
 
-        private OpenSearchLogItem CreateLogItem(LogTypes logType, IDictionary<string, string> properties)
+        private T CreateLogItem<T>(LogTypes logType, IDictionary<string, string> properties) where T : OpenSearchLogItemBase
         {
-            var logItem = CreateLogItem(properties);
+            var logItem = CreateLogItem<T>(properties);
             logItem.LogType = logType.ToString();
             logItem.Timestamp = DateTimeOffset.UtcNow;
             return logItem;
         }
 
-        private OpenSearchLogItem CreateLogItem(IDictionary<string, string> properties)
+        private T CreateLogItem<T>(IDictionary<string, string> properties) where T : OpenSearchLogItemBase
         {
             if(properties != null && properties.Count > 0)
             {
                 var json = JsonConvert.SerializeObject(properties);
-                return json.ToObject<OpenSearchLogItem>();
+                return json.ToObject<T>();
             }
             else
             {
-                return new OpenSearchLogItem();
+                return default;
             }
         }
     }    

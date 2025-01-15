@@ -169,7 +169,7 @@ namespace FoxIDs.Logic
                 logRequest.IncludeTokenRequests = true;
             }
 
-            var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
+            var response = await openSearchClient.SearchAsync<OpenSearchLogItemAll>(s => s
                 .Index(GetIndexName())
                     .Size(0)
                     .Query(q => q
@@ -197,7 +197,7 @@ namespace FoxIDs.Logic
             return $"{settings.OpenSearch.LogName}*";
         }
 
-        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
+        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItemAll> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
@@ -215,7 +215,7 @@ namespace FoxIDs.Logic
             return boolQuery;
         }
 
-        private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)
+        private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItemAll> filters, Api.UsageLogRequest logRequest)
         {
             if (logRequest.IncludeLogins)
             {
@@ -236,7 +236,7 @@ namespace FoxIDs.Logic
             return filters;
         }
 
-        private void AddFilter(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, string usageType)
+        private void AddFilter(NamedFiltersContainerDescriptor<OpenSearchLogItemAll> filters, string usageType)
         {
             filters.Filter(usageType, q => q.Term(p => p.UsageType, usageType.ToLower()));
         }

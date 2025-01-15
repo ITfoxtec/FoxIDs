@@ -379,6 +379,7 @@ namespace FoxIDs.Logic
                 item.Details = new List<Api.LogItemDetail>();
 
                 var logTraceMessage = message.ToObject<List<LogTraceMessageItem>>();
+                logTraceMessage.Reverse();
                 foreach (var messageItem in logTraceMessage)
                 {
                     var logItemDetail = new Api.LogItemDetail

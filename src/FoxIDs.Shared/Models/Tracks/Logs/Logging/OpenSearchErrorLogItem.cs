@@ -1,9 +1,8 @@
 ﻿namespace FoxIDs.Models
 {
-    public class OpenSearchLogItem : OpenSearchLogItemBase
+    public class OpenSearchErrorLogItem : OpenSearchLogItemBase
     {
-        public string Message { get; set; }
-        public double Value { get; set; }
+        public string Message { get; set; }   
         public string Domain { get; set; }
         public string RequestPath { get; set; }
         public string GrantType { get; set; }
@@ -19,9 +18,5 @@
         public string UserId { get; set; }
         public string Email { get; set; }
         public int FailingLoginCount { get; set; }
-        public string UsageType { get; set; }
-        public string UsageLoginType { get; set; }
-        public string UsageTokenType { get; set; }
-        public double UsageAddRating { get; set; }
     }
 }

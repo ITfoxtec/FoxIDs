@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
             return logResponse;
         }
 
-        private Api.LogItem ToApiLogItem(OpenSearchLogItem item)
+        private Api.LogItem ToApiLogItem(OpenSearchLogItemAll item)
         {
             var type = GetLogType(item.LogType);
             return new Api.LogItem
@@ -127,7 +127,7 @@ namespace FoxIDs.Logic
             return aLogType;
         }
 
-        private Dictionary<string, string> GetValues(Api.LogItemTypes type, OpenSearchLogItem item)
+        private Dictionary<string, string> GetValues(Api.LogItemTypes type, OpenSearchLogItemAll item)
         {
             var values = new Dictionary<string, string>();
             if (type == Api.LogItemTypes.Event)
@@ -175,7 +175,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Api.LogItemDetail> GetDetails(Api.LogItemTypes type, OpenSearchLogItem item)
+        private List<Api.LogItemDetail> GetDetails(Api.LogItemTypes type, OpenSearchLogItemAll item)
         {
             var logItemDetails = new List<Api.LogItemDetail>();
             if (type == Api.LogItemTypes.Warning || type == Api.LogItemTypes.Error || type == Api.LogItemTypes.CriticalError)
@@ -238,9 +238,9 @@ namespace FoxIDs.Logic
             operationItem.OperationId = item.OperationId;
         }
 
-        private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
+        private async Task<IEnumerable<OpenSearchLogItemAll>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
-            var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
+            var response = await openSearchClient.SearchAsync<OpenSearchLogItemAll>(s => s
                 .Index(GetIndexName())
                     .Size(maxResponseLogItems)
                     .Sort(s => s.Descending(f => f.Timestamp))
@@ -257,7 +257,7 @@ namespace FoxIDs.Logic
             return $"{settings.OpenSearch.LogName}*";
         }
 
-        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)
+        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItemAll> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)

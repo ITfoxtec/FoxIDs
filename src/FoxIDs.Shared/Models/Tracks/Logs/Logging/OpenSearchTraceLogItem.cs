@@ -4,15 +4,11 @@
     {
         public string Message { get; set; }
         public string Domain { get; set; }
-        public string OperationId { get; set; }
-        public string RequestId { get; set; }
         public string RequestPath { get; set; }
         public string GrantType { get; set; }
         public string UpPartyClientId { get; set; }
         public string UpPartyStatus { get; set; }
         public string DownPartyClientId { get; set; }
-        public string SequenceId { get; set; }
-        public string ExternalSequenceId { get; set; }
         public string AccountAction { get; set; }
         public string SequenceCulture { get; set; }
         public string Issuer { get; set; }

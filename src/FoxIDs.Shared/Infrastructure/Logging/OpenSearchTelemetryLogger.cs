@@ -236,9 +236,9 @@ namespace FoxIDs.Infrastructure
             return $"{settings.OpenSearch.LogName}-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
         }        
 
-        private OpenSearchLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
+        private OpenSearchErrorLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
         {
-            var logItem = CreateLogItem<OpenSearchLogItem>(logType, properties);
+            var logItem = CreateLogItem<OpenSearchErrorLogItem>(logType, properties);
             var messageItems = new List<ErrorMessageItem>();
             if (!message.IsNullOrWhiteSpace())
             {

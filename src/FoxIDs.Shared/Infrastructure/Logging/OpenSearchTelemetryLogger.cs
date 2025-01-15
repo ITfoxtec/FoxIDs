@@ -60,18 +60,25 @@ namespace FoxIDs.Infrastructure
                          index_patterns = new[] { $"{settings.OpenSearch.LogName}*" },
                          template = new
                          {
+                             settings = new
+                             {
+                                 index = new
+                                 {
+                                     refresh_interval = "5s"
+                                 }
+                             },
                              mappings = new
                              {
-                                 properties = new 
+                                 properties = new
                                  {
-                                    tenantName = new { type = "keyword" },
-                                    trackName = new { type = "keyword" }
+                                     tenantName = new { type = "keyword" },
+                                     trackName = new { type = "keyword" }
                                  }
                              }
-                         }
+                         },
+                         priority = "1"
                      }));
             }
-
         }
 
         private void CreateIndexPolicy(LogLifetimeOptions logLifetime)

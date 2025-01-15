@@ -64,27 +64,13 @@ namespace FoxIDs.Logic
                     var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
-                        try
-                        {
-                            throw new Exception($"Existing session user '{session.UserId}' and authenticated user '{userId}' do not match, causing an session update including new session ID.");
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Warning(ex);
-                        }
+                        logger.Event($"Existing session user '{session.UserId}' and authenticated user '{userId}' do not match, causing an session update including new session ID.");
                         updateAction(session);
                     }
 
                     if (session.ExternalSessionId != externalSessionId)
                     {
-                        try
-                        {
-                            throw new Exception("External session ID has changed, causing an session update including new session ID.");
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Warning(ex);
-                        }
+                        logger.Event("External session ID has changed, causing an session update including new session ID.");
                         updateAction(session);
                     }
                     else

@@ -199,6 +199,7 @@ namespace FoxIDs.Logic
                 if (!item.Message.IsNullOrWhiteSpace())
                 {
                     var logTraceMessageItems = item.Message.ToObject<List<LogTraceMessageItem>>();
+                    logTraceMessageItems.Reverse();
                     foreach (var logTraceMessageItem in logTraceMessageItems)
                     {
                         var logItemDetail = new Api.LogItemDetail

@@ -144,6 +144,7 @@ namespace FoxIDs.Client.Pages.Components
                     model.DisableUserAuthenticationTrust = true;
                 }
                 model.Claims = new List<string> { "*" };
+                model.DisableLoginHint = true;
             }
         }
 

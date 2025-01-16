@@ -267,9 +267,9 @@ namespace FoxIDs.Logic
             boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
 
             boolQuery = boolQuery.Must(m => m
-                .Term(t => t.TenantName, RouteBinding.TenantName) && 
-                    m.Term(t => t.TrackName, RouteBinding.TrackName) &&
-                    m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest)))) &&
+                .Term(t => t.TenantName, RouteBinding.TenantName) &&
+                    m.Term(t => t.TrackName, RouteBinding.TrackName)  &&
+                   // m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest)))) &&
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)

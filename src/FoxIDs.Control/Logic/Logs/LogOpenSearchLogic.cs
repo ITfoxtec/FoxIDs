@@ -247,7 +247,6 @@ namespace FoxIDs.Logic
                     .Sort(s => s.Descending(f => f.Timestamp))
                     .Query(q => q
                          .Bool(b => GetQuery(b, logRequest, queryTimeRange)))
-                    
                 );
 
             return response.Documents;
@@ -264,12 +263,15 @@ namespace FoxIDs.Logic
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
-            boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
-
+            if (logRequest.QueryEvents)
+            {
+                boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
+            }
+           
             boolQuery = boolQuery.Must(m => m
                 .Term(t => t.TenantName, RouteBinding.TenantName) &&
                     m.Term(t => t.TrackName, RouteBinding.TrackName)  &&
-                   // m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest)))) &&
+                    (MustBeExceptionLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest)) &&
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)
@@ -292,26 +294,18 @@ namespace FoxIDs.Logic
             return boolQuery;
         }
 
-        private static IEnumerable<string> GetLogTypes(Api.LogRequest logRequest)
-        {
-            if (logRequest.QueryExceptions)
-            {
-                yield return LogTypes.Warning.ToString();
-                yield return LogTypes.Error.ToString();
-                yield return LogTypes.CriticalError.ToString();
-            }
-            if (logRequest.QueryEvents)
-            {
-                yield return LogTypes.Event.ToString();
-            }
-            if (logRequest.QueryTraces)
-            {
-                yield return LogTypes.Trace.ToString();
-            }
-            if (logRequest.QueryMetrics)
-            {
-                yield return LogTypes.Metric.ToString();
-            }
-        }
+        private static QueryContainer MustBeExceptionLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            (m.Term(t => t.LogType, LogTypes.Warning.ToString()) ||
+                m.Term(t => t.LogType, LogTypes.Error.ToString()) ||
+                m.Term(t => t.LogType, LogTypes.CriticalError.ToString())) && (logRequest.QueryExceptions ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Event.ToString()) && (logRequest.QueryEvents ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeTraceLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Trace.ToString()) && (logRequest.QueryTraces ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeMetricLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Metric.ToString()) && (logRequest.QueryMetrics ? m.MatchAll() : m.MatchNone());
     }
 }

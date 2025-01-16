@@ -203,14 +203,9 @@ namespace FoxIDs.Logic
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
-            if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName));
-            }
-            else if (!tenantName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName));
-            }
+            boolQuery = boolQuery.Must(m => m.Term(t => t.LogType, LogTypes.Event.ToString()) &&
+                (m.Term(t => t.TenantName, tenantName) || (tenantName.IsNullOrWhiteSpace() ? m.MatchAll() : m.MatchNone())) &&
+                (m.Term(t => t.TrackName, trackName) || (trackName.IsNullOrWhiteSpace() ? m.MatchAll() : m.MatchNone())));
 
             return boolQuery;
         }

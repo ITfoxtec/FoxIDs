@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using OpenSearch.Net;
 using System.Net;
 using System.Linq;
+using System.Web;
 
 namespace FoxIDs.Infrastructure
 {
@@ -32,9 +33,10 @@ namespace FoxIDs.Infrastructure
         {
             try
             {
-                AddMapping();
                 CreateIndexPolicy(LogLifetimeOptions.Max30Days);
                 CreateIndexPolicy(LogLifetimeOptions.Max180Days);
+                AddTemplateAndIndex(LogLifetimeOptions.Max30Days);
+                AddTemplateAndIndex(LogLifetimeOptions.Max180Days);
             }
             catch (Exception ex)
             {
@@ -47,183 +49,155 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private void AddMapping()
-        {
-            var policyPath = $"_index_template/{settings.OpenSearch.LogName}-template";
+        private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
 
-            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
+        private string RolloverAlias(LogLifetimeOptions logLifetime) => RolloverAlias((int)logLifetime);
+        private string RolloverAlias(int lifetime) => $"{settings.OpenSearch.LogName}-r-{lifetime}d";
+      
+        private void AddTemplateAndIndex(LogLifetimeOptions logLifetime)
+        {
+            var lifetime = (int)logLifetime;
+            var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
+            ;
+            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, templatePath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
-                     PostData.Serializable(new
-                     {
-                         index_patterns = new[] { $"{settings.OpenSearch.LogName}*" },
-                         template = new
-                         {
-                             settings = new
-                             {
-                                 index = new
-                                 {
-                                     refresh_interval = "5s"
-                                 }
-                             },
-                             mappings = new
-                             {
-                                 properties = new
-                                 {
-                                     tenantName = new { type = "keyword" },
-                                     trackName = new { type = "keyword" }
-                                 }
-                             }
-                         },
-                         priority = "1"
-                     }));
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, templatePath, PostData.String(
+@$"{{
+  ""index_patterns"": [""{IndexPattern(logLifetime)}""],
+  ""template"": {{
+   ""settings"": {{
+    ""index.refresh_interval"": ""5s"",
+    ""plugins.index_state_management.rollover_alias"": ""{RolloverAlias(logLifetime)}""
+   }},
+   ""mappings"": {{
+    ""properties"": {{
+     ""tenantName"": {{
+      ""type"": ""keyword""
+     }},
+     ""trackName"": {{
+      ""type"": ""keyword""
+     }},
+     ""logType"": {{
+      ""type"": ""keyword""
+     }}
+    }}
+   }}
+  }}
+}}"));
+
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, HttpUtility.UrlEncode($"<{RolloverAlias(logLifetime)}-{{now/d}}-000001>"), PostData.String(
+@$"{{
+    ""aliases"": {{
+        ""{RolloverAlias(logLifetime)}"": {{
+            ""is_write_index"": true
+        }}
+    }}
+}}"));
             }
         }
 
         private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
         {
-            var lifetime = (int)logLifetime;
-            var policyPath = $"_plugins/_ism/policies/{settings.OpenSearch.LogName}-{lifetime}d";
-            var indexPattern = $"{settings.OpenSearch.LogName}-{lifetime}d*";
+            var policyPath = $"_plugins/_ism/policies/{RolloverAlias(logLifetime)}";
+            var rolloverAge = 7;
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
-                    PostData.Serializable(new
-                    {
-                        policy = new
-                        {
-                            description = $"Index policy with a lifetime of {lifetime} days.",
-                            default_state = "write",
-                            states = new object[] 
-                            {
-                                new 
-                                {
-                                    name = "write",
-                                    transitions = new [] 
-                                    {
-                                        new 
-                                        {
-                                            state_name = "read",
-                                            conditions = new 
-                                            {
-                                                min_index_age = "1d"
-                                            }
-                                        }
-                                    }
-                                },
-                                new 
-                                {
-                                    name = "read",
-                                    actions = new [] 
-                                    {
-                                        new 
-                                        {
-                                            read_only = new { },
-                                            retry = new 
-                                            {
-                                                count = 3,
-                                                backoff = "exponential",
-                                                delay = "1m"
-                                            }
-                                        }
-                                    },
-                                    transitions = new [] 
-                                    {
-                                        new 
-                                        {
-                                            state_name = "delete",
-                                            conditions = new 
-                                            {
-                                                min_index_age = $"{lifetime + 1}d"
-                                            }
-                                        }
-                                    }
-                                },
-                                new 
-                                {
-                                    name = "delete",
-                                    actions = new []
-                                    {
-                                        new 
-                                        {
-                                            delete = new { },
-                                            retry = new 
-                                            {
-                                                count = 3,
-                                                backoff = "exponential",
-                                                delay = "1m"
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            ism_template = new[] 
-                            {
-                                new 
-                                {
-                                    index_patterns = new[] 
-                                    {
-                                        indexPattern
-                                    },
-                                    priority = 1
-                                }
-                            }
-                        }
-                    }));
+
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath, PostData.String(
+@$"{{
+  ""policy"": {{
+    ""description"": ""Rollover index policy with a lifetime of {(int)logLifetime} days."",
+    ""default_state"": ""rollover"",
+    ""states"": [
+      {{
+        ""name"": ""rollover"",
+        ""actions"": [
+          {{
+            ""rollover"": {{
+              ""min_size"": ""20gb"",
+              ""min_primary_shard_size"": ""20gb"",
+              ""min_index_age"": ""{rolloverAge}d""
+            }}
+          }}
+        ],
+        ""transitions"": [
+          {{
+            ""state_name"": ""delete"",
+            ""conditions"": {{
+              ""min_index_age"": ""{(int)logLifetime + 1 + rolloverAge}d""
+            }}
+          }}
+        ]
+      }},
+      {{
+        ""name"": ""delete"",
+        ""actions"": [
+          {{
+            ""delete"": {{}}
+          }}
+        ]
+      }}
+    ],
+    ""ism_template"": {{
+      ""index_patterns"": [""{IndexPattern(logLifetime)}""],
+      ""priority"": 100
+    }}
+  }}
+}}"));
             }
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(LogTypes.Warning, exception, message, properties), Constants.Logs.IndexName.Errors);
+            Index(GetExceptionTelemetryLogString(LogTypes.Warning, exception, message, properties));
         }
 
         public void Error(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(LogTypes.Error, exception, message, properties), Constants.Logs.IndexName.Errors);
+            Index(GetExceptionTelemetryLogString(LogTypes.Error, exception, message, properties));
         }
 
         public void CriticalError(Exception exception, string message, IDictionary<string, string> properties = null)
         {
-            Index(GetExceptionTelemetryLogString(LogTypes.CriticalError, exception, message, properties), Constants.Logs.IndexName.Errors);
+            Index(GetExceptionTelemetryLogString(LogTypes.CriticalError, exception, message, properties));
         }
 
         public void Event(string eventName, IDictionary<string, string> properties = null)
         {
-            Index(GetEventTelemetryLogString(eventName, properties), Constants.Logs.IndexName.Events);
+            Index(GetEventTelemetryLogString(eventName, properties));
         }
 
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            Index(GetTraceTelemetryLogString(message, properties), Constants.Logs.IndexName.Traces);
+            Index(GetTraceTelemetryLogString(message, properties));
         }
 
         public void Metric(string metricName, double value, IDictionary<string, string> properties = null)
         {
-            Index(GetMetricTelemetryLogString(metricName, value, properties), Constants.Logs.IndexName.Metrics);
+            Index(GetMetricTelemetryLogString(metricName, value, properties));
         }
 
-        private void Index<T>(T logItem, string indexName) where T : OpenSearchLogItemBase
+        private void Index<T>(T logItem) where T : OpenSearchLogItemBase
         {
             try
             {
-                openSearchClient.Index(logItem, i => i.Index(GetIndexName(logItem.Timestamp, indexName)));
+                openSearchClient.Index(logItem, i => i.Index(GetIndexName()));
             }
             catch (Exception ex)
             {
                 try
                 {
-                    stdoutTelemetryLogger.Error(ex, $"OpenSearch log error, Index name '{indexName}'.");
+                    stdoutTelemetryLogger.Error(ex, $"OpenSearch log type '{logItem.LogType}' index error.");
                 }
                 catch
                 { }
             }
         }
 
-        private string GetIndexName(DateTimeOffset utcNow, string logIndexName)
+        private string GetIndexName()
         {
             var lifetime = settings.OpenSearch.LogLifetime.GetLifetimeInDays();
 
@@ -233,8 +207,8 @@ namespace FoxIDs.Infrastructure
                 lifetime = routeBinding.PlanLogLifetime.Value.GetLifetimeInDays();
             }
 
-            return $"{settings.OpenSearch.LogName}-{lifetime}d-{logIndexName}-{utcNow.Year}.{utcNow.Month}.{utcNow.Day}";
-        }        
+            return RolloverAlias(lifetime);
+        }
 
         private OpenSearchErrorLogItem GetExceptionTelemetryLogString(LogTypes logType, Exception exception, string message, IDictionary<string, string> properties)
         {
@@ -248,11 +222,11 @@ namespace FoxIDs.Infrastructure
             {
                 messageItems.AddRange(GetErrorMessageItems(exception));
             }
-            if(messageItems.Count > 0)
+            if (messageItems.Count > 0)
             {
                 logItem.Message = messageItems.ToJson();
             }
-            return logItem;           
+            return logItem;
         }
 
         private IEnumerable<ErrorMessageItem> GetErrorMessageItems(Exception exception)
@@ -267,7 +241,7 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private OpenSearchEventLogItem GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties) 
+        private OpenSearchEventLogItem GetEventTelemetryLogString(string eventName, IDictionary<string, string> properties)
         {
             var logItem = CreateLogItem<OpenSearchEventLogItem>(LogTypes.Event, properties);
             logItem.Message = eventName;
@@ -299,7 +273,7 @@ namespace FoxIDs.Infrastructure
 
         private T CreateLogItem<T>(IDictionary<string, string> properties) where T : OpenSearchLogItemBase
         {
-            if(properties != null && properties.Count > 0)
+            if (properties != null && properties.Count > 0)
             {
                 var json = JsonConvert.SerializeObject(properties);
                 return json.ToObject<T>();
@@ -309,5 +283,5 @@ namespace FoxIDs.Infrastructure
                 return default;
             }
         }
-    }    
+    }
 }

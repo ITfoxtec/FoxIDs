@@ -242,7 +242,7 @@ namespace FoxIDs.Logic
         private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
-                .Index(GetIndexName())
+                .Index(Indices.Index(GetIndexName()))
                     .Size(maxResponseLogItems)
                     .Sort(s => s.Descending(f => f.Timestamp))
                     .Query(q => q
@@ -252,9 +252,10 @@ namespace FoxIDs.Logic
             return response.Documents;
         }
 
-        private string GetIndexName()
+        private IEnumerable<string> GetIndexName()
         {
-            return $"{settings.OpenSearch.LogName}*";
+            yield return $"{settings.OpenSearch.LogName}*";
+            yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)

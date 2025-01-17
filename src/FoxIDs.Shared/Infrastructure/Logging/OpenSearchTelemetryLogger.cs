@@ -33,6 +33,11 @@ namespace FoxIDs.Infrastructure
         {
             try
             {
+                // Remove in about 8 month from now 2025.01.17
+                OldCreateIndexPolicy(LogLifetimeOptions.Max30Days);
+                OldCreateIndexPolicy(LogLifetimeOptions.Max180Days);
+                OldAddTemplate();
+
                 CreateIndexPolicy(LogLifetimeOptions.Max30Days);
                 CreateIndexPolicy(LogLifetimeOptions.Max180Days);
                 AddTemplateAndIndex(LogLifetimeOptions.Max30Days);
@@ -49,11 +54,135 @@ namespace FoxIDs.Infrastructure
             }
         }
 
+        // Remove in about 8 month from now 2025.01.17
+        private void OldAddTemplate()
+        {
+            var policyPath = $"_index_template/{settings.OpenSearch.LogName}-template";
+
+            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
+            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
+                     PostData.Serializable(new
+                     {
+                         index_patterns = new[] { $"{settings.OpenSearch.LogName}*" },
+                         template = new
+                         {
+                             mappings = new
+                             {
+                                 properties = new
+                                 {
+                                     tenantName = new { type = "keyword" },
+                                     trackName = new { type = "keyword" }
+                                 }
+                             }
+                         },
+                         priority = 200
+                     }));
+            }
+        }
+
+        // Remove in about 8 month from now 2025.01.17
+        private void OldCreateIndexPolicy(LogLifetimeOptions logLifetime)
+        {
+            var lifetime = (int)logLifetime;
+            var policyPath = $"_plugins/_ism/policies/{settings.OpenSearch.LogName}-{lifetime}d";
+            var indexPattern = $"{settings.OpenSearch.LogName}-{lifetime}d*";
+
+            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
+            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
+                    PostData.Serializable(new
+                    {
+                        policy = new
+                        {
+                            description = $"Index policy with a lifetime of {lifetime} days.",
+                            default_state = "write",
+                            states = new object[]
+                            {
+                                new
+                                {
+                                    name = "write",
+                                    transitions = new []
+                                    {
+                                        new
+                                        {
+                                            state_name = "read",
+                                            conditions = new
+                                            {
+                                                min_index_age = "1d"
+                                            }
+                                        }
+                                    }
+                                },
+                                new
+                                {
+                                    name = "read",
+                                    actions = new []
+                                    {
+                                        new
+                                        {
+                                            read_only = new { },
+                                            retry = new
+                                            {
+                                                count = 3,
+                                                backoff = "exponential",
+                                                delay = "1m"
+                                            }
+                                        }
+                                    },
+                                    transitions = new []
+                                    {
+                                        new
+                                        {
+                                            state_name = "delete",
+                                            conditions = new
+                                            {
+                                                min_index_age = $"{lifetime + 1}d"
+                                            }
+                                        }
+                                    }
+                                },
+                                new
+                                {
+                                    name = "delete",
+                                    actions = new []
+                                    {
+                                        new
+                                        {
+                                            delete = new { },
+                                            retry = new
+                                            {
+                                                count = 3,
+                                                backoff = "exponential",
+                                                delay = "1m"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            ism_template = new[]
+                            {
+                                new
+                                {
+                                    index_patterns = new[]
+                                    {
+                                        indexPattern
+                                    },
+                                    priority = 200
+                                }
+                            }
+                        }
+                    }));
+            }
+        }
+
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
 
         private string RolloverAlias(LogLifetimeOptions logLifetime) => RolloverAlias((int)logLifetime);
         private string RolloverAlias(int lifetime) => $"{settings.OpenSearch.LogName}-r-{lifetime}d";
-      
+
         private void AddTemplateAndIndex(LogLifetimeOptions logLifetime)
         {
             var lifetime = (int)logLifetime;
@@ -83,7 +212,8 @@ namespace FoxIDs.Infrastructure
      }}
     }}
    }}
-  }}
+  }},
+  ""priority"": 100
 }}"));
 
                 openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, HttpUtility.UrlEncode($"<{RolloverAlias(logLifetime)}-{{now/d}}-000001>"), PostData.String(

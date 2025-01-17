@@ -195,6 +195,7 @@ namespace FoxIDs.Logic
         private IEnumerable<string> GetIndexName()
         {
             yield return $"{settings.OpenSearch.LogName}*";
+            // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
             yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
@@ -206,18 +207,25 @@ namespace FoxIDs.Logic
 
             if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
             {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName) && m.Term(t => t.LogType, LogTypes.Event.ToString()));
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName) && QueryEventLogType(m));
             }
             else if (!tenantName.IsNullOrWhiteSpace())
             {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.LogType, LogTypes.Event.ToString()));
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && QueryEventLogType(m));
             }
             else
             {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.LogType, LogTypes.Event.ToString()));
+                boolQuery = boolQuery.Must(QueryEventLogType);
             }
 
             return boolQuery;
+        }
+
+        private static QueryContainer QueryEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m)
+        {
+            return m.Term(t => t.LogType, LogTypes.Event.ToString()) ||
+                // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+                m.Match(ma => ma.Field(f => f.LogType).Query(LogTypes.Event.ToString())); 
         }
 
         private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)

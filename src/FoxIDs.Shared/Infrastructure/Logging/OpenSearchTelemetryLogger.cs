@@ -58,6 +58,8 @@ namespace FoxIDs.Infrastructure
         private void OldAddTemplate()
         {
             var policyPath = $"_index_template/{settings.OpenSearch.LogName}-template";
+            var indexPattern30 = $"{settings.OpenSearch.LogName}-{(int)LogLifetimeOptions.Max30Days}d*";
+            var indexPattern180 = $"{settings.OpenSearch.LogName}-{(int)LogLifetimeOptions.Max180Days}d*";
 
             var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
             if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -65,7 +67,7 @@ namespace FoxIDs.Infrastructure
                 openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath,
                      PostData.Serializable(new
                      {
-                         index_patterns = new[] { $"{settings.OpenSearch.LogName}*" },
+                         index_patterns = new[] { indexPattern30, indexPattern180 },
                          template = new
                          {
                              mappings = new

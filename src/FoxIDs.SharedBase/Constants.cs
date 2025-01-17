@@ -220,15 +220,7 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
-            }
-
-            public static class IndexName
-            {
-                public const string Errors = "errors";
-                public const string Events = "events";
-                public const string Traces = "traces";
-                public const string Metrics = "metrics";
-            }
+            }    
         }
 
         public static class Models

@@ -50,10 +50,6 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
-                if (!sequenceData.EmailVerified)
-                {
-                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
-                }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -189,10 +185,6 @@ namespace FoxIDs.Controllers
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.Validate)
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
-                }
-                if (!sequenceData.EmailVerified)
-                {
-                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);

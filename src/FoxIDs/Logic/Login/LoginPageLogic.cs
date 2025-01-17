@@ -94,17 +94,6 @@ namespace FoxIDs.Logic
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
-                if (!user.Email.IsNullOrEmpty() && !user.EmailVerified)
-                {
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
-                }
-                if (!user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
-                {
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
-                }
-
                 if (RegisterTwoFactor(user))
                 {
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;

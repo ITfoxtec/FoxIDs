@@ -150,7 +150,7 @@ namespace FoxIDs.Logic
 
             if (!authenticationRequest.LoginHint.IsNullOrEmpty())
             {
-                loginRequest.EmailHint = authenticationRequest.LoginHint;
+                loginRequest.LoginHint = authenticationRequest.LoginHint;
             }
 
             if (!authenticationRequest.AcrValues.IsNullOrWhiteSpace())

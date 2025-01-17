@@ -92,12 +92,12 @@ namespace FoxIDs.Logic
         {
             var scopeProperties = new Dictionary<string, string>
             {
-                { Constants.Logs.UserId, session.UserId },
-                { Constants.Logs.Email, session.Email }
+                { Constants.Logs.UserId, session.UserIdClaim },
+                { Constants.Logs.Email, session.EmailClaim }
             };
             if (includeSessionId)
             {
-                scopeProperties.Add(Constants.Logs.SessionId, session.SessionId);
+                scopeProperties.Add(Constants.Logs.SessionId, session.SessionIdClaim);
             }
             return scopeProperties;
         }

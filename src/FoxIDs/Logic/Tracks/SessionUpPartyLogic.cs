@@ -58,13 +58,13 @@ namespace FoxIDs.Logic
             {
                 var sessionValid = SessionValid(session, upParty);
 
-                logger.ScopeTrace(() => $"User id '{session.UserId}' session authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
                     var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
-                    if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
+                    if (!session.UserIdClaim.IsNullOrEmpty() && session.UserIdClaim != userId)
                     {
-                        logger.Event($"Existing session user '{session.UserId}' and authenticated user '{userId}' do not match, causing an session update including new session ID.");
+                        logger.Event($"Existing session user '{session.UserIdClaim}' and authenticated user '{userId}' do not match, causing an session update including new session ID.");
                         updateAction(session);
                     }
 
@@ -79,16 +79,16 @@ namespace FoxIDs.Logic
                     }
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(upParty, session, null);
-                    logger.ScopeTrace(() => $"Session updated authentication method, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                    logger.ScopeTrace(() => $"Session updated authentication method, Session id '{session.SessionIdClaim}'.", GetSessionScopeProperties(session));
 
-                    return session.SessionId;
+                    return session.SessionIdClaim;
                 }
 
                 SetScopeProperty(session, includeSessionId: false);
                 if (!sessionEnabled)
                 {
                     await sessionCookieRepository.DeleteAsync(upParty);
-                    logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                    logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionIdClaim}'.");
                 }
             }
 
@@ -100,9 +100,9 @@ namespace FoxIDs.Logic
                 session.LastUpdated = session.CreateTime;
 
                 await sessionCookieRepository.SaveAsync(upParty, session, null);
-                logger.ScopeTrace(() => $"Session authentication method created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
+                logger.ScopeTrace(() => $"Session authentication method created, User id '{session.UserIdClaim}', Session id '{session.SessionIdClaim}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
 
-                return session.SessionId;
+                return session.SessionIdClaim;
             }
             else
             {
@@ -129,7 +129,7 @@ namespace FoxIDs.Logic
                 var sessionEnabled = SessionEnabled(upParty);
                 var sessionValid = SessionValid(session, upParty);
 
-                logger.ScopeTrace(() => $"User id '{session.UserId}' session authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
                     SetScopeProperty(session);
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
 
                 SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace(() => $"Session deleted authentication method, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted authentication method, Session id '{session.SessionIdClaim}'.");
             }
             else
             {
@@ -155,7 +155,7 @@ namespace FoxIDs.Logic
             if (session != null)
             {
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace(() => $"Session deleted authentication method, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted authentication method, Session id '{session.SessionIdClaim}'.");
                 return session;
             }
             else

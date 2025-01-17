@@ -6,8 +6,15 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "email")]
         Email = 5,
+        [EnumMember(Value = "phone")]
+        Phone = 6,
+        [EnumMember(Value = "username")]
+        Username = 7,
+
         [EnumMember(Value = "email_password")]
         EmailAndPassword = 10,
+        [EnumMember(Value = "password")]
+        Password = 11,
 
         [EnumMember(Value = "name")]
         Name = 20,

@@ -17,11 +17,20 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "srl")]
         public bool DoSessionUserRequireLogin { get; set; }
 
+        [JsonProperty(PropertyName = "uin")]
+        public string UserIdentifier { get; set; }
+
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
 
         [JsonProperty(PropertyName = "ev")]
         public bool EmailVerified { get; set; }
+
+        [JsonProperty(PropertyName = "p")]
+        public string Phone { get; set; }
+
+        [JsonProperty(PropertyName = "pv")]
+        public bool PhoneVerified { get; set; }
 
         [JsonProperty(PropertyName = "tui")]
         public IEnumerable<HrdUpPartySequenceData> ToUpParties { get; set; }

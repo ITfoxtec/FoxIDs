@@ -133,7 +133,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!samlUpSequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match authentication method session ID.");
                 }
@@ -421,7 +421,7 @@ namespace FoxIDs.Logic
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
 
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session?.SessionId);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session?.SessionIdClaim);
 
             if (party.DisableSingleLogout)
             {

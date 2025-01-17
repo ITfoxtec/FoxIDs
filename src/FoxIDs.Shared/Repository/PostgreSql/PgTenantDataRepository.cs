@@ -13,12 +13,20 @@ namespace FoxIDs.Repository
 {
     public class PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db) : TenantDataRepositoryBase
     {
-        public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            return await db.ExistsAsync(id, partitionId);
+            if (!queryAdditionalIds)
+            {
+                return await db.ExistsAsync(id, partitionId);
+            }
+            else
+            {
+                var item = await GetAsync<T>(id, required: false, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                return item != null;
+            }
         }
 
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
@@ -27,21 +35,46 @@ namespace FoxIDs.Repository
             return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
-        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var item = await db.GetAsync<T>(id, partitionId);
-            if (required && item == null)
-            { 
-                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-            }
-            if (item != null)
+            if (!queryAdditionalIds)
             {
+                var item = await db.GetAsync<T>(id, partitionId);
+                if (required && item == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                if (item != null && delete)
+                {
+                    if (!await db.RemoveAsync(id, partitionId))
+                    {
+                        throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                    }
+                }
                 await item.ValidateObjectAsync();
+                return item;
             }
-            return item;
+            else
+            {
+                Expression<Func<T, bool>> whereQuery = q => q.Id == id || q.AdditionalIds.Contains(id);
+                var item = await db.GetListAsync(partitionId, whereQuery, 1).FirstOrDefaultAsync();
+                if (required && item == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                if (item != null && delete)
+                {
+                    if (!await db.RemoveAsync(item.Id, partitionId))
+                    {
+                        throw new FoxIDsDataException(item.Id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                    }
+                }
+                await item.ValidateObjectAsync();
+                return item;
+            }
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -55,10 +88,7 @@ namespace FoxIDs.Repository
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
-            if (item != null)
-            {
-                await item.ValidateObjectAsync();
-            }
+            await item.ValidateObjectAsync();
             return item;
         }
 
@@ -73,10 +103,7 @@ namespace FoxIDs.Repository
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
-            if (item != null)
-            {
-                await item.ValidateObjectAsync();
-            }
+            await item.ValidateObjectAsync();
             return item;
         }
 
@@ -89,7 +116,6 @@ namespace FoxIDs.Repository
             var items = dataItems;
             await items.ValidateObjectAsync();
             return (items, paginationToken);
-            throw new NotImplementedException();
         }
 
         private static int GetOffset(string paginationToken, int pageSize)
@@ -150,15 +176,21 @@ namespace FoxIDs.Repository
             await db.UpsertAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
-            var partitionId = id.IdToTenantPartitionId();
-            if(!await db.RemoveAsync(id, partitionId))
+            if(!queryAdditionalIds)
             {
-                throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
-
+                var partitionId = id.IdToTenantPartitionId();
+                if (!await db.RemoveAsync(id, partitionId))
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+            else
+            {
+                _ = await GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
             }
         }
 

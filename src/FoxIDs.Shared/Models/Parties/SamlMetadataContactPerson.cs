@@ -40,7 +40,7 @@ namespace FoxIDs.Models
         public string Surname { get; set; }
 
         /// <summary>
-        /// Optional string element containing mailto: URIs representing e-mail addresses belonging to the
+        /// Optional string element containing mailto: URIs representing email addresses belonging to the
         /// contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.LimitedValueLength)]

@@ -86,8 +86,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<User, Api.User>()
                 .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty() || !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
                 .ReverseMap()
-                .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormatAsync(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.ToLower() : s.Email))
+                .ForMember(d => d.Username, opt => opt.MapFrom(s => s.Username != null ? s.Username.ToLower() : s.Username))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormatAsync(RouteBinding, new User.IdKey { Email = s.Email != null ? s.Email.ToLower() : s.Email, UserIdentifier = s.Phone ?? (s.Username != null ? s.Username.ToLower() : s.Username), UserId = s.UserId }).GetAwaiter().GetResult()));
 
             CreateMap<User, Api.MyUser>();
 
@@ -153,6 +154,9 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<Api.SendEmail, SendEmail>()
+                .ReverseMap();
+
+            CreateMap<Api.SendSms, SendSms>()
                 .ReverseMap();
 
             CreateMap<Api.LogSettings, ScopedLogger>()

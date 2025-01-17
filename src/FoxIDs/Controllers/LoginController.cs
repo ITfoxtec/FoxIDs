@@ -16,6 +16,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Claims;
 
 namespace FoxIDs.Controllers
 {
@@ -32,10 +33,11 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
+        private readonly CountryCodesLogic countryCodesLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -47,6 +49,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountLogic = accountLogic;
             this.dynamicElementLogic = dynamicElementLogic;
+            this.countryCodesLogic = countryCodesLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
@@ -88,7 +91,34 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    ModelState[nameof(login.Email)].ValidationState = ModelValidationState.Valid;
+                    if (login.EmailIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.EmailIdentifier)}.{nameof(login.EmailIdentifier.Email)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.PhoneIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.PhoneIdentifier)}.{nameof(login.PhoneIdentifier.Phone)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.UsernameIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.UsernameIdentifier)}.{nameof(login.UsernameIdentifier.Username)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.UsernameEmailIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.UsernameEmailIdentifier)}.{nameof(login.UsernameEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.UsernamePhoneIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.UsernamePhoneIdentifier)}.{nameof(login.UsernamePhoneIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.PhoneEmailIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.PhoneEmailIdentifier)}.{nameof(login.PhoneEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
+                    }
+                    else if (login.UsernamePhoneEmailIdentifier != null)
+                    {
+                        ModelState[$"{nameof(login.UsernamePhoneEmailIdentifier)}.{nameof(login.UsernamePhoneEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
+                    }
                     return await PasswordInternalAsync(sequenceData, login);
                 }
             }
@@ -171,7 +201,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -180,25 +210,60 @@ namespace FoxIDs.Controllers
                 if (validSession && sequenceData.LoginAction == LoginAction.SessionUserRequireLogin)
                 {
                     sequenceData.DoLoginIdentifierStep = false;
-                    sequenceData.Email = email;
+                    sequenceData.UserIdentifier = sessionUserIdentifier;
                     sequenceData.DoSessionUserRequireLogin = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return await PasswordInternalAsync();
                 }
 
-                logger.ScopeTrace(() => "Show identifier dialog.");
-                return base.View("Identifier", new IdentifierViewModel
+                var identifierViewModel = new IdentifierViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableCreateUser = loginUpParty.EnableCreateUser,                    
-                    Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
-                    ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                    EnableCreateUser = loginUpParty.EnableCreateUser,
+                    ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
                     UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
-                });
+                };
+
+                var userIdentifier = sequenceData.UserIdentifier.IsNullOrWhiteSpace() ? string.Empty : sequenceData.UserIdentifier;
+                if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    identifierViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailIdentifierViewModel { UserIdentifier = userIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+                {
+                    identifierViewModel.PhoneEmailIdentifier = new PhoneEmailIdentifierViewModel { UserIdentifier = userIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    identifierViewModel.UsernamePhoneIdentifier = new UsernamePhoneIdentifierViewModel { UserIdentifier = userIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    identifierViewModel.UsernameEmailIdentifier = new UsernameEmailIdentifierViewModel { UserIdentifier = userIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier)
+                {
+                    identifierViewModel.EmailIdentifier = new EmailIdentifierViewModel { Email = userIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier)
+                {
+                    identifierViewModel.PhoneIdentifier = new PhoneIdentifierViewModel { Phone = userIdentifier };
+                }
+                else if (loginUpParty.EnableUsernameIdentifier)
+                {
+                    identifierViewModel.UsernameIdentifier = new UsernameIdentifierViewModel { Username = userIdentifier };
+                }                          
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                logger.ScopeTrace(() => "Show identifier dialog.");
+                return base.View("Identifier", identifierViewModel);
             }
             catch (Exception ex)
             {
@@ -206,7 +271,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private bool ShowEmailSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
+        private bool ShowUserIdentifierSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
             if (sequenceData.ToUpParties.Where(up => up.Name == currentUpPartyName || up.HrdDomains?.Count() > 0).Any())
             {
@@ -263,16 +328,47 @@ namespace FoxIDs.Controllers
                 {
                     var identifier = new IdentifierViewModel
                     {
-                        Email = login.Email,
                         SequenceString = SequenceString,
                         Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableCreateUser = loginUpParty.EnableCreateUser,
-                        ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                        ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
                         UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                     };
+                    if (login.EmailIdentifier != null)
+                    {
+                        identifier.EmailIdentifier = new EmailIdentifierViewModel { Email = login.EmailIdentifier.Email };
+                    }
+                    else if (login.PhoneIdentifier != null)
+                    {
+                        identifier.PhoneIdentifier = new PhoneIdentifierViewModel { Phone = login.PhoneIdentifier.Phone };
+                    }
+                    else if (login.UsernameIdentifier != null)
+                    {
+                        identifier.UsernameIdentifier = new UsernameIdentifierViewModel { Username = login.UsernameIdentifier.Username };
+                    }
+                    else if (login.UsernameEmailIdentifier != null)
+                    {
+                        identifier.UsernameEmailIdentifier = new UsernameEmailIdentifierViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
+                    }
+                    else if (login.UsernamePhoneIdentifier != null)
+                    {
+                        identifier.UsernamePhoneIdentifier = new UsernamePhoneIdentifierViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
+                    }
+                    else if (login.PhoneEmailIdentifier != null)
+                    {
+                        identifier.PhoneEmailIdentifier = new PhoneEmailIdentifierViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
+                    }
+                    else if (login.UsernamePhoneEmailIdentifier != null)
+                    {
+                        identifier.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailIdentifierViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
                     return View("Identifier", identifier);
                 };
 
@@ -283,11 +379,11 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Identifier post.");
 
-                sequenceData.Email = login.Email;
+                sequenceData.UserIdentifier = GetUserIdentifier(login);
 
                 if (sequenceData.ToUpParties.Count() > 1)
                 {
-                    var autoSelectedUpParty = await serviceProvider.GetService<LoginUpLogic>().AutoSelectUpPartyAsync(sequenceData.ToUpParties, login.Email);
+                    var autoSelectedUpParty = await serviceProvider.GetService<LoginUpLogic>().AutoSelectUpPartyAsync(sequenceData.ToUpParties, sequenceData.UserIdentifier);
                     if (autoSelectedUpParty != null)
                     {
                         if (autoSelectedUpParty.Name != loginUpParty.Name)
@@ -299,7 +395,7 @@ namespace FoxIDs.Controllers
 
                 if (!sequenceData.ToUpParties.Where(up => up.Name == loginUpParty.Name).Any())
                 {
-                    ModelState.AddModelError(nameof(login.Email), localizer["There is no account connected to this email."]);
+                    ModelState.AddModelError(string.Empty, localizer["It is not possible to find this account."]);
                     return viewError();
                 }
 
@@ -315,6 +411,42 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private string GetUserIdentifier(LoginViewModel login)
+        {
+            if (login.EmailIdentifier != null)
+            {
+                return login.EmailIdentifier.Email;
+            }
+            else if (login.PhoneIdentifier != null)
+            {
+                return login.PhoneIdentifier.Phone;
+            }
+            else if (login.UsernameIdentifier != null)
+            {
+                return login.UsernameIdentifier.Username;
+            }
+            else if (login.UsernameEmailIdentifier != null)
+            {
+                return login.UsernameEmailIdentifier.UserIdentifier;
+            }
+            else if (login.UsernamePhoneIdentifier != null)
+            {
+                return login.UsernamePhoneIdentifier.UserIdentifier;
+            }
+            else if (login.PhoneEmailIdentifier != null)
+            {
+                return login.PhoneEmailIdentifier.UserIdentifier;
+            }
+            else if (login.UsernamePhoneEmailIdentifier != null)
+            {
+                return login.UsernamePhoneEmailIdentifier.UserIdentifier;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+        }
+
         private LoginRequest GetLoginRequest(LoginUpSequenceData sequenceData)
         {
             return new LoginRequest
@@ -323,7 +455,7 @@ namespace FoxIDs.Controllers
                 LoginAction = sequenceData.LoginAction,
                 UserId = sequenceData.UserId,
                 MaxAge = sequenceData.MaxAge,
-                EmailHint = sequenceData.Email,
+                LoginHint = sequenceData.LoginHint,
                 Acr = sequenceData.Acr
             };
         }
@@ -354,19 +486,18 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
             }
 
-            if (sequenceData.Email.IsNullOrWhiteSpace())
+            if (sequenceData.UserIdentifier.IsNullOrWhiteSpace())
             {
-                throw new InvalidOperationException("Required email is empty in sequence.");
+                throw new InvalidOperationException("Required user identifier is empty in sequence.");
             }
 
-            logger.ScopeTrace(() => "Show password dialog.");
-            return View("Password", new PasswordViewModel
+            var passwordViewModel = new PasswordViewModel
             {
                 SequenceString = SequenceString,
                 Title = loginUpParty.Title ?? RouteBinding.DisplayName,
@@ -375,26 +506,61 @@ namespace FoxIDs.Controllers
                 EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 EnableResetPassword = !loginUpParty.DisableResetPassword,
                 EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                DisableChangeEmail = sequenceData.DoSessionUserRequireLogin,
-                Email = sequenceData.Email,
-            });
+                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
+            };
+
+            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            {
+                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier)
+            {
+                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnablePhoneIdentifier)
+            {
+                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            logger.ScopeTrace(() => "Show password dialog.");
+            return View("Password",passwordViewModel);
         }
 
-        public async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, upParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, user?.Email, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, user?.Email, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
             }
 
-            return (validSession, user?.Email, null);
+            return (validSession, session?.UserIdentifier, null);
         }
 
         private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)
@@ -421,9 +587,40 @@ namespace FoxIDs.Controllers
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableResetPassword = !loginUpParty.DisableResetPassword,
                         EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                        DisableChangeEmail = sequenceData.DoSessionUserRequireLogin,
-                        Email = sequenceData.Email
+                        DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
                     };
+                    if (login.EmailIdentifier != null)
+                    {
+                        password.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
+                    }
+                    else if (login.PhoneIdentifier != null)
+                    {
+                        password.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
+                    }
+                    else if (login.UsernameIdentifier != null)
+                    {
+                        password.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
+                    }
+                    else if (login.UsernameEmailIdentifier != null)
+                    {
+                        password.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
+                    }
+                    else if (login.UsernamePhoneIdentifier != null)
+                    {
+                        password.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
+                    }
+                    else if (login.PhoneEmailIdentifier != null)
+                    {
+                        password.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
+                    }
+                    else if (login.UsernamePhoneEmailIdentifier != null)
+                    {
+                        password.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
                     return View("Password", password);
                 };
 
@@ -436,13 +633,13 @@ namespace FoxIDs.Controllers
                 
                 try
                 {
-                    var user = await accountLogic.ValidateUser(sequenceData.Email, login.Password);
+                    var user = await accountLogic.ValidateUser(sequenceData.UserIdentifier, login.Password);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (ChangePasswordException cpex)
                 {
                     logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
-                    return await StartChangePassword(sequenceData.Email, sequenceData);
+                    return StartChangePassword();
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -454,7 +651,7 @@ namespace FoxIDs.Controllers
                     if (aex is InvalidPasswordException || aex is UserNotExistsException)
                     {
                         logger.ScopeTrace(() => aex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
+                        ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty)]);
                     }
                     else
                     {
@@ -467,6 +664,42 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty)
+        {
+            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            {
+                return "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return "Wrong username, email or password.";
+            }
+            else if (loginUpParty.EnableEmailIdentifier)
+            {
+                return "Wrong email or password.";
+            }
+            else if (loginUpParty.EnablePhoneIdentifier)
+            {
+                return "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableUsernameIdentifier)
+            {
+                return "Wrong username or password.";
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
 
@@ -504,7 +737,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
@@ -517,7 +750,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     _ = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{session.UserIdClaim}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -558,7 +791,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.UserIdClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -677,7 +910,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, requireEmailAndPasswordElement: true).ToList()
+                    Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList()
                 });
 
             }
@@ -703,7 +936,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }                
                 PopulateCreateUserDefault(loginUpParty);
-                createUser.Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements, requireEmailAndPasswordElement: true).ToList();
+                createUser.Elements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -715,7 +948,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                (var email, var password, var emailPasswordI) = await ValidateCreateUserViewModelElementsAsync(createUser.Elements);
+                (var userIdentifier, var password, var passwordIndex) = await dynamicElementLogic.ValidateCreateUserViewModelElementsAsync(ModelState, createUser.Elements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -731,46 +964,60 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var claims = dynamicElementLogic.GetClaims(createUser.Elements);
+                    (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.Elements);
                     claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
 
-                    var user = await accountLogic.CreateUser(email, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+                    userIdentifier.Email = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.Email, userIdentifier.Email);
+                    userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
+                    userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
+                    
+                    var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
-                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Email);
+                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
                     }
                 }
                 catch (UserExistsException uex)
                 {
                     logger.ScopeTrace(() => uex.Message, triggerEvent: true);
-                    return await CreateUserStartLogin(sequenceData, loginUpParty, uex.Email);
+                    return await CreateUserStartLogin(sequenceData, loginUpParty, uex.UserIdentifier.Username ?? uex.UserIdentifier.Phone ?? uex.UserIdentifier.Email);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordPhoneTextComplexityException ppcex)
+                {
+                    logger.ScopeTrace(() => ppcex.Message);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the phone number."]);
+                }
+                catch (PasswordUsernameTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(() => pucex.Message);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewError();
@@ -781,31 +1028,22 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<(string email, string password, int emailPasswordIndex)> ValidateCreateUserViewModelElementsAsync(List<DynamicElementBase> elements)
+        private string GetUserIdentifierValue(List<Claim> claims, List<string> userIdentifierClaimTypes, string claimType, string defaultValue)
         {
-            var email = string.Empty;
-            var password = string.Empty;
-            var emailPasswordIndex = 0;
-            var index = 0;
-            foreach (var element in elements)
+            if (userIdentifierClaimTypes.Where(t => t == claimType).Any())
             {
-                await dynamicElementLogic.ValidateViewModelElementAsync(ModelState, element, index);
-                if (element is EmailAndPasswordDElement)
+                var claimValue = claims.FindFirstOrDefaultValue(c => c.Type == claimType);
+                if (!claimValue.IsNullOrWhiteSpace())
                 {
-                    emailPasswordIndex = index;
-                    email = element.DField1;
-                    password = element.DField2;
-                    element.DField2 = null;
-                    element.DField3 = null;
+                    return claimValue;
                 }
-                index++;
             }
-            return (email, password, emailPasswordIndex);
-        } 
+            return defaultValue;
+        }
 
-        private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string email)
+        private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string userIdentifier)
         {
-            sequenceData.Email = email;
+            sequenceData.UserIdentifier = userIdentifier;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
@@ -819,37 +1057,59 @@ namespace FoxIDs.Controllers
                 {
                     ConfirmAccount = false,
                     RequireMultiFactor = false,
-                    Elements = new List<DynamicElement>
+                    Elements = new List<DynamicElement>()
+                };
+
+                if (loginUpParty.EnableUsernameIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
                     {
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.EmailAndPassword,
-                            Order = 0,
-                            Required = true
-                        },
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.GivenName,
-                            Order = 1,
-                            Required = false
-                        },
-                        new DynamicElement
-                        {
-                            Type = DynamicElementTypes.FamilyName,
-                            Order = 2,
-                            Required = false
-                        }
-                    }
-                };               
+                        Type = DynamicElementTypes.Username,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
+                }
+                if (loginUpParty.EnablePhoneIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Phone,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
+                }
+                if (loginUpParty.EnableEmailIdentifier)
+                {
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Email,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
+                }
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.Password,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                    Required = true
+                });
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.GivenName,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1
+                });
+                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                {
+                    Type = DynamicElementTypes.FamilyName,
+                    Order = loginUpParty.CreateUser.Elements.Count() + 1
+                });
             }
         }
 
-        private async Task<IActionResult> StartChangePassword(string email, LoginUpSequenceData sequenceData)
-        {
-            sequenceData.Email = email;
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return new RedirectResult($"../{Constants.Endpoints.ChangePassword}/_{SequenceString}");
-        }
+        private IActionResult StartChangePassword() => new RedirectResult($"../{Constants.Endpoints.ChangePassword}/_{SequenceString}");
 
         public async Task<IActionResult> ChangePassword()
         {
@@ -866,16 +1126,50 @@ namespace FoxIDs.Controllers
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 _ = loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
 
-                logger.ScopeTrace(() => "Show change password dialog.");
-                return View(nameof(ChangePassword), new ChangePasswordViewModel
+                var changePasswordViewModel = new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    Email = sequenceData.Email,
-                });
+                };
+
+                if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+                {
+                    changePasswordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableEmailIdentifier)
+                {
+                    changePasswordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnablePhoneIdentifier)
+                {
+                    changePasswordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
+                }
+                else if (loginUpParty.EnableUsernameIdentifier)
+                {
+                    changePasswordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                logger.ScopeTrace(() => "Show change password dialog.");
+                return View(nameof(ChangePassword), changePasswordViewModel);
             }
             catch (Exception ex)
             {
@@ -914,7 +1208,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException uoex)
@@ -948,6 +1242,16 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordPhoneTextComplexityException ppcex)
+                {
+                    logger.ScopeTrace(() => ppcex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the phone number."]);
+                }
+                catch (PasswordUsernameTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(() => pucex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {

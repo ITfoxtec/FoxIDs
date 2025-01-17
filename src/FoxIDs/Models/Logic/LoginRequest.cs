@@ -15,7 +15,7 @@ namespace FoxIDs.Models.Logic
 
         public int? MaxAge { get; set; }
 
-        public string EmailHint { get; set; }
+        public string LoginHint { get; set; }
 
         public IEnumerable<string> Acr { get; set; }
     }

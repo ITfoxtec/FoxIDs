@@ -112,8 +112,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var content = new StringContent(JsonConvert.SerializeObject(requestDictionary, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
-                using var response = await httpClient.PostAsync(authenticationApiUrl, content);
+                using var response = await httpClient.PostAsPlainJsonAsync(authenticationApiUrl, requestDictionary);
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:

@@ -4,6 +4,7 @@
     {
         Login,
         ExternalLogin,
+        SmsCode,
         EmailCode,
         TwoFactorAuthenticator,
     }

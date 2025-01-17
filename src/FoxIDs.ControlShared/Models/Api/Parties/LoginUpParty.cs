@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,6 +21,12 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
+
+        public bool EnableEmailIdentifier { get; set; } = true;
+
+        public bool EnablePhoneIdentifier { get; set; }
+
+        public bool EnableUsernameIdentifier { get; set; }
 
         /// <summary>
         /// Default false.
@@ -145,7 +150,12 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
+            }
+
+            if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
+            {
+                results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
             return results;
         }

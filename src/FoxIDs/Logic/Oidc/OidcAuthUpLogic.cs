@@ -81,7 +81,7 @@ namespace FoxIDs.Logic
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
-                LoginEmailHint = loginRequest.EmailHint
+                LoginHint = loginRequest.LoginHint
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
@@ -146,9 +146,9 @@ namespace FoxIDs.Logic
                 authenticationRequest.MaxAge = oidcUpSequenceData.MaxAge;
             }
 
-            if (!oidcUpSequenceData.LoginEmailHint.IsNullOrEmpty())
+            if (!oidcUpSequenceData.LoginHint.IsNullOrEmpty())
             {
-                authenticationRequest.LoginHint = oidcUpSequenceData.LoginEmailHint;
+                authenticationRequest.LoginHint = oidcUpSequenceData.LoginHint;
             }
 
             var profile = GetProfile(party, oidcUpSequenceData);

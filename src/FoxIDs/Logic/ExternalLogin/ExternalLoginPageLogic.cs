@@ -12,6 +12,7 @@ using System.Linq;
 using FoxIDs.Models.Session;
 using ITfoxtec.Identity.Util;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {
@@ -40,7 +41,7 @@ namespace FoxIDs.Logic
 
         public DownPartySessionLink GetDownPartyLink(ExternalLoginUpParty upParty, ExternalLoginUpSequenceData sequenceData) => loginPageLogic.GetDownPartyLink(upParty, sequenceData);
 
-        public async Task<IActionResult> LoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
+        public async Task<IActionResult> LoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, string userIdentifier, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
         {
             var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
             var session = await loginPageLogic.ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
@@ -49,13 +50,13 @@ namespace FoxIDs.Logic
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), claims, sequenceData, session: session);
+            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), userIdentifier, claims, sequenceData, session: session);
         }
 
-        private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, string userIdentifier, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, newDownPartyLink, session, acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, newDownPartyLink, session, GetLoginUserIdentifier(userIdentifier), acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
@@ -65,10 +66,15 @@ namespace FoxIDs.Logic
                 var sessionId = RandomGenerator.Generate(24);
                 claims = await GetClaimsAsync(extLoginUpParty, userClaims, authTime, sequenceData, sessionId, acrClaims);
 
-                await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, claims);
+                await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
 
             return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, claims);
+        }
+
+        private static LoginUserIdentifier GetLoginUserIdentifier(string userIdentifier)
+        {
+            return new LoginUserIdentifier { UserIdentifier = userIdentifier };
         }
 
         public bool ValidSessionUpAgainstSequence(ExternalLoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session) => loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);

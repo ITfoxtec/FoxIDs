@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -11,6 +12,15 @@ namespace FoxIDs.Models
         {
             Type = PartyTypes.Login;
         }
+
+        [JsonProperty(PropertyName = "enable_email_idf")]
+        public bool EnableEmailIdentifier { get; set; } = true;
+
+        [JsonProperty(PropertyName = "enable_phone_idf")]
+        public bool EnablePhoneIdentifier { get; set; }
+
+        [JsonProperty(PropertyName = "enable_username_idf")]
+        public bool EnableUsernameIdentifier { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
@@ -62,5 +72,22 @@ namespace FoxIDs.Models
         [ValidateComplexType]
         [JsonProperty(PropertyName = "create_user")]
         public CreateUser CreateUser { get; set; }
+
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+
+            if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
+            {
+                results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+
+            return results;
+        }
     }
 }

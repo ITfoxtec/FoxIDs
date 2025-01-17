@@ -95,6 +95,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
+        [Display(Name = "Two-factor (2FA) App supported")]
+        public bool DisableTwoFactorApp { get; set; }
+
+        [Display(Name = "Two-factor with SMS supported")]
+        public bool DisableTwoFactorSms { get; set; }
+
+        [Display(Name = "Two-factor with email supported")]
+        public bool DisableTwoFactorEmail { get; set; }
+
         /// <summary>
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
         /// </summary>

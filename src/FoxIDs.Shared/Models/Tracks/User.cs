@@ -94,6 +94,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
 
+        [JsonProperty(PropertyName = "disable_two_factor_app")]
+        public bool DisableTwoFactorApp { get; set; }
+
+        [JsonProperty(PropertyName = "disable_two_factor_sms")]
+        public bool DisableTwoFactorSms { get; set; }
+
+        [JsonProperty(PropertyName = "disable_two_factor_email")]
+        public bool DisableTwoFactorEmail { get; set; }
+
         [JsonProperty(PropertyName = "two_factor_app_secret")]
         public string TwoFactorAppSecret { get; set; }
 

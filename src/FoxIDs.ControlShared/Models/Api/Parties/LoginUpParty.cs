@@ -52,6 +52,12 @@ namespace FoxIDs.Models.Api
         [Required]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
+        public bool DisableTwoFactorApp { get; set; }
+
+        public bool DisableTwoFactorSms { get; set; }
+
+        public bool DisableTwoFactorEmail { get; set; }
+
         /// <summary>
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
         /// </summary>

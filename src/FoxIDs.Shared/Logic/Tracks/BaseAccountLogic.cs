@@ -28,7 +28,8 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUser(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, bool requireMultiFactor = false)
+        public async Task<User> CreateUser(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
+            bool requireMultiFactor = false, bool disableTwoFactorApp = false, bool DisableTwoFactorSms = false, bool DisableTwoFactorEmail = false)
         {
             userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
             userIdentifier.Phone = userIdentifier.Phone?.Trim();
@@ -45,7 +46,10 @@ namespace FoxIDs.Logic
                 EmailVerified = emailVerified,
                 PhoneVerified = phoneVerified,
                 DisableAccount = disableAccount,
-                RequireMultiFactor = requireMultiFactor
+                RequireMultiFactor = requireMultiFactor,
+                DisableTwoFactorApp = disableTwoFactorApp,
+                DisableTwoFactorSms = DisableTwoFactorSms,
+                DisableTwoFactorEmail = DisableTwoFactorEmail
             };
 
             tenantName = tenantName ?? RouteBinding.TenantName;

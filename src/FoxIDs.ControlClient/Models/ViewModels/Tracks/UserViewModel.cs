@@ -49,6 +49,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
 
+        [Display(Name = "Two-factor (2FA) App supported")]
+        public bool DisableTwoFactorApp { get; set; }
+
+        [Display(Name = "Two-factor with SMS supported")]
+        public bool DisableTwoFactorSms { get; set; }
+
+        [Display(Name = "Two-factor with email supported")]
+        public bool DisableTwoFactorEmail { get; set; }
+
         [Display(Name = "Active two-factor (2FA) app (only for deactivation)")]
         public bool ActiveTwoFactorApp { get; set; }
 

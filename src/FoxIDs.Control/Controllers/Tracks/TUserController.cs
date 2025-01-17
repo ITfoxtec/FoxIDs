@@ -120,7 +120,9 @@ namespace FoxIDs.Controllers
                 var mUser = await accountLogic.CreateUser(new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username }, 
                     createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
                     confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, phoneVerified: createUserRequest.PhoneVerified, 
-                    disableAccount: createUserRequest.DisableAccount, requireMultiFactor: createUserRequest.RequireMultiFactor);
+                    disableAccount: createUserRequest.DisableAccount, 
+                    disableTwoFactorApp: createUserRequest.DisableTwoFactorApp, DisableTwoFactorSms: createUserRequest.DisableTwoFactorSms, DisableTwoFactorEmail: createUserRequest.DisableTwoFactorEmail, 
+                    requireMultiFactor: createUserRequest.RequireMultiFactor);
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -204,6 +206,9 @@ namespace FoxIDs.Controllers
                 mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
                 mUser.ChangePassword = user.ChangePassword;
                 mUser.DisableAccount = user.DisableAccount;
+                mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
+                mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;
+                mUser.DisableTwoFactorEmail = user.DisableTwoFactorEmail;
                 if (!user.ActiveTwoFactorApp)
                 {
                     if (!mUser.TwoFactorAppSecretExternalName.IsNullOrEmpty())

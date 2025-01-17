@@ -113,6 +113,10 @@
                     <div class="active-group active">
                         <div class="card">
                             <div class="card-body pt-2 pb-0">
+                                <div class="info-text">Choose which two-factor options should be available to the users.</div>
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableTwoFactorApp" For="@(() => loginUpParty.Form.Model.DisableTwoFactorApp)" Negation="true" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableTwoFactorSms" For="@(() => loginUpParty.Form.Model.DisableTwoFactorSms)" Negation="true" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableTwoFactorEmail" For="@(() => loginUpParty.Form.Model.DisableTwoFactorEmail)" Negation="true" TextType="e.d" />
                                 <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
                                 <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />
                             </div>

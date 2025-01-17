@@ -38,6 +38,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; }
 
+        [JsonProperty(PropertyName = "disable_two_factor_app")]
+        public bool DisableTwoFactorApp { get; set; }
+
+        [JsonProperty(PropertyName = "disable_two_factor_sms")]
+        public bool DisableTwoFactorSms { get; set; }
+
+        [JsonProperty(PropertyName = "disable_two_factor_email")]
+        public bool DisableTwoFactorEmail { get; set; }
+
         /// <summary>
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
         /// </summary>

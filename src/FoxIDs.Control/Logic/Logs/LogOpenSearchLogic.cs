@@ -242,7 +242,7 @@ namespace FoxIDs.Logic
         private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
-                .Index(GetIndexName())
+                .Index(Indices.Index(GetIndexName()))
                     .Size(maxResponseLogItems)
                     .Sort(s => s.Descending(f => f.Timestamp))
                     .Query(q => q
@@ -252,9 +252,11 @@ namespace FoxIDs.Logic
             return response.Documents;
         }
 
-        private string GetIndexName()
+        private IEnumerable<string> GetIndexName()
         {
-            return $"{settings.OpenSearch.LogName}*";
+            yield return $"{settings.OpenSearch.LogName}*";
+            // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+            yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)
@@ -271,7 +273,7 @@ namespace FoxIDs.Logic
             boolQuery = boolQuery.Must(m => m
                 .Term(t => t.TenantName, RouteBinding.TenantName) &&
                     m.Term(t => t.TrackName, RouteBinding.TrackName)  &&
-                    (MustBeExceptionLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest)) &&
+                    MustBeLogType(m, logRequest) && 
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)
@@ -294,6 +296,13 @@ namespace FoxIDs.Logic
             return boolQuery;
         }
 
+        private static QueryContainer MustBeLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest)
+        {
+            return MustBeExceptionLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest) ||
+                        // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+                        m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest))));
+        }
+
         private static QueryContainer MustBeExceptionLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
             (m.Term(t => t.LogType, LogTypes.Warning.ToString()) ||
                 m.Term(t => t.LogType, LogTypes.Error.ToString()) ||
@@ -307,5 +316,28 @@ namespace FoxIDs.Logic
 
         private static QueryContainer MustBeMetricLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
             m.Term(t => t.LogType, LogTypes.Metric.ToString()) && (logRequest.QueryMetrics ? m.MatchAll() : m.MatchNone());
+
+        // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+        private static IEnumerable<string> GetLogTypes(Api.LogRequest logRequest)
+        {
+            if (logRequest.QueryExceptions)
+            {
+                yield return LogTypes.Warning.ToString();
+                yield return LogTypes.Error.ToString();
+                yield return LogTypes.CriticalError.ToString();
+            }
+            if (logRequest.QueryEvents)
+            {
+                yield return LogTypes.Event.ToString();
+            }
+            if (logRequest.QueryTraces)
+            {
+                yield return LogTypes.Trace.ToString();
+            }
+            if (logRequest.QueryMetrics)
+            {
+                yield return LogTypes.Metric.ToString();
+            }
+        }
     }
 }

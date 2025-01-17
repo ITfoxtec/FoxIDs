@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
         {
             if (logRequest.IncludeLogins)
             {
-                foreach(var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Login.ToString()))
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Login.ToString()))
                 {
                     yield return bucketItem;
                 }
@@ -119,7 +119,7 @@ namespace FoxIDs.Logic
         {
             var singleBucketAggregate = aggregations[usageType] as SingleBucketAggregate;
             var bucketAggregate = singleBucketAggregate.Values.First() as BucketAggregate;
-            foreach(DateHistogramBucket bucketItem in bucketAggregate.Items)
+            foreach (DateHistogramBucket bucketItem in bucketAggregate.Items)
             {
                 yield return (usageType, bucketItem);
             }
@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
                 var valueAggregate = bucketItem.Values.First() as ValueAggregate;
-                if(valueAggregate?.Value != null)
+                if (valueAggregate?.Value != null)
                 {
                     count += valueAggregate.Value.Value;
                 }
@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
             }
 
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
-                .Index(GetIndexName())
+                .Index(Indices.Index(GetIndexName()))
                     .Size(0)
                     .Query(q => q
                          .Bool(b => GetQuery(b, tenantName, trackName, queryTimeRange)))
@@ -192,9 +192,11 @@ namespace FoxIDs.Logic
             return response.Aggregations.Values.FirstOrDefault() as FiltersAggregate;
         }
 
-        private string GetIndexName()
+        private IEnumerable<string> GetIndexName()
         {
-            return $"{settings.OpenSearch.LogName}*";
+            yield return $"{settings.OpenSearch.LogName}*";
+            // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+            yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
@@ -203,11 +205,27 @@ namespace FoxIDs.Logic
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
-            boolQuery = boolQuery.Must(m => m.Term(t => t.LogType, LogTypes.Event.ToString()) &&
-                (m.Term(t => t.TenantName, tenantName) || (tenantName.IsNullOrWhiteSpace() ? m.MatchAll() : m.MatchNone())) &&
-                (m.Term(t => t.TrackName, trackName) || (trackName.IsNullOrWhiteSpace() ? m.MatchAll() : m.MatchNone())));
+            if (!tenantName.IsNullOrWhiteSpace() && !trackName.IsNullOrWhiteSpace())
+            {
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && m.Term(t => t.TrackName, trackName) && QueryEventLogType(m));
+            }
+            else if (!tenantName.IsNullOrWhiteSpace())
+            {
+                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName) && QueryEventLogType(m));
+            }
+            else
+            {
+                boolQuery = boolQuery.Must(QueryEventLogType);
+            }
 
             return boolQuery;
+        }
+
+        private static QueryContainer QueryEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m)
+        {
+            return m.Term(t => t.LogType, LogTypes.Event.ToString()) ||
+                // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+                m.Match(ma => ma.Field(f => f.LogType).Query(LogTypes.Event.ToString())); 
         }
 
         private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)

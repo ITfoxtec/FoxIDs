@@ -817,7 +817,7 @@ namespace FoxIDs.Controllers
         {
             if (logoutChoice == LogoutChoice.Logout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.SessionId);
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 
                 if (loginUpParty.DisableSingleLogout)
                 {
@@ -1209,6 +1209,10 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
+                    if (loginUpParty.DeleteRefreshTokenGrantsOnChangePassword)
+                    {
+                        await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByUserIdentifierAsync(sequenceData.UserIdentifier);
+                    }
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException uoex)

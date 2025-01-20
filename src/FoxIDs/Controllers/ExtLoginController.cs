@@ -351,7 +351,7 @@ namespace FoxIDs.Controllers
         {
             if (logoutChoice == LogoutChoice.Logout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.SessionId);
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 
                 if (loginUpParty.DisableSingleLogout)
                 {

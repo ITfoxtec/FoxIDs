@@ -325,7 +325,7 @@ namespace FoxIDs.Logic
             }
             if (!user.Username.IsNullOrEmpty() || !user.Email.IsNullOrEmpty())
             {
-                claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Username ?? user.Email);
+                claims.AddClaim(JwtClaimTypes.PreferredUsername, !user.Username.IsNullOrEmpty() ? user.Username : user.Email);
             }
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, loginUpParty.Name);
             if (!sequenceData.UpPartyProfileName.IsNullOrEmpty())

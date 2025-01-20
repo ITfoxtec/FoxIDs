@@ -97,7 +97,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(oidcUpSequenceData.SessionId);
 
             try
             {

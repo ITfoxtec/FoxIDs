@@ -32,8 +32,11 @@ namespace FoxIDs.Logic
             bool requireMultiFactor = false, bool disableTwoFactorApp = false, bool DisableTwoFactorSms = false, bool DisableTwoFactorEmail = false)
         {
             userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
+            userIdentifier.Email = !userIdentifier.Email.IsNullOrEmpty() ? userIdentifier.Email : null;
             userIdentifier.Phone = userIdentifier.Phone?.Trim();
+            userIdentifier.Phone = !userIdentifier.Phone.IsNullOrEmpty() ? userIdentifier.Phone : null;
             userIdentifier.Username = userIdentifier.Username?.Trim()?.ToLower();
+            userIdentifier.Username = !userIdentifier.Username.IsNullOrEmpty() ? userIdentifier.Username : null;
             logger.ScopeTrace(() => $"Creating user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
             var user = new User
@@ -79,9 +82,9 @@ namespace FoxIDs.Logic
             if (checkUserAndPasswordPolicy)
             {
                 if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
-                    (userIdentifier.Phone != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Phone }), queryAdditionalIds: true)) ||
-                    (userIdentifier.Username != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Username }), queryAdditionalIds: true)) ||
-                    (user.UserId != null && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
+                    (!userIdentifier.Phone.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Phone }), queryAdditionalIds: true)) ||
+                    (!userIdentifier.Username.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Username }), queryAdditionalIds: true)) ||
+                    (!user.UserId.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
                 {
                     throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
                 }

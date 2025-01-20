@@ -30,9 +30,9 @@ namespace FoxIDs.Logic
         private readonly SendSmsLogic sendSmsLogic;
         private readonly SendEmailLogic sendEmailLogic;
         private readonly TrackCacheLogic trackCacheLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, TrackCacheLogic trackCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        {
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, TrackCacheLogic trackCacheLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)        {
             this.settings = settings;
             this.logger = logger;
             this.cacheProvider = cacheProvider;
@@ -44,6 +44,7 @@ namespace FoxIDs.Logic
             this.sendSmsLogic = sendSmsLogic;
             this.sendEmailLogic = sendEmailLogic;
             this.trackCacheLogic = trackCacheLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         #region ConfirmationCode
@@ -114,11 +115,16 @@ namespace FoxIDs.Logic
             return SendCodeAsync(SmsResetPasswordCodeKeyElement, phone, GetSmsSendResetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
         }
 
-        public Task<User> VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword)
+        public async Task<User> VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             phone = phone?.Trim();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
-            return VerifyCodeAsync(SendType.Sms, SmsResetPasswordCodeKeyElement, phone, code, GetSmsSendResetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.Sms, SmsResetPasswordCodeKeyElement, phone, code, GetSmsSendResetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
+            if (deleteRefreshTokenGrants)
+            {
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByPhoneAsync(phone);
+            }
+            return user;
         }
 
         public Task<ConfirmationCodeSendStatus> SendEmailResetPasswordCodeAsync(string email, bool forceNewCode)
@@ -127,11 +133,16 @@ namespace FoxIDs.Logic
             return SendCodeAsync(EmailResetPasswordCodeKeyElement, email, GetEmailSendResetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
         }
 
-        public Task<User> VerifyEmailResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword)
+        public async Task<User> VerifyEmailResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             email = email?.Trim()?.ToLower();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
-            return VerifyCodeAsync(SendType.Email, EmailResetPasswordCodeKeyElement, email, code, GetEmailSendResetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.Email, EmailResetPasswordCodeKeyElement, email, code, GetEmailSendResetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
+            if (deleteRefreshTokenGrants)
+            {
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByEmailAsync(email);
+            }            
+            return user;
         }
 
         private string SmsResetPasswordCodeLogText => "Phone (SMS) reset password code";

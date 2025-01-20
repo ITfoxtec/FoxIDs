@@ -34,6 +34,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_reset_password")]
         public bool DisableResetPassword { get; set; }
 
+        [JsonProperty(PropertyName = "delete_refresh_token_grants_on_change_password")]
+        public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; }

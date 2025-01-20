@@ -82,6 +82,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool DisableResetPassword { get; set; }
 
         /// <summary>
+        /// Default false.
+        /// </summary>
+        [Display(Name = "Delete refresh tokens if a user change password")]
+        public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
+
+        /// <summary>
         /// Claim transforms.
         /// </summary>
         [ValidateComplexType]

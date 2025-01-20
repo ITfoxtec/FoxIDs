@@ -370,7 +370,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, resetPassword.ConfirmationCode, resetPassword.NewPassword);
+                    var user = await accountActionLogic.VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, resetPassword.ConfirmationCode, resetPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException uex)
@@ -522,7 +522,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailResetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword);
+                    var user = await accountActionLogic.VerifyEmailResetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException uex)

@@ -46,6 +46,8 @@ namespace FoxIDs.Models.Api
         [Required]
         public bool DisableResetPassword { get; set; } = false;
 
+        public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
+
         /// <summary>
         /// Default if required.
         /// </summary>

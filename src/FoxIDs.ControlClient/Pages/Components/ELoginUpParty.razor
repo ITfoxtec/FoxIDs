@@ -99,6 +99,8 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
                 @if (loginUpParty.ShowAdvanced)
                 {
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
+
                     <div class="active-group active">
                         <div class="card">
                             <div class="card-body pb-0">

@@ -83,41 +83,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        private bool UserAndLoginUpPartySupportTwoFactorApp(User user, LoginUpParty loginUpParty)
-        {
-            if (!user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        private bool SupportTwoFactorApp(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp ? true : false;
 
-        private bool UserAndLoginUpPartySupportTwoFactorSms(User user, LoginUpParty loginUpParty)
-        {
-            if (!user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        private bool SupportTwoFactorSms(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
 
-        private bool UserAndLoginUpPartySupportTwoFactorEmail(User user, LoginUpParty loginUpParty)
-        {
-            if (!user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        private bool SupportTwoFactorEmail(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
@@ -130,6 +100,9 @@ namespace FoxIDs.Logic
             sequenceData.Phone = user.Phone;
             sequenceData.PhoneVerified = user.PhoneVerified;
             sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
+            sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
+            sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
+            sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
             if (fromStep <= LoginResponseSequenceSteps.FromPhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
             {
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -142,12 +115,12 @@ namespace FoxIDs.Logic
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaAllAndAppStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
-                if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
+                if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && sequenceData.SupportTwoFactorSms)
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.SmsTwoFactor, includeSequence: true).ToRedirectResult();
                 }
-                else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
+                else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && sequenceData.SupportTwoFactorEmail)
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.EmailTwoFactor, includeSequence: true).ToRedirectResult();
@@ -156,17 +129,17 @@ namespace FoxIDs.Logic
                 {
                     if (RegisterTwoFactor(user))
                     {
-                        if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
+                        if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && sequenceData.SupportTwoFactorSms)
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.SmsTwoFactor, includeSequence: true).ToRedirectResult();
                         }
-                        else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
+                        else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && sequenceData.SupportTwoFactorEmail)
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.EmailTwoFactor, includeSequence: true).ToRedirectResult();
                         }
-                        else if(UserAndLoginUpPartySupportTwoFactorApp(user, loginUpParty))
+                        else if(sequenceData.SupportTwoFactorApp)
                         {
                             sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);

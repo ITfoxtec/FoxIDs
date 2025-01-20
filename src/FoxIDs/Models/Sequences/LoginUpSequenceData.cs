@@ -55,5 +55,13 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "frc")]
         public string TwoFactorAppRecoveryCode { get; set; }
+
+        [JsonProperty(PropertyName = "fsa")]
+        public bool SupportTwoFactorApp { get; set; }
+
+        [JsonProperty(PropertyName = "fss")]
+        public bool SupportTwoFactorSms { get; set; }
+        [JsonProperty(PropertyName = "fse")]
+        public bool SupportTwoFactorEmail { get; set; }
     }
 }

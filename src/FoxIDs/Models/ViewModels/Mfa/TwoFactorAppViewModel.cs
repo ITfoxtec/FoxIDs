@@ -6,9 +6,9 @@ namespace FoxIDs.Models.ViewModels
     {
         public string SequenceString { get; set; }
 
-        public bool ShowTwoFactorSmsAlternative { get; set; }
+        public bool SupportTwoFactorSms { get; set; }
 
-        public bool ShowTwoFactorEmailAlternative { get; set; }
+        public bool SupportTwoFactorEmail { get; set; }
 
         [Display(Name = "Code")]
         [Required]

@@ -4,6 +4,12 @@ namespace FoxIDs.Models.ViewModels
 {
     public class RegisterTwoFactorAppViewModel : ViewModel
     {
+        public string SequenceString { get; set; }
+
+        public bool SupportTwoFactorSms { get; set; }
+
+        public bool SupportTwoFactorEmail { get; set; }
+
         public string QrCodeSetupImageUrl { get; set; }
 
         public string ManualSetupKey { get; set; }

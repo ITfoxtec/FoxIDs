@@ -45,6 +45,10 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start two factor registration.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorApp)
+                {
+                    throw new InvalidOperationException($"The app two-factor is not supported / enabled.");
+                }
                 loginPageLogic.CheckUpParty(sequenceData);
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.DoRegistration)
                 {
@@ -65,7 +69,9 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl,
-                    ManualSetupKey = twoFactorSetupInfo.ManualSetupKey
+                    ManualSetupKey = twoFactorSetupInfo.ManualSetupKey,
+                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
+                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
                 });
             }
             catch (Exception ex)
@@ -81,6 +87,10 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorApp)
+                {
+                    throw new InvalidOperationException($"The app two-factor is not supported / enabled.");
+                }
                 loginPageLogic.CheckUpParty(sequenceData);
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.DoRegistration)
                 {
@@ -95,6 +105,8 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
+                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
                     return View(registerTwoFactor);
                 };
 
@@ -148,6 +160,10 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorApp)
+                {
+                    throw new InvalidOperationException($"The app two-factor is not supported / enabled.");
+                }
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.RegisteredShowRecoveryCode)
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.RegisteredShowRecoveryCode}'.");
@@ -181,6 +197,10 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start two factor login.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorApp)
+                {
+                    throw new InvalidOperationException($"The app two-factor is not supported / enabled.");
+                }
                 loginPageLogic.CheckUpParty(sequenceData);
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.Validate)
                 {
@@ -196,6 +216,8 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
+                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
+                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
                 });
             }
             catch (Exception ex)
@@ -211,6 +233,10 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorApp)
+                {
+                    throw new InvalidOperationException($"The app two-factor is not supported / enabled.");
+                }
                 loginPageLogic.CheckUpParty(sequenceData);
                 if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.Validate)
                 {
@@ -225,6 +251,8 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
+                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
                     return View(registerTwoFactor);
                 };
 

@@ -23,10 +23,10 @@
                 <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
             </div>
 
-            @if (Model.ShowTwoFactorSmsAlternative || Model.ShowTwoFactorEmailAlternative) {
+            @if (Model.SupportTwoFactorSms || Model.SupportTwoFactorEmail) {
                 <div class="form-group create-user-group">
                     @Localizer["Try another method?"]
-                    @if(Model.ShowTwoFactorSmsAlternative && Model.ShowTwoFactorEmailAlternative) 
+                    @if(Model.SupportTwoFactorSms && Model.SupportTwoFactorEmail) 
                     {
                         <span>
                             @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
@@ -34,14 +34,14 @@
                                      "../@Constants.Endpoints.EmaiTwoFactorl/_@Model.SequenceString", "link email-2fa")
                         </span>
                     }
-                    else @if (Model.ShowTwoFactorSmsAlternative)
+                    else @if (Model.SupportTwoFactorSms)
                     {
                         <span>
                             @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
                                      "../@Constants.Endpoints.SmsTwoFactor/_@Model.SequenceString", "link sms-2fa")
                         </span>
                     }
-                    else @if (Model.ShowTwoFactorEmailAlternative)
+                    else @if (Model.SupportTwoFactorEmail)
                     {
                         <span>
                             @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",

@@ -64,8 +64,12 @@ namespace FoxIDs.Logic
                     return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
+                case FailingLoginTypes.TwoFactorSmsCode:
+                    return "SMS two-factor code";
+                case FailingLoginTypes.TwoFactorEmailCode:
+                    return "Email two-factor code";
                 case FailingLoginTypes.TwoFactorAuthenticator:
-                    return "Two-factor authenticator";
+                    return "Two-factor authenticator app";
                 default:
                     throw new NotImplementedException();
             }

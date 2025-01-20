@@ -63,6 +63,18 @@ namespace FoxIDs.Models.Config
         public int ConfirmationCodeSmsLifetime { get; set; } = 3600; // 1 hours
 
         /// <summary>
+        /// Two-factor code lifetime in seconds, send in email.
+        /// </summary>
+        [Required]
+        public int TwoFactorCodeEmailLifetime { get; set; } = 1200; // 20 minutes
+
+        /// <summary>
+        /// Two-factor code lifetime in seconds, send in SMS.
+        /// </summary>
+        [Required]
+        public int TwoFactorCodeSmsLifetime { get; set; } = 900; // 15 minutes
+
+        /// <summary>
         /// Authentication method update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.
         /// </summary>
         [Required]

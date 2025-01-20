@@ -25,8 +25,10 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorLogic accountTwoFactorLogic;
+        private readonly AccountActionLogic accountActionLogic;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic, AccountActionLogic accountActionLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -36,13 +38,15 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountLogic = accountLogic;
             this.accountTwoFactorLogic = accountTwoFactorLogic;
+            this.accountActionLogic = accountActionLogic;
+            this.planCacheLogic = planCacheLogic;
         }
 
         public async Task<IActionResult> AppTwoFactorReg()
         {
             try
             {
-                logger.ScopeTrace(() => "Start two factor registration.");
+                logger.ScopeTrace(() => "Start app two-factor registration.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 if (!sequenceData.SupportTwoFactorApp)
@@ -77,7 +81,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Start two factor registration failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Start app two-factor registration failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -112,7 +116,7 @@ namespace FoxIDs.Controllers
                     return View(registerTwoFactor);
                 };
 
-                logger.ScopeTrace(() => "Two factor registration post.");
+                logger.ScopeTrace(() => "App two-factor registration post.");
 
                 if (!ModelState.IsValid)
                 {
@@ -151,7 +155,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Two factor registration validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"App two-factor registration validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -180,7 +184,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"The {nameof(AppTwoFactorRecCode)} method is called with empty recovery code.");
                 }
 
-                logger.ScopeTrace(() => "Two factor recovery code post.");
+                logger.ScopeTrace(() => "App two-factor recovery code post.");
 
                 var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
@@ -188,7 +192,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Two factor registration and recovery code failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"App two-factor registration and recovery code failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -196,7 +200,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => "Start two factor login.");
+                logger.ScopeTrace(() => "Start app two-factor.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 if (!sequenceData.SupportTwoFactorApp)
@@ -225,7 +229,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Two factor login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"App two-factor login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -260,7 +264,7 @@ namespace FoxIDs.Controllers
                     return View(registerTwoFactor);
                 };
 
-                logger.ScopeTrace(() => "Two factor login post.");
+                logger.ScopeTrace(() => "App two-factor login post.");
 
                 if (!ModelState.IsValid)
                 {
@@ -317,7 +321,127 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Two factor login validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"App two-factor login validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        public async Task<IActionResult> SmsTwoFactor(bool newCode = false)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start SMS two factor.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorSms)
+                {
+                    throw new InvalidOperationException($"The SMS two-factor is not supported / enabled.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
+                _ = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, true);
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                return View(new TwoFactorSmsViewModel
+                {
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    SupportTwoFactorApp = sequenceData.SupportTwoFactorApp,
+                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
+                    ForceNewCode = newCode,
+                    Phone = sequenceData.Phone
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"SMS two-factor login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SmsTwoFactor(TwoFactorSmsViewModel registerTwoFactor)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorSms)
+                {
+                    throw new InvalidOperationException($"The SMS two-factor is not supported / enabled.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableSms)
+                    {
+                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                Func<IActionResult> viewError = () =>
+                {
+                    registerTwoFactor.SequenceString = SequenceString;
+                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
+                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
+                    registerTwoFactor.Css = loginUpParty.Css;
+                    registerTwoFactor.SupportTwoFactorApp = sequenceData.SupportTwoFactorApp;
+                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
+                    return View(registerTwoFactor);
+                };
+
+                logger.ScopeTrace(() => "SMS two-factor login post.");
+
+                if (!ModelState.IsValid)
+                {
+                    return viewError();
+                }
+
+                try
+                {
+                    var user = await accountActionLogic.VerifyPhoneConfirmationCodeSmsAsync(sequenceData.Phone, registerTwoFactor.Code);
+                    var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Sms, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                }
+                catch (CodeNotExistsException cneex)
+                {
+                    logger.ScopeTrace(() => cneex.Message);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Please use the new two-factor code just sent to your phone."]);
+                }
+                catch (InvalidCodeException pcex)
+                {
+                    logger.ScopeTrace(() => pcex.Message);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
+
+                return viewError();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"SMS two-factor login validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

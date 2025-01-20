@@ -145,12 +145,12 @@ namespace FoxIDs.Logic
                 if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorSms, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.SmsTwoFactor, includeSequence: true).ToRedirectResult();
                 }
                 else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
                 {
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorEmail, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.EmailTwoFactor, includeSequence: true).ToRedirectResult();
                 }
                 else
                 {
@@ -159,18 +159,18 @@ namespace FoxIDs.Logic
                         if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorSms, includeSequence: true).ToRedirectResult();
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.SmsTwoFactor, includeSequence: true).ToRedirectResult();
                         }
                         else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorEmail, includeSequence: true).ToRedirectResult();
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.EmailTwoFactor, includeSequence: true).ToRedirectResult();
                         }
                         else if(UserAndLoginUpPartySupportTwoFactorApp(user, loginUpParty))
                         {
                             sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactorApp, includeSequence: true).ToRedirectResult();
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.AppTwoFactorRegister, includeSequence: true).ToRedirectResult();
                         }
                     }
                     else
@@ -194,7 +194,7 @@ namespace FoxIDs.Logic
                         }
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorApp, includeSequence: true).ToRedirectResult();
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.AppTwoFactor, includeSequence: true).ToRedirectResult();
                     }
                 }
             }

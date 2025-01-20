@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class RegisterAppTwoFactorViewModel : ViewModel
+    public class RegisterTwoFactorAppViewModel : ViewModel
     {
         public string QrCodeSetupImageUrl { get; set; }
 

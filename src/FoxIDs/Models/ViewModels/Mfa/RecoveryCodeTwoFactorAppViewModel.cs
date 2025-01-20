@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class RecoveryCodeAppTwoFactorViewModel : ViewModel
+    public class RecoveryCodeTwoFactorAppViewModel : ViewModel
     {
         public string SequenceString { get; set; }
 

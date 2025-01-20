@@ -85,10 +85,10 @@ namespace FoxIDs
             public const string EmailResetPassword = "emailresetpassword";
             public const string PhoneConfirmation = "phoneconfirmation";
             public const string EmailConfirmation = "emailconfirmation";
-            public const string RegisterTwoFactorApp = "regtwofactorapp";
-            public const string TwoFactorApp = "twofactorapp";
-            public const string TwoFactorSms = "twofactorsms";
-            public const string TwoFactorEmail = "twofactoremail";
+            public const string AppTwoFactorRegister = "apptwofactorreg";
+            public const string AppTwoFactor = "apptwofactor";
+            public const string SmsTwoFactor = "smstwofactor";
+            public const string EmailTwoFactor = "emailtwofactor";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";

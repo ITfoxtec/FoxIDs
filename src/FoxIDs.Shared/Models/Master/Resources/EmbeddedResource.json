@@ -581,11 +581,11 @@
       "id": 139
     },
     {
-      "name": "<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
+      "name": "<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>",
       "id": 140
     },
     {
-      "name": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
+      "name": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>",
       "id": 141
     },
     {
@@ -631,6 +631,10 @@
     {
       "name": "Please use the new confirmation code just sent to your phone.",
       "id": 152
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>",
+      "id": 153
     }
   ],
   "resources": [
@@ -19019,7 +19023,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>",
           "edit_level": 100
         }
       ]
@@ -19029,7 +19033,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>",
           "edit_level": 100
         }
       ]
@@ -19140,6 +19144,16 @@
         {
           "culture": "en",
           "value": "Please use the new confirmation code just sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 153,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>",
           "edit_level": 100
         }
       ]

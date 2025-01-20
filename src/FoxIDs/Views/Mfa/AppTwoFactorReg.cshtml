@@ -51,20 +51,17 @@
                     {
                         @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
                                  $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
-                        ;
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"));
                     }
                     else @if (Model.SupportTwoFactorSms)
                     {
-                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"))
-                        ;
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>",
+                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"));
                     }
                     else @if (Model.SupportTwoFactorEmail)
                     {
-                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
-                        ;
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"));
                     }
                 </div>
             }

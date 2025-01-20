@@ -571,6 +571,22 @@
     {
       "name": "Invalid phone confirmation code, please try one more time.",
       "id": 137
+    },
+    {
+      "name": "Try another method?",
+      "id": 138
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+      "id": 139
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
+      "id": 140
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
+      "id": 141
     }
   ],
   "resources": [
@@ -18931,6 +18947,46 @@
           "culture": "uk",
           "value": "Неправильний код підтвердження телефону, спробуйте ще раз.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 138,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Try another method?",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 139,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
+          "edit_level": 100
         }
       ]
     }

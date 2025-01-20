@@ -65,6 +65,7 @@ namespace FoxIDs.Controllers
 
                 return View(new RegisterTwoFactorAppViewModel
                 {
+                    SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
@@ -102,6 +103,7 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
+                    registerTwoFactor.SequenceString = SequenceString;
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
@@ -127,10 +129,10 @@ namespace FoxIDs.Controllers
 
                     return View(nameof(AppTwoFactorRecCode), new RecoveryCodeTwoFactorAppViewModel
                     {
+                        SequenceString = SequenceString,
                         Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
-                        SequenceString = SequenceString,
                         RecoveryCode = sequenceData.TwoFactorAppRecoveryCode
                     });
                 }
@@ -213,6 +215,7 @@ namespace FoxIDs.Controllers
 
                 return View(new TwoFactorAppViewModel
                 {
+                    SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
@@ -248,6 +251,7 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
+                    registerTwoFactor.SequenceString = SequenceString;
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;

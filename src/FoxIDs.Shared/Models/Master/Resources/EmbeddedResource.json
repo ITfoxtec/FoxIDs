@@ -623,6 +623,14 @@
     {
       "name": "A two-factor code has just been sent to your phone.",
       "id": 150
+    },
+    {
+      "name": "Please use the new two-factor code just sent to your phone.",
+      "id": 151
+    },
+    {
+      "name": "Please use the new confirmation code just sent to your phone.",
+      "id": 152
     }
   ],
   "resources": [
@@ -19112,6 +19120,26 @@
         {
           "culture": "en",
           "value": "A two-factor code has just been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 151,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use the new two-factor code just sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 152,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use the new confirmation code just sent to your phone.",
           "edit_level": 100
         }
       ]

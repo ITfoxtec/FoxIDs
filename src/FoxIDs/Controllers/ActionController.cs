@@ -214,7 +214,7 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaStep);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaAllAndAppStep);
                 }
                 catch (CodeNotExistsException cneex)
                 {

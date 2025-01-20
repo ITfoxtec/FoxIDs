@@ -82,6 +82,12 @@ namespace FoxIDs.Client.Models.ViewModels
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
             }
 
+            if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
+            {
+                results.Add(new ValidationResult($"Either two-factor (2FA) with App, SMS or email should be supported if multi-factor (2FA/MFA) is require.",
+                    [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireMultiFactor)]));
+            }
+
             return results;
         }
     }

@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
             this.accountTwoFactorLogic = accountTwoFactorLogic;
         }
 
-        public async Task<IActionResult> RegTwoFactor()
+        public async Task<IActionResult> RegAppTwoFactor()
         {
             try
             {
@@ -59,7 +59,7 @@ namespace FoxIDs.Controllers
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-                return View(new RegisterTwoFactorViewModel
+                return View(new RegisterAppTwoFactorViewModel
                 {
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegTwoFactor(RegisterTwoFactorViewModel registerTwoFactor)
+        public async Task<IActionResult> RegAppTwoFactor(RegisterAppTwoFactorViewModel registerTwoFactor)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace FoxIDs.Controllers
                     sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorLogic.CreateRecoveryCode();
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-                    return View(nameof(RecCodeTwoFactor), new RecoveryCodeTwoFactorViewModel
+                    return View(nameof(RecCodeAppTwoFactor), new RecoveryCodeAppTwoFactorViewModel
                     {
                         Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                         IconUrl = loginUpParty.IconUrl,
@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
                 catch (InvalidAppCodeException acex)
                 {
                     logger.ScopeTrace(() => acex.Message, triggerEvent: true);
-                    ModelState.AddModelError(nameof(RegisterTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
+                    ModelState.AddModelError(nameof(RegisterAppTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -143,7 +143,7 @@ namespace FoxIDs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RecCodeTwoFactor(RecoveryCodeTwoFactorViewModel recoveryCodeTwoFactor)
+        public async Task<IActionResult> RecCodeAppTwoFactor(RecoveryCodeAppTwoFactorViewModel recoveryCodeTwoFactor)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace FoxIDs.Controllers
 
                 if(sequenceData.TwoFactorAppRecoveryCode.IsNullOrEmpty())
                 {
-                    throw new InvalidOperationException($"The {nameof(RecCodeTwoFactor)} method is called with empty recovery code.");
+                    throw new InvalidOperationException($"The {nameof(RecCodeAppTwoFactor)} method is called with empty recovery code.");
                 }
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
@@ -174,7 +174,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public async Task<IActionResult> TwoFactor()
+        public async Task<IActionResult> AppTwoFactor()
         {
             try
             {
@@ -191,7 +191,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new TwoFactorViewModel
+                return View(new AppTwoFactorViewModel
                 {
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
@@ -206,7 +206,7 @@ namespace FoxIDs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> TwoFactor(TwoFactorViewModel registerTwoFactor)
+        public async Task<IActionResult> AppTwoFactor(AppTwoFactorViewModel registerTwoFactor)
         {
             try
             {
@@ -244,7 +244,7 @@ namespace FoxIDs.Controllers
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactorApp, includeSequence: true).ToRedirectResult();
                     }
                     catch (InvalidRecoveryCodeException rcex)
                     {
@@ -272,7 +272,7 @@ namespace FoxIDs.Controllers
                     catch (InvalidAppCodeException acex)
                     {
                         logger.ScopeTrace(() => acex.Message, triggerEvent: true);
-                        ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
+                        ModelState.AddModelError(nameof(AppTwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
                     }
                     catch (UserObservationPeriodException uoex)
                     {

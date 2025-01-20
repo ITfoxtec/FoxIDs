@@ -57,18 +57,66 @@ namespace FoxIDs.Logic
         {
             if (user.RequireMultiFactor)
             {
-                return true;
+                return UserAndLoginUpPartySupportMultiFactor(user, loginUpParty);
             }
             else if (loginUpParty.RequireTwoFactor)
             {
-                return true;
+                return UserAndLoginUpPartySupportMultiFactor(user, loginUpParty);
             }
             else if (sequenceData.Acr?.Where(v => v.Equals(Constants.Oidc.Acr.Mfa, StringComparison.Ordinal))?.Count() > 0)
             {
-                return true;
+                return UserAndLoginUpPartySupportMultiFactor(user, loginUpParty);
             }
 
             return false;
+        }
+
+        private bool UserAndLoginUpPartySupportMultiFactor(User user, LoginUpParty loginUpParty)
+        {
+            if(!(user.DisableTwoFactorApp && user.DisableTwoFactorSms && user.DisableTwoFactorEmail) && !(loginUpParty.DisableTwoFactorApp && loginUpParty.DisableTwoFactorSms && loginUpParty.DisableTwoFactorEmail))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool UserAndLoginUpPartySupportTwoFactorApp(User user, LoginUpParty loginUpParty)
+        {
+            if (!user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool UserAndLoginUpPartySupportTwoFactorSms(User user, LoginUpParty loginUpParty)
+        {
+            if (!user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool UserAndLoginUpPartySupportTwoFactorEmail(User user, LoginUpParty loginUpParty)
+        {
+            if (!user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
@@ -92,42 +140,66 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
             }
-            else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
+            else if (fromStep <= LoginResponseSequenceSteps.FromMfaAllAndAppStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
-                if (RegisterTwoFactor(user))
+                if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
                 {
-                    sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorSms, includeSequence: true).ToRedirectResult();
+                }
+                else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorEmail, includeSequence: true).ToRedirectResult();
                 }
                 else
                 {
-                    if (!user.TwoFactorAppSecret.IsNullOrWhiteSpace())
+                    if (RegisterTwoFactor(user))
                     {
-                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
-                    }
-                    else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
-                    {
-                        var externalSecretLogic = serviceProvider.GetService<ExternalSecretLogic>();
-                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret = await externalSecretLogic.GetExternalSecretAsync(user.TwoFactorAppSecretExternalName);
-                        if (sequenceData.TwoFactorAppSecret.IsNullOrWhiteSpace())
+                        if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && UserAndLoginUpPartySupportTwoFactorSms(user, loginUpParty))
                         {
-                            throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(user.TwoFactorAppSecretExternalName)} '{user.TwoFactorAppSecretExternalName}'.");
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorSms, includeSequence: true).ToRedirectResult();
                         }
-                        await externalSecretLogic.DeleteExternalSecretAsync(user.TwoFactorAppSecretExternalName);
-                        user.TwoFactorAppSecretExternalName = null;
-                        var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
-                        await tenantDataRepository.SaveAsync(user);
+                        else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && UserAndLoginUpPartySupportTwoFactorEmail(user, loginUpParty))
+                        {
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorEmail, includeSequence: true).ToRedirectResult();
+                        }
+                        else if(UserAndLoginUpPartySupportTwoFactorApp(user, loginUpParty))
+                        {
+                            sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactorApp, includeSequence: true).ToRedirectResult();
+                        }
                     }
-                    sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
+                    else
+                    {
+                        if (!user.TwoFactorAppSecret.IsNullOrWhiteSpace())
+                        {
+                            sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
+                        }
+                        else if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)
+                        {
+                            var externalSecretLogic = serviceProvider.GetService<ExternalSecretLogic>();
+                            sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret = await externalSecretLogic.GetExternalSecretAsync(user.TwoFactorAppSecretExternalName);
+                            if (sequenceData.TwoFactorAppSecret.IsNullOrWhiteSpace())
+                            {
+                                throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(user.TwoFactorAppSecretExternalName)} '{user.TwoFactorAppSecretExternalName}'.");
+                            }
+                            await externalSecretLogic.DeleteExternalSecretAsync(user.TwoFactorAppSecretExternalName);
+                            user.TwoFactorAppSecretExternalName = null;
+                            var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
+                            await tenantDataRepository.SaveAsync(user);
+                        }
+                        sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactorApp, includeSequence: true).ToRedirectResult();
+                    }
                 }
             }
-            else
-            {
-                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
-            }
+
+            return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
         }
 
         private async Task<bool> PlanEnabledSmsAsync()

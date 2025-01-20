@@ -96,6 +96,12 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
 
+            if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
+            {
+                results.Add(new ValidationResult($"Either the field {nameof(DisableTwoFactorApp)} or the field {nameof(DisableTwoFactorSms)} or the field {nameof(DisableTwoFactorEmail)} should be False if the field {nameof(RequireTwoFactor)} is True.",
+                    [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
+            }
+
             return results;
         }
     }

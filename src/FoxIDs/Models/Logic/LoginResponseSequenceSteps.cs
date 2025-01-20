@@ -4,7 +4,9 @@
     {
         FromPhoneVerificationStep = 10,
         FromEmailVerificationStep = 20, 
-        FromMfaStep = 30,
+        FromMfaSmsStep = 31,
+        FromMfaEmailStep = 31,
+        FromMfaAllAndAppStep = 35,
         FromLoginResponseStep = 40
     }
 }

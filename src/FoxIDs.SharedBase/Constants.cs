@@ -85,8 +85,10 @@ namespace FoxIDs
             public const string EmailResetPassword = "emailresetpassword";
             public const string PhoneConfirmation = "phoneconfirmation";
             public const string EmailConfirmation = "emailconfirmation";
-            public const string RegisterTwoFactor = "regtwofactor";
-            public const string TwoFactor = "twofactor";
+            public const string RegisterTwoFactorApp = "regtwofactorapp";
+            public const string TwoFactorApp = "twofactorapp";
+            public const string TwoFactorSms = "twofactorsms";
+            public const string TwoFactorEmail = "twofactoremail";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
@@ -220,7 +222,15 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
-            }    
+            }
+
+            public static class IndexName
+            {
+                public const string Errors = "errors";
+                public const string Events = "events";
+                public const string Traces = "traces";
+                public const string Metrics = "metrics";
+            }
         }
 
         public static class Models

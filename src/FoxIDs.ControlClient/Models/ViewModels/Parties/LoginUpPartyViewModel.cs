@@ -161,10 +161,18 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+
             if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
             {
                 results.Add(new ValidationResult($"At lease one user identifier 'email', 'phone' or 'username' should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
+
+            if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
+            {
+                results.Add(new ValidationResult($"Either two-factor (2FA) with App, SMS or email should be supported if two-factor is require.",
+                    [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
+            }
+
             return results;
         }
     }

@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model AppTwoFactorViewModel
+
+@{
+    ViewData["Title"] = Localizer["Two-factor authentication (2FA)"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container name-two-factor">
+    <div class="col-md page-content">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="info-message-sub">@Localizer["Enter your authenticator app code or recovery code."]</div>
+            <div class="form-group active-group">
+                <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />
+                <label asp-for="AppCode" class="label-control"></label>
+                <span asp-validation-for="AppCode"></span>
+            </div>
+
+            <div class="form-group button-group">
+                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
+            </div>
+
+            @if (Model.ShowTwoFactorSmsAlternative || Model.ShowTwoFactorEmailAlternative) {
+                <div class="form-group create-user-group">
+                    @Localizer["Try another method?"]
+                    @if(Model.ShowTwoFactorSmsAlternative && Model.ShowTwoFactorEmailAlternative) 
+                    {
+                        <span>
+                            @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+                                     "../@Constants.Endpoints.SmsTwoFactor/_@Model.SequenceString", "link sms-2fa",
+                                     "../@Constants.Endpoints.EmaiTwoFactorl/_@Model.SequenceString", "link email-2fa")
+                        </span>
+                    }
+                    else @if (Model.ShowTwoFactorSmsAlternative)
+                    {
+                        <span>
+                            @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
+                                     "../@Constants.Endpoints.SmsTwoFactor/_@Model.SequenceString", "link sms-2fa")
+                        </span>
+                    }
+                    else @if (Model.ShowTwoFactorEmailAlternative)
+                    {
+                        <span>
+                            @Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
+                                     "../@Constants.Endpoints.EmaiTwoFactorl/_@Model.SequenceString", "link email-2fa")
+                        </span>
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

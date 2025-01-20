@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model RecoveryCodeTwoFactorViewModel
+@model RecoveryCodeAppTwoFactorViewModel
 
 @{
     ViewData["Title"] = Localizer["Two-factor authentication (2FA)"];
@@ -10,7 +10,7 @@
 
 <div class="row page-container name-rec-code-two-factor">
     <div class="col-md page-content">
-        <form method="post" action="../../@nameof(FoxIDs.Controllers.MfaController.RecCodeTwoFactor).ToLower()/_@Model.SequenceString">
+        <form method="post" action="../../@nameof(FoxIDs.Controllers.MfaController.RecCodeAppTwoFactor).ToLower()/_@Model.SequenceString">
             @Html.AntiForgeryToken()
             <div class="info-message">
                 @Localizer["Two-factor authentication has been enabled for your account."]

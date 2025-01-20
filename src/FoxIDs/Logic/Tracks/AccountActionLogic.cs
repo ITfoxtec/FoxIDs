@@ -194,10 +194,10 @@ namespace FoxIDs.Logic
             return VerifyCodeAsync(SendType.TwoFactorSms, SmsTwoFactorCodeKeyElement, phone, code, GetSmsSendTwoFactorCodeAction(), null, GetTwoFactorConfirmationCodeSmsAction(), SmsTwoFactorCodeLogText);
         }
 
-        public Task SendEmailTwoFactorCodeAsync(string email, bool forceNewCode)
+        public Task SendEmailTwoFactorCodeAsync(string email)
         {
             email = email?.Trim()?.ToLower();
-            return SendCodeAsync(EmailTwoFactorCodeKeyElement, email, GetEmailSendTwoFactorCodeAction(), forceNewCode, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText);
+            return SendCodeAsync(EmailTwoFactorCodeKeyElement, email, GetEmailSendTwoFactorCodeAction(), true, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText);
         }
 
         public Task<User> VerifyEmailTwoFactorCodeAsync(string email, string code)

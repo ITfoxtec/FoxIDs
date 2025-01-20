@@ -444,5 +444,125 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"SMS two-factor login validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
+
+        public async Task<IActionResult> EmailTwoFactor(bool newCode = false)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start email two factor.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorEmail)
+                {
+                    throw new InvalidOperationException($"The email two-factor is not supported / enabled.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableEmailTwoFactor)
+                    {
+                        throw new Exception($"Email is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
+                await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                return View(new TwoFactorEmailViewModel
+                {
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    SupportTwoFactorApp = sequenceData.SupportTwoFactorApp,
+                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
+                    ForceNewCode = newCode,
+                    Email = sequenceData.Email
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Email two-factor login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailTwoFactor(TwoFactorEmailViewModel registerTwoFactor)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.SupportTwoFactorEmail)
+                {
+                    throw new InvalidOperationException($"The email two-factor is not supported / enabled.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableEmailTwoFactor)
+                    {
+                        throw new Exception($"Email is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                Func<IActionResult> viewError = () =>
+                {
+                    registerTwoFactor.SequenceString = SequenceString;
+                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
+                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
+                    registerTwoFactor.Css = loginUpParty.Css;
+                    registerTwoFactor.SupportTwoFactorApp = sequenceData.SupportTwoFactorApp;
+                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
+                    return View(registerTwoFactor);
+                };
+
+                logger.ScopeTrace(() => "Email two-factor login post.");
+
+                if (!ModelState.IsValid)
+                {
+                    return viewError();
+                }
+
+                try
+                {
+                    var user = await accountActionLogic.VerifyEmailTwoFactorCodeAsync(sequenceData.Email, registerTwoFactor.Code);
+                    var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Email, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                }
+                catch (CodeNotExistsException cneex)
+                {
+                    logger.ScopeTrace(() => cneex.Message);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Please use the new two-factor code just sent to your email."]);
+                }
+                catch (InvalidCodeException pcex)
+                {
+                    logger.ScopeTrace(() => pcex.Message);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
+
+                return viewError();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Email two-factor login validation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
     }
 }

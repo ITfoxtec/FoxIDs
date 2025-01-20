@@ -61,6 +61,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_sms")]
         public bool EnableSms { get; set; }
 
+        [JsonProperty(PropertyName = "enable_email_two_factor")]
+        public bool EnableEmailTwoFactor { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();

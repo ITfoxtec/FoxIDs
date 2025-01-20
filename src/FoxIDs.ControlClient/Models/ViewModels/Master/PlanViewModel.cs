@@ -31,6 +31,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "SMS")]
         public bool EnableSms { get; set; }
 
+        [Display(Name = "Email two-factor")]
+        public bool EnableEmailTwoFactor { get; set; }
+
         [Required]
         [Display(Name = "Total tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();

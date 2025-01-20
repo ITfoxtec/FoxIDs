@@ -8,7 +8,7 @@
 
 <h1 class="heading">@ViewData["Title"]</h1>
 
-<div class="row page-container name-reg-two-factor">
+<div class="row page-container name-reg-two-factor app-two-factor">
     <div class="col-md page-content">
         <form method="post">
             <input type="hidden" asp-for="QrCodeSetupImageUrl" autocomplete="off" />
@@ -45,25 +45,25 @@
 
             @if (Model.SupportTwoFactorSms || Model.SupportTwoFactorEmail)
             {
-                <div class="form-group create-user-group">
+                <div class="form-group button-group another-two-factor-group">
                     @Localizer["Try another method?"]
                     @if (Model.SupportTwoFactorSms && Model.SupportTwoFactorEmail)
                     {
                         @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-2fa",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-2fa"))
+                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
                         ;
                     }
                     else @if (Model.SupportTwoFactorSms)
                     {
-                        @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-2fa"))
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
+                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"))
                         ;
                     }
                     else @if (Model.SupportTwoFactorEmail)
                     {
-                        @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-2fa"))
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
                         ;
                     }
                 </div>

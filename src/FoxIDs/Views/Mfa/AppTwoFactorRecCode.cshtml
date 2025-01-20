@@ -8,7 +8,7 @@
 
 <h1 class="heading">@ViewData["Title"]</h1>
 
-<div class="row page-container name-rec-code-two-factor">
+<div class="row page-container name-rec-code-two-factor app-two-factor">
     <div class="col-md page-content">
         <form method="post" action="../../@nameof(FoxIDs.Controllers.MfaController.AppTwoFactorRecCode).ToLower()/_@Model.SequenceString">
             @Html.AntiForgeryToken()

@@ -8,12 +8,12 @@
 
 <h1 class="heading">@ViewData["Title"]</h1>
 
-<div class="row page-container name-two-factor">
+<div class="row page-container sms-two-factor">
     <div class="col-md page-content">
         <form method="post">
             <input type="hidden" asp-for="ForceNewCode" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="info-message-sub">@(Model.ForceNewCode ? Localizer["A two-factor code has just been sent to your phone."] : Localizer["A new two-factor code has been sent to your phone."])</div>
+            <div class="info-message-sub">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your phone."] : Localizer["A two-factor code has just been sent to your phone."])</div>
             <input type="hidden" asp-for="Phone" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
             <div class="form-group active-group active">
@@ -34,25 +34,25 @@
 
             @if (Model.SupportTwoFactorApp || Model.SupportTwoFactorEmail)
             {
-                <div class="form-group create-user-group">
+                <div class="form-group button-group another-two-factor-group">
                     @Localizer["Try another method?"]
                     @if (Model.SupportTwoFactorApp && Model.SupportTwoFactorEmail)
                     {
                         @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-2fa",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-2fa"))
+                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
                         ;
                     }
                     else @if (Model.SupportTwoFactorApp)
                     {
-                        @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">authenticator app</a>.",
-                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-2fa"))
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use authenticator app</a>.",
+                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor"))
                         ;
                     }
                     else @if (Model.SupportTwoFactorEmail)
                     {
-                        @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-2fa"))
+                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"))
                         ;
                     }
                 </div>

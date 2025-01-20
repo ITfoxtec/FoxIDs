@@ -106,6 +106,10 @@ namespace FoxIDs.Logic
                     return "_sms_code";
                 case FailingLoginTypes.EmailCode:
                     return "_email_code";
+                case FailingLoginTypes.TwoFactorSmsCode:
+                    return "_sms_mfa_code";
+                case FailingLoginTypes.TwoFactorEmailCode:
+                    return "_email_mfa_code";
                 case FailingLoginTypes.TwoFactorAuthenticator:
                     return "_mfa_authenticator";
                 default:

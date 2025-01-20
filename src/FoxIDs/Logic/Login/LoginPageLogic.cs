@@ -129,12 +129,12 @@ namespace FoxIDs.Logic
                 {
                     if (RegisterTwoFactor(user))
                     {
-                        if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && sequenceData.SupportTwoFactorSms)
+                        if (sequenceData.SupportTwoFactorSms)
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.SmsTwoFactor, includeSequence: true).ToRedirectResult();
                         }
-                        else if (fromStep == LoginResponseSequenceSteps.FromMfaEmailStep && sequenceData.SupportTwoFactorEmail)
+                        else if (sequenceData.SupportTwoFactorEmail)
                         {
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.EmailTwoFactor, includeSequence: true).ToRedirectResult();

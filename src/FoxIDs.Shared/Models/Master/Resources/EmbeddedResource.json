@@ -581,12 +581,48 @@
       "id": 139
     },
     {
-      "name": "Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
+      "name": "<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
       "id": 140
     },
     {
-      "name": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
+      "name": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
       "id": 141
+    },
+    {
+      "name": "SMS two-factor",
+      "id": 142
+    },
+    {
+      "name": "A new two-factor code has been sent to your phone.",
+      "id": 143
+    },
+    {
+      "name": "Two-factor code",
+      "id": 144
+    },
+    {
+      "name": "Please enter a valid two-factor code.",
+      "id": 145
+    },
+    {
+      "name": "Send new two-factor code",
+      "id": 146
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+      "id": 147
+    },
+    {
+      "name": "Your{0}SMS two-factor code: {1}",
+      "id": 148
+    },
+    {
+      "name": "Invalid two-factor code, please try one more time.",
+      "id": 149
+    },
+    {
+      "name": "A two-factor code has just been sent to your phone.",
+      "id": 150
     }
   ],
   "resources": [
@@ -18975,7 +19011,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Use <a href=\"{0}\" class=\"{1}\">email two-factor</a>.",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use email two-factor</a>.",
           "edit_level": 100
         }
       ]
@@ -18985,7 +19021,97 @@
       "items": [
         {
           "culture": "en",
-          "value": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a>.",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 142,
+      "items": [
+        {
+          "culture": "en",
+          "value": "SMS two-factor",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 143,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new two-factor code has been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 144,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Two-factor code",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 145,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a valid two-factor code.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 146,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Send new two-factor code",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 147,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 148,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your{0}SMS two-factor code: {1}",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 149,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid two-factor code, please try one more time.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A two-factor code has just been sent to your phone.",
           "edit_level": 100
         }
       ]

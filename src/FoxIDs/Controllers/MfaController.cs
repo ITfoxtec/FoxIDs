@@ -347,7 +347,7 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                _ = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, true);
+                await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -417,7 +417,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyPhoneConfirmationCodeSmsAsync(sequenceData.Phone, registerTwoFactor.Code);
+                    var user = await accountActionLogic.VerifyPhoneTwoFactorCodeSmsAsync(sequenceData.Phone, registerTwoFactor.Code);
                     var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Sms, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
                 }

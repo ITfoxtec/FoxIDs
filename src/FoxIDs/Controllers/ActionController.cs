@@ -527,7 +527,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserNotExistsException uex)
                 {
-                    // log warning if reset password is requested for an unknown phone number.
+                    // log warning if reset password is requested for an unknown email address.
                     logger.Warning(uex);
                 }
                 catch (CodeNotExistsException cneex)

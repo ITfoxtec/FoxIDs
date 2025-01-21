@@ -14180,11 +14180,136 @@
     },
     {
       "id": 102,
-      "items": [     
+      "items": [
+        {
+          "culture": "bg",
+          "value": "{0}изтриване на паролата",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "{0}restableix la contrasenya",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "{0}reset Heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "{0}nulstil adgangskode",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "{0}Passwort zurücksetzen",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "{0}reset Κωδικός πρόσβασης",
+          "edit_level": 40
+        },
         {
           "culture": "en",
           "value": "{0}reset Password",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "{0}reset Contraseña",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "{0}reset Password",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0}reset Password",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "{0}réinitialisation Mot de passe",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "{0}poništi lozinku",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0}endurstilla lykilorð",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "{0}reset Password",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "{0}nustatyti slaptažodį",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "{0}atjaunināt paroli",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "{0}tilbakestill passord",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "{0}wachtwoord resetten",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "{0}reset Hasło",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "{0}redefinir Palavra-passe",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "{0}reset Parolă",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "{0}reset Heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "{0}nastavi geslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "{0}återställ Lösenord",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}parolayı sıfırla",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "{0}reset Password",
+          "edit_level": 40
         }
       ]
     },
@@ -14192,9 +14317,134 @@
       "id": 103,
       "items": [
         {
+          "culture": "bg",
+          "value": "{0}потвърждение по имейл",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "{0}correu electrònic de confirmació",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "{0}potvrzení e-mailu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "{0}e-mail-bekræftelse",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "{0}e-mail-bestätigung",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "{0}επιβεβαίωση ηλεκτρονικού ταχυδρομείου",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "{0}email confirmation",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "{0}confirmación de correo electrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "{0}e-maili kinnitus",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0}sähköpostivahvistus",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "{0}confirmation par courriel",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "{0}potvrda e-pošte",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0}staðfesting í tölvupósti",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "{0}conferma via e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "{0}el. pašto patvirtinimas",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "{0}e-pasta apstiprinājums",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "{0}e-postbekreftelse",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "{0}bevestiging per e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "{0}potwierdzenie e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "{0}confirmação de correio eletrónico",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "{0}confirmare e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "{0}potvrdenie e-mailom",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "{0}potrditev po e-pošti",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "{0}bekräftelse via e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}e-posta onayı",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "{0}підтвердження електронної пошти",
+          "edit_level": 40
         }
       ]
     },
@@ -21220,11 +21470,136 @@
     },
     {
       "id": 156,
-      "items": [     
+      "items": [
+        {
+          "culture": "bg",
+          "value": "{0}електронна поща с два фактора",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "{0}correu electrònic de dos factors",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "{0}e-mail dvoufaktorový",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "{0}e-mail to-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "{0}zwei-faktor-e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "{0}email two-factor",
+          "edit_level": 40
+        },
         {
           "culture": "en",
           "value": "{0}email two-factor",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "{0}email dos factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "{0}emaili kahefaktoriline",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0}sähköpostin kaksoistekijä",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "{0}courriel à deux facteurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "{0}e-pošta u dva faktora",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0}tvíþætt tölvupóstur",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "{0}e-mail a due fattori",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "{0}el. pašto dviejų veiksnių",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "{0}e-pasts ar diviem faktoriem",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "{0}e-post to-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "{0}e-mail twee-factor",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "{0}dwuskładnikowa poczta e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "{0}correio eletrónico de dois factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "{0}email cu doi factori",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "{0}e-mail s dvoma faktormi",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "{0}e-pošta z dvema faktorjema",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "{0}e-post två-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}e-posta iki faktörlü",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "{0}поштова двофакторна",
+          "edit_level": 40
         }
       ]
     },

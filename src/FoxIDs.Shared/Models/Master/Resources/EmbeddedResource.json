@@ -675,6 +675,14 @@
     {
       "name": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
       "id": 163
+    },
+    {
+      "name": "Please do not use the phone number.",
+      "id": 164
+    },
+    {
+      "name": "Please do not use the username or parts of it.",
+      "id": 165
     }
   ],
   "resources": [
@@ -22545,6 +22553,26 @@
           "culture": "uk",
           "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">додаток-автентифікатор</a> або <a href=\"{2}\" class=\"{3}\">двофакторне SMS</a>.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 164,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please do not use the phone number.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 165,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please do not use the username or parts of it.",
+          "edit_level": 100
         }
       ]
     }

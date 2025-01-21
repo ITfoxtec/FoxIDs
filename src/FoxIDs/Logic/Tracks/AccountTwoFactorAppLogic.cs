@@ -10,7 +10,7 @@ using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {
-    public class AccountTwoFactorLogic : LogicSequenceBase
+    public class AccountTwoFactorAppLogic : LogicSequenceBase
     {
         private static TimeSpan timeTolerance = TimeSpan.FromMinutes(2);
         private const int secretAndRecoveryCodeLength = 30;
@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorAppLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;

@@ -24,11 +24,11 @@ namespace FoxIDs.Controllers
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
-        private readonly AccountTwoFactorLogic accountTwoFactorLogic;
+        private readonly AccountTwoFactorAppLogic accountTwoFactorAppLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic, AccountActionLogic accountActionLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountLogic = accountLogic;
-            this.accountTwoFactorLogic = accountTwoFactorLogic;
+            this.accountTwoFactorAppLogic = accountTwoFactorAppLogic;
             this.accountActionLogic = accountActionLogic;
             this.planCacheLogic = planCacheLogic;
         }
@@ -63,7 +63,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.UserIdentifier);
+                var twoFactorSetupInfo = await accountTwoFactorAppLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.UserIdentifier);
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
@@ -125,10 +125,10 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, registerTwoFactor.AppCode);
+                    await accountTwoFactorAppLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, registerTwoFactor.AppCode);
 
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
-                    sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorLogic.CreateRecoveryCode();
+                    sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorAppLogic.CreateRecoveryCode();
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
                     return View(nameof(AppTwoFactorRecCode), new RecoveryCodeTwoFactorAppViewModel
@@ -186,7 +186,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "App two-factor recovery code post.");
 
-                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorAppLogic.SetTwoFactorAppSecretUser(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: LoginResponseSequenceSteps.LoginResponseStep);
             }
@@ -276,7 +276,7 @@ namespace FoxIDs.Controllers
                     // Is recovery code
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.UserIdentifier, registerTwoFactor.AppCode);
+                        await accountTwoFactorAppLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.UserIdentifier, registerTwoFactor.AppCode);
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -299,7 +299,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+                        await accountTwoFactorAppLogic.ValidateTwoFactorBySecretAsync(sequenceData.UserIdentifier, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
 
                         var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
                         var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);

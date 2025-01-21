@@ -429,11 +429,11 @@
       "id": 101
     },
     {
-      "name": "{0}Reset password",
+      "name": "{0}reset password",
       "id": 102
     },
     {
-      "name": "{0}Email confirmation",
+      "name": "{0}email confirmation",
       "id": 103
     },
     {
@@ -645,7 +645,7 @@
       "id": 155
     },
     {
-      "name": "{0}Email two-factor",
+      "name": "{0}email two-factor",
       "id": 156
     },
     {
@@ -9592,14 +9592,134 @@
       "id": 68,
       "items": [
         {
+          "culture": "bg",
+          "value": "Настройте двуфакторно удостоверяване с избрано от вас приложение за удостоверяване. Можете да използвате <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> и други.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Configureu dos factors amb una aplicació d&#39;autenticació que trieu. Podeu utilitzar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i altres.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Nastavte dvoufaktorové ověřování pomocí vybrané ověřovací aplikace. Můžete použít <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> a další.",
+          "edit_level": 40
+        },
+        {
           "culture": "da",
           "value": "Setup to-faktor med den authenticator app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
           "edit_level": 100
         },
         {
+          "culture": "de",
+          "value": "Richten Sie die Zwei-Faktor-Funktion mit einer Authentifizierungs-App Ihrer Wahl ein. Sie können <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> und andere verwenden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ρυθμίστε τον παράγοντα δύο παραγόντων με μια εφαρμογή ελέγχου ταυτότητας της επιλογής σας. Μπορείτε να χρησιμοποιήσετε τις εφαρμογές <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> και άλλες.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Setup two-factor with an authenticator app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Configura el doble factor con una aplicación de autenticación de tu elección. Puedes utilizar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> y otras.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Seadistage kahefaktoriline tuvastus teie valitud autentimisrakendusega. Võite kasutada <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ja teisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Aseta kaksivaiheinen tunnistautuminen valitsemallasi tunnistautumissovelluksella. Voit käyttää <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ja muita.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Configurez le double facteur avec l'application d'authentification de votre choix. Vous pouvez utiliser <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> et d'autres.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Postavite dva faktora s aplikacijom za autentifikaciju po vašem izboru. Možete koristiti <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i druge.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Settu upp tveggja þátta með auðkenningarforriti að eigin vali. Þú getur notað <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og fleiri.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Impostare il sistema a due fattori con un'applicazione di autenticazione di propria scelta. È possibile utilizzare <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> e altri.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Nustatykite dviejų veiksnių nustatymą naudodami pasirinktą autentifikavimo programėlę. Galite naudoti <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ir kitas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Iestatiet divu faktoru iestatīšanu, izmantojot izvēlēto autentifikatora lietotni. Jūs varat izmantot <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> un citas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Konfigurer tofaktor med en autentiseringsapp etter eget valg. Du kan bruke <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Stel twee-factor in met een authenticatie-app naar keuze. Je kunt <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> en anderen gebruiken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Skonfiguruj uwierzytelnianie dwuskładnikowe za pomocą wybranej aplikacji uwierzytelniającej. Możesz użyć <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i innych.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Configure o fator duplo com um aplicativo autenticador de sua escolha. Você pode usar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> e outros.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Configurați doi factori cu o aplicație de autentificare la alegerea dvs. Puteți utiliza <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> și altele.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nastavte dvojfaktorový prístup pomocou vybranej aplikácie autentifikátora. Môžete použiť <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> a ďalšie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Nastavite dvofaktorsko preverjanje z izbrano aplikacijo za preverjanje pristnosti. Uporabiš lahko <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> in druge.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ställ in tvåfaktor med en autentiseringsapp som du väljer. Du kan använda <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> och andra.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Seçtiğiniz bir kimlik doğrulayıcı uygulaması ile iki faktörlü ayarlayın. <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ve diğerlerini kullanabilirsiniz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Налаштуйте двофакторну автентифікацію за допомогою програми-автентифікатора на ваш вибір. Ви можете використовувати <a href=\"https://authy.com/\" target=\"_blank\">Anty</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> та інші.",
+          "edit_level": 40
         }
       ]
     },
@@ -11632,14 +11752,134 @@
       "id": 84,
       "items": [
         {
+          "culture": "bg",
+          "value": "Ако изгубите телефона си или по някаква друга причина вече не можете да генерирате кодове за двуфакторно удостоверяване, този код за възстановяване е ЕДИНСТВЕНИЯТ начин да получите достъп до профила си.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si perds el telèfon o per algun altre motiu ja no pots generar codis d&#39;autenticació de dos factors, aquest codi de recuperació és l&#39;ÚNICA manera d&#39;accedir al teu compte.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Pokud ztratíte telefon nebo z jiného důvodu nemůžete generovat dvoufaktorové ověřovací kódy, je tento kód pro obnovení JEDINÝM způsobem, jak získat přístup k účtu.",
+          "edit_level": 40
+        },
+        {
           "culture": "da",
           "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor koder, så er genoprettelseskoden den ENESTE adgang til din konto.",
           "edit_level": 100
         },
         {
+          "culture": "de",
+          "value": "Wenn Sie Ihr Telefon verlieren oder aus einem anderen Grund keine Codes für die Zwei-Faktor-Authentifizierung mehr generieren können, ist dieser Wiederherstellungscode die einzige Möglichkeit, Zugang zu Ihrem Konto zu erhalten.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Εάν χάσετε το τηλέφωνό σας ή για κάποιο άλλο λόγο δεν μπορείτε πλέον να δημιουργήσετε κωδικούς ελέγχου ταυτότητας δύο παραγόντων, αυτός ο κωδικός ανάκτησης είναι ο ΜΟΝΟΣ τρόπος για να αποκτήσετε πρόσβαση στο λογαριασμό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "If you lose your phone or for some other reason can no longer generate two-factor authentication codes, this recovery code is the ONLY way to gain access to your account.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Si pierdes tu teléfono o por alguna otra razón ya no puedes generar códigos de autenticación de dos factores, este código de recuperación es la ÚNICA forma de acceder a tu cuenta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kui kaotate oma telefoni või ei saa mingil muul põhjusel enam kahefaktorilise autentimise koode genereerida, on see taastamiskood ainus viis oma kontole juurdepääsu saamiseks.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Jos kadotat puhelimesi tai et jostain muusta syystä voi enää luoda kaksitekijätodennuskoodeja, tämä palautuskoodi on AINOA tapa päästä tilillesi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Si vous perdez votre téléphone ou si, pour une autre raison, vous ne pouvez plus générer de codes d'authentification à deux facteurs, ce code de récupération est le SEUL moyen d'accéder à votre compte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Ako izgubite telefon ili iz nekog drugog razloga više ne možete generirati kodove za provjeru autentičnosti u dva faktora, ovaj kod za oporavak je JEDINI način da dobijete pristup svom računu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ef þú týnir símanum þínum eða getur af einhverjum öðrum ástæðum ekki lengur búið til tveggja þátta auðkenningarkóða, þá er þessi endurheimtarkóði EINA leiðin til að fá aðgang að reikningnum þínum.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Se si perde il telefono o per qualche altro motivo non è più possibile generare codici di autenticazione a due fattori, questo codice di recupero è l'UNICO modo per accedere al proprio account.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Jei pametėte telefoną arba dėl kokių nors kitų priežasčių nebegalite generuoti dviejų veiksnių autentifikavimo kodų, šis atkūrimo kodas yra vienintelis būdas gauti prieigą prie paskyros.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Ja esat pazaudējis tālruni vai kāda cita iemesla dēļ vairs nevarat ģenerēt divu faktoru autentifikācijas kodus, šis atjaunošanas kods ir VIENĪGAIS veids, kā piekļūt kontam.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Hvis du mister telefonen din eller av andre grunner ikke lenger kan generere tofaktorautentiseringskoder, er denne gjenopprettingskoden den ENESTE måten å få tilgang til kontoen din på.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Als je je telefoon verliest of om een andere reden geen codes voor authenticatie met twee factoren meer kunt genereren, is deze herstelcode de ENIGE manier om toegang te krijgen tot je account.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Jeśli zgubisz telefon lub z innego powodu nie możesz już generować kodów uwierzytelniania dwuskładnikowego, ten kod odzyskiwania jest JEDYNYM sposobem na uzyskanie dostępu do konta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Se perder o seu telemóvel ou se, por qualquer outro motivo, já não puder gerar códigos de autenticação de dois factores, este código de recuperação é a ÚNICA forma de obter acesso à sua conta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Dacă vă pierdeți telefonul sau, din alt motiv, nu mai puteți genera coduri de autentificare cu doi factori, acest cod de recuperare este SINGURA modalitate de a obține acces la contul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Ak stratíte telefón alebo z nejakého iného dôvodu už nemôžete generovať kódy dvojfaktorového overovania, tento kód na obnovenie je JEDINÝM spôsobom, ako získať prístup do svojho konta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Če izgubite telefon ali iz kakšnega drugega razloga ne morete več ustvariti kode za dvostopenjsko preverjanje pristnosti, je ta obnovitvena koda edini način za dostop do računa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Om du tappar bort din telefon eller av någon annan anledning inte längre kan generera tvåfaktorsautentiseringskoder är denna återställningskod det ENDA sättet att få tillgång till ditt konto.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonunuzu kaybederseniz veya başka bir nedenle artık iki faktörlü kimlik doğrulama kodu oluşturamazsanız, bu kurtarma kodu hesabınıza erişmenin TEK yoludur.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Якщо ви втратили телефон або з якихось інших причин більше не можете генерувати коди двофакторної автентифікації, цей код відновлення є ЄДИНИМ способом отримати доступ до свого облікового запису.",
+          "edit_level": 40
         }
       ]
     },
@@ -13940,136 +14180,11 @@
     },
     {
       "id": 102,
-      "items": [
-        {
-          "culture": "bg",
-          "value": "{0}Подновяване на паролата",
-          "edit_level": 40
-        },
-        {
-          "culture": "ca",
-          "value": "{0}Restableix la contrasenya",
-          "edit_level": 30
-        },
-        {
-          "culture": "cs",
-          "value": "{0}Resetování hesla",
-          "edit_level": 40
-        },
-        {
-          "culture": "da",
-          "value": "{0}Nulstil kodeord",
-          "edit_level": 100
-        },
-        {
-          "culture": "de",
-          "value": "{0}Passwort zurücksetzen",
-          "edit_level": 40
-        },
-        {
-          "culture": "el",
-          "value": "{0}Επαναφορά κωδικού πρόσβασης",
-          "edit_level": 40
-        },
+      "items": [     
         {
           "culture": "en",
-          "value": "{0}Reset Password",
+          "value": "{0}reset Password",
           "edit_level": 100
-        },
-        {
-          "culture": "es",
-          "value": "{0}Restablecer contraseña",
-          "edit_level": 40
-        },
-        {
-          "culture": "et",
-          "value": "{0}Parooli lähtestamine",
-          "edit_level": 40
-        },
-        {
-          "culture": "fi",
-          "value": "{0}Nollaa salasana",
-          "edit_level": 40
-        },
-        {
-          "culture": "fr",
-          "value": "{0}Réinitialisation du mot de passe",
-          "edit_level": 40
-        },
-        {
-          "culture": "hr",
-          "value": "{0}Poništi lozinku",
-          "edit_level": 30
-        },
-        {
-          "culture": "is",
-          "value": "{0}Endurstilla lykilorð",
-          "edit_level": 30
-        },
-        {
-          "culture": "it",
-          "value": "{0}Ripristina la password",
-          "edit_level": 40
-        },
-        {
-          "culture": "lt",
-          "value": "{0}Iš naujo nustatyti slaptažodį",
-          "edit_level": 40
-        },
-        {
-          "culture": "lv",
-          "value": "{0}atjaunot paroli",
-          "edit_level": 40
-        },
-        {
-          "culture": "nb",
-          "value": "{0}Tilbakestill passord",
-          "edit_level": 100
-        },
-        {
-          "culture": "nl",
-          "value": "{0}Wachtwoord opnieuw instellen",
-          "edit_level": 100
-        },
-        {
-          "culture": "pl",
-          "value": "{0}Zresetuj hasło",
-          "edit_level": 100
-        },
-        {
-          "culture": "pt",
-          "value": "{0}Repor a palavra-passe",
-          "edit_level": 100
-        },
-        {
-          "culture": "ro",
-          "value": "{0}Reinițializați parola",
-          "edit_level": 40
-        },
-        {
-          "culture": "sk",
-          "value": "{0}Nastavenie hesla",
-          "edit_level": 40
-        },
-        {
-          "culture": "sl",
-          "value": "{0}Nastavitev gesla",
-          "edit_level": 40
-        },
-        {
-          "culture": "sv",
-          "value": "{0}Återställ lösenord",
-          "edit_level": 40
-        },
-        {
-          "culture": "tr",
-          "value": "{0}Şifreyi sıfırla",
-          "edit_level": 40
-        },
-        {
-          "culture": "uk",
-          "value": "{0}Скинути пароль",
-          "edit_level": 40
         }
       ]
     },
@@ -14077,134 +14192,9 @@
       "id": 103,
       "items": [
         {
-          "culture": "bg",
-          "value": "{0}Потвърждение на електронната поща",
-          "edit_level": 40
-        },
-        {
-          "culture": "ca",
-          "value": "{0}Confirmació per correu electrònic",
-          "edit_level": 30
-        },
-        {
-          "culture": "cs",
-          "value": "{0}Emailové potvrzení",
-          "edit_level": 40
-        },
-        {
-          "culture": "da",
-          "value": "{0}E-mail bekræftelse",
-          "edit_level": 100
-        },
-        {
-          "culture": "de",
-          "value": "{0}E-Mail-Bestätigung",
-          "edit_level": 40
-        },
-        {
-          "culture": "el",
-          "value": "{0}Επιβεβαίωση μέσω email",
-          "edit_level": 40
-        },
-        {
           "culture": "en",
-          "value": "{0}Email confirmation",
+          "value": "{0}email confirmation",
           "edit_level": 100
-        },
-        {
-          "culture": "es",
-          "value": "{0}Confirmación de correo electrónico",
-          "edit_level": 40
-        },
-        {
-          "culture": "et",
-          "value": "{0}Emaili kinnitus",
-          "edit_level": 40
-        },
-        {
-          "culture": "fi",
-          "value": "{0}Sähköpostivahvistus",
-          "edit_level": 40
-        },
-        {
-          "culture": "fr",
-          "value": "{0}Confirmation de l'e-mail",
-          "edit_level": 40
-        },
-        {
-          "culture": "hr",
-          "value": "{0}Potvrda e-pošte",
-          "edit_level": 30
-        },
-        {
-          "culture": "is",
-          "value": "{0}Staðfesting í tölvupósti",
-          "edit_level": 30
-        },
-        {
-          "culture": "it",
-          "value": "{0}Conferma e-mail",
-          "edit_level": 40
-        },
-        {
-          "culture": "lt",
-          "value": "{0}Elektroninio pašto patvirtinimas",
-          "edit_level": 40
-        },
-        {
-          "culture": "lv",
-          "value": "{0}E-pasts apstiprinājums",
-          "edit_level": 40
-        },
-        {
-          "culture": "nb",
-          "value": "{0}E-postbekreftelse",
-          "edit_level": 40
-        },
-        {
-          "culture": "nl",
-          "value": "{0}Bevestiging e-mail",
-          "edit_level": 100
-        },
-        {
-          "culture": "pl",
-          "value": "{0}Potwierdzenie e-mail",
-          "edit_level": 100
-        },
-        {
-          "culture": "pt",
-          "value": "{0}Confirmação por correio eletrónico",
-          "edit_level": 40
-        },
-        {
-          "culture": "ro",
-          "value": "{0}Confirmare prin e-mail",
-          "edit_level": 40
-        },
-        {
-          "culture": "sk",
-          "value": "{0}Potvrdenie e-mailom",
-          "edit_level": 40
-        },
-        {
-          "culture": "sl",
-          "value": "{0}Potrditev po e-pošti",
-          "edit_level": 40
-        },
-        {
-          "culture": "sv",
-          "value": "{0}E-postbekräftelse",
-          "edit_level": 40
-        },
-        {
-          "culture": "tr",
-          "value": "{0}E-posta onayı",
-          "edit_level": 40
-        },
-        {
-          "culture": "uk",
-          "value": "{0}Підтвердження електронною поштою",
-          "edit_level": 40
         }
       ]
     },
@@ -18802,9 +18792,134 @@
       "id": 138,
       "items": [
         {
+          "culture": "bg",
+          "value": "Опитайте друг метод?",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Provar un altre mètode?",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Zkusit jinou metodu?",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Prøv en anden metode?",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Eine andere Methode ausprobieren?",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Δοκιμάστε μια άλλη μέθοδο;",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Try another method?",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "¿Probar otro método?",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Proovige mõnda muud meetodit?",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kokeile toista menetelmää?",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Essayer une autre méthode ?",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Probati drugu metodu?",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Prófaðu aðra aðferð?",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Provare un altro metodo?",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Išbandyti kitą metodą?",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmēģināt citu metodi?",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Prøve en annen metode?",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Een andere methode proberen?",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wypróbować inną metodę?",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Tentar outro método?",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Încercați o altă metodă?",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Vyskúšať inú metódu?",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Poskusite z drugo metodo?",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Prova en annan metod?",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Başka bir yöntem deneyelim mi?",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Спробувати інший метод?",
+          "edit_level": 40
         }
       ]
     },
@@ -18812,9 +18927,134 @@
       "id": 139,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте <a href=\"{0}\" class=\"{1}\">SMS с два фактора</a> или <a href=\"{2}\" class=\"{3}\">електронна поща с два фактора</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Utilitzeu <a href=\"{0}\" class=\"{1}\">SMS de dos factors</a> o <a href=\"{2}\" class=\"{3}\">correu electrònic de dos factors</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte <a href=\"{0}\" class=\"{1}\">dvoufaktorovou SMS</a> nebo <a href=\"{2}\" class=\"{3}\">dvoufaktorovou e-mailovou zprávu</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug <a href=\"{0}\" class=\"{1}\">SMS to-faktor</a> eller <a href=\"{2}\" class=\"{3}\">email to-faktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie den <a href=\"{0}\" class=\"{1}\">Zwei-Faktor-SMS</a> oder den <a href=\"{2}\" class=\"{3}\">Zwei-Faktor-E-Mail</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε <a href=\"{0}\" class=\"{1}\">διπλό παράγοντα SMS</a> ή <a href=\"{2}\" class=\"{3}\">διπλό παράγοντα ηλεκτρονικού ταχυδρομείου</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utiliza <a href=\"{0}\" class=\"{1}\">SMS dos factores</a> o <a href=\"{2}\" class=\"{3}\">email dos factores</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage <a href=\"{0}\" class=\"{1}\">SMS-kaksikfaktor</a> või <a href=\"{2}\" class=\"{3}\">E-posti-kaksikfaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä <a href=\"{0}\" class=\"{1}\">SMS-kaksoistekijää</a> tai <a href=\"{2}\" class=\"{3}\">sähköpostin kaksoistekijää</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez <a href=\"{0}\" class=\"{1}\">SMS à deux facteurs</a> ou <a href=\"{2}\" class=\"{3}\">email à deux facteurs</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Upotrijebite <a href=\"{0}\" class=\"{1}\">dvofaktorni SMS</a> ili <a href=\"{2}\" class=\"{3}\">dvofaktorni e-mail</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notaðu <a href=\"{0}\" class=\"{1}\">tvíþætt SMS</a> eða <a href=\"{2}\" class=\"{3}\">tvíþætt tölvupóst</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate <a href=\"{0}\" class=\"{1}\">SMS a due fattori</a> o <a href=\"{2}\" class=\"{3}\">email a due fattori</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite <a href=\"{0}\" class=\"{1}\">SMS dviejų veiksnių</a> arba <a href=\"{2}\" class=\"{3}\">Elektroninio pašto dviejų veiksnių</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet <a href=\"{0}\" class=\"{1}\">SMS divu faktoru</a> vai <a href=\"{2}\" class=\"{3}\">E-pasts divu faktoru</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk <a href=\"{0}\" class=\"{1}\">SMS-tofaktor</a> eller <a href=\"{2}\" class=\"{3}\">e-post-tofaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik <a href=\"{0}\" class=\"{1}\">SMS twee-factor</a> of <a href=\"{2}\" class=\"{3}\">email twee-factor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj <a href=\"{0}\" class=\"{1}\">dwuskładnikowego SMS-a</a> lub <a href=\"{2}\" class=\"{3}\">dwuskładnikowego e-maila</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize <a href=\"{0}\" class=\"{1}\">SMS de dois factores</a> ou <a href=\"{2}\" class=\"{3}\">email de dois factores</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> sau <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite <a href=\"{0}\" class=\"{1}\">dvojfaktorovú SMS</a> alebo <a href=\"{2}\" class=\"{3}\">dvojfaktorovú e-mailovú správu</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite <a href=\"{0}\" class=\"{1}\">dvofaktor SMS</a> ali <a href=\"{2}\" class=\"{3}\">dvofaktor e-pošte</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd <a href=\"{0}\" class=\"{1}\">SMS tvåfaktor</a> eller <a href=\"{2}\" class=\"{3}\">email tvåfaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS iki faktörlü</a> veya <a href=\"{2}\" class=\"{3}\">e-posta iki faktörlü</a> kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">SMS двофакторний</a> або <a href=\"{2}\" class=\"{3}\">email двофакторний</a>.",
+          "edit_level": 40
         }
       ]
     },
@@ -18822,9 +19062,134 @@
       "id": 140,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използвайте двуфакторна електронна поща.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitzeu el correu electrònic de dos factors.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použijte dvoufaktorový e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug e-mail med to faktorer.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">Zwei-Faktor-E-Mail verwenden.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε τον παράγοντα δύο παραγόντων email.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar el doble factor de correo electrónico.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage e-posti kahefaktorilist funktsiooni.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä sähköpostin kaksoistekijää.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliser l'email à deux facteurs.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite e-poštu s dva faktora.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notaðu tvíþætt tölvupóst.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizzare l'email a due fattori.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Panaudokite el. pašto dviejų veiksnių.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantojiet e-pasta divfaktoru.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk e-post med to-faktor.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik e-mail twee-factor.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj dwuskładnikowego adresu e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar e-mail de dois factores.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați e-mail cu doi factori.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použiť dvojfaktorový e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izkoristite dvofaktorsko e-pošto.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd tvåfaktor för e-post.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">İki faktörlü e-posta kullanın.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використовуйте двофакторну пошту.</a>",
+          "edit_level": 40
         }
       ]
     },
@@ -18832,9 +19197,134 @@
       "id": 141,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използвайте SMS с два фактора.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitzeu SMS de dos factors.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použijte dvoufaktorovou SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug SMS to-faktor.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS Zwei-Faktor verwenden.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε SMS δύο παραγόντων.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliza el doble factor SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage SMS-i kahefaktorilist funktsiooni.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä tekstiviestien kaksitekijäistä tunnistusta.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliser le SMS à deux facteurs.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite dvostruki SMS.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notaðu SMS tveggja þátta.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizzare SMS a due fattori.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Panaudokite \"SMS\" dviejų veiksnių.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantojiet SMS ar diviem faktoriem.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk SMS med to faktorer.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik SMS two-factor.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj dwuskładnikowego SMS-a.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar SMS de dois factores.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați SMS cu doi factori.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použiť dvojfaktorovú SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izkoristite dvostopenjski SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd SMS två-faktor.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS iki faktörlü kullanın.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використовувати двофакторне SMS.</a>",
+          "edit_level": 40
         }
       ]
     },
@@ -18842,9 +19332,134 @@
       "id": 142,
       "items": [
         {
+          "culture": "bg",
+          "value": "Двуфакторен SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "SMS de dos factors",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Dvoufaktorová SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "SMS to-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "SMS Zwei-Faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "SMS δύο παραγόντων",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "SMS two-factor",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "SMS de dos factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktoriline SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tekstiviestien kaksitekijä",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "SMS à deux facteurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "SMS dva faktora",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "SMS tvíþætt",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "SMS a due fattori",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "SMS dviejų veiksnių",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "SMS ar diviem faktoriem",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "SMS to-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "SMS twee-factor",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Dwuskładnikowy SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "SMS de dois factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "SMS cu doi factori",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Dvojfaktorová SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Dvofaktorski SMS",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "SMS två-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "SMS iki faktörlü",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "SMS двофакторний",
+          "edit_level": 40
         }
       ]
     },
@@ -18852,9 +19467,134 @@
       "id": 143,
       "items": [
         {
+          "culture": "bg",
+          "value": "На телефона ви е изпратен нов двуфакторен код.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;ha enviat un nou codi de dos factors al vostre telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš telefon byl odeslán nový dvoufaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En ny to-faktor kode er blevet sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein neuer Zwei-Faktor-Code wurde an Ihr Telefon gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ένας νέος κωδικός δύο παραγόντων έχει σταλεί στο τηλέφωνό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A new two-factor code has been sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Se ha enviado un nuevo código de dos factores a tu teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie telefonile on saadetud uus kahefaktoriline kood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Puhelimeesi on lähetetty uusi kaksitekijäkoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un nouveau code à deux facteurs a été envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Na vaš telefon poslan je novi kod s dva faktora.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Nýr tveggja þátta kóði hefur verið sendur í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Un nuovo codice a due fattori è stato inviato al vostro telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų telefoną buvo išsiųstas naujas dviejų veiksnių kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu tālruni ir nosūtīts jauns divu faktoru kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "En ny tofaktorkode har blitt sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is een nieuwe twee-factorcode naar je telefoon gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Na Twój telefon został wysłany nowy kod dwuskładnikowy.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Foi enviado um novo código de dois factores para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un nou cod cu doi factori a fost trimis pe telefonul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Do vášho telefónu bol odoslaný nový dvojfaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Na vaš telefon je bila poslana nova koda za dva faktorja.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "En ny tvåfaktorkod har skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonunuza yeni bir iki faktörlü kod gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "На ваш телефон надіслано новий двофакторний код.",
+          "edit_level": 40
         }
       ]
     },
@@ -18862,9 +19602,134 @@
       "id": 144,
       "items": [
         {
+          "culture": "bg",
+          "value": "Двуфакторен код",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi de dos factors",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Dvoufaktorový kód",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "To-faktor kode",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Zwei-Faktor-Code",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός δύο παραγόντων",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Two-factor code",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código de dos factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktoriline kood",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kahden tekijän koodi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code à deux facteurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Dvofaktorski kod",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Tveggja þátta kóða",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice a due fattori",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Dviejų veiksnių kodas",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Divu faktoru kods",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "To-faktorkode",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Twee-factor code",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod dwuskładnikowy",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código de dois factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Cod cu doi factori",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Dvojfaktorový kód",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Dvofaktorska koda",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Tvåfaktorkod",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "İki faktörlü kod",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Двофакторний код",
+          "edit_level": 40
         }
       ]
     },
@@ -18872,9 +19737,134 @@
       "id": 145,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, въведете валиден двуфакторен код.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Introduïu un codi vàlid de dos factors.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Zadejte prosím platný dvoufaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Indtast venligst en gyldig to-faktor kode.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte geben Sie einen gültigen Zwei-Faktor-Code ein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε εισάγετε έναν έγκυρο κωδικό δύο παραγόντων.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please enter a valid two-factor code.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Por favor, introduzca un código de dos factores válido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun sisestage kehtiv kahefaktoriline kood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Syötä voimassa oleva kaksitekijäkoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez saisir un code à deux facteurs valide.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo unesite važeći kod s dva faktora.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast sláðu inn gildan tveggja þátta kóða.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inserire un codice a due fattori valido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Įveskite galiojantį dviejų veiksnių kodą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, ievadiet derīgu divu faktoru kodu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst skriv inn en gyldig to-faktorkode.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Voer een geldige twee-factorcode in.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wprowadź prawidłowy kod dwuskładnikowy.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Introduza um código de dois factores válido.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să introduceți un cod cu doi factori valid.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zadajte platný dvojfaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vnesite veljavno kodo dveh dejavnikov.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen ange en giltig tvåfaktorkod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen geçerli bir iki faktörlü kod girin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, введіть дійсний двофакторний код.",
+          "edit_level": 40
         }
       ]
     },
@@ -18882,9 +19872,134 @@
       "id": 146,
       "items": [
         {
+          "culture": "bg",
+          "value": "Изпращане на нов двуфакторен код",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Envia un codi de dos factors nou",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Odeslání nového dvoufaktorového kódu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Send ny to-faktor kode",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Neuen Zwei-Faktor-Code senden",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αποστολή νέου κωδικού δύο παραγόντων",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Send new two-factor code",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Enviar nuevo código de dos factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Uue kahefaktorilise koodi saatmine",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Lähetä uusi kaksitekijäkoodi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Envoyer un nouveau code à deux facteurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pošaljite novi kôd s dva faktora",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Sendu nýjan tveggja þátta kóða",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inviare il nuovo codice a due fattori",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Siųsti naują dviejų veiksnių kodą",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Jaunā divu faktoru koda nosūtīšana",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Send ny to-faktorkode",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Stuur nieuwe twee-factorcode",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wyślij nowy kod dwuskładnikowy",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Enviar novo código de dois factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Trimiteți un nou cod cu doi factori",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Odoslanie nového dvojfaktorového kódu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Pošlji novo kodo dveh dejavnikov",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Skicka ny tvåfaktorkod",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yeni iki faktörlü kod gönderme",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Надішліть новий двофакторний код",
+          "edit_level": 40
         }
       ]
     },
@@ -18892,9 +20007,134 @@
       "id": 147,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте <a href=\"{0}\" class=\"{1}\">приложение за удостоверяване на автентичността</a> или <a href=\"{2}\" class=\"{3}\">електронна поща с два фактора</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Utilitzeu <a href=\"{0}\" class=\"{1}\">l&#39;aplicació d&#39;autenticació</a> o <a href=\"{2}\" class=\"{3}\">el correu electrònic de dos factors</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte <a href=\"{0}\" class=\"{1}\">autentizační aplikaci</a> nebo <a href=\"{2}\" class=\"{3}\">dvoufaktorový e-mail</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug <a href=\"{0}\" class=\"{1}\">authenticator app</a> eller <a href=\"{2}\" class=\"{3}\">email to-faktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie die <a href=\"{0}\" class=\"{1}\">Authentifizierungs-App</a> oder <a href=\"{2}\" class=\"{3}\">Zwei-Faktor-E-Mail</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε την <a href=\"{0}\" class=\"{1}\">εφαρμογή πιστοποίησης ταυτότητας</a> ή την <a href=\"{2}\" class=\"{3}\">διπλού παράγοντα ηλεκτρονικού ταχυδρομείου</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utiliza <a href=\"{0}\" class=\"{1}\">aplicación autenticadora</a> o <a href=\"{2}\" class=\"{3}\">bifactor de correo electrónico</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage <a href=\"{0}\" class=\"{1}\">autentikaatorirakendust</a> või <a href=\"{2}\" class=\"{3}\">kahefaktorilist e-posti aadressi</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä <a href=\"{0}\" class=\"{1}\">autentikaattorisovellusta</a> tai <a href=\"{2}\" class=\"{3}\">sähköpostin kaksivaiheista tunnistusta</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez <a href=\"{0}\" class=\"{1}\">application d'authentification</a> ou <a href=\"{2}\" class=\"{3}\">courrier électronique à deux facteurs</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Koristite <a href=\"{0}\" class=\"{1}\">aplikaciju za autentifikaciju</a> ili <a href=\"{2}\" class=\"{3}\">e-poštu s dva faktora</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notaðu <a href=\"{0}\" class=\"{1}\">auðkenningarforrit</a> eða <a href=\"{2}\" class=\"{3}\">tvíþætt tölvupóst</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate <a href=\"{0}\" class=\"{1}\">applicazione autenticatore</a> o <a href=\"{2}\" class=\"{3}\">email a due fattori</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite <a href=\"{0}\" class=\"{1}\">autentifikavimo programėlę</a> arba <a href=\"{2}\" class=\"{3}\">dviejų veiksnių el. paštą</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet <a href=\"{0}\" class=\"{1}\">autentifikatora lietotni</a> vai <a href=\"{2}\" class=\"{3}\">pasta divfaktoru</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk <a href=\"{0}\" class=\"{1}\">autentiseringsapp</a> eller <a href=\"{2}\" class=\"{3}\">to-faktor e-post</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik <a href=\"{0}\" class=\"{1}\">authenticator app</a> of <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj <a href=\"{0}\" class=\"{1}\">aplikacji uwierzytelniającej</a> lub <a href=\"{2}\" class=\"{3}\">dwuskładnikowego e-maila</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">aplicativo autenticador</a> ou <a href=\"{2}\" class=\"{3}\">e-mail de dois fatores</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați <a href=\"{0}\" class=\"{1}\">aplicația de autentificare</a> sau <a href=\"{2}\" class=\"{3}\">email cu doi factori</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite <a href=\"{0}\" class=\"{1}\">autentifikačnú aplikáciu</a> alebo <a href=\"{2}\" class=\"{3}\">dvojfaktorový e-mail</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite <a href=\"{0}\" class=\"{1}\">avtentikacijsko aplikacijo</a> ali <a href=\"{2}\" class=\"{3}\">dvofaktor e-pošte</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd <a href=\"{0}\" class=\"{1}\">autentiseringsapp</a> eller <a href=\"{2}\" class=\"{3}\">tvåfaktor e-post</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">authenticator app</a> veya <a href=\"{2}\" class=\"{3}\">email two-factor</a> kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">додаток-автентифікатор</a> або <a href=\"{2}\" class=\"{3}\">двофакторну пошту</a>.",
+          "edit_level": 40
         }
       ]
     },
@@ -18902,9 +20142,134 @@
       "id": 148,
       "items": [
         {
+          "culture": "bg",
+          "value": "Вашият{0}SMS код за два фактора: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "El vostre{0}codi SMS de dos factors: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Váš{0}SMS dvoufaktorový kód: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Din{0}SMS to-faktor kode: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ihr{0}SMS-Zwei-Faktor-Code: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ο κωδικός δύο παραγόντων σας{0}SMS: {1}",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Your{0}SMS two-factor code: {1}",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Su código de dos factores{0}SMS: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie{0}SMS-i kahefaktoriline kood: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kaksitekijäkoodisi{0}SMS-koodisi: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Votre code à deux facteurs{0}SMS : {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Vaš{0}SMS dvostruki kôd: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0}Tveggja þátta SMS-kóði þinn: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Il tuo{0}Codice a due fattori SMS: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Jūsų{0}SMS dviejų veiksnių kodas: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Jūsu{0}SMS divu faktoru kods: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Din{0}SMS-tofaktorkode: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Uw{0}SMS twee-factor code: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Twój{0}kod dwuskładnikowy SMS: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "O seu código de dois factores{0}SMS: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Codul dumneavoastră{0}SMS cu doi factori: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Váš{0}SMS dvojfaktorový kód: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vaša{0}Koda za dva faktorja SMS: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Din{0}SMS tvåfaktorkod: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}SMS iki faktörlü kodunuz: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Ваш двофакторний код для СМС{0}: {1}",
+          "edit_level": 40
         }
       ]
     },
@@ -18912,9 +20277,134 @@
       "id": 149,
       "items": [
         {
+          "culture": "bg",
+          "value": "Невалиден двуфакторен код, моля, опитайте още веднъж.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi de dos factors no vàlid, prova-ho una vegada més.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Neplatný dvoufaktorový kód, zkuste to prosím ještě jednou.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Ugyldig to-faktor kode, prøv venligst en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ungültiger Zwei-Faktor-Code, bitte versuchen Sie es noch einmal.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μη έγκυρος κωδικός δύο παραγόντων, δοκιμάστε άλλη μια φορά.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Invalid two-factor code, please try one more time.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código de dos factores inválido, por favor inténtelo una vez más.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahe faktori kood on vigane, palun proovige veel kord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Virheellinen kaksitekijäkoodi, yritä vielä kerran.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code à deux facteurs non valide, veuillez réessayer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nevažeći kod s dva faktora, pokušajte još jednom.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ógildur tveggja þátta kóði, vinsamlegast reyndu einu sinni enn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice a due fattori non valido, riprovare.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Netinkamas dviejų veiksnių kodas, pabandykite dar kartą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nederīgs divu faktoru kods, lūdzu, mēģiniet vēlreiz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Ugyldig to-faktorkode, vennligst prøv en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Ongeldige twee-factor code, probeer het nog een keer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowy kod dwuskładnikowy, spróbuj ponownie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código de dois factores inválido, tente mais uma vez.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Cod doi factori invalid, vă rugăm să mai încercați o dată.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Neplatný dvojfaktorový kód, skúste to ešte raz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Neveljavna dvostopenjska koda, poskusite še enkrat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ogiltig tvåfaktorkod, försök en gång till.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Geçersiz iki faktörlü kod, lütfen bir kez daha deneyin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний двофакторний код, спробуйте ще раз.",
+          "edit_level": 40
         }
       ]
     },
@@ -18922,9 +20412,134 @@
       "id": 150,
       "items": [
         {
+          "culture": "bg",
+          "value": "На телефона ви току-що е изпратен код за два фактора.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;acaba d&#39;enviar un codi de dos factors al vostre telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš telefon byl právě odeslán dvoufaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En to-faktor kode er netop blevet sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein Zwei-Faktor-Code wurde soeben an Ihr Telefon gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μόλις εστάλη στο τηλέφωνό σας ένας κωδικός δύο παραγόντων.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A two-factor code has just been sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Un código de dos factores acaba de ser enviado a su teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie telefonile on just saadetud kahefaktoriline kood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Puhelimeesi on juuri lähetetty kahden tekijän koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un code à deux facteurs vient d'être envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Dvostruki kôd je upravo poslan na vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Tveggja þátta kóði hefur verið sendur í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Un codice a due fattori è stato appena inviato al vostro telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų telefoną ką tik išsiųstas dviejų veiksnių kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu tālruni ir nosūtīts divu faktoru kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "En to-faktorkode har nettopp blitt sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is zojuist een twee-factorcode naar je telefoon gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod dwuskładnikowy został właśnie wysłany na Twój telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Acabou de ser enviado um código de dois factores para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un cod cu doi factori tocmai a fost trimis pe telefonul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Do vášho telefónu bol práve odoslaný dvojfaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Na vaš telefon je bila pravkar poslana koda z dvema faktorjema.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "En tvåfaktorkod har just skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonunuza az önce iki faktörlü bir kod gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Двофакторний код щойно надіслано на ваш телефон.",
+          "edit_level": 40
         }
       ]
     },
@@ -18932,9 +20547,134 @@
       "id": 151,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, използвайте новия двуфакторен код, който току-що беше изпратен на телефона ви.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu el nou codi de dos factors que s&#39;acaba d&#39;enviar al vostre telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte nový dvoufaktorový kód, který vám byl právě zaslán na telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst den nye to-faktor kode, der netop er sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie den neuen Zwei-Faktor-Code, den Sie soeben auf Ihr Telefon erhalten haben.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε τον νέο κωδικό δύο παραγόντων που μόλις εστάλη στο τηλέφωνό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please use the new two-factor code just sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice el nuevo código de doble factor que acabamos de enviarle a su teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage uut kahefaktorilist koodi, mis saadeti just teie telefoni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä puhelimeesi juuri lähetettyä uutta kaksitekijäkoodia.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser le nouveau code à deux facteurs qui vient de vous être envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Upotrijebite novi kôd s dva faktora koji je upravo poslan na vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notaðu nýja tveggja þátta kóðann sem var nýlega sendur í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzi il nuovo codice a due fattori appena inviato al suo telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite ką tik į telefoną atsiųstą naująjį dviejų veiksnių kodą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet jauno divu faktoru kodu, kas tikko nosūtīts uz jūsu tālruni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst bruk den nye to-faktorkoden som nettopp ble sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik de nieuwe twee-factorcode die zojuist naar je telefoon is gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj nowego kodu dwuskładnikowego, który właśnie został wysłany na Twój telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize o novo código de dois factores que acaba de ser enviado para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți noul cod cu doi factori care tocmai v-a fost trimis pe telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite nový dvojfaktorový kód, ktorý vám bol práve zaslaný do telefónu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite novo kodo z dvema faktorjema, ki je bila pravkar poslana na vaš telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd den nya tvåfaktorkoden som just skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen telefonunuza yeni gönderilen iki faktörlü kodu kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте новий двофакторний код, щойно надісланий на ваш телефон.",
+          "edit_level": 40
         }
       ]
     },
@@ -18942,9 +20682,134 @@
       "id": 152,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, използвайте новия код за потвърждение, който току-що е изпратен на телефона ви.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu el nou codi de confirmació que s&#39;acaba d&#39;enviar al vostre telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte prosím nový potvrzovací kód, který vám byl právě zaslán na váš telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst den nye bekræftelseskode, der netop er sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie den neuen Bestätigungscode, den Sie gerade auf Ihr Handy erhalten haben.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε τον νέο κωδικό επιβεβαίωσης που μόλις εστάλη στο τηλέφωνό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please use the new confirmation code just sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice el nuevo código de confirmación que acabamos de enviarle a su teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage uut kinnituskoodi, mis saadeti just teie telefoni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä puhelimeesi juuri lähetettyä uutta vahvistuskoodia.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser le nouveau code de confirmation qui vient de vous être envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Upotrijebite novi kod za potvrdu koji je upravo poslan na vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notaðu nýja staðfestingarkóðann sem var nýlega sendur í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate il nuovo codice di conferma appena inviato al vostro telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite naują patvirtinimo kodą, ką tik atsiųstą į jūsų telefoną.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet jauno apstiprinājuma kodu, kas tikko nosūtīts uz tālruni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst bruk den nye bekreftelseskoden som nettopp ble sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik de nieuwe bevestigingscode die je zojuist naar je telefoon hebt gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Skorzystaj z nowego kodu potwierdzającego wysłanego na Twój telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize o novo código de confirmação que acaba de ser enviado para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți noul cod de confirmare care tocmai v-a fost trimis pe telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite nový potvrdzovací kód, ktorý vám bol práve zaslaný na telefón.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite novo potrditveno kodo, ki je bila pravkar poslana na vaš telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd den nya bekräftelsekoden som just skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen telefonunuza yeni gönderilen onay kodunu kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте новий код підтвердження, щойно надісланий на ваш телефон.",
+          "edit_level": 40
         }
       ]
     },
@@ -18952,9 +20817,134 @@
       "id": 153,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използвайте приложението за удостоверяване на автентичността.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitzeu l&#39;aplicació d&#39;autenticació.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použít aplikaci autentizátoru.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug authenticator app.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">Authentifikator-App verwenden.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε την εφαρμογή ελέγχου ταυτότητας.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar aplicación de autenticación.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage autentimisrakendust.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä todentajasovellusta.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliser l'application d'authentification.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite aplikaciju za autentifikaciju.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notaðu auðkenningarforrit.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizzare l'app Autenticatore.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Naudoti autentifikatoriaus programą.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantot autentifikatora lietotni.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk autentiseringsappen.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik authenticator app.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj aplikacji uwierzytelniającej.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar a aplicação de autenticação.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați aplicația de autentificare.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použiť aplikáciu autentifikátora.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Uporaba aplikacije avtentikacijskega sredstva.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd autentiseringsapp.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kimlik doğrulayıcı uygulamasını kullan.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використовувати програму автентифікації.</a>",
+          "edit_level": 40
         }
       ]
     },
@@ -18962,9 +20952,134 @@
       "id": 154,
       "items": [
         {
+          "culture": "bg",
+          "value": "Не се подкрепя в плана",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "No s&#39;admet al pla",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Není podporováno v plánu",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Ikke understøttet i planen",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Im Plan nicht unterstützt",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Δεν υποστηρίζεται στο σχέδιο",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Not supported in plan",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "No apoyado en el plan",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kavas ei toetata",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Ei tuettu suunnitelmassa",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Non pris en charge par le plan",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nije podržano u planu",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ekki stutt í áætlun",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Non supportato dal piano",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Plane nepalaikoma",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nav atbalstīts plānā",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Ikke støttet i planen",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Niet ondersteund in plan",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieobsługiwane w planie",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Não apoiado no plano",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nu este susținut în plan",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "V pláne sa nepodporuje",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Ni podprto v načrtu",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Stödjs inte i planen",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Planda desteklenmiyor",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Не підтримується в плані",
+          "edit_level": 40
         }
       ]
     },
@@ -18972,18 +21087,143 @@
       "id": 155,
       "items": [
         {
+          "culture": "bg",
+          "value": "Исканата функционалност не се поддържа в текущия ви план \"{0}\". Моля, надстройте плана си.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "La funcionalitat sol·licitada no s&#39;admet al vostre pla &#39;{0}&#39; actual. Si us plau, actualitzeu el vostre pla.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Požadovaná funkce není ve vašem aktuálním plánu \"{0}\" podporována. Upgradujte prosím svůj plán.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Den ønskede funktionalitet er ikke understøttet i din nuværende '{0}' plan. Opgrader venligst din plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Die angeforderte Funktionalität wird in Ihrem aktuellen '{0}'-Tarif nicht unterstützt. Bitte aktualisieren Sie Ihren Plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Η ζητούμενη λειτουργία δεν υποστηρίζεται από το τρέχον πρόγραμμα '{0}'. Παρακαλούμε αναβαθμίστε το πακέτο σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "La funcionalidad solicitada no es compatible con su plan actual '{0}'. Por favor, actualice su plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie praegune pakett {0} ei toeta soovitud funktsiooni. Palun uuendage oma paketti.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Pyydettyä toimintoa ei tueta nykyisessä '{0}' sopimuksessasi. Päivitä pakettisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "La fonctionnalité demandée n'est pas prise en charge par votre plan actuel '{0}'. Veuillez mettre à jour votre plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Tražena funkcija nije podržana u vašem trenutnom planu &#39;{0}&#39;. Nadogradite svoj plan.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Umbeðin virkni er ekki studd í núverandi &#39;{0}&#39; áætlun þinni. Vinsamlegast uppfærðu áætlunina þína.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "La funzionalità richiesta non è supportata dal vostro attuale piano '{0}'. Si prega di aggiornare il piano.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Prašoma funkcija nepalaikoma dabartiniame \"{0}\" plane. Atnaujinkite savo planą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Pieprasītā funkcionalitāte netiek atbalstīta jūsu pašreizējā plānā \"{0}\". Lūdzu, uzlabojiet savu plānu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Den forespurte funksjonaliteten støttes ikke i din nåværende '{0}' plan. Vennligst oppgrader abonnementet ditt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "De gevraagde functionaliteit wordt niet ondersteund in uw huidige '{0}' plan. Upgrade uw plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Żądana funkcja nie jest obsługiwana w bieżącym planie \"{0}\". Prosimy o uaktualnienie planu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "A funcionalidade solicitada não é suportada no seu plano atual '{0}'. Actualize o seu plano.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Funcționalitatea solicitată nu este acceptată în planul dvs. curent \"{0}\". Vă rugăm să vă actualizați planul.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Požadovaná funkcia nie je podporovaná vo vašom aktuálnom pláne \"{0}\". Prosím, aktualizujte svoj plán.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Zahtevana funkcionalnost ni podprta v vašem trenutnem načrtu '{0}'. Prosimo, nadgradite svoj načrt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Den begärda funktionen stöds inte i din nuvarande plan '{0}'. Vänligen uppgradera din plan.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Talep edilen işlev mevcut '{0}' planınızda desteklenmiyor. Lütfen planınızı yükseltin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Запитувана функціональність не підтримується у вашому поточному тарифі '{0}'. Будь ласка, оновіть свій тарифний план.",
+          "edit_level": 40
         }
       ]
     },
     {
       "id": 156,
-      "items": [
+      "items": [     
         {
           "culture": "en",
-          "value": "{0}Email two-factor",
+          "value": "{0}email two-factor",
           "edit_level": 100
         }
       ]
@@ -18992,9 +21232,134 @@
       "id": 157,
       "items": [
         {
+          "culture": "bg",
+          "value": "Вашият{0}електронна поща двуфакторен код: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "El vostre{0}codi de dos factors de correu electrònic: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Váš{0}emailový dvoufaktorový kód: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Din{0}e-mail to-faktor kode: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ihr{0}E-Mail Zwei-Faktor-Code: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ο κωδικός δύο παραγόντων του email σας{0}: {1}",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Your{0}email two-factor code: {1}",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Su correo electrónico{0}código de dos factores: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie{0}e-posti kahefaktoriline kood: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0}sähköpostisi kaksitekijäkoodi: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Votre{0}code de messagerie à deux facteurs : {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Vaša{0}dvostruka šifra e-pošte: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0}tvíþátta kóði tölvupóstsins þíns: {1}",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Il codice a due fattori della tua{0}email: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Jūsų{0}pašto dviejų veiksnių kodas: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Jūsu{0}pasta divfaktoru kods: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "To-faktorkoden for{0}e-post:: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Uw{0}email twee-factor code: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Twój{0}dwuskładnikowy kod e-mail: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "O código de dois factores do seu{0}email: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Codul dvs.{0}email cu doi factori: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Váš{0}emailový dvojfaktorový kód: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vaša{0}poštna dvostopenjska koda: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Din tvåfaktorkod för{0}e-post: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}email iki faktörlü kodunuz: {1}",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Ваш{0}поштовий двофакторний код: {1}",
+          "edit_level": 40
         }
       ]
     },
@@ -19002,9 +21367,134 @@
       "id": 158,
       "items": [
         {
+          "culture": "bg",
+          "value": "Двуфакторна електронна поща",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Correu electrònic de dos factors",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Dvoufaktorový e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "To-faktor e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Zwei-Faktor-E-Mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Email δύο παραγόντων",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Email two-factor",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Correo electrónico de doble factor",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "E-posti kahefaktoriline",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Sähköpostin kaksitekijä",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Courriel à deux facteurs",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "E-pošta u dva faktora",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Tvíþætt tölvupóstur",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Email a due fattori",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "El. paštas su dviem veiksniais",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "E-pasts ar diviem faktoriem",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "To-faktor e-post",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "E-mail twee-factor",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Dwuskładnikowa poczta e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Email de dois factores",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Email cu doi factori",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Dvojfaktorový e-mail",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "E-pošta z dvema faktorjema",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "E-post två-faktor",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "İki faktörlü e-posta",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Двофакторність електронної пошти",
+          "edit_level": 40
         }
       ]
     },
@@ -19012,9 +21502,134 @@
       "id": 159,
       "items": [
         {
+          "culture": "bg",
+          "value": "На имейла ви току-що беше изпратен код за два фактора.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;acaba d&#39;enviar un codi de dos factors al vostre correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš e-mail byl právě odeslán dvoufaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En to-faktor kode er netop blevet sendt til din e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein Zwei-Faktor-Code wurde soeben an Ihre E-Mail gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μόλις εστάλη στο email σας ένας κωδικός δύο παραγόντων.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A two-factor code has just been sent to your email.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Un código de dos factores acaba de ser enviado a su correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie e-posti aadressile on äsja saadetud kahefaktoriline kood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Sähköpostiisi on juuri lähetetty kahden tekijän koodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un code à deux facteurs vient d'être envoyé à votre e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Dvostruki kôd je upravo poslan na vašu e-poštu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Tveggja þátta kóða hefur verið sendur á netfangið þitt.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Un codice a due fattori è stato appena inviato al vostro indirizzo e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų el. paštą ką tik išsiųstas dviejų veiksnių kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu e-pasta adresi ir nosūtīts divu faktoru kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "En to-faktorkode har nettopp blitt sendt til e-posten din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is zojuist een twee-factorcode naar je e-mail gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod dwuskładnikowy został właśnie wysłany na Twój adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Acabou de ser enviado um código de dois factores para o seu e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un cod cu doi factori tocmai a fost trimis pe e-mailul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Na váš e-mail bol práve odoslaný dvojfaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "V vaše e-poštno sporočilo je bila pravkar poslana dvostopenjska koda.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "En tvåfaktorkod har just skickats till din e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Az önce e-postanıza iki faktörlü bir kod gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Двофакторний код щойно надіслано на вашу електронну пошту.",
+          "edit_level": 40
         }
       ]
     },
@@ -19022,9 +21637,134 @@
       "id": 160,
       "items": [
         {
+          "culture": "bg",
+          "value": "Настройка на приложението за удостоверяване",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Configura l&#39;aplicació d&#39;autenticació",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Nastavení aplikace autentizátoru",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Opsæt authenticator app",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Authenticator-App einrichten",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ρύθμιση εφαρμογής αυθεντικοποιητή",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Setup authenticator app",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Configurar la aplicación de autenticación",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Autentimaatori rakenduse seadistamine",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Asenna autentikointisovellus",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Configuration de l'application d'authentification",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Postavite aplikaciju autentifikatora",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Setja upp auðkenningarforrit",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Impostazione dell'app Autenticatore",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Autentifikatoriaus programėlės sąranka",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Autentifikatora lietotnes iestatīšana",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Konfigurer autentiseringsappen",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Authenticatie-app instellen",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Konfiguracja aplikacji uwierzytelniającej",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Configurar a aplicação de autenticação",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Configurați aplicația Authenticator",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nastavenie aplikácie autentifikátora",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Nastavitev aplikacije za preverjanje pristnosti",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Installera autentiseringsapp",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kimlik doğrulayıcı uygulamasını kurma",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Налаштування програми-автентифікатора",
+          "edit_level": 40
         }
       ]
     },
@@ -19032,9 +21772,134 @@
       "id": 161,
       "items": [
         {
+          "culture": "bg",
+          "value": "На имейла ви е изпратен нов двуфакторен код.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;ha enviat un nou codi de dos factors al vostre correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš e-mail byl zaslán nový dvoufaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En ny to-faktor kode er blevet sendt til din e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein neuer Zwei-Faktor-Code wurde an Ihre E-Mail gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ένας νέος κωδικός δύο παραγόντων έχει σταλεί στο email σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A new two-factor code has been sent to your email.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Se ha enviado un nuevo código de dos factores a su correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie e-posti aadressile on saadetud uus kahefaktoriline kood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Uusi kaksitekijäkoodi on lähetetty sähköpostiisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un nouveau code à deux facteurs a été envoyé à votre courriel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Novi kod s dva faktora poslan je na vašu e-poštu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Nýr tveggja þátta kóði hefur verið sendur á netfangið þitt.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Un nuovo codice a due fattori è stato inviato al vostro indirizzo e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų el. paštą išsiųstas naujas dviejų veiksnių kodas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu e-pastu ir nosūtīts jauns divu faktoru kods.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "En ny tofaktorkode har blitt sendt til e-posten din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is een nieuwe twee-factorcode naar uw e-mail verzonden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Na Twój adres e-mail został wysłany nowy kod dwuskładnikowy.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Foi enviado um novo código de dois factores para o seu e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un nou cod cu doi factori a fost trimis la adresa dvs. de e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Na váš e-mail bol odoslaný nový dvojfaktorový kód.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "V vaše e-poštno sporočilo je bila poslana nova dvostopenjska koda.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "En ny tvåfaktorkod har skickats till din e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "E-postanıza yeni bir iki faktörlü kod gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Новий двофакторний код надіслано на вашу електронну пошту.",
+          "edit_level": 40
         }
       ]
     },
@@ -19042,9 +21907,134 @@
       "id": 162,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, използвайте новия двуфакторен код, който току-що беше изпратен на имейла ви.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu el nou codi de dos factors que s&#39;acaba d&#39;enviar al vostre correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte prosím nový dvoufaktorový kód, který vám byl právě zaslán na e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst den nye to-faktor kode, der netop er sendt til din e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie den neuen Zwei-Faktor-Code, den Sie gerade per E-Mail erhalten haben.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε τον νέο κωδικό δύο παραγόντων που μόλις εστάλη στο email σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please use the new two-factor code just sent to your email.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice el nuevo código de dos factores que acabamos de enviarle a su correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage uut kahefaktorilist koodi, mis saadeti just teie e-posti aadressile.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä uutta kaksitekijäkoodia, joka on juuri lähetetty sähköpostiisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser le nouveau code à deux facteurs qui vient de vous être envoyé par courrier électronique.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Upotrijebite novi kôd s dva faktora koji je upravo poslan na vašu e-poštu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notaðu nýja tveggja þátta kóðann sem var nýlega sendur á netfangið þitt.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzi il nuovo codice a due fattori appena inviato al suo indirizzo e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite naująjį dviejų veiksnių kodą, ką tik atsiųstą į jūsų el. paštą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet jauno divu faktoru kodu, kas tikko nosūtīts uz jūsu e-pastu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst bruk den nye to-faktorkoden som nettopp ble sendt til e-posten din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik de nieuwe twee-factorcode die je zojuist per e-mail hebt ontvangen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj nowego kodu dwuskładnikowego, który właśnie został wysłany na Twój adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize o novo código de dois factores que acaba de ser enviado para o seu e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți noul cod cu doi factori care tocmai v-a fost trimis pe e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite nový dvojfaktorový kód, ktorý vám bol práve zaslaný na e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite novo kodo z dvema faktorjema, ki ste jo pravkar prejeli po e-pošti.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd den nya tvåfaktorkoden som just skickats till din e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen e-postanıza yeni gönderilen iki faktörlü kodu kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте новий двофакторний код, щойно надісланий на вашу електронну пошту.",
+          "edit_level": 40
         }
       ]
     },
@@ -19052,9 +22042,134 @@
       "id": 163,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте <a href=\"{0}\" class=\"{1}\">приложение за удостоверяване на автентичността</a> или <a href=\"{2}\" class=\"{3}\">SMS с два фактора</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Utilitzeu <a href=\"{0}\" class=\"{1}\">l&#39;aplicació d&#39;autenticació</a> o <a href=\"{2}\" class=\"{3}\">l&#39;SMS de dos factors</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte <a href=\"{0}\" class=\"{1}\">autentizační aplikaci</a> nebo <a href=\"{2}\" class=\"{3}\">dvoufaktorovou SMS</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug <a href=\"{0}\" class=\"{1}\">authenticator app</a> eller <a href=\"{2}\" class=\"{3}\">SMS to-faktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie die <a href=\"{0}\" class=\"{1}\">Authentifizierungs-App</a> oder <a href=\"{2}\" class=\"{3}\">SMS-Zwei-Faktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε <a href=\"{0}\" class=\"{1}\">εφαρμογή πιστοποίησης ταυτότητας</a> ή <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utiliza <a href=\"{0}\" class=\"{1}\">aplicación autenticadora</a> o <a href=\"{2}\" class=\"{3}\">SMS de doble factor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage <a href=\"{0}\" class=\"{1}\">autentikaatorirakendust</a> või <a href=\"{2}\" class=\"{3}\">SMS-kaksikfaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä <a href=\"{0}\" class=\"{1}\">autentikaattorisovellusta</a> tai <a href=\"{2}\" class=\"{3}\">SMS-kaksitekijää</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez <a href=\"{0}\" class=\"{1}\">application d'authentification</a> ou <a href=\"{2}\" class=\"{3}\">SMS à deux facteurs</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Upotrijebite <a href=\"{0}\" class=\"{1}\">aplikaciju za autentifikaciju</a> ili <a href=\"{2}\" class=\"{3}\">dvostruki SMS</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notaðu <a href=\"{0}\" class=\"{1}\">auðkenningarforrit</a> eða <a href=\"{2}\" class=\"{3}\">SMS tveggja þátta</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate <a href=\"{0}\" class=\"{1}\">applicazione autenticatore</a> o <a href=\"{2}\" class=\"{3}\">SMS a due fattori</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite <a href=\"{0}\" class=\"{1}\">autentifikavimo programėlę</a> arba <a href=\"{2}\" class=\"{3}\">SMS dviejų faktorių</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet <a href=\"{0}\" class=\"{1}\">autentifikatora lietotni</a> vai <a href=\"{2}\" class=\"{3}\">SMS divu faktoru</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk <a href=\"{0}\" class=\"{1}\">autentiseringsapp</a> eller <a href=\"{2}\" class=\"{3}\">SMS-tofaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik <a href=\"{0}\" class=\"{1}\">authenticator app</a> of <a href=\"{2}\" class=\"{3}\">SMS twee-factor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj <a href=\"{0}\" class=\"{1}\">aplikacji uwierzytelniającej</a> lub <a href=\"{2}\" class=\"{3}\">dwuskładnikowego SMS-a</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">aplicativo autenticador</a> ou <a href=\"{2}\" class=\"{3}\">SMS de dois fatores</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați <a href=\"{0}\" class=\"{1}\">aplicația de autentificare</a> sau <a href=\"{2}\" class=\"{3}\">SMS cu doi factori</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite <a href=\"{0}\" class=\"{1}\">autentifikačnú aplikáciu</a> alebo <a href=\"{2}\" class=\"{3}\">dvofaktorovú SMS</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabi <a href=\"{0}\" class=\"{1}\">avtentikacijsko aplikacijo</a> ali <a href=\"{2}\" class=\"{3}\">dvofaktorski SMS</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd <a href=\"{0}\" class=\"{1}\">autentiseringsapp</a> eller <a href=\"{2}\" class=\"{3}\">SMS tvåfaktor</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">authenticator app</a> veya <a href=\"{2}\" class=\"{3}\">SMS two-factor</a> kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">додаток-автентифікатор</a> або <a href=\"{2}\" class=\"{3}\">двофакторне SMS</a>.",
+          "edit_level": 40
         }
       ]
     }

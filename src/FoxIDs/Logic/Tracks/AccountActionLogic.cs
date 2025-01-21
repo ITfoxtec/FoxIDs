@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}Email confirmation", $"{GetCompanyName()} - "],
+                Subject = localizer["{0}email confirmation", $"{GetCompanyName()} - "],
                 Body = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
             };
         }
@@ -165,7 +165,7 @@ namespace FoxIDs.Logic
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}Reset password", $"{GetCompanyName()} - "],
+                Subject = localizer["{0}reset password", $"{GetCompanyName()} - "],
                 Body = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
             };
         }
@@ -226,7 +226,7 @@ namespace FoxIDs.Logic
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}Email two-factor", $"{GetCompanyName()} - "],
+                Subject = localizer["{0}email two-factor", $"{GetCompanyName()} - "],
                 Body = localizer["Your{0}email two-factor code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
             };
         }

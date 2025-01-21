@@ -22560,9 +22560,134 @@
       "id": 164,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, не използвайте телефонния номер.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, no utilitzeu el número de telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Nepoužívejte prosím telefonní číslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst ikke telefonnummeret.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie nicht die Telefonnummer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μην χρησιμοποιείτε τον αριθμό τηλεφώνου.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please do not use the phone number.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "No utilice el número de teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun ärge kasutage telefoninumbrit.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Älä käytä puhelinnumeroa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "N'utilisez pas le numéro de téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo nemojte koristiti telefonski broj.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast ekki nota símanúmerið.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Non utilizzare il numero di telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Nenaudokite telefono numerio.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, neizmantojiet tālruņa numuru.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst ikke bruk telefonnummeret.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik niet het telefoonnummer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Prosimy o nieużywanie numeru telefonu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Não utilize o número de telefone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să nu folosiți numărul de telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nepoužívajte telefónne číslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Ne uporabljajte telefonske številke.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd inte telefonnumret.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen telefon numarasını kullanmayın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, не використовуйте номер телефону.",
+          "edit_level": 40
         }
       ]
     },
@@ -22570,9 +22695,134 @@
       "id": 165,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, не използвайте потребителското име или части от него.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, no utilitzeu el nom d&#39;usuari ni parts del mateix.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Nepoužívejte prosím uživatelské jméno nebo jeho části.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug ikke brugernavnet eller dele af det.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie den Benutzernamen oder Teile davon nicht.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε μην χρησιμοποιείτε το όνομα χρήστη ή μέρη αυτού.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please do not use the username or parts of it.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Por favor, no utilice el nombre de usuario o partes del mismo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun ärge kasutage kasutajanime või selle osi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Älä käytä käyttäjätunnusta tai sen osia.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez ne pas utiliser le nom d'utilisateur ou des parties de celui-ci.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo nemojte koristiti korisničko ime ili njegove dijelove.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast ekki nota notandanafnið eða hluta þess.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Non utilizzare il nome utente o parti di esso.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Nenaudokite naudotojo vardo ar jo dalių.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, neizmantojiet lietotājvārdu vai tā daļas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst ikke bruk brukernavnet eller deler av det.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik de gebruikersnaam of delen ervan niet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Prosimy o nieużywanie nazwy użytkownika lub jej części.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Não utilize o nome de utilizador ou partes do mesmo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să nu utilizați numele de utilizator sau părți ale acestuia.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nepoužívajte používateľské meno alebo jeho časti.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabniškega imena ali njegovih delov ne uporabljajte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd inte användarnamnet eller delar av det.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen kullanıcı adını veya bir kısmını kullanmayın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, не використовуйте ім'я користувача або його частину.",
+          "edit_level": 40
         }
       ]
     }

@@ -289,11 +289,11 @@
       "id": 66
     },
     {
-      "name": "Two-factor authentication (2FA)",
+      "name": "Two-factor authentication",
       "id": 67
     },
     {
-      "name": "Register two-factor authentication with an app of your choice.",
+      "name": "Setup two-factor with an authenticator app of your choice.",
       "id": 68
     },
     {
@@ -357,7 +357,7 @@
       "id": 83
     },
     {
-      "name": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account.",
+      "name": "If you lose your phone or for some other reason can no longer generate two-factor authentication codes, this recovery code is the ONLY way to gain access to your account.",
       "id": 84
     },
     {
@@ -9426,132 +9426,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Двуфакторно удостоверяване (2FA)",
+          "value": "Двуфакторно удостоверяване",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Autenticació de dos factors (2FA)",
+          "value": "Autenticació de dos factors",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Dvoufaktorové ověřování (2FA)",
+          "value": "Dvoufaktorové ověřování",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "To-faktor godkendelse (2FA)",
+          "value": "To-faktor godkendelse",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Zwei-Faktor-Authentifizierung (2FA)",
+          "value": "Zwei-Faktor-Authentifizierung",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Έλεγχος ταυτότητας δύο παραγόντων (2FA)",
+          "value": "Έλεγχος ταυτότητας δύο παραγόντων",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Two-factor authentication (2FA)",
+          "value": "Two-factor authentication",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Autenticación de dos factores (2FA)",
+          "value": "Autenticación de dos factores",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Kahefaktoriline autentimine (2FA)",
+          "value": "Kahefaktoriline autentimine",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Kaksitekijätodennus (2FA)",
+          "value": "Kaksitekijätodennus",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Authentification à deux facteurs (2FA)",
+          "value": "Authentification à deux facteurs",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Autentikacija u dva faktora (2FA)",
+          "value": "Autentikacija u dva faktora",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Tvíþætt auðkenning (2FA)",
+          "value": "Tvíþætt auðkenning",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Autenticazione a due fattori (2FA)",
+          "value": "Autenticazione a due fattori",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Dviejų veiksnių autentifikavimas (2FA)",
+          "value": "Dviejų veiksnių autentifikavimas",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Divu faktoru autentifikācija (2FA)",
+          "value": "Divu faktoru autentifikācija",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Tofaktorautentisering (2FA)",
+          "value": "Tofaktorautentisering",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Authenticatie met twee factoren (2FA)",
+          "value": "Authenticatie met twee factoren",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Uwierzytelnianie dwuskładnikowe (2FA)",
+          "value": "Uwierzytelnianie dwuskładnikowe",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Autenticação de dois factores (2FA)",
+          "value": "Autenticação de dois factores",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Autentificare cu doi factori (2FA)",
+          "value": "Autentificare cu doi factori",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Dvojfaktorové overovanie (2FA)",
+          "value": "Dvojfaktorové overovanie",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Preverjanje pristnosti z dvema dejavnikoma (2FA)",
+          "value": "Preverjanje pristnosti z dvema dejavnikoma",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Tvåfaktorsautentisering (2FA)",
+          "value": "Tvåfaktorsautentisering",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "İki faktörlü kimlik doğrulama (2FA)",
+          "value": "İki faktörlü kimlik doğrulama",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Двофакторна автентифікація (2FA)",
+          "value": "Двофакторна автентифікація",
           "edit_level": 40
         }
       ]
@@ -9560,134 +9560,14 @@
       "id": 68,
       "items": [
         {
-          "culture": "bg",
-          "value": "Регистрирайте двуфакторно удостоверяване с приложение по ваш избор. Можете да използвате <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> и други.",
-          "edit_level": 40
-        },
-        {
-          "culture": "ca",
-          "value": "Registreu l&#39;autenticació de dos factors amb una aplicació que trieu. Podeu utilitzar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i altres.",
-          "edit_level": 30
-        },
-        {
-          "culture": "cs",
-          "value": "Zaregistrujte dvoufaktorové ověřování pomocí vybrané aplikace. Můžete použít <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> a další.",
-          "edit_level": 40
-        },
-        {
           "culture": "da",
-          "value": "Registrer to-faktor godkendelse med den app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
+          "value": "Setup to-faktor med den authenticator app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
           "edit_level": 100
-        },
-        {
-          "culture": "de",
-          "value": "Registrieren Sie die Zwei-Faktor-Authentifizierung mit einer App Ihrer Wahl. Sie können <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> und andere verwenden.",
-          "edit_level": 40
-        },
-        {
-          "culture": "el",
-          "value": "Καταχωρήστε τον έλεγχο ταυτότητας δύο παραγόντων σε μια εφαρμογή της επιλογής σας. Μπορείτε να χρησιμοποιήσετε <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> και άλλες.",
-          "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Register two-factor authentication with an app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others.",
+          "value": "Setup two-factor with an authenticator app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others.",
           "edit_level": 100
-        },
-        {
-          "culture": "es",
-          "value": "Registra la autenticación de dos factores con una app de tu elección. Puedes utilizar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> y otras.",
-          "edit_level": 40
-        },
-        {
-          "culture": "et",
-          "value": "Registreerige kahefaktoriline autentimine teie valitud rakendusega. Võite kasutada <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ja teisi.",
-          "edit_level": 40
-        },
-        {
-          "culture": "fi",
-          "value": "Rekisteröi kaksitekijätodennus valitsemallasi sovelluksella. Voit käyttää <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ja muita.",
-          "edit_level": 40
-        },
-        {
-          "culture": "fr",
-          "value": "Enregistrez l'authentification à deux facteurs avec l'application de votre choix. Vous pouvez utiliser <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> et d'autres.",
-          "edit_level": 40
-        },
-        {
-          "culture": "hr",
-          "value": "Registrirajte dvofaktorsku autentifikaciju pomoću aplikacije po vašem izboru. Možete koristiti <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i druge.",
-          "edit_level": 30
-        },
-        {
-          "culture": "is",
-          "value": "Skráðu tvíþætta auðkenningu með appi að eigin vali. Þú getur notað <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a> , <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a> , <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og fleiri.",
-          "edit_level": 30
-        },
-        {
-          "culture": "it",
-          "value": "Registrate l'autenticazione a due fattori con un'applicazione di vostra scelta. È possibile utilizzare <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> e altre.",
-          "edit_level": 40
-        },
-        {
-          "culture": "lt",
-          "value": "Užregistruokite dviejų veiksnių autentifikavimą naudodami pasirinktą programėlę. Galite naudoti <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ir kt.",
-          "edit_level": 40
-        },
-        {
-          "culture": "lv",
-          "value": "Reģistrējiet divfaktoru autentifikāciju ar izvēlēto lietotni. Jūs varat izmantot <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> un citas.",
-          "edit_level": 40
-        },
-        {
-          "culture": "nb",
-          "value": "Registrer tofaktorautentisering med en app etter eget valg. Du kan bruke <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
-          "edit_level": 40
-        },
-        {
-          "culture": "nl",
-          "value": "Registreer twee-factor authenticatie met een app naar keuze. Je kunt <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> en anderen gebruiken.",
-          "edit_level": 40
-        },
-        {
-          "culture": "pl",
-          "value": "Zarejestruj uwierzytelnianie dwuskładnikowe za pomocą wybranej aplikacji. Możesz użyć <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> i innych.",
-          "edit_level": 40
-        },
-        {
-          "culture": "pt",
-          "value": "Registe a autenticação de dois factores com uma aplicação à sua escolha. Pode utilizar <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> e outros.",
-          "edit_level": 40
-        },
-        {
-          "culture": "ro",
-          "value": "Înregistrați autentificarea cu doi factori cu o aplicație la alegere. Puteți utiliza <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> și altele.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sk",
-          "value": "Zaregistrujte dvojfaktorové overovanie pomocou vybranej aplikácie. Môžete použiť <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> a ďalšie.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sl",
-          "value": "Registrirajte dvofaktorsko preverjanje pristnosti z izbrano aplikacijo. Uporabiš lahko <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> in druge.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sv",
-          "value": "Registrera tvåfaktorsautentisering med en app som du väljer själv. Du kan använda <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> och andra.",
-          "edit_level": 40
-        },
-        {
-          "culture": "tr",
-          "value": "Seçtiğiniz bir uygulama ile iki faktörlü kimlik doğrulamayı kaydedin. <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> ve diğerlerini kullanabilirsiniz.",
-          "edit_level": 40
-        },
-        {
-          "culture": "uk",
-          "value": "Зареєструйте двофакторну автентифікацію у вибраному вами додатку. Ви можете використовувати <a href=\"https://authy.com/\" target=\"_blank\">Anty</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> та інші.",
-          "edit_level": 40
         }
       ]
     },
@@ -11720,134 +11600,14 @@
       "id": 84,
       "items": [
         {
-          "culture": "bg",
-          "value": "Ако изгубите телефона си или по някаква друга причина вече не можете да генерирате кодове за двуфакторно удостоверяване (2FA), този код за възстановяване е ЕДИНСТВЕНИЯТ начин да получите достъп до профила си.",
-          "edit_level": 40
-        },
-        {
-          "culture": "ca",
-          "value": "Si perds el telèfon o per algun altre motiu ja no pots generar codis d&#39;autenticació de dos factors (2FA), aquest codi de recuperació és l&#39;ÚNICA manera d&#39;accedir al teu compte.",
-          "edit_level": 30
-        },
-        {
-          "culture": "cs",
-          "value": "Pokud ztratíte telefon nebo z jiného důvodu nemůžete generovat kódy dvoufaktorového ověřování (2FA), je tento obnovovací kód JEDINÝM způsobem, jak získat přístup k účtu.",
-          "edit_level": 40
-        },
-        {
           "culture": "da",
-          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor (2FA) koder, så er genoprettelseskoden den ENESTE adgang til din konto.",
+          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor koder, så er genoprettelseskoden den ENESTE adgang til din konto.",
           "edit_level": 100
-        },
-        {
-          "culture": "de",
-          "value": "Wenn Sie Ihr Telefon verlieren oder aus einem anderen Grund keine Codes für die Zwei-Faktor-Authentifizierung (2FA) mehr erzeugen können, ist dieser Wiederherstellungscode die einzige Möglichkeit, Zugang zu Ihrem Konto zu erhalten.",
-          "edit_level": 40
-        },
-        {
-          "culture": "el",
-          "value": "Εάν χάσετε το τηλέφωνό σας ή για κάποιο άλλο λόγο δεν μπορείτε πλέον να δημιουργήσετε κωδικούς ελέγχου ταυτότητας δύο παραγόντων (2FA), αυτός ο κωδικός ανάκτησης είναι ο ΜΟΝΟΣ τρόπος για να αποκτήσετε πρόσβαση στο λογαριασμό σας.",
-          "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account.",
+          "value": "If you lose your phone or for some other reason can no longer generate two-factor authentication codes, this recovery code is the ONLY way to gain access to your account.",
           "edit_level": 100
-        },
-        {
-          "culture": "es",
-          "value": "Si pierdes tu teléfono o por alguna otra razón ya no puedes generar códigos de autenticación de dos factores (2FA), este código de recuperación es la ÚNICA forma de acceder a tu cuenta.",
-          "edit_level": 40
-        },
-        {
-          "culture": "et",
-          "value": "Kui kaotate oma telefoni või ei saa mingil muul põhjusel enam luua kahefaktorilise autentimise (2FA) koode, on see taastamiskood ainus viis oma kontole juurdepääsu saamiseks.",
-          "edit_level": 40
-        },
-        {
-          "culture": "fi",
-          "value": "Jos kadotat puhelimesi tai et jostain muusta syystä voi enää luoda 2FA-koodeja (Two-factor authentication), tämä palautuskoodi on AINOA tapa päästä tilillesi.",
-          "edit_level": 40
-        },
-        {
-          "culture": "fr",
-          "value": "Si vous perdez votre téléphone ou si, pour une autre raison, vous ne pouvez plus générer de codes d'authentification à deux facteurs (2FA), ce code de récupération est le SEUL moyen d'accéder à votre compte.",
-          "edit_level": 40
-        },
-        {
-          "culture": "hr",
-          "value": "Ako izgubite svoj telefon ili iz nekog drugog razloga više ne možete generirati kodove za provjeru autentičnosti u dva faktora (2FA), ovaj kod za oporavak je JEDINI način da dobijete pristup svom računu.",
-          "edit_level": 30
-        },
-        {
-          "culture": "is",
-          "value": "Ef þú týnir símanum þínum eða getur af einhverjum öðrum ástæðum ekki lengur búið til tvíþætta auðkenningarkóða (2FA) er þessi endurheimtarkóði EINA leiðin til að fá aðgang að reikningnum þínum.",
-          "edit_level": 30
-        },
-        {
-          "culture": "it",
-          "value": "Se si perde il telefono o per qualche altro motivo non è più possibile generare codici di autenticazione a due fattori (2FA), questo codice di recupero è l'unico modo per accedere al proprio account.",
-          "edit_level": 40
-        },
-        {
-          "culture": "lt",
-          "value": "Jei pametėte telefoną arba dėl kokių nors kitų priežasčių nebegalite generuoti dviejų veiksnių autentifikavimo (2FA) kodų, šis atkūrimo kodas yra vienintelis būdas gauti prieigą prie paskyros.",
-          "edit_level": 40
-        },
-        {
-          "culture": "lv",
-          "value": "Ja esat pazaudējis tālruni vai kāda cita iemesla dēļ vairs nevarat ģenerēt divu faktoru autentifikācijas (2FA) kodus, šis atjaunošanas kods ir TIKAI vienīgais veids, kā piekļūt kontam.",
-          "edit_level": 40
-        },
-        {
-          "culture": "nb",
-          "value": "Hvis du mister telefonen eller av andre grunner ikke lenger kan generere koder for tofaktorautentisering (2FA), er denne gjenopprettingskoden den ENESTE måten å få tilgang til kontoen din på.",
-          "edit_level": 40
-        },
-        {
-          "culture": "nl",
-          "value": "Als je je telefoon verliest of om een andere reden geen 2-factor authenticatie (2FA) codes meer kunt genereren, is deze herstelcode de ENIGE manier om toegang te krijgen tot je account.",
-          "edit_level": 40
-        },
-        {
-          "culture": "pl",
-          "value": "Jeśli zgubisz telefon lub z innego powodu nie możesz już generować kodów uwierzytelniania dwuskładnikowego (2FA), ten kod odzyskiwania jest JEDYNYM sposobem na uzyskanie dostępu do konta.",
-          "edit_level": 40
-        },
-        {
-          "culture": "pt",
-          "value": "Se perder o seu telemóvel ou se, por qualquer outro motivo, já não puder gerar códigos de autenticação de dois factores (2FA), este código de recuperação é a ÚNICA forma de obter acesso à sua conta.",
-          "edit_level": 40
-        },
-        {
-          "culture": "ro",
-          "value": "Dacă vă pierdeți telefonul sau dacă, din alte motive, nu mai puteți genera coduri de autentificare cu doi factori (2FA), acest cod de recuperare este SINGURA modalitate de a obține acces la contul dvs.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sk",
-          "value": "Ak stratíte telefón alebo z nejakého iného dôvodu už nemôžete generovať kódy dvojfaktorového overovania (2FA), tento kód na obnovenie je JEDINÝM spôsobom, ako získať prístup k svojmu účtu.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sl",
-          "value": "Če izgubite telefon ali iz kakšnega drugega razloga ne morete več ustvariti kode za dvofaktorsko preverjanje pristnosti (2FA), je ta obnovitvena koda edini način za dostop do računa.",
-          "edit_level": 40
-        },
-        {
-          "culture": "sv",
-          "value": "Om du tappar bort din telefon eller av någon annan anledning inte längre kan generera koder för tvåfaktorsautentisering (2FA) är denna återställningskod det ENDA sättet att få åtkomst till ditt konto.",
-          "edit_level": 40
-        },
-        {
-          "culture": "tr",
-          "value": "Telefonunuzu kaybederseniz veya başka bir nedenle artık İki Faktörlü Kimlik Doğrulama (2FA) kodu oluşturamazsanız, bu kurtarma kodu hesabınıza erişmenin TEK yoludur.",
-          "edit_level": 40
-        },
-        {
-          "culture": "uk",
-          "value": "Якщо ви втратили телефон або з якихось інших причин більше не можете генерувати коди двофакторної автентифікації (2FA), цей код відновлення є ЄДИНИМ способом отримати доступ до свого облікового запису.",
-          "edit_level": 40
         }
       ]
     },

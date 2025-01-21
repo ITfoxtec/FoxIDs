@@ -123,7 +123,7 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountActionLogic.VerifyPhoneConfirmationCodeSmsAsync(sequenceData.Phone, phoneConfirmation.ConfirmationCode);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromEmailVerificationStep);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, step: LoginResponseSequenceSteps.EmailVerificationStep);
                 }
                 catch (CodeNotExistsException cneex)
                 {
@@ -214,7 +214,7 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaAllAndAppStep);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, step: LoginResponseSequenceSteps.MfaAllAndAppStep);
                 }
                 catch (CodeNotExistsException cneex)
                 {

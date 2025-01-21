@@ -101,7 +101,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
-        [Display(Name = "Two-factor (2FA) App supported")]
+        [Display(Name = "Two-factor with authenticator app supported")]
         public bool DisableTwoFactorApp { get; set; }
 
         [Display(Name = "Two-factor with SMS supported")]
@@ -175,7 +175,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
             if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
             {
-                results.Add(new ValidationResult($"Either two-factor (2FA) with App, SMS or email should be supported if two-factor is require.",
+                results.Add(new ValidationResult($"Either two-factor (2FA) with authenticator app, SMS or email should be supported if two-factor is require.",
                     [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
             }
 

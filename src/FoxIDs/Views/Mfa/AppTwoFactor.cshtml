@@ -3,7 +3,7 @@
 @model TwoFactorAppViewModel
 
 @{
-    ViewData["Title"] = Localizer["Two-factor authentication (2FA)"];
+    ViewData["Title"] = Localizer["Two-factor authentication"];
 }
 
 <h1 class="heading">@ViewData["Title"]</h1>
@@ -23,25 +23,23 @@
                 <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
             </div>
 
-            @if (Model.SupportTwoFactorSms || Model.SupportTwoFactorEmail)
+            @if (Model.ShowTwoFactorSmsLink || Model.ShowTwoFactorEmailLink)
             {
                 <div class="form-group button-group another-two-factor-group">
                     @Localizer["Try another method?"]
-                    @if (Model.SupportTwoFactorSms && Model.SupportTwoFactorEmail)
+                    @if (Model.ShowTwoFactorSmsLink && Model.ShowTwoFactorEmailLink)
                     {
-                        @Html.Raw(Localizer.GetString("Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
                                  $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"));
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
                     }
-                    else @if (Model.SupportTwoFactorSms)
+                    else @if (Model.ShowTwoFactorSmsLink)
                     {
-                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"));
+                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>", $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
                     }
-                    else @if (Model.SupportTwoFactorEmail)
+                    else @if (Model.ShowTwoFactorEmailLink)
                     {
-                        @Html.Raw(Localizer.GetString("<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"));
+                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>", $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
                     }
                 </div>
             }

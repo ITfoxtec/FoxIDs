@@ -58,9 +58,19 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "fsa")]
         public bool SupportTwoFactorApp { get; set; }
+        
+        [JsonProperty(PropertyName = "fsar")]
+        public bool TwoFactorAppIsRegistred { get; set; }
+
+        [JsonIgnore]
+        public bool ShowTwoFactorAppLink => SupportTwoFactorApp && TwoFactorAppIsRegistred;
+
+        [JsonIgnore]
+        public bool ShowRegisterTwoFactorApp => SupportTwoFactorApp && !TwoFactorAppIsRegistred;
 
         [JsonProperty(PropertyName = "fss")]
         public bool SupportTwoFactorSms { get; set; }
+
         [JsonProperty(PropertyName = "fse")]
         public bool SupportTwoFactorEmail { get; set; }
     }

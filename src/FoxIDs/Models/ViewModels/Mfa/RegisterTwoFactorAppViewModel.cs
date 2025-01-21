@@ -6,9 +6,9 @@ namespace FoxIDs.Models.ViewModels
     {
         public string SequenceString { get; set; }
 
-        public bool SupportTwoFactorSms { get; set; }
+        public bool ShowTwoFactorSmsLink { get; set; }
 
-        public bool SupportTwoFactorEmail { get; set; }
+        public bool ShowTwoFactorEmailLink { get; set; }
 
         public string QrCodeSetupImageUrl { get; set; }
 

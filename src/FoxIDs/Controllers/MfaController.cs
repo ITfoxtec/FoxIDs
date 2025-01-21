@@ -75,8 +75,8 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl,
                     ManualSetupKey = twoFactorSetupInfo.ManualSetupKey,
-                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
-                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
+                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
+                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
                 });
             }
             catch (Exception ex)
@@ -111,8 +111,8 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
-                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
+                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
                     return View(registerTwoFactor);
                 };
 
@@ -188,7 +188,7 @@ namespace FoxIDs.Controllers
 
                 var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.UserIdentifier, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppRecoveryCode);
                 var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
-                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: LoginResponseSequenceSteps.LoginResponseStep);
             }
             catch (Exception ex)
             {
@@ -223,8 +223,8 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
-                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
+                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
+                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
                 });
             }
             catch (Exception ex)
@@ -259,8 +259,8 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
-                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
+                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
                     return View(registerTwoFactor);
                 };
 
@@ -303,7 +303,7 @@ namespace FoxIDs.Controllers
 
                         var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
                         var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
-                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: LoginResponseSequenceSteps.LoginResponseStep);
                     }
                     catch (InvalidAppCodeException acex)
                     {
@@ -359,8 +359,9 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    SupportTwoFactorApp = sequenceData.SupportTwoFactorApp,
-                    SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail,
+                    ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink,
+                    ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp,
+                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
                     ForceNewCode = newCode,
                     Phone = sequenceData.Phone
                 });
@@ -403,8 +404,9 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.SupportTwoFactorApp = sequenceData.SupportTwoFactorApp;
-                    registerTwoFactor.SupportTwoFactorEmail = sequenceData.SupportTwoFactorEmail;
+                    registerTwoFactor.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                    registerTwoFactor.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
                     return View(registerTwoFactor);
                 };
 
@@ -419,7 +421,7 @@ namespace FoxIDs.Controllers
                 {
                     var user = await accountActionLogic.VerifyPhoneTwoFactorCodeSmsAsync(sequenceData.Phone, registerTwoFactor.Code);
                     var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Sms, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: registerTwoFactor.RegisterTwoFactorApp ? LoginResponseSequenceSteps.MfaRegisterAuthAppStep : LoginResponseSequenceSteps.LoginResponseStep);
                 }
                 catch (CodeNotExistsException cneex)
                 {
@@ -479,8 +481,9 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    SupportTwoFactorApp = sequenceData.SupportTwoFactorApp,
-                    SupportTwoFactorSms = sequenceData.SupportTwoFactorSms,
+                    ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink,
+                    ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp,
+                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
                     ForceNewCode = newCode,
                     Email = sequenceData.Email
                 });
@@ -523,8 +526,9 @@ namespace FoxIDs.Controllers
                     registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.SupportTwoFactorApp = sequenceData.SupportTwoFactorApp;
-                    registerTwoFactor.SupportTwoFactorSms = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactor.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                    registerTwoFactor.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
                     return View(registerTwoFactor);
                 };
 
@@ -539,7 +543,7 @@ namespace FoxIDs.Controllers
                 {
                     var user = await accountActionLogic.VerifyEmailTwoFactorCodeAsync(sequenceData.Email, registerTwoFactor.Code);
                     var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Email, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: registerTwoFactor.RegisterTwoFactorApp ? LoginResponseSequenceSteps.MfaRegisterAuthAppStep : LoginResponseSequenceSteps.LoginResponseStep);
                 }
                 catch (CodeNotExistsException cneex)
                 {

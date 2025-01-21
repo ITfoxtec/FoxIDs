@@ -44,7 +44,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable account")]
         public bool DisableAccount { get; set; }
 
-        [Display(Name = "Two-factor (2FA) App disabled")]
+        [Display(Name = "Two-factor with authenticator app disabled")]
         public bool DisableTwoFactorApp { get; set; }
 
         [Display(Name = "Two-factor with SMS disabled")]

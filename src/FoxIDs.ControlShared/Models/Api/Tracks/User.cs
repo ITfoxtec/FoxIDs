@@ -43,7 +43,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable account")]
         public bool DisableAccount { get; set; }
 
-        [Display(Name = "Two-factor (2FA) App disabled")]
+        [Display(Name = "Two-factor authenticator app disabled")]
         public bool DisableTwoFactorApp { get; set; }
 
         [Display(Name = "Two-factor with SMS disabled")]
@@ -52,7 +52,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Two-factor with email disabled")]
         public bool DisableTwoFactorEmail { get; set; }
 
-        [Display(Name = "Active two-factor (2FA) App")]
+        [Display(Name = "Active two-factor authenticator App")]
         public bool ActiveTwoFactorApp { get; set; }
 
         [Display(Name = "Require multi-factor (2FA/MFA)")]

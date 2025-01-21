@@ -643,6 +643,34 @@
     {
       "name": "The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.",
       "id": 155
+    },
+    {
+      "name": "{0}Email two-factor",
+      "id": 156
+    },
+    {
+      "name": "Your{0}email two-factor code: {1}",
+      "id": 157
+    },
+    {
+      "name": "Email two-factor",
+      "id": 158
+    },
+    {
+      "name": "A two-factor code has just been sent to your email.",
+      "id": 159
+    },
+    {
+      "name": "Setup authenticator app",
+      "id": 160
+    },
+    {
+      "name": "A new two-factor code has been sent to your email.",
+      "id": 161
+    },
+    {
+      "name": "Please use the new two-factor code just sent to your email.",
+      "id": 162
     }
   ],
   "resources": [
@@ -18942,6 +18970,76 @@
         {
           "culture": "en",
           "value": "The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 156,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0}Email two-factor",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 157,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your{0}email two-factor code: {1}",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 158,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Email two-factor",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 159,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A two-factor code has just been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 160,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Setup authenticator app",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 161,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new two-factor code has been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 162,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use the new two-factor code just sent to your email.",
           "edit_level": 100
         }
       ]

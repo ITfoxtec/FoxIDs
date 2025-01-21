@@ -28,10 +28,11 @@
             </div>
             @if (Model.ShowRegisterTwoFactorApp) 
             {
-                <div class="form-group active-group">
-                    <input asp-for="RegisterTwoFactorApp" autocomplete="off" class="form-control input-control" autofocus />
-                    <label asp-for="RegisterTwoFactorApp" class="label-control"></label>
-                    <span asp-validation-for="RegisterTwoFactorApp"></span>
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input asp-for="RegisterTwoFactorApp" class="custom-control-input">
+                        <label asp-for="RegisterTwoFactorApp" class="custom-control-label"></label>
+                    </div>
                 </div>
             }
 

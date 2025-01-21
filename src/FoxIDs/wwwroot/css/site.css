@@ -170,6 +170,25 @@ code {
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }
 
+.custom-control-input:focus ~ .custom-control-label::before {
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #f19031 !important;
+    border-color: #f19031 !important;
+}
+
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+    border-color: #f19031 !important;
+}
+
+.custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    background-color: #f19031 !important;
+    border-color: #f19031 !important;
+}
+
 .button-group {
     padding-top: 15px;
     margin-top: 15px;

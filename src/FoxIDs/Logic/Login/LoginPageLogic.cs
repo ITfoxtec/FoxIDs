@@ -85,9 +85,9 @@ namespace FoxIDs.Logic
 
         private bool SupportTwoFactorApp(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp ? true : false;
 
-        private bool SupportTwoFactorSms(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
+        private bool SupportTwoFactorSms(User user, LoginUpParty loginUpParty) => !user.Phone.IsNullOrEmpty() && !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
 
-        private bool SupportTwoFactorEmail(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
+        private bool SupportTwoFactorEmail(User user, LoginUpParty loginUpParty) => !user.Email.IsNullOrEmpty() && !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 

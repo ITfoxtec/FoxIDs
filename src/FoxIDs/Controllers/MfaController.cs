@@ -463,7 +463,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableEmailTwoFactor)
                     {
-                        throw new Exception($"Email is not supported in the '{plan.Name}' plan.");
+                        throw new Exception($"Email two-factor is not supported in the '{plan.Name}' plan.");
                     }
                 }
 
@@ -509,7 +509,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableEmailTwoFactor)
                     {
-                        throw new Exception($"Email is not supported in the '{plan.Name}' plan.");
+                        throw new Exception($"Email two-factor is not supported in the '{plan.Name}' plan.");
                     }
                 }
 

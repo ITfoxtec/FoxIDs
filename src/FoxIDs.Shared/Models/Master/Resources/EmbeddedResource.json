@@ -671,6 +671,10 @@
     {
       "name": "Please use the new two-factor code just sent to your email.",
       "id": 162
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
+      "id": 163
     }
   ],
   "resources": [
@@ -19040,6 +19044,16 @@
         {
           "culture": "en",
           "value": "Please use the new two-factor code just sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 163,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
           "edit_level": 100
         }
       ]

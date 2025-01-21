@@ -47,9 +47,9 @@
                     @Localizer["Try another method?"]
                     @if (Model.ShowTwoFactorAppLink && Model.ShowTwoFactorSmsLink)
                     {
-                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
                                  $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
+                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
                     }
                     else @if (Model.ShowTwoFactorAppLink)
                     {

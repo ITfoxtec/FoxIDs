@@ -96,7 +96,7 @@ namespace FoxIDs.Controllers
                         // included + master track
                         if (count > plan.Tracks.LimitedThreshold) 
                         {
-                            throw new Exception($"Maximum number of tracks ({plan.Tracks.LimitedThreshold}) in the '{plan.Name}' plan has been reached. Master environment not counted.");
+                            throw new PlanException(plan, $"Maximum number of tracks ({plan.Tracks.LimitedThreshold}) in the '{plan.Name}' plan has been reached. Master environment not counted.");
                         }
                     }
                 }

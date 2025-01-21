@@ -343,7 +343,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableSms)
                     {
-                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                        throw new PlanException(plan, $"SMS is not supported in the '{plan.Name}' plan.");
                     }
                 }
 
@@ -389,7 +389,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableSms)
                     {
-                        throw new Exception($"SMS is not supported in the '{plan.Name}' plan.");
+                        throw new PlanException(plan, $"SMS is not supported in the '{plan.Name}' plan.");
                     }
                 }
 
@@ -463,7 +463,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableEmailTwoFactor)
                     {
-                        throw new Exception($"Email two-factor is not supported in the '{plan.Name}' plan.");
+                        throw new PlanException(plan, $"Email two-factor is not supported in the '{plan.Name}' plan.");
                     }
                 }
 
@@ -509,7 +509,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableEmailTwoFactor)
                     {
-                        throw new Exception($"Email two-factor is not supported in the '{plan.Name}' plan.");
+                        throw new PlanException(plan, $"Email two-factor is not supported in the '{plan.Name}' plan.");
                     }
                 }
 

@@ -98,7 +98,13 @@ namespace FoxIDs.Controllers
             var externalKeyIsNotReadyException = FindException<ExternalKeyIsNotReadyException>(exception);
             if (externalKeyIsNotReadyException != null)
             {
-                return HandleexternalKeyIsNotReadyException(errorViewModel);
+                return HandleExternalKeyIsNotReadyException(errorViewModel);
+            }
+
+            var planException = FindException<PlanException>(exception);
+            if (planException != null)
+            {
+                return HandlePlanException(errorViewModel, planException);
             }
 
             if (environment.IsDevelopment())
@@ -241,11 +247,19 @@ namespace FoxIDs.Controllers
             return View(errorViewModel);
         }
 
-        private IActionResult HandleexternalKeyIsNotReadyException(ErrorViewModel errorViewModel)
+        private IActionResult HandleExternalKeyIsNotReadyException(ErrorViewModel errorViewModel)
         {
             errorViewModel.ErrorTitle = localizer["Initialized new certificate"];
             errorViewModel.Error = localizer["The certificate is ready. Please try again."];
             errorViewModel.ShowRetry = true;
+            return View(errorViewModel);
+        }
+
+        private IActionResult HandlePlanException(ErrorViewModel errorViewModel, PlanException planException)
+        {
+            errorViewModel.ErrorTitle = localizer["Not supported in plan"];
+            errorViewModel.Error = localizer["The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.", planException.Plan?.Name];
+            errorViewModel.TechnicalErrors = new List<string> { planException.Message };
             return View(errorViewModel);
         }
 

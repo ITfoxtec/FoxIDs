@@ -635,6 +635,14 @@
     {
       "name": "<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>",
       "id": 153
+    },
+    {
+      "name": "Not supported in plan",
+      "id": 154
+    },
+    {
+      "name": "The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.",
+      "id": 155
     }
   ],
   "resources": [
@@ -19154,6 +19162,26 @@
         {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 154,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Not supported in plan",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 155,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.",
           "edit_level": 100
         }
       ]

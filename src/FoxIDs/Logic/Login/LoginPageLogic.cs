@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public bool GetRequereMfa(User user, LoginUpParty loginUpParty, ILoginUpSequenceDataBase sequenceData)
+        public bool GetRequireMfa(User user, LoginUpParty loginUpParty, ILoginUpSequenceDataBase sequenceData)
         {
             if (user.RequireMultiFactor)
             {
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
             }
-            else if (fromStep <= LoginResponseSequenceSteps.FromMfaAllAndAppStep && GetRequereMfa(user, loginUpParty, sequenceData))
+            else if (fromStep <= LoginResponseSequenceSteps.FromMfaAllAndAppStep && GetRequireMfa(user, loginUpParty, sequenceData))
             {
                 if (fromStep == LoginResponseSequenceSteps.FromMfaSmsStep && sequenceData.SupportTwoFactorSms)
                 {
@@ -170,6 +170,8 @@ namespace FoxIDs.Logic
                         return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.AppTwoFactor, includeSequence: true).ToRedirectResult();
                     }
                 }
+
+                throw new Exception("Require two-factor (2FA/MFA) but it is either not supported or configured.");
             }
 
             return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);

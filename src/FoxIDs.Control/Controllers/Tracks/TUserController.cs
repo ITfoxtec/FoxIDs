@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
                         // included + one master user
                         if (count > plan.Users.LimitedThreshold)
                         {
-                            throw new Exception($"Maximum number of users ({plan.Users.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
+                            throw new PlanException(plan, $"Maximum number of users ({plan.Users.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
                         }
                     }
                 }

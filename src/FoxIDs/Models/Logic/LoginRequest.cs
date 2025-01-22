@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Logic
 {
-    public class LoginRequest
+    public class LoginRequest : ILoginRequest
     {
         [Required]
         public DownPartySessionLink DownPartyLink { get; set; }

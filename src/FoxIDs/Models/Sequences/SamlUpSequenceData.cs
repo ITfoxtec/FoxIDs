@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,10 @@ namespace FoxIDs.Models.Sequences
 {
     public class SamlUpSequenceData : UpSequenceData
     {
+        public SamlUpSequenceData() : base() { }
+
+        public SamlUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonProperty(PropertyName = "i")]
         public string Id { get; set; }
 

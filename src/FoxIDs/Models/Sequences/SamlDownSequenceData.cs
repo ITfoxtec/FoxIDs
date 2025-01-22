@@ -1,10 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class SamlDownSequenceData : ISequenceData, IDownSequenceData
-    {
+    public class SamlDownSequenceData : DownSequenceData, ISequenceData
+    { 
+        public SamlDownSequenceData() : base() { }
+
+        public SamlDownSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [Required]
         [JsonProperty(PropertyName = "i")]
         public string Id { get; set; }
@@ -14,7 +19,7 @@ namespace FoxIDs.Models.Sequences
         public string RelayState { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.AcsResponseUrlLength)]
-        [JsonProperty(PropertyName = "a")]
+        [JsonProperty(PropertyName = "au")]
         public string AcsResponseUrl { get; set; }
     }
 }

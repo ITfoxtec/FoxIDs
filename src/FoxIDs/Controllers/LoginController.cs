@@ -965,7 +965,12 @@ namespace FoxIDs.Controllers
                 try
                 {
                     (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.Elements);
-                    claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
+                    (claims, var actionResult) = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, sequenceData, claims);
+                    if (actionResult != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                        return actionResult;
+                    }
 
                     userIdentifier.Email = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.Email, userIdentifier.Email);
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);

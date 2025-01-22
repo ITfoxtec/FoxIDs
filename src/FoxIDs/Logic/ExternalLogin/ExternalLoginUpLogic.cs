@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "AuthMethod, External Login redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -49,17 +49,11 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(partyId);
 
-            await sequenceLogic.SaveSequenceDataAsync(new ExternalLoginUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new ExternalLoginUpSequenceData(loginRequest)
             {
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
-                UpPartyProfileName = partyLink.ProfileName,
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                Email = loginRequest.LoginHint,
-                Acr = loginRequest.Acr
+                UpPartyProfileName = partyLink.ProfileName
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.ExtLoginController, includeSequence: true).ToRedirectResult();
@@ -76,11 +70,15 @@ namespace FoxIDs.Logic
                 await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
             }
 
-            (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(extLoginUpParty, claims,
+            (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(extLoginUpParty, sequenceData, claims,
                 (externalUserUpSequenceData) => { },
                 (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
             if (externalUserActionResult != null)
             {
+                if (deleteSequenceData)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
+                }
                 return externalUserActionResult;
             }
 

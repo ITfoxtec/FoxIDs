@@ -1,11 +1,16 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
     public class OidcUpSequenceData : UpSequenceData
-    {
+    { 
+        public OidcUpSequenceData() : base() { }
+
+        public OidcUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [JsonProperty(PropertyName = "ci")]
         public string ClientId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -31,11 +32,11 @@ namespace FoxIDs.Logic
         }
 
 
-        public async Task<(IActionResult externalUserActionResult, IEnumerable<Claim> externalUserClaims)> HandleUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction) where TProfile : UpPartyProfile
+        public async Task<(IEnumerable<Claim> externalUserClaims, IActionResult externalUserActionResult, bool deleteSequenceData)> HandleUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, ILoginRequest loginRequest, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction, Action<string> requireUserExceptionAction) where TProfile : UpPartyProfile
         {
             if (party.LinkExternalUser == null || (party.LinkExternalUser.LinkClaimType.IsNullOrWhiteSpace() && party.LinkExternalUser.RedemptionClaimType.IsNullOrWhiteSpace()))
             {
-                return (null, null);
+                return (null, null, false);
             }
 
             var linkClaimValue = GetLinkClaim(GetJwtClaimType(party, party.LinkExternalUser.LinkClaimType), claims);
@@ -80,7 +81,7 @@ namespace FoxIDs.Logic
                     {
                         var externalUserClaims = GetExternalUserClaim(party, externalUser);
                         logger.ScopeTrace(() => $"AuthMethod, External user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                        return (null, externalUserClaims);
+                        return (externalUserClaims, null, false);
                     }
                     else
                     {
@@ -91,11 +92,12 @@ namespace FoxIDs.Logic
                 {
                     if (party.LinkExternalUser.Elements?.Count > 0)
                     {
-                        return (await StartUICreateUserAsync(party, linkClaimValue, claims, populateSequenceDataAction), null);
+                        return (null, await StartUICreateUserAsync(party, loginRequest, linkClaimValue, claims, populateSequenceDataAction), false);
                     }
                     else
                     {
-                        return (null, await CreateUserAsync(party, linkClaimValue));
+                        (var createUserClaims, var createUserActionResult) = await CreateUserAsync(party, loginRequest, linkClaimValue);
+                        return (createUserClaims, createUserActionResult, createUserActionResult != null);
                     }
                 }
 
@@ -116,7 +118,7 @@ namespace FoxIDs.Logic
                 }            
             }
 
-            return (null, null);
+            return (null, null, false);
         }
 
         private string GetJwtClaimType<TProfile>(UpPartyWithExternalUser<TProfile> party, string claimType) where TProfile : UpPartyProfile
@@ -132,12 +134,16 @@ namespace FoxIDs.Logic
             return claimType;
         }
 
-        public async Task<IEnumerable<Claim>> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile
+        public async Task<(IEnumerable<Claim> claims, IActionResult actionResult)> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, ILoginRequest loginRequest, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile
         {
             logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
 
-            dynamicElementClaims = dynamicElementClaims ?? new List<Claim>();
-            var transformedClaims = await claimTransformLogic.TransformAsync(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims);
+            dynamicElementClaims = dynamicElementClaims ?? new List<Claim>(); 
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims, loginRequest);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
 
             var externalUser = new ExternalUser
             {
@@ -152,13 +158,13 @@ namespace FoxIDs.Logic
 
             var externalUserClaims = GetExternalUserClaim(upParty, externalUser);
             logger.ScopeTrace(() => $"AuthMethod, Created external user output JWT claims '{externalUserClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return externalUserClaims;
+            return (externalUserClaims, null);
         }  
 
-        private async Task<IActionResult> StartUICreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, string linkClaimValue, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction) where TProfile : UpPartyProfile
+        private async Task<IActionResult> StartUICreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> party, ILoginRequest loginRequest, string linkClaimValue, IEnumerable<Claim> claims, Action<ExternalUserUpSequenceData> populateSequenceDataAction) where TProfile : UpPartyProfile
         {
             logger.ScopeTrace(() => $"Start UI create external user, link claim '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
-            var sequenceData = new ExternalUserUpSequenceData
+            var sequenceData = new ExternalUserUpSequenceData(loginRequest)
             {
                 UpPartyId = party.Id,
                 UpPartyType = party.Type,

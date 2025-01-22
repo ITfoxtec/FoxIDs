@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => $"AuthMethod, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -48,24 +48,18 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             }
 
-            await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData(loginRequest)
             {
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 ToUpParties = [new HrdUpPartySequenceData { Name = partyLink.Name }],
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                LoginHint = loginRequest.LoginHint,
-                Acr = loginRequest.Acr,
                 DoLoginIdentifierStep = loginRequest.LoginHint.IsNullOrWhiteSpace()
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirectAsync(ILoginRequest loginRequest)
         {
             logger.ScopeTrace(() => "AuthMethod, Login redirect (multiple authentication method links).");
             (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();

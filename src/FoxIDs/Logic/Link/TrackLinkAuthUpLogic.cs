@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
             this.claimValidationLogic = claimValidationLogic;
         }
 
-        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "AuthMethod, Environment Link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -55,18 +55,12 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
-            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData(loginRequest)
             {
                 KeyName = partyLink.Name,
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
-                UpPartyProfileName = partyLink.ProfileName,
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                LoginHint = loginRequest.LoginHint,
-                Acr = loginRequest.Acr,
+                UpPartyProfileName = partyLink.ProfileName
             }, setKeyValidUntil: true);
 
             var profile = GetProfile(party, partyLink.ProfileName);
@@ -137,11 +131,16 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                    return actionResult;
+                }
                 claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, Environment Link transformed JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, claims,
+                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, claims,
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -151,6 +150,10 @@ namespace FoxIDs.Logic
                     (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
                 if (externalUserActionResult != null)
                 {
+                    if (deleteSequenceData)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                    }
                     return externalUserActionResult;
                 }
 

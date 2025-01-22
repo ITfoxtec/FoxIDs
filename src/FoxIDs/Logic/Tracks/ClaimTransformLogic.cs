@@ -4,6 +4,7 @@ using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +31,15 @@ namespace FoxIDs.Logic
 
         public async Task<List<Claim>> TransformAsync(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
         {
+            (var outputClaims, _) = await TransformAsync(claimTransforms, claims, null);
+            return outputClaims;
+        }
+
+        public async Task<(List<Claim> claims, IActionResult actionResult)> TransformAsync(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims, ILoginRequest loginRequest)
+        {
             if(claimTransforms == null || !(claimTransforms?.Count() > 0))
             {
-                return new List<Claim>(claims);
+                return (new List<Claim>(claims), null);
             }
 
             claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
@@ -82,7 +89,8 @@ namespace FoxIDs.Logic
                     throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
                 }
             }
-            return await Task.FromResult(outputClaims);
+
+            return await Task.FromResult<(List<Claim>, IActionResult)>((outputClaims, null));
         }
 
         private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)

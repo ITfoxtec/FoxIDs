@@ -76,6 +76,7 @@ namespace FoxIDs.Logic
             samlHttpRequest.Binding.ReadSamlRequest(samlHttpRequest, saml2AuthnRequest);
             logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
 
+            SamlDownSequenceData sequenceData = null;
             try
             {
                 ValidateAuthnRequest(party, saml2AuthnRequest);
@@ -98,7 +99,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
+                sequenceData = await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData(GetLoginRequestAsync(party, saml2AuthnRequest))
                 {
                     Id = saml2AuthnRequest.Id.Value,
                     RelayState = samlHttpRequest.Binding.RelayState,
@@ -113,17 +114,17 @@ namespace FoxIDs.Logic
                     switch (toUpParty.Type)
                     {
                         case PartyTypes.Login:
-                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.OAuth2:
                             throw new NotImplementedException();
                         case PartyTypes.Oidc:
-                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.Saml2:
-                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.TrackLink:
-                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, sequenceData);
                         case PartyTypes.ExternalLogin:
-                            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
 
                         default:
                             throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
@@ -131,13 +132,13 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(GetLoginRequestAsync(party, saml2AuthnRequest));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(sequenceData);
                 }
             }
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await AuthnResponseAsync(party, samlConfig, saml2AuthnRequest.Id.Value, samlHttpRequest.Binding.RelayState, GetAcsUrl(party, saml2AuthnRequest), ex.Status);
+                return await AuthnResponseAsync(party, sequenceData, samlConfig, saml2AuthnRequest.Id.Value, samlHttpRequest.Binding.RelayState, GetAcsUrl(party, saml2AuthnRequest), ex.Status);
             }
         }
 
@@ -209,10 +210,10 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
             var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
-            return await AuthnResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
+            return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
         }
 
-        private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null) 
+        private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, SamlDownSequenceData sequenceData, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null) 
         {
             logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
@@ -221,15 +222,15 @@ namespace FoxIDs.Logic
             switch (binding)
             {
                 case SamlBindingTypes.Redirect:
-                    return AuthnResponseAsync( party, samlConfig, inResponseTo, relayState, acsUrl, new Saml2RedirectBinding(), status,claims);
+                    return AuthnResponseAsync(party, sequenceData, samlConfig, inResponseTo, relayState, acsUrl, new Saml2RedirectBinding(), status, claims);
                 case SamlBindingTypes.Post:
-                    return AuthnResponseAsync(party, samlConfig, inResponseTo, relayState, acsUrl, new Saml2PostBinding(), status, claims);
+                    return AuthnResponseAsync(party, sequenceData, samlConfig, inResponseTo, relayState, acsUrl, new Saml2PostBinding(), status, claims);
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
         }
 
-        private async Task<IActionResult> AuthnResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2Binding binding, Saml2StatusCodes status, IEnumerable<Claim> claims)
+        private async Task<IActionResult> AuthnResponseAsync(SamlDownParty party, SamlDownSequenceData sequenceData, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2Binding binding, Saml2StatusCodes status, IEnumerable<Claim> claims)
         {
             binding.RelayState = relayState;
 
@@ -242,7 +243,15 @@ namespace FoxIDs.Logic
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
                 logger.ScopeTrace(() => $"AppReg, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                (claims, var actionResultTransform) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResultTransform != null)
+                {
+                    if (sequenceData != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
+                    }
+                    return actionResultTransform;
+                }
                 logger.ScopeTrace(() => $"AppReg, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
@@ -261,6 +270,10 @@ namespace FoxIDs.Logic
                 await saml2AuthnResponse.CreateSecurityTokenAsync(tokenDescriptor, authenticationStatement, subjectConfirmation);
             }
 
+            if (sequenceData != null)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
+            }
             binding.Bind(saml2AuthnResponse);
             var actionResult = binding.ToSamlActionResult();
             if (samlConfig.EncryptionCertificate != null)

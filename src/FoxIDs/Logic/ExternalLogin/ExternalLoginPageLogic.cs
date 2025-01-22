@@ -64,7 +64,12 @@ namespace FoxIDs.Logic
             {
                 var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(extLoginUpParty, userClaims, authTime, sequenceData, sessionId, acrClaims);
+                (claims, var actionResult) = await GetClaimsAsync(extLoginUpParty, sequenceData, userClaims, authTime, sessionId, acrClaims);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
+                    return actionResult;
+                }
 
                 await sessionLogic.CreateSessionAsync(extLoginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
@@ -91,7 +96,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, IEnumerable<Claim> userClaims, long authTime, ExternalLoginUpSequenceData sequenceData, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> userClaims, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var subject = userClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
 
@@ -117,11 +122,15 @@ namespace FoxIDs.Logic
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, extLoginUpParty.Type.GetPartyTypeValue());
             logger.ScopeTrace(() => $"AuthMethod, External login, with added JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.TransformAsync((extLoginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((extLoginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
 
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(extLoginUpParty.Claims, transformedClaims);
             logger.ScopeTrace(() => $"AuthMethod, External login, transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return validClaims;
+            return (validClaims, null);
         }
     }
 }

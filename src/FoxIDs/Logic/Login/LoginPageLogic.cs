@@ -284,7 +284,12 @@ namespace FoxIDs.Logic
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(loginUpParty, user, authTime, sequenceData, sessionId, acrClaims);
+                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, user, authTime, sessionId, acrClaims);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    return actionResult;
+                }
                 await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
@@ -340,7 +345,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, User user, long authTime, LoginUpSequenceData sequenceData, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -379,17 +384,25 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
             logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
+            return (transformedClaims, null);
         }
 
-        public async Task<List<Claim>> GetCreateUserTransformedClaimsAsync(LoginUpParty party, List<Claim> claims)
+        public async Task<(List<Claim> claims, IActionResult actionResult)> GetCreateUserTransformedClaimsAsync(LoginUpParty party, LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => $"AuthMethod, Create user created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var transformedClaims = await claimTransformLogic.TransformAsync(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
             logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
+            return (transformedClaims, null);
         }
     }
 }

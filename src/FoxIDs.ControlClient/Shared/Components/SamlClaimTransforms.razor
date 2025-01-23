@@ -184,93 +184,173 @@
                     <div class="col-11">
                         @if (claimTransform.ShowDetails)
                         {
-                            @switch (claimTransform.Type)
+                            if (claimTransform.TaskAction != null)
                             {
-                                case ClaimTransformTypes.Constant:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Add a constant value.</div>
-                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Constant value" />
-                                    break;
+                                switch (claimTransform.TaskAction)
+                                {
+                                    case ClaimTransformTaskActions.RequestException:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.MatchClaim:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and return error.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
+                                                break;
+                                            case ClaimTransformTypes.Match:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and return error.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
+                                                break;
+                                            case ClaimTransformTypes.RegexMatch:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex and return error.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' not supported.");
+                                        }
+                                        break;
+                                    case ClaimTransformTaskActions.UpPartyAction:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.MatchClaim:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and start authentication.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                break;
+                                            case ClaimTransformTypes.Match:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and start authentication.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
+                                                break;
+                                            case ClaimTransformTypes.RegexMatch:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex and start authentication.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' not supported.");
+                                        }
+                                        <SelectUpParty Model="claimTransform"></SelectUpParty>
+                                        break;
+                                    case ClaimTransformTaskActions.QueryInternalUser:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.Match:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and query for exactly one internal user based on the value of the claim. The query will fail if more than one internal user is found. Then add the internal users' claims.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' not supported.");
+                                        }
+                                        break;
+                                    case ClaimTransformTaskActions.QueryExternalUser:
+                                        switch (claimTransform.Type)
+                                        {
+                                            case ClaimTransformTypes.Match:
+                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and query for exactly one external user based on the value of the claim. The query will fail if more than one external user is found. Then add the external users' claims.</div>
+                                                <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                break;
+                                            default:
+                                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' not supported.");
+                                        }
+                                        break;
+                                    default:
+                                        throw new NotSupportedException($"Claim transform task action '{claimTransform.TaskAction}' not supported.");
+                                }
 
-                                case ClaimTransformTypes.MatchClaim:
-                                    @if (claimTransform.Action != ClaimTransformActions.Remove)
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim do not match" : string.Empty).</div>
+                            }
+                            else
+                            {
+                                @switch (claimTransform.Type)
+                                {
+                                    case ClaimTransformTypes.Constant:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Add a constant value.</div>
+                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Constant value" />
+                                        break;
+
+                                    case ClaimTransformTypes.MatchClaim:
+                                        @if (claimTransform.Action != ClaimTransformActions.Remove)
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim do not match" : string.Empty).</div>
+                                            <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                            <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="New value" />
+                                        }
+                                        else
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim that has to be removed.</div>
+                                        }
+                                        break;
+
+                                    case ClaimTransformTypes.Match:
+                                        @if (claimTransform.Action != ClaimTransformActions.Remove)
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty).</div>
+                                            <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                            <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
+                                            <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
+                                        }
+                                        else
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value of the claim that has to be removed.</div>
+                                            <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
+                                        }
+                                        break;
+
+                                    case ClaimTransformTypes.RegexMatch:
+                                        @if (claimTransform.Action != ClaimTransformActions.Remove)
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty). E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                            <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                            <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
+                                            <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
+                                        }
+                                        else
+                                        {
+                                            <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex of the claim that has to be removed. E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                            <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
+                                        }
+                                        break;
+
+                                    case ClaimTransformTypes.Map:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Map the value in the selected claim to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty).</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="New value" />
-                                    }
-                                    else
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim that has to be removed.</div>
-                                    }
-                                    break;
+                                        break;
 
-                                case ClaimTransformTypes.Match:
-                                    @if (claimTransform.Action != ClaimTransformActions.Remove)
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty).</div>
+                                    case ClaimTransformTypes.RegexMap:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Map the value found with the regex group map to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty). E.g. regex to find domain in email: @(@"^\S+@(?<map>\S+)$")</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
-                                        <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
-                                    }
-                                    else
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value of the claim that has to be removed.</div>
-                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
-                                    }
-                                    break;
+                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Map value in regex map group" />
+                                        break;
 
-                                case ClaimTransformTypes.RegexMatch:
-                                    @if (claimTransform.Action != ClaimTransformActions.Remove)
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty). E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                    case ClaimTransformTypes.Concatenate:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Concatenate values from claims to a new claim. If e.g. concatenating tree claims the format string require tree format elements e.g. like this: {0}-{1}.{2}</div>
+                                        <div class="form-group active-group">
+                                            <label class="label-control">Concatenate claims</label>
+                                            <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                        </div>
+                                        <FInputText @bind-Value="claimTransformClaimsIn.Transformation" For="@(() => claimTransformClaimsIn.Transformation)" LabelText="Concatenate format string" />
+                                        break;
+
+                                    case ClaimTransformTypes.ExternalClaims:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Call external claims API with selected claims and include claims returned from the external claims API.</div>
+                                        <div class="form-group active-group">
+                                            <label class="label-control">Select claims (user * to select all claims)</label>
+                                            <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                        </div>
+                                        <FInputText @bind-Value="claimTransformClaimsIn.ApiUrl" For="@(() => claimTransformClaimsIn.ApiUrl)" />
+                                        <FInputText @bind-Value="claimTransformClaimsIn.Secret" For="@(() => claimTransformClaimsIn.Secret)" />
+                                        break;
+
+                                    case ClaimTransformTypes.DkPrivilege:
+                                        <div class="p-0 alert alert-light font-italic small" role="alert"><a target="_blank" href="https://www.foxids.com/docs/claim-transform-dk-privilege">Transform DK privilege base64-decoded XML</a> claim into a list of new claims, one claim for each PrivilegeGroup XML element. The PrivilegeGroup XML element is transformed into a JSON object and serialized as a string.</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
-                                        <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
-                                    }
-                                    else
-                                    {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex of the claim that has to be removed. E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
-                                        <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
-                                    }
-                                    break;
+                                        break;
 
-                                case ClaimTransformTypes.Map:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value in the selected claim to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty).</div>
-                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                    break;
-
-                                case ClaimTransformTypes.RegexMap:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value found with the regex group map to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty). E.g. regex to find domain in email: @(@"^\S+@(?<map>\S+)$")</div>
-                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Map value in regex map group" />
-                                    break;
-
-                                case ClaimTransformTypes.Concatenate:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Concatenate values from claims to a new claim. If e.g. concatenating tree claims the format string require tree format elements e.g. like this: {0}-{1}.{2}</div>
-                                    <div class="form-group active-group">
-                                        <label class="label-control">Concatenate claims</label>
-                                        <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
-                                    </div>
-                                    <FInputText @bind-Value="claimTransformClaimsIn.Transformation" For="@(() => claimTransformClaimsIn.Transformation)" LabelText="Concatenate format string" />
-                                    break;
-
-                                case ClaimTransformTypes.ExternalClaims:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Call external claims API with selected claims and include claims returned from the external claims API.</div>
-                                    <div class="form-group active-group">
-                                        <label class="label-control">Select claims (user * to select all claims)</label>
-                                        <FInputTextList @bind-ValueList="claimTransformClaimsIn.ClaimsIn" For="@(() => claimTransformClaimsIn.ClaimsIn)" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
-                                    </div>
-                                    <FInputText @bind-Value="claimTransformClaimsIn.ApiUrl" For="@(() => claimTransformClaimsIn.ApiUrl)" />
-                                    <FInputText @bind-Value="claimTransformClaimsIn.Secret" For="@(() => claimTransformClaimsIn.Secret)" />
-                                    break;
-
-                                case ClaimTransformTypes.DkPrivilege:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert"><a target="_blank" href="https://www.foxids.com/docs/claim-transform-dk-privilege">Transform DK privilege base64-decoded XML</a> claim into a list of new claims, one claim for each PrivilegeGroup XML element. The PrivilegeGroup XML element is transformed into a JSON object and serialized as a string.</div>
-                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                    break;
-
-                                default:
-                                    throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
+                                    default:
+                                        throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
+                                }
                             }
                         }
                         else

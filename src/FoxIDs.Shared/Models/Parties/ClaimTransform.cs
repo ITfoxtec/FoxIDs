@@ -108,9 +108,9 @@ namespace FoxIDs.Models
                     switch (TaskAction)
                     {
                         case ClaimTransformTaskActions.RequestException:
-                            if (Error.IsNullOrWhiteSpace() || ErrorMessage.IsNullOrWhiteSpace())
+                            if (ErrorMessage.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The fields {nameof(Error)} and {nameof(ErrorMessage)} is required for claim transformation task action '{TaskAction}'.", [nameof(Error), nameof(ErrorMessage)]));
+                                results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required for claim transformation task action '{TaskAction}'.", [nameof(ErrorMessage)]));
                             }
                             break;
                         case ClaimTransformTaskActions.UpPartyAction:

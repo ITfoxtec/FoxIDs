@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using FoxIDs.Models.Api;
-using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class ClaimTransformViewModel : IValidatableObject
+    public class ClaimTransformViewModel : IValidatableObject, IUpPartySelection
     {
         [MaxLength(Constants.Models.Claim.TransformNameLength)]
         [RegularExpression(Constants.Models.Claim.TransformNameRegExPattern)]
@@ -65,15 +64,21 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authentication type")]
         public PartyTypes? UpPartyType { get; set; }
 
+        public string UpPartyTypeText { get; set; }
+
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Authentication name")]
         public string UpPartyName { get; set; }
+
+        [Display(Name = "Authentication name")]
+        public string UpPartyDisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.ProfileNameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Authentication profile name")]
         public string UpPartyProfileName { get; set; }
+
+        [Display(Name = "Authentication profile name")]
+        public string UpPartyDisplayProfileName { get; set; }
         #endregion
 
         public bool ShowDetails { get; set; }

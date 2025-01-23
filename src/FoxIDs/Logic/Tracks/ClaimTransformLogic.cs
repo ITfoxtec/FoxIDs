@@ -473,11 +473,11 @@ namespace FoxIDs.Logic
                 case ClaimTransformTaskActions.RequestException:
                     if (claimTransform is SamlClaimTransform)
                     {
-                        throw new SamlRequestException(claimTransform.Message) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                        throw new SamlRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                     }
                     else
                     {
-                        throw new OAuthRequestException(claimTransform.Message) { RouteBinding = RouteBinding, Error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error };
+                        throw new OAuthRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error };
                     }
                 case ClaimTransformTaskActions.UpPartyAction:
                     var upPartyLink = new UpPartyLink
@@ -548,13 +548,13 @@ namespace FoxIDs.Logic
 
             switch (claimTransform.TaskAction)
             {
-                case ClaimTransformTaskActions.QueryUser:
+                case ClaimTransformTaskActions.QueryInternalUser:
                     if (selectUserClaim == JwtClaimTypes.Email || selectUserClaim == JwtClaimTypes.PhoneNumber || selectUserClaim == JwtClaimTypes.PreferredUsername)
                     {
                         var user = await tenantDataRepository.GetAsync<User>(await User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = selectUserClaimValue }), required: false, queryAdditionalIds: true);
                         if (user != null && !user.DisableAccount)
                         {
-                            logger.ScopeTrace(() => $"Claims transformation, User '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                            logger.ScopeTrace(() => $"Claims transformation, Internal user '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
                             AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user));
                             return;
                         }
@@ -563,18 +563,18 @@ namespace FoxIDs.Logic
                     (var users, _) = await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
                     if (users?.Count() == 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, User '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, Internal user '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
                         AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First()));
                         return;
                     }
 
                     if(users?.Count() > 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, More then one user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, More then one internal users found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
                     }
                     else
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, No user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, No internal user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
                     }
                     break;
 
@@ -589,7 +589,7 @@ namespace FoxIDs.Logic
 
                     if (externalUsers?.Count() > 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, More then one external user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, More then one external users found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
                     }
                     else
                     {

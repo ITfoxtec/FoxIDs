@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -814,9 +815,10 @@ namespace FoxIDs.UnitTests
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
+            var mockIServiceProvider = new Mock<IServiceProvider>();
 
             var claimTransformValidationLogic = new ClaimTransformValidationLogic(mockHttpContextAccessor);
-            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, null, mockHttpContextAccessor);
+            return new ClaimTransformLogic(telemetryScopedLogger, mockIServiceProvider.Object, claimTransformValidationLogic, null, mockHttpContextAccessor);
         }
     }
 }

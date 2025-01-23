@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Models
+﻿namespace FoxIDs.Models.Api
 {
     public enum ClaimTransformTaskActions
     {        

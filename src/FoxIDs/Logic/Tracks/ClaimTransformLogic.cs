@@ -1,10 +1,13 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
+using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.Schemas;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +22,14 @@ namespace FoxIDs.Logic
     public class ClaimTransformLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
         private readonly ExternalClaimsConnectLogic externalClaimsConnectLogic;
 
-        public ClaimTransformLogic(TelemetryScopedLogger logger, ClaimTransformValidationLogic claimTransformValidationLogic, ExternalClaimsConnectLogic externalClaimsConnectLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClaimTransformLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ClaimTransformValidationLogic claimTransformValidationLogic, ExternalClaimsConnectLogic externalClaimsConnectLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.claimTransformValidationLogic = claimTransformValidationLogic;
             this.externalClaimsConnectLogic = externalClaimsConnectLogic;
         }
@@ -37,48 +42,90 @@ namespace FoxIDs.Logic
 
         public async Task<(List<Claim> claims, IActionResult actionResult)> TransformAsync(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims, ILoginRequest loginRequest)
         {
-            if(claimTransforms == null || !(claimTransforms?.Count() > 0))
+            if (claimTransforms == null || !(claimTransforms?.Count() > 0))
             {
                 return (new List<Claim>(claims), null);
             }
 
             claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
 
-            logger.ScopeTrace(() => "Transform claims.");
-            var outputClaims = new List<Claim>(claims);
+            logger.ScopeTrace(() => $"Claims transformation, input claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            if (loginRequest == null)
+            {
+                claimTransforms = claimTransforms.Where(t => t.TaskAction != ClaimTransformTaskActions.UpPartyAction);
+            }
             var orderedClaimTransforms = claimTransforms.OrderBy(t => t.Order);
-            foreach(var claimTransform in orderedClaimTransforms)
+
+            (var outputClaims, var actionResult) = await HandleTransformAsync(claimTransforms, AddLocalClaims(claims, loginRequest), loginRequest);
+
+            outputClaims = outputClaims.Where(c => !c.Type.StartsWith(Constants.ClaimTransformClaimTypes.Namespace, StringComparison.Ordinal)).ToList();
+            logger.ScopeTrace(() => $"Claims transformation, output claims '{outputClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (outputClaims, actionResult);
+        }
+
+        private List<Claim> AddLocalClaims(IEnumerable<Claim> claims, ILoginRequest loginRequest)
+        {
+            var localClaims = new List<Claim>(claims);
+            localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginAction, loginRequest.LoginAction.ToString().ToCamelCase());
+            if (!loginRequest.UserId.IsNullOrWhiteSpace())
+            {
+                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.UserId, loginRequest.UserId);
+            }
+            if (loginRequest.MaxAge != null && loginRequest.MaxAge.Value > 0)
+            {
+                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.MaxAge, loginRequest.MaxAge.Value.ToString());
+            }
+            if (!loginRequest.LoginHint.IsNullOrWhiteSpace())
+            {
+                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginHint, loginRequest.LoginHint);
+            }
+            if (loginRequest.Acr != null && loginRequest.Acr.Count() > 0)
+            {
+                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.Acr, loginRequest.Acr.ToSpaceList());
+            }
+
+            logger.ScopeTrace(() => $"Claims transformation, Local claims '{localClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            var claimsWithLocals = new List<Claim>(claims);
+            AddOrReplaceClaims(claimsWithLocals, ClaimTransformActions.Replace, localClaims);
+            return claimsWithLocals;
+        }
+
+        private async Task<(List<Claim> outputClaims, IActionResult actionResult)> HandleTransformAsync(IEnumerable<ClaimTransform> claimTransforms, List<Claim> claims, ILoginRequest loginRequest)
+        {
+            IActionResult actionResult = null;
+            foreach (var claimTransform in claimTransforms)
             {
                 try
                 {
                     switch (claimTransform.Type)
                     {
                         case ClaimTransformTypes.Constant:
-                            ConstantTransformation(outputClaims, claimTransform);
+                            ConstantTransformation(claims, claimTransform);
                             break;
                         case ClaimTransformTypes.MatchClaim:
-                            MatchClaimTransformation(outputClaims, claimTransform);
+                            actionResult = await MatchClaimTransformationAsync(claims, claimTransform, loginRequest);
                             break;
                         case ClaimTransformTypes.Match:
-                            MatchTransformation(outputClaims, claimTransform);
+                            actionResult = await MatchTransformationAsync(claims, claimTransform, loginRequest);
                             break;
                         case ClaimTransformTypes.RegexMatch:
-                            RegexMatchTransformation(outputClaims, claimTransform);
+                            actionResult = await RegexMatchTransformationAsync(claims, claimTransform, loginRequest);
                             break;
                         case ClaimTransformTypes.Map:
-                            MapTransformation(outputClaims, claimTransform);
+                            MapTransformation(claims, claimTransform);
                             break;
                         case ClaimTransformTypes.RegexMap:
-                            RegexMapTransformation(outputClaims, claimTransform);
+                            RegexMapTransformation(claims, claimTransform);
                             break;
                         case ClaimTransformTypes.Concatenate:
-                            ConcatenateTransformation(outputClaims, claimTransform);
+                            ConcatenateTransformation(claims, claimTransform);
                             break;
                         case ClaimTransformTypes.ExternalClaims:
-                            await ExternalClaimsTransformationAsync(outputClaims, claimTransform);
+                            await ExternalClaimsTransformationAsync(claims, claimTransform);
                             break;
                         case ClaimTransformTypes.DkPrivilege:
-                            DkPrivilegeTransformation(outputClaims, claimTransform);
+                            DkPrivilegeTransformation(claims, claimTransform);
                             break;
                         default:
                             throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
@@ -88,149 +135,153 @@ namespace FoxIDs.Logic
                 {
                     throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
                 }
-            }
 
-            return await Task.FromResult<(List<Claim>, IActionResult)>((outputClaims, null));
-        }
-
-        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
-        {
-            switch (claimTransform.Action)
-            {
-                case ClaimTransformActions.Add:
-                case ClaimTransformActions.AddIfNot:
-                    outputClaims.Add(newClaim);
-                    break;
-                case ClaimTransformActions.Replace:
-                case ClaimTransformActions.ReplaceIfNot:
-                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
-                    outputClaims.Add(newClaim);
-                    break;
-                default:
-                    throw new NotSupportedException("Claim transform action is not supported in method.");
-            }
-        }
-
-        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
-        {
-            if (newClaims.Count() > 0)
-            {
-                switch (claimTransform.Action)
+                if (actionResult != null)
                 {
-                    case ClaimTransformActions.Add:
-                    case ClaimTransformActions.AddIfNot:
-                    case ClaimTransformActions.AddIfNotOut:
-                        outputClaims.AddRange(newClaims);
-                        break;
-                    case ClaimTransformActions.Replace:
-                    case ClaimTransformActions.ReplaceIfNot:
-                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
-                        outputClaims.AddRange(newClaims);
-                        break;
-                    default:
-                        throw new NotSupportedException("Claim transform action is not supported in method.");
+                    break;
                 }
             }
+
+            return await Task.FromResult((claims, actionResult));
         }
 
-        private void ConstantTransformation(List<Claim> claims, ClaimTransform claimTransform)
-        {
-            var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
-            AddOrReplaceClaims(claims, claimTransform, newClaim);
-        }
-
-        private void MatchClaimTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        private async Task<IActionResult> MatchClaimTransformationAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
         {
             if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                var newClaims = new List<Claim>();
-                foreach (var claim in claims)
+                var claimIn = claimTransform.ClaimsIn.Single();
+                if (claimTransform.Action == ClaimTransformActions.If || claimTransform.Action == ClaimTransformActions.IfNot)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
+                    var exist = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal)).Any();
+                    var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
+                    if (doAction)
                     {
-                        newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
                     }
                 }
+                else
+                {
+                    if (claimTransform.TaskAction != null)
+                    {
+                        var selectUserClaimValue = claims.FindFirstOrDefaultValue(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
+                        if (!selectUserClaimValue.IsNullOrWhiteSpace())
+                        {
+                            await HandleAddReplaceTaskActionAsync(claims, claimTransform, selectUserClaimValue);
+                        }
+                    }
+                    else
+                    {
+                        var newClaims = new List<Claim>();
+                        foreach (var claim in claims)
+                        {
+                            if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
+                            {
+                                newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                            }
+                        }
 
-                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
-                {
-                    AddOrReplaceClaims(claims, claimTransform, newClaims);
-                }
-                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
-                {
-                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                        if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                        {
+                            AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+                        }
+                        else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                        {
+                            AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                        }
+                    }
                 }
             }
             else
             {
                 claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal));
             }
+            return null;
         }
 
-        private void MatchTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        private async Task<IActionResult> MatchTransformationAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
         {
             if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                var newClaims = new List<Claim>();
-                foreach (var claim in claims)
+                var claimIn = claimTransform.ClaimsIn.Single();
+                if (claimTransform.Action == ClaimTransformActions.If || claimTransform.Action == ClaimTransformActions.IfNot)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
+                    var exist = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal)).Any();
+                    var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
+                    if (doAction)
                     {
-                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal))
+                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
+                    }
+                }
+                else
+                {
+                    var newClaims = new List<Claim>();
+                    foreach (var claim in claims)
+                    {
+                        if (claim.Type.Equals(claimIn, StringComparison.Ordinal) && claim.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal))
                         {
                             newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                         }
                     }
-                }
 
-                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
-                {
-                    AddOrReplaceClaims(claims, claimTransform, newClaims);
-                }
-                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
-                {
-                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                    {
+                        AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+                    }
+                    else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                    {
+                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    }
                 }
             }
             else
             {
                 claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal));
             }
+            return null;
         }
 
-        private void RegexMatchTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        private async Task<IActionResult> RegexMatchTransformationAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
         {
             var regex = new Regex(claimTransform.Transformation, RegexOptions.IgnoreCase);
 
             if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                var newClaims = new List<Claim>();
                 var claimIn = claimTransform.ClaimsIn.Single();
-                foreach (var claim in claims)
+                if (claimTransform.Action == ClaimTransformActions.If || claimTransform.Action == ClaimTransformActions.IfNot)
                 {
-                    if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
+                    var exist = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal) && regex.Match(c.Value).Success).Any();
+                    var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
+                    if (doAction)
                     {
-                        var match = regex.Match(claim.Value);
-                        if (match.Success)
+                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
+                    }
+                }
+                else
+                {
+                    var newClaims = new List<Claim>();
+                    foreach (var claim in claims)
+                    {
+                        if (claim.Type.Equals(claimIn, StringComparison.Ordinal) && regex.Match(claim.Value).Success)
                         {
                             newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                         }
                     }
-                }
 
-                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
-                {
-                    AddOrReplaceClaims(claims, claimTransform, newClaims);
-                }
-                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
-                {
-                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                    {
+                        AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+                    }
+                    else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                    {
+                        AddOrReplaceClaims(claims, claimTransform.Action, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    }
                 }
             }
             else
             {
                 claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && regex.Match(c.Value).Success);
             }
+            return null;
         }
 
         private void MapTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -247,13 +298,13 @@ namespace FoxIDs.Logic
 
             if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
             {
-                AddOrReplaceClaims(claims, claimTransform, newClaims);
+                AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
                 if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
-                    AddOrReplaceClaims(claims, claimTransform, newClaims);
+                    AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
                 }                
             }
         }
@@ -277,13 +328,13 @@ namespace FoxIDs.Logic
 
             if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
             {
-                AddOrReplaceClaims(claims, claimTransform, newClaims);
+                AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
                 if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
-                    AddOrReplaceClaims(claims, claimTransform, newClaims);
+                    AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
                 }
             }
         }
@@ -313,7 +364,7 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
-            AddOrReplaceClaims(claims, claimTransform, newClaims);
+            AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
         }
 
         private async Task ExternalClaimsTransformationAsync(List<Claim> claims, ClaimTransform claimTransform)
@@ -336,7 +387,7 @@ namespace FoxIDs.Logic
             }
 
             var newClaims = selectedClaims.Count() > 0 ? await externalClaimsConnectLogic.GetClaimsAsync(claimTransform, selectedClaims) : new List<Claim>();
-            AddOrReplaceClaims(claims, claimTransform, newClaims);
+            AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
         }
 
         private void DkPrivilegeTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -412,7 +463,229 @@ namespace FoxIDs.Logic
                 }
             }
 
-            AddOrReplaceClaims(claims, claimTransform, newClaims);
+            AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
+        }
+
+        private async Task<IActionResult> HandleIfAndIfNotTaskActionAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
+        {
+            switch (claimTransform.TaskAction)
+            {
+                case ClaimTransformTaskActions.RequestException:
+                    if (claimTransform is SamlClaimTransform)
+                    {
+                        throw new SamlRequestException(claimTransform.Message) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    }
+                    else
+                    {
+                        throw new OAuthRequestException(claimTransform.Message) { RouteBinding = RouteBinding, Error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error };
+                    }
+                case ClaimTransformTaskActions.UpPartyAction:
+                    var upPartyLink = new UpPartyLink
+                    {
+                        Name = claimTransform.UpPartyName,
+                        ProfileName = claimTransform.UpPartyProfileName
+                    };
+                    logger.ScopeTrace(() => $"Claims transformation, Authentication type '{claimTransform.UpPartyType}'.");
+                    switch (claimTransform.UpPartyType)
+                    {
+                        case PartyTypes.Login:
+                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(upPartyLink, GetLoginRequestWithLocalClaims(claims, loginRequest));
+                        case PartyTypes.OAuth2:
+                            throw new NotImplementedException();
+                        case PartyTypes.Oidc:
+                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(upPartyLink, GetLoginRequestWithLocalClaims(claims, loginRequest));
+                        case PartyTypes.Saml2:
+                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(upPartyLink, GetLoginRequestWithLocalClaims(claims, loginRequest));
+                        case PartyTypes.TrackLink:
+                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(upPartyLink, GetLoginRequestWithLocalClaims(claims, loginRequest));
+                        case PartyTypes.ExternalLogin:
+                            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(upPartyLink, GetLoginRequestWithLocalClaims(claims, loginRequest));
+                        default:
+                            throw new NotSupportedException($"Connection type '{claimTransform.UpPartyType}' not supported.");
+                    }
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private LoginRequest GetLoginRequestWithLocalClaims(List<Claim> claims, ILoginRequest loginRequest)
+        {
+            var outputLoginRequest = new LoginRequest(loginRequest);
+
+            var loginActionValue = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.LoginAction);
+            if (!loginActionValue.IsNullOrWhiteSpace() && Enum.TryParse(loginActionValue, true, out LoginAction loginAction))
+            {
+                outputLoginRequest.LoginAction = loginAction;
+            }
+
+            var maxAgeValue = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.MaxAge);
+            if (!maxAgeValue.IsNullOrWhiteSpace() && int.TryParse(maxAgeValue, out int maxAge))
+            {
+                outputLoginRequest.MaxAge = maxAge;
+            }
+
+            var loginHint = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.LoginHint);
+            if (!loginHint.IsNullOrWhiteSpace())
+            {
+                outputLoginRequest.LoginHint = loginHint;
+            }
+
+            var acrValue = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.Acr);
+            if (!acrValue.IsNullOrWhiteSpace())
+            {
+                outputLoginRequest.Acr = acrValue.ToSpaceList();
+            }
+
+            return outputLoginRequest;
+        }
+
+        private async Task HandleAddReplaceTaskActionAsync(List<Claim> claims, ClaimTransform claimTransform, string selectUserClaimValue)
+        {
+            var selectUserClaim = claimTransform.TransformationExtension;
+            var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+
+            switch (claimTransform.TaskAction)
+            {
+                case ClaimTransformTaskActions.QueryUser:
+                    if (selectUserClaim == JwtClaimTypes.Email || selectUserClaim == JwtClaimTypes.PhoneNumber || selectUserClaim == JwtClaimTypes.PreferredUsername)
+                    {
+                        var user = await tenantDataRepository.GetAsync<User>(await User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = selectUserClaimValue }), required: false, queryAdditionalIds: true);
+                        if (user != null && !user.DisableAccount)
+                        {
+                            logger.ScopeTrace(() => $"Claims transformation, User '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user));
+                            return;
+                        }
+                    }
+
+                    (var users, _) = await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
+                    if (users?.Count() == 1)
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, User '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First()));
+                        return;
+                    }
+
+                    if(users?.Count() > 1)
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, More then one user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                    }
+                    else
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, No user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                    }
+                    break;
+
+                case ClaimTransformTaskActions.QueryExternalUser:
+                    (var externalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
+                    if (externalUsers?.Count() == 1)
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First()));
+                        return;
+                    }
+
+                    if (externalUsers?.Count() > 1)
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, More then one external user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                    }
+                    else
+                    {
+                        logger.ScopeTrace(() => $"Claims transformation, No external user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private List<Claim> GetClaims(User user)
+        {
+            var claims = new List<Claim>();
+            claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
+            if (!user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.Email, user.Email);
+                claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            }
+            if (!user.Phone.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PhoneNumber, user.Phone);
+                claims.AddClaim(JwtClaimTypes.PhoneNumberVerified, user.PhoneVerified.ToString().ToLower());
+            }
+            if (!user.Username.IsNullOrEmpty() || !user.Email.IsNullOrEmpty())
+            {
+                claims.AddClaim(JwtClaimTypes.PreferredUsername, !user.Username.IsNullOrEmpty() ? user.Username : user.Email);
+            }
+            if (user.Claims?.Count() > 0)
+            {
+                claims.AddRange(user.Claims.ToClaimList());
+            }
+
+            logger.ScopeTrace(() => $"Claims transformation, Users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return claims;
+        }
+
+        private List<Claim> GetClaims(ExternalUser externalUser)
+        {
+            var claims = new List<Claim>();
+            claims.AddClaim(JwtClaimTypes.Subject, externalUser.UserId);
+            if (externalUser.Claims?.Count() > 0)
+            {
+                claims.AddRange(externalUser.Claims.ToClaimList());
+            }
+
+            logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return claims;
+        }
+
+        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransformActions claimTransformAction, Claim newClaim)
+        {
+            switch (claimTransformAction)
+            {
+                case ClaimTransformActions.Add:
+                case ClaimTransformActions.AddIfNot:
+                    outputClaims.Add(newClaim);
+                    break;
+                case ClaimTransformActions.Replace:
+                case ClaimTransformActions.ReplaceIfNot:
+                    outputClaims.RemoveAll(c => newClaim.Type.Equals(c.Type, StringComparison.Ordinal));
+                    outputClaims.Add(newClaim);
+                    break;
+                default:
+                    throw new NotSupportedException("Claim transform action is not supported in method.");
+            }
+        }
+
+        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransformActions claimTransformAction, List<Claim> newClaims)
+        {
+            if (newClaims.Count() > 0)
+            {
+                switch (claimTransformAction)
+                {
+                    case ClaimTransformActions.Add:
+                    case ClaimTransformActions.AddIfNot:
+                    case ClaimTransformActions.AddIfNotOut:
+                        outputClaims.AddRange(newClaims);
+                        break;
+                    case ClaimTransformActions.Replace:
+                    case ClaimTransformActions.ReplaceIfNot:
+                        outputClaims.RemoveAll(c => newClaims.Any(c => c.Type.Equals(c.Type, StringComparison.Ordinal)));
+                        outputClaims.AddRange(newClaims);
+                        break;
+                    default:
+                        throw new NotSupportedException("Claim transform action is not supported in method.");
+                }
+            }
+        }
+
+        private void ConstantTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        {
+            var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
+            AddOrReplaceClaims(claims, claimTransform.Action, newClaim);
         }
     }
 }

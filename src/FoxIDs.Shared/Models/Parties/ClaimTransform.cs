@@ -38,6 +38,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "transformation_extension")]
         public abstract string TransformationExtension { get; set; }
 
+        #region ExternalClaims
         [JsonProperty(PropertyName = "external_connect_type")]
         public ExternalConnectTypes? ExternalConnectType { get; set; }
 
@@ -48,6 +49,33 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "secret")]
         public string Secret { get; set; }
+        #endregion
+
+        #region TaskAction
+        [JsonProperty(PropertyName = "task_action")]
+        public ClaimTransformTaskActions? TaskAction { get; set; }
+
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
+        [JsonProperty(PropertyName = "error")]
+        public string Error { get; set; }
+
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
+        [JsonProperty(PropertyName = "message")]
+        public string Message { get; set; }
+
+        [JsonProperty(PropertyName = "up_party_type")]
+        public PartyTypes? UpPartyType { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [JsonProperty(PropertyName = "up_party_name")]
+        public string UpPartyName { get; set; }
+
+        [MaxLength(Constants.Models.Party.ProfileNameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [JsonProperty(PropertyName = "up_party_profile_name")]
+        public string UpPartyProfileName { get; set; }
+        #endregion
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -58,7 +86,42 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"The field {nameof(ClaimOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimOut)]));
             }
 
-            if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
+            if (Action == ClaimTransformActions.If || Action == ClaimTransformActions.IfNot)
+            {
+                switch (Type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
+                        ValidateMatchClaimAddReplace(results);
+                        break;
+
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        ValidateMatchAddReplace(results);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Claim transformation type '{Type}' is not supported with action '{Action}'.");
+                }
+
+                switch (TaskAction)
+                {
+                    case ClaimTransformTaskActions.RequestException:
+                        if (Error.IsNullOrWhiteSpace() || Message.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The fields {nameof(Error)} and {nameof(Message)} is required for claim transformation task action '{TaskAction}'.", [nameof(Error), nameof(Message)]));
+                        }
+                        break;
+                    case ClaimTransformTaskActions.UpPartyAction:
+                        if (UpPartyType == null || UpPartyName.IsNullOrWhiteSpace() || UpPartyProfileName.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The fields {nameof(UpPartyType)} and {nameof(UpPartyName)} and {nameof(UpPartyProfileName)} is required for claim transformation task action '{TaskAction}'.", [nameof(UpPartyType), nameof(UpPartyName), nameof(UpPartyProfileName)]));
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                }
+            }
+            else if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
             {
                 switch (Type)
                 {
@@ -131,6 +194,24 @@ namespace FoxIDs.Models
                     default:
                         throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
                 }
+
+                switch (TaskAction)
+                {
+                    case ClaimTransformTaskActions.QueryUser:
+                        if (TransformationExtension.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation task action '{TaskAction}'.", [nameof(TransformationExtension)]));
+                        }
+                        break;
+                    case ClaimTransformTaskActions.QueryExternalUser:
+                        if (UpPartyName.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The fields {nameof(UpPartyName)} and {nameof(TransformationExtension)} is required for claim transformation task action '{TaskAction}'.", [nameof(UpPartyName), nameof(TransformationExtension)]));
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                }
             }
             else if (Action == ClaimTransformActions.AddIfNot || Action == ClaimTransformActions.ReplaceIfNot)
             {
@@ -193,7 +274,7 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", [nameof(ClaimsIn)]));
             }
-            if (Transformation.IsNullOrWhiteSpace())
+            if (TaskAction == null && Transformation.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
             }
@@ -209,7 +290,7 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", [nameof(Transformation)]));
             }
-            if (TransformationExtension.IsNullOrWhiteSpace())
+            if (TaskAction == null && TransformationExtension.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", [nameof(TransformationExtension)]));
             }

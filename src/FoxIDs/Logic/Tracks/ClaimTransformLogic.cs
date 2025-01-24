@@ -66,28 +66,34 @@ namespace FoxIDs.Logic
         private List<Claim> AddLocalClaims(IEnumerable<Claim> claims, ILoginRequest loginRequest)
         {
             var localClaims = new List<Claim>(claims);
-            localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginAction, loginRequest.LoginAction.ToString().ToCamelCase());
-            if (!loginRequest.UserId.IsNullOrWhiteSpace())
+            if(loginRequest != null)
             {
-                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.UserId, loginRequest.UserId);
-            }
-            if (loginRequest.MaxAge != null && loginRequest.MaxAge.Value > 0)
-            {
-                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.MaxAge, loginRequest.MaxAge.Value.ToString());
-            }
-            if (!loginRequest.LoginHint.IsNullOrWhiteSpace())
-            {
-                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginHint, loginRequest.LoginHint);
-            }
-            if (loginRequest.Acr != null && loginRequest.Acr.Count() > 0)
-            {
-                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.Acr, loginRequest.Acr.ToSpaceList());
+                localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginAction, loginRequest.LoginAction.ToString().ToCamelCase());
+                if (!loginRequest.UserId.IsNullOrWhiteSpace())
+                {
+                    localClaims.AddClaim(Constants.ClaimTransformClaimTypes.UserId, loginRequest.UserId);
+                }
+                if (loginRequest.MaxAge != null && loginRequest.MaxAge.Value > 0)
+                {
+                    localClaims.AddClaim(Constants.ClaimTransformClaimTypes.MaxAge, loginRequest.MaxAge.Value.ToString());
+                }
+                if (!loginRequest.LoginHint.IsNullOrWhiteSpace())
+                {
+                    localClaims.AddClaim(Constants.ClaimTransformClaimTypes.LoginHint, loginRequest.LoginHint);
+                }
+                if (loginRequest.Acr != null && loginRequest.Acr.Count() > 0)
+                {
+                    localClaims.AddClaim(Constants.ClaimTransformClaimTypes.Acr, loginRequest.Acr.ToSpaceList());
+                }
             }
 
             logger.ScopeTrace(() => $"Claims transformation, Local claims '{localClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var claimsWithLocals = new List<Claim>(claims);
-            AddOrReplaceClaims(claimsWithLocals, ClaimTransformActions.Replace, localClaims);
+            if (localClaims.Count > 0)
+            {
+                AddOrReplaceClaims(claimsWithLocals, ClaimTransformActions.Replace, localClaims);
+            }
             return claimsWithLocals;
         }
 

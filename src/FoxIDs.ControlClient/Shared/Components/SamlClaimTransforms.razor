@@ -377,31 +377,41 @@
     </ul>
     <ValidationMessage For="@(() => Model.ClaimTransforms)" />
     <div class="btn-group" role="group">
-        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button id="btnGroupClaimTransform" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="oi oi-plus" aria-hidden="true"></span> Add claim transform
         </button>
-        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-            <h6 class="dropdown-header">Actions: Add/Replace/If not/Remove</h6>
+        <div class="dropdown-menu" aria-labelledby="btnGroupClaimTransform">
+            <h6 class="dropdown-header">Match or not match claim and then add/replace/remove claim</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim))">Match claim</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match claim and value</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Actions: Add/Replace/If not</h6>
+            <h6 class="dropdown-header">Map claim and then add/replace/add if not exist</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryInternalUser))">Query internal user</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryExternalUser))">Query internal user</button>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Actions: Add/Replace</h6>
+            <h6 class="dropdown-header">Add/replace claim</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.ExternalClaims))">External claims API</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
+        </div>
+    </div>
+    <div class="btn-group" role="group">
+        <button id="btnGroupTaskAction" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add task action
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupTaskAction">
+            <h6 class="dropdown-header">Query user and then add/replace claims</h6>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryInternalUser))">Query internal user</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryExternalUser))">Query external user</button>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Actions: If/If not</h6>
+            <h6 class="dropdown-header">Match or not match claim and then return error</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.RequestException))">Match claim and return error</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.RequestException))">Match claim and value and return error</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.RequestException))">Regex match and return error</button>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">Match or not match claim and then start authentication</h6>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.UpPartyAction))">Match claim and start authentication</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.UpPartyAction))">Match claim and value and start authentication</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.UpPartyAction))">Regex match and start authentication</button>

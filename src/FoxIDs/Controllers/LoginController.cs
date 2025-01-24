@@ -557,7 +557,7 @@ namespace FoxIDs.Controllers
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
             }
 
             return (validSession, session?.UserIdentifier, null);
@@ -710,8 +710,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Cancel login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
-                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
-
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginCanceled, "Login canceled by user.");
             }
             catch (Exception ex)
             {
@@ -1023,6 +1022,12 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                }
+                catch (OAuthRequestException orex)
+                {
+                    logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                    logger.Error(orex);
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
                 }
 
                 return viewError();

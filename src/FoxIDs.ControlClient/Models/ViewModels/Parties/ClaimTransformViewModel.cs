@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if (TaskAction == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
             }

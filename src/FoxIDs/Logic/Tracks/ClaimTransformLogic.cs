@@ -137,9 +137,20 @@ namespace FoxIDs.Logic
                             throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
                     }
                 }
+                catch (EndpointException)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
+                    if (claimTransform.TaskAction != null)
+                    {
+                        throw new Exception($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' failed.", ex);
+                    }
+                    else
+                    {
+                        throw new Exception($"Claim transform type '{claimTransform.Type}' with output claim '{claimTransform.ClaimOut}' failed.", ex);
+                    }
                 }
 
                 if (actionResult != null)
@@ -479,7 +490,7 @@ namespace FoxIDs.Logic
                 case ClaimTransformTaskActions.RequestException:
                     if (claimTransform is SamlClaimTransform)
                     {
-                        throw new SamlRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                        throw new SamlRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Status = GetSaml2Status(claimTransform.Error) };
                     }
                     else
                     {
@@ -513,6 +524,15 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        private Saml2StatusCodes GetSaml2Status(string error)
+        {
+            if (!error.IsNullOrWhiteSpace() && Enum.TryParse(error, true, out Saml2StatusCodes statusCode)) 
+            {
+                return statusCode;
+            }
+            return Saml2StatusCodes.Responder;
         }
 
         private LoginRequest GetLoginRequestWithLocalClaims(List<Claim> claims, ILoginRequest loginRequest)

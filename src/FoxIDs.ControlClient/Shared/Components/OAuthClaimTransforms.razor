@@ -139,7 +139,7 @@
                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                     </div>
                 </div>
-                @if (claimTransform.Type != ClaimTransformTypes.ExternalClaims)
+                @if (claimTransform.TaskAction == null && claimTransform.Type != ClaimTransformTypes.ExternalClaims)
                 {
                     <div class="row">
                         <div class="col-11">
@@ -156,7 +156,14 @@
                 }
                 <div class="row">
                     <div class="col-11">
-                        @if (claimTransform.TaskAction != ClaimTransformTaskActions.QueryInternalUser && claimTransform.TaskAction != ClaimTransformTaskActions.QueryExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
+                        @if (claimTransform.TaskAction == ClaimTransformTaskActions.RequestException || claimTransform.TaskAction == ClaimTransformTaskActions.UpPartyAction)
+                        {
+                            <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
+                                <option value="@ClaimTransformActions.If">If match</option>
+                                <option value="@ClaimTransformActions.IfNot">If not match</option>
+                            </FInputSelect>
+                        }
+                        else if (claimTransform.TaskAction != ClaimTransformTaskActions.QueryInternalUser && claimTransform.TaskAction != ClaimTransformTaskActions.QueryExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
                         {
                             <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
                                 <option value="@ClaimTransformActions.Add">Add claim</option>
@@ -173,10 +180,6 @@
                                 <option value="@ClaimTransformActions.Replace">Replace claim</option>
                                 <option value="@ClaimTransformActions.AddIfNotOut">Add claim, if new claim do not exist</option>
                             </FInputSelect>
-                        }
-                        else if (claimTransform.TaskAction == ClaimTransformTaskActions.RequestException || claimTransform.TaskAction == ClaimTransformTaskActions.UpPartyAction)
-                        {
-                            // no claims to handle
                         }
                         else
                         {
@@ -199,28 +202,23 @@
                                         switch (claimTransform.Type)
                                         {
                                             case ClaimTransformTypes.MatchClaim:
-                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and return error.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.Error" For="@(() => claimTransformClaimIn.Error)" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
                                                 break;
                                             case ClaimTransformTypes.Match:
-                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and return error.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                                 <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.Error" For="@(() => claimTransformClaimIn.Error)" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
                                                 break;
                                             case ClaimTransformTypes.RegexMatch:
                                                 <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex and return error.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                                 <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.Error" For="@(() => claimTransformClaimIn.Error)" />
-                                                <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
                                                 break;
                                             default:
                                                 throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' not supported.");
                                         }
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">OpenID Connect / OAuth 2.0 error and error message.</div>
+                                        <FInputText @bind-Value="claimTransformClaimIn.Error" For="@(() => claimTransformClaimIn.Error)" />
+                                        <FInputText @bind-Value="claimTransformClaimIn.ErrorMessage" For="@(() => claimTransformClaimIn.ErrorMessage)" />
                                         break;
                                     case ClaimTransformTaskActions.UpPartyAction:
                                         switch (claimTransform.Type)
@@ -416,18 +414,18 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupTaskAction">
             <h6 class="dropdown-header">Query user and then add/replace claims</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryInternalUser))">Query internal user</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryExternalUser))">Query external user</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryInternalUser))">Query internal user</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.Match, ClaimTransformTaskActions.QueryExternalUser))">Query external user</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Match or not match claim and then return error</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.RequestException))">Match claim and return error</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.RequestException))">Match claim and value and return error</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.RequestException))">Regex match and return error</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.RequestException))">Match claim and return error</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.Match, ClaimTransformTaskActions.RequestException))">Match claim and value and return error</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.RequestException))">Regex match and return error</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Match or not match claim and then start authentication</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.UpPartyAction))">Match claim and start authentication</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match, ClaimTransformTaskActions.UpPartyAction))">Match claim and value and start authentication</button>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.UpPartyAction))">Regex match and start authentication</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.MatchClaim, ClaimTransformTaskActions.UpPartyAction))">Match claim and start authentication</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.Match, ClaimTransformTaskActions.UpPartyAction))">Match claim and value and start authentication</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTaskAction(ClaimTransformTypes.RegexMatch, ClaimTransformTaskActions.UpPartyAction))">Regex match and start authentication</button>
         </div>
     </div>
 </div>
@@ -442,98 +440,121 @@
     [Parameter]
     public bool LoginCreateUser { get; set; }
 
-    private void AddClaimTransform(ClaimTransformTypes type, ClaimTransformTaskActions? taskAction = null)
+    private void AddClaimTransform(ClaimTransformTypes type)
     {
-        if (taskAction == ClaimTransformTaskActions.RequestException || taskAction == ClaimTransformTaskActions.UpPartyAction)
+        switch (type)
         {
-            switch (type)
-            {
-                case ClaimTransformTypes.MatchClaim:
-                case ClaimTransformTypes.Match:
-                case ClaimTransformTypes.RegexMatch:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                        {
-                            ShowDetails = true,
-                            Type = type,
-                            TaskAction = taskAction
-                        });
-                    break;
+            case ClaimTransformTypes.MatchClaim:
+            case ClaimTransformTypes.Match:
+            case ClaimTransformTypes.RegexMatch:
+            case ClaimTransformTypes.Map:
+            case ClaimTransformTypes.RegexMap:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                    {
+                        ShowDetails = true,
+                        Type = type
+                    });
+                break;
+            case ClaimTransformTypes.Constant:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                    {
+                        ShowDetails = true,
+                        Type = type
+                    });
+                break;
+            case ClaimTransformTypes.Concatenate:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                    {
+                        ClaimsIn = new List<string> { string.Empty },
+                        ShowDetails = true,
+                        Type = type
+                    });
+                break;
+            case ClaimTransformTypes.ExternalClaims:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
+                    {
+                        Name = RandomName.GenerateDefaultName(),
+                        ExternalConnectType = ExternalConnectTypes.Api,
+                        ClaimsIn = new List<string> { string.Empty },
+                        ShowDetails = true,
+                        Type = type
+                    });
+                break;
+            case ClaimTransformTypes.DkPrivilege:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                    {
+                        ClaimIn = "privileges_intermediate",
+                        ClaimOut = "privileges_intermediate",
+                        ShowDetails = true,
+                        Action = ClaimTransformActions.Replace,
+                        Type = type
+                    });
+                break;
 
-                default:
-                    throw new NotSupportedException("Claim transform type not supported for task action.");
-            }
+            default:
+                throw new NotSupportedException("Claim transform type not supported.");
         }
-        else if (taskAction == ClaimTransformTaskActions.QueryInternalUser || taskAction == ClaimTransformTaskActions.QueryExternalUser)
-        {
-            switch (type)
-            {
-                case ClaimTransformTypes.Match:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                        {
-                            ShowDetails = true,
-                            Type = type,
-                            TaskAction = taskAction
-                        });
-                    break;
+    }
 
-                default:
-                    throw new NotSupportedException("Claim transform type not supported for task action.");
-            }
-        }
-        else
+    private void AddTaskAction(ClaimTransformTypes type, ClaimTransformTaskActions taskAction)
+    {
+        switch (taskAction)
         {
-            switch (type)
-            {
-                case ClaimTransformTypes.MatchClaim:
-                case ClaimTransformTypes.Match:
-                case ClaimTransformTypes.RegexMatch:
-                case ClaimTransformTypes.Map:
-                case ClaimTransformTypes.RegexMap:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                        {
-                            ShowDetails = true,
-                            Type = type
-                        });
-                    break;
-                case ClaimTransformTypes.Constant:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
-                        {
-                            ShowDetails = true,
-                            Type = type
-                        });
-                    break;
-                case ClaimTransformTypes.Concatenate:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
-                        {
-                            ClaimsIn = new List<string> { string.Empty },
-                            ShowDetails = true,
-                            Type = type
-                        });
-                    break;
-                case ClaimTransformTypes.ExternalClaims:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimsInViewModel
-                        {
-                            Name = RandomName.GenerateDefaultName(),
-                            ExternalConnectType = ExternalConnectTypes.Api,
-                            ClaimsIn = new List<string> { string.Empty },
-                            ShowDetails = true,
-                            Type = type
-                        });
-                    break;
-                case ClaimTransformTypes.DkPrivilege:
-                    Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                        {
-                            ClaimIn = "privileges_intermediate",
-                            ClaimOut = "privileges_intermediate",
-                            ShowDetails = true,
-                            Action = ClaimTransformActions.Replace,
-                            Type = type
-                        });
-                    break;
-
-                default:
-                    throw new NotSupportedException("Claim transform type not supported.");
-            }
+            case ClaimTransformTaskActions.RequestException:
+                switch (type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                            {
+                                ShowDetails = true,
+                                Type = type,
+                                Action = ClaimTransformActions.If,
+                                TaskAction = taskAction,
+                                Error = IdentityConstants.ResponseErrors.InvalidRequest
+                            });
+                        break;
+                    default:
+                        throw new NotSupportedException("Claim transform type not supported for task action.");
+                }
+                break;
+            case ClaimTransformTaskActions.UpPartyAction:
+                switch (type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                            {
+                                ShowDetails = true,
+                                Type = type,
+                                Action = ClaimTransformActions.If,
+                                TaskAction = taskAction
+                            });
+                        break;
+                    default:
+                        throw new NotSupportedException("Claim transform type not supported for task action.");
+                }
+                break;
+            case ClaimTransformTaskActions.QueryInternalUser:
+            case ClaimTransformTaskActions.QueryExternalUser:
+                switch (type)
+                {
+                    case ClaimTransformTypes.Match:
+                        Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                            {
+                                ShowDetails = true,
+                                Type = type,
+                                TaskAction = taskAction
+                            });
+                        break;
+                    default:
+                        throw new NotSupportedException("Claim transform type not supported for task action.");
+                }
+                break;
+            default:
+                throw new NotSupportedException($"Claim transform task action '{taskAction}' not supported.");
         }
     }
 

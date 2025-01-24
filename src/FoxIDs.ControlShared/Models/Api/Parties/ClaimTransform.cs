@@ -76,7 +76,7 @@ namespace FoxIDs.Models.Api
         {
             var results = new List<ValidationResult>();
 
-            if (Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if (TaskAction == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(ClaimOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimOut)]));
             }

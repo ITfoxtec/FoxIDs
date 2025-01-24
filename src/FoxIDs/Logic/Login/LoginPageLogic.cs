@@ -95,79 +95,88 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps step = LoginResponseSequenceSteps.PhoneVerificationStep) 
         {
-            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
-
-            sequenceData.Email = user.Email;
-            sequenceData.EmailVerified = user.EmailVerified;
-            sequenceData.Phone = user.Phone;
-            sequenceData.PhoneVerified = user.PhoneVerified;
-            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-
-            if (step <= LoginResponseSequenceSteps.PhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
+            try
             {
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+                var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
+
+                sequenceData.Email = user.Email;
+                sequenceData.EmailVerified = user.EmailVerified;
+                sequenceData.Phone = user.Phone;
+                sequenceData.PhoneVerified = user.PhoneVerified;
+                sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
+
+                if (step <= LoginResponseSequenceSteps.PhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+                }
+                else if (step <= LoginResponseSequenceSteps.EmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                }
+                else if (step <= LoginResponseSequenceSteps.MfaAllAndAppStep && GetRequireMfa(user, loginUpParty, sequenceData))
+                {
+                    sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
+                    sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
+                    sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
+                    sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
+
+                    if (step == LoginResponseSequenceSteps.MfaSmsStep)
+                    {
+                        if (sequenceData.SupportTwoFactorSms)
+                        {
+                            return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else if (step == LoginResponseSequenceSteps.MfaEmailStep)
+                    {
+                        if (sequenceData.SupportTwoFactorEmail)
+                        {
+                            return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
+                    {
+                        if (sequenceData.SupportTwoFactorApp)
+                        {
+                            return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else
+                    {
+                        if (sequenceData.SupportTwoFactorApp && sequenceData.TwoFactorAppIsRegistred)
+                        {
+                            return await AuthAppTwoFactorResponseAsync(sequenceData, loginUpParty, user);
+                        }
+
+                        if (sequenceData.SupportTwoFactorSms)
+                        {
+                            return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+
+                        if (sequenceData.SupportTwoFactorEmail)
+                        {
+                            return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+
+                        if (sequenceData.SupportTwoFactorApp && SupportRegisterTwoFactorApp(user, loginUpParty))
+                        {
+                            return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+
+                    throw new Exception($"Require two-factor (2FA/MFA) but it is either not supported or configured. {nameof(LoginResponseSequenceSteps)}: '{step}'.");
+                }
+
+                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
             }
-            else if (step <= LoginResponseSequenceSteps.EmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
+            catch (OAuthRequestException orex)
             {
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
             }
-            else if (step <= LoginResponseSequenceSteps.MfaAllAndAppStep && GetRequireMfa(user, loginUpParty, sequenceData))
-            {
-                sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
-                sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
-                sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
-                sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
-
-                if (step == LoginResponseSequenceSteps.MfaSmsStep)
-                {
-                    if (sequenceData.SupportTwoFactorSms)
-                    {
-                        return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else if (step == LoginResponseSequenceSteps.MfaEmailStep)
-                {
-                    if (sequenceData.SupportTwoFactorEmail)
-                    {
-                        return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
-                {
-                    if (sequenceData.SupportTwoFactorApp)
-                    {
-                        return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else
-                {
-                    if (sequenceData.SupportTwoFactorApp && sequenceData.TwoFactorAppIsRegistred)
-                    {
-                        return await AuthAppTwoFactorResponseAsync(sequenceData, loginUpParty, user);
-                    }
-
-                    if (sequenceData.SupportTwoFactorSms)
-                    {
-                        return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-
-                    if (sequenceData.SupportTwoFactorEmail)
-                    {
-                        return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-
-                    if (sequenceData.SupportTwoFactorApp && SupportRegisterTwoFactorApp(user, loginUpParty))
-                    {
-                        return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-
-                throw new Exception($"Require two-factor (2FA/MFA) but it is either not supported or configured. {nameof(LoginResponseSequenceSteps)}: '{step}'.");
-            }
-
-            return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
         }
 
         private async Task<IActionResult> AuthAppTwoFactorRegistrationResponseAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)

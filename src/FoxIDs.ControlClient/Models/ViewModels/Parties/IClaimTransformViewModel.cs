@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {

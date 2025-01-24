@@ -183,33 +183,42 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, Login response.");
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
-
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+            try
             {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
+                logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+
+                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+                {
+                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
+                }
+
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+                switch (sequenceData.DownPartyLink.Type)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
+                    case PartyTypes.Saml2:
+                        claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
-
-            logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
-
-            switch (sequenceData.DownPartyLink.Type)
+            catch (OAuthRequestException orex)
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
-                case PartyTypes.Saml2:
-                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
-                case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
-
-                default:
-                    throw new NotSupportedException();
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
             }
         }
 
-        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError error, string errorDescription = null)
+        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError? loginError = null, string error = null, string errorDescription = null)
         {
             logger.ScopeTrace(() => "Login error response.");
 
@@ -222,18 +231,23 @@ namespace FoxIDs.Logic
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyLink.Id, ErrorToOAuth2OidcString(error), errorDescription);
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyLink.Id, ErrorToOAuth2OidcString(loginError, error), errorDescription);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status: ErrorToSamlStatus(error));
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status: ErrorToSamlStatus(loginError, error));
 
                 default:
                     throw new NotSupportedException($"Connection type '{sequenceData.DownPartyLink.Type}' not supported.");
             }
         }
 
-        private string ErrorToOAuth2OidcString(LoginSequenceError error)
+        private string ErrorToOAuth2OidcString(LoginSequenceError? loginError, string error)
         {
-            switch (error)
+            if (!error.IsNullOrWhiteSpace())
+            {
+                return error;
+            }
+
+            switch (loginError)
             {
                 // Default
                 case LoginSequenceError.LoginCanceled:
@@ -250,9 +264,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        private Saml2StatusCodes ErrorToSamlStatus(LoginSequenceError error)
+        private Saml2StatusCodes ErrorToSamlStatus(LoginSequenceError? loginError, string error)
         {
-            switch (error)
+            if (!error.IsNullOrWhiteSpace())
+            {
+                return SamlConvertLogic.ErrorToSamlStatus(error);
+            }
+
+            switch (loginError)
             {
                 case LoginSequenceError.LoginCanceled:
                     return Saml2StatusCodes.AuthnFailed;

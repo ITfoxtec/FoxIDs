@@ -217,16 +217,13 @@
                                         switch (claimTransform.Type)
                                         {
                                             case ClaimTransformTypes.MatchClaim:
-                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and start authentication.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                                 break;
                                             case ClaimTransformTypes.Match:
-                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and start authentication.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                                 <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
                                                 break;
                                             case ClaimTransformTypes.RegexMatch:
-                                                <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex and start authentication.</div>
                                                 <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                                 <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
                                                 break;

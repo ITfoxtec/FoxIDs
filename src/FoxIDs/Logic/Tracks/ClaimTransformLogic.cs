@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
 
             claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
 
-            logger.ScopeTrace(() => $"Claims transformation, input claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            // Too much logging logger.ScopeTrace(() => $"Claims transformation, input claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             if (loginRequest == null)
             {
                 claimTransforms = claimTransforms.Where(t => t.TaskAction != ClaimTransformTaskActions.UpPartyAction);
@@ -59,7 +59,7 @@ namespace FoxIDs.Logic
             (var outputClaims, var actionResult) = await HandleTransformAsync(claimTransforms, AddLocalClaims(claims, loginRequest), loginRequest);
 
             outputClaims = outputClaims.Where(c => !c.Type.StartsWith(Constants.ClaimTransformClaimTypes.Namespace, StringComparison.Ordinal)).ToList();
-            logger.ScopeTrace(() => $"Claims transformation, output claims '{outputClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            // Too much logging logger.ScopeTrace(() => $"Claims transformation, output claims '{outputClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return (outputClaims, actionResult);
         }
 

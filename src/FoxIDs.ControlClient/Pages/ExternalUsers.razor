@@ -65,19 +65,21 @@
 
                                             @if (selectUpParties != null)
                                             {
-                                                @if (selectUpParties.Count() > 0)
-                                                {
-                                                    @foreach (var upParty in selectUpParties)
+                                                <div class="overflow-auto" style="max-height: 500px">
+                                                    @if (selectUpParties.Count() > 0)
                                                     {
-                                                        <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
-                                                            @(upParty.DisplayName ?? upParty.Name)
-                                                        </button>
+                                                        @foreach (var upParty in selectUpParties)
+                                                        {
+                                                            <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
+                                                                @(upParty.DisplayName ?? upParty.Name)
+                                                            </button>
+                                                        }
                                                     }
-                                                }
-                                                else if (!SelectUpPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
-                                                {
-                                                    <div class="font-italic px-4">No match</div>
-                                                }
+                                                    else if (!SelectUpPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                                                    {
+                                                        <div class="font-italic px-4">No match</div>
+                                                    }
+                                                </div>
                                             }
                                         </div>
                                     </div>

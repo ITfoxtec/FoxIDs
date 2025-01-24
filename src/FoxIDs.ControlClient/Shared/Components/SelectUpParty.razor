@@ -2,10 +2,10 @@
 @using FoxIDs.Infrastructure
 <ValidationMessage For="@(() => Model.UpPartyName)" />
 <div class="pt-2">
-    @if (Model.UpPartyName.IsNullOrWhiteSpace())
-    {
-        <div class=" form-group active-group active">
-            <label class="label-control">Authentication method</label>
+    <div class=" form-group active-group active">
+        <label class="label-control">Authentication method</label>
+        @if (Model.UpPartyName.IsNullOrWhiteSpace())
+        {
             <div class="card pb-3">
                 <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
                     <div class="form-group active-group px-3 mt-4 pb-2">
@@ -15,39 +15,47 @@
 
                 @if (upPartyFilters != null)
                 {
-                    @if (upPartyFilters.Count() > 0)
-                    {
-                        @foreach (var upPartyFilter in upPartyFilters)
+                    <div class="list-striped overflow-auto" style="max-height: 500px">
+                        @if (upPartyFilters.Count() > 0)
                         {
-                            <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => OnSelectUpParty(upPartyFilter))">
-                                @(upPartyFilter.DisplayName ?? upPartyFilter.Name)
-                            </button>
+                            @foreach (var upPartyFilter in upPartyFilters)
+                            {
+                                <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => OnSelectUpParty(upPartyFilter))">
+                                    <div>@upPartyFilter.DisplayName</div>
+                                    @if (!upPartyFilter.ProfileDisplayName.IsNullOrWhiteSpace())
+                                    {
+                                        <div>Profile: @upPartyFilter.ProfileDisplayName</div>
+                                    }
+                                    <div class="small">@upPartyFilter.TypeText</div>
+                                </button>
+                                <div class="list-striped-item"></div>
+                            }
                         }
-                    }
-                    else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
-                    {
-                        <div class="font-italic px-4">No match</div>
-                    }
+                        else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                        {
+                            <div class="font-italic px-4">No match</div>
+                        }
+                    </div>
                 }
             </div>
-        </div>
-    }
-    else
-    {
-         <div class="card card-row">
-            <div class="card-body px-2 py-1 d-flex">
-                <div class="mr-auto">
-                    <div>@Model.UpPartyDisplayName</div>
-                    @if(!@Model.UpPartyDisplayProfileName.IsNullOrWhiteSpace())
-                    {
-                        <div>Profile: @Model.UpPartyDisplayProfileName</div>
-                    }
-                    <div class="small">@Model.UpPartyTypeText</div>
+        }
+        else
+        {
+            <div class="card card-row">
+                <div class="card-body px-2 py-1 d-flex">
+                    <div class="mr-auto">
+                        <div>@Model.UpPartyDisplayName</div>
+                        @if(!@Model.UpPartyDisplayProfileName.IsNullOrWhiteSpace())
+                        {
+                            <div>Profile: @Model.UpPartyDisplayProfileName</div>
+                        }
+                        <div class="small">@Model.UpPartyTypeText</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowDefaultUpPartyFilter())">Select a different authentication method</button> 
-    }
+            <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowDefaultUpPartyFilter())">Select a different authentication method</button> 
+        }
+    </div>
 </div>
 
 @code {
@@ -68,6 +76,14 @@
     {
         await base.OnInitializedAsync();
         await UpPartyNamesFilterAsync(null);
+        if (!Model.UpPartyName.IsNullOrWhiteSpace()) 
+        {
+            var upPartyFilter = upPartyFilters.Where(p => p.Name == Model.UpPartyName && p.ProfileName == Model.UpPartyProfileName).FirstOrDefault();
+            if (upPartyFilter != null) 
+            {
+                OnSelectUpParty(upPartyFilter);
+            }
+        }
     }
 
     private async Task ShowDefaultUpPartyFilter()

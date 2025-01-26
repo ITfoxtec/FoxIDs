@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -23,5 +25,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Overwrite received claims")]
         public bool OverwriteClaims { get; set; }
+
+        [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
+        [Display(Name = "Forward claims from authentication method")]
+        public List<string> UpPartyClaims { get; set; }
     }
 }

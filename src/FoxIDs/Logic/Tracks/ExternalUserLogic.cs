@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        (var createUserClaims, var createUserActionResult) = await CreateUserAsync(party, loginRequest, linkClaimValue);
+                        (var createUserClaims, var createUserActionResult) = await CreateUserAsync(party, loginRequest, linkClaimValue, claims);
                         return (createUserClaims, createUserActionResult, createUserActionResult != null);
                     }
                 }
@@ -134,12 +134,16 @@ namespace FoxIDs.Logic
             return claimType;
         }
 
-        public async Task<(IEnumerable<Claim> claims, IActionResult actionResult)> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, ILoginRequest loginRequest, string linkClaimValue, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile
+        public async Task<(IEnumerable<Claim> claims, IActionResult actionResult)> CreateUserAsync<TProfile>(UpPartyWithExternalUser<TProfile> upParty, ILoginRequest loginRequest, string linkClaimValue, IEnumerable<Claim> claims, IEnumerable<Claim> dynamicElementClaims = null) where TProfile : UpPartyProfile
         {
             logger.ScopeTrace(() => $"Creating external user, link claim value '{linkClaimValue}', Route '{RouteBinding?.Route}'.");
 
-            dynamicElementClaims = dynamicElementClaims ?? new List<Claim>(); 
-            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), dynamicElementClaims, loginRequest);
+            var createUserClaims = (claims?.Count() > 0 && upParty.LinkExternalUser.UpPartyClaims?.Count() > 0) ? new List<Claim>(claims.Where(c => upParty.LinkExternalUser.UpPartyClaims.Any(uc => uc == c.Type))) : new List<Claim>(); 
+            if (dynamicElementClaims != null)
+            {
+                createUserClaims.AddRange(dynamicElementClaims);
+            }
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(upParty.LinkExternalUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), createUserClaims, loginRequest);
             if (actionResult != null)
             {
                 return (null, actionResult);

@@ -39,6 +39,7 @@
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />
 <DynamicElements Model="Model" />
 <div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
+<FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
 <OAuthClaimTransforms Model="Model" />
 
 @code {

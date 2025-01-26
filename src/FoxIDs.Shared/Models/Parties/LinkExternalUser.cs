@@ -37,6 +37,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "elements")]
         public List<DynamicElement> Elements { get; set; }
 
+        [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
+        [JsonProperty(PropertyName = "up_party_claims")]
+        public List<string> UpPartyClaims { get; set; }
+
         /// <summary>
         /// aAutomatic creation claim transforms, run after user creation before the user is saved.
         /// </summary>

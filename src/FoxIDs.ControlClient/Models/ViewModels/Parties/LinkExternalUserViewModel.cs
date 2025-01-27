@@ -33,7 +33,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<DynamicElementViewModel> Elements { get; set; } = new List<DynamicElementViewModel>();
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Forward claims from authentication method")]
+        [Display(Name = "Include claims from authentication method")]
         public List<string> UpPartyClaims { get; set; }
 
         /// <summary>

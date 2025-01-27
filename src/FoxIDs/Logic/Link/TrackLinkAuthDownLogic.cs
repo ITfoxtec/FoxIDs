@@ -106,24 +106,32 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
-
             if (error.IsNullOrEmpty())
             {
-                logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                (claims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
-                if (actionResult != null) 
+                try
                 {
-                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkDownSequenceData>();
-                    return actionResult;
+                    logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                    (claims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                    if (actionResult != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkDownSequenceData>();
+                        return actionResult;
+                    }
+                    logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+                    claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
+
+                    var clientClaims = claimsDownLogic.GetClientJwtClaims(party.Claims);
+                    if (clientClaims?.Count() > 0)
+                    {
+                        claims.AddRange(clientClaims);
+                    }
                 }
-                logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-                claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
-
-                var clientClaims = claimsDownLogic.GetClientJwtClaims(party.Claims);
-                if (clientClaims?.Count() > 0)
+                catch (OAuthRequestException ex)
                 {
-                    claims.AddRange(clientClaims);
+                    logger.Error(ex);
+                    error = ex.Error;
+                    errorDescription = ex.ErrorDescription;
                 }
             }
 

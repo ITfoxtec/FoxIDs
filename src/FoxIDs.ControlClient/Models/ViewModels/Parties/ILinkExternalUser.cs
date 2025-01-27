@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public interface ILinkExternalUser : IClaimTransformViewModel, IDynamicElementsViewModel
+    public interface ILinkExternalUser : IDynamicElementsViewModel
     {
         [Display(Name = "Optional create/provision external users automatically")]
         public bool AutoCreateUser { get; set; }
@@ -27,7 +27,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool OverwriteClaims { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Forward claims from authentication method")]
+        [Display(Name = "Include claims from authentication method")]
         public List<string> UpPartyClaims { get; set; }
+
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ClaimTransforms { get; set; }
     }
 }

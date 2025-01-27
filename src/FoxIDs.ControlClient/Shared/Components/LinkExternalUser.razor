@@ -5,7 +5,7 @@
     @if (IsSaml)
     {
         <div class="small">
-            Optionally use corresponding SAML 2.0 claims:<br />
+            Optionally link with corresponding SAML 2.0 claims:<br />
             <ul>
                 <li><code>@JwtClaimTypes.Subject</code> equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code></li>
                 <li><code>@JwtClaimTypes.Email</code> equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress</code></li>
@@ -16,7 +16,7 @@
     {
         <br />
     }
-    The external users are linked after the claim transformation on the authentication method has been performed.
+    The external users are linked after the first-level claim transforms on the authentication method has been performed.
 </div>
 
 <FInputText @bind-Value="Model.RedemptionClaimType" For="@(() => Model.RedemptionClaimType)" />
@@ -25,22 +25,41 @@
 <FInputToggle @bind-Value="Model.AutoCreateUser" For="@(() => Model.AutoCreateUser)" TextType="y.n" />
 <FInputToggle @bind-Value="Model.RequireUser" For="@(() => Model.RequireUser)" TextType="y.n" />
 
+@if (IsSaml)
+{
+    <div class="alert alert-info" role="alert">
+        The external user claims is handled and saved as <code>JWT</code> claims. 
+    </div>
+}
 <div class="info-text">
-    By default, claims on external users are added to the received claims with the exception of the <code>@JwtClaimTypes.Subject</code>
-    @if (IsSaml)
-    {
-        <span> (equals to <code>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier</code>)</span>
-    }
-    claim, which overrides the received <code>sub</code> claim.
+    By default, claims on external users are added to the received claims with the exception of the <code>@JwtClaimTypes.Subject</code> claim, which overrides the received <code>sub</code> claim.
     <br />
-    Claims on external users can optionally override received and transformed claims.
+    Claims on external users can optionally override received and the first-level claim transforms output claims.
 </div>
 
 <FInputToggle @bind-Value="Model.OverwriteClaims" For="@(() => Model.OverwriteClaims)" TextType="y.n" />
-<DynamicElements Model="Model" />
-<div class="info-text pb-0 mb-0">The claim transforms is performed after the user has signed up, but before the user is saved.</div>
-<FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
-<OAuthClaimTransforms Model="Model" />
+
+<div class="active-group active">
+    <div class="card">
+        <div class="card-body">
+            <div class="info-text">Add a sign-up UI with required and optional fields using dynamic elements.</div>
+            <DynamicElements Model="Model" />
+        </div>
+    </div>
+    <label class="label-control">Sign-up UI</label>
+</div>
+
+<div class="active-group active">
+    <div class="card">
+        <div class="card-body">
+            <div class="info-text">The claim@(IsSaml ? " JWT " : string.Empty)transforms is performed after the user has logged in and optionally signed up, but before the user is saved.</div>
+            <div class="info-text">Optionally include user claims from the authentication method (output of first-level claim transforms).</div>
+            <FInputTextList @bind-ValueList="Model.UpPartyClaims" For="@(() => Model.UpPartyClaims)" DynamicFirstRow="true" />
+            <OAuthClaimTransforms ClaimTransforms="Model.ClaimTransforms" />
+        </div>
+    </div>
+    <label class="label-control">Create user claim transforms</label>
+</div>
 
 @code {
     [Parameter]

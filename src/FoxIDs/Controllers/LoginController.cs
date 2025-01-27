@@ -710,7 +710,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Cancel login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
-                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginCanceled, "Login canceled by user.");
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginCanceled, errorDescription: "Login canceled by user.");
             }
             catch (Exception ex)
             {

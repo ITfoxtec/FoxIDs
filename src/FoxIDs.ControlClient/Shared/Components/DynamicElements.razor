@@ -1,82 +1,89 @@
-﻿<div class="form-group active-group active">
+﻿<div class="form-group active-group active pt-0">
     <div class="info-text">Dynamic elements shown in order (use the move up and down arrows to change the order)</div>
     <ul class="list-group">
-        @foreach (var element in Model.Elements)
+        @if (Model.Elements.Count() > 0) 
         {
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-9">
-                        @switch (element.Type)
-                        {
-                            case DynamicElementTypes.Email:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>)</div>
-                                break;
-                            case DynamicElementTypes.Phone:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Phone (claim: <code>@JwtClaimTypes.PhoneNumber</code>)</div>
-                                break;
-                            case DynamicElementTypes.Username:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Username (claim: <code>@JwtClaimTypes.PreferredUsername</code>)</div>
-                                break;
+            foreach (var element in Model.Elements)
+            {
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-9">
+                            @switch (element.Type)
+                            {
+                                case DynamicElementTypes.Email:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>)</div>
+                                    break;
+                                case DynamicElementTypes.Phone:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Phone (claim: <code>@JwtClaimTypes.PhoneNumber</code>)</div>
+                                    break;
+                                case DynamicElementTypes.Username:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Username (claim: <code>@JwtClaimTypes.PreferredUsername</code>)</div>
+                                    break;
 
-                            case DynamicElementTypes.EmailAndPassword:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>) and password</div>
-                                break;
-                            case DynamicElementTypes.Password:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Password</div>
-                                break;
+                                case DynamicElementTypes.EmailAndPassword:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email (claim: <code>@JwtClaimTypes.Email</code>) and password</div>
+                                    break;
+                                case DynamicElementTypes.Password:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Password</div>
+                                    break;
 
-                            case DynamicElementTypes.Name:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Full name (claim: <code>@JwtClaimTypes.Name</code>)</div>
-                                break;
+                                case DynamicElementTypes.Name:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Full name (claim: <code>@JwtClaimTypes.Name</code>)</div>
+                                    break;
 
-                            case DynamicElementTypes.GivenName:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Given name (claim: <code>@JwtClaimTypes.GivenName</code>)</div>
-                                break;
+                                case DynamicElementTypes.GivenName:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Given name (claim: <code>@JwtClaimTypes.GivenName</code>)</div>
+                                    break;
 
-                            case DynamicElementTypes.FamilyName:
-                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</div>
-                                break;
+                                case DynamicElementTypes.FamilyName:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</div>
+                                    break;
 
-                            default:
-                                throw new NotSupportedException($"Dynamic element type '{element.Type}' not supported.");
-                        }
+                                default:
+                                    throw new NotSupportedException($"Dynamic element type '{element.Type}' not supported.");
+                            }
+                        </div>
+                        <div class="col-2">
+                            @if (Model.Elements.IndexOf(element) > 0)
+                            {
+                                <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(element))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                            }
+                            @if (Model.Elements.IndexOf(element) < Model.Elements.Count() - 1)
+                            {
+                                <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(element))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                            }
+                        </div>
+                        <div class="col-1 text-right">
+                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                        </div>
                     </div>
-                    <div class="col-2">
-                        @if (Model.Elements.IndexOf(element) > 0)
-                        {
-                            <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(element))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
-                        }
-                        @if (Model.Elements.IndexOf(element) < Model.Elements.Count() - 1)
-                        {
-                            <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(element))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
-                        }
-                    </div>
-                    <div class="col-1 text-right">
-                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-11">
-                        <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
-                    </div>
-                </div>
-                @if (InternalUsers && (element.Type == DynamicElementTypes.Email || element.Type == DynamicElementTypes.Phone || element.Type == DynamicElementTypes.Username))
-                {
                     <div class="row">
                         <div class="col-11">
-                            <FInputToggle @bind-Value="element.IsUserIdentifier" For="@(() => element.IsUserIdentifier)" TextType="y.n" />
+                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
+                        </div>
                     </div>
-                </div>
-                }
-            </li>
+                    @if (InternalUsers && (element.Type == DynamicElementTypes.Email || element.Type == DynamicElementTypes.Phone || element.Type == DynamicElementTypes.Username))
+                    {
+                        <div class="row">
+                            <div class="col-11">
+                                <FInputToggle @bind-Value="element.IsUserIdentifier" For="@(() => element.IsUserIdentifier)" TextType="y.n" />
+                            </div>
+                        </div>
+                    }
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item"></li>
         }
     </ul>
     <ValidationMessage For="@(() => Model.Elements)" />

@@ -42,7 +42,7 @@ namespace FoxIDs.Models
         public List<string> UpPartyClaims { get; set; }
 
         /// <summary>
-        /// aAutomatic creation claim transforms, run after user creation before the user is saved.
+        /// Creation claim transforms, run after user creation before the user is saved.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]

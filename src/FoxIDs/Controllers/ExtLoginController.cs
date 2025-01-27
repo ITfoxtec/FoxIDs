@@ -113,7 +113,7 @@ namespace FoxIDs.Controllers
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
             }
 
             return (validSession, null);
@@ -243,7 +243,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Cancel external login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
-                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
+                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginCanceled, errorDescription: "Login canceled by user.");
             }
             catch (Exception ex)
             {

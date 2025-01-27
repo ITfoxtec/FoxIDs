@@ -209,8 +209,21 @@ namespace FoxIDs.Logic
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
-            var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
-            return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
+
+            try
+            {
+                var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
+                return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
+            }
+            catch (SamlRequestException ex)
+            {
+                if (status == Saml2StatusCodes.Success)
+                {
+                    logger.Error(ex);
+                    return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, Saml2StatusCodes.Responder);
+                }
+                throw;
+            }
         }
 
         private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, SamlDownSequenceData sequenceData, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null) 

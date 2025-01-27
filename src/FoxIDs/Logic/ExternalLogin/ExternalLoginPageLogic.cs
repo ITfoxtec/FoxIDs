@@ -43,14 +43,23 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseSequenceAsync(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty extLoginUpParty, string userIdentifier, IEnumerable<Claim> claims, IEnumerable<string> authMethods = null)
         {
-            var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
-            var session = await loginPageLogic.ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
+            try
+            {
+                var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
+                var session = await loginPageLogic.ValidateSessionAndRequestedUserAsync(sequenceData, extLoginUpParty, userId);
 
-            sequenceData.Claims = claims.ToClaimAndValues();
-            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                sequenceData.Claims = claims.ToClaimAndValues();
+                sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-            return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), userIdentifier, claims, sequenceData, session: session);
+                return await LoginResponseAsync(extLoginUpParty, loginPageLogic.GetDownPartyLink(extLoginUpParty, sequenceData), userIdentifier, claims, sequenceData, session: session);
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
         }
 
         private async Task<IActionResult> LoginResponseAsync(ExternalLoginUpParty extLoginUpParty, DownPartySessionLink newDownPartyLink, string userIdentifier, IEnumerable<Claim> userClaims, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)

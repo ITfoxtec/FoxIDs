@@ -239,13 +239,15 @@
                                                 default:
                                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
                                             }
-                                            <SelectUpParty Model="claimTransform"></SelectUpParty>
+                                            <SelectUpParty Model="claimTransform" IncludeProfiles="true"></SelectUpParty>
                                             break;
                                         case ClaimTransformTasks.QueryInternalUser:
                                             switch (claimTransform.Type)
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
                                                     <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and find exactly one internal user based on the value of the claim. The request will fail if more than one internal user is found. Then add the internal users' claims.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Select claim on internal user" />
                                                     break;
                                                 default:
                                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
@@ -256,6 +258,9 @@
                                             {
                                                 case ClaimTransformTypes.MatchClaim:
                                                     <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and find exactly one external user based on the value of the claim. The request will fail if more than one external user is found. Then add the external users' claims.</div>
+                                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Select claim on external user" />
+                                                    <SelectUpParty Model="claimTransform"></SelectUpParty>
                                                     break;
                                                 default:
                                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' not supported.");
@@ -264,8 +269,6 @@
                                         default:
                                             throw new NotSupportedException($"Claim transform task '{claimTransform.Task}' not supported.");
                                     }
-                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
-                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Select claim on user" />
                                 }
                                 else
                                 {

@@ -183,7 +183,7 @@ namespace FoxIDs.Logic
                         var selectUserClaimValue = claims.FindFirstOrDefaultValue(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
                         if (!selectUserClaimValue.IsNullOrWhiteSpace())
                         {
-                            await HandleAddReplaceTaskAsync(claims, claimTransform, selectUserClaimValue);
+                            await HandleAddReplaceTaskAsync(claims, claimTransform, claimIn, selectUserClaimValue);
                         }
                     }
                     else
@@ -490,11 +490,14 @@ namespace FoxIDs.Logic
                 case ClaimTransformTasks.RequestException:
                     if (claimTransform is SamlClaimTransform)
                     {
+                        logger.ScopeTrace(() => $"Claims transformation, Throw '{nameof(SamlRequestException)}' with error '{GetSaml2Status(claimTransform.Error)}' and error message '{claimTransform.ErrorMessage}'.");
                         throw new SamlRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Status = GetSaml2Status(claimTransform.Error) };
                     }
                     else
                     {
-                        throw new OAuthRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error };
+                        var error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error;
+                        logger.ScopeTrace(() => $"Claims transformation, Throw '{nameof(OAuthRequestException)}' with error '{error}' and error message '{claimTransform.ErrorMessage}'.");
+                        throw new OAuthRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Error = error};
                     }
                 case ClaimTransformTasks.UpPartyAction:
                     var upPartyLink = new UpPartyLink
@@ -502,7 +505,7 @@ namespace FoxIDs.Logic
                         Name = claimTransform.UpPartyName,
                         ProfileName = claimTransform.UpPartyProfileName
                     };
-                    logger.ScopeTrace(() => $"Claims transformation, Authentication type '{claimTransform.UpPartyType}'.");
+                    logger.ScopeTrace(() => $"Claims transformation, Start authentication type '{claimTransform.UpPartyType}' and method '{claimTransform.UpPartyName}'{(claimTransform.UpPartyProfileName.IsNullOrWhiteSpace() ? $" and profile '{claimTransform.UpPartyProfileName}'" : string.Empty)}.");
                     switch (claimTransform.UpPartyType)
                     {
                         case PartyTypes.Login:
@@ -566,7 +569,7 @@ namespace FoxIDs.Logic
             return outputLoginRequest;
         }
 
-        private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string selectUserClaimValue)
+        private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string claimIn, string selectUserClaimValue)
         {
             var selectUserClaim = claimTransform.Transformation;
             var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
@@ -581,7 +584,7 @@ namespace FoxIDs.Logic
                         if (user != null && !user.DisableAccount)
                         {
                             logger.ScopeTrace(() => $"Claims transformation, Internal user '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, selectUserClaim, selectUserClaimValue));
+                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, claimIn, selectUserClaim, selectUserClaimValue));
                             return;
                         }
                     }
@@ -592,7 +595,7 @@ namespace FoxIDs.Logic
                     if (users?.Count() == 1)
                     {
                         logger.ScopeTrace(() => $"Claims transformation, Internal user '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First(), selectUserClaim, selectUserClaimValue));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First(), claimIn, selectUserClaim, selectUserClaimValue));
                         return;
                     }
 
@@ -612,18 +615,18 @@ namespace FoxIDs.Logic
 
                     if (externalUsers?.Count() == 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First(), selectUserClaim, selectUserClaimValue));
+                        logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First(), claimIn, selectUserClaim, selectUserClaimValue));
                         return;
                     }
 
                     if (externalUsers?.Count() > 1)
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, More then one external users found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, More then one external users found by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
                     }
                     else
                     {
-                        logger.ScopeTrace(() => $"Claims transformation, No external user found by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
+                        logger.ScopeTrace(() => $"Claims transformation, No external user found by authentication method '{claimTransform.UpPartyName}' and claim '{selectUserClaim}' with claim value '{selectUserClaimValue}'.");
                     }
                     break;
 
@@ -632,7 +635,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> GetClaims(User user, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(User user, string claimIn, string selectUserClaim, string selectUserClaimValue)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -655,12 +658,15 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
-            claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
-            logger.ScopeTrace(() => $"Claims transformation, Users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            if(claimIn.Equals(selectUserClaim, StringComparison.CurrentCulture))
+            {
+                claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
+            }
+            logger.ScopeTrace(() => $"Claims transformation, Internal users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }
 
-        private List<Claim> GetClaims(ExternalUser externalUser, string selectUserClaim, string selectUserClaimValue)
+        private List<Claim> GetClaims(ExternalUser externalUser, string claimIn, string selectUserClaim, string selectUserClaimValue)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, externalUser.UserId);
@@ -669,7 +675,10 @@ namespace FoxIDs.Logic
                 claims.AddRange(externalUser.Claims.ToClaimList());
             }
 
-            claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
+            if (claimIn.Equals(selectUserClaim, StringComparison.CurrentCulture))
+            {
+                claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
+            }
             logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }

@@ -53,7 +53,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowDefaultUpPartyFilter())">Select a different authentication method</button> 
+            <button type="button" class="btn btn-link btn-sm pt-0" onclick="@(() => ShowDefaultUpPartyFilter())">Select a different authentication method</button> 
         }
     </div>
 </div>
@@ -67,6 +67,9 @@
 
     [Parameter]
     public IUpPartySelection Model { get; set; }
+
+    [Parameter]
+    public bool IncludeProfiles { get; set; }
 
     private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
     private List<UpParty> upParties;
@@ -150,7 +153,7 @@
                     tempUpPartyFilters.Remove(item);
                 }
 
-                if (up.Profiles != null)
+                if (IncludeProfiles && up.Profiles != null)
                 {
                     foreach (var profile in up.Profiles)
                     {

@@ -153,6 +153,7 @@ namespace FoxIDs.Logic
             {
                 Id = await ExternalUser.IdFormatAsync(RouteBinding, upParty.Name, await linkClaimValue.HashIdStringAsync()),
                 UserId = Guid.NewGuid().ToString(),
+                UpPartyName = upParty.Name,
                 LinkClaimValue = linkClaimValue,
                 Claims = transformedClaims.ToClaimAndValues()
             };

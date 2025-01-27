@@ -568,7 +568,7 @@ namespace FoxIDs.Logic
 
         private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string selectUserClaimValue)
         {
-            var selectUserClaim = claimTransform.TransformationExtension;
+            var selectUserClaim = claimTransform.Transformation;
             var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
@@ -581,16 +581,18 @@ namespace FoxIDs.Logic
                         if (user != null && !user.DisableAccount)
                         {
                             logger.ScopeTrace(() => $"Claims transformation, Internal user '{user.UserId}' found in user identifiers by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user));
+                            AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(user, selectUserClaim, selectUserClaimValue));
                             return;
                         }
                     }
 
-                    (var users, _) = await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
+                    (var users, _) = await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && 
+                        u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
+
                     if (users?.Count() == 1)
                     {
                         logger.ScopeTrace(() => $"Claims transformation, Internal user '{users.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First()));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(users.First(), selectUserClaim, selectUserClaimValue));
                         return;
                     }
 
@@ -605,11 +607,13 @@ namespace FoxIDs.Logic
                     break;
 
                 case ClaimTransformTasks.QueryExternalUser:
-                    (var externalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
+                    (var externalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && 
+                        u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
+
                     if (externalUsers?.Count() == 1)
                     {
                         logger.ScopeTrace(() => $"Claims transformation, External user '{externalUsers.First().UserId}' found in claims by claim '{selectUserClaim}' and claim value '{selectUserClaimValue}'.");
-                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First()));
+                        AddOrReplaceClaims(claims, claimTransform.Action, GetClaims(externalUsers.First(), selectUserClaim, selectUserClaimValue));
                         return;
                     }
 
@@ -628,7 +632,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> GetClaims(User user)
+        private List<Claim> GetClaims(User user, string selectUserClaim, string selectUserClaimValue)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -651,11 +655,12 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
+            claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             logger.ScopeTrace(() => $"Claims transformation, Users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }
 
-        private List<Claim> GetClaims(ExternalUser externalUser)
+        private List<Claim> GetClaims(ExternalUser externalUser, string selectUserClaim, string selectUserClaimValue)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, externalUser.UserId);
@@ -664,6 +669,7 @@ namespace FoxIDs.Logic
                 claims.AddRange(externalUser.Claims.ToClaimList());
             }
 
+            claims = claims.Where(c => !(c.Type.Equals(selectUserClaim, StringComparison.CurrentCulture) && c.Value.Equals(selectUserClaimValue, StringComparison.CurrentCulture))).ToList();
             logger.ScopeTrace(() => $"Claims transformation, External users JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return claims;
         }

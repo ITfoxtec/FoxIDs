@@ -57,6 +57,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
+                if (afterMap.ExternalUserLoadedClaimTransforms?.Count > 0)
+                {
+                    afterMap.ExternalUserLoadedClaimTransforms = afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransforms();
+                }
                 if (afterMap.CreateUser?.ClaimTransforms?.Count > 0)
                 {
                     afterMap.CreateUser.ClaimTransforms = afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransforms();

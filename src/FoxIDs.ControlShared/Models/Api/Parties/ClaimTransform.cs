@@ -133,15 +133,15 @@ namespace FoxIDs.Models.Api
                     switch (Task)
                     {
                         case ClaimTransformTasks.QueryInternalUser:
-                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            if (Transformation.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation task '{Task}'.", [nameof(TransformationExtension)]));
+                                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(Transformation)]));
                             }
                             break;
                         case ClaimTransformTasks.QueryExternalUser:
-                            if (UpPartyName.IsNullOrWhiteSpace() || TransformationExtension.IsNullOrWhiteSpace())
+                            if (UpPartyName.IsNullOrWhiteSpace() || Transformation.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The fields {nameof(UpPartyName)} and {nameof(TransformationExtension)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(TransformationExtension)]));
+                                results.Add(new ValidationResult($"The fields {nameof(UpPartyName)} and {nameof(Transformation)} is required for claim transformation task '{Task}'.", [nameof(UpPartyName), nameof(Transformation)]));
                             }
                             break;
                         default:

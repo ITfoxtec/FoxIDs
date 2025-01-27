@@ -147,9 +147,9 @@ namespace FoxIDs.Client.Models.ViewModels
                     {
                         case ClaimTransformTasks.QueryInternalUser:
                         case ClaimTransformTasks.QueryExternalUser:
-                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            if (Transformation.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
                             }
                             break;
                         default:

@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
             // Too much logging logger.ScopeTrace(() => $"Claims transformation, input claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             if (loginRequest == null)
             {
-                claimTransforms = claimTransforms.Where(t => t.TaskAction != ClaimTransformTaskActions.UpPartyAction);
+                claimTransforms = claimTransforms.Where(t => t.Task != ClaimTransformTasks.UpPartyAction);
             }
             var orderedClaimTransforms = claimTransforms.OrderBy(t => t.Order);
 
@@ -143,9 +143,9 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    if (claimTransform.TaskAction != null)
+                    if (claimTransform.Task != null)
                     {
-                        throw new Exception($"Claim transform type '{claimTransform.Type}' and task action '{claimTransform.TaskAction}' failed.", ex);
+                        throw new Exception($"Claim transform type '{claimTransform.Type}' and task '{claimTransform.Task}' failed.", ex);
                     }
                     else
                     {
@@ -173,17 +173,17 @@ namespace FoxIDs.Logic
                     var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
                     if (doAction)
                     {
-                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
+                        return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
                     }
                 }
                 else
                 {
-                    if (claimTransform.TaskAction != null)
+                    if (claimTransform.Task != null)
                     {
                         var selectUserClaimValue = claims.FindFirstOrDefaultValue(c => c.Type.Equals(claimIn, StringComparison.Ordinal));
                         if (!selectUserClaimValue.IsNullOrWhiteSpace())
                         {
-                            await HandleAddReplaceTaskActionAsync(claims, claimTransform, selectUserClaimValue);
+                            await HandleAddReplaceTaskAsync(claims, claimTransform, selectUserClaimValue);
                         }
                     }
                     else
@@ -226,7 +226,7 @@ namespace FoxIDs.Logic
                     var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
                     if (doAction)
                     {
-                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
+                        return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
                     }
                 }
                 else
@@ -270,7 +270,7 @@ namespace FoxIDs.Logic
                     var doAction = (exist && claimTransform.Action == ClaimTransformActions.If) || (!exist && claimTransform.Action == ClaimTransformActions.IfNot);
                     if (doAction)
                     {
-                        return await HandleIfAndIfNotTaskActionAsync(claims, claimTransform, loginRequest);
+                        return await HandleIfAndIfNotTaskAsync(claims, claimTransform, loginRequest);
                     }
                 }
                 else
@@ -483,11 +483,11 @@ namespace FoxIDs.Logic
             AddOrReplaceClaims(claims, claimTransform.Action, newClaims);
         }
 
-        private async Task<IActionResult> HandleIfAndIfNotTaskActionAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
+        private async Task<IActionResult> HandleIfAndIfNotTaskAsync(List<Claim> claims, ClaimTransform claimTransform, ILoginRequest loginRequest)
         {
-            switch (claimTransform.TaskAction)
+            switch (claimTransform.Task)
             {
-                case ClaimTransformTaskActions.RequestException:
+                case ClaimTransformTasks.RequestException:
                     if (claimTransform is SamlClaimTransform)
                     {
                         throw new SamlRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Status = GetSaml2Status(claimTransform.Error) };
@@ -496,7 +496,7 @@ namespace FoxIDs.Logic
                     {
                         throw new OAuthRequestException(claimTransform.ErrorMessage) { RouteBinding = RouteBinding, Error = claimTransform.Error.IsNullOrEmpty() ? IdentityConstants.ResponseErrors.InvalidRequest : claimTransform.Error };
                     }
-                case ClaimTransformTaskActions.UpPartyAction:
+                case ClaimTransformTasks.UpPartyAction:
                     var upPartyLink = new UpPartyLink
                     {
                         Name = claimTransform.UpPartyName,
@@ -566,15 +566,15 @@ namespace FoxIDs.Logic
             return outputLoginRequest;
         }
 
-        private async Task HandleAddReplaceTaskActionAsync(List<Claim> claims, ClaimTransform claimTransform, string selectUserClaimValue)
+        private async Task HandleAddReplaceTaskAsync(List<Claim> claims, ClaimTransform claimTransform, string selectUserClaimValue)
         {
             var selectUserClaim = claimTransform.TransformationExtension;
             var tenantDataRepository = serviceProvider.GetService<ITenantDataRepository>();
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-            switch (claimTransform.TaskAction)
+            switch (claimTransform.Task)
             {
-                case ClaimTransformTaskActions.QueryInternalUser:
+                case ClaimTransformTasks.QueryInternalUser:
                     if (selectUserClaim == JwtClaimTypes.Email || selectUserClaim == JwtClaimTypes.PhoneNumber || selectUserClaim == JwtClaimTypes.PreferredUsername)
                     {
                         var user = await tenantDataRepository.GetAsync<User>(await User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = selectUserClaimValue }), required: false, queryAdditionalIds: true);
@@ -604,7 +604,7 @@ namespace FoxIDs.Logic
                     }
                     break;
 
-                case ClaimTransformTaskActions.QueryExternalUser:
+                case ClaimTransformTasks.QueryExternalUser:
                     (var externalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && u.Claims.Any(c => c.Claim.Equals(selectUserClaim, StringComparison.Ordinal) && c.Claim.Equals(selectUserClaimValue, StringComparison.Ordinal)));
                     if (externalUsers?.Count() == 1)
                     {

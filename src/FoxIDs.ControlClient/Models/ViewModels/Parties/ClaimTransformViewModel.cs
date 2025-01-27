@@ -49,9 +49,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Secret { get; set; }
         #endregion
 
-        #region TaskAction
-        [Display(Name = "Task action")]
-        public ClaimTransformTaskActions? TaskAction { get; set; }
+        #region Task
+        [Display(Name = "Task")]
+        public ClaimTransformTasks? Task { get; set; }
 
         [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [Display(Name = "Error")]
@@ -89,12 +89,12 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (TaskAction == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if (Task == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
             }
 
-            if (TaskAction != null)
+            if (Task != null)
             {
                 if (Action == ClaimTransformActions.If || Action == ClaimTransformActions.IfNot)
                 {
@@ -113,9 +113,9 @@ namespace FoxIDs.Client.Models.ViewModels
                             throw new NotSupportedException($"Claim transformation type '{Type}' is not supported with action '{Action}'.");
                     }
 
-                    switch (TaskAction)
+                    switch (Task)
                     {
-                        case ClaimTransformTaskActions.RequestException:
+                        case ClaimTransformTasks.RequestException:
                             if (Error.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field is required.", [nameof(Error)]));
@@ -125,10 +125,10 @@ namespace FoxIDs.Client.Models.ViewModels
                                 results.Add(new ValidationResult($"The field is required.", [nameof(ErrorMessage)]));
                             }
                             break;
-                        case ClaimTransformTaskActions.UpPartyAction:
+                        case ClaimTransformTasks.UpPartyAction:
                             break;
                         default:
-                            throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                            throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }
                 }
                 else if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
@@ -143,17 +143,17 @@ namespace FoxIDs.Client.Models.ViewModels
                             throw new NotSupportedException($"Claim transformation type '{Type}' is not supported with action '{Action}'.");
                     }
 
-                    switch (TaskAction)
+                    switch (Task)
                     {
-                        case ClaimTransformTaskActions.QueryInternalUser:
-                        case ClaimTransformTaskActions.QueryExternalUser:
+                        case ClaimTransformTasks.QueryInternalUser:
+                        case ClaimTransformTasks.QueryExternalUser:
                             if (TransformationExtension.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
                             }
                             break;
                         default:
-                            throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                            throw new NotSupportedException($"Claim transformation task '{Task}' is not supported with type '{Type}' and action '{Action}'.");
                     }
                 }
             }
@@ -281,7 +281,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         private void ValidateMatchClaimAddReplace(List<ValidationResult> results)
         {
-            if (TaskAction == null && Transformation.IsNullOrWhiteSpace())
+            if (Task == null && Transformation.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
             }
@@ -293,7 +293,7 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
             }
-            if (TaskAction == null && TransformationExtension.IsNullOrWhiteSpace())
+            if (Task == null && TransformationExtension.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
             }

@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum ClaimTransformTaskActions
+    public enum ClaimTransformTasks
     {        
         RequestException = 20,
         UpPartyAction = 100,

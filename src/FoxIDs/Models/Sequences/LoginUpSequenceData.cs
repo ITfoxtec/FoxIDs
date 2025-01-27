@@ -1,10 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
     public class LoginUpSequenceData : UpSequenceData, ILoginUpSequenceDataBase
     {
+        public LoginUpSequenceData() : base() { }
+
+        public LoginUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 
@@ -37,9 +42,6 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "li")]
         public bool DoLoginIdentifierStep { get; set; }
-
-        [JsonProperty(PropertyName = "a")]
-        public IEnumerable<string> Acr { get; set; }
 
         [JsonProperty(PropertyName = "am")]
         public IEnumerable<string> AuthMethods { get; set; }

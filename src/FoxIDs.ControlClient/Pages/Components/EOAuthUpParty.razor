@@ -147,11 +147,14 @@
             }
             else if (oauthUpParty.ShowClaimTransformTab)
             {
-                <div class="mb-3 alert alert-info" role="alert">
-                    If you create a new claim the claim is local in this authentication method unless you add the claim or '*' (default) to the 'Forward claims' list.
+                <div class="info-text" role="alert">
+                    This claim transforms is executed after the user has logged in.
+                </div>
+                <OAuthClaimTransforms ClaimTransforms="oauthUpParty.Form.Model.ClaimTransforms" />
+                <div class="alert alert-info" role="alert">
+                    If you create a new claim in the claim transforms the claim is local in this authentication method unless you add the claim or '*' (default) to the 'Forward claims' list.
                     In the application registration you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
-                <OAuthClaimTransforms Model="oauthUpParty.Form.Model" />
             }
         </div>
     </div>

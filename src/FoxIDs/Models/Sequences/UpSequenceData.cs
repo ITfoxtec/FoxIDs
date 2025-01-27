@@ -8,6 +8,19 @@ namespace FoxIDs.Models.Sequences
 {
     public abstract class UpSequenceData : IUpSequenceData, IValidatableObject
     {
+        protected UpSequenceData()
+        { }
+
+        public UpSequenceData(ILoginRequest loginRequest) 
+        {
+            DownPartyLink = loginRequest.DownPartyLink;
+            LoginAction = loginRequest.LoginAction;
+            UserId = loginRequest.UserId;
+            MaxAge = loginRequest.MaxAge;
+            LoginHint = loginRequest.LoginHint;
+            Acr = loginRequest.Acr;
+        }
+
         [JsonProperty(PropertyName = "es")]
         public bool ExternalInitiatedSingleLogout { get; set; } = false;
 
@@ -41,6 +54,9 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "lh")]
         public string LoginHint { get; set; }
+
+        [JsonProperty(PropertyName = "a")]
+        public IEnumerable<string> Acr { get; set; }
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

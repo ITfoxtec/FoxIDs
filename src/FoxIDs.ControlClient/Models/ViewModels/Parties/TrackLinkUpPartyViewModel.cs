@@ -1,10 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackLinkUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class TrackLinkUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyHrd
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
@@ -56,6 +57,13 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+
+        /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// Default 10 hours.
@@ -115,5 +123,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         public List<TrackLinkUpPartyProfileViewModel> Profiles { get; set; } = new List<TrackLinkUpPartyProfileViewModel>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();        
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
+            }
+            return results;
+        }
     }
 }

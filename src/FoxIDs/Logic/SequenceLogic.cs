@@ -269,7 +269,7 @@ namespace FoxIDs.Logic
             return keySequenceData;
         }
 
-        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData, new()
+        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData
         {
             if (settings.DeleteUsedSequences)
             {

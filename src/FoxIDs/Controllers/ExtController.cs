@@ -111,7 +111,12 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Create external user post.");
 
                 (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(createExternalUser.Elements);
-                var externalAccountClaims = await externalUserLogic.CreateUserAsync(externalUserUpParty, sequenceData.LinkClaimValue, dynamicElementClaims);
+                (var externalAccountClaims, var actionResult) = await externalUserLogic.CreateUserAsync(externalUserUpParty, sequenceData, sequenceData.LinkClaimValue, sequenceData.Claims?.ToClaimList(), dynamicElementClaims);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<ExternalUserUpSequenceData>();
+                    return actionResult;
+                }
 
                 await sequenceLogic.RemoveSequenceDataAsync<ExternalUserUpSequenceData>();
                 switch (sequenceData.UpPartyType)

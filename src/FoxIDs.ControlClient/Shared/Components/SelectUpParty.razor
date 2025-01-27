@@ -1,81 +1,250 @@
-﻿@typeparam TModel
+﻿@using FoxIDs.Client.Services
+@using FoxIDs.Infrastructure
+<ValidationMessage For="@(() => Model.UpPartyName)" />
+<div class="pt-2">
+    <div class=" form-group active-group active">
+        <label class="label-control">Authentication method</label>
+        @if (Model.UpPartyName.IsNullOrWhiteSpace())
+        {
+            <div class="card pb-3">
+                <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
+                    <div class="form-group active-group px-3 mt-4 pb-2">
+                        <FInputTextFilter @bind-Value="upPartyNamesFilterForm.Model.FilterName" For="@(() => upPartyNamesFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                    </div>
+                </PageEditForm>
 
-<div class="form-group active-group active">
-    <div class="card card-row">
-        <div class="card-body px-0 py-0">
-            <div class="d-flex align-content-start flex-wrap">
-                @if (upParties != null)
+                @if (upPartyFilters != null)
                 {
-                    @foreach (var allowUpParty in EditDownPartyForm.Model.AllowUpParties)
-                    {
-                        <div class="card card-row">
-                            <div class="card-body px-2 py-1 d-flex">
-                                <div class="mr-auto">
-                                    @{
-                                        var allowUpPartyText = UpPartyInfoText(allowUpParty);
-                                    }
-                                    <div>@allowUpPartyText.displayName</div>
-                                    @if(!allowUpPartyText.profileDisplayName.IsNullOrWhiteSpace())
+                    <div class="list-striped overflow-auto" style="max-height: 500px">
+                        @if (upPartyFilters.Count() > 0)
+                        {
+                            @foreach (var upPartyFilter in upPartyFilters)
+                            {
+                                <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => OnSelectUpParty(upPartyFilter))">
+                                    <div>@upPartyFilter.DisplayName</div>
+                                    @if (!upPartyFilter.ProfileDisplayName.IsNullOrWhiteSpace())
                                     {
-                                        <div>Profile: @allowUpPartyText.profileDisplayName</div>
+                                        <div>Profile: @upPartyFilter.ProfileDisplayName</div>
                                     }
-                                    <div class="small">@allowUpPartyText.type</div>
-                                </div>
-                                <div class="p-0">
-                                    <button type="button" class="btn btn-link py-0 pl-2 pr-0" title="Remove" @onclick="@(() => OnRemoveUpPartyAsync(allowUpParty))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                                </div>
-                            </div>
-                        </div>
-                    }
+                                    <div class="small">@upPartyFilter.TypeText</div>
+                                </button>
+                                <div class="list-striped-item"></div>
+                            }
+                        }
+                        else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                        {
+                            <div class="font-italic px-4">No match</div>
+                        }
+                    </div>
                 }
             </div>
-        </div>
-    </div>
-
-    <Label For="@(() => EditDownPartyForm.Model.AllowUpParties)" class="label-control" />
-    <ValidationMessage For="@(() => EditDownPartyForm.Model.AllowUpParties)" />
-    <button type="button" class="btn btn-link btn-xs" @onclick="@(async () => await LoadDefaultUpPartyFilter())">
-        <span class="oi oi-pencil" aria-hidden="true"></span> Change allowed authentication methods
-    </button>
-</div>
-
-<Modal @ref="upPartyFilterModal" Title="Select authentication methods">
-    <div class="modal-body">
-        <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
-            <div class="form-group active-group pb-2">
-                <FInputTextFilter @bind-Value="upPartyNamesFilterForm.Model.FilterName" For="@(() => upPartyNamesFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
-            </div>
-        </PageEditForm>
-        @if (upPartyFilters != null)
+        }
+        else
         {
-            @if (upPartyFilters.Count() > 0)
-            {
-                <div class="list-striped">                    
-                    @foreach (var upPartyFilter in upPartyFilters.Where(u => !u.Hide))
-                    {
-                        <div class="d-flex">
-                            <InputCheckbox @bind-Value="upPartyFilter.Selected" class="mr-1" />
-                            <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpParty(upPartyFilter))">
-                                <div>@upPartyFilter.DisplayName</div>
-                                @if (!upPartyFilter.ProfileDisplayName.IsNullOrWhiteSpace())
-                                {
-                                    <div>Profile: @upPartyFilter.ProfileDisplayName</div>
-                                }
-                                <div class="small">@upPartyFilter.TypeText</div>
-                            </button>
-                        </div>
-                        <div class="list-striped-item"></div>
-                    }
+            <div class="card card-row">
+                <div class="card-body px-2 py-1 d-flex">
+                    <div class="mr-auto">
+                        <div>@Model.UpPartyDisplayName</div>
+                        @if(!@Model.UpPartyDisplayProfileName.IsNullOrWhiteSpace())
+                        {
+                            <div>Profile: @Model.UpPartyDisplayProfileName</div>
+                        }
+                        <div class="small">@Model.UpPartyTypeText</div>
+                    </div>
                 </div>
-            }
-            else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
-            {
-                <div class="font-italic px-1">No match</div>
-            }
+            </div>
+            <button type="button" class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowDefaultUpPartyFilter())">Select a different authentication method</button> 
         }
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary @(upPartyFilters?.Count() > 0 ? "" : "disabled")" @onclick="OnUpPartyFilterSelectAsync">Select</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => upPartyFilterModal.Hide())">Cancel</button>
-    </div>
-</Modal>
+</div>
+
+@code {
+    [Inject]
+    public OpenidConnectPkce OpenidConnectPkce { get; set; }
+
+    [Inject]
+    public UpPartyService UpPartyService { get; set; }
+
+    [Parameter]
+    public IUpPartySelection Model { get; set; }
+
+    private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
+    private List<UpParty> upParties;
+    private List<UpPartyFilterViewModel> upPartyFilters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await UpPartyNamesFilterAsync(null);
+        if (!Model.UpPartyName.IsNullOrWhiteSpace()) 
+        {
+            var upPartyFilter = upPartyFilters.Where(p => p.Name == Model.UpPartyName && p.ProfileName == Model.UpPartyProfileName).FirstOrDefault();
+            if (upPartyFilter != null) 
+            {
+                OnSelectUpParty(upPartyFilter);
+            }
+        }
+    }
+
+    private async Task ShowDefaultUpPartyFilter()
+    {
+        await UpPartyNamesFilterAsync(null);
+        Model.UpPartyName = null;
+    }
+
+    private async Task OnUpPartyNamesFilterValidSubmitAsync(EditContext editContext)
+    {
+        try
+        {
+            await UpPartyNamesFilterAsync(upPartyNamesFilterForm.Model.FilterName);
+        }
+        catch (FoxIDsApiException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                upPartyNamesFilterForm.SetFieldError(nameof(upPartyNamesFilterForm.Model.FilterName), ex.Message);
+            }
+            else
+            {
+                throw;
+            }
+        }
+    }
+
+    private async Task UpPartyNamesFilterAsync(string filterName)
+    {
+        try
+        {
+            var ups = (await UpPartyService.GetUpPartiesAsync(filterName)).Data;
+            if (upParties?.Count() > 0)
+            {
+                foreach (var up in ups)
+                {
+                    if (!upParties.Where(u => u.Name == up.Name).Any())
+                    {
+                        upParties.Add(up);
+                    }
+                }
+            }
+            else
+            {
+                upParties = ups?.ToList();
+            }
+
+            var tempUpPartyFilters = upPartyFilters;
+            upPartyFilters = new List<UpPartyFilterViewModel>();
+            foreach (var up in ups)
+            {
+                var typeText = GetTypeText(up);
+
+                var item = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName.IsNullOrWhiteSpace()).FirstOrDefault();
+                upPartyFilters.Add(new UpPartyFilterViewModel
+                    {
+                        Name = up.Name,
+                        DisplayName = up.DisplayName ?? up.Name,
+                        Type = up.Type,
+                        TypeText = typeText
+                    });
+                if (tempUpPartyFilters != null && item != null)
+                {
+                    tempUpPartyFilters.Remove(item);
+                }
+
+                if (up.Profiles != null)
+                {
+                    foreach (var profile in up.Profiles)
+                    {
+                        var itemProfile = tempUpPartyFilters?.Where(u => u.Name == up.Name && u.ProfileName == profile.Name).FirstOrDefault();
+                        upPartyFilters.Add(new UpPartyFilterViewModel
+                            {
+                                Name = up.Name,
+                                DisplayName = up.DisplayName ?? up.Name,
+                                ProfileName = profile.Name,
+                                ProfileDisplayName = profile.DisplayName,
+                                Type = up.Type,
+                                TypeText = typeText
+                            });
+                        if (tempUpPartyFilters != null && itemProfile != null)
+                        {
+                            tempUpPartyFilters.Remove(itemProfile);
+                        }
+                    }
+                }
+            }
+
+            if (tempUpPartyFilters?.Count() > 0)
+            {
+                tempUpPartyFilters.ForEach(u => u.Hide = true);
+                upPartyFilters.AddRange(tempUpPartyFilters);
+            }
+        }
+        catch (TokenUnavailableException)
+        {
+            await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+        }
+    }
+
+    private void OnSelectUpParty(UpPartyFilterViewModel upPartyFilter)
+    {
+        Model.UpPartyType = upPartyFilter.Type;
+        Model.UpPartyTypeText = upPartyFilter.TypeText;
+        Model.UpPartyDisplayProfileName = upPartyFilter.ProfileDisplayName;
+        Model.UpPartyProfileName = upPartyFilter.ProfileName;
+        Model.UpPartyDisplayName = upPartyFilter.DisplayName;
+        Model.UpPartyName = upPartyFilter.Name;
+    }
+
+    private (string displayName, string profileDisplayName, string type) UpPartyInfoText(UpPartyLink upPartyLink)
+    {
+        var upParty = upParties.Where(f => f.Name == upPartyLink.Name).FirstOrDefault();
+        if (upParty == null)
+        {
+            return (upPartyLink.Name, upPartyLink.ProfileName, string.Empty);
+        }
+        else
+        {
+            return (upParty.DisplayName ?? upParty.Name, GetProfileDisplayName(upParty, upPartyLink.ProfileName), GetTypeText(upParty));
+        }
+    }
+
+    private string GetProfileDisplayName(UpParty upParty, string profileName)
+    {
+        if (!profileName.IsNullOrEmpty() && upParty.Profiles != null)
+        {
+            var profileDisplayName = upParty.Profiles.Where(p => p.Name == profileName).Select(p => p.DisplayName).FirstOrDefault();
+            return profileDisplayName ?? profileName;
+        }
+
+        return string.Empty;
+    }
+
+    private string GetTypeText(UpParty upParty)
+    {
+        if (upParty.Type == PartyTypes.Login)
+        {
+            return "Login";
+        }
+        else if (upParty.Type == PartyTypes.OAuth2)
+        {
+            return "OAuth 2.0";
+        }
+        else if (upParty.Type == PartyTypes.Oidc)
+        {
+            return "OpenID Connect";
+        }
+        else if (upParty.Type == PartyTypes.Saml2)
+        {
+            return "SAML 2.0";
+        }
+        else if (upParty.Type == PartyTypes.TrackLink)
+        {
+            return "Environment Link";
+        }
+        else if (upParty.Type == PartyTypes.ExternalLogin)
+        {
+            return "External API Login";
+        }
+
+        throw new NotSupportedException();
+    }
+}

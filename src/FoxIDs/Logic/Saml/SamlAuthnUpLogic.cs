@@ -59,7 +59,7 @@ namespace FoxIDs.Logic
             this.planUsageLogic = planUsageLogic;
         }
 
-        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -71,16 +71,11 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(partyId);
 
-            await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData(loginRequest)
             {
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 UpPartyProfileName = partyLink.ProfileName,
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                LoginHint = loginRequest.LoginHint
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
@@ -324,13 +319,18 @@ namespace FoxIDs.Logic
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
 
-                var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                    return actionResult;
+                }
                 var validClaims = ValidateClaims(party, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, SAML Authn transformed SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, jwtValidClaims, 
+                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, jwtValidClaims, 
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -339,6 +339,10 @@ namespace FoxIDs.Logic
                     (errorMessage) => throw new SamlRequestException(errorMessage) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder });
                 if (externalUserActionResult != null)
                 {
+                    if (deleteSequenceData)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                    }
                     return externalUserActionResult;
                 }
 
@@ -398,10 +402,16 @@ namespace FoxIDs.Logic
         {
             jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
+            (var transformedJwtClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), jwtValidClaims, sequenceData);
+            if (actionResult != null)
+            {
+                return actionResult;
+            }
+
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, transformedJwtClaims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {
-                jwtValidClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                transformedJwtClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
@@ -409,8 +419,8 @@ namespace FoxIDs.Logic
                 await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Saml2);
             }
 
-            logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return await AuthnResponseDownAsync(sequenceData, status, jwtValidClaims);          
+            logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{transformedJwtClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims);          
         }
 
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)

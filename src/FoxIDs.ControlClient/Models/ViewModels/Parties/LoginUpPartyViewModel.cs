@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
+    public class LoginUpPartyViewModel : IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         public string InitName { get; set; }
 
@@ -93,6 +93,13 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+
+        /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// Default if required.

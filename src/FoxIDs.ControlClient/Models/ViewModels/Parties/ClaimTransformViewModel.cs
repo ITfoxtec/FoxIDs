@@ -6,7 +6,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class ClaimTransformViewModel : IValidatableObject
+    public class ClaimTransformViewModel : IValidatableObject, IUpPartySelection
     {
         [MaxLength(Constants.Models.Claim.TransformNameLength)]
         [RegularExpression(Constants.Models.Claim.TransformNameRegExPattern)]
@@ -36,6 +36,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Transformation extension")]
         public virtual string TransformationExtension { get; set; }
 
+        #region ExternalClaims
         [Display(Name = "External connect type")]
         public ExternalConnectTypes? ExternalConnectType { get; set; }
 
@@ -46,6 +47,39 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "API secret")]
         public string Secret { get; set; }
+        #endregion
+
+        #region TaskAction
+        [Display(Name = "Task action")]
+        public ClaimTransformTaskActions? TaskAction { get; set; }
+
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
+        [Display(Name = "Error")]
+        public string Error { get; set; }
+
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
+        [Display(Name = "Error message")]
+        public string ErrorMessage { get; set; }
+
+        [Display(Name = "Authentication type")]
+        public PartyTypes? UpPartyType { get; set; }
+
+        public string UpPartyTypeText { get; set; }
+
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string UpPartyName { get; set; }
+
+        [Display(Name = "Authentication name")]
+        public string UpPartyDisplayName { get; set; }
+
+        [MaxLength(Constants.Models.Party.ProfileNameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        public string UpPartyProfileName { get; set; }
+
+        [Display(Name = "Authentication profile name")]
+        public string UpPartyDisplayProfileName { get; set; }
+        #endregion
 
         public bool ShowDetails { get; set; }
 
@@ -55,132 +89,199 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if (TaskAction == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(ClaimOut)]));
             }
 
-            if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
+            if (TaskAction != null)
             {
-                switch (Type)
+                if (Action == ClaimTransformActions.If || Action == ClaimTransformActions.IfNot)
                 {
-                    case ClaimTransformTypes.Constant:
-                        if (Transformation.IsNullOrWhiteSpace())
-                        {
-                            results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
-                        }
-                        break;
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            ValidateMatchClaimAddReplace(results);
+                            break;
 
-                    case ClaimTransformTypes.MatchClaim:
-                        ValidateMatchClaimAddReplace(results);
-                        break;
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            ValidateMatchAddReplace(results);
+                            break;
 
-                    case ClaimTransformTypes.Match:
-                    case ClaimTransformTypes.RegexMatch:
-                        ValidateMatchAddReplace(results);
-                        break;
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' is not supported with action '{Action}'.");
+                    }
 
-                    case ClaimTransformTypes.Map:
-                    case ClaimTransformTypes.DkPrivilege:
-                        break;
-
-                    case ClaimTransformTypes.RegexMap:
-                        ValidateRegexMapClaimAddReplace(results);
-                        break;
-
-                    case ClaimTransformTypes.Concatenate:
-                        if (Transformation.IsNullOrWhiteSpace())
-                        {
-                            results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
-                        }
-                        break;
-                    case ClaimTransformTypes.ExternalClaims:
-                        if (Name.IsNullOrWhiteSpace())
-                        {
-                            results.Add(new ValidationResult($"The field is required.", [nameof(Name)]));
-                        }
-                        if (ExternalConnectType == ExternalConnectTypes.Api)
-                        {
-                            if (ApiUrl.IsNullOrWhiteSpace())
+                    switch (TaskAction)
+                    {
+                        case ClaimTransformTaskActions.RequestException:
+                            if (Error.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The field is required.", [nameof(ApiUrl)]));
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Error)]));
                             }
-                            else if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                            if (ErrorMessage.IsNullOrWhiteSpace())
                             {
-                                results.Add(new ValidationResult($"The field is required to start with HTTPS.", [nameof(ApiUrl)]));
+                                results.Add(new ValidationResult($"The field is required.", [nameof(ErrorMessage)]));
                             }
-                            if (Secret.IsNullOrWhiteSpace())
-                            {
-                                results.Add(new ValidationResult($"The field is required.", [nameof(Secret)]));
-                            }
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Claim transformation type '{Type}' and external connect type '{ExternalConnectType}' not supported.");
-                        }
-                        break;
+                            break;
+                        case ClaimTransformTaskActions.UpPartyAction:
+                            break;
+                        default:
+                            throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                    }
+                }
+                else if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
+                {
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            ValidateMatchClaimAddReplace(results);
+                            break;
 
-                    default:
-                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' is not supported with action '{Action}'.");
+                    }
+
+                    switch (TaskAction)
+                    {
+                        case ClaimTransformTaskActions.QueryInternalUser:
+                        case ClaimTransformTaskActions.QueryExternalUser:
+                            if (TransformationExtension.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
+                            }
+                            break;
+                        default:
+                            throw new NotSupportedException($"Claim transformation task action '{TaskAction}' is not supported with type '{Type}' and action '{Action}'.");
+                    }
                 }
             }
-            else if (Action == ClaimTransformActions.AddIfNot || Action == ClaimTransformActions.ReplaceIfNot)
+            else
             {
-                switch (Type)
+                if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
                 {
-                    case ClaimTransformTypes.MatchClaim:
-                        ValidateMatchClaimAddReplace(results);
-                        break;
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.Constant:
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            break;
 
-                    case ClaimTransformTypes.Match:
-                    case ClaimTransformTypes.RegexMatch:
-                        ValidateMatchAddReplace(results);
-                        break;
+                        case ClaimTransformTypes.MatchClaim:
+                            ValidateMatchClaimAddReplace(results);
+                            break;
 
-                    default:
-                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            ValidateMatchAddReplace(results);
+                            break;
+
+                        case ClaimTransformTypes.Map:
+                        case ClaimTransformTypes.DkPrivilege:
+                            break;
+
+                        case ClaimTransformTypes.RegexMap:
+                            ValidateRegexMapClaimAddReplace(results);
+                            break;
+
+                        case ClaimTransformTypes.Concatenate:
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            break;
+
+                        case ClaimTransformTypes.ExternalClaims:
+                            if (Name.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Name)]));
+                            }
+                            if (ExternalConnectType == ExternalConnectTypes.Api)
+                            {
+                                if (ApiUrl.IsNullOrWhiteSpace())
+                                {
+                                    results.Add(new ValidationResult($"The field is required.", [nameof(ApiUrl)]));
+                                }
+                                else if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    results.Add(new ValidationResult($"The field is required to start with HTTPS.", [nameof(ApiUrl)]));
+                                }
+                                if (Secret.IsNullOrWhiteSpace())
+                                {
+                                    results.Add(new ValidationResult($"The field is required.", [nameof(Secret)]));
+                                }
+                            }
+                            else
+                            {
+                                throw new NotSupportedException($"Claim transformation type '{Type}' and external connect type '{ExternalConnectType}' not supported.");
+                            }
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                    }
                 }
-            }
-            else if (Action == ClaimTransformActions.AddIfNotOut)
-            {
-                switch (Type)
+                else if (Action == ClaimTransformActions.AddIfNot || Action == ClaimTransformActions.ReplaceIfNot)
                 {
-                    case ClaimTransformTypes.Map:
-                        break;
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            ValidateMatchClaimAddReplace(results);
+                            break;
 
-                    case ClaimTransformTypes.RegexMap:
-                        ValidateRegexMapClaimAddReplace(results);
-                        break;
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            ValidateMatchAddReplace(results);
+                            break;
 
-                    default:
-                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                    }
                 }
-            }
-            else if (Action == ClaimTransformActions.Remove)
-            {
-                switch (Type)
+                else if (Action == ClaimTransformActions.AddIfNotOut)
                 {
-                    case ClaimTransformTypes.MatchClaim:
-                        break;
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.Map:
+                            break;
 
-                    case ClaimTransformTypes.Match:
-                    case ClaimTransformTypes.RegexMatch:
-                        if (Transformation.IsNullOrWhiteSpace())
-                        {
-                            results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
-                        }
-                        break;
+                        case ClaimTransformTypes.RegexMap:
+                            ValidateRegexMapClaimAddReplace(results);
+                            break;
 
-                    default:
-                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                    }
+                }
+                else if (Action == ClaimTransformActions.Remove)
+                {
+                    switch (Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            break;
+
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            if (Transformation.IsNullOrWhiteSpace())
+                            {
+                                results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
+                            }
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                    }
                 }
             }
             return results;
         }
 
         private void ValidateMatchClaimAddReplace(List<ValidationResult> results)
-        { 
-            if (Transformation.IsNullOrWhiteSpace())
+        {
+            if (TaskAction == null && Transformation.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
             }
@@ -192,7 +293,7 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(Transformation)]));
             }
-            if (TransformationExtension.IsNullOrWhiteSpace())
+            if (TaskAction == null && TransformationExtension.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field is required.", [nameof(TransformationExtension)]));
             }
@@ -207,4 +308,3 @@ namespace FoxIDs.Client.Models.ViewModels
         }
     }
 }
-

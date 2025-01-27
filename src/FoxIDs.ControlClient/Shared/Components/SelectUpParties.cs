@@ -14,7 +14,7 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared.Components
 {
-    public partial class SelectUpParty<TModel> where TModel : class, IAllowUpPartyNames, new()
+    public partial class SelectUpParties<TModel> where TModel : class, IAllowUpPartyNames, new()
     {
         private Modal upPartyFilterModal;        
         private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
@@ -144,14 +144,6 @@ namespace FoxIDs.Client.Shared.Components
             catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-        }
-
-        private void OnFilterSelectedAllChange(bool selectAll)
-        {
-            foreach (var up in upPartyFilters)
-            {
-                up.Selected = selectAll;
             }
         }
 

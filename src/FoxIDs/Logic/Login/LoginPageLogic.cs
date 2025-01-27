@@ -95,79 +95,88 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseSequenceAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user, IEnumerable<string> authMethods = null, LoginResponseSequenceSteps step = LoginResponseSequenceSteps.PhoneVerificationStep) 
         {
-            var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
-
-            sequenceData.Email = user.Email;
-            sequenceData.EmailVerified = user.EmailVerified;
-            sequenceData.Phone = user.Phone;
-            sequenceData.PhoneVerified = user.PhoneVerified;
-            sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
-
-            if (step <= LoginResponseSequenceSteps.PhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
+            try
             {
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+                var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
+
+                sequenceData.Email = user.Email;
+                sequenceData.EmailVerified = user.EmailVerified;
+                sequenceData.Phone = user.Phone;
+                sequenceData.PhoneVerified = user.PhoneVerified;
+                sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
+
+                if (step <= LoginResponseSequenceSteps.PhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.PhoneConfirmation, includeSequence: true).ToRedirectResult();
+                }
+                else if (step <= LoginResponseSequenceSteps.EmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                }
+                else if (step <= LoginResponseSequenceSteps.MfaAllAndAppStep && GetRequireMfa(user, loginUpParty, sequenceData))
+                {
+                    sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
+                    sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
+                    sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
+                    sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
+
+                    if (step == LoginResponseSequenceSteps.MfaSmsStep)
+                    {
+                        if (sequenceData.SupportTwoFactorSms)
+                        {
+                            return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else if (step == LoginResponseSequenceSteps.MfaEmailStep)
+                    {
+                        if (sequenceData.SupportTwoFactorEmail)
+                        {
+                            return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
+                    {
+                        if (sequenceData.SupportTwoFactorApp)
+                        {
+                            return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+                    else
+                    {
+                        if (sequenceData.SupportTwoFactorApp && sequenceData.TwoFactorAppIsRegistred)
+                        {
+                            return await AuthAppTwoFactorResponseAsync(sequenceData, loginUpParty, user);
+                        }
+
+                        if (sequenceData.SupportTwoFactorSms)
+                        {
+                            return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+
+                        if (sequenceData.SupportTwoFactorEmail)
+                        {
+                            return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
+                        }
+
+                        if (sequenceData.SupportTwoFactorApp && SupportRegisterTwoFactorApp(user, loginUpParty))
+                        {
+                            return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
+                        }
+                    }
+
+                    throw new Exception($"Require two-factor (2FA/MFA) but it is either not supported or configured. {nameof(LoginResponseSequenceSteps)}: '{step}'.");
+                }
+
+                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
             }
-            else if (step <= LoginResponseSequenceSteps.EmailVerificationStep && user.ConfirmAccount && !user.Email.IsNullOrEmpty() && !user.EmailVerified)
+            catch (OAuthRequestException orex)
             {
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
             }
-            else if (step <= LoginResponseSequenceSteps.MfaAllAndAppStep && GetRequireMfa(user, loginUpParty, sequenceData))
-            {
-                sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
-                sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
-                sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
-                sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
-
-                if (step == LoginResponseSequenceSteps.MfaSmsStep)
-                {
-                    if (sequenceData.SupportTwoFactorSms)
-                    {
-                        return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else if (step == LoginResponseSequenceSteps.MfaEmailStep)
-                {
-                    if (sequenceData.SupportTwoFactorEmail)
-                    {
-                        return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
-                {
-                    if (sequenceData.SupportTwoFactorApp)
-                    {
-                        return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-                else
-                {
-                    if (sequenceData.SupportTwoFactorApp && sequenceData.TwoFactorAppIsRegistred)
-                    {
-                        return await AuthAppTwoFactorResponseAsync(sequenceData, loginUpParty, user);
-                    }
-
-                    if (sequenceData.SupportTwoFactorSms)
-                    {
-                        return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-
-                    if (sequenceData.SupportTwoFactorEmail)
-                    {
-                        return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
-                    }
-
-                    if (sequenceData.SupportTwoFactorApp && SupportRegisterTwoFactorApp(user, loginUpParty))
-                    {
-                        return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
-                    }
-                }
-
-                throw new Exception($"Require two-factor (2FA/MFA) but it is either not supported or configured. {nameof(LoginResponseSequenceSteps)}: '{step}'.");
-            }
-
-            return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
         }
 
         private async Task<IActionResult> AuthAppTwoFactorRegistrationResponseAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
@@ -284,7 +293,12 @@ namespace FoxIDs.Logic
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(loginUpParty, user, authTime, sequenceData, sessionId, acrClaims);
+                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, user, authTime, sessionId, acrClaims);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    return actionResult;
+                }
                 await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
@@ -340,7 +354,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, User user, long authTime, LoginUpSequenceData sequenceData, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -379,17 +393,25 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var transformedClaims = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
             logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
+            return (transformedClaims, null);
         }
 
-        public async Task<List<Claim>> GetCreateUserTransformedClaimsAsync(LoginUpParty party, List<Claim> claims)
+        public async Task<(List<Claim> claims, IActionResult actionResult)> GetCreateUserTransformedClaimsAsync(LoginUpParty party, LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => $"AuthMethod, Create user created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var transformedClaims = await claimTransformLogic.TransformAsync(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
             logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
+            return (transformedClaims, null);
         }
     }
 }

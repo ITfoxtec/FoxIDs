@@ -65,6 +65,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"CodeChallengeSecret '{codeChallengeSecret.ToJson()}'.", traceType: TraceTypes.Message);
             }
 
+            OidcDownSequenceData sequenceData = null;
             try
             {
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, codeChallengeSecret);
@@ -75,7 +76,7 @@ namespace FoxIDs.Logic
                     await sequenceLogic.SetCultureAsync(authenticationRequest.UiLocales.ToSpaceList());
                 }
 
-                await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
+                sequenceData = await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData(await GetLoginRequestAsync(party, authenticationRequest))
                 {
                     ResponseType = authenticationRequest.ResponseType,
                     RestrictFormAction = party.RestrictFormAction,
@@ -96,24 +97,24 @@ namespace FoxIDs.Logic
                     switch (toUpParty.Type)
                     {
                         case PartyTypes.Login:
-                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
+                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.OAuth2:
                             throw new NotImplementedException();
                         case PartyTypes.Oidc:
-                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
+                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.Saml2:
-                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
+                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, sequenceData);
                         case PartyTypes.TrackLink:
-                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
+                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, sequenceData);
                         case PartyTypes.ExternalLogin:
-                            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
+                            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
                         default:
                             throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                     }
                 }
                 else
                 {
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(await GetLoginRequestAsync(party, authenticationRequest));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(sequenceData);
                 }
             }
             catch (OAuthRequestException ex)
@@ -123,7 +124,7 @@ namespace FoxIDs.Logic
                     throw new EndpointException("Redirect URI in authentication request is empty.", ex);
                 }
                 logger.Error(ex);
-                return await AuthenticationResponseErrorAsync(party, authenticationRequest, ex);
+                return await AuthenticationResponseErrorAsync(party, sequenceData, authenticationRequest, ex);
             }
         }
 
@@ -281,34 +282,47 @@ namespace FoxIDs.Logic
             }
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
-
-            logger.ScopeTrace(() => $"AppReg, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"AppReg, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-            var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
-
-            var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
-
-            if (party.RestrictFormAction)
+            try
             {
-                securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+
+                logger.ScopeTrace(() => $"AppReg, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                (claims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResult != null)
+                {
+                    return actionResult;
+                }
+                logger.ScopeTrace(() => $"AppReg, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+                var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
+
+                var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
+
+                if (party.RestrictFormAction)
+                {
+                    securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+                }
+                else
+                {
+                    securityHeaderLogic.AddFormActionAllowAll();
+                }
+                await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
+                switch (responseMode)
+                {
+                    case IdentityConstants.ResponseModes.FormPost:
+                        return sequenceData.RedirectUri.ToHtmlPostContentResult(nameValueCollection);
+                    case IdentityConstants.ResponseModes.Query:
+                        return sequenceData.RedirectUri.ToRedirectResult(nameValueCollection);
+                    case IdentityConstants.ResponseModes.Fragment:
+                        return sequenceData.RedirectUri.ToFragmentResult(nameValueCollection);
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
-            else
+            catch (OAuthRequestException ex)
             {
-                securityHeaderLogic.AddFormActionAllowAll();
-            }
-            switch (responseMode)
-            {
-                case IdentityConstants.ResponseModes.FormPost:
-                    return sequenceData.RedirectUri.ToHtmlPostContentResult(nameValueCollection);
-                case IdentityConstants.ResponseModes.Query:
-                    return sequenceData.RedirectUri.ToRedirectResult(nameValueCollection);
-                case IdentityConstants.ResponseModes.Fragment:
-                    return sequenceData.RedirectUri.ToFragmentResult(nameValueCollection);
-
-                default:
-                    throw new NotSupportedException();
+                logger.Error(ex);
+                return AuthenticationResponseError(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, ex.Error, ex.ErrorDescription);
             }
         }
 
@@ -390,20 +404,25 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(true);
 
-            return await AuthenticationResponseErrorAsync(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
+            return AuthenticationResponseError(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }
 
-        private Task<IActionResult> AuthenticationResponseErrorAsync(TParty party, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
+        private async Task<IActionResult> AuthenticationResponseErrorAsync(TParty party, OidcDownSequenceData sequenceData, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
         {
             logger.ScopeTrace(() => "OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, party.Id);
 
-            return AuthenticationResponseErrorAsync(party.RestrictFormAction, authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
+            if (sequenceData != null)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
+            }
+
+            return AuthenticationResponseError(party.RestrictFormAction, authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
         }
 
-        private async Task<IActionResult> AuthenticationResponseErrorAsync(bool restrictFormAction, string redirectUri, string state, string error, string errorDescription)
+        private IActionResult AuthenticationResponseError(bool restrictFormAction, string redirectUri, string state, string error, string errorDescription)
         {
             var authenticationResponse = new AuthenticationResponse
             {

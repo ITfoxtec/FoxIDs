@@ -1028,6 +1028,16 @@ namespace FoxIDs
             };
         }
 
+        public static class ClaimTransformClaimTypes
+        {
+            public const string Namespace = "_local:";
+            public static string LoginAction = $"{Namespace}login_action";
+            public static string UserId = $"{Namespace}user_id";
+            public static string MaxAge = $"{Namespace}max_age";
+            public static string LoginHint = $"{Namespace}login_hint";
+            public static string Acr = $"{Namespace}{FoxI.JwtClaimTypes.Acr}";
+        }
+
         public static class JwtClaimTypes
         {
             public const string AuthMethod = "auth_method";

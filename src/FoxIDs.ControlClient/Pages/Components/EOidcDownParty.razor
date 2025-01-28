@@ -393,7 +393,7 @@
                     <div class="mb-3 alert alert-info" role="alert">
                         If you create a new claim the claim is local in this application registration unless you add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                     </div>
-                    <OAuthClaimTransforms Model="oidcDownParty.Form.Model" />
+                    <OAuthClaimTransforms ClaimTransforms="oidcDownParty.Form.Model.ClaimTransforms" />
                 }
             </div>
         }

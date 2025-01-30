@@ -264,7 +264,7 @@ namespace FoxIDs.Logic
         public async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(ILoginUpSequenceDataBase sequenceData, IUpParty upParty, string userId)
         {
             var session = await GetSessionAsync(sequenceData, upParty);
-            if (session != null && userId != session.UserIdClaim)
+            if (session != null && session.Claims?.Count() > 0 && userId != session.UserIdClaim)
             {
                 logger.ScopeTrace(() => "Authenticated user and session user do not match.");
                 // TODO invalid user login

@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
 
             var sessionEnabled = SessionEnabled(upParty);
             var session = await sessionCookieRepository.GetAsync(upParty);
-            if (session != null)
+            if (session != null && session.Claims?.Count() > 0)
             {
                 var sessionValid = SessionValid(session, upParty);
 

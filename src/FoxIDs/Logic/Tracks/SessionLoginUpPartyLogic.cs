@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
             var sessionEnabled = SessionEnabled(upParty);
             var sessionValid = SessionValid(session, upParty);
 
-            if (sessionEnabled && sessionValid)
+            if (session.Claims?.Count() > 0 && sessionEnabled && sessionValid)
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 if (claims?.Count() > 0)
@@ -173,7 +173,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Get and update external session, Route '{RouteBinding.Route}'.");
 
             var session = await sessionCookieRepository.GetAsync(extLoginUpParty);
-            if (session != null)
+            if (session != null && session.Claims?.Count() > 0)
             {
                 var sessionEnabled = SessionEnabled(extLoginUpParty);
                 var sessionValid = SessionValid(session, extLoginUpParty);

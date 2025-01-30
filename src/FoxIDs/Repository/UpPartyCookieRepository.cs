@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace FoxIDs.Repository
 {
     public class UpPartyCookieRepository<TMessage> where TMessage : CookieMessage, new()
     {
+        private ConcurrentDictionary<string, TMessage> cookieCache = new ConcurrentDictionary<string, TMessage>();
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtection;
         private readonly IHttpContextAccessor httpContextAccessor;
@@ -47,6 +49,11 @@ namespace FoxIDs.Repository
             CheckRouteBinding(routeBinding);
 
             logger.ScopeTrace(() => $"Get authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}', delete '{delete}'.");
+
+            if (cookieCache.TryGetValue(CookieName(), out TMessage cacheCookie))
+            {
+                return cacheCookie;
+            }
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -88,6 +95,8 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Save authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
+            cookieCache[CookieName()] = message;
+
             var cookieOptions = new CookieOptions
             {
                 Secure = true,
@@ -95,12 +104,8 @@ namespace FoxIDs.Repository
                 SameSite = message.SameSite,
                 IsEssential = true,
                 Path = GetPath(routeBinding, party),
+                Expires = persistentCookieExpires
             };
-            if (persistentCookieExpires != null)
-            {
-                cookieOptions.Expires = persistentCookieExpires;
-            }
-
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 CookieName(),
                 new CookieEnvelope<TMessage>
@@ -141,6 +146,8 @@ namespace FoxIDs.Repository
 
         private void DeleteByName(RouteBinding routeBinding, IUpParty party, string name)
         {
+            cookieCache.TryRemove(name, out TMessage cacheCookie);
+
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 name,
                 string.Empty,
@@ -162,7 +169,7 @@ namespace FoxIDs.Repository
 
         private IDataProtector CreateProtector(RouteBinding routeBinding)
         {
-            return dataProtection.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName, routeBinding.UpParty.Name, typeof(TMessage).Name });
+            return dataProtection.CreateProtector([routeBinding.TenantName, routeBinding.TrackName, routeBinding.UpParty.Name, typeof(TMessage).Name]);
         }
 
         private string CookieName()

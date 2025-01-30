@@ -17,18 +17,20 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -66,22 +68,23 @@ namespace FoxIDs.Logic
                     {
                         throw new Exception("Incorrect issuer.");
                     }
-                    if (session.ExternalSessionId != frontChannelLogoutRequest.SessionId)
+                    if (!session.ExternalSessionId.IsNullOrWhiteSpace() && session.ExternalSessionId != frontChannelLogoutRequest.SessionId)
                     {
                         throw new Exception("Incorrect session id.");
                     }
                 }
 
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
+                _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session.SessionIdClaim);
 
                 if (!party.DisableSingleLogout)
                 {
                     var allowIframeOnDomains = new List<string>().ConcatOnce(party.Client.AuthorizeUrl?.UrlToDomain()).ConcatOnce(party.Client.EndSessionUrl?.UrlToDomain()).ConcatOnce(party.Client.TokenUrl?.UrlToDomain());
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims, allowIframeOnDomains, hostedInIframe: true);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, null, allowIframeOnDomains: allowIframeOnDomains, hostedInIframe: true);
                     if (doSingleLogout)
                     {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        securityHeaderLogic.AddFrameSrcAllowAll();
+                        return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
                     }
                 }
             }

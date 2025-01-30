@@ -34,10 +34,10 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
         private readonly CountryCodesLogic countryCodesLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -50,7 +50,7 @@ namespace FoxIDs.Controllers
             this.accountLogic = accountLogic;
             this.dynamicElementLogic = dynamicElementLogic;
             this.countryCodesLogic = countryCodesLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -548,11 +548,11 @@ namespace FoxIDs.Controllers
 
         public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
-            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
+            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequireMfa(user, upParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -814,52 +814,62 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> LogoutResponse(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, LogoutChoice logoutChoice, SessionLoginUpPartyCookie session = null)
         {
-            if (logoutChoice == LogoutChoice.Logout)
+            if (sequenceData.IsSingleLogout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+                return await singleLogoutLogic.HandleSingleLogoutUpAsync();
+            }
+            else
+            {
+                if (logoutChoice == LogoutChoice.Logout)
+                {
+                    await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 
-                if (loginUpParty.DisableSingleLogout)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                    return await LogoutDoneAsync(loginUpParty, sequenceData);
-                }
-                else
-                {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, sequenceData.DownPartyLink, session?.DownPartyLinks, session?.Claims);
-                    if (doSingleLogout)
-                    {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
-                    }
-                    else
+                    if (loginUpParty.DisableSingleLogout)
                     {
                         await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                         return await LogoutDoneAsync(loginUpParty, sequenceData);
                     }
+                    else
+                    {
+                        (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(loginUpParty, sequenceData.DownPartyLink, sequenceData);
+                        if (doSingleLogout)
+                        {
+                            return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        }
+                        else
+                        {
+                            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                            return await LogoutDoneAsync(loginUpParty, sequenceData);
+                        }
+                    }
                 }
-            }
-            else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
-            {
-                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                if (sequenceData.PostLogoutRedirect)
+                else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
                 {
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    if (sequenceData.PostLogoutRedirect)
+                    {
+                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                    }
+                    else
+                    {
+                        logger.ScopeTrace(() => "Show logged in dialog.");
+                        return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    }
                 }
                 else
                 {
-                    logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    throw new NotImplementedException();
                 }
-            }
-            else
-            {
-                throw new NotImplementedException();
             }
         }
 
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
-            loginPageLogic.CheckUpParty(sequenceData);
+            if (!sequenceData.IsSingleLogout)
+            {
+                loginPageLogic.CheckUpParty(sequenceData);
+            }
             return await LogoutDoneAsync(null, sequenceData);
         }
 
@@ -896,10 +906,10 @@ namespace FoxIDs.Controllers
                 }
                 PopulateCreateUserDefault(loginUpParty);
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData, session);
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
@@ -955,15 +965,18 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Create user post.");
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData, session);
                 }
 
                 try
                 {
                     (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.Elements);
+
+                    await sessionLogic.CreateOrUpdateMarkerSessionAsync(loginUpParty, sequenceData.DownPartyLink);
+
                     (claims, var actionResult) = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, sequenceData, claims);
                     if (actionResult != null)
                     {
@@ -1133,7 +1146,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 _ = loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
 
                 var changePasswordViewModel = new ChangePasswordViewModel

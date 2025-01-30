@@ -32,9 +32,9 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
         private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
             this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
@@ -238,7 +238,7 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
             if (!ValidatePartySingleLogoutSupport(party))
             {
-                return await singleLogoutDownLogic.HandleSingleLogoutAsync(sequenceData);
+                return await singleLogoutLogic.HandleSingleLogoutDownAsync(sequenceData);
             }
             
             var claims = await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
@@ -340,7 +340,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            return await singleLogoutDownLogic.HandleSingleLogoutAsync();
+            return await singleLogoutLogic.HandleSingleLogoutDownAsync();
         }
 
         private void ValidateLogoutResponse(SamlDownParty party, Saml2LogoutResponse saml2LogoutResponse)

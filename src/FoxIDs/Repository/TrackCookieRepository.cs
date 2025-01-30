@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace FoxIDs.Repository
 {
     public class TrackCookieRepository<TMessage> where TMessage : CookieMessage, new()
     {
+        private ConcurrentDictionary<string, TMessage> cookieCache = new ConcurrentDictionary<string, TMessage>();
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtection;
         private readonly IHttpContextAccessor httpContextAccessor;
@@ -48,6 +50,11 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Get environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
+            if (cookieCache.TryGetValue(CookieName(), out TMessage cacheCookie))
+            {
+                return cacheCookie;
+            }
+
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
             {
@@ -81,6 +88,8 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Save environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
+            cookieCache[CookieName()] = message;
+
             var cookieOptions = new CookieOptions
             {
                 Secure = true,
@@ -89,7 +98,6 @@ namespace FoxIDs.Repository
                 IsEssential = true,
                 Path = GetPath(routeBinding),
             };
-
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 CookieName(),
                 new CookieEnvelope<TMessage>
@@ -128,6 +136,8 @@ namespace FoxIDs.Repository
 
         private void DeleteByName(RouteBinding routeBinding, string name)
         {
+            cookieCache.TryRemove(name, out TMessage cacheCookie);
+
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 name,
                 string.Empty,
@@ -149,7 +159,7 @@ namespace FoxIDs.Repository
 
         private IDataProtector CreateProtector(RouteBinding routeBinding)
         {
-            return dataProtection.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName });
+            return dataProtection.CreateProtector([routeBinding.TenantName, routeBinding.TrackName]);
         }
 
         private string CookieName()

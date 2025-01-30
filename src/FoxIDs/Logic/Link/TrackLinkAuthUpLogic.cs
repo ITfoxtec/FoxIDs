@@ -133,6 +133,8 @@ namespace FoxIDs.Logic
 
                 try
                 {
+                    await sessionUpPartyLogic.CreateOrUpdateMarkerSessionAsync(party, sequenceData.DownPartyLink);
+
                     (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
                     if (actionResult != null)
                     {
@@ -211,10 +213,10 @@ namespace FoxIDs.Logic
                 return (null, actionResult);
             }
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, transformedClaims, externalSessionId);
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, transformedClaims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {
-                transformedClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                transformedClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())

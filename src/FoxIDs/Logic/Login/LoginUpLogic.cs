@@ -178,11 +178,10 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
+        public async Task<IActionResult> LoginResponseAsync(LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => "AuthMethod, Login response.");
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             try
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);

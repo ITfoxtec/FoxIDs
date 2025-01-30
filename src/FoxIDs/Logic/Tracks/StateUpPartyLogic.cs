@@ -2,6 +2,7 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,7 +15,7 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository;
 
-        public StateUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
+        public StateUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<StateUpPartyCookie> stateCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
         {
             this.logger = logger;
             this.stateCookieRepository = stateCookieRepository;

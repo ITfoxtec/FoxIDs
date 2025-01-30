@@ -169,7 +169,7 @@ namespace FoxIDs.Logic
                     throw new Exception($"Require two-factor (2FA/MFA) but it is either not supported or configured. {nameof(LoginResponseSequenceSteps)}: '{step}'.");
                 }
 
-                return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, sequenceData, session: session);
+                return await LoginResponseAsync(loginUpParty, sequenceData, GetDownPartyLink(loginUpParty, sequenceData), user, session: session);
             }
             catch (OAuthRequestException orex)
             {
@@ -281,28 +281,28 @@ namespace FoxIDs.Logic
             return session;
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, LoginUpSequenceData sequenceData, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), acrClaims))
             {
                 claims = session.Claims.ToClaimList();
             }
             else
             {
                 var sessionId = RandomGenerator.Generate(24);
-                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, user, authTime, sessionId, acrClaims);
+                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId, acrClaims);
                 if (actionResult != null)
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                     return actionResult;
                 }
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
+                await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
-            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(claims);
+            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, claims);
         }
 
         private LoginUserIdentifier GetLoginUserIdentifier(User user, string userIdentifier)
@@ -342,11 +342,12 @@ namespace FoxIDs.Logic
             return true;
         }
 
-        public async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        public async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
         {
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
             {
-                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(session.Claims.ToClaimList());
+                await sessionLogic.AddOrUpdateSessionTrackAsync(loginUpParty, sequenceData.DownPartyLink);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, session.Claims.ToClaimList());
             }
             else
             {
@@ -354,7 +355,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -392,6 +393,8 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
             logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            await sessionLogic.CreateOrUpdateMarkerSessionAsync(loginUpParty, newDownPartyLink);
 
             (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)

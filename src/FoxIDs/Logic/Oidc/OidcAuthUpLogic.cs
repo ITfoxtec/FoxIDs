@@ -80,7 +80,7 @@ namespace FoxIDs.Logic
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthorizationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
@@ -309,6 +309,8 @@ namespace FoxIDs.Logic
                     }
                 }
 
+                await sessionUpPartyLogic.CreateOrUpdateMarkerSessionAsync(party, sequenceData.DownPartyLink, idToken: idToken);
+
                 (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
                 if (actionResult != null)
                 {
@@ -403,10 +405,10 @@ namespace FoxIDs.Logic
                 return actionResult;
             }
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, transformedClaims, externalSessionId, idToken);
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, transformedClaims, externalSessionId, idToken);
             if (!sessionId.IsNullOrEmpty())
             {
-                transformedClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                transformedClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
             if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())

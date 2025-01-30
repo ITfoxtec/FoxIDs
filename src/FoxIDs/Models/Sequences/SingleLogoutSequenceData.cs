@@ -8,8 +8,8 @@ namespace FoxIDs.Models.Sequences
     public class SingleLogoutSequenceData : ISequenceData
     {
         [Required]
-        [JsonProperty(PropertyName = "un")]
-        public string UpPartyName { get; set; }
+        [JsonProperty(PropertyName = "ui")]
+        public string UpPartyId { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "ut")]
@@ -20,6 +20,12 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "dl")]
         public IEnumerable<DownPartySessionLink> DownPartyLinks { get; set; }
+
+        [JsonProperty(PropertyName = "ul")]
+        public IEnumerable<UpPartySessionLink> UpPartyLinks { get; set; }
+
+        [JsonProperty(PropertyName = "dp")]
+        public DownPartySessionLink DownPartyLink { get; set; }
 
         [JsonProperty(PropertyName = "hi")]
         public bool HostedInIframe { get; set; }

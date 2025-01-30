@@ -24,15 +24,15 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "es")]
         public bool ExternalInitiatedSingleLogout { get; set; } = false;
 
+        [JsonProperty(PropertyName = "ss")]
+        public bool IsSingleLogout { get; set; }        
+
         [JsonProperty(PropertyName = "dp")]
         public DownPartySessionLink DownPartyLink { get; set; }
 
-        [JsonProperty(PropertyName = "sc")]
-        public IEnumerable<ClaimAndValues> SessionClaims { get; set; }
+        [JsonProperty(PropertyName = "c")]
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
 
-        [JsonProperty(PropertyName = "sdl")]
-        public List<DownPartySessionLink> SessionDownPartyLinks { get; set; }
-        
         [JsonProperty(PropertyName = "hln")]
         public string HrdLoginUpPartyName { get; set; }
 
@@ -62,11 +62,11 @@ namespace FoxIDs.Models.Sequences
         {
             var results = new List<ValidationResult>();
 
-            if (!ExternalInitiatedSingleLogout)
+            if (!IsSingleLogout && !ExternalInitiatedSingleLogout)
             {
                 if (DownPartyLink == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(DownPartyLink)} is required if not external initiated single logout.", new[] { nameof(DownPartyLink) }));
+                    results.Add(new ValidationResult($"The field {nameof(DownPartyLink)} is required if not internal or external initiated single logout.", [nameof(DownPartyLink)]));
                 }
             }
 

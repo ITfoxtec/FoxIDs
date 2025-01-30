@@ -94,7 +94,7 @@ namespace FoxIDs.Controllers
             try
             {
                 logger.ScopeTrace(() => $"Environment Link single Logout done, Authentication method name '{RouteBinding.UpParty.Name}'");
-                return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().SingleLogoutDone(RouteBinding.UpParty.Id);
+                return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().SingleLogoutDoneAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
             {

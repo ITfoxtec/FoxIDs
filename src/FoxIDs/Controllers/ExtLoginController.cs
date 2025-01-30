@@ -31,10 +31,10 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ExternalLoginConnectLogic externalLoginConnectLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.externalLoginConnectLogic = externalLoginConnectLogic;
             this.dynamicElementLogic = dynamicElementLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -104,11 +104,11 @@ namespace FoxIDs.Controllers
 
         public async Task<(bool validSession, IActionResult actionResult)> CheckSessionReturnRedirectAction(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty upParty)
         {
-            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
+            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+                return (validSession, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -349,52 +349,62 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> LogoutResponse(ExternalLoginUpParty loginUpParty, ExternalLoginUpSequenceData sequenceData, LogoutChoice logoutChoice, SessionLoginUpPartyCookie session = null)
         {
-            if (logoutChoice == LogoutChoice.Logout)
+            if (sequenceData.IsSingleLogout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+                return await singleLogoutLogic.HandleSingleLogoutUpAsync();
+            }
+            else
+            {
+                if (logoutChoice == LogoutChoice.Logout)
+                {
+                    await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 
-                if (loginUpParty.DisableSingleLogout)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                    return await LogoutDoneAsync(loginUpParty, sequenceData);
-                }
-                else
-                {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, sequenceData.DownPartyLink, session?.DownPartyLinks, session?.Claims);
-                    if (doSingleLogout)
-                    {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
-                    }
-                    else
+                    if (loginUpParty.DisableSingleLogout)
                     {
                         await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                         return await LogoutDoneAsync(loginUpParty, sequenceData);
                     }
+                    else
+                    {
+                        (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(loginUpParty, sequenceData.DownPartyLink, sequenceData);
+                        if (doSingleLogout)
+                        {
+                            return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        }
+                        else
+                        {
+                            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                            return await LogoutDoneAsync(loginUpParty, sequenceData);
+                        }
+                    }                
                 }
-            }
-            else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
-            {
-                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                if (sequenceData.PostLogoutRedirect)
+                else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
                 {
-                    return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    if (sequenceData.PostLogoutRedirect)
+                    {
+                        return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                    }
+                    else
+                    {
+                        logger.ScopeTrace(() => "Show logged in dialog.");
+                        return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    }
                 }
                 else
                 {
-                    logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    throw new NotImplementedException();
                 }
-            }
-            else
-            {
-                throw new NotImplementedException();
             }
         }
 
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
-            loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
+            if (!sequenceData.IsSingleLogout)
+            {
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
+            }
             return await LogoutDoneAsync(null, sequenceData);
         }
 

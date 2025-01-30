@@ -293,7 +293,7 @@ namespace FoxIDs.Logic
         private IDataProtector CreateProtector(string trackName = null)
         {
             var routeBinding = HttpContext.GetRouteBinding();
-            return dataProtectionProvider.CreateProtector(new[] { routeBinding.TenantName, trackName ?? routeBinding.TrackName, typeof(SequenceLogic).Name });
+            return dataProtectionProvider.CreateProtector([routeBinding.TenantName, trackName ?? routeBinding.TrackName, typeof(SequenceLogic).Name]);
         }
 
         private void CheckTimeout(Sequence sequence) 

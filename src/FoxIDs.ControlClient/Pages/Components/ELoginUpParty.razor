@@ -100,18 +100,20 @@
                 @if (loginUpParty.ShowAdvanced)
                 {
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
-
-                    <div class="active-group active">
-                        <div class="card">
-                            <div class="card-body pb-0">
-                                <div class="info-text">Select which user identifier texts to display in the login UI. All user identifiers defined on a user can always be used.</div>
-                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableUsernameIdentifier" For="@(() => loginUpParty.Form.Model.EnableUsernameIdentifier)" TextType="e.d" />
-                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnablePhoneIdentifier" For="@(() => loginUpParty.Form.Model.EnablePhoneIdentifier)" TextType="e.d" />
-                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableEmailIdentifier" For="@(() => loginUpParty.Form.Model.EnableEmailIdentifier)" TextType="e.d" />
-                            </div>
+                }
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <div class="info-text">Select which user identifier texts to display in the login UI. All user identifiers defined on a user can always be used.</div>
+                            <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableUsernameIdentifier" For="@(() => loginUpParty.Form.Model.EnableUsernameIdentifier)" TextType="e.d" />
+                            <FInputToggle @bind-Value="loginUpParty.Form.Model.EnablePhoneIdentifier" For="@(() => loginUpParty.Form.Model.EnablePhoneIdentifier)" TextType="e.d" />
+                            <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableEmailIdentifier" For="@(() => loginUpParty.Form.Model.EnableEmailIdentifier)" TextType="e.d" />
                         </div>
-                        <label class="label-control">User identifiers</label>
                     </div>
+                    <label class="label-control">User identifiers</label>
+                </div>
+                @if (loginUpParty.ShowAdvanced)
+                {
                     <div class="active-group active">
                         <div class="card">
                             <div class="card-body pt-2 pb-0">

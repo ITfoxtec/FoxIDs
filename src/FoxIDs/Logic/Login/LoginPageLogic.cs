@@ -292,7 +292,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var sessionId = RandomGenerator.Generate(24);
+                var sessionId = await sessionLogic.GetSessionIdAsync(loginUpParty);
                 (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId, acrClaims);
                 if (actionResult != null)
                 {

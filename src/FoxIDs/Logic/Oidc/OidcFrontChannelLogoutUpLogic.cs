@@ -77,7 +77,11 @@ namespace FoxIDs.Logic
                 _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session.SessionIdClaim);
 
-                if (!party.DisableSingleLogout)
+                if (party.DisableSingleLogout)
+                {
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
+                }
+                else
                 {
                     var allowIframeOnDomains = new List<string>().ConcatOnce(party.Client.AuthorizeUrl?.UrlToDomain()).ConcatOnce(party.Client.EndSessionUrl?.UrlToDomain()).ConcatOnce(party.Client.TokenUrl?.UrlToDomain());
                     (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, null, allowIframeOnDomains: allowIframeOnDomains, hostedInIframe: true);

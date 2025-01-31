@@ -4,7 +4,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace FoxIDs.Logic
             {
                 if (!sessionClaims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                 {
-                    sessionClaims.AddClaim(JwtClaimTypes.SessionId, await GetSessionIdAsync());
+                    sessionClaims.AddClaim(JwtClaimTypes.SessionId, await GetSessionIdAsync(upParty));
                 }
                 session.Claims = sessionClaims.ToClaimAndValues();
 
@@ -129,15 +128,6 @@ namespace FoxIDs.Logic
             claims = claims ?? new List<Claim>();
             return claims.Where(c => c.Type == JwtClaimTypes.Subject || c.Type == Constants.JwtClaimTypes.SubFormat || c.Type == JwtClaimTypes.Email || c.Type == JwtClaimTypes.Amr).ToList();
         }
-        private async Task<string> GetSessionIdAsync()
-        {
-            var sessionId = await GetSessionTrackSessionIdAsync();
-            if (!sessionId.IsNullOrEmpty())
-            {
-                return sessionId;
-            }
-            return RandomGenerator.Generate(24);
-        } 
 
         public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty
         {

@@ -38,11 +38,11 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "Initialize single logout.");
 
-            var sessionTrackCookie = await sessionUpPartyLogic.GetAndDeleteSessionTrackCookieAsync();
+            var sessionTrackCookieGroup = await sessionUpPartyLogic.GetAndDeleteSessionTrackCookieGroupAsync(upParty);
 
-            var upPartyLinks = sessionTrackCookie?.UpPartyLinks?.Where(p => p.Id != upParty.Id);
-            var downPartyLinks = sessionTrackCookie?.DownPartyLinks?.Where(p => p.SupportSingleLogout && (initiatingDownParty == null || p.Id != initiatingDownParty.Id));
-            if (!(upPartyLinks?.Count() > 0) && (!(downPartyLinks?.Count() > 0) || !(sessionTrackCookie.Claims?.Count() > 0)))
+            var upPartyLinks = sessionTrackCookieGroup?.UpPartyLinks?.Where(p => p.Id != upParty.Id);
+            var downPartyLinks = sessionTrackCookieGroup?.DownPartyLinks?.Where(p => initiatingDownParty == null || p.Id != initiatingDownParty.Id);
+            if (!(upPartyLinks?.Count() > 0) && (!(downPartyLinks?.Count() > 0) || !(sessionTrackCookieGroup.Claims?.Count() > 0)))
             {
                 return (false, null);
             }
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
             {
                 UpPartyId = upParty.Id,
                 UpPartyType = upParty.Type,
-                Claims = sessionTrackCookie.Claims,
+                Claims = sessionTrackCookieGroup.Claims,
                 DownPartyLinks = downPartyLinks,
                 UpPartyLinks = upPartyLinks,
                 DownPartyLink = upSequenceData?.DownPartyLink,

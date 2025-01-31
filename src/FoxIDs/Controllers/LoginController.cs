@@ -826,6 +826,7 @@ namespace FoxIDs.Controllers
 
                     if (loginUpParty.DisableSingleLogout)
                     {
+                        await sessionLogic.DeleteSessionTrackCookieGroupAsync(loginUpParty);
                         await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                         return await LogoutDoneAsync(loginUpParty, sequenceData);
                     }

@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
             else
             {
                 var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var sessionId = RandomGenerator.Generate(24);
+                var sessionId = await sessionLogic.GetSessionIdAsync(extLoginUpParty);
                 (claims, var actionResult) = await GetClaimsAsync(extLoginUpParty, sequenceData, newDownPartyLink, userClaims, authTime, sessionId, acrClaims);
                 if (actionResult != null)
                 {

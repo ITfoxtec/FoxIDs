@@ -273,11 +273,11 @@ namespace FoxIDs.Logic
             {
                 if (party.DisableSingleLogout)
                 {
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
                     return await LogoutResponseDownAsync(sequenceData);
                 }
                 else
                 {
-
                     (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, sequenceData.DownPartyLink, sequenceData);
                     if (doSingleLogout)
                     {
@@ -437,13 +437,13 @@ namespace FoxIDs.Logic
 
             if (party.DisableSingleLogout)
             {
+                await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
                 var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
                 return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState);
             }
             else
             {
                 (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, null, sequenceData);
-
                 if (doSingleLogout)
                 {
                     return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);

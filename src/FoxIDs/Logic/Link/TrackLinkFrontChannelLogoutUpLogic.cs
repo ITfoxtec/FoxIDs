@@ -55,7 +55,11 @@ namespace FoxIDs.Logic
             {
                 var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
 
-                if (!party.DisableSingleLogout)
+                if (party.DisableSingleLogout)
+                {
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
+                }
+                else
                 {
                     var frontChannelLogoutUri = HttpContext.GetTrackUpPartyUrl(RouteBinding.TrackName, party.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.FrontChannelLogout);
                     var allowIframeOnDomains = new List<string> { frontChannelLogoutUri.UrlToDomain() };

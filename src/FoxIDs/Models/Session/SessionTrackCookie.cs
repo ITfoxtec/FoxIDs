@@ -9,13 +9,7 @@ namespace FoxIDs.Models.Session
         [JsonIgnore]
         public override SameSiteMode SameSite => SameSiteMode.None;
 
-        [JsonProperty(PropertyName = "ul")]
-        public List<UpPartySessionLink> UpPartyLinks { get; set; }  
-        
-        [JsonProperty(PropertyName = "dl")]
-        public List<DownPartySessionLink> DownPartyLinks { get; set; }
-
-        [JsonProperty(PropertyName = "c")]
-        public IEnumerable<ClaimAndValues> Claims { get; set; }
+        [JsonProperty(PropertyName = "g")]
+        public List<SessionTrackCookieGroup> Groups { get; set; }  
     }
 }

@@ -143,6 +143,7 @@ namespace FoxIDs.Logic
             {
                 if (party.DisableSingleLogout)
                 {
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
                     return await LogoutResponseDownAsync(sequenceData);
                 }
                 else

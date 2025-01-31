@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
             var upPartyName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethod) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
             var upPartyProfileName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthProfileMethod);
             var upPartyTypeValue = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethodType) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
-            if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
+            if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && upPartyTypeValue.TryGetPartyType(out PartyTypes upPartyType))
             {
                 return new UpPartyLink { Name = upPartyName, ProfileName = upPartyProfileName, Type = upPartyType };
             }

@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 SessionId = logoutRequest?.SessionId,
                 RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
-                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? false,
+                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true,
                 ClientId = ResolveClientId(party)
             });
 

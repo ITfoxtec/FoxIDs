@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 SessionId = logoutRequest?.SessionId,
                 RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
-                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? false
+                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult();

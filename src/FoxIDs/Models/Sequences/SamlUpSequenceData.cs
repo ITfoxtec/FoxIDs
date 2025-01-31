@@ -37,7 +37,7 @@ namespace FoxIDs.Models.Sequences
             {
                 if (Id.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Id)} is required if external initiated single logout.", new[] { nameof(Id) }));
+                    results.Add(new ValidationResult($"The field {nameof(Id)} is required if external initiated single logout.", [nameof(Id)]));
                 }
             }
 

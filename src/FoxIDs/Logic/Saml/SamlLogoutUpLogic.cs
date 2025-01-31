@@ -62,7 +62,7 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 SessionId = logoutRequest?.SessionId,
                 RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
-                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? false
+                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
@@ -299,7 +299,7 @@ namespace FoxIDs.Logic
             {
                 throw new Exception("Invalid authentication method id.");
             }
-            if (!sequenceData.ExternalInitiatedSingleLogout)
+            if (!sequenceData.IsSingleLogout && !sequenceData.ExternalInitiatedSingleLogout)
             {
                 return await LogoutResponseDownAsync(sequenceData);
             }

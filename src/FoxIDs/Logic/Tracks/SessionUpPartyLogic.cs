@@ -5,6 +5,7 @@ using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,23 +17,39 @@ namespace FoxIDs.Logic
     public class SessionUpPartyLogic : SessionBaseLogic
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
 
-        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
+        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository, TrackCookieRepository<SessionTrackCookie> sessionTrackCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, sessionTrackCookieRepository, httpContextAccessor)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateMarkerSessionAsync<T>(T upParty, DownPartySessionLink downPartyLink, string idToken = null) where T : UpParty
+        public async Task CreateOrUpdateMarkerSessionAsync<T>(T upParty, DownPartySessionLink downPartyLink, string externalSessionId, string idToken = null, List<Claim> samlClaims = null) where T : UpParty
         {
             await AddOrUpdateSessionTrackAsync(upParty, downPartyLink);
 
             logger.ScopeTrace(() => $"Create marker session for authentication method, Route '{RouteBinding.Route}'.");
             var session = new SessionUpPartyCookie();
+            session.IsMarkerSession = true;
             session.IdToken = idToken;
+            session.Claims = await GetJwtClaimsAsync(samlClaims);
+            session.ExternalSessionId = externalSessionId;
             session.LastUpdated = session.CreateTime;
             await sessionCookieRepository.SaveAsync(upParty, session, null);
+        }
+
+        private async Task<IEnumerable<ClaimAndValues>> GetJwtClaimsAsync(List<Claim> samlClaims)
+        {
+            if (samlClaims != null && samlClaims?.Count() > 0)
+            {
+                var claimsOAuthDownLogic = serviceProvider.GetService<ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+                var jwtClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(samlClaims);
+                return jwtClaims.Where(c => c.Type == JwtClaimTypes.Subject || c.Type == Constants.JwtClaimTypes.SubFormat).ToClaimAndValues();
+            }
+            return null;
         }
 
         public async Task<string> CreateOrUpdateSessionAsync<T>(T upParty, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
@@ -73,6 +90,12 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserIdClaim}' session for authentication method exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionIdClaim}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
+                    if (session.IsMarkerSession)
+                    {
+                        updateAction(session);
+                        session.IsMarkerSession = false;
+                    }
+
                     var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserIdClaim.IsNullOrEmpty() && session.UserIdClaim != userId)
                     {

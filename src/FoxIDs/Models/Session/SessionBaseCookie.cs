@@ -24,5 +24,8 @@ namespace FoxIDs.Models.Session
 
         [JsonProperty(PropertyName = "dl")]
         public List<DownPartySessionLink> DownPartyLinks { get; set; }
+
+        [JsonProperty(PropertyName = "m")]
+        public bool IsMarkerSession { get; set; }
     }
 }

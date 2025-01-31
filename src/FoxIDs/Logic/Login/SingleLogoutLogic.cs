@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using FoxIDs.Repository;
 using MongoDB.Driver;
 using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -51,6 +52,7 @@ namespace FoxIDs.Logic
             {
                 UpPartyId = upParty.Id,
                 UpPartyType = upParty.Type,
+                SessionId = sessionTrackCookieGroup.Claims?.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId),
                 Claims = sessionTrackCookieGroup.Claims,
                 DownPartyLinks = downPartyLinks,
                 UpPartyLinks = upPartyLinks,
@@ -138,7 +140,9 @@ namespace FoxIDs.Logic
             {
                 return new LogoutRequest
                 {
-                    DownPartyLink = sequenceData.DownPartyLink
+                    DownPartyLink = sequenceData.DownPartyLink,
+                    SessionId = sequenceData.SessionId,
+                    PostLogoutRedirect = true,                    
                 };
             }
             return null;

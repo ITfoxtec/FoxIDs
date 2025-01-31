@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                     {
                         throw new Exception("Incorrect issuer.");
                     }
-                    if (!session.ExternalSessionId.IsNullOrWhiteSpace() && session.ExternalSessionId != frontChannelLogoutRequest.SessionId)
+                    if (session.ExternalSessionId != frontChannelLogoutRequest.SessionId)
                     {
                         throw new Exception("Incorrect session id.");
                     }

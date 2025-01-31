@@ -33,6 +33,7 @@ namespace FoxIDs.Logic
 
             logger.ScopeTrace(() => $"Create marker session for authentication method, Route '{RouteBinding.Route}'.");
             var session = new SessionLoginUpPartyCookie();
+            session.IsMarkerSession = true;
             session.LastUpdated = session.CreateTime;
             await sessionCookieRepository.SaveAsync(loginUpParty, session, null);
         }
@@ -67,7 +68,7 @@ namespace FoxIDs.Logic
             var sessionEnabled = SessionEnabled(upParty);
             var sessionValid = SessionValid(session, upParty);
 
-            if (session.Claims?.Count() > 0 && sessionEnabled && sessionValid)
+            if (!session.IsMarkerSession && sessionEnabled && sessionValid)
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 if (claims?.Count() > 0)

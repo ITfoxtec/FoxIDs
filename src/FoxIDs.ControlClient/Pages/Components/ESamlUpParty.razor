@@ -230,12 +230,10 @@
                                 <div class="col">
                                     @if (samlUpParty.Form.Model.IsManual)
                                     {
-                                        <div class="form-group active-group">
-                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                            </FInputSelect>
-                                        </div>
+                                        <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)">
+                                            <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                            <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                        </FInputSelect>
                                     }
                                     else if (!samlUpParty.CreateMode)
                                     {
@@ -251,12 +249,10 @@
                                 </div>
                             }
                             <div class="col">
-                                <div class="form-group active-group">
-                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnResponseBinding" For="@(() => samlUpParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                    </FInputSelect>
-                                </div>
+                                <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnResponseBinding" For="@(() => samlUpParty.Form.Model.AuthnResponseBinding)">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
                             </div>
                         </div>
                     }
@@ -293,12 +289,10 @@
                                 <div class="col">
                                     @if (samlUpParty.Form.Model.IsManual)
                                     {
-                                        <div class="form-group active-group">
-                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                            </FInputSelect>
-                                        </div>
+                                        <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)">
+                                            <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                            <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                        </FInputSelect>
                                     }
                                     else if (!samlUpParty.CreateMode)
                                     {
@@ -314,12 +308,10 @@
                                 </div>
                             }
                             <div class="col">
-                                <div class="form-group active-group">
-                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutResponseBinding" For="@(() => samlUpParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                    </FInputSelect>
-                                </div>
+                                <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutResponseBinding" For="@(() => samlUpParty.Form.Model.LogoutResponseBinding)">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
                             </div>
                         </div>
                     }
@@ -333,15 +325,13 @@
                 {
                     @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
                     {
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnContextComparisonViewModel" For="@(() => samlUpParty.Form.Model.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
-                                <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
-                                <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
-                                <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
-                                <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
-                                <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
-                            </FInputSelect>
-                        </div>
+                        <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnContextComparisonViewModel" For="@(() => samlUpParty.Form.Model.AuthnContextComparisonViewModel)">
+                            <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
+                            <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
+                            <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
+                            <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
+                            <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
+                        </FInputSelect>
                         <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
                         <FInputTextArea @bind-Value="samlUpParty.Form.Model.AuthnRequestExtensionsXml" For="@(() => samlUpParty.Form.Model.AuthnRequestExtensionsXml)" />
 
@@ -440,15 +430,13 @@
                                     <div class="col-11">
                                         <FInputText @bind-Value="profile.DisplayName" For="@(() => profile.DisplayName)" />
                                         <FInputText @bind-Value="profile.Name" For="@(() => profile.Name)" />
-                                        <div class="form-group active-group">
-                                            <FInputSelect @bind-Value="profile.AuthnContextComparisonViewModel" For="@(() => profile.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
-                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
-                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
-                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
-                                                <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
-                                            </FInputSelect>
-                                        </div>
+                                        <FInputSelect @bind-Value="profile.AuthnContextComparisonViewModel" For="@(() => profile.AuthnContextComparisonViewModel)">
+                                            <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
+                                            <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
+                                            <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
+                                            <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
+                                            <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
+                                        </FInputSelect>
                                         <FInputTextList @bind-ValueList="profile.AuthnContextClassReferences" For="@(() => profile.AuthnContextClassReferences)" DynamicFirstRow="true" />
                                         <FInputTextArea @bind-Value="profile.AuthnRequestExtensionsXml" For="@(() => profile.AuthnRequestExtensionsXml)" />
                                     </div>

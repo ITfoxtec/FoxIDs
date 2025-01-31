@@ -8,6 +8,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace FoxIDs.Repository
 {
@@ -50,12 +51,13 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Get authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}', delete '{delete}'.");
 
+            var cookieName = CookieName();
             if (cookieCache.TryGetValue(CookieName(), out TMessage cacheCookie))
             {
                 return cacheCookie;
             }
 
-            var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
+            var cookie = httpContextAccessor.HttpContext.Request.Cookies[cookieName];
             if (!cookie.IsNullOrWhiteSpace())
             {
                 try
@@ -65,7 +67,7 @@ namespace FoxIDs.Repository
                     if (delete)
                     {
                         logger.ScopeTrace(() => $"Delete authentication method cookie, '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
-                        DeleteByName(routeBinding, party, CookieName());
+                        DeleteByName(routeBinding, party, cookieName);
                     }
 
                     return envelope.Message;
@@ -73,7 +75,7 @@ namespace FoxIDs.Repository
                 catch (CryptographicException ex)
                 {
                     logger.Warning(ex, $"Unable to unprotect authentication method cookie '{typeof(TMessage).Name}', deleting cookie.");
-                    DeleteByName(routeBinding, party, CookieName());
+                    DeleteByName(routeBinding, party, cookieName);
                     return null;
                 }
                 catch (Exception ex)
@@ -95,8 +97,10 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Save authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
-            cookieCache[CookieName()] = message;
+            var cookieName = CookieName();
+            cookieCache[cookieName] = message;
 
+            httpContextAccessor.HttpContext.Response.Headers.SetCookie = httpContextAccessor.HttpContext.Response.Headers.SetCookie.Where(c => !c.StartsWith($"{cookieName}=")).ToArray();
             var cookieOptions = new CookieOptions
             {
                 Secure = true,
@@ -107,7 +111,7 @@ namespace FoxIDs.Repository
                 Expires = persistentCookieExpires
             };
             httpContextAccessor.HttpContext.Response.Cookies.Append(
-                CookieName(),
+                cookieName,
                 new CookieEnvelope<TMessage>
                 {
                     Message = message,

@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 UpPartyProfileName = partyLink.ProfileName
-            }, setKeyValidUntil: true);
+            }, setKeyValidUntil: true, partyName: party.Name);
 
             var profile = GetProfile(party, partyLink.ProfileName);
 
@@ -98,7 +98,7 @@ namespace FoxIDs.Logic
             }
 
             await sequenceLogic.ValidateAndSetSequenceAsync(keySequenceData.UpPartySequenceString);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
 
             List<Claim> claims = keySequenceData.Claims?.ToClaimList();
             if (keySequenceData.Error.IsNullOrEmpty())
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
                     (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
                     if (actionResult != null)
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
                         return actionResult;
                     }
                     claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
@@ -156,7 +156,7 @@ namespace FoxIDs.Logic
                     {
                         if (deleteSequenceData)
                         {
-                            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
                         }
                         return externalUserActionResult;
                     }
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
                     (claims, var authResponseActionResult) = await AuthResponsePostAsync(party, sequenceData, claims, externalUserClaims, externalSessionId);
                     if (authResponseActionResult != null)
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
                         return authResponseActionResult;
                     }
                 }
@@ -172,18 +172,18 @@ namespace FoxIDs.Logic
                 {
                     logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
                     logger.Error(orex);
-                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
                     return await AuthResponseDownAsync(sequenceData, null, orex.Error, orex.ErrorDescription);
                 }
             }
 
-            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
             return await AuthResponseDownAsync(sequenceData, claims, keySequenceData.Error, keySequenceData.ErrorDescription);
         }
 
         public async Task<IActionResult> AuthResponsePostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(externalUserSequenceData.UpPartyId);
 
             try

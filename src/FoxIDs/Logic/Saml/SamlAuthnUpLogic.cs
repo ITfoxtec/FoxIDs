@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 UpPartyProfileName = partyLink.ProfileName,
-            });
+            }, partyName: party.Name);
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+            var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -259,7 +259,7 @@ namespace FoxIDs.Logic
                 }
 
                 await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
-                sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name, remove: false);
             }
             catch (Exception ex)
             {
@@ -324,7 +324,7 @@ namespace FoxIDs.Logic
                 (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
                 if (actionResult != null)
                 {
-                    await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                    await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                     return actionResult;
                 }
                 var validClaims = ValidateClaims(party, transformedClaims);
@@ -343,12 +343,12 @@ namespace FoxIDs.Logic
                 {
                     if (deleteSequenceData)
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                     }
                     return externalUserActionResult;
                 }
 
-                await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                 return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId);
             }
             catch (StopSequenceException)
@@ -377,7 +377,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnResponsePostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(externalUserSequenceData.UpPartyId);
 
             try
@@ -404,7 +404,7 @@ namespace FoxIDs.Logic
         {
             jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
-            (var transformedJwtClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), jwtValidClaims, sequenceData);
+            (var transformedJwtClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExternalUserLoadedClaimTransforms?.ConvertAll(t => (ClaimTransform)t), jwtValidClaims, sequenceData);
             if (actionResult != null)
             {
                 return actionResult;

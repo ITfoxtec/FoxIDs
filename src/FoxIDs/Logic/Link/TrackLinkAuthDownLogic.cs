@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);
-            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
+            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false, partyName: party.ToUpPartyName);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
                 throw new EndpointException($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.") { RouteBinding = RouteBinding };

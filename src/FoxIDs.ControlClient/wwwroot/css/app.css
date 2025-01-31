@@ -670,7 +670,7 @@ img.logo {
         -webkit-transform: scale(.85) translateY(-2.4rem);
         transform: scale(.85) translateY(-2.4rem);
     }
-    .active-group.active > .input-group > .label-control {
+    .active-group.active .input-group > .label-control {
         -webkit-transform: scale(.85) translateY(-2.4rem);
         transform: scale(.85) translateY(-2.4rem);
     }

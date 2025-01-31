@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                 SessionId = logoutRequest?.SessionId,
                 RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
                 PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true
-            });
+            }, partyName: party.Name);
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+            var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -213,7 +213,7 @@ namespace FoxIDs.Logic
             samlHttpRequest.Binding.ReadSamlResponse(samlHttpRequest, saml2LogoutResponse);
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: party.DisableSingleLogout);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name, remove: party.DisableSingleLogout);
 
             try
             {
@@ -285,7 +285,7 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                         return await LogoutResponseDownAsync(sequenceData);
                     }
                 }
@@ -294,7 +294,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutDoneAsync(string partyId)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: true);
             if (!sequenceData.IsSingleLogout && !sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -410,7 +410,7 @@ namespace FoxIDs.Logic
                     UpPartyId = party.Id,
                     RelayState = samlHttpRequest.Binding.RelayState,
                     SessionId = saml2LogoutRequest.SessionIndex
-                });
+                }, partyName: party.Name);
 
                 if (samlHttpRequest.Binding is Saml2PostBinding)
                 {
@@ -460,7 +460,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AuthMethod, SAML Single Logout request jump.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");

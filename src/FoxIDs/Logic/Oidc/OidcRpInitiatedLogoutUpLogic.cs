@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
                 PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true,
                 ClientId = ResolveClientId(party)
-            });
+            }, partyName: party.Name);
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC End session request.");
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -182,11 +182,11 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> EndSessionResponseInternalAsync(OidcUpParty party)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: party.DisableSingleLogout);
 
             if (sequenceData.IsSingleLogout)
             {
-                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                 return await singleLogoutLogic.HandleSingleLogoutUpAsync();
             }
             else
@@ -205,7 +205,7 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                         return await LogoutResponseDownAsync(sequenceData);
                     }
                 }
@@ -214,7 +214,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutDoneAsync(string partyId)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: true);
             if (!sequenceData.IsSingleLogout && !sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");

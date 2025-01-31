@@ -202,7 +202,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<T> SaveSequenceDataAsync<T>(T data, Sequence sequence = null, string trackName = null, bool setKeyValidUntil = false) where T : ISequenceData
+        public async Task<T> SaveSequenceDataAsync<T>(T data, Sequence sequence = null, string trackName = null, bool setKeyValidUntil = false, string partyName = null) where T : ISequenceData
         {
             if (setKeyValidUntil && data is ISequenceKey keyData)
             {
@@ -215,18 +215,18 @@ namespace FoxIDs.Logic
             var lifetime = sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime;
             if (data is IDownSequenceData)
                 lifetime += settings.SequenceGracePeriod;
-            await cacheProvider.SetAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), lifetime);
+            await cacheProvider.SetAsync(DataKey(typeof(T), sequence, trackName: trackName, partyName: partyName), data.ToJson(), lifetime);
             return data;
         }
 
-        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false, Sequence sequence = null, string trackName = null) where T : ISequenceData
+        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false, Sequence sequence = null, string trackName = null, string partyName = null) where T : ISequenceData
         {
             sequence = sequence ?? HttpContext.GetSequence(allowNull);
             if(allowNull && sequence == null)
             {
                 return default;
             }
-            var key = DataKey(typeof(T), sequence, trackName);
+            var key = DataKey(typeof(T), sequence, trackName: trackName, partyName: partyName);
             var data = await cacheProvider.GetAsync(key);
             if(data == null)
             {
@@ -248,9 +248,9 @@ namespace FoxIDs.Logic
             return sequenceData;
         }
 
-        public async Task<T> ValidateKeySequenceDataAsync<T>(Sequence sequence, string trackName, bool remove = true) where T : ISequenceKey
+        public async Task<T> ValidateKeySequenceDataAsync<T>(Sequence sequence, string trackName, bool remove = true, string partyName = null) where T : ISequenceKey
         {
-            var keySequenceData = await GetSequenceDataAsync<T>(remove: remove, sequence: sequence, trackName: trackName);
+            var keySequenceData = await GetSequenceDataAsync<T>(remove: remove, sequence: sequence, trackName: trackName, partyName: partyName);
 
             if (keySequenceData.KeyUsed)
             {
@@ -269,12 +269,12 @@ namespace FoxIDs.Logic
             return keySequenceData;
         }
 
-        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData
+        public async Task RemoveSequenceDataAsync<T>(string partyName = null) where T : ISequenceData
         {
             if (settings.DeleteUsedSequences)
             {
                 var sequence = HttpContext.GetSequence();
-                var key = DataKey(typeof(T), sequence);
+                var key = DataKey(typeof(T), sequence, partyName: partyName);
                 await cacheProvider.DeleteAsync(key);
             }
         }
@@ -284,10 +284,10 @@ namespace FoxIDs.Logic
             return Task.FromResult(Protect(sequence));
         }
 
-        private string DataKey(Type type, Sequence sequence, string trackName = null)
+        private string DataKey(Type type, Sequence sequence, string trackName = null, string partyName = null)
         {
             var routeBinding = HttpContext.GetRouteBinding();
-            return $"{routeBinding.TenantName}.{trackName ?? routeBinding.TrackName}.seq.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
+            return $"{routeBinding.TenantName}.{trackName ?? routeBinding.TrackName}.seq.{type.Name.ToLower()}{(partyName.IsNullOrEmpty() ? string.Empty : $".{partyName}")}.{sequence.Id}.{sequence.CreateTime}";
         }
 
         private IDataProtector CreateProtector(string trackName = null)

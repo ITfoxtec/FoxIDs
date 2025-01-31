@@ -78,7 +78,7 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 UpPartyProfileName = partyLink.ProfileName
             };
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, partyName: party.Name);
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthorizationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
@@ -86,7 +86,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request.");
-            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
                 var codeVerifier = RandomGenerator.Generate(64);
                 oidcUpSequenceData.CodeVerifier = codeVerifier;
             }
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, partyName: party.Name);
 
             var authenticationRequest = new AuthenticationRequest
             {
@@ -253,7 +253,7 @@ namespace FoxIDs.Logic
             try
             {
                 await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: false);
             }
             catch (Exception ex)
             {
@@ -314,7 +314,7 @@ namespace FoxIDs.Logic
                 (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
                 if (actionResult != null)
                 {
-                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                     return actionResult;
                 }
 
@@ -332,12 +332,12 @@ namespace FoxIDs.Logic
                 {
                     if (deleteSequenceData)
                     {
-                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                     }
                     return externalUserActionResult;
                 }
 
-                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                 return await AuthenticationRequestPostAsync(party, sequenceData, validClaims, externalUserClaims, idToken, externalSessionId);
             }
             catch (StopSequenceException)
@@ -365,7 +365,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
 
             try

@@ -270,7 +270,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !session.SessionIdClaim.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }

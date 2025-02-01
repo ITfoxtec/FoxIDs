@@ -219,10 +219,7 @@ namespace FoxIDs.Logic
                 transformedClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-            {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.TrackLink);
-            }
+            await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.TrackLink);
 
             logger.ScopeTrace(() => $"AuthMethod, Environment Link output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return (transformedClaims, null);

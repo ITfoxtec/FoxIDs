@@ -133,10 +133,7 @@ namespace FoxIDs.Logic
                 return (null, actionResult);
             }
 
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-            {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.ExternalLogin);
-            }
+            await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.ExternalLogin);
 
             logger.ScopeTrace(() => $"AuthMethod, External Login, output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return (transformedClaims, null);

@@ -186,10 +186,7 @@ namespace FoxIDs.Logic
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-                {
-                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
-                }
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
 
                 logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 

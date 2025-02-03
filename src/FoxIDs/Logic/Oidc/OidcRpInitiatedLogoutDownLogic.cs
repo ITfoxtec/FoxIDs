@@ -143,6 +143,14 @@ namespace FoxIDs.Logic
                 return toUpPartyFromIdToken;
             }
 
+            (var toUpParties, var isSession) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
+            if (isSession && toUpParties?.Count() == 1)
+            {
+                var sessionUpParty = toUpParties.First();
+                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(sessionUpParty.Name, sessionUpParty.ProfileName);
+                return sessionUpParty;
+            }
+
             return await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
         }
 

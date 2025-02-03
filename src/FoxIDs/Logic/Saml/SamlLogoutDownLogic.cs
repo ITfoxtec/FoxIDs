@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
 using FoxIDs.Logic.Tracks;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -112,7 +113,7 @@ namespace FoxIDs.Logic
                     RelayState = samlHttpRequest.Binding.RelayState
                 });
 
-                var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
+                var toUpParty = await GetToUpPartyAsync();
                 logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
                 switch (toUpParty.Type)
                 {
@@ -138,6 +139,19 @@ namespace FoxIDs.Logic
                 logger.Error(ex);
                 return await LogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, samlHttpRequest.Binding.RelayState, ex.Status);
             }
+        }
+
+        private async Task<UpPartyLink> GetToUpPartyAsync()
+        {
+            (var toUpParties, var isSession) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
+            if (isSession && toUpParties?.Count() == 1)
+            {
+                var sessionUpParty = toUpParties.First();
+                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(sessionUpParty.Name, sessionUpParty.ProfileName);
+                return sessionUpParty;
+            }
+
+            return await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
         }
 
         private LogoutRequest GetLogoutRequest(SamlDownParty party, Saml2LogoutRequest saml2LogoutRequest)

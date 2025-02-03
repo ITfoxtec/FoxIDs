@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                     AcsResponseUrl = GetAcsUrl(party, saml2AuthnRequest),
                 });
 
-                var toUpParties = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
+                (var toUpParties, _) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
                 if (toUpParties.Count() == 1)
                 {
                     var toUpParty = toUpParties.First();

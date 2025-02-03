@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
             return RandomGenerator.Generate(24);
         }
 
-        public async Task<List<UpPartyLink>> GetSessionOrRouteBindingUpParty(List<UpPartyLink> upPartyLinks)
+        public async Task<(List<UpPartyLink>, bool isSession)> GetSessionOrRouteBindingUpParty(List<UpPartyLink> upPartyLinks)
         {
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
@@ -49,10 +49,10 @@ namespace FoxIDs.Logic
                 var sessionGroup = session.Groups.Where(g => g.SessionUpParty != null && g.UpPartyLinks?.Any(u => upPartyLinks.Any(ru => ru.Name == u.Id.PartyIdToName())) == true).FirstOrDefault();
                 if (sessionGroup != null && sessionGroup.SessionUpParty != null)
                 {
-                    return [new UpPartyLink { Name = sessionGroup.SessionUpParty.Id.PartyIdToName(), Type = sessionGroup.SessionUpParty.Type }];
+                    return ([new UpPartyLink { Name = sessionGroup.SessionUpParty.Id.PartyIdToName(), Type = sessionGroup.SessionUpParty.Type }], true);
                 }
             }
-            return upPartyLinks;
+            return (upPartyLinks, false);
         }
 
         protected bool SessionEnabled<T>(T upParty) where T : IUpParty

@@ -188,6 +188,7 @@ namespace FoxIDs.Client.Pages.Logging
                 usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeLogins = true;
+                usageLogRequest.IncludeAdditional = true;
                 usageLogRequest.IncludeTokenRequests = true;
             }
         }
@@ -198,6 +199,7 @@ namespace FoxIDs.Client.Pages.Logging
             {
                 usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.Logins);
                 usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.TokenRequests);
+                usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.Additional);
             }
 
             if (usageLogRequestForm.Model.TimeScope == UsageLogTimeScopes.ThisMonth && usageLogRequestForm.Model.SummarizeLevel == UsageLogSummarizeLevels.Month)

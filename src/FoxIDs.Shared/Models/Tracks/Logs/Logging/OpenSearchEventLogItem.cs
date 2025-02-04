@@ -10,5 +10,7 @@
         public string UsageLoginType { get; set; }
         public string UsageTokenType { get; set; }
         public double UsageAddRating { get; set; }
+        public double UsageSms { get; set; }
+        public double UsageEmail { get; set; }
     }
 }

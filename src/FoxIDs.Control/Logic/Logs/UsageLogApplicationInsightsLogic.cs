@@ -71,8 +71,28 @@ namespace FoxIDs.Logic
                 var item = new Api.UsageLogItem
                 {
                     Type = logType,
-                    Value = GetCount(row, logType),
                 };
+
+                switch (logType)
+                {
+                    case Api.UsageLogTypes.Login:
+                    case Api.UsageLogTypes.TokenRequest:
+                        (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(row);
+                        item.Value = totalCount;
+                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
+                        break;
+                    case Api.UsageLogTypes.Confirmation:
+                    case Api.UsageLogTypes.ResetPassword:
+                    case Api.UsageLogTypes.Mfa:
+                        (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(row);
+                        item.Value = itemCount;
+                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                        break;
+                    default:
+                        item.Value = GetCount(row);
+                        break;
+                }
+
                 itemsPointer.Add(item);
             }
 
@@ -123,14 +143,38 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private decimal GetCount(LogsTableRow row, Api.UsageLogTypes logType)
+        private decimal GetCount(LogsTableRow row)
         {
             var count = row.GetDouble("UsageCount");
-            if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
-            {
-                count += row.GetDouble("UsageAddRating");
-            }
             return count.HasValue ? Math.Round(Convert.ToDecimal(count.Value), 1) : 0.0M;
+        }
+
+        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(LogsTableRow row)
+        {
+            var item = row.GetDouble("UsageCount");
+            double realCount = item.HasValue ? item.Value : 0.0;
+            
+            double extraCount = 0.0;
+            var addItem = row.GetDouble("UsageAddRating");
+            extraCount = addItem.HasValue ? addItem.Value : 0.0;
+
+            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
+        }
+
+        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(LogsTableRow row)
+        {
+            var item = row.GetDouble("UsageCount");
+            double itemCount = item.HasValue ? item.Value : 0.0;
+            
+            double smsCount = 0.0;
+            var smsItem = row.GetDouble("UsageSms");
+            smsCount = smsItem.HasValue ? smsItem.Value : 0.0;
+
+            double emailCount = 0.0;
+            var emailItem = row.GetDouble("UsageEmail");
+            emailCount = emailItem.HasValue ? smsItem.Value : 0.0;
+
+            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(emailCount), 1));
         }
 
         private DateTime GetDate(LogsTableRow row)
@@ -236,8 +280,10 @@ namespace FoxIDs.Logic
 | extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
 | extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
 | extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
+| extend {Constants.Logs.UsageSms} = Properties.{Constants.Logs.UsageSms}
+| extend {Constants.Logs.UsageEmail} = Properties.{Constants.Logs.UsageEmail}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
+| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

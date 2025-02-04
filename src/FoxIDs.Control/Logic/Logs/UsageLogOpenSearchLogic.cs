@@ -80,14 +80,14 @@ namespace FoxIDs.Logic
                     {
                         case Api.UsageLogTypes.Login:
                         case Api.UsageLogTypes.TokenRequest:
-                            (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem, logType);
+                            (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem);
                             item.Value = totalCount;
                             item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                             break;
                         case Api.UsageLogTypes.Confirmation:
                         case Api.UsageLogTypes.ResetPassword:
                         case Api.UsageLogTypes.Mfa:
-                            (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(bucketItem, logType);
+                            (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(bucketItem);
                             item.Value = itemCount;
                             item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
                             break;
@@ -178,7 +178,7 @@ namespace FoxIDs.Logic
             return Math.Round(Convert.ToDecimal(itemCount), 1);
         }
 
-        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(DateHistogramBucket bucketItem)
         {
             double realCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
             double extraCount = 0.0;
@@ -190,7 +190,7 @@ namespace FoxIDs.Logic
             return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
         }
 
-        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem)
         {
             double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
             double smsCount = 0.0;
@@ -240,14 +240,15 @@ namespace FoxIDs.Logic
                                 .DateHistogram("per_interval", dh => dh
                                     .Field(f => f.Timestamp).CalendarInterval(GetDateInterval(logRequest.SummarizeLevel))
                                     .Aggregations(sumAggs => sumAggs
-                                        .Sum(nameof(OpenSearchLogItem.UsageAddRating).ToLower(), sa => sa
-                                            .Field(p => p.UsageAddRating)
-                                        )
+                                  
                                         .Sum(nameof(OpenSearchLogItem.UsageSms).ToLower(), sa => sa
                                             .Field(p => p.UsageSms)
                                         )
                                         .Sum(nameof(OpenSearchLogItem.UsageEmail).ToLower(), sa => sa
                                             .Field(p => p.UsageEmail)
+                                        )
+                                        .Sum(nameof(OpenSearchLogItem.UsageAddRating).ToLower(), sa => sa
+                                            .Field(p => p.UsageAddRating)
                                         )
                                     )
                              ))

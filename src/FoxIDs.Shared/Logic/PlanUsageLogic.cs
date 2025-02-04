@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             }
             else if(sendTypes == UsageLogSendTypes.Email)
             {
-                properties = new Dictionary<string, string> { { Constants.Logs.Email, "1" } };
+                properties = new Dictionary<string, string> { { Constants.Logs.UsageEmail, "1" } };
             }
             LogEvent(planUsageType, message: $"Usage {planUsageType}{(sendTypes.HasValue ? $".{sendTypes}" : string.Empty)} event.", properties: properties);
         }

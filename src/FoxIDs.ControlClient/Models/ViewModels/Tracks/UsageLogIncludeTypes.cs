@@ -10,5 +10,12 @@
         public const string Additional = "Additional";
         public const string ControlApiGets = "Control API gets";
         public const string ControlApiUpdates = "Control API updates";
+        public const string Confirmation = "Confirmation";
+        public const string ResetPassword = "Reset password";
+        public const string Mfa = "MFA";
+        public const string RealCount = "Real request count";
+        public const string ExtraCount = "Extra trace count";
+        public const string Sms = "SMS";
+        public const string Email = "Email";
     }
 }

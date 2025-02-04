@@ -7,6 +7,7 @@
         public const string Users = "Users";
         public const string Logins = "Logins";
         public const string TokenRequests = "Token requests";
+        public const string Additional = "Additional";
         public const string ControlApiGets = "Control API gets";
         public const string ControlApiUpdates = "Control API updates";
     }

@@ -171,14 +171,13 @@ namespace FoxIDs.Logic
 
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
-            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
+            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
             }
-            var includeAll = logRequest.IncludeLogins && logRequest.IncludeTokenRequests && logRequest.IncludeControlApiGets && logRequest.IncludeControlApiUpdates;
-
-            var where = includeAll ? $"isnotempty({Constants.Logs.UsageType})" : $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"{Constants.Logs.UsageType} == '{i}'"))}";
+          
+            var where = $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"{Constants.Logs.UsageType} == '{i}'"))}";
 
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
@@ -193,19 +192,25 @@ namespace FoxIDs.Logic
         {
             if (logRequest.IncludeLogins)
             {
-                yield return Api.UsageLogTypes.Login.ToString();
+                yield return UsageLogTypes.Login.ToString();
             }
             if (logRequest.IncludeTokenRequests)
             {
-                yield return Api.UsageLogTypes.TokenRequest.ToString();
+                yield return UsageLogTypes.TokenRequest.ToString();
+            }
+            if (logRequest.IncludeAdditional)
+            {
+                yield return UsageLogTypes.Confirmation.ToString();
+                yield return UsageLogTypes.ResetPassword.ToString();
+                yield return UsageLogTypes.Mfa.ToString();
             }
             if (logRequest.IncludeControlApiGets)
             {
-                yield return Api.UsageLogTypes.ControlApiGet.ToString();
+                yield return UsageLogTypes.ControlApiGet.ToString();
             }
             if (logRequest.IncludeControlApiUpdates)
             {
-                yield return Api.UsageLogTypes.ControlApiUpdate.ToString();
+                yield return UsageLogTypes.ControlApiUpdate.ToString();
             }
         }
 

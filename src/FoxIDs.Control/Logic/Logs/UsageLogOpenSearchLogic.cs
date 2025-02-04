@@ -74,8 +74,28 @@ namespace FoxIDs.Logic
                     var item = new Api.UsageLogItem
                     {
                         Type = logType,
-                        Value = GetCount(bucketItem, logType),
                     };
+
+                    switch (logType)
+                    {
+                        case Api.UsageLogTypes.Login:
+                        case Api.UsageLogTypes.TokenRequest:
+                            (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem, logType);
+                            item.Value = totalCount;
+                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
+                            break;
+                        case Api.UsageLogTypes.Confirmation:
+                        case Api.UsageLogTypes.ResetPassword:
+                        case Api.UsageLogTypes.Mfa:
+                            (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(bucketItem, logType);
+                            item.Value = itemCount;
+                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                            break;
+                        default:
+                            item.Value = GetCount(bucketItem);
+                            break;
+                    }
+
                     itemsPointer.Add(item);
                 }
             }
@@ -95,6 +115,23 @@ namespace FoxIDs.Logic
             if (logRequest.IncludeTokenRequests)
             {
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.TokenRequest.ToString()))
+                {
+                    yield return bucketItem;
+                }
+            }
+            if (logRequest.IncludeAdditional)
+            {
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Confirmation.ToString()))
+                {
+                    yield return bucketItem;
+                }
+           
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ResetPassword.ToString()))
+                {
+                    yield return bucketItem;
+                }
+           
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Mfa.ToString()))
                 {
                     yield return bucketItem;
                 }
@@ -135,18 +172,40 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private decimal GetCount(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        private decimal GetCount(DateHistogramBucket bucketItem)
         {
-            var count = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
-            if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
+            double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;           
+            return Math.Round(Convert.ToDecimal(itemCount), 1);
+        }
+
+        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        {
+            double realCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
+            double extraCount = 0.0;
+            var valueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageAddRating).ToLower()] as ValueAggregate;
+            if (valueAggregate?.Value != null)
             {
-                var valueAggregate = bucketItem.Values.First() as ValueAggregate;
-                if (valueAggregate?.Value != null)
-                {
-                    count += valueAggregate.Value.Value;
-                }
+                extraCount = valueAggregate.Value.Value;
             }
-            return Math.Round(Convert.ToDecimal(count), 1);
+            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
+        }
+
+        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem, Api.UsageLogTypes logType)
+        {
+            double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
+            double smsCount = 0.0;
+            var smsValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageSms).ToLower()] as ValueAggregate;
+            if (smsValueAggregate?.Value != null)
+            {
+                smsCount = smsValueAggregate.Value.Value;
+            }
+            double emailCount = 0.0;
+            var emailValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageEmail).ToLower()] as ValueAggregate;
+            if (emailValueAggregate?.Value != null)
+            {
+                emailCount = emailValueAggregate.Value.Value;
+            }
+            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(emailCount), 1));
         }
 
         private (DateTime start, DateTime end) GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
@@ -163,7 +222,7 @@ namespace FoxIDs.Logic
 
         private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest)
         {
-            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
+            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
@@ -181,8 +240,14 @@ namespace FoxIDs.Logic
                                 .DateHistogram("per_interval", dh => dh
                                     .Field(f => f.Timestamp).CalendarInterval(GetDateInterval(logRequest.SummarizeLevel))
                                     .Aggregations(sumAggs => sumAggs
-                                        .Sum("usageaddrating", sa => sa
+                                        .Sum(nameof(OpenSearchLogItem.UsageAddRating).ToLower(), sa => sa
                                             .Field(p => p.UsageAddRating)
+                                        )
+                                        .Sum(nameof(OpenSearchLogItem.UsageSms).ToLower(), sa => sa
+                                            .Field(p => p.UsageSms)
+                                        )
+                                        .Sum(nameof(OpenSearchLogItem.UsageEmail).ToLower(), sa => sa
+                                            .Field(p => p.UsageEmail)
                                         )
                                     )
                              ))
@@ -232,19 +297,25 @@ namespace FoxIDs.Logic
         {
             if (logRequest.IncludeLogins)
             {
-                AddFilter(filters, Api.UsageLogTypes.Login.ToString());
+                AddFilter(filters, UsageLogTypes.Login.ToString());
             }
             if (logRequest.IncludeTokenRequests)
             {
-                AddFilter(filters, Api.UsageLogTypes.TokenRequest.ToString());
+                AddFilter(filters, UsageLogTypes.TokenRequest.ToString());
+            }
+            if (logRequest.IncludeAdditional)
+            {
+                AddFilter(filters, UsageLogTypes.Confirmation.ToString());
+                AddFilter(filters, UsageLogTypes.ResetPassword.ToString());
+                AddFilter(filters, UsageLogTypes.Mfa.ToString());
             }
             if (logRequest.IncludeControlApiGets)
             {
-                AddFilter(filters, Api.UsageLogTypes.ControlApiGet.ToString());
+                AddFilter(filters, UsageLogTypes.ControlApiGet.ToString());
             }
             if (logRequest.IncludeControlApiUpdates)
             {
-                AddFilter(filters, Api.UsageLogTypes.ControlApiUpdate.ToString());
+                AddFilter(filters, UsageLogTypes.ControlApiUpdate.ToString());
             }
             return filters;
         }

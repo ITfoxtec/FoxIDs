@@ -26,9 +26,10 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorAppLogic accountTwoFactorAppLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -39,6 +40,7 @@ namespace FoxIDs.Controllers
             this.accountLogic = accountLogic;
             this.accountTwoFactorAppLogic = accountTwoFactorAppLogic;
             this.accountActionLogic = accountActionLogic;
+            this.planUsageLogic = planUsageLogic;
             this.planCacheLogic = planCacheLogic;
         }
 
@@ -58,6 +60,8 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
+
+                planUsageLogic.LogMfaEvent();
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -213,6 +217,8 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
                 }
 
+                planUsageLogic.LogMfaEvent();
+
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -347,6 +353,8 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                planUsageLogic.LogMfaEvent(UsageLogSendTypes.Sms);
+
                 await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -468,6 +476,8 @@ namespace FoxIDs.Controllers
                         throw new PlanException(plan, $"Email two-factor is not supported in the '{plan.Name}' plan.");
                     }
                 }
+
+                planUsageLogic.LogMfaEvent(UsageLogSendTypes.Email);
 
                 await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
 

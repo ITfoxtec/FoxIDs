@@ -20,13 +20,15 @@ namespace FoxIDs.Logic
         public void LogLoginEvent(PartyTypes partyType)
         {
             var addRating = GetLogAddRating();
-            logger.Event($"Usage {UsageLogTypes.Login}.{partyType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.Login.ToString() }, { Constants.Logs.UsageLoginType, partyType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
+            var planUsageType = UsageLogTypes.Login;
+            LogEvent(planUsageType, message: $"Usage {UsageLogTypes.Login}.{partyType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageLoginType, partyType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
         }
 
         public void LogTokenRequestEvent(UsageLogTokenTypes tokenType)
         {
             var addRating = GetLogAddRating(tokenType);
-            logger.Event($"Usage {UsageLogTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
+            var planUsageType = UsageLogTypes.TokenRequest;
+            LogEvent(planUsageType, message: $"Usage {planUsageType}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageTokenType, tokenType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
         }
 
         public void LogControlApiGetEvent()
@@ -39,9 +41,46 @@ namespace FoxIDs.Logic
             LogEvent(UsageLogTypes.ControlApiUpdate);
         }
 
-        private void LogEvent(UsageLogTypes planUsageType)
+        public void LogConfirmationEvent(UsageLogSendTypes? sendTypes = null)
         {
-            logger.Event($"Usage {planUsageType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, planUsageType.ToString() } });
+            LogEvent(UsageLogTypes.Confirmation, sendTypes);
+        }
+
+        public void LogResetPasswordEvent(UsageLogSendTypes? sendTypes = null)
+        {
+            LogEvent(UsageLogTypes.ResetPassword, sendTypes);
+        }
+
+        public void LogMfaEvent(UsageLogSendTypes? sendTypes = null)
+        {
+            LogEvent(UsageLogTypes.Mfa, sendTypes);
+        }
+
+        public void LogEvent(UsageLogTypes planUsageType, UsageLogSendTypes? sendTypes)
+        {
+            Dictionary<string, string> properties = null;
+            if (sendTypes == UsageLogSendTypes.Sms)
+            {
+                properties = new Dictionary<string, string> { { Constants.Logs.UsageSms, "1" } };
+            }
+            else if(sendTypes == UsageLogSendTypes.Email)
+            {
+                properties = new Dictionary<string, string> { { Constants.Logs.Email, "1" } };
+            }
+            LogEvent(planUsageType, message: $"Usage {planUsageType}{(sendTypes.HasValue ? $".{sendTypes}" : string.Empty)} event.", properties: properties);
+        }
+
+        private void LogEvent(UsageLogTypes planUsageType, string message = null, IDictionary<string, string> properties = null)
+        {
+            var prop = new Dictionary<string, string> { { Constants.Logs.UsageType, planUsageType.ToString() } };
+            if (properties != null)
+            {
+                foreach(var property in properties)
+                {
+                    prop.Add(property.Key, property.Value);
+                }
+            }
+            logger.Event(message ?? $"Usage {planUsageType} event.", properties: prop);
         }
 
         private double GetLogAddRating(UsageLogTokenTypes? tokenType = null)

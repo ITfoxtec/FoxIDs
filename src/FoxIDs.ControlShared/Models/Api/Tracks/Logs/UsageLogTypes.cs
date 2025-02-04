@@ -10,6 +10,13 @@
         Login = 300,
         TokenRequest = 400,
         ControlApiGet = 500,
-        ControlApiUpdate = 520
+        ControlApiUpdate = 520,
+        Confirmation = 600,
+        ResetPassword = 700,
+        Mfa = 800,
+        RealCount = 10100,
+        ExtraCount = 10120,
+        Sms = 10200,
+        Email = 10320,
     }
 }

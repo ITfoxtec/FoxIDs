@@ -117,7 +117,7 @@ namespace FoxIDs.Controllers
                     }
                 }
                 
-                var mUser = await accountLogic.CreateUser(new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username }, 
+                var mUser = await accountLogic.CreateUserAsync(new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username }, 
                     createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
                     confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, phoneVerified: createUserRequest.PhoneVerified, 
                     disableAccount: createUserRequest.DisableAccount, 

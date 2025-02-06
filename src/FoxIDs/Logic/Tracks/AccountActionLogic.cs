@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
         public async Task<User> VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             phone = phone?.Trim();
-            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
+            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
             var user = await VerifyCodeAsync(SendType.Sms, SmsResetPasswordCodeKeyElement, phone, code, GetSmsSendResetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
@@ -136,7 +136,7 @@ namespace FoxIDs.Logic
         public async Task<User> VerifyEmailResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             email = email?.Trim()?.ToLower();
-            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
+            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
             var user = await VerifyCodeAsync(SendType.Email, EmailResetPasswordCodeKeyElement, email, code, GetEmailSendResetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {

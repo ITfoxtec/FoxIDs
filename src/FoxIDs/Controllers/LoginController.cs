@@ -641,6 +641,13 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
                     return StartChangePassword();
                 }
+                catch (PasswordRiskException prex)
+                {
+                    logger.ScopeTrace(() => prex.Message, triggerEvent: true);
+                    sequenceData.ShowPasswordRiskError = true;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return StartChangePassword();
+                }
                 catch (UserObservationPeriodException uoex)
                 {
                     logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
@@ -989,7 +996,7 @@ namespace FoxIDs.Controllers
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
                     userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
                     
-                    var user = await accountLogic.CreateUser(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+                    var user = await accountLogic.CreateUserAsync(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
                         return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
@@ -1158,6 +1165,13 @@ namespace FoxIDs.Controllers
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 };
+
+                if (sequenceData.ShowPasswordRiskError)
+                {
+                    ModelState.AddModelError(string.Empty, localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    sequenceData.ShowPasswordRiskError = false;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                }
 
                 if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
                 {

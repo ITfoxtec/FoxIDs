@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUser(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
+        public async Task<User> CreateUserAsync(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
             bool requireMultiFactor = false, bool disableTwoFactorApp = false, bool DisableTwoFactorSms = false, bool DisableTwoFactorEmail = false)
         {
             userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
                 {
                     throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
                 }
-                await ValidatePasswordPolicy(userIdentifier, password);
+                await ValidatePasswordPolicyAsync(userIdentifier, password);
             }
             user.ChangePassword = changePassword;
             await tenantDataRepository.CreateAsync(user);
@@ -115,7 +115,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> ChangePasswordUser(UserIdentifier userIdentifier, string currentPassword, string newPassword)
+        public async Task<User> ChangePasswordUserAsync(UserIdentifier userIdentifier, string currentPassword, string newPassword)
         {
             userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
             userIdentifier.Phone = userIdentifier.Phone?.Trim();
@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier.ToJson()}'.");
                 }
 
-                await ValidatePasswordPolicy(userIdentifier, newPassword);
+                await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
@@ -156,7 +156,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task SetPasswordUser(User user, string newPassword)
+        public async Task SetPasswordUserAsync(User user, string newPassword)
         {
             var userIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username };
             logger.ScopeTrace(() => $"Set password user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
@@ -166,7 +166,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
-            await ValidatePasswordPolicy(userIdentifier, newPassword);
+            await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.ChangePassword = false;
@@ -175,7 +175,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
         }
 
-        protected async Task ValidatePasswordPolicy(UserIdentifier userIdentifier, string password)
+        protected async Task ValidatePasswordPolicyAsync(UserIdentifier userIdentifier, string password)
         {
             CheckPasswordLength(password);
 
@@ -186,7 +186,15 @@ namespace FoxIDs.Logic
 
             if (RouteBinding.CheckPasswordRisk)
             {
-                await CheckPasswordRisk(password);
+                await CheckPasswordRiskAsync(password);
+            }
+        }
+
+        protected async Task ValidatePasswordRiskAsync(string password)
+        {
+            if (RouteBinding.CheckPasswordRisk)
+            {
+                await CheckPasswordRiskAsync(password);
             }
         }
 
@@ -288,7 +296,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task CheckPasswordRisk(string password)
+        private async Task CheckPasswordRiskAsync(string password)
         {
             var passwordSha1Hash = password.Sha1Hash();
             if (await masterDataRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))

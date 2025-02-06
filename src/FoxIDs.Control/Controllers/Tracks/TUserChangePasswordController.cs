@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
                 userRequest.Phone = userRequest.Phone?.Trim();
                 userRequest.Username = userRequest.Username?.Trim()?.ToLower();
 
-                var mUser = await accountLogic.ChangePasswordUser(new UserIdentifier { Email = userRequest.Email, Phone = userRequest.Phone, Username = userRequest.Username }, userRequest.CurrentPassword, userRequest.NewPassword);
+                var mUser = await accountLogic.ChangePasswordUserAsync(new UserIdentifier { Email = userRequest.Email, Phone = userRequest.Phone, Username = userRequest.Username }, userRequest.CurrentPassword, userRequest.NewPassword);
 
                 return Ok(mapper.Map<Api.User>(mUser));
             }

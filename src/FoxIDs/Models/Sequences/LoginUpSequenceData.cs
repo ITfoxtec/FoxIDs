@@ -75,5 +75,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "fse")]
         public bool SupportTwoFactorEmail { get; set; }
+
+        [JsonProperty(PropertyName = "spr")]
+        public bool ShowPasswordRiskError { get; set; }
     }
 }

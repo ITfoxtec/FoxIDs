@@ -43,6 +43,7 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
+            await ValidatePasswordRiskAsync(password);
             if (await secretHashLogic.ValidateSecretAsync(user, password))
             {
                 await failingLoginLogic.ResetFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
@@ -94,7 +95,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicy(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+                await ValidatePasswordPolicyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;

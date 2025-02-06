@@ -81,6 +81,14 @@ namespace FoxIDs.Models
         public PlanItem TokenRequests { get; set; }
 
         [Required]
+        [JsonProperty(PropertyName = "sms")]
+        public PlanItem Sms { get; set; } = new PlanItem();
+
+        [Required]
+        [JsonProperty(PropertyName = "emails")]
+        public PlanItem Emails { get; set; } = new PlanItem();
+
+        [Required]
         [JsonProperty(PropertyName = "control_api_get_req")]
         public PlanItem ControlApiGetRequests { get; set; }
 

@@ -342,17 +342,9 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException($"The SMS two-factor is not supported / enabled.");
                 }
-                loginPageLogic.CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);              
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty())
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableSms)
-                    {
-                        throw new PlanException(plan, $"SMS is not supported in the '{plan.Name}' plan.");
-                    }
-                }
-
+                await planUsageLogic.VerifyCanSendSmsAsync();
                 planUsageLogic.LogMfaEvent(UsageLogSendTypes.Sms);
 
                 await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
@@ -468,15 +460,7 @@ namespace FoxIDs.Controllers
                 }
                 loginPageLogic.CheckUpParty(sequenceData);
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty())
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableEmailTwoFactor)
-                    {
-                        throw new PlanException(plan, $"Email two-factor is not supported in the '{plan.Name}' plan.");
-                    }
-                }
-
+                await planUsageLogic.VerifyCanSendEmailAsync(isMfa: true);
                 planUsageLogic.LogMfaEvent(UsageLogSendTypes.Email);
 
                 await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);

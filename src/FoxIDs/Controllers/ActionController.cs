@@ -51,14 +51,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty())
-                {
-                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (!plan.EnableSms)
-                    {
-                        throw new PlanException(plan, $"SMS is not supported in the '{plan.Name}' plan.");
-                    }
-                }
+                await planUsageLogic.VerifyCanSendSmsAsync();
 
                 var codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
                 if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
@@ -163,6 +156,8 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+
+                await planUsageLogic.VerifyCanSendEmailAsync();
 
                 var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
                 if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)

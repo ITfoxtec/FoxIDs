@@ -5,16 +5,23 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
+using FoxIDs.Logic.Caches.Providers;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
     public class PlanUsageLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly ICacheProvider cacheProvider;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public PlanUsageLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanUsageLogic(TelemetryScopedLogger logger, ICacheProvider cacheProvider, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.cacheProvider = cacheProvider;
+            this.planCacheLogic = planCacheLogic;
         }
 
         public void LogLoginEvent(PartyTypes partyType)
@@ -137,6 +144,63 @@ namespace FoxIDs.Logic
             }
 
             return Math.Round(rating, 1);
+        }
+
+        public async Task VerifyCanSendSmsAsync()
+        {
+            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            {
+                var utcNow = DateTime.UtcNow;
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+
+                if (!plan.EnableSms)
+                {
+                    throw new PlanException(plan, $"SMS two-factor is not supported in the '{plan.Name}' plan.");
+                }
+
+                if (plan.Sms.LimitedThreshold > 0)
+                {
+                    var emailCount = await cacheProvider.GetNumberAsync(SmsSendCountInTenantKey(utcNow));
+                    if (emailCount >= plan.Sms.LimitedThreshold)
+                    {
+                        throw new PlanException(plan, $"Maximum number of SMS ({plan.Sms.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
+                    }
+                }
+                await cacheProvider.IncrementNumberAsync(SmsSendCountInTenantKey(utcNow), (DateTime.DaysInMonth(utcNow.Year, utcNow.Month) + 1) * 24 * 60 * 60);
+            }
+        }
+
+        public async Task VerifyCanSendEmailAsync(bool isMfa = false)
+        {
+            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            {
+                var utcNow = DateTime.UtcNow;
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+
+                if (isMfa && !plan.EnableEmailTwoFactor)
+                {
+                    throw new PlanException(plan, $"Email two-factor is not supported in the '{plan.Name}' plan.");
+                }
+
+                if (plan.Emails.LimitedThreshold > 0)
+                {
+                    var emailCount = await cacheProvider.GetNumberAsync(EmailsSendCountInTenantKey(utcNow));
+                    if (emailCount >= plan.Emails.LimitedThreshold)
+                    {
+                        throw new PlanException(plan, $"Maximum number of emails ({plan.Emails.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
+                    }
+                }
+                await cacheProvider.IncrementNumberAsync(EmailsSendCountInTenantKey(utcNow), (DateTime.DaysInMonth(utcNow.Year, utcNow.Month) + 1) * 24 * 60 * 60);
+            }
+        }
+
+        private string SmsSendCountInTenantKey(DateTime utcNow)
+        {
+            return $"sms_send_count_{RouteBinding.TenantName}_{utcNow.Month}";
+        }
+        private string EmailsSendCountInTenantKey(DateTime utcNow)
+        {
+            return $"emails_send_count_{RouteBinding.TenantName}_{utcNow.Month}";
         }
     }
 }

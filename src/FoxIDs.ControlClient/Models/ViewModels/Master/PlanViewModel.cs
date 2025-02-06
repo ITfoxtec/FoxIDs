@@ -51,6 +51,14 @@ namespace FoxIDs.Models.Api
         public PlanItem TokenRequests { get; set; }
 
         [Required]
+        [Display(Name = "SMS per month")]
+        public PlanItem Sms { get; set; } 
+
+        [Required]
+        [Display(Name = "Emails per month")]
+        public PlanItem Emails { get; set; }
+
+        [Required]
         [Display(Name = "Control API gets per month")]
         public PlanItem ControlApiGetRequests { get; set; }
 

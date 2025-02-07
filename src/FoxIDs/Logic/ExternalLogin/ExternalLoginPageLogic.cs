@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using FoxIDs.Models.Sequences;
 using System.Linq;
 using FoxIDs.Models.Session;
-using ITfoxtec.Identity.Util;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Logic;
 

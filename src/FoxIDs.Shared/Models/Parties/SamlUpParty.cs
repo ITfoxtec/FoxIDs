@@ -145,6 +145,11 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
+
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
+            }
             return results;
         }
     }

@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model PhoneConfirmationViewModel
+
+@{
+    ViewData["Title"] = Localizer["Phone confirmation"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container name-phone-confirmation">
+    <div class="col-md page-content">
+        <form method="post">
+            <input type="hidden" asp-for="ConfirmationCodeSendStatus" autocomplete="off" />
+            <div class="info-message">
+                @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode) 
+                {
+                    @Localizer["A confirmation code has just been sent to your phone. Please verify your phone number with the confirmation code."]
+                }
+                else if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.ForceNewCode)
+                {
+                    @Localizer["A new confirmation code has been sent to your phone. Please verify your phone number with the confirmation code."]
+                }
+                else 
+                {
+                    @Localizer["Please verify your phone number with the confirmation code sent to your phone."]
+                }
+            </div>
+            <input type="hidden" asp-for="Phone" autocomplete="off" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group active">
+                <input asp-for="Phone" id="showPhone" disabled autocomplete="off" class="form-control input-control bg-light" />
+                <label asp-for="Phone" id="showPhone" class="label-control"></label>
+                <span asp-validation-for="Phone"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
+                <label asp-for="ConfirmationCode" class="label-control"></label>
+                <span asp-validation-for="ConfirmationCode"></span>
+            </div>
+            <div class="form-group button-group">
+                <input type="submit" value="@Localizer["Confirm phone"]" class="btn btn-primary" />
+                @if (Model.EnableCancelLogin)
+                {
+                    <a href="../../../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                }
+                <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new confirmation code"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

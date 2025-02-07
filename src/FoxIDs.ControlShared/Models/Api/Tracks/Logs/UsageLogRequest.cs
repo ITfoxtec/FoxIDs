@@ -32,6 +32,8 @@ namespace FoxIDs.Models.Api
 
         public bool IncludeTokenRequests { get; set; }
 
+        public bool IncludeAdditional { get; set; }
+
         public bool IncludeControlApiGets { get; set; }
 
         public bool IncludeControlApiUpdates { get; set; }

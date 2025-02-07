@@ -9,7 +9,7 @@ using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, IClaimTransformViewModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
+    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
         public string InitName { get; set; }
 

@@ -2,8 +2,12 @@
 {   
     public enum LoginResponseSequenceSteps
     {
-        FromEmailVerificationStep = 1, 
-        FromMfaStep = 2,
-        FromLoginResponseStep = 3
+        PhoneVerificationStep = 10,
+        EmailVerificationStep = 20,
+        MfaSmsStep = 30,
+        MfaEmailStep = 31,
+        MfaRegisterAuthAppStep = 32,
+        MfaAllAndAppStep = 35,
+        LoginResponseStep = 40
     }
 }

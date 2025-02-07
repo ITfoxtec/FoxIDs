@@ -58,6 +58,12 @@ namespace FoxIDs.Repository
             var collection = database.GetCollection<T>(name);
             collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
             collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
+            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds), 
+                options: new CreateIndexOptions
+                {
+                    Unique = true,
+                    Sparse = true,
+                }));
             return collection;
         }
 

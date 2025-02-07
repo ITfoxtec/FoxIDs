@@ -48,6 +48,11 @@ namespace FoxIDs.Models
             {
                 results.AddRange(baseResults);
             }
+
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
+            }
             return results;
         }
     }

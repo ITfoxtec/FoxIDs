@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,10 @@ namespace FoxIDs.Models.Sequences
 {
     public class SamlUpSequenceData : UpSequenceData
     {
+        public SamlUpSequenceData() : base() { }
+
+        public SamlUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonProperty(PropertyName = "i")]
         public string Id { get; set; }
 
@@ -32,7 +37,7 @@ namespace FoxIDs.Models.Sequences
             {
                 if (Id.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Id)} is required if external initiated single logout.", new[] { nameof(Id) }));
+                    results.Add(new ValidationResult($"The field {nameof(Id)} is required if external initiated single logout.", [nameof(Id)]));
                 }
             }
 

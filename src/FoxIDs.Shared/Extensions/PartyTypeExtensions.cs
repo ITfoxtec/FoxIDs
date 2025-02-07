@@ -26,5 +26,33 @@ namespace FoxIDs
                     throw new NotSupportedException();
             }
         }
+
+        public static bool TryGetPartyType(this string partyTypeValue, out PartyTypes partyTypes)
+        {
+            switch (partyTypeValue?.ToLower())
+            {
+                case "login":
+                    partyTypes = PartyTypes.Login;
+                    return true;
+                case "oidc":
+                    partyTypes = PartyTypes.Oidc;
+                    return true;
+                case "oauth2":
+                    partyTypes = PartyTypes.OAuth2;
+                    return true;
+                case "saml2":
+                    partyTypes = PartyTypes.Saml2;
+                    return true;
+                case "env_link":
+                    partyTypes = PartyTypes.TrackLink;
+                    return true;
+                case "ext_login":
+                    partyTypes = PartyTypes.ExternalLogin;
+                    return true;
+            }
+
+            partyTypes = PartyTypes.Login;
+            return false;
+        }
     }
 }

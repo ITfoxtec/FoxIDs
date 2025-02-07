@@ -5,6 +5,10 @@ namespace FoxIDs.Models
 {
     public enum ClaimTransformActions
     {
+        [EnumMember(Value = "if")]
+        If = 4,
+        [EnumMember(Value = "if_not")]
+        IfNot = 6,
         [EnumMember(Value = "add")]
         Add = 10,
         [EnumMember(Value = "add_if_not")]

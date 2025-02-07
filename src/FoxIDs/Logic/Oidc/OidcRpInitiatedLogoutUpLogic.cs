@@ -22,11 +22,11 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly StateUpPartyLogic stateUpPartyLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -34,11 +34,12 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.stateUpPartyLogic = stateUpPartyLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
             this.securityHeaderLogic = securityHeaderLogic;
         }
-        public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
+
+        public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC End session request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -50,13 +51,14 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
-                DownPartyLink = logoutRequest.DownPartyLink,
+                IsSingleLogout = isSingleLogout,
+                DownPartyLink = logoutRequest?.DownPartyLink,
                 UpPartyId = partyId,
-                SessionId = logoutRequest.SessionId,
-                RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
-                PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
+                SessionId = logoutRequest?.SessionId,
+                RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
+                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true,
                 ClientId = ResolveClientId(party)
-            });
+            }, partyName: party.Name);
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
@@ -64,25 +66,32 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC End session request.");
-            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
-            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
+            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
             }
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            var party = await tenantDataRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
+            var party = await tenantDataRepository.GetAsync<OidcUpParty>(sequenceData.UpPartyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
             {
-                return await SingleLogoutDone(party.Id);
+                if (sequenceData.IsSingleLogout)
+                {
+                    return await singleLogoutLogic.HandleSingleLogoutUpAsync();
+                }
+                else
+                {
+                    return await SingleLogoutDoneAsync(party.Id);
+                }
             }
 
             try
             {
-                if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match authentication method session ID.");
                 }
@@ -92,12 +101,8 @@ namespace FoxIDs.Logic
                 logger.Warning(ex);
             }
 
-            oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
-            oidcUpSequenceData.SessionClaims = session.Claims;
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
-
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 
             try
             {
@@ -115,7 +120,7 @@ namespace FoxIDs.Logic
             var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
             {
                 IdTokenHint = session.IdToken,
-                ClientId = oidcUpSequenceData.ClientId,
+                ClientId = sequenceData.ClientId,
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = await sequenceLogic.CreateExternalSequenceIdAsync(),
             };
@@ -177,31 +182,40 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> EndSessionResponseInternalAsync(OidcUpParty party)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: party.DisableSingleLogout);
 
-            if (party.DisableSingleLogout)
+            if (sequenceData.IsSingleLogout)
             {
-                return await LogoutResponseDownAsync(sequenceData);
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                return await singleLogoutLogic.HandleSingleLogoutUpAsync();
             }
             else
             {
-                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
-                if (doSingleLogout)
+                if (party.DisableSingleLogout)
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
+                    return await LogoutResponseDownAsync(sequenceData);
                 }
                 else
                 {
-                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
-                    return await LogoutResponseDownAsync(sequenceData);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, sequenceData.DownPartyLink, sequenceData);
+                    if (doSingleLogout)
+                    {
+                        return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                        return await LogoutResponseDownAsync(sequenceData);
+                    }
                 }
             }
         }
 
-        public async Task<IActionResult> SingleLogoutDone(string partyId)
+        public async Task<IActionResult> SingleLogoutDoneAsync(string partyId)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
-            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: true);
+            if (!sequenceData.IsSingleLogout && !sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
             }

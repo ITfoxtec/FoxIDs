@@ -31,10 +31,10 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ExternalLoginConnectLogic externalLoginConnectLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public ExtLoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, ExternalLoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalLoginConnectLogic externalLoginConnectLogic, DynamicElementLogic dynamicElementLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.externalLoginConnectLogic = externalLoginConnectLogic;
             this.dynamicElementLogic = dynamicElementLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -104,16 +104,16 @@ namespace FoxIDs.Controllers
 
         public async Task<(bool validSession, IActionResult actionResult)> CheckSessionReturnRedirectAction(ExternalLoginUpSequenceData sequenceData, ExternalLoginUpParty upParty)
         {
-            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty, loginPageLogic.GetDownPartyLink(upParty, sequenceData));
+            var session = await sessionLogic.GetAndUpdateExternalSessionAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData.DownPartyLink, session));
+                return (validSession, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
+                return (validSession, await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
             }
 
             return (validSession, null);
@@ -185,15 +185,15 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var username = extLoginUpParty.UsernameType switch
+                    var userIdentifier = extLoginUpParty.UsernameType switch
                     {
                         ExternalLoginUsernameTypes.Email => extLogin.Email,
                         ExternalLoginUsernameTypes.Text => extLogin.Username,
                         _ => throw new NotSupportedException()
                     };
                     var profile = GetProfile(extLoginUpParty, sequenceData);
-                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, username, extLogin.Password);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, claims);
+                    var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, userIdentifier, extLogin.Password);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, userIdentifier, claims);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -207,8 +207,8 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(() => aex.Message, triggerEvent: true);
                         var wrongErrorText = extLoginUpParty.UsernameType switch
                         {
-                            ExternalLoginUsernameTypes.Email => "Wrong email or password",
-                            ExternalLoginUsernameTypes.Text => "Wrong username or password",
+                            ExternalLoginUsernameTypes.Email => "Wrong email or password.",
+                            ExternalLoginUsernameTypes.Text => "Wrong username or password.",
                             _ => throw new NotSupportedException()
                         };
                         ModelState.AddModelError(string.Empty,  localizer[wrongErrorText]);
@@ -243,7 +243,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Cancel external login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
-                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
+                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginCanceled, errorDescription: "Login canceled by user.");
             }
             catch (Exception ex)
             {
@@ -270,7 +270,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !session.SessionIdClaim.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionIdClaim, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
@@ -283,7 +283,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     _ = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
-                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{session.EmailClaim}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(extLoginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -324,7 +324,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(extLoginUpParty);
-                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.EmailClaim}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(extLoginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -349,52 +349,63 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> LogoutResponse(ExternalLoginUpParty loginUpParty, ExternalLoginUpSequenceData sequenceData, LogoutChoice logoutChoice, SessionLoginUpPartyCookie session = null)
         {
-            if (logoutChoice == LogoutChoice.Logout)
+            if (sequenceData.IsSingleLogout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.SessionId);
-
-                if (loginUpParty.DisableSingleLogout)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                    return await LogoutDoneAsync(loginUpParty, sequenceData);
-                }
-                else
-                {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, sequenceData.DownPartyLink, session?.DownPartyLinks, session?.Claims);
-                    if (doSingleLogout)
-                    {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
-                    }
-                    else
-                    {
-                        await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                        return await LogoutDoneAsync(loginUpParty, sequenceData);
-                    }
-                }
-            }
-            else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
-            {
-                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                if (sequenceData.PostLogoutRedirect)
-                {
-                    return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
-                }
-                else
-                {
-                    logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
-                }
+                return await singleLogoutLogic.HandleSingleLogoutUpAsync();
             }
             else
             {
-                throw new NotImplementedException();
+                if (logoutChoice == LogoutChoice.Logout)
+                {
+                    await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+
+                    if (loginUpParty.DisableSingleLogout)
+                    {
+                        await sessionLogic.DeleteSessionTrackCookieGroupAsync(loginUpParty);
+                        await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                        return await LogoutDoneAsync(loginUpParty, sequenceData);
+                    }
+                    else
+                    {
+                        (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(loginUpParty, sequenceData.DownPartyLink, sequenceData);
+                        if (doSingleLogout)
+                        {
+                            return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        }
+                        else
+                        {
+                            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                            return await LogoutDoneAsync(loginUpParty, sequenceData);
+                        }
+                    }                
+                }
+                else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                    if (sequenceData.PostLogoutRedirect)
+                    {
+                        return await serviceProvider.GetService<ExternalLogoutUpLogic>().LogoutResponseAsync(sequenceData);
+                    }
+                    else
+                    {
+                        logger.ScopeTrace(() => "Show logged in dialog.");
+                        return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
-            loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
+            if (!sequenceData.IsSingleLogout)
+            {
+                loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
+            }
             return await LogoutDoneAsync(null, sequenceData);
         }
 

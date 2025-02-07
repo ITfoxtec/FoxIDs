@@ -36,8 +36,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic(settings);
 
-            services.AddSingleton<EmbeddedResourceLogic>();
-
             services.AddTransient<SendEventEmailLogic>();
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();

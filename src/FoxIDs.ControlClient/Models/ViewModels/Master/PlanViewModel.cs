@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
@@ -29,6 +28,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [Display(Name = "SMS two-factor and reset password")]
+        public bool EnableSms { get; set; }
+
+        [Display(Name = "Email two-factor")]
+        public bool EnableEmailTwoFactor { get; set; }
+
         [Required]
         [Display(Name = "Total tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();
@@ -46,6 +51,14 @@ namespace FoxIDs.Models.Api
         public PlanItem TokenRequests { get; set; }
 
         [Required]
+        [Display(Name = "SMS per month")]
+        public PlanItem Sms { get; set; } 
+
+        [Required]
+        [Display(Name = "Emails per month")]
+        public PlanItem Emails { get; set; }
+
+        [Required]
         [Display(Name = "Control API gets per month")]
         public PlanItem ControlApiGetRequests { get; set; }
 
@@ -53,7 +66,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Control API updates per month")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [JsonProperty(PropertyName = "log_lifetime")]
         [Display(Name = "Log lifetime")]
         public LogLifetimeOptionsVievModel? LogLifetime { get; set; }
     }

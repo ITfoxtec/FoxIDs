@@ -1,10 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
     public class LoginUpSequenceData : UpSequenceData, ILoginUpSequenceDataBase
     {
+        public LoginUpSequenceData() : base() { }
+
+        public LoginUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 
@@ -17,20 +22,26 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "srl")]
         public bool DoSessionUserRequireLogin { get; set; }
 
+        [JsonProperty(PropertyName = "uin")]
+        public string UserIdentifier { get; set; }
+
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
 
         [JsonProperty(PropertyName = "ev")]
         public bool EmailVerified { get; set; }
 
+        [JsonProperty(PropertyName = "p")]
+        public string Phone { get; set; }
+
+        [JsonProperty(PropertyName = "pv")]
+        public bool PhoneVerified { get; set; }
+
         [JsonProperty(PropertyName = "tui")]
         public IEnumerable<HrdUpPartySequenceData> ToUpParties { get; set; }
 
         [JsonProperty(PropertyName = "li")]
         public bool DoLoginIdentifierStep { get; set; }
-
-        [JsonProperty(PropertyName = "a")]
-        public IEnumerable<string> Acr { get; set; }
 
         [JsonProperty(PropertyName = "am")]
         public IEnumerable<string> AuthMethods { get; set; }
@@ -46,5 +57,26 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "frc")]
         public string TwoFactorAppRecoveryCode { get; set; }
+
+        [JsonProperty(PropertyName = "fsa")]
+        public bool SupportTwoFactorApp { get; set; }
+        
+        [JsonProperty(PropertyName = "fsar")]
+        public bool TwoFactorAppIsRegistred { get; set; }
+
+        [JsonIgnore]
+        public bool ShowTwoFactorAppLink => SupportTwoFactorApp && TwoFactorAppIsRegistred;
+
+        [JsonIgnore]
+        public bool ShowRegisterTwoFactorApp => SupportTwoFactorApp && !TwoFactorAppIsRegistred;
+
+        [JsonProperty(PropertyName = "fss")]
+        public bool SupportTwoFactorSms { get; set; }
+
+        [JsonProperty(PropertyName = "fse")]
+        public bool SupportTwoFactorEmail { get; set; }
+
+        [JsonProperty(PropertyName = "spr")]
+        public bool ShowPasswordRiskError { get; set; }
     }
 }

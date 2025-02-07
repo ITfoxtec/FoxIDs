@@ -43,7 +43,7 @@ namespace FoxIDs.Models.Api
 
         /// <summary>
         /// [Optional]
-        /// Optional string element containing mailto: URIs representing e-mail addresses belonging to the
+        /// Optional string element containing mailto: URIs representing email addresses belonging to the
         /// contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.LimitedValueLength)]

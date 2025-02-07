@@ -22,11 +22,11 @@ namespace FoxIDs.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        public async Task<IActionResult> AuthenticationRequest()
+        public async Task<IActionResult> AuthorizationRequest()
         {
             try
             {
-                logger.ScopeTrace(() => $"Authentication request, Authentication type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Authorization request, Authentication type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Authentication request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Authorization request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

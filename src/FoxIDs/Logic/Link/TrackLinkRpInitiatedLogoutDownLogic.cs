@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -39,7 +40,7 @@ namespace FoxIDs.Logic
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);
-            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
+            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false, partyName: party.ToUpPartyName);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
                 throw new Exception($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.");
@@ -47,7 +48,7 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });
 
-            var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
+            var toUpParty = await GetToUpPartyAsync();
             logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
             switch (toUpParty.Type)
             {
@@ -67,6 +68,19 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
             }
+        }
+
+        private async Task<UpPartyLink> GetToUpPartyAsync()
+        {
+            (var toUpParties, var isSession) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
+            if (isSession && toUpParties?.Count() == 1)
+            {
+                var sessionUpParty = toUpParties.First();
+                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(sessionUpParty.Name, sessionUpParty.ProfileName);
+                return sessionUpParty;
+            }
+
+            return await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
         }
 
         private LogoutRequest GetLogoutRequest(TrackLinkDownParty party, string sessionId, bool requireLogoutConsent)

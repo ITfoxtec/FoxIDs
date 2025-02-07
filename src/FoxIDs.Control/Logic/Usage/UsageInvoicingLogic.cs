@@ -373,6 +373,8 @@ namespace FoxIDs.Logic.Usage
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional users ({plan.Users.Included} included)", $"Additional users (more then {plan.Users.FirstLevelThreshold})", used.Users, plan.Users, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional logins ({plan.Logins.Included} included)", $"Additional logins (more then {plan.Logins.FirstLevelThreshold})", used.Logins, plan.Logins, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional token requests ({plan.TokenRequests.Included} included)", $"Additional token requests (more then {plan.TokenRequests.FirstLevelThreshold})", used.TokenRequests, plan.TokenRequests, exchangeRate);
+                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional SMS ({plan.Sms.Included} included)", $"Additional SMS (more then {plan.Sms.FirstLevelThreshold})", used.TokenRequests, plan.Sms, exchangeRate);
+                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional emails ({plan.Emails.Included} included)", $"Additional emails (more then {plan.Emails.FirstLevelThreshold})", used.TokenRequests, plan.Emails, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API reads ({plan.ControlApiGetRequests.Included} included)", $"Additional Control API reads (more then {plan.ControlApiGetRequests.FirstLevelThreshold})", used.ControlApiGets, plan.ControlApiGetRequests, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API updates ({plan.ControlApiUpdateRequests.Included} included)", $"Additional Control API updates (more then {plan.ControlApiUpdateRequests.FirstLevelThreshold})", used.ControlApiUpdates, plan.ControlApiUpdateRequests, exchangeRate);
             }
@@ -477,8 +479,7 @@ namespace FoxIDs.Logic.Usage
 
             var httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{settings.Usage.ExternalInvoiceApiId.OAuthUrlDencode()}:{settings.Usage.ExternalInvoiceApiSecret.OAuthUrlDencode()}".Base64Encode());
-            var content = new StringContent(JsonConvert.SerializeObject(invoiceRequest, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
-            using var response = await httpClient.PostAsync(settings.Usage.ExternalInvoiceApiUrl, content);
+            using var response = await httpClient.PostAsPlainJsonAsync(settings.Usage.ExternalInvoiceApiUrl, invoiceRequest);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

@@ -27,6 +27,8 @@ namespace FoxIDs.Client
                         newClaimTransforms.Add(oauthClaimTransformClaimIn);
                         break;
                     case ClaimTransformTypes.Constant:
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimInViewModel>());
+                        break;
                     case ClaimTransformTypes.Concatenate:
                         newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInViewModel>());
                         break;
@@ -61,6 +63,8 @@ namespace FoxIDs.Client
                         newClaimTransforms.Add(samlClaimTransformClaimIn);
                         break;
                     case ClaimTransformTypes.Constant:
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimInViewModel>());
+                        break;
                     case ClaimTransformTypes.Concatenate:
                         newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInViewModel>());
                         break;

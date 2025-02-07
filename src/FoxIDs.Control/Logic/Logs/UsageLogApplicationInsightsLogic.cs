@@ -71,8 +71,28 @@ namespace FoxIDs.Logic
                 var item = new Api.UsageLogItem
                 {
                     Type = logType,
-                    Value = GetCount(row, logType),
                 };
+
+                switch (logType)
+                {
+                    case Api.UsageLogTypes.Login:
+                    case Api.UsageLogTypes.TokenRequest:
+                        (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(row);
+                        item.Value = totalCount;
+                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
+                        break;
+                    case Api.UsageLogTypes.Confirmation:
+                    case Api.UsageLogTypes.ResetPassword:
+                    case Api.UsageLogTypes.Mfa:
+                        (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(row);
+                        item.Value = itemCount;
+                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount, SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.SmsPrice, Value = smsPrice }] }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                        break;
+                    default:
+                        item.Value = GetCount(row);
+                        break;
+                }
+
                 itemsPointer.Add(item);
             }
 
@@ -123,14 +143,42 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private decimal GetCount(LogsTableRow row, Api.UsageLogTypes logType)
+        private decimal GetCount(LogsTableRow row)
         {
             var count = row.GetDouble("UsageCount");
-            if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
-            {
-                count += row.GetDouble("UsageAddRating");
-            }
             return count.HasValue ? Math.Round(Convert.ToDecimal(count.Value), 1) : 0.0M;
+        }
+
+        private (decimal totalCount, decimal realCount, decimal extraCount) GetCountAndRealEstra(LogsTableRow row)
+        {
+            var item = row.GetDouble("UsageCount");
+            double realCount = item.HasValue ? item.Value : 0.0;
+            
+            double extraCount = 0.0;
+            var addItem = row.GetDouble("UsageAddRating");
+            extraCount = addItem.HasValue ? addItem.Value : 0.0;
+
+            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
+        }
+
+        private (decimal realCount, decimal smsCount, decimal smsPrice, decimal emailCount) GetCountAndSmsEmail(LogsTableRow row)
+        {
+            var item = row.GetDouble("UsageCount");
+            double itemCount = item.HasValue ? item.Value : 0.0;
+            
+            double smsCount = 0.0;
+            var smsItem = row.GetDouble("UsageSms");
+            smsCount = smsItem.HasValue ? smsItem.Value : 0.0;
+
+            double smsPrice = 0.0;
+            var smsPriceItem = row.GetDouble("UsageSmsPrice");
+            smsPrice = smsPriceItem.HasValue ? smsPriceItem.Value : 0.0;
+
+            double emailCount = 0.0;
+            var emailItem = row.GetDouble("UsageEmail");
+            emailCount = emailItem.HasValue ? smsItem.Value : 0.0;
+
+            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 1));
         }
 
         private DateTime GetDate(LogsTableRow row)
@@ -171,14 +219,13 @@ namespace FoxIDs.Logic
 
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
-            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
+            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
             }
-            var includeAll = logRequest.IncludeLogins && logRequest.IncludeTokenRequests && logRequest.IncludeControlApiGets && logRequest.IncludeControlApiUpdates;
-
-            var where = includeAll ? $"isnotempty({Constants.Logs.UsageType})" : $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"{Constants.Logs.UsageType} == '{i}'"))}";
+          
+            var where = $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"{Constants.Logs.UsageType} == '{i}'"))}";
 
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
@@ -193,19 +240,25 @@ namespace FoxIDs.Logic
         {
             if (logRequest.IncludeLogins)
             {
-                yield return Api.UsageLogTypes.Login.ToString();
+                yield return UsageLogTypes.Login.ToString();
             }
             if (logRequest.IncludeTokenRequests)
             {
-                yield return Api.UsageLogTypes.TokenRequest.ToString();
+                yield return UsageLogTypes.TokenRequest.ToString();
+            }
+            if (logRequest.IncludeAdditional)
+            {
+                yield return UsageLogTypes.Confirmation.ToString();
+                yield return UsageLogTypes.ResetPassword.ToString();
+                yield return UsageLogTypes.Mfa.ToString();
             }
             if (logRequest.IncludeControlApiGets)
             {
-                yield return Api.UsageLogTypes.ControlApiGet.ToString();
+                yield return UsageLogTypes.ControlApiGet.ToString();
             }
             if (logRequest.IncludeControlApiUpdates)
             {
-                yield return Api.UsageLogTypes.ControlApiUpdate.ToString();
+                yield return UsageLogTypes.ControlApiUpdate.ToString();
             }
         }
 
@@ -231,8 +284,11 @@ namespace FoxIDs.Logic
 | extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
 | extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
 | extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
+| extend {Constants.Logs.UsageSms} = Properties.{Constants.Logs.UsageSms}
+| extend {Constants.Logs.UsageSmsPrice} = Properties.{Constants.Logs.UsageSmsPrice}
+| extend {Constants.Logs.UsageEmail} = Properties.{Constants.Logs.UsageEmail}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
+| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageSmsPrice = sum(todouble({Constants.Logs.UsageSmsPrice})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

@@ -10,7 +10,6 @@ namespace FoxIDs.Models
     public class UsageSettings : MasterDocument
     {
         public static Task<string> IdFormatAsync() => IdFormatAsync(new IdKey());
-
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

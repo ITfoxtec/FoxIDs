@@ -29,6 +29,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [Display(Name = "SMS two-factor and reset password")]
+        public bool EnableSms { get; set; }
+
+        [Display(Name = "Email two-factor")]
+        public bool EnableEmailTwoFactor { get; set; }
+
         [Required]
         [Display(Name = "Total tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();
@@ -44,6 +50,14 @@ namespace FoxIDs.Models.Api
         [Required]
         [Display(Name = "Token requests per month")]
         public PlanItem TokenRequests { get; set; }
+
+        [Required]
+        [Display(Name = "SMS per month")]
+        public PlanItem Sms { get; set; }
+
+        [Required]
+        [Display(Name = "Emails per month")]
+        public PlanItem Emails { get; set; }
 
         [Required]
         [Display(Name = "Control API gets per month")]

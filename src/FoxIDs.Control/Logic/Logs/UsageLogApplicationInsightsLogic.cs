@@ -84,9 +84,9 @@ namespace FoxIDs.Logic
                     case Api.UsageLogTypes.Confirmation:
                     case Api.UsageLogTypes.ResetPassword:
                     case Api.UsageLogTypes.Mfa:
-                        (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(row);
+                        (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(row);
                         item.Value = itemCount;
-                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                        item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount, SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.SmsPrice, Value = smsPrice }] }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
                         break;
                     default:
                         item.Value = GetCount(row);
@@ -161,7 +161,7 @@ namespace FoxIDs.Logic
             return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
         }
 
-        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(LogsTableRow row)
+        private (decimal realCount, decimal smsCount, decimal smsPrice, decimal emailCount) GetCountAndSmsEmail(LogsTableRow row)
         {
             var item = row.GetDouble("UsageCount");
             double itemCount = item.HasValue ? item.Value : 0.0;
@@ -170,11 +170,15 @@ namespace FoxIDs.Logic
             var smsItem = row.GetDouble("UsageSms");
             smsCount = smsItem.HasValue ? smsItem.Value : 0.0;
 
+            double smsPrice = 0.0;
+            var smsPriceItem = row.GetDouble("UsageSmsPrice");
+            smsPrice = smsPriceItem.HasValue ? smsPriceItem.Value : 0.0;
+
             double emailCount = 0.0;
             var emailItem = row.GetDouble("UsageEmail");
             emailCount = emailItem.HasValue ? smsItem.Value : 0.0;
 
-            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(emailCount), 1));
+            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 1));
         }
 
         private DateTime GetDate(LogsTableRow row)
@@ -281,9 +285,10 @@ namespace FoxIDs.Logic
 | extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
 | extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
 | extend {Constants.Logs.UsageSms} = Properties.{Constants.Logs.UsageSms}
+| extend {Constants.Logs.UsageSmsPrice} = Properties.{Constants.Logs.UsageSmsPrice}
 | extend {Constants.Logs.UsageEmail} = Properties.{Constants.Logs.UsageEmail}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
+| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})), UsageSms = sum(todouble({Constants.Logs.UsageSms})), UsageSmsPrice = sum(todouble({Constants.Logs.UsageSmsPrice})), UsageEmail = sum(todouble({Constants.Logs.UsageEmail})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

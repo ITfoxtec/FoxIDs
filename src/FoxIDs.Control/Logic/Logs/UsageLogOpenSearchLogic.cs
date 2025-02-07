@@ -87,9 +87,9 @@ namespace FoxIDs.Logic
                         case Api.UsageLogTypes.Confirmation:
                         case Api.UsageLogTypes.ResetPassword:
                         case Api.UsageLogTypes.Mfa:
-                            (var itemCount, var smsCount, var emailCount) = GetCountAndSmsEmail(bucketItem);
+                            (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(bucketItem);
                             item.Value = itemCount;
-                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount, SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.SmsPrice, Value = smsPrice }] }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
                             break;
                         default:
                             item.Value = GetCount(bucketItem);
@@ -190,7 +190,7 @@ namespace FoxIDs.Logic
             return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
         }
 
-        private (decimal realCount, decimal smsCount, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem)
+        private (decimal realCount, decimal smsCount, decimal smsPrice, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem)
         {
             double itemCount = bucketItem.DocCount.HasValue ? bucketItem.DocCount.Value : 0.0;
             double smsCount = 0.0;
@@ -199,13 +199,21 @@ namespace FoxIDs.Logic
             {
                 smsCount = smsValueAggregate.Value.Value;
             }
+
+            double smsPrice = 0.0;
+            var smsPriceValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageSmsPrice).ToLower()] as ValueAggregate;
+            if (smsPriceValueAggregate?.Value != null)
+            {
+                smsPrice = smsPriceValueAggregate.Value.Value;
+            }
+
             double emailCount = 0.0;
             var emailValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageEmail).ToLower()] as ValueAggregate;
             if (emailValueAggregate?.Value != null)
             {
                 emailCount = emailValueAggregate.Value.Value;
             }
-            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(emailCount), 1));
+            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 1));
         }
 
         private (DateTime start, DateTime end) GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
@@ -243,6 +251,9 @@ namespace FoxIDs.Logic
                                   
                                         .Sum(nameof(OpenSearchLogItem.UsageSms).ToLower(), sa => sa
                                             .Field(p => p.UsageSms)
+                                        )
+                                        .Sum(nameof(OpenSearchLogItem.UsageSmsPrice).ToLower(), sa => sa
+                                            .Field(p => p.UsageSmsPrice)
                                         )
                                         .Sum(nameof(OpenSearchLogItem.UsageEmail).ToLower(), sa => sa
                                             .Field(p => p.UsageEmail)

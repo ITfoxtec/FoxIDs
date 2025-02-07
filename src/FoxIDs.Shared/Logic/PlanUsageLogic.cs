@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using FoxIDs.Logic.Caches.Providers;
 using ITfoxtec.Identity;
+using FoxIDs.Repository;
 
 namespace FoxIDs.Logic
 {
@@ -16,12 +17,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ICacheProvider cacheProvider;
         private readonly PlanCacheLogic planCacheLogic;
+        private readonly IMasterDataRepository masterDataRepository;
 
-        public PlanUsageLogic(TelemetryScopedLogger logger, ICacheProvider cacheProvider, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanUsageLogic(TelemetryScopedLogger logger, ICacheProvider cacheProvider, PlanCacheLogic planCacheLogic, IMasterDataRepository masterDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.cacheProvider = cacheProvider;
             this.planCacheLogic = planCacheLogic;
+            this.masterDataRepository = masterDataRepository;
         }
 
         public void LogLoginEvent(PartyTypes partyType)
@@ -48,32 +51,63 @@ namespace FoxIDs.Logic
             LogEvent(UsageLogTypes.ControlApiUpdate);
         }
 
-        public void LogConfirmationEvent(UsageLogSendTypes? sendTypes = null)
+        public async Task LogConfirmationSmsEventAsync(string phone)
         {
-            LogEvent(UsageLogTypes.Confirmation, sendTypes);
+            await LogSmsEventAsync(UsageLogTypes.Confirmation, phone);
+        }
+        public void LogConfirmationEmailEvent()
+        {
+            LogEmailEvent(UsageLogTypes.Confirmation);
         }
 
-        public void LogResetPasswordEvent(UsageLogSendTypes? sendTypes = null)
+        public async Task LogResetPasswordSmsEventAsync(string phone)
         {
-            LogEvent(UsageLogTypes.ResetPassword, sendTypes);
+            await LogSmsEventAsync(UsageLogTypes.ResetPassword, phone);
+        }
+        public void LogResetPasswordEmailEvent()
+        {
+            LogEmailEvent(UsageLogTypes.ResetPassword);
         }
 
-        public void LogMfaEvent(UsageLogSendTypes? sendTypes = null)
+        public void LogMfaAuthAppEvent()
         {
-            LogEvent(UsageLogTypes.Mfa, sendTypes);
+            LogEvent(UsageLogTypes.Mfa);
+        }
+        public async Task LogMfaSmsEventAsync(string phone)
+        {
+            await LogSmsEventAsync(UsageLogTypes.Mfa, phone);
+        }
+        public void LogMfaEmailEvent()
+        {
+            LogEmailEvent(UsageLogTypes.Mfa);
         }
 
-        public void LogEvent(UsageLogTypes planUsageType, UsageLogSendTypes? sendTypes)
+        public async Task LogSmsEventAsync(UsageLogTypes planUsageType, string phone)
         {
-            Dictionary<string, string> properties = null;
-            if (sendTypes == UsageLogSendTypes.Sms)
+            var smsPrices = await LoadAndCreateSmsPrices();
+            decimal price = 0.0M;
+            if (smsPrices.Countries?.Count() > 0)
             {
-                properties = new Dictionary<string, string> { { Constants.Logs.UsageSms, "1" } };
+                var phoneNumber = phone.TrimStart('+');
+                var queryprice = smsPrices.Countries?.Where(c => phoneNumber.StartsWith(c.PhoneCode.ToString())).OrderByDescending(c => c.PhoneCode.ToString().Length).Select(c => c.Price).FirstOrDefault();
+                if (!queryprice.HasValue || !(queryprice > 0))
+                {
+                    throw new Exception($"Phone number '{phone}' country code not supported.");
+                }
+                price = queryprice.Value;
             }
-            else if(sendTypes == UsageLogSendTypes.Email)
-            {
-                properties = new Dictionary<string, string> { { Constants.Logs.UsageEmail, "1" } };
-            }
+            var properties = new Dictionary<string, string> { { Constants.Logs.UsageSms, "1" }, { Constants.Logs.UsageSmsPrice, price.ToString(CultureInfo.InvariantCulture) } };
+            LogEvent(planUsageType, UsageLogSendTypes.Sms, properties);
+        }
+
+        public void LogEmailEvent(UsageLogTypes planUsageType)
+        {
+            var properties = new Dictionary<string, string> { { Constants.Logs.UsageEmail, "1" } };
+            LogEvent(planUsageType, UsageLogSendTypes.Email, properties);
+        }
+
+        public void LogEvent(UsageLogTypes planUsageType, UsageLogSendTypes? sendTypes, Dictionary<string, string> properties)
+        {
             LogEvent(planUsageType, message: $"Usage {planUsageType}{(sendTypes.HasValue ? $".{sendTypes}" : string.Empty)} event.", properties: properties);
         }
 
@@ -201,6 +235,21 @@ namespace FoxIDs.Logic
         private string EmailsSendCountInTenantKey(DateTime utcNow)
         {
             return $"emails_send_count_{RouteBinding.TenantName}_{utcNow.Month}";
+        }
+
+        private async Task<SmsPrices> LoadAndCreateSmsPrices()
+        {
+            var mSmsPrices = await masterDataRepository.GetAsync<SmsPrices>(await SmsPrices.IdFormatAsync(), required: false);
+            if (mSmsPrices == null)
+            {
+                mSmsPrices = new SmsPrices
+                {
+                    Id = await SmsPrices.IdFormatAsync()
+                };
+                await masterDataRepository.CreateAsync(mSmsPrices);
+            }
+
+            return mSmsPrices;
         }
     }
 }

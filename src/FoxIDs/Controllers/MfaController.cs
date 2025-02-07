@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
 
-                planUsageLogic.LogMfaEvent();
+                planUsageLogic.LogMfaAuthAppEvent();
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -217,7 +217,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
                 }
 
-                planUsageLogic.LogMfaEvent();
+                planUsageLogic.LogMfaAuthAppEvent();
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -345,7 +345,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);              
 
                 await planUsageLogic.VerifyCanSendSmsAsync();
-                planUsageLogic.LogMfaEvent(UsageLogSendTypes.Sms);
+                await planUsageLogic.LogMfaSmsEventAsync(sequenceData.Phone);
 
                 await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
 
@@ -461,7 +461,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 await planUsageLogic.VerifyCanSendEmailAsync(isMfa: true);
-                planUsageLogic.LogMfaEvent(UsageLogSendTypes.Email);
+                planUsageLogic.LogMfaEmailEvent();
 
                 await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
 

@@ -17,6 +17,7 @@
         RealCount = 10100,
         ExtraCount = 10120,
         Sms = 10200,
+        SmsPrice = 10210,
         Email = 10320,
     }
 }

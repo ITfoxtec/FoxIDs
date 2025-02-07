@@ -56,7 +56,7 @@ namespace FoxIDs.Controllers
                 var codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
                 if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    planUsageLogic.LogConfirmationEvent(UsageLogSendTypes.Sms);
+                    await planUsageLogic.LogConfirmationSmsEventAsync(sequenceData.Phone);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -162,7 +162,7 @@ namespace FoxIDs.Controllers
                 var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
                 if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    planUsageLogic.LogConfirmationEvent(UsageLogSendTypes.Email);
+                    planUsageLogic.LogConfirmationEmailEvent();
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -314,7 +314,7 @@ namespace FoxIDs.Controllers
 
                 if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    planUsageLogic.LogResetPasswordEvent(UsageLogSendTypes.Sms);
+                    await planUsageLogic.LogResetPasswordSmsEventAsync(sequenceData.Phone);
                 }
 
                 return View(new PhoneResetPasswordViewModel
@@ -480,7 +480,7 @@ namespace FoxIDs.Controllers
 
                 if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    planUsageLogic.LogResetPasswordEvent(UsageLogSendTypes.Email);
+                    planUsageLogic.LogResetPasswordEmailEvent();
                 }
 
                 return View(new EmailResetPasswordViewModel

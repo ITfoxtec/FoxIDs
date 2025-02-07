@@ -9,7 +9,7 @@
     </div>
     @if (Item.SubItems?.Count() > 0 && Item.SubItems.Where(i => i.Value > 0).Any())
     {
-        <div class="col-12 mt-2 py-2 bg-light">
+        <div class="col-12 @(Item.Type == UsageLogTypes.Sms ? "pb-2" : "mt-2 py-2") bg-light">
             <small>
                 @foreach (var item in Item.SubItems)
                 {
@@ -54,6 +54,8 @@
                 return UsageLogIncludeTypes.ExtraCount;
             case UsageLogTypes.Sms:
                 return UsageLogIncludeTypes.Sms;
+            case UsageLogTypes.SmsPrice:
+                return UsageLogIncludeTypes.SmsPrice;
             case UsageLogTypes.Email:
                 return UsageLogIncludeTypes.Email;
             default:

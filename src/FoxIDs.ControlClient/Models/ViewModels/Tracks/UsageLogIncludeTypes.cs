@@ -16,6 +16,7 @@
         public const string RealCount = "Real request count";
         public const string ExtraCount = "Extra trace count";
         public const string Sms = "SMS";
+        public const string SmsPrice = "SMS base price";
         public const string Email = "Email";
     }
 }

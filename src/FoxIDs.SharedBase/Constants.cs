@@ -198,6 +198,7 @@ namespace FoxIDs
             public const string UsageTokenType = "UsageTokenType";
             public const string UsageAddRating = "UsageAddRating";
             public const string UsageSms = "UsageSms";
+            public const string UsageSmsPrice = "UsageSmsPrice";
             public const string UsageEmail = "UsageEmail";
 
             public static class Results
@@ -269,6 +270,7 @@ namespace FoxIDs
                 public const string DataProtection = "datap";
                 public const string Used = "used";
                 public const string UsageSettings = "uset";
+                public const string SmsPrices = "smsp";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -343,6 +345,14 @@ namespace FoxIDs
                 public const int InvoiceNumberMin = 0;
                 public const int InvoiceNumberPrefixLength = 20;
                 public const string InvoiceNumberPrefixRegExPattern = @"^[\w;:\/\-.,+ ]*$";
+            }
+
+            public static class SmsPrices
+            {
+                public const int IdLength = 20;
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
+                public const int CountriesMin = 0;
+                public const int CountriesMax = 500;
             }
 
             public static class Currency

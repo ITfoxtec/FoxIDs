@@ -178,6 +178,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace(() => "AuthMethod, SAML Logout request.", triggerEvent: true);
 
+            await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 

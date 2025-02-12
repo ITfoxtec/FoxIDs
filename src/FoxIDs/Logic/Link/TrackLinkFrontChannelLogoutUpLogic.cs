@@ -53,8 +53,6 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
             if (session != null)
             {
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-
                 if (party.DisableSingleLogout)
                 {
                     await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);

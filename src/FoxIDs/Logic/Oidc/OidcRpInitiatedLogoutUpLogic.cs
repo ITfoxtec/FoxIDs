@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
@@ -20,18 +21,20 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly StateUpPartyLogic stateUpPartyLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, StateUpPartyLogic stateUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
+            this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.stateUpPartyLogic = stateUpPartyLogic;
             this.singleLogoutLogic = singleLogoutLogic;
@@ -101,6 +104,7 @@ namespace FoxIDs.Logic
                 logger.Warning(ex);
             }
 
+            await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
 

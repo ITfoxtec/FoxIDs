@@ -3,7 +3,7 @@
     <div class="info-text">
         <DocsLink Page="claim-transform">Claim transforms</DocsLink> executed in order (use the move up and down arrows to change the order)
         <br />
-        @if (LoginCreateUser) 
+        @if (IsLoginCreateUser) 
         {
             <span>The new claims are added to the existing claims or otherwise replaced.</span>
         }
@@ -428,8 +428,17 @@
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.Match, ClaimTransformTasks.RequestException))">Match claim and value and return error</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.RegexMatch, ClaimTransformTasks.RequestException))">Regex match and return error</button>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Match or not match claim and then start authentication</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.UpPartyAction))">Match claim and start authentication</button>
+            <h6 class="dropdown-header">
+                Match or not match claim and then start authentication
+            </h6>
+            @if (IsDownParty)
+            {
+                <div class="mx-4 my-2 px-2 py-1 alert alert-info" role="alert">Please be careful not to start an infinite login loop.</div>
+            }
+            else
+            {
+                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.UpPartyAction))">Match claim and start authentication</button>
+            }
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.Match, ClaimTransformTasks.UpPartyAction))">Match claim and value and start authentication</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.RegexMatch, ClaimTransformTasks.UpPartyAction))">Regex match and start authentication</button>
         </div>
@@ -444,7 +453,10 @@
     public bool ExcludeDkPrivilege { get; set; }
 
     [Parameter]
-    public bool LoginCreateUser { get; set; }
+    public bool IsLoginCreateUser { get; set; }
+
+    [Parameter]
+    public bool IsDownParty { get; set; }
 
     private void AddClaimTransform(ClaimTransformTypes type)
     {

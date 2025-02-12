@@ -417,7 +417,14 @@
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.RegexMatch, ClaimTransformTasks.RequestException))">Regex match and return error</button>
             <div class="dropdown-divider"></div>
             <h6 class="dropdown-header">Match or not match claim and then start authentication</h6>
-            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.UpPartyAction))">Match claim and start authentication</button>
+            @if (IsDownParty)
+            {
+                <div class="mx-4 my-2 px-2 py-1 alert alert-info" role="alert">Please be careful not to start an infinite login loop.</div>
+            }
+            else
+            {
+                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.MatchClaim, ClaimTransformTasks.UpPartyAction))">Match claim and start authentication</button>
+            }
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.Match, ClaimTransformTasks.UpPartyAction))">Match claim and value and start authentication</button>
             <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddTask(ClaimTransformTypes.RegexMatch, ClaimTransformTasks.UpPartyAction))">Regex match and start authentication</button>
         </div>
@@ -427,6 +434,9 @@
 @code {
     [Parameter]
     public List<ClaimTransformViewModel> ClaimTransforms { get; set; }
+
+    [Parameter]
+    public bool IsDownParty { get; set; }
 
     private void AddClaimTransform(ClaimTransformTypes type, ClaimTransformTasks? task = null)
     {

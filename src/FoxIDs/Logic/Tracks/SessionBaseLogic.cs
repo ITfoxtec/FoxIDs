@@ -62,49 +62,55 @@ namespace FoxIDs.Logic
 
         public async Task AddOrUpdateSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink) where T : IUpParty
         {
-            (var session, var sessionGroup) = await LoadSessionTrackAsync(upParty);
-            AddUpPartyLink(sessionGroup, upParty);
-            if (!upParty.DisableSingleLogout && downPartyLink != null)
+            (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, downPartyLink);
+            foreach (var sessionGroup in sessionGroups)
             {
-                AddDownPartyLink(sessionGroup, downPartyLink);
+                AddUpPartyLink(sessionGroup, upParty);
+                if (!upParty.DisableSingleLogout && downPartyLink != null)
+                {
+                    AddDownPartyLink(sessionGroup, downPartyLink);
+                }
             }
             await sessionTrackCookieRepository.SaveAsync(session);
         }
 
         protected async Task AddOrUpdateSessionTrackWithClaimsAsync<T>(T upParty, IEnumerable<ClaimAndValues> claims) where T : IUpParty
         {
-            (var session, var sessionGroup) = await LoadSessionTrackAsync(upParty);
-            AddUpPartyLink(sessionGroup, upParty);
-            if (claims?.Count() > 0)
+            (var session, var sessionGroups) = await LoadSessionTrackAsync(upParty, null);
+            foreach (var sessionGroup in sessionGroups)
             {
-                sessionGroup.SessionUpParty = new UpPartySessionLink { Id = upParty.Id, Type = upParty.Type };
-                sessionGroup.Claims = claims.Where(c => c.Claim == JwtClaimTypes.SessionId || c.Claim == JwtClaimTypes.Email || c.Claim == JwtClaimTypes.Subject || c.Claim == JwtClaimTypes.Name || c.Claim == Constants.JwtClaimTypes.Upn || c.Claim == Constants.JwtClaimTypes.SubFormat);
+                AddUpPartyLink(sessionGroup, upParty);
+                if (sessionGroup.SessionUpParty == null && claims?.Count() > 0)
+                {
+                    sessionGroup.SessionUpParty = new UpPartySessionLink { Id = upParty.Id, Type = upParty.Type };
+                    sessionGroup.Claims = claims.Where(c => c.Claim == JwtClaimTypes.SessionId || c.Claim == JwtClaimTypes.Email || c.Claim == JwtClaimTypes.Subject || c.Claim == JwtClaimTypes.Name || c.Claim == Constants.JwtClaimTypes.Upn || c.Claim == Constants.JwtClaimTypes.SubFormat);
+                }
             }
             await sessionTrackCookieRepository.SaveAsync(session);
         }
 
-        private async Task<(SessionTrackCookie, SessionTrackCookieGroup)> LoadSessionTrackAsync<T>(T upParty) where T : IUpParty
+        private async Task<(SessionTrackCookie, IEnumerable<SessionTrackCookieGroup>)> LoadSessionTrackAsync<T>(T upParty, DownPartySessionLink downPartyLink) where T : IUpParty
         {
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session == null)
             {
                 session = new SessionTrackCookie();
                 session.LastUpdated = session.CreateTime;
-                return (session, AddNewSessionTrackCookieSequenceGroup(session));
+                return (session, AddNewSessionTrackCookieSequenceGroups(session));
             }
             else
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var sessionGroup = session.Groups?.Where(g => g.SequenceId == Sequence.Id || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).FirstOrDefault();
-                if (sessionGroup == null)
+                var sessionGroups = session.Groups?.Where(g => (downPartyLink != null && g.DownPartyLinks?.Any(d => d.Id == downPartyLink.Id) == true) || g.SequenceId == Sequence.Id || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true);
+                if (!(sessionGroups?.Count() > 0))
                 {
-                    sessionGroup = AddNewSessionTrackCookieSequenceGroup(session);
+                    sessionGroups = AddNewSessionTrackCookieSequenceGroups(session);
                 }
-                return (session, sessionGroup);
+                return (session, sessionGroups);
             }
         }
 
-        private SessionTrackCookieGroup AddNewSessionTrackCookieSequenceGroup(SessionTrackCookie session)
+        private IEnumerable<SessionTrackCookieGroup> AddNewSessionTrackCookieSequenceGroups(SessionTrackCookie session)
         {
             var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence.Id };
             if (session.Groups == null)
@@ -112,7 +118,7 @@ namespace FoxIDs.Logic
                 session.Groups = new List<SessionTrackCookieGroup>();
             }
             session.Groups.Add(sessionGroup);
-            return sessionGroup;
+            return session.Groups;
         }
 
         public async Task<SessionTrackCookieGroup> GetAndDeleteSessionTrackCookieGroupAsync<T>(T upParty) where T : IUpParty

@@ -3,33 +3,36 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using FoxIDs.Logic;
+using ITfoxtec.Identity;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models.Config;
 using System;
-using FoxIDs.Infrastructure.Security;
-using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
-    public class TTrackLogController : ApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    public class TTenantLogController : ApiController
     {
         private readonly FoxIDsControlSettings settings;
         private readonly LogLogic logLogic;
 
-        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, LogLogic logLogic) : base(logger)
+        public TTenantLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, LogLogic logLogic) : base(logger)
         {
             this.settings = settings;
             this.logLogic = logLogic;
         }
 
         /// <summary>
-        /// Get environment logs.
+        /// Get tenant logs.
         /// </summary>
         /// <returns>Logs.</returns>
         [ProducesResponseType(typeof(Api.LogResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
+        public async Task<ActionResult<Api.LogResponse>> GetTenantLog(Api.TenantLogRequest logRequest)
         {
             if (settings.Options.Log == LogOptions.Stdout)
             {
@@ -47,7 +50,25 @@ namespace FoxIDs.Controllers
                 }
             }
 
-            var logResponse = await logLogic.QueryLogs(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
+            if (!logRequest.TenantName.IsNullOrWhiteSpace())
+            {
+                logRequest.TenantName = logRequest.TenantName.ToLower();
+                if (!logRequest.TrackName.IsNullOrWhiteSpace())
+                {
+                    logRequest.TrackName = logRequest.TrackName.ToLower();
+                }
+                else
+                {
+                    logRequest.TrackName = null;
+                }
+            }
+            else
+            {
+                logRequest.TenantName = null;
+                logRequest.TrackName = null;
+            }
+
+            var logResponse = await logLogic.QueryLogs(logRequest, logRequest.TenantName, logRequest.TrackName);
             return Ok(logResponse);
         }
     }

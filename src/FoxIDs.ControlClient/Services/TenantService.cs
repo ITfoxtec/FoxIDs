@@ -1,7 +1,6 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -12,6 +11,7 @@ namespace FoxIDs.Client.Services
         private const string apiUri = "api/{tenant}/master/!tenant";
         private const string tenantsApiUri = "api/{tenant}/master/!tenants";
         private const string usageTenantsApiUri = "api/{tenant}/master/!usagetenants";
+        private const string logApiUri = "api/{tenant}/master/!tenantlog";
         private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
         private const string usageSettingsApiUri = "api/@master/!usagesettings";
         private const string listUsagesApiUri = "api/{tenant}/master/!usages";
@@ -29,6 +29,7 @@ namespace FoxIDs.Client.Services
         public async Task<TenantResponse> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, TenantResponse>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
 
+        public async Task<LogResponse> GetLogAsync(TenantLogRequest logRequest) => await GetAsync<TenantLogRequest, LogResponse>(logApiUri, logRequest);
         public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
 
         public async Task<UsageSettings> GetUsageSettingsAsync() => await GetAsync<UsageSettings>(usageSettingsApiUri);

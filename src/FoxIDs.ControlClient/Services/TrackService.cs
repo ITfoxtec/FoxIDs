@@ -62,7 +62,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<UsageLogResponse> GetTrackUsageLogAsync(UsageLogRequest usageLogRequest) => await GetAsync<UsageLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
 
-        public async Task<LogResponse> GetTrackLogAsync(LogRequest logRequest) => await GetAsync<LogRequest, LogResponse>(logApiUri, logRequest);
+        public async Task<LogResponse> GetLogAsync(LogRequest logRequest) => await GetAsync<LogRequest, LogResponse>(logApiUri, logRequest);
 
         public async Task<LogSettings> GetTrackLogSettingAsync() => await GetAsync<LogSettings>(logSettingApiUri);
         public async Task SaveTrackLogSettingAsync(LogSettings logSettings) => await PostAsync(logSettingApiUri, logSettings);

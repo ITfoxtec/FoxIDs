@@ -3,39 +3,34 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using FoxIDs.Models.Config;
-using System;
-using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using ITfoxtec.Identity;
+using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
-    public class TTrackLogController : ApiController
+    public class TMyTenantLogController : ApiController
     {
         private readonly FoxIDsControlSettings settings;
         private readonly LogLogic logLogic;
 
-        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, LogLogic logLogic) : base(logger)
+        public TMyTenantLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, LogLogic logLogic) : base(logger)
         {
             this.settings = settings;
             this.logLogic = logLogic;
         }
 
         /// <summary>
-        /// Get environment logs.
+        /// Get my tenant logs.
         /// </summary>
         /// <returns>Logs.</returns>
         [ProducesResponseType(typeof(Api.LogResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
+        public async Task<ActionResult<Api.LogResponse>> GetMyTenantLog(Api.MyTenantLogRequest logRequest)
         {
-            if (settings.Options.Log == LogOptions.Stdout)
-            {
-                throw new Exception("Not possible for Stdout.");
-            }
-
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
             if (settings.Options.Log == LogOptions.ApplicationInsights)
@@ -47,7 +42,16 @@ namespace FoxIDs.Controllers
                 }
             }
 
-            var logResponse = await logLogic.QueryLogs(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
+            if (!logRequest.TrackName.IsNullOrWhiteSpace())
+            {
+                logRequest.TrackName = logRequest.TrackName.ToLower();
+            }
+            else
+            {
+                logRequest.TrackName = null;
+            }
+
+            var logResponse = await logLogic.QueryLogs(logRequest, RouteBinding.TenantName, logRequest.TrackName);
             return Ok(logResponse);
         }
     }

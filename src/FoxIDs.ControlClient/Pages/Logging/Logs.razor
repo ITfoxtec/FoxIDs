@@ -50,6 +50,15 @@
                 <option value="@LogTimeIntervals.TwentyfourHours">24 hours</option>
             </FInputSelect>
             <FInputCheckboxSelect Items="queryTypeItems" SelectedItems="logRequestForm.Model.QueryTypes" For="@(() => logRequestForm.Model.QueryTypes)" />
+            @if (IsMasterTenant)
+            {
+                <FInputText @bind-Value="logRequestForm.Model.TenantName" For="@(() => logRequestForm.Model.TenantName)" />
+                <FInputText @bind-Value="logRequestForm.Model.TrackName" For="@(() => logRequestForm.Model.TrackName)" />
+            }
+            else @if (IsMasterTrack)
+            {
+                <FInputText @bind-Value="logRequestForm.Model.TrackName" For="@(() => logRequestForm.Model.TrackName)" />
+            }
             <FInputTextFilter @bind-Value="logRequestForm.Model.Filter" For="@(() => logRequestForm.Model.Filter)" />
         </PageEditForm>
 
@@ -95,7 +104,7 @@
                                                         @foreach (var oSubItem in sSubItem.SubItems)
                                                         {
                                                             <li class="list-group-item">
-                                                                <ELogItem Item="oSubItem" />
+                                                                <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
                                                             </li>
                                                         }
                                                     </ul>
@@ -103,7 +112,7 @@
                                             }
                                             else
                                             {
-                                                <ELogItem Item="sSubItem" />
+                                                <ELogItem Item="sSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
                                             }
                                         </li>
                                     }
@@ -120,7 +129,7 @@
                                     @foreach (var oSubItem in item.SubItems)
                                     {
                                         <li class="list-group-item">
-                                            <ELogItem Item="oSubItem" />
+                                            <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
                                         </li>
                                     }
                                 </ul>
@@ -128,7 +137,7 @@
                         }
                         else
                         {
-                            <ELogItem Item="item" />
+                            <ELogItem Item="item" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
                         }
                     </li>
                 }

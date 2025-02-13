@@ -225,6 +225,8 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
+                public const string TenantName = "TenantName";
+                public const string TrackName = "TrackName";
             }
 
             public static class IndexName

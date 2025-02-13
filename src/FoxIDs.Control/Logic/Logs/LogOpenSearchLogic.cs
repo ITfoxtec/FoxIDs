@@ -23,10 +23,10 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<Api.LogResponse> QueryLogs(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
+        public async Task<Api.LogResponse> QueryLogs(Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var responseTruncated = false;
-            var logItems = await LoadLogsAsync(logRequest, queryTimeRange, maxResponseLogItems);
+            var logItems = await LoadLogsAsync(logRequest, tenantName, trackName, queryTimeRange, maxResponseLogItems);
 
             if (logItems.Count() >= maxResponseLogItems)
             {
@@ -239,14 +239,14 @@ namespace FoxIDs.Logic
             operationItem.OperationId = item.OperationId;
         }
 
-        private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
+        private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
                 .Index(Indices.Index(GetIndexName()))
                     .Size(maxResponseLogItems)
                     .Sort(s => s.Descending(f => f.Timestamp))
                     .Query(q => q
-                         .Bool(b => GetQuery(b, logRequest, queryTimeRange)))
+                         .Bool(b => GetQuery(b, logRequest, tenantName, trackName, queryTimeRange)))
                 );
 
             return response.Documents;
@@ -259,7 +259,7 @@ namespace FoxIDs.Logic
             yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
-        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)
+        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
@@ -271,8 +271,8 @@ namespace FoxIDs.Logic
             }
            
             boolQuery = boolQuery.Must(m => m
-                .Term(t => t.TenantName, RouteBinding.TenantName) &&
-                    m.Term(t => t.TrackName, RouteBinding.TrackName)  &&
+                .Term(t => t.TenantName, tenantName) &&
+                    m.Term(t => t.TrackName, trackName)  &&
                     MustBeLogType(m, logRequest) && 
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs

@@ -25,34 +25,34 @@ namespace FoxIDs.Logic
             this.logAnalyticsWorkspaceProvider = logAnalyticsWorkspaceProvider;
         }
 
-        public async Task<Api.LogResponse> QueryLogsAsync(Api.LogRequest logRequest, QueryTimeRange queryTimeRange, int maxResponseLogItems)
+        public async Task<Api.LogResponse> QueryLogsAsync(Api.LogRequest logRequest, string tenantName, string trackName, QueryTimeRange queryTimeRange, int maxResponseLogItems)
         {
             var responseTruncated = false;
             var items = new List<InternalLogItem>();
             if (logRequest.QueryExceptions)
             {
-                if (await LoadExceptionsAsync(items, queryTimeRange, logRequest.Filter))
+                if (await LoadExceptionsAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryTraces)
             {
-                if (await LoadTracesAsync(items, queryTimeRange, logRequest.Filter))
+                if (await LoadTracesAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryEvents)
             {
-                if (await LoadEventsAsync(items, queryTimeRange, logRequest.Filter))
+                if (await LoadEventsAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryMetrics)
             {
-                if (await LoadMetricsAsync(items, queryTimeRange, logRequest.Filter))
+                if (await LoadMetricsAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
@@ -184,11 +184,11 @@ namespace FoxIDs.Logic
             return settings.ApplicationInsights.WorkspaceId;
         }
 
-        private async Task<bool> LoadExceptionsAsync(List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadExceptionsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath {GetGeneralQueryExtend()}";
             var where = filter.IsNullOrEmpty() ? null : $"| where Details contains '{filter}' or RequestId contains '{filter}' or RequestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
-            var exceptionsQuery = GetQuery("AppExceptions", extend, where);
+            var exceptionsQuery = GetQuery(tenantName, trackName, "AppExceptions", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), exceptionsQuery, queryTimeRange);
             var table = response.Value.Table;
 
@@ -215,11 +215,11 @@ namespace FoxIDs.Logic
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadTracesAsync(List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadTracesAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Message contains '{filter}' or {GetGeneralQueryWhere(filter)}";
-            var tracesQuery = GetQuery("AppTraces", extend, where);
+            var tracesQuery = GetQuery(tenantName, trackName, "AppTraces", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), tracesQuery, queryTimeRange);
             var table = response.Value.Table;
 
@@ -241,11 +241,11 @@ namespace FoxIDs.Logic
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadEventsAsync(List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadEventsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = $"| where isempty(Properties.f_UsageType){(filter.IsNullOrEmpty() ? String.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
-            var eventsQuery = GetQuery("AppEvents", extend, where);
+            var eventsQuery = GetQuery(tenantName, trackName, "AppEvents", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
 
@@ -265,11 +265,11 @@ namespace FoxIDs.Logic
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadMetricsAsync(List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadMetricsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
-            var customMetricsQuery = GetQuery("AppMetrics", extend, where);
+            var customMetricsQuery = GetQuery(tenantName, trackName, "AppMetrics", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), customMetricsQuery, queryTimeRange);
             var table = response.Value.Table;
 
@@ -281,7 +281,7 @@ namespace FoxIDs.Logic
                     Timestamp = GetTimestamp(row),
                     SequenceId = GetSequenceId(row),
                     OperationId = GetOperationId(row),
-                    Values = GetValues(row, new string[] { Constants.Logs.Results.Name, Constants.Logs.Results.Sum, Constants.Logs.Results.OperationName })
+                    Values = GetValues(row, [Constants.Logs.Results.Name, Constants.Logs.Results.Sum, Constants.Logs.Results.OperationName])
                 };
                 items.Add(item);
             }
@@ -309,14 +309,14 @@ namespace FoxIDs.Logic
 {Constants.Logs.Email} contains '{filter}' or 
 {Constants.Logs.UserAgent} contains '{filter}'";
 
-        private string GetQuery(string fromType, string extend, string where)
+        private string GetQuery(string tenantName, string trackName, string fromType, string extend, string where)
         {
             return
 @$"{fromType}
 | extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
 | extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
 | extend {Constants.Logs.SequenceId} = Properties.{Constants.Logs.SequenceId} {(extend.IsNullOrEmpty() ? string.Empty : extend)}
-| where {Constants.Logs.TenantName} == '{RouteBinding.TenantName}' and {Constants.Logs.TrackName} == '{RouteBinding.TrackName}' {(where.IsNullOrEmpty() ? string.Empty : where)}
+| where {Constants.Logs.TenantName} == '{tenantName}' and {Constants.Logs.TrackName} == '{trackName}' {(where.IsNullOrEmpty() ? string.Empty : where)}
 | limit {maxQueryLogItems}
 | order by TimeGenerated";
         }

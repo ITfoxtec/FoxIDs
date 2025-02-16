@@ -37,7 +37,7 @@ namespace FoxIDs.Client.Logic
             this.authenticationStateProvider = authenticationStateProvider;
         }
 
-        public bool IsMasterTenant => Constants.Routes.MasterTenantName.Equals(tenantName, StringComparison.OrdinalIgnoreCase);
+        public bool IsMasterTenant => Constants.Routes.MasterTenantName.Equals(GetTenantNameLocal(), StringComparison.OrdinalIgnoreCase);
 
         public bool IsMasterTrack => trackSelectedLogic.Track != null && Constants.Routes.MasterTrackName.Equals(trackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
 
@@ -76,6 +76,15 @@ namespace FoxIDs.Client.Logic
             return tenantName;
         }
 
+        private string GetTenantNameLocal()
+        {
+            if (tenantName.IsNullOrEmpty())
+            {
+                SetTenantName(); 
+            }
+            return tenantName;
+        }
+
         public string GetFoxIDsTenantEndpoint()
         {
             if (trackSelectedLogic.Track != null && !IsMasterTrack && !IsMasterTenant && myTenant != null && myTenant.CustomDomainVerified)
@@ -108,13 +117,18 @@ namespace FoxIDs.Client.Logic
 
         public async Task InitRouteBindingAsync()
         {
-            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
-            tenantName = urlSplit[0];
+            SetTenantName();
             await ValidateAndUpdateSessionTenantName();
             if (!IsMasterTenant)
             {
                 await LoadMyTenantAsync();
             }
+        }
+
+        public void SetTenantName()
+        {
+            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
+            tenantName = urlSplit[0];
         }
 
         private async Task ValidateAndUpdateSessionTenantName()

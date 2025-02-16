@@ -6,7 +6,16 @@ There are two different types of users:
 - [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The users are authenticated in an external Identity Provider and the users can be [redeemed](#provision-and-redeem) based on e.g. an `email` claim.
 
 ## Internal users
-Internal users can be authenticated in all [login](login.md) authentication methods in an environment, making is possible to [customize](customization.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.
+Internal users can be authenticated in one or more [login](login.md) authentication methods in an environment, making is possible to [customize](customization.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.
+
+Internal users support three user identifiers; email, phone number and username. The user identifiers is the username part when a user login with username and password. 
+You can select to only use one user identifier or them all.
+
+Only phone number as user identifier.
+![Phone number as user identifier](images/user-phone-user-identifier.png)
+
+Both email, phone number and username as user identifier.
+![Email, phone number and username as user identifier](images/user-email-phone-username-user-identifier.png)
 
 ### Create user
 Depending on the selected [login](login.md) authentication method's configuration, new users can create an account online.
@@ -20,7 +29,8 @@ And is then asked to fill out a form to create a user.
 ![New users create an account online](images/user-create-new-account.png)
 
 The page is composed by dynamic elements which can be customized per [login](login.md) authentication method.  
-In this example the create user page is composed by a Full name element and the default required Email and password element, ordered with the Full name element at the top.
+In this example the create user page is composed by a Given name element and a Family name element and a Email element and a Password element, ordered with the Full name element at the top.
+The Email element is a user identifier used to login. 
 
 This is the configuration in the [login](login.md) authentication method. Moreover, the claim `some_custom_claim` is added to each user as a constant in the [claim transformation](claim-transform).
 
@@ -32,9 +42,10 @@ Internal users can be created, changed and deleted with the [Control Client](con
 ![Configure Login](images/configure-user.png)
 
 ### Multi-factor authentication (MFA)
-Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app in a [login authentication method](login.md#two-factor-authentication-2famfa) and to configure the authenticator app if not already configured.
+Two-factor / multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor based on SMS, email or authenticator app and to register a authenticator app if not already registered.
 
-It is possible to see whether a two-factor authenticator app is configured for the user, and the administrator can deactivate the configured two-factor authenticator app.
+It is configurable which two-factor authentications should be available per user and per [login authentication method](login.md#two-factor-authentication-2famfa). 
+You can see whether a two-factor authenticator app is registered for on the user, and the administrator can deactivate the configured two-factor authenticator app.
 
 ![Configure Login](images/configure-user-mfa.png)
 

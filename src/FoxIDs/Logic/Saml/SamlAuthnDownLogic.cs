@@ -275,7 +275,15 @@ namespace FoxIDs.Logic
                 var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(samlClaimsDownLogic.GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
 
                 var authnContext = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationMethod);
+                if (string.IsNullOrEmpty(authnContext))
+                {
+                    throw new InvalidOperationException($"The authentication method '{ClaimTypes.AuthenticationMethod}' claim is empty.");
+                }
                 var authenticationInstant = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationInstant);
+                if (string.IsNullOrEmpty(authenticationInstant))
+                {
+                    throw new InvalidOperationException($"The authentication instant '{ClaimTypes.AuthenticationInstant}' claim is empty.");
+                }
                 var authenticationStatement = saml2AuthnResponse.CreateAuthenticationStatement(authnContext, DateTime.Parse(authenticationInstant));
 
                 var subjectConfirmation = saml2AuthnResponse.CreateSubjectConfirmation(tokenIssueTime, party.SubjectConfirmationLifetime);

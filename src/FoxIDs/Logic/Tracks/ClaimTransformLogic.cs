@@ -714,7 +714,7 @@ namespace FoxIDs.Logic
                         break;
                     case ClaimTransformActions.Replace:
                     case ClaimTransformActions.ReplaceIfNot:
-                        outputClaims.RemoveAll(c => newClaims.Any(c => c.Type.Equals(c.Type, StringComparison.Ordinal)));
+                        outputClaims.RemoveAll(c => newClaims.Any(nc => nc.Type.Equals(c.Type, StringComparison.Ordinal)));
                         outputClaims.AddRange(newClaims);
                         break;
                     default:

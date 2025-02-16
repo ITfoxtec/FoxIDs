@@ -43,6 +43,22 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "session_id")]
         public string SessionId { get; set; }
 
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "sub")]
+        public string Sub { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "email")]
+        public string Email { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "phone")]
+        public string Phone { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "username")]
+        public string Username { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "ct")]
         public long CreateTime { get; set; }

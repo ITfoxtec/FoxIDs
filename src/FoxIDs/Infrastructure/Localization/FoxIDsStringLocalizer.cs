@@ -27,9 +27,9 @@ namespace FoxIDs.Infrastructure.Localization
 
         private LocalizedString GetString(string name, params object[] arguments)
         {
-            var culture = httpContextAccessor.HttpContext.GetCulture();
+            var cultureName = httpContextAccessor.HttpContext.GetCultureParentName();
 
-            var value = localizationLogic.GetValue(name, culture.Name);
+            var value = localizationLogic.GetValue(name, cultureName);
 #if DEBUG
             if(value.IsNullOrEmpty())
             {

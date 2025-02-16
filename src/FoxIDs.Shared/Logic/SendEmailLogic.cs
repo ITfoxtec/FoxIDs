@@ -31,6 +31,7 @@ namespace FoxIDs.Logic
         public async Task SendEmailAsync(MailboxAddress toEmail, EmailContent emailContent)
         {
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
+            if (emailContent == null) throw new ArgumentNullException(nameof(emailContent));
 
             try
             {
@@ -49,7 +50,7 @@ namespace FoxIDs.Logic
                 else
                 {
                     //TODO add support for other email providers
-                    throw new NotImplementedException("Email provider not supported.");
+                    throw new NotSupportedException("Email provider not supported.");
                 }
             }
             catch (EmailConfigurationException cex)

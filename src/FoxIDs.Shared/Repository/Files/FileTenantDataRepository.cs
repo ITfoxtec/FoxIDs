@@ -18,12 +18,20 @@ namespace FoxIDs.Repository
             this.fileDataRepository = fileDataRepository;
         }
 
-        public override ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            return fileDataRepository.ExistsAsync(id, partitionId);
+            if (!queryAdditionalIds)
+            {
+                return await fileDataRepository.ExistsAsync(id, partitionId);
+            }
+            else
+            {
+                var item = await GetAsync<T>(id, required: false, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                return item != null;
+            }
         }
 
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
@@ -41,16 +49,29 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var item = (await fileDataRepository.GetAsync(id, partitionId, required, delete)).DataJsonToObject<T>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required && !queryAdditionalIds, delete)).DataJsonToObject<T>();
+            if (queryAdditionalIds && item == null)
+            {
+                Expression<Func<T, bool>> whereQuery = q => q.AdditionalIds.Contains(id);
+                var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>())).Select(i => i.DataJsonToObject<T>());
+                item = dataItems.Where(d => whereQuery.Compile()(d)).FirstOrDefault();
+                if (item == null && required)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+                if (item != null && delete)
+                {
+                    await DeleteAsync<T>(item.Id, scopedLogger: scopedLogger);
+                }
+            }
             await item.ValidateObjectAsync();
             return item;
         }
-
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
@@ -162,12 +183,19 @@ namespace FoxIDs.Repository
             await fileDataRepository.SaveAsync(item.Id, item.PartitionId, item.ToJson());
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             
-            var partitionId = id.IdToTenantPartitionId();
-            await fileDataRepository.DeleteAsync(id, partitionId);
+            if(!queryAdditionalIds)
+            {
+                var partitionId = id.IdToTenantPartitionId();
+                await fileDataRepository.DeleteAsync(id, partitionId);
+            }
+            else
+            {
+                _ = GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+            }
         }
 
         //public override ValueTask<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)

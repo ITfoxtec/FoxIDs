@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => $"AuthMethod, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -48,24 +48,18 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             }
 
-            await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData(loginRequest)
             {
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 ToUpParties = [new HrdUpPartySequenceData { Name = partyLink.Name }],
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                Email = loginRequest.EmailHint,
-                Acr = loginRequest.Acr,
-                DoLoginIdentifierStep = loginRequest.EmailHint.IsNullOrWhiteSpace()
+                DoLoginIdentifierStep = loginRequest.LoginHint.IsNullOrWhiteSpace()
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirectAsync(ILoginRequest loginRequest)
         {
             logger.ScopeTrace(() => "AuthMethod, Login redirect (multiple authentication method links).");
             (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();
@@ -77,7 +71,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SetUiUpPartyIdAsync(partyId);
 
             var hrdUpParties = ToHrdUpPartis(toUpParties);
-            var autoSelectedUpParty = await AutoSelectUpPartyAsync(hrdUpParties, loginRequest.EmailHint);
+            var autoSelectedUpParty = await AutoSelectUpPartyAsync(hrdUpParties, loginRequest.LoginHint);
             if (autoSelectedUpParty != null && autoSelectedUpParty.Name != loginName)
             {
                 switch (autoSelectedUpParty.Type)
@@ -111,24 +105,24 @@ namespace FoxIDs.Logic
                     LoginAction = loginRequest.LoginAction,
                     UserId = loginRequest.UserId,
                     MaxAge = loginRequest.MaxAge,
-                    Email = loginRequest.EmailHint,
+                    LoginHint = loginRequest.LoginHint,
                     Acr = loginRequest.Acr,
-                    DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.EmailHint.IsNullOrWhiteSpace())
+                    DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.LoginHint.IsNullOrWhiteSpace())
                 });
 
                 return HttpContext.GetUpPartyUrl(loginName, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
             }
         }
 
-        public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string email)
+        public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string userIdentifier)
         {
             // Handle up-parties with HRD "*" selection last.
             var toUpPartiesOrdered = toUpParties.OrderBy(u => u.HrdDomains?.Where(h => h == "*").Any() == true);
 
             // 1) Select specified authentication method
-            if (!email.IsNullOrWhiteSpace())
+            if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
-                var emailSplit = email.Split('@');
+                var emailSplit = userIdentifier.Split('@');
                 if (emailSplit.Count() > 1)
                 {
                     var domain = emailSplit[1];
@@ -153,9 +147,9 @@ namespace FoxIDs.Logic
             }
 
             // 3) Select authentication method by star
-            if (!email.IsNullOrWhiteSpace())
+            if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
-                var starUpParty = toUpPartiesOrdered.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
+                var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Any() == true).FirstOrDefault();
                 if (starUpParty != null)
                 {
                     return new UpPartyLink { Name = starUpParty.Name, ProfileName = starUpParty.ProfileName, Type = starUpParty.Type };
@@ -184,38 +178,43 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
+        public async Task<IActionResult> LoginResponseAsync(LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => "AuthMethod, Login response.");
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
-
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+            try
             {
+                logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
+
                 await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
+
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+                switch (sequenceData.DownPartyLink.Type)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
+                    case PartyTypes.Saml2:
+                        claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
-
-            logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
-
-            switch (sequenceData.DownPartyLink.Type)
+            catch (OAuthRequestException orex)
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
-                case PartyTypes.Saml2:
-                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
-                case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
-
-                default:
-                    throw new NotSupportedException();
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
             }
         }
 
-        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError error, string errorDescription = null)
+        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError? loginError = null, string error = null, string errorDescription = null)
         {
             logger.ScopeTrace(() => "Login error response.");
 
@@ -228,18 +227,23 @@ namespace FoxIDs.Logic
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyLink.Id, ErrorToOAuth2OidcString(error), errorDescription);
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyLink.Id, ErrorToOAuth2OidcString(loginError, error), errorDescription);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status: ErrorToSamlStatus(error));
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status: ErrorToSamlStatus(loginError, error));
 
                 default:
                     throw new NotSupportedException($"Connection type '{sequenceData.DownPartyLink.Type}' not supported.");
             }
         }
 
-        private string ErrorToOAuth2OidcString(LoginSequenceError error)
+        private string ErrorToOAuth2OidcString(LoginSequenceError? loginError, string error)
         {
-            switch (error)
+            if (!error.IsNullOrWhiteSpace())
+            {
+                return error;
+            }
+
+            switch (loginError)
             {
                 // Default
                 case LoginSequenceError.LoginCanceled:
@@ -256,9 +260,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        private Saml2StatusCodes ErrorToSamlStatus(LoginSequenceError error)
+        private Saml2StatusCodes ErrorToSamlStatus(LoginSequenceError? loginError, string error)
         {
-            switch (error)
+            if (!error.IsNullOrWhiteSpace())
+            {
+                return SamlConvertLogic.ErrorToSamlStatus(error);
+            }
+
+            switch (loginError)
             {
                 case LoginSequenceError.LoginCanceled:
                     return Saml2StatusCodes.AuthnFailed;

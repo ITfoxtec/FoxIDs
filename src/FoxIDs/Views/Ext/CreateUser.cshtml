@@ -23,6 +23,18 @@
                         @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
                     </div>
                 }
+                else if (Model.Elements[i] is PhoneDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetPhoneControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is UsernameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetUsernameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
                 else if (Model.Elements[i] is NameDElement)
                 {
                     <div class="form-group active-group">

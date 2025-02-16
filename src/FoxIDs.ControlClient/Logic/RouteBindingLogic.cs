@@ -18,7 +18,6 @@ namespace FoxIDs.Client.Logic
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
         private TenantResponse myTenant;
-        private bool? isMasterTenant;
         private readonly ClientSettings clientSettings;
         private readonly IServiceProvider serviceProvider;
         private readonly TrackSelectedLogic trackSelectedLogic;
@@ -38,7 +37,7 @@ namespace FoxIDs.Client.Logic
             this.authenticationStateProvider = authenticationStateProvider;
         }
 
-        public bool IsMasterTenant => (isMasterTenant ?? (isMasterTenant = Constants.Routes.MasterTenantName.Equals(tenantName, StringComparison.OrdinalIgnoreCase))).Value;
+        public bool IsMasterTenant => Constants.Routes.MasterTenantName.Equals(tenantName, StringComparison.OrdinalIgnoreCase);
 
         public bool IsMasterTrack => trackSelectedLogic.Track != null && Constants.Routes.MasterTrackName.Equals(trackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
 

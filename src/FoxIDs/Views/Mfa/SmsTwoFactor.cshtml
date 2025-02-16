@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model TwoFactorSmsViewModel
+
+@{
+    ViewData["Title"] = Localizer["SMS two-factor"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container sms-two-factor">
+    <div class="col-md page-content">
+        <form method="post">
+            <input type="hidden" asp-for="ForceNewCode" autocomplete="off" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="info-message-sub">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your phone."] : Localizer["A two-factor code has just been sent to your phone."])</div>
+            <input type="hidden" asp-for="Phone" autocomplete="off" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group active">
+                <input asp-for="Phone" id="showPhone" disabled autocomplete="off" class="form-control input-control bg-light" />
+                <label asp-for="Phone" id="showPhone" class="label-control"></label>
+                <span asp-validation-for="Phone"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="Code" autocomplete="off" class="form-control input-control" autofocus />
+                <label asp-for="Code" class="label-control"></label>
+                <span asp-validation-for="Code"></span>
+            </div>
+            @if (Model.ShowRegisterTwoFactorApp)
+            {
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input asp-for="RegisterTwoFactorApp" class="custom-control-input">
+                        <label asp-for="RegisterTwoFactorApp" class="custom-control-label"></label>
+                    </div>
+                </div>
+            }
+
+            <div class="form-group button-group">
+                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
+                <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new two-factor code"]</a>
+            </div>
+
+            @if (Model.ShowTwoFactorAppLink || Model.ShowTwoFactorEmailLink)
+            {
+                <div class="form-group button-group another-two-factor-group">
+                    @Localizer["Try another method?"]
+                    @if (Model.ShowTwoFactorAppLink && Model.ShowTwoFactorEmailLink)
+                    {
+                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor",
+                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"]
+                    }
+                    else @if (Model.ShowTwoFactorAppLink)
+                    {
+                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>", $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor"];
+                    }
+                    else @if (Model.ShowTwoFactorEmailLink)
+                    {
+                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>", $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

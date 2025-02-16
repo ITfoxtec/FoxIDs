@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames, IClaimTransformViewModel
+    public class OidcDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames
     {
         public string InitName { get; set; }
 

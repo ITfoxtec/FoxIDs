@@ -1,5 +1,7 @@
-﻿namespace FoxIDs.Models.Sequences
+﻿using FoxIDs.Models.Logic;
+
+namespace FoxIDs.Models.Sequences
 {
-    public interface IDownSequenceData
+    public interface IDownSequenceData : ISequenceData, ILoginRequest
     { }
 }

@@ -105,34 +105,50 @@ namespace FoxIDs.Client.Pages.Components
             }
             if (generalLoginUpParty.Form.Model.CreateUser.Elements?.Any() != true)
             {
-                generalLoginUpParty.Form.Model.CreateUser.Elements = new List<DynamicElementViewModel>
+                generalLoginUpParty.Form.Model.CreateUser.Elements = new List<DynamicElementViewModel>();
+
+                if (generalLoginUpParty.Form.Model.EnableUsernameIdentifier)
                 {
-                    new DynamicElementViewModel
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
-                        IsStaticRequired = true,
-                        Type = DynamicElementTypes.EmailAndPassword,
-                        Required = true
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.GivenName
-                    },
-                    new DynamicElementViewModel
-                    {
-                        Type = DynamicElementTypes.FamilyName
-                    }
-                };
-            }
-            else
-            {
-                foreach (var element in generalLoginUpParty.Form.Model.CreateUser.Elements)
-                {
-                    if (element.Type == DynamicElementTypes.EmailAndPassword)
-                    {
-                        element.IsStaticRequired = true;
-                        element.Required = true;
-                    }
+                        Type = DynamicElementTypes.Username,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
                 }
+                if (generalLoginUpParty.Form.Model.EnablePhoneIdentifier)
+                {
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Phone,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
+                }
+                if (generalLoginUpParty.Form.Model.EnableEmailIdentifier || (!generalLoginUpParty.Form.Model.EnablePhoneIdentifier && !generalLoginUpParty.Form.Model.EnableUsernameIdentifier))
+                {
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Email,
+                        Required = true,
+                        IsUserIdentifier = true
+                    });
+                }
+
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.Password,
+                    Required = true
+                });
+
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.GivenName
+                });
+                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                {
+                    Type = DynamicElementTypes.FamilyName
+                });
             }
         }
 

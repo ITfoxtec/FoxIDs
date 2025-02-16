@@ -101,7 +101,11 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnInitializedAsync()
         {
-            await ControlClientSettingLogic.InitLoadAsync();
+            var user = (await authenticationStateTask).User;
+            if (user.Identity.IsAuthenticated)
+            {
+                await ControlClientSettingLogic.InitLoadAsync();
+            }
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;

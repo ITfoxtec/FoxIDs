@@ -17,19 +17,21 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly HrdLogic hrdLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
 
-        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.hrdLogic = hrdLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
         }
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
@@ -51,16 +53,19 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
             if (session != null)
             {
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-
-                if (!party.DisableSingleLogout)
+                if (party.DisableSingleLogout)
+                {
+                    await sessionUpPartyLogic.DeleteSessionTrackCookieGroupAsync(party);
+                }
+                else
                 {
                     var frontChannelLogoutUri = HttpContext.GetTrackUpPartyUrl(RouteBinding.TrackName, party.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.FrontChannelLogout);
                     var allowIframeOnDomains = new List<string> { frontChannelLogoutUri.UrlToDomain() };
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims, allowIframeOnDomains, hostedInIframe: true);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutLogic.InitializeSingleLogoutAsync(party, null, allowIframeOnDomains: allowIframeOnDomains, hostedInIframe: true);
                     if (doSingleLogout)
                     {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                        securityHeaderLogic.AddFrameSrcAllowAll();
+                        return await singleLogoutLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
                     }
                 }
             }

@@ -36,8 +36,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic(settings);
 
-            services.AddSingleton<EmbeddedResourceLogic>();
-
             services.AddTransient<SendEventEmailLogic>();
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
@@ -53,6 +51,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
 
+            services.AddSingleton<LogLogic>();
             services.AddSingleton<UsageLogLogic>();
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {

@@ -128,9 +128,9 @@ namespace FoxIDs.Infrastructure
                                             read_only = new { },
                                             retry = new
                                             {
-                                                count = 3,
+                                                count = 7,
                                                 backoff = "exponential",
-                                                delay = "1m"
+                                                delay = "1d"
                                             }
                                         }
                                     },
@@ -156,9 +156,9 @@ namespace FoxIDs.Infrastructure
                                             delete = new { },
                                             retry = new
                                             {
-                                                count = 3,
+                                                count = 7,
                                                 backoff = "exponential",
-                                                delay = "1m"
+                                                delay = "1d"
                                             }
                                         }
                                     }

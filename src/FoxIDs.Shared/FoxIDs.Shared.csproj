@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>1.14.16</Version>
+		<Version>1.15.6</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
-		<Copyright>Copyright © 2024</Copyright>
+		<Copyright>Copyright © 2025</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

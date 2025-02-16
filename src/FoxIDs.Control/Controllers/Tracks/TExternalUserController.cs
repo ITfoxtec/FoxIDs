@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
-                userRequest = ToLower(userRequest);
+                userRequest = ToLowerAndLower(userRequest);
 
                 var mExternalUser = await GetExternalUserAsync(userRequest);
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
@@ -70,8 +70,22 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
-                userRequest = ToLower(userRequest);
+                userRequest = ToLowerAndLower(userRequest);
                 if (!await validateApiModelExternalUserLogic.ValidateApiModelAsync(ModelState, userRequest)) return BadRequest(ModelState);
+
+                try
+                {
+                    await CheckIfRedemptionClaimValueExists(userRequest.UpPartyName, userRequest.RedemptionClaimValue);
+                }
+                catch (FoxIDsDataException ex)
+                {
+                    if (ex.StatusCode == DataStatusCode.Conflict)
+                    {
+                        logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}', redemption claim already exist.");
+                        return Conflict($"{typeof(Api.ExternalUserId).Name}.{nameof(Api.ExternalUserId.RedemptionClaimValue)}", userRequest.RedemptionClaimValue);
+                    }
+                    throw;
+                }
 
                 var mExternalUser = mapper.Map<ExternalUser>(userRequest);
                 mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue));
@@ -105,7 +119,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(userRequest)) return BadRequest(ModelState);
-                userRequest = ToLower(userRequest);
+                userRequest = ToLowerAndLower(userRequest);
 
                 var mExternalUser = await GetExternalUserAsync(userRequest);
 
@@ -113,10 +127,12 @@ namespace FoxIDs.Controllers
                 var tempMExternalUser = mapper.Map<ExternalUser>(userRequest);
                 mExternalUser.Claims = tempMExternalUser.Claims;
 
+                var checkIfRedemptionClaimValueExists = false;
                 if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace())
                 {
                     if (!await validateApiModelExternalUserLogic.ValidateApiModelAsync(ModelState, userRequest)) return BadRequest(ModelState);
                     mExternalUser.UpPartyName = userRequest.UpdateUpPartyName;
+                    checkIfRedemptionClaimValueExists = true;
                 }
 
                 if (userRequest.UpdateLinkClaimValue != null)
@@ -140,29 +156,53 @@ namespace FoxIDs.Controllers
                     else
                     {
                         mExternalUser.RedemptionClaimValue = userRequest.UpdateRedemptionClaimValue;
+                        checkIfRedemptionClaimValueExists = true;
                     }
                 }
 
-                if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace() && userRequest.UpPartyName != userRequest.UpdateUpPartyName ||                                                            // if up-party change
-                    userRequest.UpdateLinkClaimValue != null && userRequest.LinkClaimValue != userRequest.UpdateLinkClaimValue ||                                                                 // if link claim change
-                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && !userRequest.UpdateLinkClaimValue.IsNullOrWhiteSpace() ||                                                                  // if link claim is added
-                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.UpdateRedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)    // if link claim not set and redemption claim change
+                if (checkIfRedemptionClaimValueExists)
                 {
-                    var oldExternalIserId = mExternalUser.Id;
-                    mExternalUser.Id = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(mExternalUser.LinkClaimValue, mExternalUser.RedemptionClaimValue));
-                    await tenantDataRepository.CreateAsync(mExternalUser);
-                    await tenantDataRepository.DeleteAsync<ExternalUser>(oldExternalIserId);
-                }
-                else
-                {
-                    await tenantDataRepository.SaveAsync(mExternalUser);
+                    try
+                    {
+                        await CheckIfRedemptionClaimValueExists(mExternalUser.UpPartyName, mExternalUser.RedemptionClaimValue);
+                    }
+                    catch (FoxIDsDataException ex)
+                    {
+                        if (ex.StatusCode == DataStatusCode.Conflict)
+                        {
+                            logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{mExternalUser.UpPartyName}' and link claim '{mExternalUser.LinkClaimValue}' or redemption claim '{mExternalUser.RedemptionClaimValue}', redemption claim already exist.");
+                            return Conflict($"{typeof(Api.ExternalUserId).Name}.{nameof(Api.ExternalUserId.RedemptionClaimValue)}", mExternalUser.RedemptionClaimValue);
+                        }
+                        throw;
+                    }
                 }
 
+                if (!userRequest.UpdateUpPartyName.IsNullOrWhiteSpace() && userRequest.UpPartyName != userRequest.UpdateUpPartyName ||                                                                 // if up-party change
+                    userRequest.UpdateLinkClaimValue != null && userRequest.LinkClaimValue != userRequest.UpdateLinkClaimValue ||                                                                      // if link claim change
+                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && !userRequest.UpdateLinkClaimValue.IsNullOrWhiteSpace() ||                                                                       // if link claim is added
+                    userRequest.LinkClaimValue.IsNullOrWhiteSpace() && userRequest.UpdateRedemptionClaimValue != null && userRequest.RedemptionClaimValue != userRequest.UpdateRedemptionClaimValue)   // if link claim not set and redemption claim change
+                {
+                    var newId = await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(mExternalUser.LinkClaimValue, mExternalUser.RedemptionClaimValue));
+                    if (mExternalUser.Id != newId)
+                    {
+                        await tenantDataRepository.DeleteAsync<ExternalUser>(mExternalUser.Id);
+                        mExternalUser.Id = newId;
+                        await tenantDataRepository.CreateAsync(mExternalUser);
+                        return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
+                    }
+                }
+
+                await tenantDataRepository.UpdateAsync(mExternalUser);
                 return Ok(mapper.Map<Api.ExternalUser>(mExternalUser));
             }
             catch (FoxIDsDataException ex)
             {
-                if (ex.StatusCode == DataStatusCode.NotFound)
+                if (ex.StatusCode == DataStatusCode.Conflict)
+                {
+                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
+                    return Conflict(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
+                }
+                else if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.ExternalUserId).Name}' by up-party name '{userRequest.UpPartyName}' and link claim '{userRequest.LinkClaimValue}' or redemption claim '{userRequest.RedemptionClaimValue}'.");
                     return NotFound(typeof(Api.ExternalUserId).Name, $"{userRequest.UpPartyName}:{(!userRequest.LinkClaimValue.IsNullOrWhiteSpace() ? userRequest.LinkClaimValue : userRequest.RedemptionClaimValue)}");
@@ -197,13 +237,25 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private async Task CheckIfRedemptionClaimValueExists(string upPartyName, string redemptionClaimValue)
+        {
+            if (!redemptionClaimValue.IsNullOrWhiteSpace())
+            {
+                if (await tenantDataRepository.CountAsync<ExternalUser>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, 
+                    whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && u.UpPartyName == upPartyName && u.RedemptionClaimValue == redemptionClaimValue) > 0)
+                {
+                    throw new FoxIDsDataException($"Redemption claim value '{redemptionClaimValue}' already exist.") { StatusCode = DataStatusCode.Conflict };
+                }
+            }
+        }
+
         private async Task<ExternalUser> GetExternalUserAsync(Api.ExternalUserId userRequest)
         {
             var mExternalUser = await tenantDataRepository.GetAsync<ExternalUser>(await ExternalUser.IdFormatAsync(RouteBinding, userRequest.UpPartyName, await GetLinkClaimHashAsync(userRequest.LinkClaimValue, userRequest.RedemptionClaimValue)), required: !userRequest.LinkClaimValue.IsNullOrWhiteSpace());
             if (mExternalUser == null)
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
+                (var mExternalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && u.UpPartyName.Equals(userRequest.UpPartyName) && u.RedemptionClaimValue.Equals(userRequest.RedemptionClaimValue));
                 mExternalUser = mExternalUsers?.FirstOrDefault();
                 if (mExternalUser == null)
                 {
@@ -214,15 +266,17 @@ namespace FoxIDs.Controllers
             return mExternalUser;
         }
 
-        private T ToLower<T>(T userRequest) where T : Api.ExternalUserId
+        private T ToLowerAndLower<T>(T userRequest) where T : Api.ExternalUserId
         {
-            userRequest.UpPartyName = userRequest.UpPartyName?.ToLower();
-            userRequest.RedemptionClaimValue = userRequest.RedemptionClaimValue?.ToLower();
+            userRequest.UpPartyName = userRequest.UpPartyName?.Trim().ToLower();
+            userRequest.LinkClaimValue = userRequest.LinkClaimValue?.Trim();
+            userRequest.RedemptionClaimValue = userRequest.RedemptionClaimValue?.Trim().ToLower();
 
             if (userRequest is Api.ExternalUserUpdateRequest externalUserUpdateRequest)
             {
-                externalUserUpdateRequest.UpdateUpPartyName = externalUserUpdateRequest.UpdateUpPartyName?.ToLower();
-                externalUserUpdateRequest.UpdateRedemptionClaimValue = externalUserUpdateRequest.UpdateRedemptionClaimValue?.ToLower();
+                externalUserUpdateRequest.UpdateUpPartyName = externalUserUpdateRequest.UpdateUpPartyName?.Trim().ToLower();
+                externalUserUpdateRequest.UpdateLinkClaimValue = externalUserUpdateRequest.UpdateLinkClaimValue?.Trim();
+                externalUserUpdateRequest.UpdateRedemptionClaimValue = externalUserUpdateRequest.UpdateRedemptionClaimValue?.Trim().ToLower();
             }
 
             return userRequest;

@@ -11,7 +11,7 @@ namespace FoxIDs.UnitTests.Mocks
     public class FakeTenantRepository : TenantDataRepositoryBase
     {
 
-        public override ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if(id == "user:testtenant:testtrack:a2@test.com")
             {
@@ -26,7 +26,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +61,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }

@@ -2,6 +2,8 @@
 {
     public enum ClaimTransformActions
     {
+        If = 4,
+        IfNot = 6,
         Add = 10,
         AddIfNot = 12,
         AddIfNotOut = 15,

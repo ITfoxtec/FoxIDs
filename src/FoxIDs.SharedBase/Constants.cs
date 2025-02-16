@@ -81,9 +81,14 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ResetPassword = "resetpassword";
+            public const string PhoneResetPassword = "phoneresetpassword";
+            public const string EmailResetPassword = "emailresetpassword";
+            public const string PhoneConfirmation = "phoneconfirmation";
             public const string EmailConfirmation = "emailconfirmation";
-            public const string RegisterTwoFactor = "regtwofactor";
-            public const string TwoFactor = "twofactor";
+            public const string AppTwoFactorRegister = "apptwofactorreg";
+            public const string AppTwoFactor = "apptwofactor";
+            public const string SmsTwoFactor = "smstwofactor";
+            public const string EmailTwoFactor = "emailtwofactor";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
@@ -109,7 +114,7 @@ namespace FoxIDs
 
             public static class UpJump
             {
-                public const string AuthenticationRequest = "authenticationrequest";
+                public const string AuthorizationRequest = "authorizationrequest";
                 public const string EndSessionRequest = "endsessionrequest";
 
                 public const string AuthnRequest = "authnrequest";
@@ -192,6 +197,9 @@ namespace FoxIDs
             public const string UsageLoginType = "UsageLoginType";
             public const string UsageTokenType = "UsageTokenType";
             public const string UsageAddRating = "UsageAddRating";
+            public const string UsageSms = "UsageSms";
+            public const string UsageSmsPrice = "UsageSmsPrice";
+            public const string UsageEmail = "UsageEmail";
 
             public static class Results
             {
@@ -217,12 +225,23 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
-            }    
+                public const string TenantName = "TenantName";
+                public const string TrackName = "TrackName";
+            }
+
+            public static class IndexName
+            {
+                public const string Errors = "errors";
+                public const string Events = "events";
+                public const string Traces = "traces";
+                public const string Metrics = "metrics";
+            }
         }
 
         public static class Models
         {
             public const string CosmosPartitionKeyPath = "/partition_id";
+            public const string CosmosAdditionalIdsPath = "/a_ids";
 
             public const int DefaultNameLength = 8;
             public const int DefaultNameMaxAttempts = 3;
@@ -253,6 +272,7 @@ namespace FoxIDs
                 public const string DataProtection = "datap";
                 public const string Used = "used";
                 public const string UsageSettings = "uset";
+                public const string SmsPrices = "smsp";
 
                 // data type used for cache
                 public const string Cache = "cache";
@@ -327,6 +347,14 @@ namespace FoxIDs
                 public const int InvoiceNumberMin = 0;
                 public const int InvoiceNumberPrefixLength = 20;
                 public const string InvoiceNumberPrefixRegExPattern = @"^[\w;:\/\-.,+ ]*$";
+            }
+
+            public static class SmsPrices
+            {
+                public const int IdLength = 20;
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
+                public const int CountriesMin = 0;
+                public const int CountriesMax = 500;
             }
 
             public static class Currency
@@ -477,6 +505,12 @@ namespace FoxIDs
                     public const int SmtpUsernameLength = 100;
                     public const int SmtpPasswordLength = 200;
                 }
+                public static class SendSms
+                {
+                    public const int FromNameLength = 100;
+                    public const int ClientIdLength = 300;
+                    public const int ClientSecretLength = 300;
+                }
                 public static class Logging
                 {
                     public const int ScopedStreamLoggersMin = 0;
@@ -488,12 +522,23 @@ namespace FoxIDs
             {
                 public const int IdLength = 180;
                 public const string IdRegExPattern = @"^[\w:\-.+@]*$";
+
+
+                public const int AdditionalIdsMin = 0;
+                public const int AdditionalIdsMax = 5;
+
                 public const int UserIdLength = 40;
+                public const string UserIdRegExPattern = @"^[\w\-]*$";
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
-                public const int ConfirmationCodeLength = 8;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
+                public const int UsernameLength = 60;
+                public const string UsernameRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
+                public const int PhoneLength = 30;
+                public const string PhoneRegExPattern = @"^\+[1-9]{1}[0-9]{1,14}$";
+                public const int ConfirmationCodeEmailLength = 8;
+                public const int ConfirmationCodeSmsLength = 5;
                 public const int TwoFactorAppCodeLength = 50;
             }
 
@@ -950,20 +995,20 @@ namespace FoxIDs
             /// <summary>
             /// Default ID Token claims.
             /// </summary>
-            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] 
-                { 
+            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
+                [
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, JwtClaimTypes.LocalSub
-                }).ToArray();
+                ]).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
-            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] 
-                { 
+            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
+                [
                     JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
                     JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Actor, JwtClaimTypes.LocalSub
-                }).ToArray();
+                ]).ToArray();
 
             /// <summary>
             /// Default JWT Token authentication method claims.
@@ -995,6 +1040,16 @@ namespace FoxIDs
                 SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthProfileMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, 
                 SamlClaimTypes.AuthMethodIssuer, SamlClaimTypes.LocalNameIdentifier
             };
+        }
+
+        public static class ClaimTransformClaimTypes
+        {
+            public const string Namespace = "_local:";
+            public static string LoginAction = $"{Namespace}login_action";
+            public static string UserId = $"{Namespace}user_id";
+            public static string MaxAge = $"{Namespace}max_age";
+            public static string LoginHint = $"{Namespace}login_hint";
+            public static string Acr = $"{Namespace}{FoxI.JwtClaimTypes.Acr}";
         }
 
         public static class JwtClaimTypes

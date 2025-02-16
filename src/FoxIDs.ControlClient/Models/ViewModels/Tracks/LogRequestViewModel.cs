@@ -13,11 +13,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Interval")]
         public LogTimeIntervals TimeInterval { get; set; } = LogTimeIntervals.FifteenMinutes;
 
+        [Display(Name = "Select tenant by full tenant name")]
+        public string TenantName { get; set; }
+
+        [Display(Name = "Select environment by full environment name")]
+        public string TrackName { get; set; }
+
         [Display(Name = "Search")]
         public string Filter { get; set; }
 
         [Display(Name = "Log types")]
-        public List<string> QueryTypes { get; set; } = new List<string> { LogQueryTypes.Exceptions, LogQueryTypes.Events };
+        public List<string> QueryTypes { get; set; }
 
         public static DateTimeOffset DefaultFromTime => DateTimeOffset.Now.AddMinutes(-5);
 
@@ -30,7 +36,7 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 if (QueryTypes.Contains(LogQueryTypes.Traces) && QueryTypes.Contains(LogQueryTypes.Events))
                 {
-                    results.Add(new ValidationResult($"Traces and events cannot be selected at the same time.", new[] { nameof(QueryTypes) }));
+                    results.Add(new ValidationResult($"Traces and events cannot be selected at the same time.", [nameof(QueryTypes)]));
                 }
             }
 

@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
             this.claimValidationLogic = claimValidationLogic;
         }
 
-        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "AuthMethod, Environment Link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -55,19 +55,13 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(partyId);
 
-            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData
+            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData(loginRequest)
             {
                 KeyName = partyLink.Name,
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
-                UpPartyProfileName = partyLink.ProfileName,
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                LoginEmailHint = loginRequest.EmailHint,
-                Acr = loginRequest.Acr,
-            }, setKeyValidUntil: true);
+                UpPartyProfileName = partyLink.ProfileName
+            }, setKeyValidUntil: true, partyName: party.Name);
 
             var profile = GetProfile(party, partyLink.ProfileName);
 
@@ -104,7 +98,7 @@ namespace FoxIDs.Logic
             }
 
             await sequenceLogic.ValidateAndSetSequenceAsync(keySequenceData.UpPartySequenceString);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
 
             List<Claim> claims = keySequenceData.Claims?.ToClaimList();
             if (keySequenceData.Error.IsNullOrEmpty())
@@ -137,56 +131,98 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
-                logger.ScopeTrace(() => $"AuthMethod, Environment Link transformed JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, claims,
-                    (externalUserUpSequenceData) =>
-                    {
-                        externalUserUpSequenceData.ExternalSessionId = externalSessionId;
-                        externalUserUpSequenceData.Error = keySequenceData.Error;
-                        externalUserUpSequenceData.ErrorDescription = keySequenceData.ErrorDescription;
-                    },
-                    (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
-                if (externalUserActionResult != null)
+                try
                 {
-                    return externalUserActionResult;
-                }
+                    await sessionUpPartyLogic.CreateOrUpdateMarkerSessionAsync(party, sequenceData.DownPartyLink, externalSessionId);
 
-                claims = await AuthResponsePostAsync(party, sequenceData, claims, externalUserClaims, externalSessionId);
+                    (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                    if (actionResult != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
+                        return actionResult;
+                    }
+                    claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
+                    logger.ScopeTrace(() => $"AuthMethod, Environment Link transformed JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+                    (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, claims,
+                        (externalUserUpSequenceData) =>
+                        {
+                            externalUserUpSequenceData.ExternalSessionId = externalSessionId;
+                            externalUserUpSequenceData.Error = keySequenceData.Error;
+                            externalUserUpSequenceData.ErrorDescription = keySequenceData.ErrorDescription;
+                        },
+                        (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
+                    if (externalUserActionResult != null)
+                    {
+                        if (deleteSequenceData)
+                        {
+                            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
+                        }
+                        return externalUserActionResult;
+                    }
+
+                    (claims, var authResponseActionResult) = await AuthResponsePostAsync(party, sequenceData, claims, externalUserClaims, externalSessionId);
+                    if (authResponseActionResult != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
+                        return authResponseActionResult;
+                    }
+                }
+                catch (OAuthRequestException orex)
+                {
+                    logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                    logger.Error(orex);
+                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
+                    return await AuthResponseDownAsync(sequenceData, null, orex.Error, orex.ErrorDescription);
+                }
             }
 
-            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: party.Name);
             return await AuthResponseDownAsync(sequenceData, claims, keySequenceData.Error, keySequenceData.ErrorDescription);
         }
 
         public async Task<IActionResult> AuthResponsePostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(externalUserSequenceData.UpPartyId);
 
-            var claims = await AuthResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.ExternalSessionId);
-            return await AuthResponseDownAsync(sequenceData, claims, externalUserSequenceData.Error, externalUserSequenceData.ErrorDescription);
+            try
+            {
+                (var claims, var actionResult) = await AuthResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.ExternalSessionId);
+                if (actionResult != null)
+                {
+                    return actionResult;
+                }
+                return await AuthResponseDownAsync(sequenceData, claims, externalUserSequenceData.Error, externalUserSequenceData.ErrorDescription);
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await AuthResponseDownAsync(sequenceData, null, orex.Error, orex.ErrorDescription);
+            }
         }
 
-        private async Task<List<Claim>> AuthResponsePostAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData, List<Claim> claims, IEnumerable<Claim> externalUserClaims, string externalSessionId)
+        private async Task<(List<Claim>, IActionResult actionResult)> AuthResponsePostAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData, List<Claim> claims, IEnumerable<Claim> externalUserClaims, string externalSessionId)
         {
             claims = externalUserLogic.AddExternalUserClaims(party, claims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, claims, externalSessionId);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExternalUserLoadedClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                return (null, actionResult);
+            }
+
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, transformedClaims, externalSessionId);
             if (!sessionId.IsNullOrEmpty())
             {
-                claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                transformedClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-            {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.TrackLink);
-            }
+            await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.TrackLink);
 
-            logger.ScopeTrace(() => $"AuthMethod, Environment Link output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return claims;
+            logger.ScopeTrace(() => $"AuthMethod, Environment Link output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (transformedClaims, null);
         }
 
         private async Task<IActionResult> AuthResponseDownAsync(TrackLinkUpSequenceData sequenceData, List<Claim> claims, string error, string errorDescription)

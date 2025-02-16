@@ -1,27 +1,24 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace FoxIDs
 {
     public static class JsonSerializerExtensions
     {
-        public static JsonSerializerOptions JsonSerializerOptions { get; private set; } = new JsonSerializerOptions();
-
-        static JsonSerializerExtensions()
+        public static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
-            JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
+        public static string JsonNewtonsoftSerialize(this object obj)
+        {
+            return JsonConvert.SerializeObject(obj, JsonSerializerSettings);
         }
 
-        public static string JsonSerialize(this object obj)
+        public static T JsonNewtonsoftDeserialize<T>(this string json) 
         {
-            return JsonSerializer.Serialize(obj, JsonSerializerOptions);
-        }
-
-        public static T JsonDeserialize<T>(this string json) 
-        {
-            return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
+            return JsonConvert.DeserializeObject<T>(json, JsonSerializerSettings);
         }
     }
 }

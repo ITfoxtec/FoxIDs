@@ -58,6 +58,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_custom_domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [JsonProperty(PropertyName = "enable_sms")]
+        public bool EnableSms { get; set; }
+
+        [JsonProperty(PropertyName = "enable_email_two_factor")]
+        public bool EnableEmailTwoFactor { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "tracks")]
         public PlanItem Tracks { get; set; } = new PlanItem();
@@ -73,6 +79,14 @@ namespace FoxIDs.Models
         [Required]
         [JsonProperty(PropertyName = "token_req")]
         public PlanItem TokenRequests { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "sms")]
+        public PlanItem Sms { get; set; } = new PlanItem();
+
+        [Required]
+        [JsonProperty(PropertyName = "emails")]
+        public PlanItem Emails { get; set; } = new PlanItem();
 
         [Required]
         [JsonProperty(PropertyName = "control_api_get_req")]

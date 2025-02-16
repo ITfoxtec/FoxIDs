@@ -63,7 +63,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(null));
+                SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
             }
             catch (TokenUnavailableException)
             {
@@ -80,13 +80,13 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail));
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterEmail), ex.Message);
+                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterValue), ex.Message);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterEmail, paginationToken: paginationToken), addUsers: true);
+                SetGeneralUsers(await UserService.GetUsersAsync(userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, userFilterForm.Model.FilterValue, paginationToken: paginationToken), addUsers: true);
             }
             catch (TokenUnavailableException)
             {
@@ -109,7 +109,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterEmail), ex.Message);
+                    userFilterForm.SetFieldError(nameof(userFilterForm.Model.FilterValue), ex.Message);
                 }
                 else
                 {
@@ -150,7 +150,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var user = await UserService.GetUserAsync(generalUser.Email);
+                var user = await UserService.GetUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
                 await generalUser.Form.InitAsync(ToViewModel(user));
             }
             catch (TokenUnavailableException)
@@ -178,6 +178,7 @@ namespace FoxIDs.Client.Pages
             {
                 user.ConfirmAccount = true;
                 user.EmailVerified = false;
+                user.PhoneVerified = false;
                 user.ChangePassword = true;
             }
         }
@@ -211,13 +212,36 @@ namespace FoxIDs.Client.Pages
                 if (generalUser.CreateMode)
                 {
                     var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>());
+                    generalUser.Email = userResult.Email;
+                    generalUser.Phone = userResult.Phone;
+                    generalUser.Username = userResult.Username;
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     generalUser.CreateMode = false;
                     toastService.ShowSuccess("User created.");
                 }
                 else
                 {
-                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>());
+                    var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>(afterMap: afterMap =>
+                    {
+                        if (afterMap.Email != generalUser.Email)
+                        {
+                            afterMap.UpdateEmail = afterMap.Email;
+                        }
+                        if (afterMap.Phone != generalUser.Phone)
+                        {
+                            afterMap.UpdatePhone = afterMap.Phone;
+                        }
+                        if (afterMap.Username != generalUser.Username)
+                        {
+                            afterMap.UpdateUsername = afterMap.Username;
+                        }
+                        afterMap.Email = generalUser.Email;
+                        afterMap.Phone = generalUser.Phone;
+                        afterMap.Username = generalUser.Username;
+                    }));
+                    generalUser.Email = userResult.Email;
+                    generalUser.Phone = userResult.Phone;
+                    generalUser.Username = userResult.Username;
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     toastService.ShowSuccess("User updated.");
                 }
@@ -241,7 +265,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await UserService.DeleteUserAsync(generalUser.Email);
+                await UserService.DeleteUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
                 users.Remove(generalUser);
             }
             catch (TokenUnavailableException)

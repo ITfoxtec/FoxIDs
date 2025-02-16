@@ -26,18 +26,27 @@ namespace FoxIDs.Logic
                 if (createUserElements?.Count() > 0)
                 {
                     ValidateDuplicatedOrderNumber(createUserElements);
-
-                    if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email).Count() == 1)
-                    {
-                        throw new ValidationException("Dynamic element of type Email is not supported.");
-                    }
-
-                    if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() != 1)
-                    {
-                        throw new ValidationException("Exactly one create user dynamic element of type EmailAndPassword is required.");
-                    }
-
                     ValidateDuplicatedElementType(createUserElements);
+
+                    if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() >= 1)
+                    {
+                        if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username || e.Type == Api.DynamicElementTypes.Password).Count() >= 1)
+                        {
+                            throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be combined with dynamic elements of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} or {nameof(Api.DynamicElementTypes.Password)}.");
+                        }
+                    }
+                    else
+                    {
+                        if (createUserElements.Where(e => (e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username) && e.Required).Count() < 1)
+                        {
+                            throw new ValidationException($"At least one dynamic element of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} must be set as required.");
+                        }
+
+                        if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() != 1)
+                        {
+                            throw new ValidationException($"One dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
+                        }
+                    }
                 }
             }
             catch (ValidationException vex)
@@ -57,13 +66,16 @@ namespace FoxIDs.Logic
                 if (linkExternalUserElements?.Count() > 0)
                 {
                     ValidateDuplicatedOrderNumber(linkExternalUserElements);
+                    ValidateDuplicatedElementType(linkExternalUserElements);
 
                     if (linkExternalUserElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() == 1)
                     {
-                        throw new ValidationException("Dynamic element of type EmailAndPassword is not supported.");
+                        throw new ValidationException($"Dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} is not supported.");
                     }
-
-                    ValidateDuplicatedElementType(linkExternalUserElements);
+                    if (linkExternalUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() == 1)
+                    {
+                        throw new ValidationException($"Dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is not supported.");
+                    }
                 }
             }
             catch (ValidationException vex)

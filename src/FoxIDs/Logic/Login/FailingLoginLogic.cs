@@ -19,35 +19,35 @@ namespace FoxIDs.Logic
             this.cacheProvider = cacheProvider;
         }
 
-        public async Task<long> IncreaseFailingLoginCountAsync(string username, FailingLoginTypes failingLoginType)
+        public async Task<long> IncreaseFailingLoginCountAsync(string lockId, FailingLoginTypes failingLoginType)
         {
-            var key = FailingLoginCountCacheKey(username, failingLoginType);
+            var key = FailingLoginCountCacheKey(lockId, failingLoginType);
             return await cacheProvider.IncrementNumberAsync(key, RouteBinding.FailingLoginCountLifetime);
         }
 
-        public async Task ResetFailingLoginCountAsync(string username, FailingLoginTypes failingLoginType)
+        public async Task ResetFailingLoginCountAsync(string lockId, FailingLoginTypes failingLoginType)
         {
-            await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(username, failingLoginType));
+            await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(lockId, failingLoginType));
         }
 
-        public async Task<long> VerifyFailingLoginCountAsync(string username, FailingLoginTypes failingLoginType)
+        public async Task<long> VerifyFailingLoginCountAsync(string lockId, FailingLoginTypes failingLoginType)
         {
-            var key = FailingLoginCountCacheKey(username, failingLoginType);
+            var key = FailingLoginCountCacheKey(lockId, failingLoginType);
 
-            if (await cacheProvider.ExistsAsync(FailingLoginLockedCacheKey(username, failingLoginType)))
+            if (await cacheProvider.ExistsAsync(FailingLoginLockedCacheKey(lockId, failingLoginType)))
             {
-                logger.ScopeTrace(() => $"{GetUserText(failingLoginType)} '{username}' locked by observation period.", triggerEvent: true);
-                throw new UserObservationPeriodException($"{GetUserText(failingLoginType)} '{username}' locked by observation period.");
+                logger.ScopeTrace(() => $"{GetUserText(failingLoginType)} '{lockId}' locked by observation period.", triggerEvent: true);
+                throw new UserObservationPeriodException($"{GetUserText(failingLoginType)} '{lockId}' locked by observation period.");
             }
 
             var failingLoginCount = await cacheProvider.GetNumberAsync(key);
             if (failingLoginCount >= RouteBinding.MaxFailingLogins)
             {
-                await cacheProvider.SetFlagAsync(FailingLoginLockedCacheKey(username, failingLoginType), RouteBinding.FailingLoginObservationPeriod);
+                await cacheProvider.SetFlagAsync(FailingLoginLockedCacheKey(lockId, failingLoginType), RouteBinding.FailingLoginObservationPeriod);
                 await cacheProvider.DeleteAsync(key);
 
-                logger.ScopeTrace(() => $"Observation period started for {GetUserText(failingLoginType).ToLower()} '{username}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                throw new UserObservationPeriodException($"Observation period started for {GetUserText(failingLoginType).ToLower()} '{username}'.");
+                logger.ScopeTrace(() => $"Observation period started for {GetUserText(failingLoginType).ToLower()} '{lockId}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
+                throw new UserObservationPeriodException($"Observation period started for {GetUserText(failingLoginType).ToLower()} '{lockId}'.");
             }
             return failingLoginCount;
         }
@@ -60,10 +60,16 @@ namespace FoxIDs.Logic
                     return "User";
                 case FailingLoginTypes.ExternalLogin:
                     return "External login user";
+                case FailingLoginTypes.SmsCode:
+                    return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
+                case FailingLoginTypes.TwoFactorSmsCode:
+                    return "SMS two-factor code";
+                case FailingLoginTypes.TwoFactorEmailCode:
+                    return "Email two-factor code";
                 case FailingLoginTypes.TwoFactorAuthenticator:
-                    return "Two-factor authenticator";
+                    return "Two-factor authenticator app";
                 default:
                     throw new NotImplementedException();
             }
@@ -73,19 +79,19 @@ namespace FoxIDs.Logic
             failingLoginCount > 0 ? new Dictionary<string, string> { { Constants.Logs.FailingLoginCount, Convert.ToString(failingLoginCount) } } : null;
 
 
-        private string FailingLoginCountCacheKey(string username, FailingLoginTypes failingLoginType)
+        private string FailingLoginCountCacheKey(string lockId, FailingLoginTypes failingLoginType)
         {
-            return $"failing_login_count_{CacheSubKey(username, failingLoginType)}";
+            return $"failing_login_count_{CacheSubKey(lockId, failingLoginType)}";
         }
 
-        private string FailingLoginLockedCacheKey(string username, FailingLoginTypes failingLoginType)
+        private string FailingLoginLockedCacheKey(string lockId, FailingLoginTypes failingLoginType)
         {
-            return $"failing_login_locked_{CacheSubKey(username, failingLoginType)}";
+            return $"failing_login_locked_{CacheSubKey(lockId, failingLoginType)}";
         }
 
-        private string CacheSubKey(string username, FailingLoginTypes failingLoginType)
+        private string CacheSubKey(string lockId, FailingLoginTypes failingLoginType)
         {
-            return $"{RouteBinding.TenantNameDotTrackName}{CacheSubKey(failingLoginType)}_{username}";
+            return $"{RouteBinding.TenantNameDotTrackName}{CacheSubKey(failingLoginType)}_{lockId}";
         }
 
         private string CacheSubKey(FailingLoginTypes failingLoginType)
@@ -96,8 +102,14 @@ namespace FoxIDs.Logic
                     return string.Empty;
                 case FailingLoginTypes.ExternalLogin:
                     return "_external_login";
+                case FailingLoginTypes.SmsCode:
+                    return "_sms_code";
                 case FailingLoginTypes.EmailCode:
                     return "_email_code";
+                case FailingLoginTypes.TwoFactorSmsCode:
+                    return "_sms_mfa_code";
+                case FailingLoginTypes.TwoFactorEmailCode:
+                    return "_email_mfa_code";
                 case FailingLoginTypes.TwoFactorAuthenticator:
                     return "_mfa_authenticator";
                 default:

@@ -219,7 +219,7 @@ namespace FoxIDs.Logic
 
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
-            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
+            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
@@ -252,12 +252,9 @@ namespace FoxIDs.Logic
                 yield return UsageLogTypes.ResetPassword.ToString();
                 yield return UsageLogTypes.Mfa.ToString();
             }
-            if (logRequest.IncludeControlApiGets)
+            if (logRequest.IncludeControlApi)
             {
                 yield return UsageLogTypes.ControlApiGet.ToString();
-            }
-            if (logRequest.IncludeControlApiUpdates)
-            {
                 yield return UsageLogTypes.ControlApiUpdate.ToString();
             }
         }

@@ -136,15 +136,13 @@ namespace FoxIDs.Logic
                     yield return bucketItem;
                 }
             }
-            if (logRequest.IncludeControlApiGets)
+            if (logRequest.IncludeControlApi)
             {
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ControlApiGet.ToString()))
                 {
                     yield return bucketItem;
                 }
-            }
-            if (logRequest.IncludeControlApiUpdates)
-            {
+
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ControlApiUpdate.ToString()))
                 {
                     yield return bucketItem;
@@ -230,7 +228,7 @@ namespace FoxIDs.Logic
 
         private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest)
         {
-            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
+            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
@@ -321,12 +319,9 @@ namespace FoxIDs.Logic
                 AddFilter(filters, UsageLogTypes.ResetPassword.ToString());
                 AddFilter(filters, UsageLogTypes.Mfa.ToString());
             }
-            if (logRequest.IncludeControlApiGets)
+            if (logRequest.IncludeControlApi)
             {
                 AddFilter(filters, UsageLogTypes.ControlApiGet.ToString());
-            }
-            if (logRequest.IncludeControlApiUpdates)
-            {
                 AddFilter(filters, UsageLogTypes.ControlApiUpdate.ToString());
             }
             return filters;

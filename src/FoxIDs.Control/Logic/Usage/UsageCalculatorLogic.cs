@@ -70,8 +70,8 @@ namespace FoxIDs.Logic.Usage
                     SummarizeLevel = Api.UsageLogSummarizeLevels.Month,
                     IncludeLogins = true,
                     IncludeTokenRequests = true,
-                    IncludeControlApiGets = true,
-                    IncludeControlApiUpdates = true,
+                    IncludeAdditional = true,
+                    IncludeControlApi = true
                 }, tenant.Name, null, isMasterTrack: true);
 
             used.IsUsageCalculated = true;
@@ -79,6 +79,9 @@ namespace FoxIDs.Logic.Usage
             used.Users = usageDbLogs.Items.Where(i => i.Type == Api.UsageLogTypes.User).Select(i => i.Value).FirstOrDefault();
             used.Logins = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.Login).Select(i => i.Value).FirstOrDefault();
             used.TokenRequests = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.TokenRequest).Select(i => i.Value).FirstOrDefault();
+
+
+
             used.ControlApiGets = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiGet).Select(i => i.Value).FirstOrDefault();
             used.ControlApiUpdates = usageLogs.Items.Where(i => i.Type == Api.UsageLogTypes.ControlApiUpdate).Select(i => i.Value).FirstOrDefault();
 

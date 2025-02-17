@@ -17,10 +17,10 @@ namespace FoxIDs.Client.Pages.Logging
 {
     public partial class LogUsage
     {
-        private static List<string> includeNotUserTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeMasterTrackAllTypeItems = new List<string> { UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeDefaultAllTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeNotUserTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApi };
+        private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApi };
+        private static List<string> includeMasterTrackAllTypeItems = new List<string> { UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApi };
+        private static List<string> includeDefaultAllTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.Additional, UsageLogIncludeTypes.ControlApi };
 
         private string logLoadError;
         private PageEditForm<UsageLogRequestViewModel> usageLogRequestForm;
@@ -169,8 +169,7 @@ namespace FoxIDs.Client.Pages.Logging
                 usageLogRequest.IncludeLogins = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Logins);
                 usageLogRequest.IncludeTokenRequests = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.TokenRequests);
                 usageLogRequest.IncludeAdditional = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Additional);
-                usageLogRequest.IncludeControlApiGets = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApiGets);
-                usageLogRequest.IncludeControlApiUpdates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApiUpdates);
+                usageLogRequest.IncludeControlApi = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApi);
             }
             else
             {

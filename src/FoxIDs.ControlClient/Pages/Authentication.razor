@@ -1,8 +1,33 @@
 @page "/{tenantName}/authentication/{action}"
+@using ITfoxtec.Identity.Messages
+@using System.Security
 @layout EmptyLayout
 @inherits AuthenticationPageBase
 
 @code {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
     [Parameter]
     public string TenantName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            await base.OnInitializedAsync();
+        }
+        catch(Exception ex) 
+        {
+            if (ex is SecurityException securityException && securityException.InnerException is ResponseErrorException responseErrorException &&
+                (responseErrorException.Error == Constants.OAuth.ResponseErrors.LoginTimeout || responseErrorException.Error == Constants.OAuth.ResponseErrors.LoginCanceled))
+            {
+                NavigationManager.NavigateTo($"{NavigationManager.BaseUri.Trim('/')}/{TenantName}".ToLower());
+            }
+            else 
+            {
+                throw;
+            }
+        }
+    }
 }

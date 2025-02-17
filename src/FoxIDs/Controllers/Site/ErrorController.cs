@@ -47,78 +47,114 @@ namespace FoxIDs.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var errorViewModel = new ErrorViewModel
+            try
             {
-                CreateTime = DateTimeOffset.Now,
-                RequestId = HttpContext.TraceIdentifier,
-                OperationId = Activity.Current?.TraceId.ToString()
-            };
 
-            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            var exception = exceptionHandlerPathFeature?.Error;
-
-            if (exceptionHandlerPathFeature != null && exception != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
-            {                
-                return HandleOAuthTokenException(exception);
-            }
-            else
-            {
-                LogException(exception);
-            }
-
-            var sequenceException = FindException<SequenceException>(exception);
-            var sequence = await ReadAndUseSequenceAsync(errorViewModel, exceptionHandlerPathFeature);
-            if (sequence != null)
-            {
-                if (sequenceException != null)
+                var errorViewModel = new ErrorViewModel
                 {
-                    var handleGracefulSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
-                    if (handleGracefulSequenceExceptionResult != null)
+                    CreateTime = DateTimeOffset.Now,
+                    RequestId = HttpContext.TraceIdentifier,
+                    OperationId = Activity.Current?.TraceId.ToString()
+                };
+
+                var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature?.Error;
+
+                if (exceptionHandlerPathFeature != null && exception != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
+                {
+                    return HandleOAuthTokenException(exception);
+                }
+                else
+                {
+                    var sequenceException = FindException<SequenceException>(exception);
+                    var sequence = await ReadAndUseSequenceAsync(errorViewModel, exceptionHandlerPathFeature);
+                    if (sequence != null)
                     {
-                        return handleGracefulSequenceExceptionResult;
+                        if (sequenceException != null)
+                        {
+                            var handleGracefulSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
+                            if (handleGracefulSequenceExceptionResult != null)
+                            {
+                                LogExceptionAsWarning(exception);
+                                return handleGracefulSequenceExceptionResult;
+                            }
+                        }
                     }
-                }
-            }
 
-            if (sequenceException != null)
-            {
-                var handleSequenceExceptionResult = HandleSequenceException(errorViewModel, sequenceException);
-                if (handleSequenceExceptionResult != null)
+                    if (sequenceException != null)
+                    {
+                        var handleSequenceExceptionResult = HandleSequenceException(errorViewModel, sequenceException);
+                        if (handleSequenceExceptionResult != null)
+                        {
+                            LogExceptionAsWarning(exception);
+                            return handleSequenceExceptionResult;
+                        }
+                    }
+
+                    var routeCreationException = FindException<RouteCreationException>(exception);
+                    if (routeCreationException != null)
+                    {
+                        LogExceptionAsWarning(exception);
+                        return HandleRouteCreationException(errorViewModel, routeCreationException);
+                    }
+
+                    var externalKeyIsNotReadyException = FindException<ExternalKeyIsNotReadyException>(exception);
+                    if (externalKeyIsNotReadyException != null)
+                    {
+                        LogExceptionAsWarning(exception);
+                        return HandleExternalKeyIsNotReadyException(errorViewModel);
+                    }
+
+                    var planException = FindException<PlanException>(exception);
+                    if (planException != null)
+                    {
+                        LogExceptionAsWarning(exception);
+                        return HandlePlanException(errorViewModel, planException);
+                    }
+
+                    LogExceptionAsError(exception);
+                }
+
+                if (environment.IsDevelopment())
                 {
-                    return handleSequenceExceptionResult;
+                    errorViewModel.TechnicalErrors = ExceptionTechnicalErrors(exception);
                 }
+                else
+                {
+                    errorViewModel.TechnicalErrors = exception.GetAllMessages();
+                }
+                return View(errorViewModel);
             }
-
-            var routeCreationException = FindException<RouteCreationException>(exception);
-            if (routeCreationException != null)
+            catch (Exception ex)
             {
-                return HandleRouteCreationException(errorViewModel, routeCreationException);
+                logger.CriticalError(ex, "An error occurred in the error page error handling.");
+                return View(new ErrorViewModel
+                {
+                    CreateTime = DateTimeOffset.Now,
+                    RequestId = HttpContext?.TraceIdentifier,
+                    TechnicalErrors = ExceptionTechnicalErrors(ex)
+                });
             }
-
-            var externalKeyIsNotReadyException = FindException<ExternalKeyIsNotReadyException>(exception);
-            if (externalKeyIsNotReadyException != null)
-            {
-                return HandleExternalKeyIsNotReadyException(errorViewModel);
-            }
-
-            var planException = FindException<PlanException>(exception);
-            if (planException != null)
-            {
-                return HandlePlanException(errorViewModel, planException);
-            }
-
-            if (environment.IsDevelopment())
-            {
-                errorViewModel.TechnicalErrors = exception != null ? new List<string>(exception.ToString().Split('\n')) : null;
-            }
-            else
-            {
-                errorViewModel.TechnicalErrors = exception.GetAllMessages();
-            }
-            return View(errorViewModel);
         }
 
-        private void LogException(Exception exception)
+        private List<string> ExceptionTechnicalErrors(Exception exception)
+        {
+            return exception != null ? new List<string>(exception.ToString().Split('\n')) : null;
+        }
+
+        private void LogExceptionAsWarning(Exception exception)
+        {
+            if (exception == null)
+            {
+                LogExceptionAsError(exception);
+            }
+            else
+            {
+                logger.Warning(exception);
+            }
+        }
+
+        private void LogExceptionAsError(Exception exception)
         {
             if (exception == null)
             {

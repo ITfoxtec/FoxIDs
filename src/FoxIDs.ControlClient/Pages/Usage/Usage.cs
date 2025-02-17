@@ -136,11 +136,12 @@ namespace FoxIDs.Client.Pages.Usage
                 generalUsed.Error = ex.Message;
             }
         }
-        private string UsagePriceText(GeneralUsedViewModel generalUsed)
+        private string UsageInfoAndPriceText(GeneralUsedViewModel generalUsed)
         {
             var invoice = generalUsed.Invoices?.LastOrDefault();
             var price = invoice?.Price;
-            return $"{(price > 0 ? $", price: {invoice?.Currency}{price}" : string.Empty)}";
+            var totalPrice = invoice?.TotalPrice;
+            return $"{(invoice != null ? $", Invoice: {invoice.InvoiceNumber}" : string.Empty)}{(totalPrice > 0 ? $",{(totalPrice != invoice.Price ? $" Price: {invoice?.Currency}{price}," : string.Empty)} Total price: {invoice?.Currency}{totalPrice}" : string.Empty)}";
         }
 
         private (bool sendItemsInvoice, bool failed, bool paid, string statusText) UsageInfoText(GeneralUsedViewModel generalUsed)
@@ -291,6 +292,7 @@ namespace FoxIDs.Client.Pages.Usage
             try
             {
                 var tenant = await TenantService.GetTenantAsync(generalUsed.TenantName);
+                generalUsed.EnableUsage = tenant.EnableUsage;
                 if (tenant.HourPrice > 0)
                 {
                     generalUsed.HourPrice = tenant.HourPrice.Value;

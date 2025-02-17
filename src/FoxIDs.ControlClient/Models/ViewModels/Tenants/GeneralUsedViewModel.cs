@@ -37,5 +37,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public decimal HourPrice { get; set; }
 
         public PageEditForm<UsedViewModel> Form { get; set; }
+
+        // From tenant
+        public bool EnableUsage { get; set; }
     }
 }

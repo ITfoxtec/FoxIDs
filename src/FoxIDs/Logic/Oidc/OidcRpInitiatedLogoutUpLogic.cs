@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"AuthMethod, End session response '{rpInitiatedLogoutResponse.ToJson()}'.", traceType: TraceTypes.Message);
             rpInitiatedLogoutResponse.Validate();
 
-            if (rpInitiatedLogoutResponse.State.IsNullOrEmpty())
+            if (rpInitiatedLogoutResponse.State.IsNullOrWhiteSpace())
             {
                 rpInitiatedLogoutResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
             }
@@ -179,7 +179,15 @@ namespace FoxIDs.Logic
                 await stateUpPartyLogic.DeleteStateCookieAsync(party);
             }
 
-            await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
+            try
+            {
+                await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Invalid State '{rpInitiatedLogoutResponse.State}' returned from the IdP.", ex);
+            }
+
             logger.ScopeTrace(() => "AuthMethod, Successful OIDC End session response.", triggerEvent: true);
             return await EndSessionResponseInternalAsync(party);
         }

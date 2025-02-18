@@ -136,15 +136,13 @@ namespace FoxIDs.Logic
                     yield return bucketItem;
                 }
             }
-            if (logRequest.IncludeControlApiGets)
+            if (logRequest.IncludeControlApi)
             {
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ControlApiGet.ToString()))
                 {
                     yield return bucketItem;
                 }
-            }
-            if (logRequest.IncludeControlApiUpdates)
-            {
+
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ControlApiUpdate.ToString()))
                 {
                     yield return bucketItem;
@@ -187,7 +185,7 @@ namespace FoxIDs.Logic
             {
                 extraCount = valueAggregate.Value.Value;
             }
-            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
+            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 0), Math.Round(Convert.ToDecimal(extraCount), 1));
         }
 
         private (decimal realCount, decimal smsCount, decimal smsPrice, decimal emailCount) GetCountAndSmsEmail(DateHistogramBucket bucketItem)
@@ -201,10 +199,13 @@ namespace FoxIDs.Logic
             }
 
             double smsPrice = 0.0;
-            var smsPriceValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageSmsPrice).ToLower()] as ValueAggregate;
-            if (smsPriceValueAggregate?.Value != null)
+            if (smsCount > 0)
             {
-                smsPrice = smsPriceValueAggregate.Value.Value;
+                var smsPriceValueAggregate = bucketItem[nameof(OpenSearchLogItem.UsageSmsPrice).ToLower()] as ValueAggregate;
+                if (smsPriceValueAggregate?.Value != null)
+                {
+                    smsPrice = smsPriceValueAggregate.Value.Value / smsCount;
+                }
             }
 
             double emailCount = 0.0;
@@ -213,7 +214,7 @@ namespace FoxIDs.Logic
             {
                 emailCount = emailValueAggregate.Value.Value;
             }
-            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 1));
+            return (Math.Round(Convert.ToDecimal(itemCount), 0), Math.Round(Convert.ToDecimal(smsCount), 0), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 0));
         }
 
         private (DateTime start, DateTime end) GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
@@ -230,7 +231,7 @@ namespace FoxIDs.Logic
 
         private async Task<FiltersAggregate> LoadUsageEventsAsync(string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, Api.UsageLogRequest logRequest)
         {
-            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates && !logRequest.IncludeAdditional)
+            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
@@ -321,12 +322,9 @@ namespace FoxIDs.Logic
                 AddFilter(filters, UsageLogTypes.ResetPassword.ToString());
                 AddFilter(filters, UsageLogTypes.Mfa.ToString());
             }
-            if (logRequest.IncludeControlApiGets)
+            if (logRequest.IncludeControlApi)
             {
                 AddFilter(filters, UsageLogTypes.ControlApiGet.ToString());
-            }
-            if (logRequest.IncludeControlApiUpdates)
-            {
                 AddFilter(filters, UsageLogTypes.ControlApiUpdate.ToString());
             }
             return filters;

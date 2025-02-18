@@ -34,9 +34,7 @@ namespace FoxIDs.Models.Api
 
         public bool IncludeAdditional { get; set; }
 
-        public bool IncludeControlApiGets { get; set; }
-
-        public bool IncludeControlApiUpdates { get; set; }
+        public bool IncludeControlApi { get; set; }
 
         public bool OnlyDbQuery { get; set; }
     }

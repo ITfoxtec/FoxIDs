@@ -240,7 +240,7 @@ namespace FoxIDs.Logic
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace(() => $"AuthMethod, Authentication response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
-            if (authenticationResponse.State.IsNullOrEmpty())
+            if (authenticationResponse.State.IsNullOrWhiteSpace())
             {
                 authenticationResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
             }
@@ -249,19 +249,18 @@ namespace FoxIDs.Logic
                 await stateUpPartyLogic.DeleteStateCookieAsync(party);
             }
 
-            OidcUpSequenceData sequenceData = null;
             try
             {
                 await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: false);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Invalid State '{authenticationResponse.State}' returned from the IdP.");
-                throw;
+                throw new Exception($"Invalid State '{authenticationResponse.State}' returned from the IdP.", ex);
             }
 
-            if(party.Client.ClientKeys?.Where(ck => ck.Type == ClientKeyTypes.KeyVaultImport).Count() > 0)
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: false);
+
+            if (party.Client.ClientKeys?.Where(ck => ck.Type == ClientKeyTypes.KeyVaultImport).Count() > 0)
             {
                 await serviceProvider.GetService<ExternalKeyLogic>().PhasedOutExternalClientKeyAsync<TParty, TClient>(party);
             }

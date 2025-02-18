@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
+using System.Net.Sockets;
 
 namespace FoxIDs.Logic
 {
@@ -47,41 +48,97 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                throw new Exception($"OIDC discovery error for OIDC discovery URL '{oidcDiscoveryUrl}'.", ex);
+                throw new Exception($"OIDC discovery URL '{oidcDiscoveryUrl}' error.", ex);
             }
         }
 
         protected async Task<OidcDiscovery> GetOidcDiscoveryAsync(string oidcDiscoveryUrl)
         {
-            var httpClient = httpClientFactory.CreateClient();
-            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, oidcDiscoveryUrl));
-            // Handle the response
-            switch (response.StatusCode)
+            try
             {
-                case HttpStatusCode.OK:
-                    var result = await response.Content.ReadAsStringAsync();
-                    var oidcDiscovery = result.ToObject<OidcDiscovery>();
-                    return oidcDiscovery;
+                var httpClient = httpClientFactory.CreateClient();
+                using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, oidcDiscoveryUrl));
+                // Handle the response
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        var result = await response.Content.ReadAsStringAsync();
+                        var oidcDiscovery = result.ToObject<OidcDiscovery>();
+                        return oidcDiscovery;
 
-                default:
-                    throw new Exception($"Status Code OK expected. Unable to read OIDC Discovery '{oidcDiscoveryUrl}'. StatusCode={response.StatusCode}..");
+                    default:
+                        throw new Exception($"OIDC Discovery response error, status code={response.StatusCode}.");
+                }
+            }
+            catch (HttpRequestException hrex)
+            {
+                if (hrex.InnerException is SocketException soex)
+                {
+                    if (soex.SocketErrorCode == SocketError.TimedOut)
+                    {
+                        throw new Exception($"It is not possible to call the OIDC Discovery URL '{oidcDiscoveryUrl}', the call has timed out.", hrex);
+                    }
+                }
+
+                throw new Exception($"It is not possible to call the OIDC Discovery URL '{oidcDiscoveryUrl}'.", hrex);
+            }
+            catch (TaskCanceledException tcex)
+            {
+                if (tcex.InnerException is TimeoutException)
+                {
+                    throw new Exception($"It is not possible to call the OIDC Discovery URL '{oidcDiscoveryUrl}', the call has timed out.", tcex);
+                }
+
+                throw new Exception($"It is not possible to call the OIDC Discovery URL '{oidcDiscoveryUrl}'.", tcex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"The call to the OIDC Discovery URL '{oidcDiscoveryUrl}' has failed.", ex);
             }
         }
 
         protected async Task<JsonWebKeySet> GetOidcDiscoveryKeysAsync(string jwksUri)
         {
-            var httpClient = httpClientFactory.CreateClient();
-            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, jwksUri));
-            // Handle the response
-            switch (response.StatusCode)
+            try
             {
-                case HttpStatusCode.OK:
-                    var result = await response.Content.ReadAsStringAsync();
-                    var jsonWebKeySet = result.ToObject<JsonWebKeySet>();
-                    return jsonWebKeySet;
+                var httpClient = httpClientFactory.CreateClient();
+                using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, jwksUri));
+                // Handle the response
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.OK:
+                        var result = await response.Content.ReadAsStringAsync();
+                        var jsonWebKeySet = result.ToObject<JsonWebKeySet>();
+                        return jsonWebKeySet;
 
-                default:
-                    throw new Exception($"Status Code OK expected. StatusCode={response.StatusCode}.");
+                    default:
+                        throw new Exception($"OIDC Discovery Keys (JWKS) response error, status code={response.StatusCode}.");
+                }
+            }
+            catch (HttpRequestException hrex)
+            {
+                if (hrex.InnerException is SocketException soex)
+                {
+                    if (soex.SocketErrorCode == SocketError.TimedOut)
+                    {
+                        throw new Exception($"It is not possible to call the OIDC Discovery Keys (JWKS) URL '{jwksUri}', the call has timed out.", hrex);
+                    }
+                }
+
+                throw new Exception($"It is not possible to call the OIDC Discovery Keys (JWKS) URL '{jwksUri}'.", hrex);
+            }
+            catch (TaskCanceledException tcex)
+            {
+                if (tcex.InnerException is TimeoutException)
+                {
+                    throw new Exception($"It is not possible to call the OIDC Discovery Keys (JWKS) URL '{jwksUri}', the call has timed out.", tcex);
+                }
+
+                throw new Exception($"It is not possible to call the OIDC Discovery Keys (JWKS) URL '{jwksUri}'.", tcex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"The call to the OIDC Discovery Keys (JWKS) URL '{jwksUri}' has failed.", ex);
             }
         }
     }

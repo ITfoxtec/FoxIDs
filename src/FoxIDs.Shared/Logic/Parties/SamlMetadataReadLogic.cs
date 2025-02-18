@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -40,13 +41,33 @@ namespace FoxIDs.Logic
                         return metadata;
 
                     default:
-                        throw new Exception($"Read SAML 2.0 metadata error, status code={response.StatusCode}.");
+                        throw new Exception($"SAML 2.0 metadata response error, status code={response.StatusCode}.");
+                }
+            }
+            catch (HttpRequestException hrex)
+            {
+                if (hrex.InnerException is SocketException soex)
+                {
+                    if (soex.SocketErrorCode == SocketError.TimedOut)
+                    {
+                        throw new Exception($"It is not possible to call the SAML 2.0 metadata URL '{metadataUrl}', the call has timed out.", hrex);
+                    }
                 }
 
+                throw new Exception($"It is not possible to call the SAML 2.0 metadata URL '{metadataUrl}'.", hrex);
+            }
+            catch (TaskCanceledException tcex)
+            {
+                if (tcex.InnerException is TimeoutException)
+                {
+                    throw new Exception($"It is not possible to call the SAML 2.0 metadata URL '{metadataUrl}', the call has timed out.", tcex);
+                }
+
+                throw new Exception($"It is not possible to call the SAML 2.0 metadata URL '{metadataUrl}'.", tcex);
             }
             catch (Exception ex)
             {
-                throw new Exception($"SAML 2.0 metadata error for metadata URL '{metadataUrl}'.", ex);
+                throw new Exception($"The call to the SAML 2.0 metadata URL '{metadataUrl}' has failed.", ex);
             }
         }
 

@@ -158,7 +158,7 @@ namespace FoxIDs.Logic
             var addItem = row.GetDouble("UsageAddRating");
             extraCount = addItem.HasValue ? addItem.Value : 0.0;
 
-            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 1), Math.Round(Convert.ToDecimal(extraCount), 1));
+            return (Math.Round(Convert.ToDecimal(realCount + extraCount), 1), Math.Round(Convert.ToDecimal(realCount), 0), Math.Round(Convert.ToDecimal(extraCount), 1));
         }
 
         private (decimal realCount, decimal smsCount, decimal smsPrice, decimal emailCount) GetCountAndSmsEmail(LogsTableRow row)
@@ -171,14 +171,17 @@ namespace FoxIDs.Logic
             smsCount = smsItem.HasValue ? smsItem.Value : 0.0;
 
             double smsPrice = 0.0;
-            var smsPriceItem = row.GetDouble("UsageSmsPrice");
-            smsPrice = smsPriceItem.HasValue ? smsPriceItem.Value : 0.0;
+            if (smsCount > 0)
+            {
+                var smsPriceItem = row.GetDouble("UsageSmsPrice");
+                smsPrice = smsPriceItem.HasValue ? smsPriceItem.Value / smsCount : 0.0;
+            }
 
             double emailCount = 0.0;
             var emailItem = row.GetDouble("UsageEmail");
             emailCount = emailItem.HasValue ? smsItem.Value : 0.0;
 
-            return (Math.Round(Convert.ToDecimal(itemCount), 1), Math.Round(Convert.ToDecimal(smsCount), 1), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 1));
+            return (Math.Round(Convert.ToDecimal(itemCount), 0), Math.Round(Convert.ToDecimal(smsCount), 0), Math.Round(Convert.ToDecimal(smsPrice), 4), Math.Round(Convert.ToDecimal(emailCount), 0));
         }
 
         private DateTime GetDate(LogsTableRow row)

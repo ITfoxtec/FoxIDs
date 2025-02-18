@@ -131,6 +131,21 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.Sms" For="@(() => used.Form.Model.Sms)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.SmsPrice" For="@(() => used.Form.Model.SmsPrice)" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <FFieldNumberD @bind-Value="used.Form.Model.Emails" For="@(() => used.Form.Model.Emails)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
                                                         <FFieldNumberD @bind-Value="used.Form.Model.ControlApiGets" For="@(() => used.Form.Model.ControlApiGets)" />
                                                     </div>
                                                     <div class="col-6">
@@ -255,8 +270,12 @@
                             Action
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+                            @{
+                                var dropdownMenuNoItems = false;
+                            }
                             @if (ShowDoInvoicingButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoInvoicingAsync(used))">
@@ -272,6 +291,7 @@
                             }
                             @if (ShowSendInvoiceAgainButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await SendInvoiceAgainAsync(used))">
@@ -287,6 +307,7 @@
                             }
                             @if (ShowDoCreditNoteButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoCreditNoteAsync(used))">
@@ -302,6 +323,7 @@
                             }
                             @if (ShowSendCreditNoteAgainButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await SendCreditNoteAgainAsync(used))">
@@ -317,6 +339,7 @@
                             }
                             @if (ShowDoPaymentButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoPaymentAgainAsync(used))">
@@ -332,6 +355,7 @@
                             }
                             @if (ShowMarkAsPaidButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoMarkAsPaidAsync(used))">
@@ -347,6 +371,7 @@
                             }    
                             @if (ShowMarkAsNotPaidButton(used))
                             {
+                                dropdownMenuNoItems = true;
                                 @if (!used.InvoicingActionButtonDisabled)
                                 {
                                     <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await DoMarkAsNotPaidAsync(used))">
@@ -359,6 +384,12 @@
                                         Mark as not paid
                                     </button>
                                 }
+                            }
+                            @if(!dropdownMenuNoItems) 
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-dark dropdown-item" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
+                                    Show details
+                                </button>
                             }
                         </div>
                     </div>

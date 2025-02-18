@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                throw new Exception($"OIDC discovery error for OIDC discovery URL '{oidcDiscoveryUrl}'.", ex);
+                throw new Exception($"OIDC discovery URL '{oidcDiscoveryUrl}' error.", ex);
             }
         }
 

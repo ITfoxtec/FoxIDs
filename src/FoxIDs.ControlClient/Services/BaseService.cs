@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace FoxIDs.Client.Services
 {
@@ -55,20 +56,24 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
-        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string paginationToken = null)
+        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
         {
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName1}={parmValue1}");
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
             }
             if (!parmValue2.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName2}={parmValue2}");
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
             }
             if (!parmValue3.IsNullOrWhiteSpace())
             {
-                parms.Add($"{parmName3}={parmValue3}");
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
+            }
+            if (!parmValue4.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName4}={HttpUtility.UrlEncode(parmValue4)}");
             }
             if (!paginationToken.IsNullOrWhiteSpace())
             {
@@ -85,9 +90,22 @@ namespace FoxIDs.Client.Services
             return await response.ToObjectAsync<T>();
         }
 
-        protected async Task<T> GetAsync<T>(string url, string value, string parmName = "name")
+        protected async Task<T> GetAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
+            var parms = new List<string>();
+            if (!parmValue1.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
+            }
+            if (!parmValue2.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
+            }
+            if (!parmValue3.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
+            }
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
             return await response.ToObjectAsync<T>();
         }
 
@@ -99,31 +117,25 @@ namespace FoxIDs.Client.Services
             return await response.ToObjectAsync<TResponse>();
         }
 
-        protected async Task<T> GetAsync<T>(string url, string value1, string value2, string parmName1, string parmName2)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
-            return await response.ToObjectAsync<T>();
-        }
-
         protected async Task PostAsync<T>(string url, T data)
         {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PostResponseAsync<T, TResponse>(string url, T data)
         {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PostAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task PutAsync<T>(string url, T data)
         {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
         protected async Task<TResponse> PutResponseAsync<T, TResponse>(string url, T data)
         {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
+            using var response = await httpClient.PutAsFoxIDsApiJsonAsync(await GetTenantApiUrlAsync(url), data);
             return await response.ToObjectAsync<TResponse>();
         }
 
@@ -132,14 +144,22 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
-        protected async Task DeleteAsync(string url, string value, string parmName = "name")
+        protected async Task DeleteAsync(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmName1 = "name", string parmName2 = null, string parmName3 = null)
         {
-            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
-        }
-
-        protected async Task DeleteAsync(string url, string value1, string value2, string parmName1, string parmName2)
-        {
-            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
+            var parms = new List<string>();
+            if (!parmValue1.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName1}={HttpUtility.UrlEncode(parmValue1)}");
+            }
+            if (!parmValue2.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName2}={HttpUtility.UrlEncode(parmValue2)}");
+            }
+            if (!parmValue3.IsNullOrWhiteSpace())
+            {
+                parms.Add($"{parmName3}={HttpUtility.UrlEncode(parmValue3)}");
+            }
+            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{string.Join('&', parms)}");
         }
 
         protected async Task DeleteByRequestObjAsync<TRequest>(string url, TRequest request)

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class CreateUserViewModel : CreateUser, IClaimTransformViewModel, IDynamicElementsViewModel
+    public class CreateUserViewModel : CreateUser, IDynamicElementsViewModel
     {
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public new List<DynamicElementViewModel> Elements { get; set; }

@@ -11,6 +11,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralUserViewModel(User user)
         {
             Email = user.Email;
+            Phone = user.Phone;
+            Username = user.Username;
         }
 
         public bool Edit { get; set; }

@@ -8,11 +8,26 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCancelLogin { get; set; }
 
-        [Display(Name = "Email")]
-        [Required]
-        [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
-        public string Email { get; set; }
+        [ValidateComplexType]
+        public EmailPasswordViewModel EmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhonePasswordViewModel PhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePasswordViewModel UsernameIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameEmailPasswordViewModel UsernameEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhonePasswordViewModel UsernamePhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhoneEmailPasswordViewModel PhoneEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneEmailPasswordViewModel UsernamePhoneEmailIdentifier { get; set; }
 
         [Display(Name = "Current password")]
         [Required]

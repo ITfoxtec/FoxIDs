@@ -7,6 +7,8 @@ using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models.Config;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -14,10 +16,12 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize(Constants.ControlApi.Segment.Usage)]
     public class TTenantLogUsageController : ApiController
     {
+        private readonly FoxIDsControlSettings settings;
         private readonly UsageLogLogic usageLogLogic;
 
-        public TTenantLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
+        public TTenantLogUsageController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
         {
+            this.settings = settings;
             this.usageLogLogic = usageLogLogic;
         }
 
@@ -30,6 +34,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.UsageLogResponse>> GetTenantLogUsage(Api.UsageTenantLogRequest logRequest)
         {
+            if (settings.Options.Log == LogOptions.Stdout)
+            {
+                throw new Exception("Not possible for Stdout.");
+            }
+
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
             if (!logRequest.TenantName.IsNullOrWhiteSpace())

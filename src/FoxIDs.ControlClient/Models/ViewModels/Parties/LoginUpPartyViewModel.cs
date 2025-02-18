@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class LoginUpPartyViewModel : IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         public string InitName { get; set; }
 
@@ -51,6 +51,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Single logout")]
         public bool DisableSingleLogout { get; set; }
 
+        [Display(Name = "Email")]
+        public bool EnableEmailIdentifier { get; set; } = true;
+
+        [Display(Name = "Phone number")]
+        public bool EnablePhoneIdentifier { get; set; }
+
+        [Display(Name = "Username")]
+        public bool EnableUsernameIdentifier { get; set; }
+
         /// <summary>
         /// Default false.
         /// </summary>
@@ -73,6 +82,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool DisableResetPassword { get; set; }
 
         /// <summary>
+        /// Default false.
+        /// </summary>
+        [Display(Name = "Delete refresh tokens if a user change password")]
+        public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
+
+        /// <summary>
         /// Claim transforms.
         /// </summary>
         [ValidateComplexType]
@@ -80,11 +95,27 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+
+        /// <summary>
         /// Default if required.
         /// </summary>
         [Required]
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
+
+        [Display(Name = "Two-factor with authenticator app supported")]
+        public bool DisableTwoFactorApp { get; set; }
+
+        [Display(Name = "Two-factor with SMS supported")]
+        public bool DisableTwoFactorSms { get; set; }
+
+        [Display(Name = "Two-factor with email supported")]
+        public bool DisableTwoFactorEmail { get; set; }
 
         /// <summary>
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
@@ -139,5 +170,23 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         public CreateUserViewModel CreateUser { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
+            {
+                results.Add(new ValidationResult($"At lease one user identifier 'email', 'phone' or 'username' should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+
+            if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
+            {
+                results.Add(new ValidationResult($"Either two-factor (2FA) with authenticator app, SMS or email should be supported if two-factor is require.",
+                    [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
+            }
+
+            return results;
+        }
     }
 }

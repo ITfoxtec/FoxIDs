@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
                     var supportedCulture = supportedCultures.Where(i => i.Equals(culture, StringComparison.InvariantCultureIgnoreCase) || i.Equals(new CultureInfo(culture).TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
                     if (!supportedCulture.IsNullOrEmpty())
                     {
-                        return supportedCulture;
+                        return culture;
                     }
                 }
             }

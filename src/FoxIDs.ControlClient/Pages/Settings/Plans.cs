@@ -161,6 +161,8 @@ namespace FoxIDs.Client.Pages.Settings
             plan.Users = plan.Users ?? new PlanItem();
             plan.Logins = plan.Logins ?? new PlanItem();
             plan.TokenRequests = plan.TokenRequests ?? new PlanItem();
+            plan.Sms = plan.Sms ?? new PlanItem();
+            plan.Emails = plan.Emails ?? new PlanItem();
             plan.ControlApiGetRequests = plan.ControlApiGetRequests ?? new PlanItem();
             plan.ControlApiUpdateRequests = plan.ControlApiUpdateRequests ?? new PlanItem();            
         }

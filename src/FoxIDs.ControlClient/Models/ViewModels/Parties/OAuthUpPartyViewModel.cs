@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthUpPartyViewModel : IClaimTransformViewModel, IValidatableObject
+    public class OAuthUpPartyViewModel : IValidatableObject
     {
         public string InitName { get; set; }
 

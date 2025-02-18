@@ -8,18 +8,31 @@ namespace FoxIDs.Models.Sequences
 {
     public abstract class UpSequenceData : IUpSequenceData, IValidatableObject
     {
+        protected UpSequenceData()
+        { }
+
+        public UpSequenceData(ILoginRequest loginRequest) 
+        {
+            DownPartyLink = loginRequest.DownPartyLink;
+            LoginAction = loginRequest.LoginAction;
+            UserId = loginRequest.UserId;
+            MaxAge = loginRequest.MaxAge;
+            LoginHint = loginRequest.LoginHint;
+            Acr = loginRequest.Acr;
+        }
+
         [JsonProperty(PropertyName = "es")]
         public bool ExternalInitiatedSingleLogout { get; set; } = false;
+
+        [JsonProperty(PropertyName = "ss")]
+        public bool IsSingleLogout { get; set; }        
 
         [JsonProperty(PropertyName = "dp")]
         public DownPartySessionLink DownPartyLink { get; set; }
 
-        [JsonProperty(PropertyName = "sc")]
-        public IEnumerable<ClaimAndValues> SessionClaims { get; set; }
+        [JsonProperty(PropertyName = "c")]
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
 
-        [JsonProperty(PropertyName = "sdl")]
-        public List<DownPartySessionLink> SessionDownPartyLinks { get; set; }
-        
         [JsonProperty(PropertyName = "hln")]
         public string HrdLoginUpPartyName { get; set; }
 
@@ -40,17 +53,20 @@ namespace FoxIDs.Models.Sequences
         public int? MaxAge { get; set; }
 
         [JsonProperty(PropertyName = "lh")]
-        public string LoginEmailHint { get; set; }
+        public string LoginHint { get; set; }
+
+        [JsonProperty(PropertyName = "a")]
+        public IEnumerable<string> Acr { get; set; }
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
 
-            if (!ExternalInitiatedSingleLogout)
+            if (!IsSingleLogout && !ExternalInitiatedSingleLogout)
             {
                 if (DownPartyLink == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(DownPartyLink)} is required if not external initiated single logout.", new[] { nameof(DownPartyLink) }));
+                    results.Add(new ValidationResult($"The field {nameof(DownPartyLink)} is required if not internal or external initiated single logout.", [nameof(DownPartyLink)]));
                 }
             }
 

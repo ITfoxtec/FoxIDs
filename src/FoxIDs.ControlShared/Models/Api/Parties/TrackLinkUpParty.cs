@@ -3,6 +3,7 @@ using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -44,6 +45,12 @@ namespace FoxIDs.Models.Api
 
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ExternalUserLoadedClaimTransforms { get; set; }
 
         /// <summary>
         /// Default 10 hours.
@@ -122,6 +129,11 @@ namespace FoxIDs.Models.Api
                         results.Add(new ValidationResult($"The fields {nameof(Name)} (value: '{Name}') and {nameof(profile.Name)} (value: '{profile.Name}') must not be more then {Constants.Models.Party.NameLength} in total.", [nameof(Name), $"{nameof(profile)}[{count}].{nameof(profile.Name)}"]));
                     }
                 }
+            }
+
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
             }
             return results;
         }

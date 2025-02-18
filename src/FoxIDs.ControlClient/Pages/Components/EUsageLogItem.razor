@@ -7,6 +7,17 @@
     <div class="col-6 text-right">
         @Item.Value
     </div>
+    @if (Item.SubItems?.Count() > 0 && Item.SubItems.Where(i => i.Value > 0).Any())
+    {
+        <div class="col-12 @(Item.Type == UsageLogTypes.Sms ? "pb-2" : "mt-2 py-2") bg-light">
+            <small>
+                @foreach (var item in Item.SubItems)
+                {
+                    <EUsageLogItem Item="item" />
+                }
+            </small>
+        </div>
+    }
 </div>
 
 @code {
@@ -31,6 +42,22 @@
                 return UsageLogIncludeTypes.ControlApiGets;
             case UsageLogTypes.ControlApiUpdate:
                 return UsageLogIncludeTypes.ControlApiUpdates;
+            case UsageLogTypes.Confirmation:
+                return UsageLogIncludeTypes.Confirmation;
+            case UsageLogTypes.ResetPassword:
+                return UsageLogIncludeTypes.ResetPassword;
+            case UsageLogTypes.Mfa:
+                return UsageLogIncludeTypes.Mfa;
+            case UsageLogTypes.RealCount:
+                return UsageLogIncludeTypes.RealCount;
+            case UsageLogTypes.ExtraCount:
+                return UsageLogIncludeTypes.ExtraCount;
+            case UsageLogTypes.Sms:
+                return UsageLogIncludeTypes.Sms;
+            case UsageLogTypes.SmsPrice:
+                return UsageLogIncludeTypes.SmsPrice;
+            case UsageLogTypes.Email:
+                return UsageLogIncludeTypes.Email;
             default:
                 throw new NotImplementedException();
         }

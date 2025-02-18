@@ -45,7 +45,7 @@
                         @if (externalUser.CreateMode)
                         {
                             <div class="info-text">The external user can be redeemed by a redemption claim type (e.g. <code>email</code>) and the user are then automatically linked with the link claim type. You should know the redemption claim value in advanced.</div>
-                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="externalUser.CreateMode" />
 
                             <div class="info-text">The external user are linked with the link claim type (e.g. <code>sub</code>). Most of the time, the link claim value is not known in advance. You can add the value if you know it.</div>
                             <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
@@ -65,19 +65,21 @@
 
                                             @if (selectUpParties != null)
                                             {
-                                                @if (selectUpParties.Count() > 0)
-                                                {
-                                                    @foreach (var upParty in selectUpParties)
+                                                <div class="overflow-auto" style="max-height: 500px">
+                                                    @if (selectUpParties.Count() > 0)
                                                     {
-                                                        <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
-                                                            @(upParty.DisplayName ?? upParty.Name)
-                                                        </button>
+                                                        @foreach (var upParty in selectUpParties)
+                                                        {
+                                                            <button type="button" class="dropdown-item btn btn-link px-4" @onclick="@(() => SelectUpParty(externalUser, upParty))">
+                                                                @(upParty.DisplayName ?? upParty.Name)
+                                                            </button>
+                                                        }
                                                     }
-                                                }
-                                                else if (!SelectUpPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
-                                                {
-                                                    <div class="font-italic px-4">No match</div>
-                                                }
+                                                    else if (!SelectUpPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                                                    {
+                                                        <div class="font-italic px-4">No match</div>
+                                                    }
+                                                </div>
                                             }
                                         </div>
                                     </div>
@@ -99,7 +101,7 @@
                         else
                         {
                             <div class="info-text">You can change the redemption claim value, but it will not have effect unless the link claim value is empty.</div>
-                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="true" />
+                            <FInputText @bind-Value="externalUser.Form.Model.RedemptionClaimValue" For="@(() => externalUser.Form.Model.RedemptionClaimValue)" Focus="externalUser.CreateMode" />
                             <FInputText @bind-Value="externalUser.Form.Model.LinkClaimValue" For="@(() => externalUser.Form.Model.LinkClaimValue)" />
 
                             @if (!externalUser.Form.Model.UpPartyDisplayName.IsNullOrWhiteSpace())

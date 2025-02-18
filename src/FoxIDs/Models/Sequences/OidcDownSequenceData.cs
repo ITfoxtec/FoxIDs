@@ -1,11 +1,16 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class OidcDownSequenceData : ISequenceData, IDownSequenceData
+    public class OidcDownSequenceData : DownSequenceData, ISequenceData
     {
+        public OidcDownSequenceData() : base() { }
+
+        public OidcDownSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [MaxLength(IdentityConstants.MessageLength.ResponseTypeMax)]
         [JsonProperty(PropertyName = "rt")]
         public string ResponseType { get; set; }

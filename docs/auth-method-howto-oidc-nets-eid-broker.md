@@ -88,7 +88,7 @@ That's it, you are done.
 > The application registration can read the claims from the authentication method. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
 
 ## Scope and claims
-You can optionally create a scope on the application registration with the Nets eID Broker claims as voluntary claims. The scope can then be used by a OpenID Connect client or another FoxIDs authentication method acting as a OpenID Connect client.
+You can optionally create a scope on the application registration with the Nets eID Broker claims as `Voluntary claims`. The scope can then be used by a OpenID Connect client or another FoxIDs authentication method acting as a OpenID Connect client.
 
 The name of the scope can e.g, be `nets_eid_broker`
 

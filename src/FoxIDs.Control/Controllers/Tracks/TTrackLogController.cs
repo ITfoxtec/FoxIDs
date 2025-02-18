@@ -5,25 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Models.Config;
 using System;
-using ITfoxtec.Identity;
-using Azure.Monitor.Query;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
     public class TTrackLogController : ApiController
     {
-        private const int maxResponseLogItems = 300;
         private readonly FoxIDsControlSettings settings;
-        private readonly IServiceProvider serviceProvider;
+        private readonly LogLogic logLogic;
 
-        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider) : base(logger)
+        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, LogLogic logLogic) : base(logger)
         {
             this.settings = settings;
-            this.serviceProvider = serviceProvider;
+            this.logLogic = logLogic;
         }
 
         /// <summary>
@@ -51,29 +47,8 @@ namespace FoxIDs.Controllers
                 }
             }
 
-            if (!logRequest.Filter.IsNullOrEmpty())
-            {
-                logRequest.Filter = logRequest.Filter.Trim();
-            }
-
-            if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
-            {
-                logRequest.QueryExceptions = true;
-                logRequest.QueryEvents = true;
-            }
-
-            var start = DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime);
-            var end = DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime);
-
-            switch (settings.Options.Log)
-            {
-                case LogOptions.OpenSearchAndStdoutErrors:
-                    return Ok(await serviceProvider.GetService<LogOpenSearchLogic>().QueryLogs(logRequest, (start.DateTime, end.DateTime), maxResponseLogItems));
-                case LogOptions.ApplicationInsights:
-                    return Ok(await serviceProvider.GetService<LogApplicationInsightsLogic>().QueryLogsAsync(logRequest, new QueryTimeRange(start, end), maxResponseLogItems));
-                default:
-                    throw new NotSupportedException();
-            }
+            var logResponse = await logLogic.QueryLogs(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
+            return Ok(logResponse);
         }
     }
 }

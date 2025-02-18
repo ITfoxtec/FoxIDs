@@ -11,6 +11,7 @@ using System.Linq;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
+using System.Linq.Expressions;
 
 namespace FoxIDs.Controllers
 {
@@ -32,21 +33,41 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get users.
         /// </summary>
-        /// <param name="filterEmail">Filter user email.</param>
+        /// <param name="filterEmail">Filter by email.</param>
+        /// <param name="filterPhone">Filter by phone.</param>
+        /// <param name="filterUsername">Filter by username.</param>
+        /// <param name="filterUserId">Filter by user ID.</param>
         /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(HashSet<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.User>>> GetUsers(string filterEmail, string paginationToken = null)
+        public async Task<ActionResult<HashSet<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
         {
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mUsers, var nextPaginationToken) = filterEmail.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 
-                    await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
-                        u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
 
+                Expression<Func<User, bool>> whereQuery = u => u.DataType.Equals(dataType);
+                var filterWhereQuerys = GetFilterWhereQuery(filterEmail, filterPhone, filterUsername, filterUserId);
+                if (filterWhereQuerys?.Count() > 0)
+                {
+                    Expression<Func<User, bool>> filterWhereQuery = null; 
+                    foreach (var fwq in filterWhereQuerys)
+                    {
+                        if (filterWhereQuery == null)
+                        {
+                            filterWhereQuery = fwq;
+                        }
+                        else
+                        {
+                            filterWhereQuery = filterWhereQuery.Or(fwq);
+                        }
+                    }
+                    whereQuery = whereQuery.AndAlso(filterWhereQuery);
+                }
+
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetListAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+      
                 var response = new Api.PaginationResponse<Api.User>
                 {
                     Data = new HashSet<Api.User>(mUsers.Count()),
@@ -66,6 +87,26 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.User).Name, filterEmail);
                 }
                 throw;
+            }
+        }
+
+        private IEnumerable<Expression<Func<User, bool>>> GetFilterWhereQuery(string filterEmail, string filterPhone, string filterUsername, string filterUserId)
+        {
+            if (!filterEmail.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterPhone.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterUsername.IsNullOrWhiteSpace())
+            {
+                yield return u => u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase);
+            }
+            if (!filterUserId.IsNullOrWhiteSpace())
+            {
+                yield return u => u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase);
             }
         }
     }

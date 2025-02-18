@@ -153,6 +153,7 @@ namespace FoxIDs.Infrastructure.Hosting
             routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
             routeBinding.AllowIframeOnDomains = track.AllowIframeOnDomains;
             routeBinding.SendEmail = track.SendEmail;
+            routeBinding.SendSms = track.SendSms;
             routeBinding.Logging = track.Logging;
 
             if (!partyNameAndBinding.IsNullOrWhiteSpace())

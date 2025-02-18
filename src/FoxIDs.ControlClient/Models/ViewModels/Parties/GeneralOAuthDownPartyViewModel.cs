@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<OAuthDownPartyViewModel> Form { get; set; }
 
-        public SelectUpParty<OAuthDownPartyViewModel> SelectAllowUpPartyName;
+        public SelectUpParties<OAuthDownPartyViewModel> SelectAllowUpPartyName;
 
         public List<KeyInfoViewModel> ClientKeyInfoList { get; set; } = new List<KeyInfoViewModel>();
 

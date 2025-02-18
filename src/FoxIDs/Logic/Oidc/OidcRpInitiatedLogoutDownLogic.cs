@@ -143,6 +143,14 @@ namespace FoxIDs.Logic
                 return toUpPartyFromIdToken;
             }
 
+            (var toUpParties, var isSession) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
+            if (isSession && toUpParties?.Count() == 1)
+            {
+                var sessionUpParty = toUpParties.First();
+                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(sessionUpParty.Name, sessionUpParty.ProfileName);
+                return sessionUpParty;
+            }
+
             return await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
         }
 
@@ -151,7 +159,7 @@ namespace FoxIDs.Logic
             var upPartyName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethod) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
             var upPartyProfileName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthProfileMethod);
             var upPartyTypeValue = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.AuthMethodType) ?? idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
-            if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
+            if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && upPartyTypeValue.TryGetPartyType(out PartyTypes upPartyType))
             {
                 return new UpPartyLink { Name = upPartyName, ProfileName = upPartyProfileName, Type = upPartyType };
             }

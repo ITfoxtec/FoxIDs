@@ -9,6 +9,7 @@ using ITfoxtec.Identity.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Localization;
 using FoxIDs.Models.Sequences;
+using System.Collections.Generic;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -144,12 +145,13 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected async Task SetSequanceAndCulture(HttpContext httpContext, string routeAction)
         {
-            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, routeAction);
-            var requestCulture = new RequestCulture(culture);
+            var requestUICultures = await GetRequestUICulturesAsync(httpContext);
+            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, routeAction, requestUICultures);
+            var requestCulture = new RequestCulture(culture, requestUICultures?.FirstOrDefault() ?? culture);
             httpContext.Features.Set<IRequestCultureFeature>(new RequestCultureFeature(requestCulture, null));
         }
 
-        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, string routeAction)
+        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, string routeAction, IEnumerable<string> requestUICultures)
         {
             var routeBinding = httpContext.GetRouteBinding();
             var sequence = await SetSequanceAsync(httpContext, routeAction);
@@ -161,14 +163,19 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(httpContext);
-                var culture = providerResultCulture?.UICultures?.Select(c => c.Value);
-                if (!(culture?.Count() > 0))
-                {
-                    culture = providerResultCulture?.Cultures?.Select(c => c.Value);
-                }
-                return localizationLogic.GetSupportedCulture(culture, routeBinding);
+                return localizationLogic.GetSupportedCulture(requestUICultures, routeBinding);
             }
+        }
+
+        private async Task<IEnumerable<string>> GetRequestUICulturesAsync(HttpContext httpContext)
+        {
+            var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(httpContext);
+            var cultures = providerResultCulture?.UICultures?.Select(c => c.Value);
+            if (cultures?.Count() > 0)
+            {
+                return cultures;
+            }
+            return providerResultCulture?.Cultures?.Select(c => c.Value);
         }
 
         private async Task<Sequence> SetSequanceAsync(HttpContext httpContext, string routeAction)

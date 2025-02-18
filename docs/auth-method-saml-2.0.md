@@ -40,4 +40,6 @@ Manual configuration become available by disabling `Automatic update`.
 
 ![Manual SAML 2.0 configuration](images/configure-saml-manual-auth-method.png)
 
-> Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).
+> Change the claims the authentication method forwards with [claim transforms](claim-transform.md).
+
+If you are creating a new claim, add the claim or `*` (default) to the `Forward claims` list to forward the claim to the application registration.

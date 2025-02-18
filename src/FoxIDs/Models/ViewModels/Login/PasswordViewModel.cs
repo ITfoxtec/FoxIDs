@@ -12,12 +12,28 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCreateUser { get; set; }
 
-        public bool DisableChangeEmail { get; set; }
+        public bool DisableChangeUserIdentifier { get; set; }
 
-        [Display(Name = "Email")]
-        [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
-        public string Email { get; set; }
+        [ValidateComplexType]
+        public EmailPasswordViewModel EmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhonePasswordViewModel PhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePasswordViewModel UsernameIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameEmailPasswordViewModel UsernameEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhonePasswordViewModel UsernamePhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhoneEmailPasswordViewModel PhoneEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneEmailPasswordViewModel UsernamePhoneEmailIdentifier { get; set; }
 
         [Display(Name = "Password")]
         [Required]

@@ -37,7 +37,7 @@ Logs can be searched in [FoxIDs Control Client and API](control.md).
 The log level can be configured per FoxIDs environment:
 
  - Enable `Log info trace` - to see details about the login and logout sequences
- - Enable `Log claim trace` - to see the claims authentication methods and application registrations receive and pass on
+ - Enable `Log claim trace` - to see the claims authentication methods and application registrations receives and forwards/issues
  - Enable `Log message trace` - to see the raw messages received and sent
  - Enable `Log metric trace` - to see response times and throughput
 

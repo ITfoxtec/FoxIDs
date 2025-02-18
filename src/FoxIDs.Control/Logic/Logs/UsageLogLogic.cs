@@ -190,7 +190,7 @@ namespace FoxIDs.Logic
 
         private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)
         {
-            return items.Select(i => new Api.UsageLogItem { Type = i.Type, Value = i.Value, SubItems = i.SubItems != null ? SortUsageTypes(i.SubItems) : null }).OrderBy(i => i.Type);
+            return items.Select(i => new Api.UsageLogItem { Type = i.Type, Value = i.Value, SubItems = i.SubItems != null ? SortUsageTypes(i.SubItems) : null }).OrderBy(i => (i.Type == Api.UsageLogTypes.ControlApiGet || i.Type == Api.UsageLogTypes.ControlApiUpdate) ? (int)i.Type * 1000 : (int)i.Type);
         }
     }
 }

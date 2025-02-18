@@ -32,7 +32,7 @@ An application using Client Credentials Grant could be a backend service secured
 
 Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as OAuth 2.0 resources.
 
-> Change the claims the application registration pass on with [claim transforms](claim-transform.md).
+> Change the claims the application registration issues with [claim transforms](claim-transform.md).
 
 ## Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported for security reasons because it is insecure and should not be used.

@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,10 @@ namespace FoxIDs.Models.Sequences
 {
     public class TrackLinkUpSequenceData : UpSequenceData, ISequenceKey
     {
+        public TrackLinkUpSequenceData() : base() { }
+
+        public TrackLinkUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonIgnore]
         public string KeyName
         {
@@ -38,9 +43,6 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "dss")]
         public string DownPartySequenceString { get; set; }
-
-        [JsonProperty(PropertyName = "a")]
-        public IEnumerable<string> Acr { get; set; }
 
         [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [JsonProperty(PropertyName = "si")]

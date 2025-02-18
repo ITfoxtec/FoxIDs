@@ -11,6 +11,12 @@ try
     var resourceLogic = serviceProvider.GetService<ResourceLogic>();
     await resourceLogic.LoadResourcesAsync();
 
+    Console.WriteLine("Add default EN resource");
+    if (resourceLogic.AddDefaultEnResource())
+    {
+        await resourceLogic.SaveResourcesAsync();
+    }
+
     Console.WriteLine("DeepL");
     await serviceProvider.GetService<DeepLTranslateLogic>().TranslateAllAsync();
     await resourceLogic.SaveResourcesAsync();

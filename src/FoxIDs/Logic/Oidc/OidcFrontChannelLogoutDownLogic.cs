@@ -20,15 +20,15 @@ namespace FoxIDs.Logic
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
 
-        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackIssuerLogic = trackIssuerLogic;
             this.tenantDataRepository = tenantDataRepository;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
         }
 
         public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
@@ -94,12 +94,12 @@ namespace FoxIDs.Logic
 
         private string GetFrontChannelLogoutDoneUrl(SingleLogoutSequenceData sequenceData, TParty firstParty)
         {
-            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true, firstParty.PartyBindingPattern);
+            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true, firstParty.PartyBindingPattern);
         }
 
         public Task<IActionResult> LogoutDoneAsync()
         {
-            return singleLogoutDownLogic.HandleSingleLogoutAsync();
+            return singleLogoutLogic.HandleSingleLogoutDownAsync();
         }
     }
 }

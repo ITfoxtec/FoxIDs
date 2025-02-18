@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,6 +11,10 @@ namespace FoxIDs.Models
         [ValidateComplexType]
         [JsonProperty(PropertyName = "link_external_user")]
         public LinkExternalUser LinkExternalUser { get; set; }
+
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [JsonProperty(PropertyName = "ext_user_claim_transforms")]
+        public List<OAuthClaimTransform> ExternalUserLoadedClaimTransforms { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -23,22 +23,23 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest)
+        public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
         {
             logger.ScopeTrace(() => "AppReg, Logout redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-
+            
             await logoutRequest.ValidateObjectAsync();
 
             await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
-                DownPartyLink = logoutRequest.DownPartyLink,
+                IsSingleLogout = isSingleLogout,
+                DownPartyLink = logoutRequest?.DownPartyLink,
                 UpPartyId = partyId,
-                SessionId = logoutRequest.SessionId,
-                RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
-                PostLogoutRedirect = logoutRequest.PostLogoutRedirect
+                SessionId = logoutRequest?.SessionId,
+                RequireLogoutConsent = logoutRequest?.RequireLogoutConsent ?? false,
+                PostLogoutRedirect = logoutRequest?.PostLogoutRedirect ?? true
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult();

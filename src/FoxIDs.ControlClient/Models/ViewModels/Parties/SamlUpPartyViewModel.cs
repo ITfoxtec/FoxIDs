@@ -6,10 +6,11 @@ using ITfoxtec.Identity.Saml2.Schemas;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : IValidatableObject, IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
+    public class SamlUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
         public string InitName { get; set; }
 
@@ -65,6 +66,13 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+
+        /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
@@ -272,6 +280,11 @@ namespace FoxIDs.Client.Models.ViewModels
                 {
                     results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", new[] { nameof(MetadataUrl) }));
                 }
+            }
+
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
             }
             return results;
         }

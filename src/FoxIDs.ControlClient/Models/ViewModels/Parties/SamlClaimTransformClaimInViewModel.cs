@@ -26,7 +26,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (Action != ClaimTransformActions.Remove)
+            if (Type != ClaimTransformTypes.Constant && Action != ClaimTransformActions.Remove)
             {
                 if (ClaimIn.IsNullOrWhiteSpace())
                 {

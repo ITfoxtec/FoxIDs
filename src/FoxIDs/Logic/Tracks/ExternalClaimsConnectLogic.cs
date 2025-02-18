@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                using var response = await httpClient.PostAsJsonAsync(claimsApiUrl, claimsRequest);
+                using var response = await httpClient.PostAsPlainJsonAsync(claimsApiUrl, claimsRequest);
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:

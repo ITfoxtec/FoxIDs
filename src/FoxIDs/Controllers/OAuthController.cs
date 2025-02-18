@@ -41,7 +41,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-
         public async Task<IActionResult> EndSessionResponse()
         {
             try
@@ -90,7 +89,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDoneAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }

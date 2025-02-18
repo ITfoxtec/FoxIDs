@@ -18,15 +18,15 @@ namespace FoxIDs.Logic
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SequenceLogic sequenceLogic;
-        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly SingleLogoutLogic singleLogoutLogic;
 
-        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
             this.securityHeaderLogic = securityHeaderLogic;
             this.sequenceLogic = sequenceLogic;
-            this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.singleLogoutLogic = singleLogoutLogic;
         }
 
         public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
@@ -69,13 +69,13 @@ namespace FoxIDs.Logic
 
         private string GetFrontChannelLogoutDoneUrl(SingleLogoutSequenceData sequenceData, TrackLinkDownParty firstParty)
         {
-            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true, firstParty.PartyBindingPattern);
+            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.TrackLinkController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true, firstParty.PartyBindingPattern);
         }
 
         public Task<IActionResult> LogoutDoneAsync()
         {
             logger.ScopeTrace(() => "AppReg, Environment Link front channel logout done.");
-            return singleLogoutDownLogic.HandleSingleLogoutAsync();
+            return singleLogoutLogic.HandleSingleLogoutDownAsync();
         }
     }
 }

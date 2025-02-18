@@ -46,9 +46,9 @@ namespace FoxIDs.Client.Services
 
         public async Task<PaginationResponse<ResourceName>> GetResourceNamesAsync(string filterName, string paginationToken = null) => await GetListAsync<ResourceName>(listResourceNamesApiUri, filterName, paginationToken: paginationToken);
 
-        public async Task<ResourceItem> GetTrackResourceAsync(int resourceId) => await GetAsync<ResourceItem>(resourceApiUri, Convert.ToString(resourceId), parmName: nameof(resourceId));
+        public async Task<ResourceItem> GetTrackResourceAsync(int resourceId) => await GetAsync<ResourceItem>(resourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
         public async Task UpdateTrackResourceAsync(TrackResourceItem trackResourceItem) => await PutAsync(resourceApiUri, trackResourceItem);
-        public async Task DeleteTrackResourceAsync(int resourceId) => await DeleteAsync(resourceApiUri, Convert.ToString(resourceId), parmName: nameof(resourceId));
+        public async Task DeleteTrackResourceAsync(int resourceId) => await DeleteAsync(resourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
 
         public async Task<ResourceSettings> GetTrackResourceSettingAsync() => await GetAsync<ResourceSettings>(resourceSettingApiUri);
         public async Task SaveTrackResourceSettingAsync(ResourceSettings resourceSettings) => await PostAsync(resourceSettingApiUri, resourceSettings);
@@ -62,7 +62,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<UsageLogResponse> GetTrackUsageLogAsync(UsageLogRequest usageLogRequest) => await GetAsync<UsageLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
 
-        public async Task<LogResponse> GetTrackLogAsync(LogRequest logRequest) => await GetAsync<LogRequest, LogResponse>(logApiUri, logRequest);
+        public async Task<LogResponse> GetLogAsync(LogRequest logRequest) => await GetAsync<LogRequest, LogResponse>(logApiUri, logRequest);
 
         public async Task<LogSettings> GetTrackLogSettingAsync() => await GetAsync<LogSettings>(logSettingApiUri);
         public async Task SaveTrackLogSettingAsync(LogSettings logSettings) => await PostAsync(logSettingApiUri, logSettings);

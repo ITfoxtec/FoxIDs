@@ -7,8 +7,8 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Search by user email.
         /// </summary>
-        [MaxLength(Constants.Models.User.EmailLength)]
+        [MaxLength(Constants.Models.User.UsernameLength)]
         [Display(Name = "Search user")]
-        public string FilterEmail { get; set; }
+        public string FilterValue { get; set; }
     }
 }

@@ -20,11 +20,11 @@ namespace FoxIDs.Repository
             this.mongoDbRepositoryClient = mongoDbRepositoryClient;
         }
 
-        public override async ValueTask<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false);
+            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false, queryAdditionalIds: queryAdditionalIds);
             return item != null;
         }
 
@@ -45,9 +45,9 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
-            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete);
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete, queryAdditionalIds);
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -64,7 +64,7 @@ namespace FoxIDs.Repository
             return await ReadItemAsync<Track>(await Track.IdFormatAsync(idKey), Track.PartitionIdFormat(idKey), required);
         }
 
-        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataDocument
+        private async ValueTask<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false, bool queryAdditionalIds = false) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -72,7 +72,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId) && f.Id.Equals(id);
+                Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId) && (f.Id.Equals(id) || (queryAdditionalIds && f.AdditionalIds.Where(a => a.Equals(id)).Any()));
                 var data = delete ? await collection.FindOneAndDeleteAsync(filter) : await collection.Find(filter).FirstOrDefaultAsync();
                 if (required && data == null)
                 {
@@ -219,7 +219,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -228,7 +228,7 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && f.Id.Equals(id));
+                var result = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && (f.Id.Equals(id) || (queryAdditionalIds && f.AdditionalIds.Where(a => a.Equals(id)).Any())));
                 if (!result.IsAcknowledged || !(result.DeletedCount > 0))
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };

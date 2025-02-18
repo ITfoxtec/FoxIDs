@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -72,26 +72,21 @@ namespace FoxIDs.Logic
 
             var party = await tenantDataRepository.GetAsync<TParty>(partyId);
 
-            var oidcUpSequenceData = new OidcUpSequenceData
+            var oidcUpSequenceData = new OidcUpSequenceData(loginRequest)
             {
-                DownPartyLink = loginRequest.DownPartyLink,
                 HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
-                UpPartyProfileName = partyLink.ProfileName,
-                LoginAction = loginRequest.LoginAction,
-                UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge,
-                LoginEmailHint = loginRequest.EmailHint
+                UpPartyProfileName = partyLink.ProfileName
             };
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, partyName: party.Name);
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthorizationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request.");
-            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: partyId.PartyIdToName(), remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid authentication method id.");
@@ -114,7 +109,7 @@ namespace FoxIDs.Logic
                 var codeVerifier = RandomGenerator.Generate(64);
                 oidcUpSequenceData.CodeVerifier = codeVerifier;
             }
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, partyName: party.Name);
 
             var authenticationRequest = new AuthenticationRequest
             {
@@ -146,9 +141,9 @@ namespace FoxIDs.Logic
                 authenticationRequest.MaxAge = oidcUpSequenceData.MaxAge;
             }
 
-            if (!oidcUpSequenceData.LoginEmailHint.IsNullOrEmpty())
+            if (!oidcUpSequenceData.LoginHint.IsNullOrEmpty())
             {
-                authenticationRequest.LoginHint = oidcUpSequenceData.LoginEmailHint;
+                authenticationRequest.LoginHint = oidcUpSequenceData.LoginHint;
             }
 
             var profile = GetProfile(party, oidcUpSequenceData);
@@ -245,7 +240,7 @@ namespace FoxIDs.Logic
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace(() => $"AuthMethod, Authentication response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
-            if (authenticationResponse.State.IsNullOrEmpty())
+            if (authenticationResponse.State.IsNullOrWhiteSpace())
             {
                 authenticationResponse.State = await stateUpPartyLogic.GetAndDeleteStateCookieAsync(party);
             }
@@ -254,19 +249,18 @@ namespace FoxIDs.Logic
                 await stateUpPartyLogic.DeleteStateCookieAsync(party);
             }
 
-            OidcUpSequenceData sequenceData = null;
             try
             {
                 await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Invalid State '{authenticationResponse.State}' returned from the IdP.");
-                throw;
+                throw new Exception($"Invalid State '{authenticationResponse.State}' returned from the IdP.", ex);
             }
 
-            if(party.Client.ClientKeys?.Where(ck => ck.Type == ClientKeyTypes.KeyVaultImport).Count() > 0)
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name, remove: false);
+
+            if (party.Client.ClientKeys?.Where(ck => ck.Type == ClientKeyTypes.KeyVaultImport).Count() > 0)
             {
                 await serviceProvider.GetService<ExternalKeyLogic>().PhasedOutExternalClientKeyAsync<TParty, TClient>(party);
             }
@@ -314,11 +308,19 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var transformedClaims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                await sessionUpPartyLogic.CreateOrUpdateMarkerSessionAsync(party, sequenceData.DownPartyLink, externalSessionId, idToken: idToken);
+
+                (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResult != null)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                    return actionResult;
+                }
+
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, OIDC transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var externalUserActionResult, var externalUserClaims) = await externalUserLogic.HandleUserAsync(party, validClaims,
+                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, validClaims,
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -327,10 +329,14 @@ namespace FoxIDs.Logic
                     (errorMessage) => throw new OAuthRequestException(errorMessage) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest });
                 if (externalUserActionResult != null)
                 {
+                    if (deleteSequenceData)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                    }
                     return externalUserActionResult;
                 }
 
-                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
                 return await AuthenticationRequestPostAsync(party, sequenceData, validClaims, externalUserClaims, idToken, externalSessionId);
             }
             catch (StopSequenceException)
@@ -358,7 +364,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
 
             try
@@ -392,19 +398,22 @@ namespace FoxIDs.Logic
         {
             validClaims = externalUserLogic.AddExternalUserClaims(party, validClaims, externalUserClaims);
 
-            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExternalUserLoadedClaimTransforms?.ConvertAll(t => (ClaimTransform)t), validClaims, sequenceData);
+            if (actionResult != null)
+            {
+                return actionResult;
+            }
+
+            var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, transformedClaims, externalSessionId, idToken);
             if (!sessionId.IsNullOrEmpty())
             {
-                validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                transformedClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
             }
 
-            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
-            {
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Oidc);
-            }
+            await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Oidc);
 
-            logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
+            logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return await AuthenticationResponseDownAsync(sequenceData, claims: transformedClaims);
         }
 
         private (Dictionary<string, string> formOrQueryDictionary, bool onlyAcceptGetResponseWithError) GetFormOrQueryDictionary(TParty party)

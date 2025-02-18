@@ -37,6 +37,18 @@ namespace FoxIDs
         }
 
         /// <summary>
+        /// Add or replace Claim to List&lt;Claim&gt;.
+        /// </summary>
+        public static void AddOrReplaceClaim(this List<Claim> list, string type, string value)
+        {
+            if (list.Where(c => c.Type == type).Any())
+            {
+                list.RemoveAll(c => c.Type == type);
+            }
+            list.Add(new Claim(type, value));
+        }
+
+        /// <summary>
         /// Add Claim to List&lt;Claim&gt;.
         /// </summary>
         public static void AddClaim(this List<Claim> list, string type, string value, string valueType, string issuer)

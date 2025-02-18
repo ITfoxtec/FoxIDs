@@ -39,11 +39,11 @@ The default client authentication method is `client secret post` and can be chan
 
 The scopes the FoxIDs authentication method should send in the request to the external OP can be configured. E.g, `profile` or `email`.
 
-The authentication method only transfer default claims and configured claim to the application registrations. 
+The authentication method only forwards default claims and claims added in the `Forward claims` list to the application registrations. All claims is forwarded if you add `*` (default) to the `Forward claims` list.
 
 Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
-> Change the claims the authentication method pass on with [claim transforms](claim-transform.md).
+> Change the claims the authentication method forwards with [claim transforms](claim-transform.md).
 
 FoxIDs default use the brackets connection pattern `.../(auth-method)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes connection pattern `.../~auth-method~/...` or dot connection pattern `.../.auth-method./...`.
 

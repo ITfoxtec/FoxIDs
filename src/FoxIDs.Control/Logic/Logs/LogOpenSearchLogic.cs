@@ -23,10 +23,10 @@ namespace FoxIDs.Logic
             this.openSearchClient = openSearchClient;
         }
 
-        public async Task<Api.LogResponse> QueryLogs(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
+        public async Task<Api.LogResponse> QueryLogs(Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var responseTruncated = false;
-            var logItems = await LoadLogsAsync(logRequest, queryTimeRange, maxResponseLogItems);
+            var logItems = await LoadLogsAsync(logRequest, tenantName, trackName, queryTimeRange, maxResponseLogItems);
 
             if (logItems.Count() >= maxResponseLogItems)
             {
@@ -199,6 +199,7 @@ namespace FoxIDs.Logic
                 if (!item.Message.IsNullOrWhiteSpace())
                 {
                     var logTraceMessageItems = item.Message.ToObject<List<LogTraceMessageItem>>();
+                    logTraceMessageItems.Reverse();
                     foreach (var logTraceMessageItem in logTraceMessageItems)
                     {
                         var logItemDetail = new Api.LogItemDetail
@@ -238,37 +239,41 @@ namespace FoxIDs.Logic
             operationItem.OperationId = item.OperationId;
         }
 
-        private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
+        private async Task<IEnumerable<OpenSearchLogItem>> LoadLogsAsync(Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange, int maxResponseLogItems)
         {
             var response = await openSearchClient.SearchAsync<OpenSearchLogItem>(s => s
-                .Index(GetIndexName())
+                .Index(Indices.Index(GetIndexName()))
                     .Size(maxResponseLogItems)
                     .Sort(s => s.Descending(f => f.Timestamp))
                     .Query(q => q
-                         .Bool(b => GetQuery(b, logRequest, queryTimeRange)))
-                    
+                         .Bool(b => GetQuery(b, logRequest, tenantName, trackName, queryTimeRange)))
                 );
 
             return response.Documents;
         }
 
-        private string GetIndexName()
+        private IEnumerable<string> GetIndexName()
         {
-            return $"{settings.OpenSearch.LogName}*";
+            yield return $"{settings.OpenSearch.LogName}*";
+            // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+            yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
-        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, (DateTime start, DateTime end) queryTimeRange)
+        private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, Api.LogRequest logRequest, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
         {
             boolQuery = boolQuery.Filter(f => f.DateRange(dt => dt.Field(field => field.Timestamp)
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
-            boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
-
+            if (logRequest.QueryEvents)
+            {
+                boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
+            }
+           
             boolQuery = boolQuery.Must(m => m
-                .Term(t => t.TenantName, RouteBinding.TenantName) && 
-                    m.Term(t => t.TrackName, RouteBinding.TrackName) &&
-                    m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest)))) &&
+                .Term(t => t.TenantName, tenantName) &&
+                    m.Term(t => t.TrackName, trackName)  &&
+                    MustBeLogType(m, logRequest) && 
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs
                             .Field(f => f.Message)
@@ -291,6 +296,28 @@ namespace FoxIDs.Logic
             return boolQuery;
         }
 
+        private static QueryContainer MustBeLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest)
+        {
+            return MustBeExceptionLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest) ||
+                        // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
+                        m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest))));
+        }
+
+        private static QueryContainer MustBeExceptionLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            (m.Term(t => t.LogType, LogTypes.Warning.ToString()) ||
+                m.Term(t => t.LogType, LogTypes.Error.ToString()) ||
+                m.Term(t => t.LogType, LogTypes.CriticalError.ToString())) && (logRequest.QueryExceptions ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Event.ToString()) && (logRequest.QueryEvents ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeTraceLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Trace.ToString()) && (logRequest.QueryTraces ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeMetricLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Metric.ToString()) && (logRequest.QueryMetrics ? m.MatchAll() : m.MatchNone());
+
+        // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
         private static IEnumerable<string> GetLogTypes(Api.LogRequest logRequest)
         {
             if (logRequest.QueryExceptions)

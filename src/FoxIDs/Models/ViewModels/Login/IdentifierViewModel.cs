@@ -11,13 +11,28 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCreateUser { get; set; }
 
-        [Display(Name = "Email")]
-        [Required]
-        [MaxLength(Constants.Models.User.EmailLength)]
-        [EmailAddress]
-        public string Email { get; set; }
+        [ValidateComplexType]
+        public EmailIdentifierViewModel EmailIdentifier { get; set; }
 
-        public bool ShowEmailSelection { get; set; }
+        [ValidateComplexType]
+        public PhoneIdentifierViewModel PhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameIdentifierViewModel UsernameIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernameEmailIdentifierViewModel UsernameEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneIdentifierViewModel UsernamePhoneIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public PhoneEmailIdentifierViewModel PhoneEmailIdentifier { get; set; }
+
+        [ValidateComplexType]
+        public UsernamePhoneEmailIdentifierViewModel UsernamePhoneEmailIdentifier { get; set; }
+
+        public bool ShowUserIdentifierSelection { get; set; }
 
         [Display(Name = "Search log in")]
         public string UpPartyFilter { get; set; }

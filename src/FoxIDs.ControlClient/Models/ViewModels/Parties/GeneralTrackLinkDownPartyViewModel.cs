@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<TrackLinkDownPartyViewModel> Form { get; set; }
 
-        public SelectUpParty<TrackLinkDownPartyViewModel> SelectAllowUpPartyName;
+        public SelectUpParties<TrackLinkDownPartyViewModel> SelectAllowUpPartyName;
 
         public bool ShowTrackLinkTab { get; set; } = true;
         public bool ShowClaimTransformTab { get; set; }

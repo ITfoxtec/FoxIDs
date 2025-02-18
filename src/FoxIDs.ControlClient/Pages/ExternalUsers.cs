@@ -320,7 +320,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    generalExternalUser.Form.SetFieldError(nameof(generalExternalUser.Form.Model.LinkClaimValue), ex.Message);
+                    generalExternalUser.Form.SetError(ex.Message);
                 }
                 else
                 {

@@ -8,8 +8,9 @@ Additional subsets of claim transformations can be performed if a user or an ext
 
 ![Claim transform flow diagram](images/claim-transform.svg)
 
-If you create a new claim in a claim transform, the claim is send from the authentication method if the claim or `*` is in the `Forward claims` list. 
-The application registration receives the claim and issues the claim if the claim or `*` is in the `Issue claims` list or alternative if the claim is in a requested scope's `Voluntary claims` list. 
+> If you create a new claim with a claim transform, the claim is local in the authentication method or application registration.  
+> In an authentication method the claim is forwarded by adding the claim or `*` (default) is in the `Forward claims` list.  
+> In a application registration you need to add the claim or `*`to the `Issue claims` list or alternative for OpenID Connect add the claim to a scopes `Voluntary claims` list and request the scope from your application.
 
 Please see [claim transform examples](#claim-transform-examples)
 

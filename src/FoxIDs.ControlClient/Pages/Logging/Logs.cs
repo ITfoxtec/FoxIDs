@@ -5,6 +5,7 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -35,10 +36,20 @@ namespace FoxIDs.Client.Pages.Logging
         public NotificationLogic NotificationLogic { get; set; }
 
         [Inject]
+        public TenantService TenantService { get; set; }
+
+        [Inject]
+        public MyTenantService MyTenantService { get; set; }
+
+        [Inject]
         public TrackService TrackService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
+
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
         protected override async Task OnInitializedAsync()
         {
@@ -85,9 +96,40 @@ namespace FoxIDs.Client.Pages.Logging
         private async Task LoadLogAsync()
         {
             logLoadError = null;
-            var logRequest = new LogRequest();
+
+            if (IsMasterTenant)
+            {
+                var logRequest = new TenantLogRequest();
+                AddLogValues(logRequest);
+                if (logRequestForm?.Model != null)
+                {
+                    logRequest.TenantName = logRequestForm.Model.TenantName;
+                    logRequest.TrackName = logRequestForm.Model.TrackName;
+                }
+                logResponse = (await TenantService.GetLogAsync(logRequest)).Map<LogResponseViewModel>();
+            }
+            else if (IsMasterTrack)
+            {
+                var logRequest = new MyTenantLogRequest();
+                AddLogValues(logRequest);
+                if (logRequestForm?.Model != null)
+                {
+                    logRequest.TrackName = logRequestForm.Model.TrackName;
+                }
+                logResponse = (await MyTenantService.GetLogAsync(logRequest)).Map<LogResponseViewModel>();
+            }
+            else
+            {
+                var logRequest = new LogRequest();
+                AddLogValues(logRequest);
+                logResponse = (await TrackService.GetLogAsync(logRequest)).Map<LogResponseViewModel>(); 
+            }
+        }
+
+        private void AddLogValues(LogRequest logRequest)
+        {
             var fromTime = GetFromTime();
-            if(!fromTime.HasValue)
+            if (!fromTime.HasValue)
             {
                 return;
             }
@@ -101,13 +143,14 @@ namespace FoxIDs.Client.Pages.Logging
                 logRequest.QueryEvents = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Events);
                 logRequest.QueryMetrics = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Metrics);
             }
-            else 
+            else
             {
                 logRequest.QueryExceptions = true;
-                logRequest.QueryEvents = true;
+                if (!IsMasterTenant && !IsMasterTrack)
+                {
+                    logRequest.QueryEvents = true;
+                }
             }
-
-            logResponse = (await TrackService.GetTrackLogAsync(logRequest)).Map<LogResponseViewModel>();
         }
 
         private DateTimeOffset? GetFromTime()
@@ -135,7 +178,16 @@ namespace FoxIDs.Client.Pages.Logging
 
         private void LogRequestViewModelAfterInit(LogRequestViewModel model)
         {
-            if(ClientSettings.LogOption == LogOptions.ApplicationInsights)
+            if (!(model.QueryTypes?.Count() > 0))
+            {
+                model.QueryTypes = [LogQueryTypes.Exceptions];
+                if (!IsMasterTenant && !IsMasterTrack)
+                {
+                    model.QueryTypes.Add(LogQueryTypes.Events);
+                }
+            }
+
+            if (ClientSettings.LogOption == LogOptions.ApplicationInsights)
             {
                 model.DisableBothEventAndTrace = true;
             }
@@ -146,7 +198,15 @@ namespace FoxIDs.Client.Pages.Logging
             if (logRequestForm.Model.QueryTypes.Count() <= 0)
             {
                 logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Exceptions);
-                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Events);
+                if (!IsMasterTenant && !IsMasterTrack)
+                {
+                    logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Events);
+                }
+            }
+
+            if (IsMasterTenant && logRequestForm.Model.TenantName.IsNullOrWhiteSpace())
+            {
+                logRequestForm.Model.TrackName = null;
             }
 
             logResponse = null;

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackLinkDownPartyViewModel : IDownPartyName, IValidatableObject, IAllowUpPartyNames, IClaimTransformViewModel
+    public class TrackLinkDownPartyViewModel : IDownPartyName, IValidatableObject, IAllowUpPartyNames
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]

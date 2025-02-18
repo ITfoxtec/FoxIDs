@@ -35,10 +35,7 @@ namespace FoxIDs.Repository
             { 
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
             }
-            if (item != null)
-            {
-                await item.ValidateObjectAsync();
-            }
+            await item.ValidateObjectAsync();
             return item;
         }
 
@@ -49,7 +46,6 @@ namespace FoxIDs.Repository
             var items = dataItems.ToList();
             await items.ValidateObjectAsync();
             return items;
-            throw new NotImplementedException();
         }
 
         public override async ValueTask CreateAsync<T>(T item)

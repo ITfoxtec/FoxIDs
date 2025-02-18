@@ -3,18 +3,14 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using FoxIDs.Util;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ExtInv = FoxIDs.Models.ExternalInvoices;
@@ -218,14 +214,14 @@ namespace FoxIDs.Logic.Usage
                     invoice.SendStatus = UsageInvoiceSendStatus.Failed;
                     await tenantDataRepository.UpdateAsync(used);
                 }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception saveEx)
                 {
                     logger.Error(saveEx, $"Usage, unable to save status: {UsageInvoiceSendStatus.Failed}.");
@@ -373,6 +369,12 @@ namespace FoxIDs.Logic.Usage
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional users ({plan.Users.Included} included)", $"Additional users (more then {plan.Users.FirstLevelThreshold})", used.Users, plan.Users, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional logins ({plan.Logins.Included} included)", $"Additional logins (more then {plan.Logins.FirstLevelThreshold})", used.Logins, plan.Logins, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional token requests ({plan.TokenRequests.Included} included)", $"Additional token requests (more then {plan.TokenRequests.FirstLevelThreshold})", used.TokenRequests, plan.TokenRequests, exchangeRate);
+                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional SMS ({plan.Sms.Included} included)", $"Additional SMS (more then {plan.Sms.FirstLevelThreshold})", used.Sms, plan.Sms, exchangeRate);
+                if (used.Sms > 0)
+                {
+                    invoice.Price += AddInvoiceUsageLine(invoice.Lines, "SMS country price", used.SmsPrice, used.Sms, exchangeRate);
+                }
+                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional emails ({plan.Emails.Included} included)", $"Additional emails (more then {plan.Emails.FirstLevelThreshold})", used.Emails, plan.Emails, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API reads ({plan.ControlApiGetRequests.Included} included)", $"Additional Control API reads (more then {plan.ControlApiGetRequests.FirstLevelThreshold})", used.ControlApiGets, plan.ControlApiGetRequests, exchangeRate);
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API updates ({plan.ControlApiUpdateRequests.Included} included)", $"Additional Control API updates (more then {plan.ControlApiUpdateRequests.FirstLevelThreshold})", used.ControlApiUpdates, plan.ControlApiUpdateRequests, exchangeRate);
             }
@@ -455,6 +457,15 @@ namespace FoxIDs.Logic.Usage
             return price;
         }
 
+        private decimal AddInvoiceUsageLine(List<InvoiceLine> lines, string text, decimal smsPrice, decimal usedCount, decimal exchangeRate)
+        {
+            var unitPrice = CurrencyAndRoundPrice(smsPrice, exchangeRate, true);
+            var price = RoundPrice(unitPrice * usedCount, false);
+            lines.Add(new InvoiceLine { Text = text, Quantity = usedCount, UnitPrice = unitPrice, Price = price });
+
+            return price;
+        }
+
         private decimal CurrencyAndRoundPrice(decimal price, decimal exchangeRate, bool isUnitPrice)
         {
             return RoundPrice(price * exchangeRate, isUnitPrice);
@@ -477,8 +488,7 @@ namespace FoxIDs.Logic.Usage
 
             var httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{settings.Usage.ExternalInvoiceApiId.OAuthUrlDencode()}:{settings.Usage.ExternalInvoiceApiSecret.OAuthUrlDencode()}".Base64Encode());
-            var content = new StringContent(JsonConvert.SerializeObject(invoiceRequest, JsonSettings.ExternalSerializerSettings), Encoding.UTF8, MediaTypeNames.Application.Json);
-            using var response = await httpClient.PostAsync(settings.Usage.ExternalInvoiceApiUrl, content);
+            using var response = await httpClient.PostAsPlainJsonAsync(settings.Usage.ExternalInvoiceApiUrl, invoiceRequest);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

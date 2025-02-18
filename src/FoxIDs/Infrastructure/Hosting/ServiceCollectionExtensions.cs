@@ -21,8 +21,8 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic(settings);
 
-            services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
+            services.AddSingleton<CountryCodesLogic>();
 
             services.AddTransient<SequenceLogic>();
             services.AddTransient<SecurityHeaderLogic>();
@@ -32,12 +32,12 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<LoginPageLogic>();
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();
-            services.AddTransient<SingleLogoutDownLogic>();            
+            services.AddTransient<SingleLogoutLogic>();            
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<FailingLoginLogic>();            
             services.AddTransient<AccountLogic>();
             services.AddTransient<AccountActionLogic>();
-            services.AddTransient<AccountTwoFactorLogic>();
+            services.AddTransient<AccountTwoFactorAppLogic>();
             services.AddTransient<ExternalLoginPageLogic>();
             services.AddTransient<ExternalLoginConnectLogic>();
             services.AddTransient<ExternalLoginUpLogic>();

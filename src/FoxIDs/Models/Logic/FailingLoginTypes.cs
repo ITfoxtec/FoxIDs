@@ -4,7 +4,10 @@
     {
         Login,
         ExternalLogin,
+        SmsCode,
         EmailCode,
+        TwoFactorSmsCode,
+        TwoFactorEmailCode,
         TwoFactorAuthenticator,
     }
 }

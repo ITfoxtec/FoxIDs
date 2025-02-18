@@ -11,44 +11,54 @@ namespace FoxIDs
 {
     public static class DynamicElementExtension
     {
-        public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxlength = 60, bool isRequired = false, bool autocompleteAsUsername = false)
+        public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.EmailLength, bool isRequired = false)
         {
-            return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxlength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: autocompleteAsUsername ? "email" : "", isRequired: isRequired);
+            return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxLength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: "email", isRequired: isRequired);
         }
 
-        public static IHtmlContent GetPasswordControl(this IHtmlHelper html, string name, string value, int maxlength = 50, bool isRequired = false)
+        public static IHtmlContent GetPhoneControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.PhoneLength, bool isRequired = false)
         {
-            return html.GetControl("password", name, html.GetLocalizerValue("Password"), value, maxlength, autocomplete: "new-password", isRequired: isRequired);
+            return html.GetControl("phone", name, html.GetLocalizerValue("Phone"), value, maxLength, validation: $"data-val-phone=\"{html.GetErrorAttributeLocalizerMessage<PhoneAttribute>()}\"", autocomplete: "tel", isRequired: isRequired);
         }
 
-        public static IHtmlContent GetConfirmPasswordControl(this IHtmlHelper html, string name, string value, string matchPasswordName, int maxlength = 50, bool isRequired = false)
+        public static IHtmlContent GetUsernameControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.UsernameLength, bool isRequired = false)
+        {
+            return html.GetControl("username", name, html.GetLocalizerValue("Username"), value, maxLength, autocomplete: "username", isRequired: isRequired);
+        }
+
+        public static IHtmlContent GetPasswordControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.Track.PasswordLengthMax, bool isRequired = false)
+        {
+            return html.GetControl("password", name, html.GetLocalizerValue("Password"), value, maxLength, autocomplete: "new-password", isRequired: isRequired);
+        }
+
+        public static IHtmlContent GetConfirmPasswordControl(this IHtmlHelper html, string name, string value, string matchPasswordName, int maxLength = Constants.Models.Track.PasswordLengthMax, bool isRequired = false)
         {
             var displayName = html.GetLocalizerValue("Confirm password");
-            return html.GetControl("password", name, displayName, value, maxlength, validation: $"data-val-equalto=\"{html.GetLocalizerValue("'{0}' and 'Password' do not match.", displayName)}\" data-val-equalto-other=\"{matchPasswordName}\"", autocomplete: "new-password", isRequired: isRequired);
+            return html.GetControl("password", name, displayName, value, maxLength, validation: $"data-val-equalto=\"{html.GetLocalizerValue("'{0}' and 'Password' do not match.", displayName)}\" data-val-equalto-other=\"{matchPasswordName}\"", autocomplete: "new-password", isRequired: isRequired);
         }
 
-        public static IHtmlContent GetNameControl(this IHtmlHelper html, string name, string value, int maxlength = 150, bool isRequired = false)
+        public static IHtmlContent GetNameControl(this IHtmlHelper html, string name, string value, int maxLength = 150, bool isRequired = false)
         {
-            return html.GetControl("text", name, html.GetLocalizerValue("Full name"), value, maxlength, autocomplete: "name", isRequired: isRequired);
+            return html.GetControl("text", name, html.GetLocalizerValue("Full name"), value, maxLength, autocomplete: "name", isRequired: isRequired);
         }
 
-        public static IHtmlContent GetGivenNameControl(this IHtmlHelper html, string name, string value, int maxlength = 80, bool isRequired = false)
+        public static IHtmlContent GetGivenNameControl(this IHtmlHelper html, string name, string value, int maxLength = 80, bool isRequired = false)
         {
-            return html.GetControl("text", name, html.GetLocalizerValue("Given name"), value, maxlength, autocomplete: "given-name", isRequired: isRequired);
+            return html.GetControl("text", name, html.GetLocalizerValue("Given name"), value, maxLength, autocomplete: "given-name", isRequired: isRequired);
         }
 
-        public static IHtmlContent GetFamilyNameControl(this IHtmlHelper html, string name, string value, int maxlength = 80, bool isRequired = false)
+        public static IHtmlContent GetFamilyNameControl(this IHtmlHelper html, string name, string value, int maxLength = 80, bool isRequired = false)
         {
-            return html.GetControl("text", name, html.GetLocalizerValue("Family name"), value, maxlength, autocomplete: "family-name", isRequired: isRequired);
+            return html.GetControl("text", name, html.GetLocalizerValue("Family name"), value, maxLength, autocomplete: "family-name", isRequired: isRequired);
         }
 
-        private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxlength, string validation = null, string autocomplete = null, bool isRequired = false)
+        private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxLength, string validation = null, string autocomplete = null, bool isRequired = false)
         {
             (var hasError, var errorMessage) = GetError(html, name);
 
             var id = name.Replace('.', '_').Replace('[', '_').Replace(']', '_');
             var content = new HtmlContentBuilder();
-            content.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control{(hasError ? " input-validation-error" : string.Empty)}\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxlength)}\" data-val-maxlength-max=\"{maxlength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxlength=\"{maxlength}\" name=\"{name}\" value=\"{value}\">");
+            content.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control{(hasError ? " input-validation-error" : string.Empty)}\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxLength)}\" data-val-maxLength-max=\"{maxLength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxLength=\"{maxLength}\" name=\"{name}\" value=\"{value}\">");
             content.AppendHtml($"<label class=\"label-control\" for=\"{name}\">{displayName}</label>");
             content.AppendHtml($"<span class=\"{(hasError ? "field-validation-error" : "field-validation-valid")}\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\">{errorMessage}</span>");
             return content;

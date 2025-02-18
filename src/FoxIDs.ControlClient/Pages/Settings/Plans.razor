@@ -57,7 +57,7 @@
                         Plan
                     </div>
                     <div class="modal-body">
-                        <FInputText @bind-Value="plan.Form.Model.DisplayName" For="@(() => plan.Form.Model.DisplayName)" Focus="true" />
+                        <FInputText @bind-Value="plan.Form.Model.DisplayName" For="@(() => plan.Form.Model.DisplayName)" Focus="plan.CreateMode" />
                         @if (plan.CreateMode)
                         {
                             <FInputText @bind-Value="plan.Form.Model.Name" For="@(() => plan.Form.Model.Name)" />
@@ -71,6 +71,8 @@
                         <FInputText @bind-Value="plan.Form.Model.Text" For="@(() => plan.Form.Model.Text)" />
                         <FInputNumberD @bind-Value="plan.Form.Model.CostPerMonth" For="@(() => plan.Form.Model.CostPerMonth)" />
                         <FInputToggle @bind-Value="plan.Form.Model.EnableCustomDomain" For="@(() => plan.Form.Model.EnableCustomDomain)" TextType="e.d" />
+                        <FInputToggle @bind-Value="plan.Form.Model.EnableSms" For="@(() => plan.Form.Model.EnableSms)" TextType="e.d" />
+                        <FInputToggle @bind-Value="plan.Form.Model.EnableEmailTwoFactor" For="@(() => plan.Form.Model.EnableEmailTwoFactor)" TextType="e.d" />
 
                         <ul class="list-group mb-3">
                             <li class="list-group-item">
@@ -104,6 +106,22 @@
                                 <FInputNumberD @bind-Value="plan.Form.Model.TokenRequests.FirstLevelCost" For="@(() => plan.Form.Model.TokenRequests.FirstLevelCost)" />
                                 <FInputNumberLN @bind-Value="plan.Form.Model.TokenRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.TokenRequests.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.TokenRequests.SecondLevelCost" For="@(() => plan.Form.Model.TokenRequests.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.Sms)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.Sms.Included" For="@(() => plan.Form.Model.Sms.Included)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Sms.LimitedThreshold" For="@(() => plan.Form.Model.Sms.LimitedThreshold)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.Sms.FirstLevelCost" For="@(() => plan.Form.Model.Sms.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Sms.FirstLevelThreshold" For="@(() => plan.Form.Model.Sms.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.Sms.SecondLevelCost" For="@(() => plan.Form.Model.Sms.SecondLevelCost)" />
+                            </li>
+                            <li class="list-group-item">
+                                <Label For="@(() => plan.Form.Model.Emails)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.Emails.Included" For="@(() => plan.Form.Model.Emails.Included)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Emails.LimitedThreshold" For="@(() => plan.Form.Model.Emails.LimitedThreshold)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.Emails.FirstLevelCost" For="@(() => plan.Form.Model.Emails.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.Emails.FirstLevelThreshold" For="@(() => plan.Form.Model.Emails.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.Emails.SecondLevelCost" For="@(() => plan.Form.Model.Emails.SecondLevelCost)" />
                             </li>
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.ControlApiGetRequests)" class="label-control" />

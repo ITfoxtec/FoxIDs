@@ -44,15 +44,19 @@ namespace FoxIDs.Logic
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);
-            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
+            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false, partyName: party.ToUpPartyName);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
                 throw new EndpointException($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.") { RouteBinding = RouteBinding };
             }
 
-            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });
+            var sequenceData = await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData(GetLoginRequest(party, keySequenceData))
+            {
+                KeyName = party.Name,
+                UpPartySequenceString = keySequenceString 
+            });
 
-            var toUpParties = RouteBinding.ToUpParties;
+            (var toUpParties, _) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
             if (toUpParties.Count() == 1)
             {
                 var toUpParty = toUpParties.First();
@@ -60,17 +64,17 @@ namespace FoxIDs.Logic
                 switch (toUpParty.Type)
                 {
                     case PartyTypes.Login:
-                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, sequenceData);
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, sequenceData);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, sequenceData);
                     case PartyTypes.ExternalLogin:
-                        return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginRedirectAsync(toUpParty, sequenceData);
 
                     default:
                         throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
@@ -78,7 +82,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(GetLoginRequest(party, keySequenceData));
+                return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(sequenceData);
             }
         }
 
@@ -90,7 +94,7 @@ namespace FoxIDs.Logic
                 LoginAction = keySequenceData.LoginAction,
                 UserId = keySequenceData.UserId,
                 MaxAge = keySequenceData.MaxAge,
-                EmailHint = keySequenceData.LoginEmailHint,
+                LoginHint = keySequenceData.LoginHint,
                 Acr = keySequenceData.Acr
             };
         }
@@ -102,19 +106,32 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
-
             if (error.IsNullOrEmpty())
             {
-                logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-                claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
-
-                var clientClaims = claimsDownLogic.GetClientJwtClaims(party.Claims);
-                if (clientClaims?.Count() > 0)
+                try
                 {
-                    claims.AddRange(clientClaims);
+                    logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                    (claims, var actionResult) = await claimTransformLogic.TransformAsync(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                    if (actionResult != null)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<TrackLinkDownSequenceData>();
+                        return actionResult;
+                    }
+                    logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+                    claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
+
+                    var clientClaims = claimsDownLogic.GetClientJwtClaims(party.Claims);
+                    if (clientClaims?.Count() > 0)
+                    {
+                        claims.AddRange(clientClaims);
+                    }
+                }
+                catch (OAuthRequestException ex)
+                {
+                    logger.Error(ex);
+                    error = ex.Error;
+                    errorDescription = ex.ErrorDescription;
                 }
             }
 

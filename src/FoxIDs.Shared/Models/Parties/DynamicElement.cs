@@ -19,11 +19,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "required")]
         public bool Required { get; set; }
 
+        [JsonProperty(PropertyName = "is_user_identifier")]
+        public bool IsUserIdentifier { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
 
-            if (!Required && (Type == DynamicElementTypes.EmailAndPassword))
+            if (!Required && (Type == DynamicElementTypes.EmailAndPassword || Type == DynamicElementTypes.Password))
             {
                 results.Add(new ValidationResult($"The field {nameof(Required)} must be true for dynamic element type '{Type}'.", [nameof(Required)]));
             }

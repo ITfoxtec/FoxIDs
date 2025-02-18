@@ -121,6 +121,7 @@ namespace FoxIDs.Client.Shared.Components
             }
             else
             {
+                Console.WriteLine("Form has error.");
                 var valError = string.Empty;
                 foreach (var message in EditContext.GetValidationMessages())
                 {

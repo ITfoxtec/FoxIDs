@@ -3,10 +3,11 @@ using FoxIDs.Models.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class ExternalLoginUpPartyViewModel : IClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
+    public class ExternalLoginUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyHrd, IClientAdditionalParameters
     {
         public string InitName { get; set; }
 
@@ -93,6 +94,13 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
+        /// Claim transforms executed after the external users claims has been loaded.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+
+        /// <summary>
         /// Default if required.
         /// </summary>
         [Required]
@@ -143,5 +151,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.UpParty.ProfilesMin, Constants.Models.UpParty.ProfilesMax)]
         public List<ExternalLoginUpPartyProfileViewModel> Profiles { get; set; } = new List<ExternalLoginUpPartyProfileViewModel>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
+            }
+            return results;
+        }
     }
 }

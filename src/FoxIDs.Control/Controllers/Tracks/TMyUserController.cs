@@ -6,7 +6,6 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
@@ -35,22 +34,17 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.MyUser>> GetMyUser()
         {
-            var email = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
             try
             {
-                if (email.IsNullOrWhiteSpace())
-                {
-                    throw new Exception("Authenticated users email claim is empty.");
-                }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await GetMyIdAsync());
                 return Ok(mapper.Map<Api.MyUser>(mUser));
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.MyUser).Name}' by email '{email}'.");
-                    return NotFound(typeof(Api.MyUser).Name, email);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.MyUser).Name}' by claims.");
+                    return NotFound(typeof(Api.MyUser).Name, "by claims");
                 }
                 throw;
             }
@@ -66,14 +60,9 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.MyUser>> PutMyUser([FromBody] Api.MyUser user)
         {
-            var email = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
             try
             {
-                if (email.IsNullOrWhiteSpace())
-                {
-                    throw new Exception("Authenticated users email claim is empty.");
-                }
-                var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                var mUser = await tenantDataRepository.GetAsync<User>(await GetMyIdAsync());
                 mUser.ChangePassword = user.ChangePassword;
                 await tenantDataRepository.UpdateAsync(mUser);
 
@@ -83,11 +72,26 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.MyUser).Name}' by email '{email}'.");
-                    return NotFound(typeof(Api.MyUser).Name, email, nameof(email));
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.MyUser).Name}' by claims.");
+                    return NotFound(typeof(Api.MyUser).Name, "by claims");
                 }
                 throw;
             }
+        }
+
+        private async Task<string> GetMyIdAsync()
+        {
+            var email = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
+            var phone = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PhoneNumber);
+            var username = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.PreferredUsername);
+            var userId = User.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
+
+            if (email.IsNullOrWhiteSpace() && phone.IsNullOrWhiteSpace() && username.IsNullOrWhiteSpace() && userId.IsNullOrWhiteSpace())
+            {
+                throw new Exception("Authenticated users email, phone, username and userid claims is empty, at lease one is required.");
+            }
+
+            return await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username, UserId = userId });
         }
     }
 }

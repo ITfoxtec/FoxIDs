@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableCustomDomain)
                     {
-                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
+                        throw new PlanException(plan, $"Custom domain is not supported in the '{plan.Name}' plan.");
                     }
                 }
 

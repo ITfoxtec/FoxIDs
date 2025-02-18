@@ -34,6 +34,12 @@ namespace FoxIDs.Models.Config
         public SmtpSettings Smtp { get; set; }
 
         /// <summary>
+        /// Sms configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public SmsSettings Sms { get; set; }
+
+        /// <summary>
         /// OpenSearch configuration.
         /// </summary>
         [ValidateComplexType]

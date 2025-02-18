@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FoxIDs.Models.Logic;
+using System;
 
 namespace FoxIDs.Logic
 {
@@ -9,6 +10,6 @@ namespace FoxIDs.Logic
         public UserExistsException(string message) : base(message) { }
         public UserExistsException(string message, Exception innerException) : base(message, innerException) { }
 
-        public string Email { get; set; }
+        public UserIdentifier UserIdentifier { get; set; }
     }
 }

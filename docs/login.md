@@ -15,7 +15,7 @@ The login authentication method user interface authenticates users in a two-step
 ## Home Realm Discovery (HRD)
 When you create a application registration it is in most cases the best solution to use a star `(*)` in round brackets to select the authentication methods. 
 If a application registration is configured to only be allowed to use one authentication method the user is immediately redirected to that particular authentication method. 
-If more than one authentication method is allowed the user is redirected to a login authentication method which make it possible to select an authentication method either by writing an e-mail (looking at the domain) or by clicking a HRD button.
+If more than one authentication method is allowed the user is redirected to a login authentication method which make it possible to select an authentication method either by writing an email (looking at the domain) or by clicking a HRD button.
 
 It is possible to select up to 4 authentication methods by name or use the star notation, please see more about [selection](index.md#selection-by-url).
 
@@ -75,7 +75,7 @@ The login authentication method interface can be [customized with custom title, 
 ![Configure Login](images/configure-login-customization.png)
 
 ### Configure claims
-You can change the claims the login authentication method pass on with [claim transforms](claim-transform.md).
+You can change the claims the login authentication method forwards with [claim transforms](claim-transform.md).
 
 ### All login configurations
 All login configurations are available after clicking show advanced.

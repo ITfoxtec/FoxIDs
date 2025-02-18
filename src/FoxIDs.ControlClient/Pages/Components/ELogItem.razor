@@ -51,7 +51,7 @@
             </ul>
         }
 
-        @foreach (var value in Item.Values)
+        @foreach (var value in Item.Values?.Where(v => v.Key != Constants.Logs.Results.TenantName && v.Key != Constants.Logs.Results.TrackName))
         {
             <div>@value.Key.GetDisplayLogKey(): @value.Value.GetDisplayLogValue()</div>
         }
@@ -72,7 +72,7 @@
             </ul>
         }
 
-        @foreach (var value in Item.Values)
+        @foreach (var value in Item.Values?.Where(v => v.Key != Constants.Logs.Results.TenantName && v.Key != Constants.Logs.Results.TrackName))
         {
             <div>@value.Key.GetDisplayLogKey(): @value.Value.GetDisplayLogValue()</div>
         }
@@ -97,15 +97,15 @@
             <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @userAgent.GetDisplayLogValue()</div>
         }
 
-        var appId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
-        if(!appId.IsNullOrWhiteSpace())
+        var downPartyId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
+        if (!downPartyId.IsNullOrWhiteSpace())
         {
-            <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @appId.GetDisplayLogValue()</div>
+            <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
         }
-        var authMethodId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
-        if (!authMethodId.IsNullOrWhiteSpace())
+        var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
+        if (!upPartyId.IsNullOrWhiteSpace())
         {
-            <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @authMethodId.GetDisplayLogValue()</div>
+            <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @upPartyId.GetDisplayLogValue()</div>
         }
         var userId = @Item.Values.GetValue(Constants.Logs.Results.UserId);
         if (!userId.IsNullOrWhiteSpace())
@@ -147,15 +147,32 @@
             <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @userAgent.GetDisplayLogValue()</div>
         }
 
-        var appId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
-        if (!appId.IsNullOrWhiteSpace())
+        var downPartyId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
+        if (!downPartyId.IsNullOrWhiteSpace())
         {
-            <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @appId.GetDisplayLogValue()</div>
+            <div>@Constants.Logs.Results.DownPartyId.GetDisplayLogKey(): @downPartyId.GetDisplayLogValue()</div>
         }
-        var authMethodId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
-        if (!authMethodId.IsNullOrWhiteSpace())
+        var upPartyId = @Item.Values.GetValue(Constants.Logs.Results.UpPartyId);
+        if (!upPartyId.IsNullOrWhiteSpace())
         {
-            <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @authMethodId.GetDisplayLogValue()</div>
+            <div>@Constants.Logs.Results.UpPartyId.GetDisplayLogKey(): @upPartyId.GetDisplayLogValue()</div>
+        }
+    }
+
+    @if (IsMasterTenant)
+    {
+        var tenantName = @Item.Values.GetValue(Constants.Logs.Results.TenantName);
+        if (!tenantName.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.TenantName.GetDisplayLogKey(): @tenantName.GetDisplayLogValue()</div>
+        }
+    }
+    @if (IsMasterTenant || IsMasterTrack)
+    {
+        var trackName = @Item.Values.GetValue(Constants.Logs.Results.TrackName);
+        if (!trackName.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.TrackName.GetDisplayLogKey(): @trackName.GetDisplayLogValue()</div>
         }
     }
 </div>
@@ -163,5 +180,11 @@
 @code {
     [Parameter]
     public LogItemViewModel Item { get; set; }
+
+    [Parameter]
+    public bool IsMasterTenant { get; set; }
+
+    [Parameter]
+    public bool IsMasterTrack { get; set; }
 }
 

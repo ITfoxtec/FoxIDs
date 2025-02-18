@@ -27,6 +27,7 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
         }
 
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> SpMetadata()
         {
             try
@@ -47,6 +48,7 @@ namespace FoxIDs.Controllers
             }
         }
 
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> IdPMetadata()
         {
             try

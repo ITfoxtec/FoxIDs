@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,8 +7,12 @@ using System.Linq;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class TrackLinkDownSequenceData : ISequenceKey, IDownSequenceData
+    public class TrackLinkDownSequenceData : DownSequenceData, ISequenceKey
     {
+        public TrackLinkDownSequenceData() : base() { }
+
+        public TrackLinkDownSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
+
         [JsonIgnore]
         public string KeyName 
         {

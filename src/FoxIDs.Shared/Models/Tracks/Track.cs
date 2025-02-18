@@ -110,6 +110,10 @@ namespace FoxIDs.Models
         public SendEmail SendEmail { get; set; }
 
         [ValidateComplexType]
+        [JsonProperty(PropertyName = "send_sms")]
+        public SendSms SendSms { get; set; }
+
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "logging")]
         public Logging Logging { get; set; } 
         

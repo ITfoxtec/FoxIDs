@@ -23,7 +23,7 @@ namespace FoxIDs.Client.Services
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri, true.ToString(), parmName: "isUpParty"))?.Name;
+        public async Task<string> GetNewPartyNameAsync() => (await GetAsync<NewPartyName>(newPartyNameApiUri, true.ToString(), parmName1: "isUpParty"))?.Name;
 
         public async Task<PaginationResponse<UpParty>> GetUpPartiesAsync(string filterValue, string paginationToken = null) => await GetListAsync<UpParty>(listApiUri, filterValue, parmValue2: filterValue, parmName2: "filterHrdDomains", paginationToken: paginationToken);
 
@@ -42,13 +42,13 @@ namespace FoxIDs.Client.Services
         public async Task<OidcUpParty> UpdateOidcUpPartyAsync(OidcUpParty party) => await PutResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task DeleteOidcUpPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
-        public async Task<OAuthClientSecretSingleResponse> GetOidcClientSecretUpPartyAsync(string partyName) => await GetAsync<OAuthClientSecretSingleResponse>(oidcClientSecretApiUri, partyName, parmName: nameof(partyName));
+        public async Task<OAuthClientSecretSingleResponse> GetOidcClientSecretUpPartyAsync(string partyName) => await GetAsync<OAuthClientSecretSingleResponse>(oidcClientSecretApiUri, partyName, parmName1: nameof(partyName));
         public async Task<OAuthClientSecretSingleResponse> UpdateOidcClientSecretUpPartyAsync(OAuthClientSecretSingleRequest secretRequest) => await PutResponseAsync<OAuthClientSecretSingleRequest, OAuthClientSecretSingleResponse>(oidcClientSecretApiUri, secretRequest);
-        public async Task DeleteOidcClientSecretUpPartyAsync(string name) => await DeleteAsync(oidcClientSecretApiUri, name, parmName: nameof(name));
+        public async Task DeleteOidcClientSecretUpPartyAsync(string name) => await DeleteAsync(oidcClientSecretApiUri, name, parmName1: nameof(name));
 
-        public async Task<OAuthClientKeyResponse> GetOidcClientKeyUpPartyAsync(string partyName) => await GetAsync<OAuthClientKeyResponse>(oidcClientKeyApiUri, partyName, parmName: nameof(partyName));
+        public async Task<OAuthClientKeyResponse> GetOidcClientKeyUpPartyAsync(string partyName) => await GetAsync<OAuthClientKeyResponse>(oidcClientKeyApiUri, partyName, parmName1: nameof(partyName));
         public async Task<OAuthClientKeyResponse> CreateOidcClientKeyUpPartyAsync(OAuthClientKeyRequest keyRequest) => await PostResponseAsync<OAuthClientKeyRequest, OAuthClientKeyResponse>(oidcClientKeyApiUri, keyRequest);
-        public async Task DeleteOidcClientKeyUpPartyAsync(string name) => await DeleteAsync(oidcClientKeyApiUri, name, parmName: nameof(name));
+        public async Task DeleteOidcClientKeyUpPartyAsync(string name) => await DeleteAsync(oidcClientKeyApiUri, name, parmName1: nameof(name));
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
         public async Task<SamlUpParty> CreateSamlUpPartyAsync(SamlUpParty party) => await PostResponseAsync<SamlUpParty, SamlUpParty>(samlApiUri, party);
@@ -67,8 +67,8 @@ namespace FoxIDs.Client.Services
         public async Task<ExternalLoginUpParty> UpdateExternalLoginUpPartyAsync(ExternalLoginUpParty party) => await PutResponseAsync<ExternalLoginUpParty, ExternalLoginUpParty>(externalLoginApiUri, party);
         public async Task DeleteExternalLoginUpPartyAsync(string name) => await DeleteAsync(externalLoginApiUri, name);
 
-        public async Task<ExternalLoginSecretResponse> GetExternalLoginSecretUpPartyAsync(string partyName) => await GetAsync<ExternalLoginSecretResponse>(externalLoginSecretApiUri, partyName, parmName: nameof(partyName));
+        public async Task<ExternalLoginSecretResponse> GetExternalLoginSecretUpPartyAsync(string partyName) => await GetAsync<ExternalLoginSecretResponse>(externalLoginSecretApiUri, partyName, parmName1: nameof(partyName));
         public async Task<ExternalLoginSecretResponse> UpdateExternalLoginSecretUpPartyAsync(ExternalLoginSecretRequest secretRequest) => await PutResponseAsync<ExternalLoginSecretRequest, ExternalLoginSecretResponse>(externalLoginSecretApiUri, secretRequest);
-        public async Task DeleteExternalLoginSecretUpPartyAsync(string name) => await DeleteAsync(externalLoginSecretApiUri, name, parmName: nameof(name));
+        public async Task DeleteExternalLoginSecretUpPartyAsync(string name) => await DeleteAsync(externalLoginSecretApiUri, name, parmName1: nameof(name));
     }
 }

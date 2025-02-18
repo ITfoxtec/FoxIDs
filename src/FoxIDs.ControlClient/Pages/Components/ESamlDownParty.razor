@@ -67,7 +67,7 @@
         <div class="tab-content pt-3">
             @if (samlDownParty.ShowSamlTab)
             {
-                <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
+                <SelectUpParties @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, true))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, true))" />
                 <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
                 <FInputToggle @bind-Value="samlDownParty.Form.Model.DisableAbsoluteUrls" For="@(() => samlDownParty.Form.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
@@ -75,20 +75,16 @@
                 {
                     <div class="row active-group-outline">
                         <div class="col">
-                            <div class="form-group active-group">
-                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                </FInputSelect>
-                            </div>
+                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)">
+                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                            </FInputSelect>
                         </div>
                         <div class="col">
-                            <div class="form-group active-group">
-                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                </FInputSelect>
-                            </div>
+                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)">
+                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                            </FInputSelect>
                         </div>
                     </div>
 
@@ -132,20 +128,16 @@
                     <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
                     <div class="row active-group-outline">
                         <div class="col">
-                            <div class="form-group active-group">
-                                <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                </FInputSelect>
-                            </div>
+                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)">
+                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                            </FInputSelect>
                         </div>
                         <div class="col">
-                            <div class="form-group active-group">
-                                <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                </FInputSelect>
-                            </div>
+                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)">
+                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                            </FInputSelect>
                         </div>
                     </div>
                 }
@@ -213,9 +205,9 @@
             else if (samlDownParty.ShowClaimTransformTab)
             {
                 <div class="mb-3 alert alert-info" role="alert">
-                    If you create a new claim the claim is local unless you add the claim to the 'Issue claims' list.
+                    If you create a new claim the claim is local in this application registration unless you add the claim or '*' to the 'Issue claims' list.
                 </div>
-                <SamlClaimTransforms Model="samlDownParty.Form.Model" />
+                <SamlClaimTransforms ClaimTransforms="samlDownParty.Form.Model.ClaimTransforms" IsDownParty="true" />
             }
         </div>
     </div>

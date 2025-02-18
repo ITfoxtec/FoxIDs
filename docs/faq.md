@@ -15,3 +15,8 @@ In SAML 2.0 the login hint is forwarded as a `NameID` with the Email Format `urn
 The problem occurs if the OIDC logout require an ID Token before accepting logout. In this case the ID Token is invalid because the container type and there by the signing certificate have changed.  
 Solution: You need to close the browser and start over.
 
+##### How is an external SAML 2.0 IdPs certificate updated and can it be automated?
+FoxIDs will automatically start accepting the new certificate if the external IdP add the new certificate to the existing SAML 2.0 metadata file/endpoint at least 24 hours in advance. A SAML 2.0 metadata file can have many certificates.  
+You force a metadata refresh by clicking **Update** on the authentication method in FoxIDs.
+
+If external IdP create a new SAML 2.0 metadata file or only hands over the certificate, there is only the manual way.

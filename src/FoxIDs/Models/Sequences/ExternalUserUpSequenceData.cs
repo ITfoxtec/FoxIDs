@@ -1,15 +1,16 @@
-﻿using ITfoxtec.Identity.Saml2.Schemas;
+﻿using FoxIDs.Models.Logic;
+using ITfoxtec.Identity.Saml2.Schemas;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class ExternalUserUpSequenceData : ISequenceData
+    public class ExternalUserUpSequenceData : UpSequenceData
     {
-        [Required]
-        [JsonProperty(PropertyName = "ui")]
-        public string UpPartyId { get; set; }
+        public ExternalUserUpSequenceData() : base() { }
+
+        public ExternalUserUpSequenceData(ILoginRequest loginRequest) : base(loginRequest) { }
 
         [Required]
         [JsonProperty(PropertyName = "ut")]

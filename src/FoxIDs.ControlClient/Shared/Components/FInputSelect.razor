@@ -1,7 +1,7 @@
 ﻿@typeparam TValue
 @inherits FInputBase<TValue>
 
-<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+<div class="form-group active-group">
     <select @ref="inputElement" @bind="@CurrentValueAsString" class="form-control input-control">
         @if (ShowDefaultOption)
         {
@@ -14,9 +14,6 @@
 </div>
 
 @code {
-    [Parameter]
-    public bool IncludeActiveFormGroup { get; set; } = true;
-
     [Parameter]
     public bool ShowDefaultOption { get; set; } = false;
 

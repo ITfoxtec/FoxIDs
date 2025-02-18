@@ -111,6 +111,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapSamlClaimTransforms();
                 }
+                if (afterMap.ExternalUserLoadedClaimTransforms?.Count > 0)
+                {
+                    afterMap.ExternalUserLoadedClaimTransforms = afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransforms();
+                }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
                     afterMap.LinkExternalUser.ClaimTransforms = afterMap.LinkExternalUser.ClaimTransforms.MapOAuthClaimTransforms();
@@ -144,6 +148,7 @@ namespace FoxIDs.Client.Pages.Components
                     model.DisableUserAuthenticationTrust = true;
                 }
                 model.Claims = new List<string> { "*" };
+                model.DisableLoginHint = true;
             }
         }
 
@@ -290,6 +295,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalSamlUpParty.Form.Model.ClaimTransforms.MapSamlClaimTransformsBeforeMap();
+                generalSamlUpParty.Form.Model.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalSamlUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
@@ -310,7 +316,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();
-
+                    afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
 
                     if (generalSamlUpParty.Form.Model.Profiles?.Count() > 0)

@@ -63,3 +63,5 @@ The following screen shot show the basic FoxIDs SAML 2.0 application registratio
 ![Configure SAML 2.0](images/configure-saml-app-reg.png)
 
 > Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).
+
+If you are creating a new claim, add the claim or `*` to the `Issue claims` list to issue the claim to your application.

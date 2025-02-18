@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
 
                 foreach (var claimTransform in addActionClaimTransform)
                 {
-                    if (claimTransform.Type != ClaimTransformTypes.ExternalClaims)
+                    if (claimTransform.Task == null && claimTransform.Type != ClaimTransformTypes.ExternalClaims)
                     {
                         if (claimTransform is OAuthClaimTransform)
                         {

@@ -39,7 +39,7 @@ namespace FoxIDs.Logic.Tracks
             else
             {
                 var newUpParties = new List<HrdUpPartyCookieData> { new HrdUpPartyCookieData { LoginUpPartyName = loginUpPartyName, SelectedUpPartyName = selectedUpPartyName, SelectedUpPartyProfileName = selectedUpPartyProfileName, SelectedUpPartyType = selectedType } };
-                var existingUpPartis = hrdSelectionCookie.UpParties.Where(up => up.LoginUpPartyName != loginUpPartyName);
+                var existingUpPartis = hrdSelectionCookie.UpParties.Where(up => loginUpPartyName.IsNullOrEmpty() || up.LoginUpPartyName != loginUpPartyName);
                 if (existingUpPartis.Any())
                 {
                     newUpParties.AddRange(existingUpPartis);
@@ -87,7 +87,7 @@ namespace FoxIDs.Logic.Tracks
                 foreach (var toUpParty in toUpParties)
                 {
                     var hrdUpParty = hrdSelectionCookie.UpParties.Where(up => (up.SelectedUpPartyName == toUpParty.Name && (up.SelectedUpPartyProfileName.IsNullOrEmpty() || up.SelectedUpPartyProfileName == toUpParty.ProfileName)) || 
-                        (up.LoginUpPartyName == toUpParty.Name && toUpParties.Where(tup => tup.Name == up.SelectedUpPartyName && (up.SelectedUpPartyProfileName.IsNullOrEmpty() || tup.ProfileName == up.SelectedUpPartyProfileName)).Any())).FirstOrDefault();
+                        (!up.LoginUpPartyName.IsNullOrEmpty() && up.LoginUpPartyName == toUpParty.Name && toUpParties.Where(tup => tup.Name == up.SelectedUpPartyName && (up.SelectedUpPartyProfileName.IsNullOrEmpty() || tup.ProfileName == up.SelectedUpPartyProfileName)).Any())).FirstOrDefault();
                     if (hrdUpParty != null)
                     {
                         await DeleteHrdSelectionBySelectedUpPartyAsync(hrdUpParty.SelectedUpPartyName, hrdUpParty.SelectedUpPartyProfileName, hrdSelectionCookie);

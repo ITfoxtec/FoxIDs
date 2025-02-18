@@ -107,7 +107,7 @@
                     <div class="mb-3 alert alert-info" role="alert">
                         The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
-                    <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />
+                    <SelectUpParties @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />
                     @if (DownParty.ShowAdvanced)
                     {
                         <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true" />
@@ -321,9 +321,9 @@
             else if (oauthDownParty.ShowClaimTransformTab)
             {
                 <div class="mb-3 alert alert-info" role="alert">
-                    If you create a new claim the claim is local unless you add the claim to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
+                    If you create a new claim the claim is local in this application registration unless you add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
-                <OAuthClaimTransforms Model="oauthDownParty.Form.Model" />
+                <OAuthClaimTransforms ClaimTransforms="oauthDownParty.Form.Model.ClaimTransforms" IsDownParty="true" />
             }
         </div>
     </div>

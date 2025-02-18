@@ -83,6 +83,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "token_requests")]
         public decimal TokenRequests { get; set; }
 
+        [JsonProperty(PropertyName = "sms")]
+        public decimal Sms { get; set; }
+
+        [JsonProperty(PropertyName = "sms_price")]
+        public decimal SmsPrice { get; set; }
+
+        [JsonProperty(PropertyName = "emails")]
+        public decimal Emails { get; set; }
+
         [JsonProperty(PropertyName = "control_api_gets")]
         public decimal ControlApiGets { get; set; }
 

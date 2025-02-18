@@ -18,6 +18,15 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Token requests")]
         public decimal TokenRequests { get; set; }
 
+        [Display(Name = "SMS")]
+        public decimal Sms { get; set; }
+
+        [Display(Name = "SMS country EUR price")]
+        public decimal SmsPrice { get; set; }
+
+        [Display(Name = "Emails")]
+        public decimal Emails { get; set; }
+
         [Display(Name = "Control API gets")]
         public decimal ControlApiGets { get; set; }
 

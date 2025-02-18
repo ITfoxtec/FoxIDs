@@ -67,8 +67,8 @@
                             </div>
                             <div>
                                 @{
-                                    (var sendItemsInvoice, var failed, var paid, var statusText) = @UsageInfoText(used);
-                                    var textClass = sendItemsInvoice ? "text-primary" : failed ? "text-danger font-weight-bold" : paid ? "text-success" : string.Empty;
+                                    (var sendItemsInvoice, var failed, var notPaid, var paid, var statusText) = @UsageInfoText(used);
+                                    var textClass = sendItemsInvoice ? "text-primary" : failed ? "text-danger font-weight-bold" : notPaid ? "bg-warning" : paid ? "text-success" : string.Empty;
                                 }
                                 <small class="@textClass">@statusText</small>
                             </div>
@@ -258,14 +258,29 @@
                     <button type="button" class="btn btn-link mr-auto" @onclick="@(async () => await ShowUpdateUsageAsync(used))">
                         Tenant: @used.TenantName@UsageInfoAndPriceText(used)
                         <br />
-                        @{ 
-                            (var sendItemsInvoice, var failed, var paid, var statusText) = @UsageInfoText(used);
-                            var textClass = sendItemsInvoice ? "text-primary" : failed ? "text-danger font-weight-bold" : paid ? "text-success" : string.Empty;
+                        @{
+                            (var sendItemsInvoice, var failed, var notPaid, var paid, var statusText) = @UsageInfoText(used);
+                            var textClass = sendItemsInvoice ? "text-primary" : failed ? "text-danger font-weight-bold" : notPaid ? "text-dark bg-warning" : paid ? "text-success" : string.Empty;
                         }
                         <small class="@textClass">@statusText</small>
                     </button>
 
                     <div class="btn-group" role="group">
+                        @if (ShowMarkAsPaidButton(used))
+                        {
+                            @if (!used.InvoicingActionButtonDisabled)
+                            {
+                                <button type="button" class="btn btn-outline-dark" @onclick="@(async () => await DoMarkAsPaidAsync(used))">
+                                    Mark as paid
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark" disabled="disabled">
+                                    Do invoicing
+                                </button>
+                            }
+                        }
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Action
                         </button>

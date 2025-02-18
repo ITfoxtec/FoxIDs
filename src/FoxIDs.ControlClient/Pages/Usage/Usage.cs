@@ -144,7 +144,7 @@ namespace FoxIDs.Client.Pages.Usage
             return $"{(invoice != null ? $", Invoice: {invoice.InvoiceNumber}" : string.Empty)}{(totalPrice > 0 ? $",{(totalPrice != invoice.Price ? $" Price: {invoice?.Currency}{price}," : string.Empty)} Total price: {invoice?.Currency}{totalPrice}" : string.Empty)}";
         }
 
-        private (bool sendItemsInvoice, bool failed, bool paid, string statusText) UsageInfoText(GeneralUsedViewModel generalUsed)
+        private (bool sendItemsInvoice, bool failed, bool notPaid, bool paid, string statusText) UsageInfoText(GeneralUsedViewModel generalUsed)
         {
             var invoice = generalUsed.Invoices?.LastOrDefault();
             var invoiceSendState = invoice?.SendStatus;
@@ -195,7 +195,8 @@ namespace FoxIDs.Client.Pages.Usage
 
             var sendItemsInvoice = generalUsed.HasItems && invoice?.SendStatus != UsageInvoiceSendStatus.Send;
             var failed = invoice?.SendStatus == UsageInvoiceSendStatus.Failed || generalUsed?.PaymentStatus.PaymentApiStatusIsGenerallyFailed() == true;
-            return (sendItemsInvoice, failed, generalUsed.PaymentStatus == UsagePaymentStatus.Paid, $"Status: {string.Join(", ", statusTest)}");
+            var notPaid = generalUsed.IsInvoiceReady && ((invoice?.IsCardPayment != true && generalUsed.PaymentStatus != UsagePaymentStatus.Paid) || generalUsed.PaymentStatus.PaymentApiStatusIsGenerallyFailed());
+            return (sendItemsInvoice, failed, notPaid, generalUsed.PaymentStatus == UsagePaymentStatus.Paid, $"Status: {string.Join(", ", statusTest)}");
         }
 
         private void OnUsageFilterAfterInit(FilterUsageViewModel filterUsage)

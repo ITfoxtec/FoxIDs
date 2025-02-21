@@ -230,6 +230,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-google-scopes.png = docs\images\howto-oidc-google-scopes.png
 		docs\images\howto-oidc-google-usertype.png = docs\images\howto-oidc-google-usertype.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
+		docs\images\howto-oidc-nets-eid-broker-claim-transform.png = docs\images\howto-oidc-nets-eid-broker-claim-transform.png
+		docs\images\howto-oidc-nets-eid-broker-external-user.png = docs\images\howto-oidc-nets-eid-broker-external-user.png
+		docs\images\howto-oidc-nets-eid-broker-profile.png = docs\images\howto-oidc-nets-eid-broker-profile.png
 		docs\images\howto-saml-claim-mappings.png = docs\images\howto-saml-claim-mappings.png
 		docs\images\howto-saml-context-handler-app-base-config-reg.png = docs\images\howto-saml-context-handler-app-base-config-reg.png
 		docs\images\howto-saml-context-handler-app-base-config.png = docs\images\howto-saml-context-handler-app-base-config.png
@@ -284,11 +287,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 		docs\images\user-create-new-account-config.png = docs\images\user-create-new-account-config.png
 		docs\images\user-create-new-account.png = docs\images\user-create-new-account.png
+		docs\images\user-email-phone-username-user-identifier.png = docs\images\user-email-phone-username-user-identifier.png
 		docs\images\user-external-auth-method-redemption.png = docs\images\user-external-auth-method-redemption.png
 		docs\images\user-external-create-new-account-config.png = docs\images\user-external-create-new-account-config.png
 		docs\images\user-external-create-new-account.png = docs\images\user-external-create-new-account.png
 		docs\images\user-external-redemption.png = docs\images\user-external-redemption.png
 		docs\images\user-login.png = docs\images\user-login.png
+		docs\images\user-phone-user-identifier.png = docs\images\user-phone-user-identifier.png
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"

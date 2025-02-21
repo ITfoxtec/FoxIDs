@@ -112,13 +112,13 @@ namespace FoxIDs.Logic
 
         private IEnumerable<SessionTrackCookieGroup> AddNewSessionTrackCookieSequenceGroups(SessionTrackCookie session)
         {
-            var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence.Id };
             if (session.Groups == null)
             {
                 session.Groups = new List<SessionTrackCookieGroup>();
             }
+            var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence.Id };
             session.Groups.Add(sessionGroup);
-            return session.Groups;
+            return [sessionGroup];
         }
 
         public async Task<SessionTrackCookieGroup> GetAndDeleteSessionTrackCookieGroupAsync<T>(T upParty) where T : IUpParty
@@ -172,7 +172,7 @@ namespace FoxIDs.Logic
 
         protected void AddDownPartyLink(SessionTrackCookieGroup sessionGroup, DownPartySessionLink downPartyLink)
         {
-            if (downPartyLink == null || !downPartyLink.SupportSingleLogout)
+            if (downPartyLink == null)
             {
                 return;
             }

@@ -43,7 +43,6 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
-            await ValidatePasswordRiskAsync(password);
             if (await secretHashLogic.ValidateSecretAsync(user, password))
             {
                 await failingLoginLogic.ResetFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
@@ -55,6 +54,15 @@ namespace FoxIDs.Logic
                 else
                 {
                     logger.ScopeTrace(() => $"User '{userIdentifier}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
+                    try
+                    {
+                        await ValidatePasswordRiskAsync(password);
+                    }
+                    catch
+                    {
+                        logger.ScopeTrace(() => $"User '{userIdentifier}' password is in risk based on global password breaches, user have to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
+                        throw;
+                    }
                     return user;
                 }
             }

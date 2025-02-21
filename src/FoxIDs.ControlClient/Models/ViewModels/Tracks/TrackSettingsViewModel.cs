@@ -83,7 +83,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool? CheckPasswordComplexity { get; set; }
 
         [Required]
-        [Display(Name = "Check password risk")]
+        [Display(Name = "Check password risk based on global password breaches")]
         public bool? CheckPasswordRisk { get; set; } 
 
         [ValidateComplexType]

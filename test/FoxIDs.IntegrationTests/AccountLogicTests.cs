@@ -1,0 +1,121 @@
+using System.Threading.Tasks;
+using FoxIDs.Logic;
+using Xunit;
+using FoxIDs.Models;
+using FoxIDs.UnitTests.MockHelpers;
+using FoxIDs.UnitTests.Helpers;
+using FoxIDs.UnitTests.Mocks;
+using FoxIDs.Models.Config;
+using FoxIDs.Models.Logic;
+using FoxIDs.Repository;
+using Wololo.PgKeyValueDB;
+using Npgsql;
+using System.Text.Json;
+
+namespace FoxIDs.UnitTests
+{
+    public class AccountLogicTests
+    {
+        [Theory]
+        [InlineData("a1@test.com", "12345678")]
+        [InlineData("a1@test.com", "123456789")]
+        [InlineData("a1@test.com", "12345678901234567890123456789012345678901234567890")]
+        public async Task CreateUserCheckPasswordLength_ReturnsUser(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
+            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            Assert.NotNull(user);
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "1234")]
+        [InlineData("a1@test.com", "12345")]
+        [InlineData("a1@test.com", "123456")]
+        [InlineData("a1@test.com", "1234567")]
+        public async Task CreateUserCheckPasswordLength_ThrowPasswordLengthException(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
+            await Assert.ThrowsAsync<PasswordLengthException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "!QAZ2wsx")]
+        [InlineData("a1@test.com", "!comQAZ2wsx")]
+        [InlineData("a1@test.com", "!a1QAZ2wsx")]
+        [InlineData("a1@test.com", "QAZ12wsx")]
+        [InlineData("a1@test.com", "%!QAZwsx")]
+        [InlineData("a1@test.com", "%!123wsx")]
+        [InlineData("a1@test.com", "%!123QAZ")]
+        public async Task CreateUserCheckPasswordComplexity_ReturnsUser(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
+            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            Assert.NotNull(user);
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "!testQAZ2wsx")]
+        public async Task CreateUserCheckPasswordComplexity_ThrowPasswordEmailTextComplexityException(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
+            await Assert.ThrowsAsync<PasswordEmailTextComplexityException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "!QAZ2wsxsometenant")]
+        [InlineData("a1@test.com", "sometrack!QAZ2wsx")]
+        [InlineData("a1@test.com", "!QAZ2loginwsx")]
+        public async Task CreateUserCheckPasswordComplexity_ThrowPasswordUrlTextComplexityException(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
+            await Assert.ThrowsAsync<PasswordUrlTextComplexityException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "!QAZ2wsx#EDC")]
+        public async Task CreateUserCheckPasswordRisk_ReturnsUser(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance();
+            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            Assert.NotNull(user);
+        }
+
+        [Theory]
+        [InlineData("a1@test.com", "!QAZ2wsx")]
+        public async Task CreateUserCheckPasswordRisk_ThrowPasswordRiskException(string email, string password)
+        {
+            var accountLogic = AccountLogicInstance();
+            await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+        }
+
+        private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
+        {
+            var routeBinding = new RouteBinding
+            {
+                PasswordLength = passwordLength,
+                CheckPasswordComplexity = checkPasswordComplexity,
+                CheckPasswordRisk = checkPasswordRisk,
+            };
+            var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
+
+            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
+
+            var connectionString = "Host=localhost;Username=postgres;Password=postgres;Database=postgres";
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var dataSource = new NpgsqlDataSourceBuilder(connectionString)
+                .EnableDynamicJson()
+                .ConfigureJsonOptions(jsonSerializerOptions)
+                .Build();
+            var fakeTenantRepository = new PgTenantDataRepository(new PgKeyValueDB(dataSource, "foxids", "tenant", jsonSerializerOptions));
+            var fakeMasterRepository = new PgMasterDataRepository(new PgKeyValueDB(dataSource, "foxids", "master", jsonSerializerOptions));
+           
+            var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
+
+            var accountLogic = new BaseAccountLogic(telemetryScopedLogger, fakeTenantRepository, fakeMasterRepository, secretHashLogic, mockHttpContextAccessor);
+            return accountLogic;
+        }
+    }
+}

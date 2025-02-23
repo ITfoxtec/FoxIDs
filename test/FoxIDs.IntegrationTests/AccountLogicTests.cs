@@ -11,6 +11,9 @@ using FoxIDs.Repository;
 using Wololo.PgKeyValueDB;
 using Npgsql;
 using System.Text.Json;
+using MysticMind.PostgresEmbed;
+using System;
+using System.Linq;
 
 namespace FoxIDs.UnitTests
 {
@@ -88,6 +91,8 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
         }
 
+        static PgServer pg;
+
         private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {
             var routeBinding = new RouteBinding
@@ -100,7 +105,12 @@ namespace FoxIDs.UnitTests
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            var connectionString = "Host=localhost;Username=postgres;Password=postgres;Database=postgres";
+            if (pg == null)
+            {
+                pg = new PgServer("16.2.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
+                pg.Start();
+            }
+            var connectionString = $"Host=localhost;Port={pg.PgPort};Username=postgres;Password=postgres;Database=postgres";
             var jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -109,12 +119,13 @@ namespace FoxIDs.UnitTests
                 .EnableDynamicJson()
                 .ConfigureJsonOptions(jsonSerializerOptions)
                 .Build();
-            var fakeTenantRepository = new PgTenantDataRepository(new PgKeyValueDB(dataSource, "foxids", "tenant", jsonSerializerOptions));
-            var fakeMasterRepository = new PgMasterDataRepository(new PgKeyValueDB(dataSource, "foxids", "master", jsonSerializerOptions));
+            var schema = "foxids" + Guid.NewGuid().ToString().Replace("-", "");
+            var pgTenantRepository = new PgTenantDataRepository(new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions));
+            var pgMasterRepository = new PgMasterDataRepository(new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions));
            
             var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
 
-            var accountLogic = new BaseAccountLogic(telemetryScopedLogger, fakeTenantRepository, fakeMasterRepository, secretHashLogic, mockHttpContextAccessor);
+            var accountLogic = new BaseAccountLogic(telemetryScopedLogger, pgTenantRepository, pgMasterRepository, secretHashLogic, mockHttpContextAccessor);
             return accountLogic;
         }
     }

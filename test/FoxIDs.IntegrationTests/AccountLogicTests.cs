@@ -4,8 +4,6 @@ using Xunit;
 using FoxIDs.Models;
 using FoxIDs.UnitTests.MockHelpers;
 using FoxIDs.UnitTests.Helpers;
-using FoxIDs.UnitTests.Mocks;
-using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
 using Wololo.PgKeyValueDB;
@@ -13,7 +11,6 @@ using Npgsql;
 using System.Text.Json;
 using MysticMind.PostgresEmbed;
 using System;
-using System.Linq;
 
 namespace FoxIDs.UnitTests
 {
@@ -120,9 +117,12 @@ namespace FoxIDs.UnitTests
                 .ConfigureJsonOptions(jsonSerializerOptions)
                 .Build();
             var schema = "foxids" + Guid.NewGuid().ToString().Replace("-", "");
-            var pgTenantRepository = new PgTenantDataRepository(new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions));
-            var pgMasterRepository = new PgMasterDataRepository(new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions));
-           
+            var pgTenantDb = new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions);
+            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb);
+            var pgMasterDb = new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions);
+            pgMasterDb.Create("prisk:@master:3357229DDDC9963302283F4D4863A74F310C9E80", true, "@master:prisks");
+            var pgMasterRepository = new PgMasterDataRepository(pgMasterDb);
+
             var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
 
             var accountLogic = new BaseAccountLogic(telemetryScopedLogger, pgTenantRepository, pgMasterRepository, secretHashLogic, mockHttpContextAccessor);

@@ -63,7 +63,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, queryAdditionalIds, scopedLogger: scopedLogger);
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete: delete, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -200,6 +200,10 @@ namespace FoxIDs.Repository
                 var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
             }
+            catch (FoxIDsDataException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
@@ -239,6 +243,10 @@ namespace FoxIDs.Repository
                 var container = GetContainer(item);
                 var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -281,6 +289,10 @@ namespace FoxIDs.Repository
                 var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId), new ItemRequestOptions { IndexingDirective = IndexingDirective.Exclude });
                 totalRU += response.RequestCharge;
             }
+            catch (FoxIDsDataException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId, ex);
@@ -296,7 +308,7 @@ namespace FoxIDs.Repository
         {
             double totalRU = 0;
             var query = GetQueryAsync<T>(partitionId);
-            var setIterator = query.Where(q => (notId.IsNullOrEmpty() || q.Id == notId) && (q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId))).ToFeedIterator();
+            var setIterator = query.Where(q => (notId.IsNullOrEmpty() || q.Id != notId) && (q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId))).ToFeedIterator();
             var response = await setIterator.ReadNextAsync();
             totalRU += response.RequestCharge;
             var item = response.FirstOrDefault();

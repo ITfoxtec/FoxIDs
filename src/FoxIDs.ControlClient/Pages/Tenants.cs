@@ -233,10 +233,17 @@ namespace FoxIDs.Client.Pages
 
         private async Task DeleteTenantAsync(GeneralTenantViewModel generalTenant)
         {
+            if (!"delete".Equals(generalTenant.DeleteAcknowledgeText, StringComparison.InvariantCultureIgnoreCase))
+            {
+                generalTenant.Form.SetError("Please type 'delete' to confirm that you want to delete.");
+                return;
+            }
+
             try
             {
-                generalTenant.DeleteAcknowledge = false;                
-                if(tenantWorking)
+                generalTenant.DeleteAcknowledge = false;
+                generalTenant.DeleteAcknowledgeText = string.Empty;
+                if (tenantWorking)
                 {
                     return;
                 }

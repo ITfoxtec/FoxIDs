@@ -25,8 +25,7 @@ namespace FoxIDs.Repository
                         {
                             Id = settings.CosmosDb.TtlContainerId,
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
-                            DefaultTimeToLive = -1,
-                            UniqueKeyPolicy = GetUniqueKeyPolicy()
+                            DefaultTimeToLive = -1
                         });
                     logger.Trace("One Cosmos DB Document container created.");
                     SetContainers(container, container);
@@ -36,16 +35,14 @@ namespace FoxIDs.Repository
                     var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
                     {
                         Id = settings.CosmosDb.ContainerId,
-                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
-                        UniqueKeyPolicy = GetUniqueKeyPolicy()
+                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
                     });
                     var ttlContainer = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                         new ContainerProperties
                         {
                             Id = settings.CosmosDb.TtlContainerId,
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
-                            DefaultTimeToLive = -1,
-                            UniqueKeyPolicy = GetUniqueKeyPolicy()
+                            DefaultTimeToLive = -1
                         });
                     logger.Trace("Two Cosmos DB Document containers created.");
                     SetContainers(container, ttlContainer);
@@ -53,15 +50,6 @@ namespace FoxIDs.Repository
 
                 logger.Trace("Cosmos DB Document container(s) seeded.");
             }
-        }
-
-        private UniqueKeyPolicy GetUniqueKeyPolicy()
-        {
-            var uniqueKey = new UniqueKey();
-            uniqueKey.Paths.Add(Constants.Models.CosmosAdditionalIdsPath);
-            var uniqueKeyPolicy = new UniqueKeyPolicy();
-            uniqueKeyPolicy.UniqueKeys.Add(uniqueKey);
-            return uniqueKeyPolicy;
         }
     }
 }

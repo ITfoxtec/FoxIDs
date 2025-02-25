@@ -54,7 +54,7 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var item = (await fileDataRepository.GetAsync(id, partitionId, required && !queryAdditionalIds, delete)).DataJsonToObject<T>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required: required && !queryAdditionalIds, delete: delete)).DataJsonToObject<T>();
             if (queryAdditionalIds && item == null)
             {
                 Expression<Func<T, bool>> whereQuery = q => q.AdditionalIds.Contains(id);
@@ -78,7 +78,7 @@ namespace FoxIDs.Repository
 
             var id = await Tenant.IdFormatAsync(tenantName);
             var partitionId = Tenant.PartitionIdFormat();
-            var item = (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Tenant>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required: required)).DataJsonToObject<Tenant>();
             await item.ValidateObjectAsync();
             return item;
         }
@@ -89,7 +89,7 @@ namespace FoxIDs.Repository
 
             var id = await Track.IdFormatAsync(idKey);
             var partitionId = Track.PartitionIdFormat(idKey);
-            var item = (await fileDataRepository.GetAsync(id, partitionId, required)).DataJsonToObject<Track>();
+            var item = (await fileDataRepository.GetAsync(id, partitionId, required: required)).DataJsonToObject<Track>();
             await item.ValidateObjectAsync();
             return item;
         }

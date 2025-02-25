@@ -156,6 +156,11 @@
                             You are about to delete your tenant. All tracks and user repositories will also be deleted, there is no way back a tenant can not be restored! Are you sure?
                         </div>
 
+                        <div class="py-3">
+                            To confirm that you want to delete, type 'delete'.
+                        </div>
+                        <FInputText @bind-Value="deleteTenantAcknowledgeText" For="@(() => deleteTenantAcknowledgeText)" LabelText="Confirm, type 'delete'" />
+
                         <div class="mt-3">
                             <button type="button" class="btn btn-secondary" @onclick="DeleteTenantAsync">Yes delete tenant</button>
                             <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTenantAcknowledge = false)">No</button>

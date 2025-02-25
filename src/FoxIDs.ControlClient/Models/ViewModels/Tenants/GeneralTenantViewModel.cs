@@ -23,6 +23,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool DeleteAcknowledge { get; set; }
 
+        public string DeleteAcknowledgeText { get; set; }
+
         public string Error { get; set; }
 
         public string LoginUri { get; set; }

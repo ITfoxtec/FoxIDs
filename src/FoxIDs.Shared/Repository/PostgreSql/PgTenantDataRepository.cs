@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -142,6 +142,11 @@ namespace FoxIDs.Repository
             item.SetTenantPartitionId();
             item.SetDataType();
             await item.ValidateObjectAsync();
+
+            if (await ExistsAsync<T>(item.Id, true, scopedLogger))
+            {
+                throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+            }
 
             if (!await db.CreateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
             {

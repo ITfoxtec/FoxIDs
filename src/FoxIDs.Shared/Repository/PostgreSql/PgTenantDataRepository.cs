@@ -250,9 +250,9 @@ namespace FoxIDs.Repository
             return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
-        public async Task RemoveAllExpiredAsync()
+        public async Task RemoveAllExpiredGlobalAsync()
         {
-            _ = await db.RemoveAllExpiredAsync();
+            _ = await db.RemoveAllExpiredGlobalAsync();
         }
     }
 }

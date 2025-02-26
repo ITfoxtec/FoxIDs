@@ -18,7 +18,7 @@ This is the default external login UI with a text-based username.
 
 ![External Login UI](images/configure-external-login-ui.png)
 
-The external login UI can be [customized](customization.md).
+The external login UI can be [customised](customisation.md).
 
 ## Implement API
 
@@ -135,4 +135,4 @@ Configure an external login authentication method to call your API in [FoxIDs Co
     ![Configure an external login authentication method](images/configure-external-login-config.png)
  9. Click **Create**
 
- Optionally click **Show advanced** in the top right corner of the configuration section to [customized](customization.md) the login UI.
+ Optionally click **Show advanced** in the top right corner of the configuration section to [customised](customisation.md) the login UI.

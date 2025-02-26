@@ -1,5 +1,5 @@
 # Login, Home Realm Discovery and MFA
-FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customization.md).
+FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customisation.md).
 
 A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users.md#internal-users) with the same user repository.
 
@@ -24,15 +24,15 @@ A HRD button is shown for the authentication method if not at least one domain o
 
 ![Home Realm Discovery configuration](images/configure-login-hrd.png)
 
-An example of how a login screen with HRD looks like, it can be [customized](title-icon-css.md).
+An example of how a login screen with HRD looks like, it can be [customised](title-icon-css.md).
 ![Home Realm Discovery configuration](images/configure-login-hrd-example.png)
 
 The [title, icon and CSS](title-icon-css.md) configured on the first allowed login authentication method on the application registration is used. Without an allowed login authentication method configured the title, icon and CSS from the default login authentication method is used.
 
 ## Two-factor authentication (2FA/MFA)
-A login authentication method support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
+A login authentication method support two-factor authentication (2FA) / multi-factor authentication (MFA) with an authenticator app, SMS and email.
 
-Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
+Two-factor authentication with an authenticator app, SMS and email is per default enabled and is initiated if required.  
 Two-factor authentication can be set as a requirement in each [login authentication method](login.md#configure-two-factor-authentication-2fa), per [user](users.md#multi-factor-authentication-mfa) or required by the calling [OpenID Connect](app-reg-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](app-reg-saml-2.0.md#require-multi-factor-authentication-mfa) application registration.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
@@ -45,39 +45,34 @@ A default login authentication method is created in each environment.
 The [title, icon and CSS](title-icon-css.md) configured on the default login authentication method is use in the case where no login authentication method is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login authentication method.
 
 ### Configure login options
-It can be configured whether users should be allowed to cancel login and whether users are allowed to create a [new user online](users.md#internal-users) through the login user interface. New users can alternatively be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
+It can be configured whether users should be allowed to reset there password, whether users are allowed to create a [new user online](users.md#internal-users), which user identifiers to use, the [UI can be customised](title-icon-css.md) and much more.  
+New users can be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-login.png)
 
 ### Configure two-factor authentication (2FA)
-The two-factor authenticator app name shown for the user's is per default set to the tenant's name. You most likely want to change the name to something more human readable.
+The two-factor options can be changed and the authenticator app name shown for the user's can be changed. The name is per default set to the tenant's name. You most likely want to change the name to something more human readable.
 
 You can select to require two-factor authentication for all users authenticating using the login authentication method. 
 
 ![Configure Login](images/configure-login-2fa.png)
 
 ### Configure user session
-The user sessions lifetime can be changed. The default lifetime is 10 hours. 
+Click **Show advanced** to change the user sessions lifetime. The default lifetime is 10 hours. 
 The user session is a sliding session, where the lifetime is extended every time, an application makes a login request until the absolute session lifetime is reached.  
-It is possible to configure an absolute session lifetime as well.
+It is possible to configure an absolute session lifetime or not.
 
 The user session can be changed to a persistent session which is preserved when the browser is closed and reopened.  
-The user session become a persistent session if either the persistent session lifetime is configured to be grater, then 0. Or the persistent session lifetime unlimited setting is set to on.
+The user session become a persistent session if either the persistent session lifetime is configured to be grater, then 0. Or the persistent session lifetime unlimited setting is set to **Yes**.
 
 > Click the `User session` tag to see all session settings.
 
 ![Configure Login](images/configure-login-session.png)
 
-
-### Configure customization
-The login authentication method interface can be [customized with custom title, icon and CSS](title-icon-css).
-
-![Configure Login](images/configure-login-customization.png)
-
 ### Configure claims
 You can change the claims the login authentication method forwards with [claim transforms](claim-transform.md).
 
 ### All login configurations
-All login configurations are available after clicking show advanced.
+All login configurations are available after clicking **Show advanced**.
 
 ![Configure Login](images/configure-login-advanced.png)

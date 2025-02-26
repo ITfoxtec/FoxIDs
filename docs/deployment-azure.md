@@ -55,7 +55,7 @@ Custom domains is configured with custom primary domains and a custom domain on 
 
 ### Custom primary domains
 
-The FoxIDs and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](#reverse-proxy).
+The FoxIDs and FoxIDs Control sites primary domains can be customised. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](#reverse-proxy).
 
 > Important: change the primary domain before adding tenants.
 

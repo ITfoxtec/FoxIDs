@@ -212,11 +212,8 @@ namespace FoxIDs.Repository
 
         private async Task<bool> AdditionalIdExistAsync<T>(string idOrAdditionalId, string partitionId, string notId = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
-            Expression<Func<T, bool>> whereQuery = q => q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId);
-            if (!notId.IsNullOrEmpty())
-            {
-                whereQuery.AndAlso(q => q.Id != notId);
-            }
+            var notIdIsEmpty = notId.IsNullOrEmpty();
+            Expression<Func<T, bool>> whereQuery = q => (notIdIsEmpty || q.Id != notId) && (q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId));
             var item = await db.GetListAsync(partitionId, whereQuery, 1).FirstOrDefaultAsync();
             return item != null;
         }

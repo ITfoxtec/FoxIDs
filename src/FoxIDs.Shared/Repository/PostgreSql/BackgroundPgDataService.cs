@@ -48,7 +48,7 @@ namespace FoxIDs.Repository
                             var tenantDataRepository = scope.ServiceProvider.GetService<ITenantDataRepository>();
                             if (tenantDataRepository is PgTenantDataRepository pgTenantDataRepository)
                             {
-                                await pgTenantDataRepository.RemoveAllExpiredAsync();
+                                await pgTenantDataRepository.RemoveAllExpiredGlobalAsync();
                                 scopedLogger.Event("Done processing tenant PostgreSQL data.");
                             }
                         }
@@ -58,7 +58,7 @@ namespace FoxIDs.Repository
                             var cacheProvider = scope.ServiceProvider.GetRequiredService<ICacheProvider>();
                             if (cacheProvider is PostgreSqlCacheProvider postgreSqlCacheProvider)
                             {
-                                await postgreSqlCacheProvider.RemoveAllExpiredAsync();
+                                await postgreSqlCacheProvider.RemoveAllExpiredGlobalAsync();
                                 scopedLogger.Event("Done processing cache PostgreSQL data.");
                             }
                         }

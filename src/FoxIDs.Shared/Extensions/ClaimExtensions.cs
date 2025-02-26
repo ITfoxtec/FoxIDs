@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,7 +92,7 @@ namespace FoxIDs
         public static List<ClaimAndValues> ToClaimAndValues(this IEnumerable<Claim> list)
         {
             var claimAndValues = new List<ClaimAndValues>();
-            foreach (var gc in list.GroupBy(c => c.Type))
+            foreach (var gc in list.Where(c => !c.Value.IsNullOrWhiteSpace()).GroupBy(c => c.Type))
             {
                 claimAndValues.Add(new ClaimAndValues { Claim = gc.Key, Values = gc.Select(gci => gci.Value).ToList() });
             }

@@ -48,7 +48,15 @@ namespace FoxIDs.Logic
 
             if (partyLogoutUrls.Count() <= 0 || partyNames.Count() <= 0 || firstParty == null)
             {
-                throw new InvalidOperationException("Unable to complete front channel logout. Please close the browser to logout.");
+                try
+                {
+                    throw new InvalidOperationException("Unable to complete front channel logout.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                    return await LogoutDoneAsync();
+                }
             }
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyNames = partyNames, Claims = sequenceData.Claims }, setKeyValidUntil: true);

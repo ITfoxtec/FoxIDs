@@ -85,9 +85,9 @@ namespace FoxIDs.Logic.Caches.Providers
             return number;
         }
 
-        public async Task RemoveAllExpiredAsync()
+        public async Task RemoveAllExpiredGlobalAsync()
         {
-            _ = await db.RemoveAllExpiredAsync();
+            _ = await db.RemoveAllExpiredGlobalAsync();
         }
 
         private  string GetId(string key) => $"{CachePartitionId}:{key}";

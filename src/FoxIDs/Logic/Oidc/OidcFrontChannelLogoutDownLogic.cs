@@ -75,7 +75,15 @@ namespace FoxIDs.Logic
 
             if (partyLogoutUrls.Count() <= 0 || firstParty == null)
             {
-                throw new InvalidOperationException("Unable to complete front channel logout. Please close the browser to logout.");
+                try
+                {
+                    throw new InvalidOperationException("Unable to complete front channel logout.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                    return await LogoutDoneAsync();
+                }            
             }
 
             if (doSamlLogoutInIframe)
@@ -99,6 +107,7 @@ namespace FoxIDs.Logic
 
         public Task<IActionResult> LogoutDoneAsync()
         {
+            logger.ScopeTrace(() => "AppReg, OIDC Front Channel logout done.");
             return singleLogoutLogic.HandleSingleLogoutDownAsync();
         }
     }

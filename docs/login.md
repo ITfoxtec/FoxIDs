@@ -40,6 +40,74 @@ In this example the user is asked to do two-factor authentication with an authen
 
 ![2FA example](images/configure-login-2fa-example.png)
 
+The two-factor authentication type is selected as shown in this table.
+
+<table>
+    <tr>
+        <th>SMS two-factor enabled and user has phone number</th>
+        <th>Email two-factor enabled and user has email</th>
+        <th>User has registered authenticator app</th>
+        <th>Possible two-factor type(s)</th>
+        <th>Selected two-factor type</th>
+    </tr>
+    <tr>
+        <td>false</td>
+        <td>false</td>
+        <td>false</td>
+        <td>Authenticator app</td>
+        <td>Authenticator app</td>
+    </tr>
+    <tr>
+        <td>false</td>
+        <td>false</td>
+        <td>true</td>
+        <td>Authenticator app</td>
+        <td>Authenticator app</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>false</td>
+        <td>false</td>
+        <td>SMS - can register authenticator app after SMS verification</td>
+        <td>SMS</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>false</td>
+        <td>true</td>
+        <td>SMS and authenticator app</td>
+        <td>Authenticator app</td>
+    </tr>
+    <tr>
+        <td>false</td>
+        <td>true</td>
+        <td>false</td>
+        <td>Email - can register authenticator app after email verification</td>
+        <td>Email</td>
+    </tr>
+    <tr>
+        <td>false</td>
+        <td>true</td>
+        <td>true</td>
+        <td>Email and authenticator app</td>
+        <td>Authenticator app</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>true</td>
+        <td>false</td>
+        <td>SMS and mail - can register authenticator app after SMS/email verification</td>
+        <td>SMS</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>true</td>
+        <td>true</td>
+        <td>SMS, email and authenticator app</td>
+        <td>Authenticator app</td>
+    </tr>
+</table>
+
 ## Login configuration
 A default login authentication method is created in each environment. 
 

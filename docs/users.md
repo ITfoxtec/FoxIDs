@@ -44,7 +44,7 @@ Internal users can be created, changed and deleted with the [Control Client](con
 ### Multi-factor authentication (MFA)
 Two-factor / multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor based on SMS, email or authenticator app and to register a authenticator app if not already registered.
 
-It is configurable which two-factor authentications should be available per user and per [login authentication method](login.md#two-factor-authentication-2famfa). 
+It is configurable which two-factor authentications should be available per user and per login authentication method. Please see more info about [two-factor authentication](login.md#two-factor-authentication-2famfa).  
 You can see whether a two-factor authenticator app is registered for on the user, and the administrator can deactivate the configured two-factor authenticator app.
 
 ![Configure Login](images/configure-user-mfa.png)

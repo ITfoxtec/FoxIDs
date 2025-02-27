@@ -13,14 +13,13 @@ A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 applic
 The login authentication method authenticates users in a two-step login UI with the username and password input on two separate pages.
 
 ## Home Realm Discovery (HRD)
-When you create a application registration it is in most cases the best solution to use a star `(*)` in round brackets to select the authentication methods. 
+When you create a application registration it is most often the best solution to use the default star notation `(*)` to [select](index.md#selection-by-url) the authentication methods. 
 If a application registration is configured to only be allowed to use one authentication method the user is immediately redirected to that particular authentication method. 
 If more than one authentication method is allowed the user is redirected to a login authentication method which make it possible to select an authentication method either by writing an email (looking at the domain) or by clicking a HRD button.
 
-It is possible to select up to 4 authentication methods by name or use the star notation, please see more about [selection](index.md#selection-by-url).
+It is possible to select up to 4 authentication methods by name or use the star notation `(*)`, please see more about [selection](index.md#selection-by-url).
 
-It is configurable for each authentication method which domains should result in selecting the authentication method and if a HRD button should be shown optionally with a logo. 
-A HRD button is shown for the authentication method if not at least one domain or wildcard is configured. 
+One or more domains can be configured for each authentication method and if an HRD button should be shown to the user. An HRD button will be displayed for the authentication method if no domain or wildcard is configured.
 
 ![Home Realm Discovery configuration](images/configure-login-hrd.png)
 

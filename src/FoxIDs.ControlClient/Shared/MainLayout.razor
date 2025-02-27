@@ -23,13 +23,13 @@
                     <ul class="navbar-nav nav-item dropdown-nav-item">
                         @if (IsMasterTenant)
                         {
-                            @if (!UseOneMainTenant)
-                            {
-                                <li class="nav-item pt-2">
-                                    <strong class="align-middle">Master tenant</strong>
+                            <li class="nav-item pt-2">
+                                <strong class="align-middle">Master tenant</strong>
+                                @if (EnableNewTenant)
+                                {
                                     <button type="button" class="btn btn-primary ml-4" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
-                                </li>
-                            }
+                                }
+                            </li>
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
                         {

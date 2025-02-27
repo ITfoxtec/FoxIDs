@@ -1,44 +1,52 @@
-# Claim transforms
+# Claim transforms and claim tasks
 
-Each FoxIDs authentication method and application registration handle [claims](claim.md) and support claim transformations. 
-This means that two sets of claim transforms can be executed on each user authentication. 
-First executing claim transforms on the authentication method and then claim transforms on the application registration. 
+Each FoxIDs authentication method and application registration handle [claims](claim.md) and they support claim transformations and claim tasks. 
+This means that multiple sets of claim transforms and claim tasks can be executed on each user authentication. 
+First executing claim transforms and claim tasks on the authentication method and then claim transforms and claim tasks on the application registration. 
 
-Additional subsets of claim transformations can be performed if a user or an external user is created.
+Additional subsets of claim transforms and claim tasks can be performed if a user or an external user is created.
 
 ![Claim transform flow diagram](images/claim-transform.svg)
 
-> If you create a new claim with a claim transform, the claim is local in the authentication method or application registration.  
+> If you create a new claim with a claim transform or claim tasks, the claim is local in the authentication method or application registration.  
 > In an authentication method the claim is forwarded by adding the claim or `*` (default) is in the `Forward claims` list.  
 > In a application registration you need to add the claim or `*`to the `Issue claims` list or alternative for OpenID Connect add the claim to a scopes `Voluntary claims` list and request the scope from your application.
 
-Please see [claim transform examples](#claim-transform-examples)
+Please see the [claim transform examples](#claim-transform-examples)
 
 > Enable `Log claim trace` in the [log settings](logging.md#log-settings) to see the claims before and after transformation in the [logs](logging.md). 
 
-Claim transforms can e.g., be configured in a login authentication method.
+Claim transforms can be configured in a login authentication method.
 
 ![FoxIDs authentication method claim transform](images/configure-claim-transform-auth-method.png)
 
-And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
+And claim tasks.
+
+![FoxIDs authentication method claim task](images/configure-claim-task-auth-method.png)
+
+Similarly, claim transforms and claim tasks can be configured as first and second level in a OpenID Connect application registration.
 
 ![FoxIDs application registration claim transform](images/configure-claim-transform-app-reg.png)
 
-> Claims are by default represented as JWT claims. If the authentication method or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
+> Claims are by default represented as JWT claims. If the authentication method is SAML 2.0 the claims in the first-level is represented as SAML 2.0 claims.
+If the application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
 
-A claim transform will do one of op to five different actions depending on the particular claim transform type.
+A claim transform and claim task will do one of op to seven different actions depending on the particular claim transform or claim task type.
 
-Claim transform actions:
+Claim transform and claim task actions:
 
 - `Add claim` - add a new claim
 - `Add claim, if not match` - do the add action if the condition does not match
 - `Replace claim` - add a new claim and remove existing claims if one or mere exist
 - `Replace claim, if not match` - do the replace action if the condition does not match
 - `Remove claim` - remove the claims if one or mere exist
+- `If match` - do the action if the condition match
+- `If not match` - do the action if the condition does not match
 
-The claim transforms is executed in order and the actions is therefore executed in order. This means that it is possible to create a local variable by adding a claim and later in the sequence removing the same claim again.
+The claim transforms and claim tasks is executed in order and the actions is therefore executed in order. This means that it is possible to create a local variable by adding a claim and later in the sequence take decisions based on the claim. 
+A claim is local in the claim transforms and claim tasks set if it start with `_local:`
 
-With the `Add claim, if not match` actions it is possible to add a claim if another claim or a claim with a value do not exist.
+With the `Add claim, if not match` actions it is possible to add a claim (local variable) if another claim or a claim with a value do not exist.
 
 Claim transform types that support all actions:
 
@@ -58,6 +66,21 @@ Claim transform types that support `Add claim` and `Replace claim` actions:
 - `External claims API` - Call an [external API](#external-claims---api) with the selected claims to add/replace claims with external claims
 - `DK XML privilege to JSON` - Converting the [DK privilege to JSON](claim-transform-dk-privilege). 
 
+Claim task types that support `Add claim` and `Replace claim` actions:
+
+- `Query internal user` - Match the claim and find exactly one internal user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the users' claims.
+- `Query external user` - Match the claim and find exactly one external user based on the value of the claim. The request will fail if more than one user is found. Then add/replace the users' claims.
+
+Claim task types that support `If match` and `If not match` actions:
+
+- `Match claim and return error` - Return an error if the claim type match/not match.
+- `Match claim and value and return error` - Return an error if the claim type and value match/not match.
+- `Regex match and return error` - Return an error if the claim type and claim value match/not match the regular expression.
+- `Match claim and start authentication` - Start a new login flow by initiating a authentication method if the claim type match/not match.
+- `Match claim and value and start authentication` - Start a new login flow by initiating a authentication method if the claim type and value match/not match.
+- `Regex match and start authentication` - Start a new login flow by initiating a authentication method if the claim type and claim value match/not match the regular expression.
+
+> The start authentication claim tasks can be used to do step-up if the user is logged in with one-factor and another factor is required. Or if additional information (claims) is required.
 
 ## External claims - API
 You can [call your own API](#implement-api) from FoxIDs with a claim transformation. The API is called with claims and the claims returned form the API can be added with a add or replace action. 

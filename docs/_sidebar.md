@@ -28,7 +28,7 @@
 - Topics
   - [Users](users.md)
   - [Claims](claim.md)
-  - [Claim transforms](claim-transform.md)
+  - [Claim transforms and tasks](claim-transform-task.md)
   - [Certificates](certificates.md)
   - [Logging](logging.md)
   - [Email provider](email.md)

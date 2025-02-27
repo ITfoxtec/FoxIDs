@@ -97,6 +97,8 @@ namespace FoxIDs.Client.Shared
 
         private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
+        private bool UseOneMainTenant => ClientSettings.UseOneMainTenant;
+
         private bool RequestPayment => RouteBindingLogic.RequestPayment;
 
         protected override async Task OnInitializedAsync()

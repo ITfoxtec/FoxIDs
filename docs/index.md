@@ -8,7 +8,7 @@ FoxIDs is designed as service with multi-tenant support. Your tenant holds your 
 Each environment is an Identity Provider with a [user repository](users.md) and a unique [certificate](certificates.md). 
 An environment can be connected to external Identity Provider with [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods. 
 The environment is configured as the IdP for applications and APIs with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
-The user's [log in](login.md) experience is configured and optionally [customized](customization.md).
+The user's [log in](login.md) experience is configured and optionally [customised](customisation.md).
 
 > Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`

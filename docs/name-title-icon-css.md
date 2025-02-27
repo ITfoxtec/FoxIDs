@@ -2,7 +2,7 @@
 
 ## Display name
 
-A display name for you organisation, company or system can be configured on each environment. When FoxIDs send an email to a user the email text is customized by adding the display name.
+A display name for you organisation, company or system can be configured on each environment. When FoxIDs send an email to a user the email text is customised by adding the display name.
 
 The name is configured in the environment settings in [FoxIDs Control Client](control.md#foxids-control-client).
 

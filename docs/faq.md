@@ -20,3 +20,12 @@ FoxIDs will automatically start accepting the new certificate if the external Id
 You force a metadata refresh by clicking **Update** on the authentication method in FoxIDs.
 
 If external IdP create a new SAML 2.0 metadata file or only hands over the certificate, there is only the manual way.
+
+##### Who owns the security components used to build FoxIDs?
+FoxIDs is build with open-source security components owned by FoxIDs ApS. 
+
+- SAMl 2.0 is implemented with the [ITfoxtec.Identity.Saml2](https://github.com/ITfoxtec/ITfoxtec.Identity.Saml2) ([docs](https://www.foxids.com/components/identitysaml2)) component
+- OAuth 2.0 and OpenID Connect is implemented with the [ITfoxtec.Identity](https://github.com/ITfoxtec/ITfoxtec.Identity) component
+- OpenID Connect in the Control Client is implemented with the [ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect](https://github.com/ITfoxtec/ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect) component.
+
+FoxIDs is former known as ITfoxtec.

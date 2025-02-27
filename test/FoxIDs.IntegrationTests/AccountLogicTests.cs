@@ -14,7 +14,23 @@ using System;
 
 namespace FoxIDs.UnitTests
 {
-    public class AccountLogicTests
+    public class DatabaseFixture : IDisposable
+    {
+        public DatabaseFixture()
+        {
+            PgServer = new PgServer("17.4.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
+            PgServer.Start();
+        }
+
+        public void Dispose()
+        {
+            PgServer.Stop();
+        }
+
+        public PgServer PgServer { get; private set; }
+    }
+
+    public class AccountLogicTests(DatabaseFixture fixture) : IClassFixture<DatabaseFixture>
     {
         [Theory]
         [InlineData("a1@test.com", "12345678")]
@@ -88,8 +104,6 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
         }
 
-        static PgServer pg;
-
         private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {
             var routeBinding = new RouteBinding
@@ -102,12 +116,7 @@ namespace FoxIDs.UnitTests
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            if (pg == null)
-            {
-                pg = new PgServer("16.2.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
-                pg.Start();
-            }
-            var connectionString = $"Host=localhost;Port={pg.PgPort};Username=postgres;Password=postgres;Database=postgres";
+            var connectionString = $"Host=localhost;Port={fixture.PgServer.PgPort};Username=postgres;Password=postgres;Database=postgres";
             var jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

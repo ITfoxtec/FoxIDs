@@ -15,7 +15,7 @@ namespace FoxIDs.Client.Models.Config
         public LogOptions LogOption { get; set; }
         public KeyStorageOptions KeyStorageOption { get; set; }
 
-        public bool UseOneMainTenant { get; set; }
+        public bool EnableCreateNewTenant { get; set; }
 
         public bool EnablePayment { get; set; }
         public bool PaymentTestMode { get; set; }

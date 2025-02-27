@@ -97,7 +97,7 @@ namespace FoxIDs.Client.Shared
 
         private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
-        private bool EnableNewTenant => ClientSettings != null && !ClientSettings.UseOneMainTenant;
+        private bool EnableCreateNewTenant => ClientSettings.EnableCreateNewTenant;
 
         private bool RequestPayment => RouteBindingLogic.RequestPayment;
 

@@ -3,14 +3,14 @@ FoxIDs handle user login in the login authentication method. There can be config
 
 A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users.md#internal-users) with the same user repository.
 
-When a [users](users.md#internal-users) authenticates, the user's session is associated with the login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
-A user session is only established in the login authentication method if the session lifetime is set to more than 0 seconds.
+When a [user](users.md#internal-users) authenticates, the user's session is associated with the login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
+A user session is not established in the login authentication method if the session lifetime is set to 0 seconds.
 
 A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login authentication method.
 
 ![FoxIDs login](images/connections-login.svg)
 
-The login authentication method user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
+The login authentication method authenticates users in a two-step login UI with the username and password input on two separate pages.
 
 ## Home Realm Discovery (HRD)
 When you create a application registration it is in most cases the best solution to use a star `(*)` in round brackets to select the authentication methods. 
@@ -37,6 +37,10 @@ Two-factor authentication can be set as a requirement in each [login authenticat
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
+In this example the user is asked to do two-factor authentication with an authenticator app or change to use SMS or email.
+
+![2FA example](images/configure-login-2fa-example.png)
+
 ## Login configuration
 A default login authentication method is created in each environment. 
 
@@ -55,7 +59,7 @@ The two-factor options can be changed and the authenticator app name shown for t
 
 You can select to require two-factor authentication for all users authenticating using the login authentication method. 
 
-![Configure Login](images/configure-login-2fa.png)
+![Configure Login 2FA](images/configure-login-2fa.png)
 
 ### Configure user session
 Click **Show advanced** to change the user sessions lifetime. The default lifetime is 10 hours. 

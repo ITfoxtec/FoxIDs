@@ -33,6 +33,8 @@ namespace FoxIDs.Logic
                 return Task.FromResult(new List<Claim>(jwtClaims));
             }
 
+            jwtClaims = jwtClaims.Where(c => !c.Value.IsNullOrWhiteSpace());
+
             var filterClaimTypes = GetFilterJwtClaimTypes(client, selectedScopes, includeIdTokenClaims, includeAccessTokenClaims);
             return FilterJwtClaimsAsync(filterClaimTypes, jwtClaims);
         }

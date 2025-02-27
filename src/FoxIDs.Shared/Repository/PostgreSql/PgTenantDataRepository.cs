@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -143,6 +143,17 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            if (item.AdditionalIds?.Count() > 0)
+            {
+                foreach (var additionalId in item.AdditionalIds)
+                {
+                    if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, scopedLogger: scopedLogger))
+                    {
+                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                    }
+                }
+            }
+
             if (!await db.CreateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
@@ -158,7 +169,18 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            if(!await db.UpdateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
+            if (item.AdditionalIds?.Count() > 0)
+            {
+                foreach (var additionalId in item.AdditionalIds)
+                {
+                    if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: item.Id, scopedLogger: scopedLogger))
+                    {
+                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                    }
+                }
+            }
+
+            if (!await db.UpdateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
             }
@@ -173,7 +195,27 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            if (item.AdditionalIds?.Count() > 0)
+            {
+                var exist = await ExistsAsync<T>(item.Id, scopedLogger: scopedLogger);
+                foreach (var additionalId in item.AdditionalIds)
+                {
+                    if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: exist ? item.Id : null, scopedLogger: scopedLogger))
+                    {
+                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                    }
+                }
+            }
+
             await db.UpsertAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
+        }
+
+        private async Task<bool> AdditionalIdExistAsync<T>(string idOrAdditionalId, string partitionId, string notId = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        {
+            var notIdIsEmpty = notId.IsNullOrEmpty();
+            Expression<Func<T, bool>> whereQuery = q => (notIdIsEmpty || q.Id != notId) && (q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId));
+            var item = await db.GetListAsync(partitionId, whereQuery, 1).FirstOrDefaultAsync();
+            return item != null;
         }
 
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
@@ -208,9 +250,9 @@ namespace FoxIDs.Repository
             return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
-        public async Task RemoveAllExpiredAsync()
+        public async Task RemoveAllExpiredGlobalAsync()
         {
-            _ = await db.RemoveAllExpiredAsync();
+            _ = await db.RemoveAllExpiredGlobalAsync();
         }
     }
 }

@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages.Settings
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
+        private string deleteTrackAcknowledgeText = string.Empty;
         private bool trackWorking;
 
         [Inject]
@@ -114,9 +115,17 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DeleteTrackAsync()
         {
+            deleteTrackError = string.Empty;
+            if (!"delete".Equals(deleteTrackAcknowledgeText, StringComparison.InvariantCultureIgnoreCase))
+            {
+                deleteTrackError = "Please type 'delete' to confirm that you want to delete.";
+                return;
+            }
+
             try
             {
                 deleteTrackAcknowledge = false;
+                deleteTrackAcknowledgeText = string.Empty;
                 if (trackWorking)
                 {
                     return;

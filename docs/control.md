@@ -362,6 +362,10 @@ The master tenant access rights is at the same time both scopes and roles.
 
 <table>
     <tr>
+        <th>Scope / role</th>
+        <th>Access</th>
+    </tr>
+    <tr>
         <td colspan=2><i>Access to the master tenant data<br />
             Can list, create and delete tenants but not look into other tenants.
         </i></td>

@@ -395,7 +395,7 @@ namespace FoxIDs.Infrastructure
             return logItem;
         }
 
-        private T CreateLogItem<T>(LogTypes logType, IDictionary<string, string> properties) where T : OpenSearchLogItemBase
+        private T CreateLogItem<T>(LogTypes logType, IDictionary<string, string> properties) where T : OpenSearchLogItemBase, new()
         {
             var logItem = CreateLogItem<T>(properties);
             logItem.LogType = logType.ToString();
@@ -403,7 +403,7 @@ namespace FoxIDs.Infrastructure
             return logItem;
         }
 
-        private T CreateLogItem<T>(IDictionary<string, string> properties) where T : OpenSearchLogItemBase
+        private T CreateLogItem<T>(IDictionary<string, string> properties) where T : OpenSearchLogItemBase, new()
         {
             if (properties != null && properties.Count > 0)
             {
@@ -412,7 +412,7 @@ namespace FoxIDs.Infrastructure
             }
             else
             {
-                return default;
+                return new T();
             }
         }
     }

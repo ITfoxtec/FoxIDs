@@ -1,10 +1,10 @@
-# Customization
+# Customisation
 
-FoxIDs can be customized to support your needs. 
+FoxIDs can be customised to support your needs. 
 
 ## Title, Icon and CSS
 
-The FoxIDs user interface can be customized with a another [title, icon and CSS](name-title-icon-css.md).
+The FoxIDs user interface can be customised with a another [title, icon and CSS](name-title-icon-css.md).
 
 ## Languages
 

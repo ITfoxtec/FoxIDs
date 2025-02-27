@@ -47,7 +47,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
-            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete, queryAdditionalIds);
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete: delete, queryAdditionalIds: queryAdditionalIds);
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)

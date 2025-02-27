@@ -70,16 +70,19 @@
             {
                 loginUpParty.Form.Model.CreateUser = null;
             }
-            <li class="nav-item">
-                @if (loginUpParty.ShowSessionTab)
-                {
-                    <a class="nav-link active">User Session</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User Session</button>
-                }
-            </li>
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <li class="nav-item">
+                    @if (loginUpParty.ShowSessionTab)
+                    {
+                        <a class="nav-link active">User Session</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User Session</button>
+                    }
+                </li>
+            }
             <li class="nav-item">
                 @if (loginUpParty.ShowHrdTab)
                 {

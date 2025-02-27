@@ -63,7 +63,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, queryAdditionalIds, scopedLogger: scopedLogger);
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete: delete, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
         }
 
         public override async ValueTask<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
@@ -183,9 +183,26 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
+                if (item.AdditionalIds?.Count() > 0)
+                {
+                    foreach (var additionalId in item.AdditionalIds)
+                    {
+                        (var aidExist, var totalRUTemp) = await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, scopedLogger: scopedLogger);
+                        totalRU += totalRUTemp;
+                        if (aidExist)
+                        {
+                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        }
+                    }
+                }
+
                 var container = GetContainer(item);
                 var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -210,9 +227,26 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
+                if (item.AdditionalIds?.Count() > 0)
+                {
+                    foreach (var additionalId in item.AdditionalIds)
+                    {
+                        (var aidExist, var totalRUTemp) = await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: item.Id, scopedLogger: scopedLogger);
+                        totalRU += totalRUTemp;
+                        if (aidExist)
+                        {
+                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        }
+                    }
+                }
+
                 var container = GetContainer(item);
                 var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -237,9 +271,27 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
+                if (item.AdditionalIds?.Count() > 0)
+                {
+                    var exist = await ExistsAsync<T>(item.Id, scopedLogger: scopedLogger);
+                    foreach (var additionalId in item.AdditionalIds)
+                    {
+                        (var aidExist, var totalRUTemp) = await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: exist ? item.Id : null, scopedLogger: scopedLogger);
+                        totalRU += totalRUTemp;
+                        if (aidExist)
+                        {
+                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        }
+                    }
+                }
+
                 var container = GetContainer(item);
                 var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId), new ItemRequestOptions { IndexingDirective = IndexingDirective.Exclude });
                 totalRU += response.RequestCharge;
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -250,6 +302,17 @@ namespace FoxIDs.Repository
                 scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
+        }
+
+        private async Task<(bool, double totalRU)> AdditionalIdExistAsync<T>(string idOrAdditionalId, string partitionId, string notId = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
+        {
+            double totalRU = 0;
+            var query = GetQueryAsync<T>(partitionId);
+            var setIterator = query.Where(q => (notId.IsNullOrEmpty() || q.Id != notId) && (q.Id == idOrAdditionalId || q.AdditionalIds.Contains(idOrAdditionalId))).ToFeedIterator();
+            var response = await setIterator.ReadNextAsync();
+            totalRU += response.RequestCharge;
+            var item = response.FirstOrDefault();
+            return (item != null, totalRU);
         }
 
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)

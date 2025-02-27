@@ -14,7 +14,7 @@
   - [External Login - API](external-login.md)
   - [Environment Link](howto-environmentlink-foxids.md)
 - [Token exchange](token-exchange.md)
-- [Customization](customization.md)
+- [Customisation](customisation.md)
   - [Name, title, Icon and CSS](name-title-icon-css.md)
   - [Custom domain](custom-domain.md)
   - [Languages](language.md)

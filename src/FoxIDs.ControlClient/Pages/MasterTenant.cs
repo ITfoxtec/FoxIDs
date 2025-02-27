@@ -23,6 +23,7 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<MasterTenantViewModel> tenantSettingsForm;
         private string deleteTenantError;
         private bool deleteTenantAcknowledge = false;
+        private string deleteTenantAcknowledgeText = string.Empty;
         private string savedCustomDomain;
         private string changePaymentError;
         private bool changePaymentWorking;
@@ -252,9 +253,17 @@ namespace FoxIDs.Client.Pages
 
         private async Task DeleteTenantAsync()
         {
+            deleteTenantError = string.Empty;
+            if (!"delete".Equals(deleteTenantAcknowledgeText, StringComparison.InvariantCultureIgnoreCase))
+            {
+                deleteTenantError = "Please type 'delete' to confirm that you want to delete.";
+                return;
+            }
+
             try
             {
                 deleteTenantAcknowledge = false;
+                deleteTenantAcknowledgeText = string.Empty;
                 if (tenantWorking)
                 {
                     return;

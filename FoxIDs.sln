@@ -64,8 +64,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\connections.md = docs\connections.md
 		docs\control.md = docs\control.md
 		docs\custom-domain.md = docs\custom-domain.md
-		docs\customization.md = docs\customization.md
 		docs\deployment-azure.md = docs\deployment-azure.md
+		docs\customisation.md = docs\customisation.md
 		docs\deployment-docker.md = docs\deployment-docker.md
 		docs\deployment-k8s.md = docs\deployment-k8s.md
 		docs\deployment.md = docs\deployment.md
@@ -123,6 +123,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-default-scope-claims.png = docs\images\configure-default-scope-claims.png
 		docs\images\configure-email-provider-environment-sendgrid.png = docs\images\configure-email-provider-environment-sendgrid.png
 		docs\images\configure-email-provider-environment-smtp.png = docs\images\configure-email-provider-environment-smtp.png
+		docs\images\configure-env-name-address.png = docs\images\configure-env-name-address.png
 		docs\images\configure-environment-setting.png = docs\images\configure-environment-setting.png
 		docs\images\configure-environment.png = docs\images\configure-environment.png
 		docs\images\configure-external-claims-config.png = docs\images\configure-external-claims-config.png
@@ -133,12 +134,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-jwt-saml-mappings.png = docs\images\configure-jwt-saml-mappings.png
 		docs\images\configure-log-stream-appinsight.png = docs\images\configure-log-stream-appinsight.png
 		docs\images\configure-log.png = docs\images\configure-log.png
+		docs\images\configure-login-2fa-example.png = docs\images\configure-login-2fa-example.png
 		docs\images\configure-login-2fa.png = docs\images\configure-login-2fa.png
 		docs\images\configure-login-advanced.png = docs\images\configure-login-advanced.png
 		docs\images\configure-login-css-backbround-image.png = docs\images\configure-login-css-backbround-image.png
 		docs\images\configure-login-css-backbround-logo.png = docs\images\configure-login-css-backbround-logo.png
 		docs\images\configure-login-css-sample-test.png = docs\images\configure-login-css-sample-test.png
-		docs\images\configure-login-customization.png = docs\images\configure-login-customization.png
+		docs\images\configure-login-customisation.png = docs\images\configure-login-customisation.png
 		docs\images\configure-login-hrd-example.png = docs\images\configure-login-hrd-example.png
 		docs\images\configure-login-hrd.png = docs\images\configure-login-hrd.png
 		docs\images\configure-login-session.png = docs\images\configure-login-session.png
@@ -342,6 +344,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.PGMigrator", "tools\FoxIDs.PGMigrator\FoxIDs.PGMigrator.csproj", "{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.IntegrationTests", "test\FoxIDs.IntegrationTests\FoxIDs.IntegrationTests.csproj", "{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -392,6 +396,10 @@ Global
 		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -413,6 +421,7 @@ Global
 		{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804} = {ADF3A7A1-55CD-466B-9CE2-76B159582B17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

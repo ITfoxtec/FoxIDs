@@ -34,13 +34,11 @@ namespace FoxIDs.UnitTests
     {
         [Theory]
         [InlineData("a1@test.com", "12345678")]
-        [InlineData("a1@test.com", "123456789")]
-        [InlineData("a1@test.com", "12345678901234567890123456789012345678901234567890")]
-        public async Task CreateUserCheckPasswordLength_ReturnsUser(string email, string password)
+        public async Task CreateUserCheckDuplicate_ThrowUserExistsException(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
-            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
-            Assert.NotNull(user);
+            await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            await Assert.ThrowsAsync<UserExistsException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
         }
 
         [Theory]

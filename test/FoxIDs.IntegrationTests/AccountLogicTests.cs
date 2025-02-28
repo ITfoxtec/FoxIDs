@@ -5,32 +5,12 @@ using FoxIDs.Models;
 using FoxIDs.UnitTests.MockHelpers;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.Models.Logic;
-using FoxIDs.Repository;
-using Wololo.PgKeyValueDB;
-using Npgsql;
-using System.Text.Json;
-using MysticMind.PostgresEmbed;
-using System;
+using FoxIDs.IntegrationTests.Helpers;
 
-namespace FoxIDs.UnitTests
+namespace FoxIDs.IntegrationTests
 {
-    public class DatabaseFixture : IDisposable
-    {
-        public DatabaseFixture()
-        {
-            PgServer = new PgServer("17.4.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
-            PgServer.Start();
-        }
-
-        public void Dispose()
-        {
-            PgServer.Stop();
-        }
-
-        public PgServer PgServer { get; private set; }
-    }
-
-    public class AccountLogicTests(DatabaseFixture fixture) : IClassFixture<DatabaseFixture>
+    [Collection(nameof(DatabaseCollection))]
+    public class AccountLogicTests(DatabaseFixture fixture)
     {
         [Theory]
         [InlineData("a1@test.com", "12345678")]
@@ -114,21 +94,7 @@ namespace FoxIDs.UnitTests
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            var connectionString = $"Host=localhost;Port={fixture.PgServer.PgPort};Username=postgres;Password=postgres;Database=postgres";
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            };
-            var dataSource = new NpgsqlDataSourceBuilder(connectionString)
-                .EnableDynamicJson()
-                .ConfigureJsonOptions(jsonSerializerOptions)
-                .Build();
-            var schema = "foxids" + Guid.NewGuid().ToString().Replace("-", "");
-            var pgTenantDb = new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions);
-            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb);
-            var pgMasterDb = new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions);
-            pgMasterDb.Create("prisk:@master:3357229DDDC9963302283F4D4863A74F310C9E80", true, "@master:prisks");
-            var pgMasterRepository = new PgMasterDataRepository(pgMasterDb);
+            (var pgTenantRepository, var pgMasterRepository) = RepositoriesHelper.GetRepositories(fixture);
 
             var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
 

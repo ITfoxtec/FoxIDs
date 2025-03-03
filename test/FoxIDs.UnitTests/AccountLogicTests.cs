@@ -5,7 +5,6 @@ using FoxIDs.Models;
 using FoxIDs.UnitTests.MockHelpers;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.Mocks;
-using FoxIDs.Models.Config;
 using FoxIDs.Models.Logic;
 
 namespace FoxIDs.UnitTests

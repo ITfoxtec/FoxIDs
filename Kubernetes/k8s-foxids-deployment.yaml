@@ -35,10 +35,14 @@ spec:
               value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
+            #   value: "PostgreSql"  # PostgreSql database
             - name: "Settings__Options__Cache"
-              value: "Redis"
+              value: "MongoDb"
+            #   value: "PostgreSql"  # Cache in PostgreSql database
+            #   value: "Redis"  # Cache in Redis 
             - name: "Settings__Options__DataCache"
-              value: "Default"
+              value: "None"
+            #   value: "Default"  # Cache DB data in Redis 
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -56,13 +60,32 @@ spec:
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
               value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
-            - name: REDIS_SERVER
-              valueFrom: 
-                configMapKeyRef:
-                  name: redis-configmap
-                  key: database_url
-            - name: "Settings__RedisCache__ConnectionString"
-              value: "$(REDIS_SERVER):6379"
+            # PostgreSql
+            # - name: POSTGRES_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: postgres-secret
+            #       key: postgres-username
+            # - name: POSTGRES_PASSWORD
+            #   valueFrom: 
+            #     secretKeyRef:
+            #       name: postgres-secret
+            #       key: postgres-password
+            # - name: MONGO_SERVER
+            #   valueFrom: 
+            #     configMapKeyRef:
+            #       name: postgres-configmap
+            #       key: database_url
+            # - name: "Settings__PostgreSql__ConnectionString"
+            #   value: "Host=$(POSTGRES_SERVER);Username=$(POSTGRES_USERNAME);Password=$(POSTGRES_PASSWORD);Database=FoxIDs"
+            # Redis
+            # - name: REDIS_SERVER
+            #   valueFrom: 
+            #     configMapKeyRef:
+            #       name: redis-configmap
+            #       key: database_url
+            # - name: "Settings__RedisCache__ConnectionString"
+            #   value: "$(REDIS_SERVER):6379"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -107,10 +130,14 @@ spec:
               value: "Stdout"
             - name: "Settings__Options__DataStorage"
               value: "MongoDb"
+           #   value: "PostgreSql"  # PostgreSql database
             - name: "Settings__Options__Cache"
-              value: "Redis"
+              value: "MongoDb"
+           #   value: "PostgreSql"  # Cache in PostgreSql database
+           #   value: "Redis"  # Cache in Redis 
             - name: "Settings__Options__DataCache"
-              value: "Default"
+              value: "None"
+           #   value: "Default"  # Cache DB data in Redis 
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -128,13 +155,31 @@ spec:
                   key: database_url
             - name: "Settings__MongoDb__ConnectionString"
               value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_SERVER):27017"
-            - name: REDIS_SERVER
-              valueFrom: 
-                configMapKeyRef:
-                  name: redis-configmap
-                  key: database_url
-            - name: "Settings__RedisCache__ConnectionString"
-              value: "$(REDIS_SERVER):6379"
+            # PostgreSql
+            # - name: POSTGRES_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: postgres-secret
+            #       key: postgres-username
+            # - name: POSTGRES_PASSWORD
+            #   valueFrom: 
+            #     secretKeyRef:
+            #       name: postgres-secret
+            #       key: postgres-password
+            # - name: MONGO_SERVER
+            #   valueFrom: 
+            #     configMapKeyRef:
+            #       name: postgres-configmap
+            #       key: database_url
+            # - name: "Settings__PostgreSql__ConnectionString"
+            #   value: "Host=$(POSTGRES_SERVER);Username=$(POSTGRES_USERNAME);Password=$(POSTGRES_PASSWORD);Database=FoxIDs"
+            # - name: REDIS_SERVER
+            #   valueFrom: 
+            #     configMapKeyRef:
+            #       name: redis-configmap
+            #       key: database_url
+            # - name: "Settings__RedisCache__ConnectionString"
+            #   value: "$(REDIS_SERVER):6379"
 ---
 apiVersion: v1
 kind: Service

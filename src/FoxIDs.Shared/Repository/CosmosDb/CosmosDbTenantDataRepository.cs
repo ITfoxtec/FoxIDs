@@ -191,7 +191,7 @@ namespace FoxIDs.Repository
                         totalRU += totalRUTemp;
                         if (aidExist)
                         {
-                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                            throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                         }
                     }
                 }
@@ -235,7 +235,7 @@ namespace FoxIDs.Repository
                         totalRU += totalRUTemp;
                         if (aidExist)
                         {
-                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                            throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                         }
                     }
                 }
@@ -280,7 +280,7 @@ namespace FoxIDs.Repository
                         totalRU += totalRUTemp;
                         if (aidExist)
                         {
-                            throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                            throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                         }
                     }
                 }

@@ -149,7 +149,7 @@ namespace FoxIDs.Repository
                 {
                     if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, scopedLogger: scopedLogger))
                     {
-                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                     }
                 }
             }
@@ -175,7 +175,7 @@ namespace FoxIDs.Repository
                 {
                     if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: item.Id, scopedLogger: scopedLogger))
                     {
-                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace FoxIDs.Repository
                 {
                     if (await AdditionalIdExistAsync<T>(additionalId, item.PartitionId, notId: exist ? item.Id : null, scopedLogger: scopedLogger))
                     {
-                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+                        throw new FoxIDsDataException(additionalId, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
                     }
                 }
             }

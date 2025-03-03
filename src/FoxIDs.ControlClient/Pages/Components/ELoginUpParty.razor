@@ -163,7 +163,6 @@
             {
                 @if (loginUpParty.Form.Model.CreateUser != null)
                 {
-                    <div class="info-text">The user must verify the account as part of multi-factor.</div>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
 

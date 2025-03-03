@@ -70,16 +70,19 @@
             {
                 loginUpParty.Form.Model.CreateUser = null;
             }
-            <li class="nav-item">
-                @if (loginUpParty.ShowSessionTab)
-                {
-                    <a class="nav-link active">User Session</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User Session</button>
-                }
-            </li>
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <li class="nav-item">
+                    @if (loginUpParty.ShowSessionTab)
+                    {
+                        <a class="nav-link active">User Session</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">User Session</button>
+                    }
+                </li>
+            }
             <li class="nav-item">
                 @if (loginUpParty.ShowHrdTab)
                 {
@@ -160,7 +163,6 @@
             {
                 @if (loginUpParty.Form.Model.CreateUser != null)
                 {
-                    <div class="info-text">The user must verify the account as part of multi-factor.</div>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
 

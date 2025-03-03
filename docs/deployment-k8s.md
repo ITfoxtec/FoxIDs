@@ -2,26 +2,22 @@
 
 Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes enabled.
 
-This is a description of how to make a default [deployment](#deployment), [log in for the first time](#first-login) and some [considerations](#considerations). It is expected that you will need to customize the yaml files to suit your needs, preferences and environment.
+This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login) as well as some [considerations](#considerations). It is expected that you will need to customize the yaml files to suit your needs, preferences and environment.
 
 Pre requirements:
 - You have a Kubernetes cluster or Docker Desktop with Kubernetes enabled. 
 - You have basic knowledge about Kubernetes.
 - You have `kubectl` installer.
-- You have [Helm](https://docs.helm.sh/) installer.  
-  *Install Helm on windows with this CMD command `winget install Helm.Helm`*
 
 > This is a list of [useful commands](#useful-commands) in the end of this description.
 
 This deployment include:
 
-- Two websites one for FoxIDs and one for the FoxIDs Control (Client and API) in two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general). 
+- Two websites one for FoxIDs and one for the FoxIDs Control (the admin Client and API) in two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general). 
 - The two websites is exposed on two different domains secured with automatically generated [Let's Encrypt](https://letsencrypt.org) certificates.
-- MongoDB is a NoSQL database and contains all data including tenants, environments and users. Deployed with the [official MongoDB](https://hub.docker.com/_/mongo) Docker image.
-- Redis cache holds sequences (e.g., login and logout), data cache to improve performance and handle counters to secure authentication against various attacks. Deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
+- MongoDB is a NoSQL database and contains all data including tenants, environments and users. Deployed with the [official MongoDB](https://hub.docker.com/_/mongo) Docker image. You can optionally use your own PostgreSQL instance instead of MongoDB. 
+- Default holds the cache in the database. Optionally use a Redis cache if you are installing a FoxIDs cluster with high throughput. The cache holds sequences (e.g., login and logout) and handle counters to secure authentication against various attacks and data cache (Redis only) to improve performance. Redis is deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
 - Logs are written to `stdout` where the logs can be picked up by Kubernetes.
-
-> Optionally use PostgreSql instead of MongoDB and optionally opt out Redis and save cache data in the database (MongoDB or PostgreSql). Without a Redis cache you need to select `None` as data cache.
 
 ## Deployment
 
@@ -32,13 +28,25 @@ Clone the [git repository](https://github.com/ITfoxtec/FoxIDs) or download as ZI
 Open a console and navigate to the `./Kubernetes` folder.
 
 ### Persistent volumes 
-You need persistent volumes for MongoDB and Redis.
+You need persistent volumes for MongoDB and optionally Redis.
 
-If you are using Kubernetes in Docker Desktop you can create persistent volumes on the host file system - not recommended for production.
+In a Kubernetes cluster use or create suitable persistent volumes and create a `persistent volume claim` with the name `mongo-data-pvc` for MongoDB and optionally one for Redis with the name `redis-data-pvc`.
 
-In a Kubernetes cluster use or create suitable persistent volumes and create two `persistent volume claim` with the names `mongo-data-pvc` for MongoDB and the name `redis-data-pvc` for Redis.
+You might be able to use [dynamic storage provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) with `StorageClass`.
+
+Create `persistent volume claim` for Mongo
+```cmd
+kubectl apply -f k8s-mongo-pvc-dynamic.yaml
+```
+
+Optionally create `persistent volume claim` for Redis
+```cmd
+kubectl apply -f k8s-redis-pvc-dynamic.yaml
+```
 
 **Kubernetes in Docker Desktop**
+
+If you are using Kubernetes in Docker Desktop you can create persistent volumes on the host file system - not recommended for production.
 
 Create `persistent volume` for MongoDB
 ```cmd
@@ -50,26 +58,14 @@ Create `persistent volume claim` for MongoDB
 kubectl apply -f k8s-mongo-pvc-dockerdesktop.yaml
 ```
 
-Create `persistent volume` for Redis
+Optionally create `persistent volume` for Redis
 ```cmd
 kubectl apply -f k8s-redis-pv-dockerdesktop.yaml
 ```
 
-Create `persistent volume claim` for Redis
+Optionally create `persistent volume claim` for Redis
 ```cmd
 kubectl apply -f k8s-redis-pvc-dockerdesktop.yaml
-```
-
-**Otherwise**, you might be able to use [dynamic storage provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) with `StorageClass`.
-
-Create `persistent volume claim` for Mongo
-```cmd
-kubectl apply -f k8s-mongo-pvc-dynamic.yaml
-```
-
-Create `persistent volume claim` for Redis
-```cmd
-kubectl apply -f k8s-redis-pvc-dynamic.yaml
 ```
 
 ### Namespace
@@ -111,14 +107,27 @@ Add a `ConfigMap` for the MongoDB service
 kubectl apply -f k8s-mongo-configmap.yaml -n foxids
 ```
 
-### Redis
+### Optionally use PostgreSQL instead of MongoDB
+Change the username and password to match you own PostgreSQL instance in `k8s-postgres-secret.yaml`. The username and password is base64 encoded.
 
-Create Redis  
+Add the PostgreSQL secret
+```cmd
+kubectl apply -f k8s-postgres-secret.yaml -n foxids
+```
+
+Add a `ConfigMap` for the PostgreSQL service
+```cmd
+kubectl apply -f k8s-postgres-configmap.yaml -n foxids
+```
+
+### Optionally, Redis
+
+Optionally create Redis  
 ```cmd
 kubectl apply -f k8s-redis-deployment.yaml -n foxids
 ```
 
-Add a `ConfigMap` for the Redis service
+Optionally add a `ConfigMap` for the Redis service
 ```cmd
 kubectl apply -f k8s-redis-configmap.yaml -n foxids
 ```
@@ -151,6 +160,9 @@ This example show how to add Outlook / Microsoft 365 with SMTP:
     value: "xxxxxxx"
 ```
 
+**Optionally use PostgreSQL or Redis**  
+Optionally change the database and/or cache configuration in `k8s-foxids-deployment.yaml` to use PostgreSQL instead of MongoDB and/or to use Redis as cache.
+
 **Deploy**  
 Create the two FoxIDs websites
 ```cmd
@@ -158,6 +170,10 @@ kubectl apply -f k8s-foxids-deployment.yaml -n foxids
 ```
 
 The configuration require a Nginx controller. You can optionally change the configuration to use another controller.
+
+Pre requirements:
+- You have [Helm](https://docs.helm.sh/) installer.  
+  *Install Helm on windows with this CMD command `winget install Helm.Helm`*
 
 Install Ingress-Nginx controller with two commands
 ```cmd

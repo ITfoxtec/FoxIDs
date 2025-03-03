@@ -101,7 +101,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalLoginUpParty.Form.Model.CreateUser == null)
             {
-                generalLoginUpParty.Form.Model.CreateUser = new CreateUserViewModel();
+                generalLoginUpParty.Form.Model.CreateUser = new CreateUserViewModel { ConfirmAccount = true };
             }
             if (generalLoginUpParty.Form.Model.CreateUser.Elements?.Any() != true)
             {

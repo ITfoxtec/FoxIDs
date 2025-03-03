@@ -25,7 +25,10 @@
                         {
                             <li class="nav-item pt-2">
                                 <strong class="align-middle">Master tenant</strong>
-                                <button type="button" class="btn btn-primary ml-4" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
+                                @if (EnableCreateNewTenant)
+                                {
+                                    <button type="button" class="btn btn-primary ml-4" @onclick="ShowCreateTenantModalAsync"><span class="oi oi-plus" aria-hidden="true"></span> New Tenant</button>
+                                }
                             </li>
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)

@@ -1086,7 +1086,7 @@ namespace FoxIDs.Controllers
             {
                 loginUpParty.CreateUser = new CreateUser
                 {
-                    ConfirmAccount = false,
+                    ConfirmAccount = true,
                     RequireMultiFactor = false,
                     Elements = new List<DynamicElement>()
                 };

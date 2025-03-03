@@ -97,6 +97,8 @@ namespace FoxIDs.Client.Shared
 
         private bool IsMasterTrack => RouteBindingLogic.IsMasterTrack;
 
+        private bool EnableCreateNewTenant => ClientSettings.EnableCreateNewTenant;
+
         private bool RequestPayment => RouteBindingLogic.RequestPayment;
 
         protected override async Task OnInitializedAsync()

@@ -677,9 +677,9 @@ namespace FoxIDs
                     public const int AccessTokenLifetimeMin = 300; // 5 minutes
                     public const int AccessTokenLifetimeMax = 86400; // 24 hours
                     public const int RefreshTokenLifetimeMin = 900; // 15 minutes 
-                    public const int RefreshTokenLifetimeMax = 15768000; // 6 month
+                    public const int RefreshTokenLifetimeMax = 126144000; // 4 years
                     public const int RefreshTokenAbsoluteLifetimeMin = 900; // 15 minutes 
-                    public const int RefreshTokenAbsoluteLifetimeMax = 31536000; // 12 month
+                    public const int RefreshTokenAbsoluteLifetimeMax = 126144000; // 4 years
                 }
 
                 public static class Resource

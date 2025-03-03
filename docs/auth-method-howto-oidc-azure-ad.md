@@ -96,7 +96,7 @@ By during this the access token is issued by the same OP (IdP) and is thereby ac
 If you configure App roles on the Microsoft Entra ID App under the App roles tab. 
 The roles are returned in the `roles` claim in the ID token for users assigned to the role.
 
-If you are [reading claims from access token](#read-claims-from-access-token) the roles has to be defined in the Microsoft Entra ID App for a resource (API).
+If you are reading claims from access token the roles has to be defined in the Microsoft Entra ID App for a resource (API).
 
 **In FoxIDs Control Client**
 

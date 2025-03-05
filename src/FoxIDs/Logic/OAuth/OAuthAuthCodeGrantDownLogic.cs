@@ -37,7 +37,6 @@ namespace FoxIDs.Logic
             var grant = new AuthCodeTtlGrant
             {
                 TimeToLive = client.AuthorizationCodeLifetime.Value,
-                Claims = grantClaims.ToClaimAndValues(),
                 ClientId = client.ClientId,
                 RedirectUri = redirectUri,
                 Scope = scope,
@@ -45,6 +44,19 @@ namespace FoxIDs.Logic
                 CodeChallenge = codeChallenge,
                 CodeChallengeMethod = codeChallengeMethod
             };
+            grant.Claims = new List<ClaimAndValues>();
+            foreach (var gc in grantClaims.ToClaimAndValues())
+            {
+                try
+                {
+                    await gc.ValidateObjectAsync();
+                    grant.Claims.Add(gc);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex, $"Unable to save claim '{gc.Claim}' in grant.");
+                }
+            }
             await grant.SetIdAsync(new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code });
             await tenantDataRepository.SaveAsync(grant);
 

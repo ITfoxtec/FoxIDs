@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
                     {
                         if (RouteBinding.AutoMapSamlClaims)
                         {
-                            samlClaims.Add(new Claim(AddNewJwtBasedMappingReturnSaml(mappings, newMappings, jwtClaim.Type), jwtClaim.Value, jwtClaim.ValueType, jwtClaim.Issuer, jwtClaim.OriginalIssuer));
+                            samlClaims.Add(new Claim(await AddNewJwtBasedMappingReturnSamlAsync(mappings, newMappings, jwtClaim.Type), jwtClaim.Value, jwtClaim.ValueType, jwtClaim.Issuer, jwtClaim.OriginalIssuer));
                         }
                         else
                         {
@@ -113,8 +113,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to map JWT claims to SAML claims.");
-                throw;
+                throw new Exception("Failed to map JWT claims to SAML claims.", ex);
             }
         }
 
@@ -178,7 +177,7 @@ namespace FoxIDs.Logic
                     {
                         if (RouteBinding.AutoMapSamlClaims)
                         {
-                            jwtClaims.Add(new Claim(AddNewSamlBasedMappingReturnJwt(mappings, newMappings, samlClaim.Type), samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
+                            jwtClaims.Add(new Claim(await AddNewSamlBasedMappingReturnJwtAsync(mappings, newMappings, samlClaim.Type), samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
                         }
                         else
                         {
@@ -198,8 +197,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to map SAML claims to JWT claims.");
-                throw;
+                throw new Exception("Failed to map SAML claims to JWT claims.", ex);
             }
         }
 
@@ -226,8 +224,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to map SAML claims to JWT claim types.");
-                throw;
+                throw new Exception("Failed to map SAML claims to JWT claim types.", ex);
             }
         }
 
@@ -312,20 +309,30 @@ namespace FoxIDs.Logic
         }
 
 
-        private string AddNewJwtBasedMappingReturnSaml(List<ClaimMap> mappings, List<ClaimMap> newMappings, string jwtClaim)
+        private async Task<string> AddNewJwtBasedMappingReturnSamlAsync(List<ClaimMap> mappings, List<ClaimMap> newMappings, string jwtClaim)
         {
+            var samlClaim = $"{Constants.SamlAutoMapClaimTypes.Namespace}{jwtClaim.Replace("_", "")}";
             var claimMap = new ClaimMap
             {
                 JwtClaim = jwtClaim.ToLower(),
-                SamlClaim = $"{Constants.SamlAutoMapClaimTypes.Namespace}{jwtClaim.Replace("_", "")}"
+                SamlClaim = samlClaim
             };
             mappings.Add(claimMap);
-            newMappings.Add(claimMap);
+
+            try
+            {
+                await claimMap.ValidateObjectAsync();
+                newMappings.Add(claimMap);
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex, $"Unable to map JWT claim '{jwtClaim}' to SAML 2.0 claim '{samlClaim}'.");
+            }
 
             return claimMap.SamlClaim;
         }
 
-        private string AddNewSamlBasedMappingReturnJwt(List<ClaimMap> mappings, List<ClaimMap> newMappings, string samlClaim)
+        private async Task<string> AddNewSamlBasedMappingReturnJwtAsync(List<ClaimMap> mappings, List<ClaimMap> newMappings, string samlClaim)
         {
             string jwtClaim = null;
             var claimSplit = samlClaim.Split('/');
@@ -361,7 +368,16 @@ namespace FoxIDs.Logic
                 SamlClaim = samlClaim,
             };
             mappings.Add(claimMap);
-            newMappings.Add(claimMap);
+
+            try
+            {
+                await claimMap.ValidateObjectAsync();
+                newMappings.Add(claimMap);
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex, $"Unable to map SAML 2.0 claim '{samlClaim}' to JWT claim '{jwtClaim}'.");
+            }
 
             return jwtClaim;
         }

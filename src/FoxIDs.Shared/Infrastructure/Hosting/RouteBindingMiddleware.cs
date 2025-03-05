@@ -49,7 +49,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failing route request path '{httpContext.Request.Path.Value}'.", ex);
+                throw new RouteException($"Failing route request path '{httpContext.Request.Path.Value}'.", ex);
             }
         }
 

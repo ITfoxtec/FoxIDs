@@ -571,11 +571,11 @@ namespace FoxIDs
             public static class Claim
             {
                 public const int JwtTypeLength = 100;
-                public const string JwtTypeRegExPattern = @"^[\w:\/\-.+]*$";                            
-                public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
+                public const string JwtTypeRegExPattern = @"^[\w:\/\-.+ ]*$";                            
+                public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+ \*]*$";
                 public const int SamlTypeLength = 300;
-                public const string SamlTypeRegExPattern = @"^[\w:\/\-.+]*$";
-                public const string SamlTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
+                public const string SamlTypeRegExPattern = @"^[\w:\/\-.+ ]*$";
+                public const string SamlTypeWildcardRegExPattern = @"^[\w:\/\-.+ \*]*$";
 
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;

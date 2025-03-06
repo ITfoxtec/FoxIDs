@@ -10,11 +10,14 @@ using System;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic.Logs;
+using System.Threading;
 
 namespace FoxIDs.Logic.Usage
 {
     public class UsageMolliePaymentLogic
     {
+        private const int tenSecondsWaitPeriodInSeconds = 10;
+
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly IMandateClient mandateClient;
@@ -80,12 +83,11 @@ namespace FoxIDs.Logic.Usage
             }
         }
 
-
-        public async Task<bool> DoPaymentAsync(Tenant tenant, Used used, Invoice invoice)
+        public async Task<bool> DoPaymentAsync(Tenant tenant, Used used, Invoice invoice, bool doStatusRetry = false, CancellationToken? stoppingToken = null)
         {
             if (!HasActiveCardPayment(tenant))
             {
-                throw new InvalidOperationException("Not an active payment.");
+                throw new InvalidOperationException($"Not an active payment. Tenant: '{tenant.Name}'.");
             }
 
             try
@@ -105,6 +107,14 @@ namespace FoxIDs.Logic.Usage
                 var paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
                 used.PaymentStatus = paymentResponse.Status.FromMollieStatusToPaymentStatus();
                 used.PaymentId = paymentResponse.Id;
+
+                if (doStatusRetry && stoppingToken.HasValue && (used.PaymentStatus == UsagePaymentStatus.Open || used.PaymentStatus == UsagePaymentStatus.Pending))
+                {
+                    await Task.Delay(tenSecondsWaitPeriodInSeconds, stoppingToken.Value);
+                    var paymentResponseSecondAttempt = await paymentClient.GetPaymentAsync(used.PaymentId);
+                    used.PaymentStatus = paymentResponseSecondAttempt.Status.FromMollieStatusToPaymentStatus();
+                }
+
                 await tenantDataRepository.UpdateAsync(used);
 
                 logger.Event($"Usage, payment 'card' for tenant '{used.TenantName}' status '{used.PaymentStatus}'.");

@@ -816,7 +816,7 @@ namespace FoxIDs
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
 
-                public const int RelayStateLength = 2000;
+                public const int RelayStateLength = 20000;
                 public const int AcsResponseUrlLength = 2000;
 
                 public static class Up

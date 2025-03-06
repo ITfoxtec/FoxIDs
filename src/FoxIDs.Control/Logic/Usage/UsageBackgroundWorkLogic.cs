@@ -164,9 +164,9 @@ namespace FoxIDs.Logic.Usage
                         {
                             throw;
                         }
-                        catch (Exception tEx)
+                        catch (Exception tex)
                         {
-                            scopedLogger.Error(tEx, $"Usage, calculation and invoicing for tenant '{tenant.Name}' error.");
+                            scopedLogger.Error(tex, $"Usage, calculation and invoicing for tenant '{tenant.Name}' error.");
                         }
                     }
 
@@ -243,9 +243,9 @@ namespace FoxIDs.Logic.Usage
                         {
                             throw;
                         }
-                        catch (Exception tEx)
+                        catch (Exception tex)
                         {
-                            scopedLogger.Error(tEx, $"Usage, invoicing for tenant '{used.TenantName}' error.");
+                            scopedLogger.Error(tex, $"Usage, invoicing for tenant '{used.TenantName}' error.");
                         }
                     }
 

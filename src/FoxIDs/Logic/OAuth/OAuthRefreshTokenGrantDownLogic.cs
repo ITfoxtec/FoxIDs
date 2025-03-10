@@ -224,6 +224,13 @@ namespace FoxIDs.Logic
             grant.Email = GetTruncatedClaimValue(claims, JwtClaimTypes.Email);
             grant.Phone = GetTruncatedClaimValue(claims, JwtClaimTypes.PhoneNumber);
             grant.Username = GetTruncatedClaimValue(claims, JwtClaimTypes.PreferredUsername);
+            if (grant.Email == grant.Username)
+            {
+                grant.Username = null;
+            }
+
+            grant.AuthMethod = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethod);
+            grant.AuthMethodType = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethodType);
 
             await grant.SetIdAsync(new RefreshTokenGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, RefreshToken = refreshToken });
             await tenantDataRepository.SaveAsync(grant);

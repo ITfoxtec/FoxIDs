@@ -23,18 +23,7 @@ namespace FoxIDs.Logic
             this.tenantDataRepository = tenantDataRepository;
         }
 
-        public async Task<(IReadOnlyCollection<RefreshTokenTtlGrant> ttlGrants, IReadOnlyCollection<RefreshTokenGrant> grants, string paginationToken)> ListRefreshTokenGrantsAsync(string userIdentifier, string clientId, string autoMethod, string paginationToken = null)
-        {
-            (var ttlGrantsPaginationToken, var grantsPaginationToken) = GetGrantPaginationTokens(paginationToken);
-
-            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, clientId, autoMethod), paginationToken: ttlGrantsPaginationToken);
-            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, clientId, autoMethod), paginationToken: grantsPaginationToken);
-
-            return (ttlGrants, grants, CreateCombinedPaginationToken(nextTtlGrantsPaginationToken, nextGrantsPaginationToken));
-        }
-
-        public async Task<(RefreshTokenTtlGrant ttlGrant, RefreshTokenGrant grant)> GetRefreshTokenGrantsAsync(string refreshToken)
+        public async Task<(RefreshTokenTtlGrant ttlGrant, RefreshTokenGrant grant)> GetRefreshTokenGrantAsync(string refreshToken)
         {
             if (refreshToken.IsNullOrWhiteSpace())
             {
@@ -45,7 +34,7 @@ namespace FoxIDs.Logic
             var id = await RefreshTokenGrant.IdFormatAsync(idKey);
             var ttlGrant = await tenantDataRepository.GetAsync<RefreshTokenTtlGrant>(id, required: false);
             var grant = await tenantDataRepository.GetAsync<RefreshTokenGrant>(id, required: false);
-            
+
             if (ttlGrant == null && grant == null)
             {
                 throw new FoxIDsDataException(id, DataDocument.PartitionIdFormat(idKey)) { StatusCode = DataStatusCode.NotFound };
@@ -54,26 +43,61 @@ namespace FoxIDs.Logic
             return (ttlGrant, grant);
         }
 
-        public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier = null, string clientId = null, string authMethod = null)
+        public async Task<(IReadOnlyCollection<RefreshTokenTtlGrant> ttlGrants, IReadOnlyCollection<RefreshTokenGrant> grants, string paginationToken)> ListRefreshTokenGrantsAsync(string userIdentifier, string sub, string clientId, string autoMethod, string paginationToken = null)
         {
-            if (userIdentifier.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && authMethod.IsNullOrWhiteSpace())
-            {
-                throw new ArgumentException($"Either the {nameof(userIdentifier)} or the {nameof(clientId)} or the {nameof(authMethod)} parameter is required.");
-            }
-
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Client ID '{clientId}', Auth method '{authMethod}'.");
+            (var ttlGrantsPaginationToken, var grantsPaginationToken) = GetGrantPaginationTokens(paginationToken);
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, clientId, authMethod));
-            if (ttlGrantCount > 0)
+            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, autoMethod), paginationToken: ttlGrantsPaginationToken);
+            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, autoMethod), paginationToken: grantsPaginationToken);
+
+            return (ttlGrants, grants, CreateCombinedPaginationToken(nextTtlGrantsPaginationToken, nextGrantsPaginationToken));
+        }
+
+        public async Task DeleteRefreshTokenGrantAsync(string refreshToken)
+        {
+            if (refreshToken.IsNullOrWhiteSpace())
             {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, User identifier '{userIdentifier}', Client ID '{clientId}', Auth method '{authMethod}'.");
+                throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var grantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, clientId, authMethod));
+            (var ttlGrant, var grant) = await GetRefreshTokenGrantAsync(refreshToken);
+
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Refresh token '{refreshToken}'.");
+
+            if (ttlGrant != null)
+            {
+                await tenantDataRepository.DeleteAsync<RefreshTokenTtlGrant>(ttlGrant.Id);
+                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted.");
+            }
+            
+            if(grant != null)
+            {
+                await tenantDataRepository.DeleteAsync<RefreshTokenGrant>(grant.Id);
+                logger.ScopeTrace(() => $"Refresh Token grants deleted.");
+            }
+        }
+
+        public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier, string sub = null, string clientId = null, string authMethod = null)
+        {
+            if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && authMethod.IsNullOrWhiteSpace())
+            {
+                throw new ArgumentException($"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(authMethod)} parameter is required.");
+            }
+
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Client ID '{clientId}', Auth method '{authMethod}'.");
+
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+            var ttlGrantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, authMethod));
+            if (ttlGrantCount > 0)
+            {
+                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted.");
+            }
+
+            var grantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, authMethod));
             if (grantCount > 0)
             {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, User identifier '{userIdentifier}', Client ID '{clientId}', Auth method '{authMethod}'.");
+                logger.ScopeTrace(() => $"Refresh Token grants deleted.");
             }
         }
 
@@ -123,14 +147,16 @@ namespace FoxIDs.Logic
             return $"{(ttlGrantsPaginationToken.IsNullOrWhiteSpace() ? string.Empty : HttpUtility.UrlEncode(ttlGrantsPaginationToken))}&{(grantsPaginationToken.IsNullOrWhiteSpace() ? string.Empty : HttpUtility.UrlEncode(grantsPaginationToken))}";
         }
 
-        private static Expression<Func<T, bool>> GetQuery<T>(string userIdentifier, string clientId, string authMethod) where T : RefreshTokenGrant
+        private static Expression<Func<T, bool>> GetQuery<T>(string userIdentifier, string sub, string clientId, string authMethod) where T : RefreshTokenGrant
         {
             var queryByUserIdentifier = !userIdentifier.IsNullOrWhiteSpace();
+            var queryBySub = !sub.IsNullOrWhiteSpace();
             var queryByClientId = !clientId.IsNullOrWhiteSpace();
             var queryByAuthMethod = !authMethod.IsNullOrWhiteSpace();
 
             return d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) &&
-                            (!queryByUserIdentifier || d.Sub == userIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier) &&
+                            (!queryByUserIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier) &&
+                            (!queryBySub || d.Sub == sub) &&
                             (!queryByClientId || d.ClientId == clientId) &&
                             (!queryByAuthMethod || d.AuthMethod == authMethod);
         }

@@ -31,22 +31,24 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get refresh token grants.
         /// </summary>
-        /// <param name="filterUserIdentifier">Filter by the user identifier which can be: sub, email, phone or username.</param>
+        /// <param name="filterUserIdentifier">Filter by the user identifier which can be: email, phone or username.</param>
+        /// <param name="filterSub">Filter by the users SUB claim.</param>
         /// <param name="filterClientId">Filter by the applications client ID.</param>
         /// <param name="filterAuthMethod">Filter by the authentication method.</param>
         /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Refresh token grants.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.RefreshTokenGrant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.RefreshTokenGrant>>> GetRefreshTokenGrants(string filterUserIdentifier, string filterClientId, string filterAuthMethod, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.RefreshTokenGrant>>> GetRefreshTokenGrants(string filterUserIdentifier, string filterSub, string filterClientId, string filterAuthMethod, string paginationToken = null)
         {
             try
             {
                 filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
+                filterSub = filterSub?.Trim();
                 filterClientId = filterClientId?.Trim().ToLower();
                 filterAuthMethod = filterAuthMethod?.Trim().ToLower();
 
-                (var mTtlGrants, var mGrants, var nextPaginationToken) = await oauthRefreshTokenGrantDownBaseLogic.ListRefreshTokenGrantsAsync(filterUserIdentifier, filterClientId, filterAuthMethod, paginationToken);
+                (var mTtlGrants, var mGrants, var nextPaginationToken) = await oauthRefreshTokenGrantDownBaseLogic.ListRefreshTokenGrantsAsync(filterUserIdentifier, filterSub, filterClientId, filterAuthMethod, paginationToken);
                 
                 var response = new Api.PaginationResponse<Api.RefreshTokenGrant>
                 {
@@ -81,25 +83,27 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete refresh token grants.
         /// </summary>
-        /// <param name="userIdentifier">User identifier which can be: sub, email, phone or username.</param>
+        /// <param name="userIdentifier">User identifier which can be: email, phone or username.</param>
+        /// <param name="sub">The users SUB claim.</param>
         /// <param name="clientId">Applications client ID.</param>
-        /// <param name="filterAuthMethod">Filter by the authentication method.</param>
+        /// <param name="authMethod">Filter by the authentication method.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRefreshTokenGrants(string userIdentifier = null, string clientId = null, string authMethod = null)
+        public async Task<IActionResult> DeleteRefreshTokenGrants(string userIdentifier = null, string sub = null, string clientId = null, string authMethod = null)
         {
             try
             {
-                if (userIdentifier.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace())
+                if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && authMethod.IsNullOrWhiteSpace())
                 {
-                    ModelState.TryAddModelError(string.Empty, $"Either the {nameof(userIdentifier)} or the {nameof(clientId)} parameter is required.");
+                    ModelState.TryAddModelError(string.Empty, $"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(authMethod)} parameter is required.");
                     return BadRequest(ModelState);
                 }
                 userIdentifier = userIdentifier?.Trim().ToLower();
+                sub = sub?.Trim();
                 clientId = clientId?.Trim().ToLower();
                 authMethod = authMethod?.Trim().ToLower();
 
-                await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(userIdentifier, clientId, authMethod);
+                await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(userIdentifier, sub, clientId, authMethod);
 
                 return NoContent();
             }

@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                (var ttlGrant, var grant) = await oauthRefreshTokenGrantDownBaseLogic.GetRefreshTokenGrantsAsync(refreshToken);
+                (var ttlGrant, var grant) = await oauthRefreshTokenGrantDownBaseLogic.GetRefreshTokenGrantAsync(refreshToken);
 
                 return Ok(mapper.Map<Api.RefreshTokenGrant>(ttlGrant ?? grant));
             }
@@ -51,6 +51,37 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.RefreshTokenGrant).Name}' by refresh token '{refreshToken}'.");
+                    return NotFound(typeof(Api.RefreshTokenGrant).Name, refreshToken);
+                }
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Delete refresh token grant.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteRefreshTokenGrants(string refreshToken)
+        {
+            try
+            {
+                if (refreshToken.IsNullOrWhiteSpace())
+                {
+                    ModelState.TryAddModelError(string.Empty, $"The {nameof(refreshToken)} parameter is required.");
+                    return BadRequest(ModelState);
+                }
+
+                await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantAsync(refreshToken);
+
+                return NoContent();
+            }
+            catch (FoxIDsDataException ex)
+            {
+                if (ex.StatusCode == DataStatusCode.NotFound)
+                {
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.RefreshTokenGrant).Name}' by refresh token '{refreshToken}'.");
                     return NotFound(typeof(Api.RefreshTokenGrant).Name, refreshToken);
                 }
                 throw;

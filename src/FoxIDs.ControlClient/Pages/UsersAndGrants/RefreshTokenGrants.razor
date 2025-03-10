@@ -50,7 +50,7 @@
                         }
                         else
                         {
-                            <span>@GetDeleteText()</span>
+                            <span>Delete @String.Join(' ', GetDeleteText()).</span>
                         }
                     </div>
                     <div class="py-2">
@@ -95,9 +95,16 @@
                         {
                             <FFieldText @bind-Value="refreshTokenGrant.Details.ExpireAtText" For="@(() => refreshTokenGrant.Details.ExpireAtText)" />
                         }
-                        <FFieldText @bind-Value="refreshTokenGrant.Details.Email" For="@(() => refreshTokenGrant.Details.Email)" />
-                        <FFieldText @bind-Value="refreshTokenGrant.Details.Phone" For="@(() => refreshTokenGrant.Details.Phone)" />
-                        <FFieldText @bind-Value="refreshTokenGrant.Details.Username" For="@(() => refreshTokenGrant.Details.Username)" />
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Email" For="@(() => refreshTokenGrant.Details.Email)" />
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Phone" For="@(() => refreshTokenGrant.Details.Phone)" />
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Username" For="@(() => refreshTokenGrant.Details.Username)" />
+                                </div>
+                            </div>
+                            <label class="label-control">User identifiers</label>
+                        </div>
                         <FFieldText @bind-Value="refreshTokenGrant.Details.Sub" For="@(() => refreshTokenGrant.Details.Sub)" />
                         <div class="row">
                             <div class="col-6">

@@ -197,13 +197,17 @@ namespace FoxIDs.Client.Pages.UsersAndGrants
             return string.Join(", ", infoText);
         }
 
-        private string GetDeleteText()
+        private IEnumerable<string> GetDeleteText()
         {
-            var u = deleteRtGrantFilter.FilterUserIdentifier;
-            var a = deleteRtGrantFilter.FilterAuthMethod;
-            var c = deleteRtGrantFilter.FilterClientId;
-
-            return $"Delete grants for {(u.IsNullOrWhiteSpace() ? "all users" : $"users with '{u}'")} {(a.IsNullOrWhiteSpace() ? string.Empty : $"authenticated with '{a}'")}{(c.IsNullOrWhiteSpace() ? string.Empty : $"in application '{c}'")}.";
+            yield return deleteRtGrantFilter.FilterUserIdentifier.IsNullOrWhiteSpace() ? "all users" : $"users with '{deleteRtGrantFilter.FilterUserIdentifier}'"; 
+            if(!deleteRtGrantFilter.FilterAuthMethod.IsNullOrWhiteSpace())
+            {
+                yield return  $"authenticated with '{deleteRtGrantFilter.FilterAuthMethod}'";
+            }
+            if (!deleteRtGrantFilter.FilterClientId.IsNullOrWhiteSpace())
+            {
+                yield return $"in application '{deleteRtGrantFilter.FilterClientId}'";
+            }
         }
 
         private async Task DeleteRefreshTokenGrantsAsync()

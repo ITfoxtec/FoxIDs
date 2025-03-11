@@ -20,7 +20,12 @@ namespace FoxIDs.Models.Api
 
         public string Filter { get; set; }
 
+        // For backward compatibility.
         public bool QueryExceptions { get; set; }
+
+        public bool QueryErrors { get; set; }
+
+        public bool QueryWarnings { get; set; }
 
         public bool QueryTraces { get; set; }
 

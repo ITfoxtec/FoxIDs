@@ -28,9 +28,17 @@ namespace FoxIDs.Logic
                 logRequest.Filter = logRequest.Filter.Trim();
             }
 
-            if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
+            // For backward compatibility.
+            if (logRequest.QueryExceptions)
             {
-                logRequest.QueryExceptions = true;
+                logRequest.QueryErrors = true;
+                logRequest.QueryWarnings = true;
+            }
+
+            if (!logRequest.QueryErrors && !logRequest.QueryWarnings && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
+            {
+                logRequest.QueryErrors = true;
+                logRequest.QueryWarnings = true;
                 logRequest.QueryEvents = true;
             }
 

@@ -17,7 +17,7 @@ using FoxIDs.Client.Logic;
 using System.Linq;
 using ITfoxtec.Identity;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.UsersAndGrants
 {
     public partial class ExternalUsers
     {
@@ -27,6 +27,7 @@ namespace FoxIDs.Client.Pages
         private List<GeneralExternalUserViewModel> externalUsers = new List<GeneralExternalUserViewModel>();
         private string paginationToken;
         private string usersHref;
+        private string refreshTokenGrantsHref;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -46,6 +47,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             usersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/users";
+            refreshTokenGrantsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/refreshtokengrants";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

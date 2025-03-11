@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : OAuthRefreshTokenGrantDownBaseLogic where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -93,44 +93,6 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task DeleteRefreshTokenGrantsByUserIdentifierAsync(string userIdentifier)
-        {
-            if (userIdentifier.IsNullOrWhiteSpace()) return;
-
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}'.");
-
-            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && (d.Sub == userIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier));
-            if (ttlGrantCount > 0)
-            {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, User identifier '{userIdentifier}'.");
-            }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && (d.Sub == userIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier));
-            if (grantCount > 0)
-            {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, User identifier '{userIdentifier}'.");
-            }
-        }
-
-        public async Task DeleteRefreshTokenGrantsBySubAsync(string sub)
-        {
-            if (sub.IsNullOrWhiteSpace()) return;
-
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Sub '{sub}'.");
-
-            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Sub == sub);
-            if (ttlGrantCount > 0)
-            {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Sub '{sub}'.");
-            }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Sub == sub);
-            if (grantCount > 0)
-            {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, Sub '{sub}'.");
-            }
-        }
-
         public async Task DeleteRefreshTokenGrantsByPhoneAsync(string phone)
         {
             if (phone.IsNullOrWhiteSpace()) return;
@@ -169,24 +131,24 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task DeleteRefreshTokenGrantsByUserNameAsync(string username)
-        {
-            if (username.IsNullOrWhiteSpace()) return;
+        //public async Task DeleteRefreshTokenGrantsByUserNameAsync(string username)
+        //{
+        //    if (username.IsNullOrWhiteSpace()) return;
 
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Username '{username}'.");
+        //    logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Username '{username}'.");
 
-            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Username == username);
-            if (ttlGrantCount > 0)
-            {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Username '{username}'.");
-            }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Username == username);
-            if (grantCount > 0)
-            {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, Username '{username}'.");
-            }
-        }
+        //    var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+        //    var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Username == username);
+        //    if (ttlGrantCount > 0)
+        //    {
+        //        logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Username '{username}'.");
+        //    }
+        //    var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Username == username);
+        //    if (grantCount > 0)
+        //    {
+        //        logger.ScopeTrace(() => $"Refresh Token grants deleted, Username '{username}'.");
+        //    }
+        //}
 
         private void CheckeConfiguration(TClient client)
         {
@@ -262,6 +224,13 @@ namespace FoxIDs.Logic
             grant.Email = GetTruncatedClaimValue(claims, JwtClaimTypes.Email);
             grant.Phone = GetTruncatedClaimValue(claims, JwtClaimTypes.PhoneNumber);
             grant.Username = GetTruncatedClaimValue(claims, JwtClaimTypes.PreferredUsername);
+            if (grant.Email == grant.Username)
+            {
+                grant.Username = null;
+            }
+
+            grant.AuthMethod = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethod);
+            grant.AuthMethodType = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethodType);
 
             await grant.SetIdAsync(new RefreshTokenGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, RefreshToken = refreshToken });
             await tenantDataRepository.SaveAsync(grant);

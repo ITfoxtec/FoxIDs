@@ -19,6 +19,7 @@ using FoxIDs.Models.Sequences;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.Diagnostics;
+using FoxIDs.Infrastructure.Hosting;
 
 namespace FoxIDs.Controllers
 {
@@ -112,7 +113,15 @@ namespace FoxIDs.Controllers
                         return HandlePlanException(errorViewModel, planException);
                     }
 
-                    LogExceptionAsError(exception);
+                    var routeException = FindException<RouteException>(exception);
+                    if (routeException != null)
+                    {
+                        LogExceptionAsWarning(routeException);
+                    }
+                    else
+                    {
+                        LogExceptionAsError(exception);
+                    }
                 }
 
                 if (environment.IsDevelopment())

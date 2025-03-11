@@ -571,11 +571,11 @@ namespace FoxIDs
             public static class Claim
             {
                 public const int JwtTypeLength = 100;
-                public const string JwtTypeRegExPattern = @"^[\w:\/\-.+]*$";                            
-                public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
+                public const string JwtTypeRegExPattern = @"^[\w:\/\-.+ ]*$";                            
+                public const string JwtTypeWildcardRegExPattern = @"^[\w:\/\-.+ \*]*$";
                 public const int SamlTypeLength = 300;
-                public const string SamlTypeRegExPattern = @"^[\w:\/\-.+]*$";
-                public const string SamlTypeWildcardRegExPattern = @"^[\w:\/\-.+\*]*$";
+                public const string SamlTypeRegExPattern = @"^[\w:\/\-.+ ]*$";
+                public const string SamlTypeWildcardRegExPattern = @"^[\w:\/\-.+ \*]*$";
 
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;
@@ -645,6 +645,8 @@ namespace FoxIDs
                 {
                     public const int IdLength = 220;
                     public const string IdRegExPattern = @"^[\w:\-_]*$";
+                    public const int RefreshTokenLength = 100;
+                    public const string RefreshTokenRegExPattern = @"^[\w-_]*$";
                     public const int ClaimsMin = 1;
                     public const int ClaimsMax = 1000;
                 }
@@ -816,7 +818,7 @@ namespace FoxIDs
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
 
-                public const int RelayStateLength = 2000;
+                public const int RelayStateLength = 20000;
                 public const int AcsResponseUrlLength = 2000;
 
                 public static class Up

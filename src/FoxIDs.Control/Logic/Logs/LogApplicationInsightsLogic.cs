@@ -29,9 +29,9 @@ namespace FoxIDs.Logic
         {
             var responseTruncated = false;
             var items = new List<InternalLogItem>();
-            if (logRequest.QueryExceptions)
+            if (logRequest.QueryErrors || logRequest.QueryWarnings)
             {
-                if (await LoadExceptionsAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter))
+                if (await LoadExceptionsAsync(tenantName, trackName, items, queryTimeRange, logRequest.Filter, logRequest.QueryErrors, logRequest.QueryWarnings))
                 {
                     responseTruncated = true;
                 }
@@ -184,7 +184,7 @@ namespace FoxIDs.Logic
             return settings.ApplicationInsights.WorkspaceId;
         }
 
-        private async Task<bool> LoadExceptionsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadExceptionsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter, bool includeErrors, bool includeWarnings)
         {
             var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath {GetGeneralQueryExtend()}";
             var where = filter.IsNullOrEmpty() ? null : $"| where Details contains '{filter}' or RequestId contains '{filter}' or RequestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
@@ -207,9 +207,12 @@ namespace FoxIDs.Logic
                     OperationId = GetOperationId(row),
                     Values = GetValues(row, [Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.ClientIp, Constants.Logs.Results.AppRoleInstance])
                 };
-                AddExceptionDetails(row, item);
-                AddProperties(row, item.Values);
-                items.Add(item);
+                if ((includeErrors && (item.Type == Api.LogItemTypes.CriticalError || item.Type == Api.LogItemTypes.Error)) || (includeWarnings && item.Type == Api.LogItemTypes.Warning))
+                {
+                    AddExceptionDetails(row, item);
+                    AddProperties(row, item.Values);
+                    items.Add(item);
+                }
             }
 
             return table.Rows.Count() >= maxQueryLogItems;

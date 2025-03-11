@@ -352,7 +352,7 @@ namespace FoxIDs.Logic
                 }
 
                 emailContent.Address = HttpUtility.HtmlEncode(string.Join(" - ", aList));
-                emailContent.Info = localizer["This email is send from <a href=\"{0}\">FoxIDs</a> the European identity service provided by ITfoxtec."];
+                emailContent.Info = localizer["This email is send from <a href=\"{0}\">FoxIDs</a> the European Identity Service."];
             }
 
             return emailContent;

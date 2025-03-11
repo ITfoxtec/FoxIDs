@@ -227,6 +227,9 @@ Add ingress with certificate bound domains
 kubectl apply -f k8s-foxids-ingress-deployment.yaml -n foxids
 ```
 
+> Impotent! Ingress is installed with the annotations `nginx.ingress.kubernetes.io/proxy-buffers-number: "4"` and `nginx.ingress.kubernetes.io/proxy-buffer-size: "32k"` 
+   to support SAML 2.0 where HTTP responses can be quite large.
+
 Optionally verify Ingress
 ```cmd
 kubectl get ingress -n foxids

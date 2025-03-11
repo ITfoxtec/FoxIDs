@@ -298,15 +298,16 @@ namespace FoxIDs.Logic
 
         private static QueryContainer MustBeLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest)
         {
-            return MustBeExceptionLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest) ||
+            return MustBeErrorLogType(m, logRequest) || MustBeWarningLogType(m, logRequest) || MustBeEventLogType(m, logRequest) || MustBeTraceLogType(m, logRequest) || MustBeMetricLogType(m, logRequest) ||
                         // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
                         m.Match(ma => ma.Field(f => f.LogType).Query(string.Join(' ', GetLogTypes(logRequest))));
         }
 
-        private static QueryContainer MustBeExceptionLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
-            (m.Term(t => t.LogType, LogTypes.Warning.ToString()) ||
-                m.Term(t => t.LogType, LogTypes.Error.ToString()) ||
-                m.Term(t => t.LogType, LogTypes.CriticalError.ToString())) && (logRequest.QueryExceptions ? m.MatchAll() : m.MatchNone());
+        private static QueryContainer MustBeErrorLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            (m.Term(t => t.LogType, LogTypes.Error.ToString()) || m.Term(t => t.LogType, LogTypes.CriticalError.ToString())) && (logRequest.QueryErrors ? m.MatchAll() : m.MatchNone());
+
+        private static QueryContainer MustBeWarningLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
+            m.Term(t => t.LogType, LogTypes.Warning.ToString()) && (logRequest.QueryWarnings ? m.MatchAll() : m.MatchNone());
 
         private static QueryContainer MustBeEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m, Api.LogRequest logRequest) =>
             m.Term(t => t.LogType, LogTypes.Event.ToString()) && (logRequest.QueryEvents ? m.MatchAll() : m.MatchNone());
@@ -320,11 +321,14 @@ namespace FoxIDs.Logic
         // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
         private static IEnumerable<string> GetLogTypes(Api.LogRequest logRequest)
         {
-            if (logRequest.QueryExceptions)
+            if (logRequest.QueryErrors)
             {
-                yield return LogTypes.Warning.ToString();
                 yield return LogTypes.Error.ToString();
                 yield return LogTypes.CriticalError.ToString();
+            }
+            if (logRequest.QueryWarnings)
+            {
+                yield return LogTypes.Warning.ToString();
             }
             if (logRequest.QueryEvents)
             {

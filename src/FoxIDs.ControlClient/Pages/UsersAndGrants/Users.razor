@@ -8,6 +8,9 @@
     <li class="nav-item">
         <a class="nav-link" href="@externalUsersHref">External Users</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@refreshTokenGrantsHref">Refresh Token Grants</a>
+    </li>
 </ul>
 
 <div class="d-flex pt-2">
@@ -41,7 +44,10 @@
             {
                 <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
                     <div class="modal-header">
-                        User
+                        <div class="h5">
+                            User
+                        </div>
+                        <FInputSwitchAdvancedOptions @bind-Value="user.ShowAdvanced" />
                     </div>
                     <div class="modal-body">
                         <div class="active-group active">
@@ -65,24 +71,35 @@
                             <input type="hidden" @bind="user.Form.Model.Password" />
                             <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
-                        <FInputToggle @bind-Value="user.Form.Model.ConfirmAccount" For="@(() => user.Form.Model.ConfirmAccount)" TextType="y.n" />
-                        <FInputToggle @bind-Value="user.Form.Model.PhoneVerified" For="@(() => user.Form.Model.PhoneVerified)" TextType="y.n" />
-                        <FInputToggle @bind-Value="user.Form.Model.EmailVerified" For="@(() => user.Form.Model.EmailVerified)" TextType="y.n" />
-                        <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
-                        <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
+
                         <div class="active-group active">
                             <div class="card">
-                                <div class="card-body pb-0">
-                                    <div class="info-text">Choose which two-factor options should be available to the user.</div>
-                                    <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorApp" For="@(() => user.Form.Model.DisableTwoFactorApp)" Negation="true" TextType="e.d" />
-                                    <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorSms" For="@(() => user.Form.Model.DisableTwoFactorSms)" Negation="true" TextType="e.d" />
-                                    <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorEmail" For="@(() => user.Form.Model.DisableTwoFactorEmail)" Negation="true" TextType="e.d" />
-                                    <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
-                                    <FInputToggle @bind-Value="user.Form.Model.ActiveTwoFactorApp" For="@(() => user.Form.Model.ActiveTwoFactorApp)" TextType="y.n" />
+                                <div class="card-body pt-3 pb-0">
+                                    <FInputToggle @bind-Value="user.Form.Model.ConfirmAccount" For="@(() => user.Form.Model.ConfirmAccount)" TextType="y.n" />
+                                    <FInputToggle @bind-Value="user.Form.Model.PhoneVerified" For="@(() => user.Form.Model.PhoneVerified)" TextType="y.n" />
+                                    <FInputToggle @bind-Value="user.Form.Model.EmailVerified" For="@(() => user.Form.Model.EmailVerified)" TextType="y.n" />
                                 </div>
                             </div>
-                            <label class="label-control">Two-factor</label>
+                            <label class="label-control">User confirmation</label>
                         </div>
+                        <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
+                        <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
+                        @if (user.ShowAdvanced)
+                        {
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body pb-0">
+                                        <div class="info-text">Choose which two-factor options should be available to the user.</div>
+                                        <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorApp" For="@(() => user.Form.Model.DisableTwoFactorApp)" Negation="true" TextType="e.d" />
+                                        <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorSms" For="@(() => user.Form.Model.DisableTwoFactorSms)" Negation="true" TextType="e.d" />
+                                        <FInputToggle @bind-Value="user.Form.Model.DisableTwoFactorEmail" For="@(() => user.Form.Model.DisableTwoFactorEmail)" Negation="true" TextType="e.d" />
+                                        <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
+                                        <FInputToggle @bind-Value="user.Form.Model.ActiveTwoFactorApp" For="@(() => user.Form.Model.ActiveTwoFactorApp)" TextType="y.n" />
+                                    </div>
+                                </div>
+                                <label class="label-control">Two-factor</label>
+                            </div>
+                        }
                         <div class="form-group active-group active">
                             <Label For="@(() => user.Form.Model.Claims)" class="label-control" />
                             <ul class="list-group">
@@ -133,7 +150,7 @@
             else
             {
                 <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateUserAsync(user))">
-                    @(user.Email ?? user.Phone ?? user.Username)
+                    @GetInfoText(user)
                 </button>
             }
         </li>

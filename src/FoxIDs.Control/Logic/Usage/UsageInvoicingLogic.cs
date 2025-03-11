@@ -38,13 +38,13 @@ namespace FoxIDs.Logic.Usage
             this.usageMolliePaymentLogic = usageMolliePaymentLogic;
         }
 
-        public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken, bool doInvoicing = false)
+        public async Task<bool> DoInvoicingAsync(Tenant tenant, Used used, CancellationToken stoppingToken)
         {
-            if(!doInvoicing && tenant.EnableUsage != true)
+            if(!(used.Items?.Count() > 0) && tenant.EnableUsage != true)
             {
                 used.IsInactive = true;
                 await tenantDataRepository.UpdateAsync(used);
-                logger.Event($"Usage, invoicing for tenant '{used.TenantName}' not enabled, set to inactive.");
+                logger.Event($"Usage, invoicing for tenant '{used.TenantName}' set to inactive. Items: {used.Items?.Count()}, EnableUsage: '{tenant.EnableUsage == true}' ");
                 return true;
             }
 
@@ -70,7 +70,7 @@ namespace FoxIDs.Logic.Usage
                         await tenantDataRepository.UpdateAsync(used);
                         try
                         {
-                            throw new Exception("Card payment NOT active.");
+                            throw new Exception($"Card payment NOT active. Tenant: '{tenant.Name}'.");
                         }
                         catch (Exception ex)
                         {
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic.Usage
                     {
                         if (used.PaymentStatus == UsagePaymentStatus.None)
                         {
-                            if (!await usageMolliePaymentLogic.DoPaymentAsync(tenant, used, invoice))
+                            if (!await usageMolliePaymentLogic.DoPaymentAsync(tenant, used, invoice, doStatusRetry: true, stoppingToken: stoppingToken))
                             {
                                 taskDone = false;
                             }
@@ -105,6 +105,10 @@ namespace FoxIDs.Logic.Usage
                                     taskDone = false;
                                 }
                             }
+                            else
+                            {
+                                taskDone = false;
+                            }
                         }
                     }
                 }
@@ -120,7 +124,7 @@ namespace FoxIDs.Logic.Usage
                 }
             }
 
-            if(taskDone)
+            if (taskDone)
             {
                 used.IsInactive = false;
                 used.IsDone = true;

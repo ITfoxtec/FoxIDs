@@ -1,0 +1,177 @@
+﻿@page "/{tenantName}/refreshtokengrants"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@usersHref">Internal Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Refresh Token Grants</a>
+    </li>
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        Active refresh token grants in this environment.
+    </div>
+</div>
+
+<PageEditForm @ref="refreshTokenGrantFilterForm" TModel="FilterRefreshTokenGrantViewModel" OnValidSubmit="OnRefreshTokenGrantsFilterValidSubmitAsync">
+    <FInputText @bind-Value="refreshTokenGrantFilterForm.Model.FilterUserIdentifier" For="@(() => refreshTokenGrantFilterForm.Model.FilterUserIdentifier)" />
+    <div class="row">
+        <div class="col-6">
+            <FInputText @bind-Value="refreshTokenGrantFilterForm.Model.FilterAuthMethod" For="@(() => refreshTokenGrantFilterForm.Model.FilterAuthMethod)" />
+        </div>
+        <div class="col-6">
+            <FInputTextFilter @bind-Value="refreshTokenGrantFilterForm.Model.FilterClientId" For="@(() => refreshTokenGrantFilterForm.Model.FilterClientId)" />
+        </div>
+    </div>
+</PageEditForm>
+
+@if (refreshTokenGrants.Count() > 0)
+{
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body">
+                @if (!deleteRtGrantError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger mt-2" role="alert">
+                        @deleteRtGrantError
+                    </div>
+                }
+                <div class="d-flex">
+                    <div class="align-self-center info-text mr-auto">
+                        @if (deleteRtGrantFilter == null)
+                        {
+                            <span>Specify at least one search parameter if you want to delete refresh token grants.</span>
+                        }
+                        else
+                        {
+                            <span>Delete @String.Join(' ', GetDeleteText()).</span>
+                        }
+                    </div>
+                    <div class="py-2">
+                        @if (deleteRtGrantFilter == null) 
+                        {
+                            <button type="button" class="btn btn-secondary" disabled="disabled">Delete grants</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteRefreshTokenGrantsAsync">Delete grants</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <label class="label-control">Delete refresh token grants</label>
+    </div>
+}
+
+<ul class="list-group">
+    @if (refreshTokenGrants.Count() > 0) 
+    {
+        @foreach (var refreshTokenGrant in refreshTokenGrants)
+        {
+            <li class="list-group-item @(refreshTokenGrant.Details != null ? "active" : string.Empty)">
+                @if (!refreshTokenGrant.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @refreshTokenGrant.Error
+                    </div>
+                }
+                
+                @if (refreshTokenGrant.Details != null)
+                {
+                    <div class="modal-header">
+                        <div class="h5">
+                            Refresh Token Grant
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        @if (!refreshTokenGrant.Details.ExpireAtText.IsNullOrWhiteSpace())
+                        {
+                            <FFieldText @bind-Value="refreshTokenGrant.Details.ExpireAtText" For="@(() => refreshTokenGrant.Details.ExpireAtText)" />
+                        }
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Email" For="@(() => refreshTokenGrant.Details.Email)" />
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Phone" For="@(() => refreshTokenGrant.Details.Phone)" />
+                                    <FFieldText @bind-Value="refreshTokenGrant.Details.Username" For="@(() => refreshTokenGrant.Details.Username)" />
+                                </div>
+                            </div>
+                            <label class="label-control">User identifiers</label>
+                        </div>
+                        <FFieldText @bind-Value="refreshTokenGrant.Details.Sub" For="@(() => refreshTokenGrant.Details.Sub)" />
+                        <div class="row">
+                            <div class="col-6">
+                                <FFieldText @bind-Value="refreshTokenGrant.Details.AuthMethod" For="@(() => refreshTokenGrant.Details.AuthMethod)" />
+                            </div>
+                            <div class="col-6">
+                                <FFieldText @bind-Value="refreshTokenGrant.Details.AuthMethodType" For="@(() => refreshTokenGrant.Details.AuthMethodType)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <FFieldText @bind-Value="refreshTokenGrant.Details.ClientId" For="@(() => refreshTokenGrant.Details.ClientId)" />
+                            </div>
+                        </div>
+                        <FFieldText @bind-Value="refreshTokenGrant.Details.SessionId" For="@(() => refreshTokenGrant.Details.SessionId)" />
+
+                        @if (refreshTokenGrant.Details.Claims?.Count() > 0) 
+                        {
+                            <div class="form-group active-group active">
+                                <label class="label-control">Claims</label>
+                                <ul class="list-group">
+                                    @foreach (var claim in refreshTokenGrant.Details.Claims)
+                                    {
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <FFieldText @bind-Value="claim.Claim" For="@(() => claim.Claim)" />
+                                                </div>
+                                                <div class="col-6">
+                                                    <FFieldTextList @bind-ValueList="claim.Values" For="@(() => claim.Values)" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => refreshTokenGrant.Details = null)">Close</button>
+                    </div>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link" @onclick="@(async () => await ShowDetailsRefreshTokenGrantAsync(refreshTokenGrant))">
+                        <span>User: @GetInfoText(refreshTokenGrant)</span>
+                        <br />
+                        <span>Authentication method: @refreshTokenGrant.AuthMethod (@refreshTokenGrant.AuthMethodType)</span>
+                        <br />
+                        <span>Application: @refreshTokenGrant.ClientId</span>
+                    </button>
+                }
+            </li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="font-italic pl-1">No refresh token grants</div>
+        </li>
+    }
+</ul>
+@if (paginationToken != null)
+{
+    <div class="pl-3 pt-3">
+        <button type="button" class="btn btn-secondary" @onclick="LoadMoreUsersAsync">
+            Load more
+        </button>
+    </div>
+}

@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Pages.Logging
 {
     public partial class Logs
     {
-        private List<string> queryTypeItems = new List<string> { LogQueryTypes.Exceptions, LogQueryTypes.Events, LogQueryTypes.Traces, LogQueryTypes.Metrics };
+        private List<string> queryTypeItems = new List<string> { LogQueryTypes.Errors, LogQueryTypes.Warnings, LogQueryTypes.Events, LogQueryTypes.Traces, LogQueryTypes.Metrics };
 
         private string logLoadError;
         private PageEditForm<LogRequestViewModel> logRequestForm;
@@ -138,14 +138,16 @@ namespace FoxIDs.Client.Pages.Logging
             if (logRequestForm?.Model != null)
             {
                 logRequest.Filter = logRequestForm.Model.Filter;
-                logRequest.QueryExceptions = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Exceptions);
+                logRequest.QueryErrors = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Errors);
+                logRequest.QueryWarnings = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Warnings);
                 logRequest.QueryTraces = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Traces);
                 logRequest.QueryEvents = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Events);
                 logRequest.QueryMetrics = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Metrics);
             }
             else
             {
-                logRequest.QueryExceptions = true;
+                logRequest.QueryErrors = true;
+                logRequest.QueryWarnings = true;
                 if (!IsMasterTenant && !IsMasterTrack)
                 {
                     logRequest.QueryEvents = true;
@@ -180,7 +182,7 @@ namespace FoxIDs.Client.Pages.Logging
         {
             if (!(model.QueryTypes?.Count() > 0))
             {
-                model.QueryTypes = [LogQueryTypes.Exceptions];
+                model.QueryTypes = [LogQueryTypes.Errors, LogQueryTypes.Warnings];
                 if (!IsMasterTenant && !IsMasterTrack)
                 {
                     model.QueryTypes.Add(LogQueryTypes.Events);
@@ -197,7 +199,8 @@ namespace FoxIDs.Client.Pages.Logging
         {
             if (logRequestForm.Model.QueryTypes.Count() <= 0)
             {
-                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Exceptions);
+                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Errors);
+                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Warnings);
                 if (!IsMasterTenant && !IsMasterTrack)
                 {
                     logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Events);

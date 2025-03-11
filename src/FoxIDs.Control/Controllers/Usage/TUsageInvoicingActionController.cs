@@ -133,7 +133,7 @@ namespace FoxIDs.Controllers
                 else if (mUsed.Items?.Count() > 0)
                 {
                     using var cancellationTokenSource = new CancellationTokenSource();
-                    await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token, doInvoicing: true);
+                    await usageInvoicingLogic.DoInvoicingAsync(mTenant, mUsed, cancellationTokenSource.Token);
                 }
                 else
                 {

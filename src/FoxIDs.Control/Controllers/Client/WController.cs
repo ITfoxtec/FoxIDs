@@ -9,6 +9,7 @@ using FoxIDs.Models;
 using FoxIDs.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using FoxIDs.Models.Config;
+using FoxIDs.Infrastructure.Hosting;
 
 namespace FoxIDs.Controllers.Client
 {
@@ -37,11 +38,33 @@ namespace FoxIDs.Controllers.Client
         {
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionHandlerPathFeature?.Error;
-            LogException(exception);
+
+            var routeException = FindException<RouteException>(exception);
+            if (routeException != null)
+            {
+                LogExceptionAsWarning(routeException);
+            }
+            else
+            {
+                LogExceptionAsError(exception);
+            }
+
             return GetProcessedIndexFile(GetTechnicalError(exception));
         }
 
-        private void LogException(Exception exception)
+        private void LogExceptionAsWarning(Exception exception)
+        {
+            if (exception == null)
+            {
+                LogExceptionAsError(exception);
+            }
+            else
+            {
+                logger.Warning(exception);
+            }
+        }
+
+        private void LogExceptionAsError(Exception exception)
         {
             if (exception == null)
             {

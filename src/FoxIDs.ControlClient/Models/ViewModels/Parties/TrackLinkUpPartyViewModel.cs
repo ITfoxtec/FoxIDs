@@ -48,7 +48,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
-        [Display(Name = "Pipe the external ID.")]
+        [Display(Name = "Pipe the external ID (e.g., the sub claim)")]
         public bool PipeExternalId { get; set; }
 
         /// <summary>

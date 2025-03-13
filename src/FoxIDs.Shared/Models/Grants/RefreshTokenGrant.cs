@@ -59,6 +59,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "username")]
         public string Username { get; set; }
 
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "auth_method")]
+        public string AuthMethod { get; set; }
+
+        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "auth_method_type")]
+        public string AuthMethodType { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "ct")]
         public long CreateTime { get; set; }
@@ -73,8 +81,8 @@ namespace FoxIDs.Models
         public class IdKey : Track.IdKey
         {
             [Required]
-            [MaxLength(100)]
-            [RegularExpression(@"^[\w-_]*$")]
+            [MaxLength(Constants.Models.OAuthDownParty.Grant.RefreshTokenLength)]
+            [RegularExpression(Constants.Models.OAuthDownParty.Grant.RefreshTokenRegExPattern)]
             public string RefreshToken { get; set; }
         }
     }

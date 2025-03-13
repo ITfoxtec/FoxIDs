@@ -52,9 +52,9 @@ namespace FoxIDs.Client.Pages.Components
         [Parameter]
         public string TenantName { get; set; }
 
-        public void ShowLoginTab(GeneralLoginUpPartyViewModel upParty, LoginTabTypes samlTabTypes)
+        public void ShowLoginTab(GeneralLoginUpPartyViewModel upParty, LoginTabTypes loginTabTypes)
         {
-            switch (samlTabTypes)
+            switch (loginTabTypes)
             {
                 case LoginTabTypes.Login:
                     upParty.ShowLoginTab = true;

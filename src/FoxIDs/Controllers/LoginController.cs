@@ -1249,7 +1249,7 @@ namespace FoxIDs.Controllers
                     var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
                     if (loginUpParty.DeleteRefreshTokenGrantsOnChangePassword)
                     {
-                        await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByUserIdentifierAsync(sequenceData.UserIdentifier);
+                        await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier);
                     }
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }

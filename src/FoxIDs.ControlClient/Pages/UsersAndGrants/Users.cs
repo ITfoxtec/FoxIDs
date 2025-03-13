@@ -14,8 +14,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
+using ITfoxtec.Identity;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.UsersAndGrants
 {
     public partial class Users
     {
@@ -23,6 +24,7 @@ namespace FoxIDs.Client.Pages
         private List<GeneralUserViewModel> users = new List<GeneralUserViewModel>();
         private string paginationToken;
         private string externalUsersHref;
+        private string refreshTokenGrantsHref;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -39,6 +41,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             externalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/externalusers";
+            refreshTokenGrantsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/refreshtokengrants";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -74,7 +77,6 @@ namespace FoxIDs.Client.Pages
                 userFilterForm.SetError(ex.Message);
             }
         }
-
 
         private async Task OnUserFilterValidSubmitAsync(EditContext editContext)
         {
@@ -171,6 +173,24 @@ namespace FoxIDs.Client.Pages
             });
         }
 
+        private string GetInfoText(GeneralUserViewModel generalUser)
+        {
+            var infoText = new List<string>();
+            if (!generalUser.Email.IsNullOrWhiteSpace())
+            {
+                infoText.Add(generalUser.Email);
+            }
+            if (!generalUser.Phone.IsNullOrWhiteSpace())
+            {
+                infoText.Add(generalUser.Phone);
+            }
+            if (!generalUser.Username.IsNullOrWhiteSpace())
+            {
+                infoText.Add(generalUser.Username);
+            }
+
+            return string.Join(", ", infoText);
+        }
 
         private void UserViewModelAfterInit(GeneralUserViewModel generalUser, UserViewModel user)
         {

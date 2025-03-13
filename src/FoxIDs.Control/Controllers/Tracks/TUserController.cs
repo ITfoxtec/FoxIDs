@@ -68,7 +68,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Get '{typeof(Api.User).Name}' by email '{email}', phone '{phone}', username '{username}'.");
-                    return NotFound(typeof(Api.User).Name, email ?? phone ?? username);
+                    return NotFound(typeof(Api.User).Name, new { email, phone, username }.ToJson());
                 }
                 throw;
             }
@@ -140,7 +140,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.User).Name}' by email '{createUserRequest.Email}', phone '{createUserRequest.Phone}', username '{createUserRequest.Username}'.");
-                    return Conflict(typeof(Api.User).Name, createUserRequest.Email ?? createUserRequest.Phone ?? createUserRequest.Username);
+                    return Conflict(typeof(Api.User).Name, new { createUserRequest.Email, createUserRequest.Phone, createUserRequest.Username }.ToJson());
                 }
                 throw;
             }
@@ -267,7 +267,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserRequest).Name}' by email '{user.Email}', phone '{user.Phone}', username '{user.Username}'.");
-                    return NotFound(typeof(Api.UserRequest).Name, user.Email ?? user.Phone ?? user.Username);
+                    return NotFound(typeof(Api.UserRequest).Name, new { user.Email, user.Phone, user.Username }.ToJson());
                 }
                 throw;
             }
@@ -302,7 +302,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Delete '{typeof(Api.User).Name}' by email '{email}', phone '{phone}', username '{username}'.");
-                    return NotFound(typeof(Api.User).Name, email ?? phone ?? username);
+                    return NotFound(typeof(Api.User).Name, new { email, phone, username }.ToJson());
                 }
                 throw;
             }

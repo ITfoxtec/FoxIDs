@@ -22,8 +22,9 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, SecurityHeaderLogic securityHeaderLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
@@ -32,6 +33,7 @@ namespace FoxIDs.Logic
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.hrdLogic = hrdLogic;
             this.singleLogoutLogic = singleLogoutLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
@@ -50,7 +52,9 @@ namespace FoxIDs.Logic
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(session.SessionIdClaim);
             logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
+
             if (session != null)
             {
                 if (party.DisableSingleLogout)

@@ -43,13 +43,13 @@ namespace FoxIDs.Logic
             return (ttlGrant, grant);
         }
 
-        public async Task<(IReadOnlyCollection<RefreshTokenTtlGrant> ttlGrants, IReadOnlyCollection<RefreshTokenGrant> grants, string paginationToken)> ListRefreshTokenGrantsAsync(string userIdentifier, string sub, string clientId, string autoMethod, string paginationToken = null)
+        public async Task<(IReadOnlyCollection<RefreshTokenTtlGrant> ttlGrants, IReadOnlyCollection<RefreshTokenGrant> grants, string paginationToken)> ListRefreshTokenGrantsAsync(string userIdentifier, string sub, string clientId, string upPartyName, string paginationToken = null)
         {
             (var ttlGrantsPaginationToken, var grantsPaginationToken) = GetGrantPaginationTokens(paginationToken);
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, autoMethod), paginationToken: ttlGrantsPaginationToken);
-            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, autoMethod), paginationToken: grantsPaginationToken);
+            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: ttlGrantsPaginationToken);
+            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: grantsPaginationToken);
 
             return (ttlGrants, grants, CreateCombinedPaginationToken(nextTtlGrantsPaginationToken, nextGrantsPaginationToken));
         }
@@ -78,23 +78,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier, string sub = null, string clientId = null, string authMethod = null)
+        public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier, string sub = null, string clientId = null, string upPartyName = null, PartyTypes? upPartyType = null)
         {
-            if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && authMethod.IsNullOrWhiteSpace())
+            if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && upPartyName.IsNullOrWhiteSpace())
             {
-                throw new ArgumentException($"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(authMethod)} parameter is required.");
+                throw new ArgumentException($"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(upPartyName)} parameter is required.");
             }
 
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Client ID '{clientId}', Auth method '{authMethod}'.");
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Client ID '{clientId}', Auth method '{upPartyName}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, authMethod));
+            var ttlGrantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted.");
             }
 
-            var grantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, authMethod));
+            var grantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted.");
@@ -147,18 +147,21 @@ namespace FoxIDs.Logic
             return $"{(ttlGrantsPaginationToken.IsNullOrWhiteSpace() ? string.Empty : HttpUtility.UrlEncode(ttlGrantsPaginationToken))}&{(grantsPaginationToken.IsNullOrWhiteSpace() ? string.Empty : HttpUtility.UrlEncode(grantsPaginationToken))}";
         }
 
-        private static Expression<Func<T, bool>> GetQuery<T>(string userIdentifier, string sub, string clientId, string authMethod) where T : RefreshTokenGrant
+        private static Expression<Func<T, bool>> GetQuery<T>(string userIdentifier, string sub, string clientId, string upPartyName, PartyTypes? upPartyType = null) where T : RefreshTokenGrant
         {
             var queryByUserIdentifier = !userIdentifier.IsNullOrWhiteSpace();
             var queryBySub = !sub.IsNullOrWhiteSpace();
             var queryByClientId = !clientId.IsNullOrWhiteSpace();
-            var queryByAuthMethod = !authMethod.IsNullOrWhiteSpace();
+            var queryByUpPartyName = !upPartyName.IsNullOrWhiteSpace();
+            var queryByUpPartyType = upPartyType.HasValue;
+            var upPartyTypeValue = upPartyType.HasValue ? upPartyType.Value.GetPartyTypeValue() : null;
 
             return d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) &&
                             (!queryByUserIdentifier || d.Email == userIdentifier || d.Phone == userIdentifier || d.Username == userIdentifier) &&
                             (!queryBySub || d.Sub == sub) &&
                             (!queryByClientId || d.ClientId == clientId) &&
-                            (!queryByAuthMethod || d.AuthMethod == authMethod);
+                            (!queryByUpPartyName || d.UpPartyName == upPartyName) &&
+                            (!queryByUpPartyType || d.UpPartyType == upPartyTypeValue);   
         }
     }
 }

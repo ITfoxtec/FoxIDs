@@ -108,10 +108,10 @@
                         <FFieldText @bind-Value="refreshTokenGrant.Details.Sub" For="@(() => refreshTokenGrant.Details.Sub)" />
                         <div class="row">
                             <div class="col-6">
-                                <FFieldText @bind-Value="refreshTokenGrant.Details.AuthMethod" For="@(() => refreshTokenGrant.Details.AuthMethod)" />
+                                <FFieldText @bind-Value="refreshTokenGrant.Details.UpPartyName" For="@(() => refreshTokenGrant.Details.UpPartyName)" />
                             </div>
                             <div class="col-6">
-                                <FFieldText @bind-Value="refreshTokenGrant.Details.AuthMethodType" For="@(() => refreshTokenGrant.Details.AuthMethodType)" />
+                                <FFieldText @bind-Value="refreshTokenGrant.Details.UpPartyType" For="@(() => refreshTokenGrant.Details.UpPartyType)" />
                             </div>
                         </div>
                         <div class="row">
@@ -152,7 +152,7 @@
                     <button type="button" class="btn btn-link" @onclick="@(async () => await ShowDetailsRefreshTokenGrantAsync(refreshTokenGrant))">
                         <span>User: @GetInfoText(refreshTokenGrant)</span>
                         <br />
-                        <span>Authentication method: @refreshTokenGrant.AuthMethod (@refreshTokenGrant.AuthMethodType)</span>
+                        <span>Authentication method: @refreshTokenGrant.UpPartyName (@refreshTokenGrant.UpPartyType)</span>
                         <br />
                         <span>Application: @refreshTokenGrant.ClientId</span>
                     </button>

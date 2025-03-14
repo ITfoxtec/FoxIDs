@@ -35,7 +35,7 @@ namespace FoxIDs.Models.Api
         public bool EnableEmailTwoFactor { get; set; }
 
         [Required]
-        [Display(Name = "Total tracks")]
+        [Display(Name = "Total environments")]
         public PlanItem Tracks { get; set; } = new PlanItem();
 
         [Required]

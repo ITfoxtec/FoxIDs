@@ -15,8 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
             Phone = refreshTokenGrant.Phone;
             Username = refreshTokenGrant.Username;
             ClientId = refreshTokenGrant.ClientId;
-            AuthMethod = refreshTokenGrant.AuthMethod;
-            AuthMethodType = refreshTokenGrant.AuthMethodType;
+            UpPartyName = refreshTokenGrant.UpPartyName;
+            UpPartyType = refreshTokenGrant.UpPartyType;
         }
 
         public string Error { get; set; }

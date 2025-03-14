@@ -399,12 +399,16 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
+        public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null, bool allowNullSequenceData = false)
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(remove: true, allowNull: allowNullSequenceData);
+            if (allowNullSequenceData && sequenceData == null)
+            {
+                return null;
+            }
 
             return AuthenticationResponseError(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }

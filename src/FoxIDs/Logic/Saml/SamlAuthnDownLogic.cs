@@ -200,7 +200,7 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null)
+        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null, bool allowNullSequenceData = false)
         {
             logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -208,7 +208,11 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(remove: false, allowNull: allowNullSequenceData);
+            if (allowNullSequenceData && sequenceData == null)
+            {
+                return null;
+            }
 
             try
             {

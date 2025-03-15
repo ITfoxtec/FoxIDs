@@ -271,7 +271,7 @@ namespace FoxIDs.Logic
             throw new OAuthRequestException($"Unsupported response type '{authenticationRequest.ResponseType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
         }
 
-        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, string idpInitiatedRedirectUrl = null)
+        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -281,13 +281,21 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Application Client not configured.");
             }
 
-            if (!idpInitiatedRedirectUrl.IsNullOrEmpty())
+            if (idPInitiatedLink != null)
             {
-                if (!party.Client.RedirectUris.Any(u => party.Client.DisableAbsoluteUris ? idpInitiatedRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(idpInitiatedRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
+                if (!party.AllowUpParties.Where(p => p.Name == idPInitiatedLink.UpPartyName && p.Type == idPInitiatedLink.UpPartyType).Any())
                 {
-                    throw new Exception($"Invalid IdP Initiated login redirect URI '{idpInitiatedRedirectUrl}' (maybe the request URL do not match the expected client).");
+                    throw new Exception($"The IdP Initiated login authentication method '{idPInitiatedLink.UpPartyName}' ({idPInitiatedLink.UpPartyType}) is not a allowed for the application '{party.Name}' ({party.Type}).");
                 }
-                return new RedirectResult(idpInitiatedRedirectUrl);
+                if (idPInitiatedLink.DownPartyRedirectUrl.IsNullOrEmpty())
+                {
+                    throw new Exception($"The IdP Initiated login redirect URL is empty.");
+                }
+                if (!party.Client.RedirectUris.Any(u => party.Client.DisableAbsoluteUris ? idPInitiatedLink.DownPartyRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(idPInitiatedLink.DownPartyRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new Exception($"Invalid IdP Initiated login redirect URI '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected client).");
+                }
+                return new RedirectResult(idPInitiatedLink.DownPartyRedirectUrl);
             }
           
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);

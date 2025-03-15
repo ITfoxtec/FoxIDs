@@ -252,73 +252,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.UpPartyStatus, saml2AuthnResponse.Status.ToString());
             logger.ScopeTrace(() => "AuthMethod, SAML Authn response.", triggerEvent: true);
 
-            SamlUpSequenceData sequenceData = null;
-            DownPartySessionLink idPInitiatedDownPartyLink = null;
-            string idpInitiatedRedirectUrl = null;
-            try
-            {
-                if (samlHttpRequest.Binding.RelayState.IsNullOrEmpty())
-                {
-                    if (party.EnableIdPInitiated)
-                    {
-                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the requested application and it is required for IdP Initiated login. Binding: {samlHttpRequest.Binding.GetTypeName()}.");
-                    }
-                    else
-                    {
-                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the sequence ID and it is required. Binding: {samlHttpRequest.Binding.GetTypeName()}.{(saml2AuthnResponse.Status == Saml2StatusCodes.Success ? " IdP Initiated login is not enabled." : string.Empty)}");
-                    }
-                }
-
-                if (party.EnableIdPInitiated && samlHttpRequest.Binding.RelayState?.StartsWith("app_name=") == true)
-                {
-                    var rsSplit = samlHttpRequest.Binding.RelayState.Split('&');
-                    if(!(rsSplit.Count() >= 2))
-                    {
-                        throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain two or three elements.");
-                    }
-
-                    idPInitiatedDownPartyLink = new DownPartySessionLink { Id = await DownParty.IdFormatAsync(RouteBinding, HttpUtility.UrlDecode(rsSplit[0].Substring("app_name=".Count()))) };
-                    if (rsSplit[1].Equals("app_type=saml2"))
-                    {
-                        idPInitiatedDownPartyLink.Type = PartyTypes.Saml2;
-                    }
-                    else if(rsSplit[1].Equals("app_type=oidc"))
-                    {
-                        idPInitiatedDownPartyLink.Type = PartyTypes.Oidc;
-                        if (rsSplit.Count() != 3 || !rsSplit[2].StartsWith("app_redirect="))
-                        {
-                            throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain three elements for OpenID Connect and the last element should be 'app_redirect'.");
-                        }
-                        idpInitiatedRedirectUrl = HttpUtility.UrlDecode(rsSplit[2].Substring("app_redirect=".Count()));
-                    }
-                    else
-                    {
-                        throw new Exception($"Invalid 'app_type' in IdP Initiated relay state '{samlHttpRequest.Binding.RelayState}'.");
-                    }
-                }
-                else
-                {
-                    if (samlHttpRequest.Binding.RelayState?.StartsWith("app_name=") == true)
-                    {
-                        try
-                        {
-                            throw new Exception("IdP Initiated login is not enabled.");
-                        }
-                        catch (Exception iex)
-                        {
-                            logger.Warning(iex);
-                        }
-                    }
-
-                    await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
-                    sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name, remove: false);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"Invalid RelayState '{samlHttpRequest.Binding.RelayState}' returned from the IdP.");
-                throw;
-            }
+            (var sequenceData, var idPInitiatedLink) = await GetSequenceOrIdPInitiatedLink(party, samlHttpRequest, saml2AuthnResponse);
 
             try
             {
@@ -352,7 +286,7 @@ namespace FoxIDs.Logic
 
                 var claims = new List<Claim>(saml2AuthnResponse.ClaimsIdentity.Claims.Where(c => c.Type != ClaimTypes.NameIdentifier));
                 var nameIdClaim = GetNameIdClaim(party.Name, saml2AuthnResponse.ClaimsIdentity.Claims);
-                if(nameIdClaim != null)
+                if (nameIdClaim != null)
                 {
                     claims.Add(nameIdClaim);
                 }
@@ -361,7 +295,7 @@ namespace FoxIDs.Logic
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
                 claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Saml2ClaimTypes.NameId &&
-                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthProfileMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
+                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthProfileMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType &&
                     c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
                 if (!string.IsNullOrEmpty(sequenceData?.UpPartyProfileName))
@@ -391,7 +325,7 @@ namespace FoxIDs.Logic
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
-                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, jwtValidClaims, 
+                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, jwtValidClaims,
                     (externalUserUpSequenceData) =>
                     {
                         externalUserUpSequenceData.ExternalSessionId = externalSessionId;
@@ -411,7 +345,7 @@ namespace FoxIDs.Logic
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                 }
-                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId, idPInitiatedDownPartyLink: idPInitiatedDownPartyLink, idpInitiatedRedirectUrl: idpInitiatedRedirectUrl);
+                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId, idPInitiatedLink: idPInitiatedLink);
             }
             catch (StopSequenceException)
             {
@@ -424,7 +358,7 @@ namespace FoxIDs.Logic
                     throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
                 }
                 logger.Error(ex);
-                return await AuthnResponseDownAsync(sequenceData, ex.Status, idPInitiatedDownPartyLink: idPInitiatedDownPartyLink, idpInitiatedRedirectUrl: idpInitiatedRedirectUrl);
+                return await AuthnResponseDownAsync(sequenceData, ex.Status, idPInitiatedLink: idPInitiatedLink);
             }
             catch (Exception ex)
             {
@@ -433,7 +367,92 @@ namespace FoxIDs.Logic
                     throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
                 }
                 logger.Error(ex);
-                return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder, idPInitiatedDownPartyLink: idPInitiatedDownPartyLink, idpInitiatedRedirectUrl: idpInitiatedRedirectUrl);
+                return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder, idPInitiatedLink: idPInitiatedLink);
+            }
+        }
+
+        private async Task<(SamlUpSequenceData sequenceData, IdPInitiatedDownPartyLink idPInitiatedLink)> GetSequenceOrIdPInitiatedLink(SamlUpParty party, Saml2Http.HttpRequest samlHttpRequest, Saml2AuthnResponse saml2AuthnResponse)
+        {
+            try
+            {
+                if (samlHttpRequest.Binding.RelayState.IsNullOrEmpty())
+                {
+                    if (party.EnableIdPInitiated)
+                    {
+                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the requested application and it is required for IdP Initiated login. Binding: {samlHttpRequest.Binding.GetTypeName()}.");
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the sequence ID and it is required. Binding: {samlHttpRequest.Binding.GetTypeName()}.{(saml2AuthnResponse.Status == Saml2StatusCodes.Success ? " IdP Initiated login is not enabled." : string.Empty)}");
+                    }
+                }
+
+                if (party.EnableIdPInitiated && samlHttpRequest.Binding.RelayState?.StartsWith("app_name=") == true)
+                {
+                    var idPInitiatedLink = new IdPInitiatedDownPartyLink
+                    {
+                        UpPartyName = party.Name,
+                        UpPartyType = party.Type
+                    };
+
+                    var rsSplit = samlHttpRequest.Binding.RelayState.Split('&');
+                    if (!(rsSplit.Count() >= 2))
+                    {
+                        throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain two or three elements.");
+                    }
+
+                    idPInitiatedLink.DownPartyId = await DownParty.IdFormatAsync(RouteBinding, HttpUtility.UrlDecode(rsSplit[0].Substring("app_name=".Count())));
+
+                    if (rsSplit[1].Equals("app_type=saml2"))
+                    {
+                        idPInitiatedLink.DownPartyType = PartyTypes.Saml2;
+                    }
+                    else if (rsSplit[1].Equals("app_type=oidc"))
+                    {
+                        idPInitiatedLink.DownPartyType = PartyTypes.Oidc;
+                        if (!(rsSplit.Count() >= 3))
+                        {
+                            throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain three elements for OpenID Connect.");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Invalid 'app_type' in IdP Initiated relay state '{samlHttpRequest.Binding.RelayState}'.");
+                    }
+
+                    if (rsSplit.Count() >= 3)
+                    {
+                        if (!rsSplit[2].StartsWith("app_redirect="))
+                        {
+                            throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', the third elements should be 'app_redirect'.");
+                        }
+                        idPInitiatedLink.DownPartyRedirectUrl = HttpUtility.UrlDecode(rsSplit[2].Substring("app_redirect=".Count()));
+                    }
+
+                    return (null,  idPInitiatedLink);
+                }
+                else
+                {
+                    if (samlHttpRequest.Binding.RelayState?.StartsWith("app_name=") == true)
+                    {
+                        try
+                        {
+                            throw new Exception("IdP Initiated login is not enabled.");
+                        }
+                        catch (Exception iex)
+                        {
+                            logger.Warning(iex);
+                        }
+                    }
+
+                    await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
+                    return (await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name, remove: false), null);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Invalid RelayState '{samlHttpRequest.Binding.RelayState}' returned from the IdP.");
+                throw;
             }
         }
 
@@ -462,7 +481,7 @@ namespace FoxIDs.Logic
             }        
         }
 
-        private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, List<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId, DownPartySessionLink idPInitiatedDownPartyLink = null, string idpInitiatedRedirectUrl = null)
+        private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, List<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
@@ -484,7 +503,7 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{transformedJwtClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims, idPInitiatedDownPartyLink: idPInitiatedDownPartyLink, idpInitiatedRedirectUrl: idpInitiatedRedirectUrl);          
+            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims, idPInitiatedLink: idPInitiatedLink);          
         }
 
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
@@ -561,12 +580,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, List<Claim> jwtClaims = null, DownPartySessionLink idPInitiatedDownPartyLink = null, string idpInitiatedRedirectUrl = null)
+        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, List<Claim> jwtClaims = null, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             try
             {
-                var downPartyId = sequenceData != null ? sequenceData.DownPartyLink.Id : idPInitiatedDownPartyLink.Id;
-                var downPartyType = sequenceData != null ? sequenceData.DownPartyLink.Type : idPInitiatedDownPartyLink.Type;
+                var downPartyId = sequenceData != null ? sequenceData.DownPartyLink.Id : idPInitiatedLink.DownPartyId;
+                var downPartyType = sequenceData != null ? sequenceData.DownPartyLink.Type : idPInitiatedLink.DownPartyType;
 
                 logger.ScopeTrace(() => $"Response, Application type {downPartyType}.");
 
@@ -577,14 +596,14 @@ namespace FoxIDs.Logic
                     case PartyTypes.Oidc:
                         if (status == Saml2StatusCodes.Success)
                         {
-                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(downPartyId, jwtClaims, idpInitiatedRedirectUrl: idpInitiatedRedirectUrl);
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(downPartyId, jwtClaims, idPInitiatedLink: idPInitiatedLink);
                         }
                         else
                         {
                             return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(downPartyId, StatusToOAuth2OidcError(status));
                         }
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(downPartyId, status, jwtClaims, isIdPInitiated: idPInitiatedDownPartyLink != null);
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(downPartyId, status, jwtClaims, idPInitiatedLink: idPInitiatedLink);
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(downPartyId, jwtClaims, error: status == Saml2StatusCodes.Success ? null : StatusToOAuth2OidcError(status));
                     default:

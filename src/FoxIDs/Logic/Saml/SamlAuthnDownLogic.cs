@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -200,7 +201,7 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null, bool allowNullSequenceData = false)
+        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null, bool isIdPInitiated = false, bool allowNullSequenceData = false)
         {
             logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -208,23 +209,25 @@ namespace FoxIDs.Logic
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(remove: false, allowNull: allowNullSequenceData);
+            var sequenceData = !isIdPInitiated ? await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(remove: false, allowNull: allowNullSequenceData) : null;
             if (allowNullSequenceData && sequenceData == null)
             {
                 return null;
             }
 
+            var acsResponseUrl = !isIdPInitiated ? sequenceData.AcsResponseUrl : party.AcsUrls.First();
+
             try
             {
                 var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
-                return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
+                return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData?.Id, sequenceData?.RelayState, acsResponseUrl, status, claims);
             }
             catch (SamlRequestException ex)
             {
                 if (status == Saml2StatusCodes.Success)
                 {
                     logger.Error(ex);
-                    return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, Saml2StatusCodes.Responder);
+                    return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData?.Id, sequenceData?.RelayState, acsResponseUrl, Saml2StatusCodes.Responder);
                 }
                 throw;
             }
@@ -253,7 +256,7 @@ namespace FoxIDs.Logic
 
             var saml2AuthnResponse = new FoxIDsSaml2AuthnResponse(settings, samlConfig)
             {
-                InResponseTo = new Saml2Id(inResponseTo),
+                InResponseTo = !inResponseTo.IsNullOrEmpty() ? new Saml2Id(inResponseTo) : null,
                 Status = status,
                 Destination = new Uri(acsUrl),
             };

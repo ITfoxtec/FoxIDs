@@ -271,7 +271,7 @@ namespace FoxIDs.Logic
             throw new OAuthRequestException($"Unsupported response type '{authenticationRequest.ResponseType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
         }
 
-        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
+        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, string idpInitiatedRedirectUrl = null)
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -281,7 +281,17 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Application Client not configured.");
             }
 
+            if (!idpInitiatedRedirectUrl.IsNullOrEmpty())
+            {
+                if (!party.Client.RedirectUris.Any(u => party.Client.DisableAbsoluteUris ? idpInitiatedRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(idpInitiatedRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new Exception($"Invalid IdP Initiated login redirect URI '{idpInitiatedRedirectUrl}' (maybe the request URL do not match the expected client).");
+                }
+                return new RedirectResult(idpInitiatedRedirectUrl);
+            }
+          
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
+
             try
             {
 

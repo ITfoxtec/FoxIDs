@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
                     }
 
                     var routeException = FindException<RouteException>(exception);
-                    if (routeException != null)
+                    if (routeException != null && !(routeException.InnerException is EndpointException))
                     {
                         LogExceptionAsWarning(routeException);
                     }

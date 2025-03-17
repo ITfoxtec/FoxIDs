@@ -244,7 +244,7 @@ namespace FoxIDs.Logic
             {
                 if (!party.AcsUrls.Any(u => party.DisableAbsoluteUrls ? idPInitiatedLink.DownPartyRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) : u.Equals(idPInitiatedLink.DownPartyRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    throw new Exception($"Invalid IdP Initiated login assertion consumer service URL '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected relaying party).");
+                    throw new Exception($"Invalid IdP-Initiated login assertion consumer service URL '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected relaying party).");
                 }
                 return idPInitiatedLink.DownPartyRedirectUrl;
             }

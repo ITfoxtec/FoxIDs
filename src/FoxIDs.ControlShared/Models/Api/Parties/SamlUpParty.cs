@@ -197,7 +197,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
-        [Display(Name = "Enable IdP Initiated login")]
+        [Display(Name = "Enable IdP-Initiated login")]
         public bool EnableIdPInitiated { get; set; }
 
         [ValidateComplexType]

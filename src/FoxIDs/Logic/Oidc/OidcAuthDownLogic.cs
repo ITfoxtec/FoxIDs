@@ -285,15 +285,15 @@ namespace FoxIDs.Logic
             {
                 if (!party.AllowUpParties.Where(p => p.Name == idPInitiatedLink.UpPartyName && p.Type == idPInitiatedLink.UpPartyType).Any())
                 {
-                    throw new Exception($"The IdP Initiated login authentication method '{idPInitiatedLink.UpPartyName}' ({idPInitiatedLink.UpPartyType}) is not a allowed for the application '{party.Name}' ({party.Type}).");
+                    throw new Exception($"The IdP-Initiated login authentication method '{idPInitiatedLink.UpPartyName}' ({idPInitiatedLink.UpPartyType}) is not a allowed for the application '{party.Name}' ({party.Type}).");
                 }
                 if (idPInitiatedLink.DownPartyRedirectUrl.IsNullOrEmpty())
                 {
-                    throw new Exception($"The IdP Initiated login redirect URL is empty.");
+                    throw new Exception($"The IdP-Initiated login redirect URL is empty.");
                 }
                 if (!party.Client.RedirectUris.Any(u => party.Client.DisableAbsoluteUris ? idPInitiatedLink.DownPartyRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(idPInitiatedLink.DownPartyRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    throw new Exception($"Invalid IdP Initiated login redirect URI '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected client).");
+                    throw new Exception($"Invalid IdP-Initiated login redirect URI '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected client).");
                 }
                 return new RedirectResult(idPInitiatedLink.DownPartyRedirectUrl);
             }

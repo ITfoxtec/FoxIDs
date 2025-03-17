@@ -23,7 +23,6 @@ using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
 using ITfoxtec.Identity.Util;
 using System.ComponentModel.DataAnnotations;
-using FoxIDs.Models.Session;
 using System.Web;
 
 namespace FoxIDs.Logic
@@ -379,11 +378,11 @@ namespace FoxIDs.Logic
                 {
                     if (party.EnableIdPInitiated)
                     {
-                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the requested application and it is required for IdP Initiated login. Binding: {samlHttpRequest.Binding.GetTypeName()}.");
+                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the requested application and it is required for IdP-Initiated login. Binding: {samlHttpRequest.Binding.GetTypeName()}.");
                     }
                     else
                     {
-                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the sequence ID and it is required. Binding: {samlHttpRequest.Binding.GetTypeName()}.{(saml2AuthnResponse.Status == Saml2StatusCodes.Success ? " IdP Initiated login is not enabled." : string.Empty)}");
+                        throw new ArgumentNullException(nameof(samlHttpRequest.Binding.RelayState), $"The {nameof(samlHttpRequest.Binding.RelayState)} contains the sequence ID and it is required. Binding: {samlHttpRequest.Binding.GetTypeName()}.{(saml2AuthnResponse.Status == Saml2StatusCodes.Success ? " IdP-Initiated login is not enabled." : string.Empty)}");
                     }
                 }
 
@@ -398,10 +397,10 @@ namespace FoxIDs.Logic
                     var rsSplit = samlHttpRequest.Binding.RelayState.Split('&');
                     if (!(rsSplit.Count() >= 2))
                     {
-                        throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain two or three elements.");
+                        throw new Exception($"Invalid IdP-Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain two or three elements.");
                     }
 
-                    idPInitiatedLink.DownPartyId = await DownParty.IdFormatAsync(RouteBinding, HttpUtility.UrlDecode(rsSplit[0].Substring("app_name=".Count())));
+                    idPInitiatedLink.DownPartyId = await DownParty.IdFormatAsync(RouteBinding, rsSplit[0].Substring("app_name=".Count()));
 
                     if (rsSplit[1].Equals("app_type=saml2"))
                     {
@@ -412,19 +411,19 @@ namespace FoxIDs.Logic
                         idPInitiatedLink.DownPartyType = PartyTypes.Oidc;
                         if (!(rsSplit.Count() >= 3))
                         {
-                            throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain three elements for OpenID Connect.");
+                            throw new Exception($"Invalid IdP-Initiated login relay state '{samlHttpRequest.Binding.RelayState}', should contain three elements for OpenID Connect.");
                         }
                     }
                     else
                     {
-                        throw new Exception($"Invalid 'app_type' in IdP Initiated relay state '{samlHttpRequest.Binding.RelayState}'.");
+                        throw new Exception($"Invalid 'app_type' in IdP-Initiated relay state '{samlHttpRequest.Binding.RelayState}'.");
                     }
 
                     if (rsSplit.Count() >= 3)
                     {
                         if (!rsSplit[2].StartsWith("app_redirect="))
                         {
-                            throw new Exception($"Invalid IdP Initiated login relay state '{samlHttpRequest.Binding.RelayState}', the third elements should be 'app_redirect'.");
+                            throw new Exception($"Invalid IdP-Initiated login relay state '{samlHttpRequest.Binding.RelayState}', the third elements should be 'app_redirect'.");
                         }
                         idPInitiatedLink.DownPartyRedirectUrl = HttpUtility.UrlDecode(rsSplit[2].Substring("app_redirect=".Count()));
                     }
@@ -437,7 +436,7 @@ namespace FoxIDs.Logic
                     {
                         try
                         {
-                            throw new Exception("IdP Initiated login is not enabled.");
+                            throw new Exception("IdP-Initiated login is not enabled.");
                         }
                         catch (Exception iex)
                         {

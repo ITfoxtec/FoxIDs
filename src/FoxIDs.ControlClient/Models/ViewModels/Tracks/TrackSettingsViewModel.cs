@@ -71,7 +71,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public int FailingLoginCountLifetime { get; set; } = 36000;
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
-        [Display(Name = "Failing login observation period")]
+        [Display(Name = "Failing login lock observation period")]
         public int FailingLoginObservationPeriod { get; set; } = 3600;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]

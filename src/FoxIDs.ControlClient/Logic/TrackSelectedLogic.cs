@@ -10,6 +10,8 @@ namespace FoxIDs.Client.Logic
 
         public bool IsTrackSelected => Track != null;
 
+        public Track CurrentTrack => Track;
+
         public event Func<Track, Task> OnTrackSelectedAsync;
         public event Func<Task> OnSelectTrackAsync;
 

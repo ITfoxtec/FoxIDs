@@ -44,8 +44,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Authentication method type")]
         public string UpPartyType { get; set; }
 
-        [Display(Name = "Expire at")]
-        public DateTime? ExpireAt { get; set; }
+        [Required]
+        [Display(Name = "Create time")]
+        public long CreateTime { get; set; }
+
+        [Required]
+        [Display(Name = "Time to live")]
+        public int? TimeToLive { get; set; }
 
         [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
         public List<ClaimAndValues> Claims { get; set; }

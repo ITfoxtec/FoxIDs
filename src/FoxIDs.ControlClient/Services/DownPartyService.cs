@@ -14,8 +14,6 @@ namespace FoxIDs.Client.Services
         private const string oauthclientsecretApiUri = "api/{tenant}/{track}/!oauthclientsecretdownparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcdownparty";
         private const string oidcclientsecretApiUri = "api/{tenant}/{track}/!oidcclientsecretdownparty";
-        private const string refreshTokenGrantApiUri = "api/{tenant}/{track}/!refreshtokengrant";
-        private const string refreshTokenGrantsApiUri = "api/{tenant}/{track}/!refreshtokengrants";
         private const string samlApiUri = "api/{tenant}/{track}/!samldownparty";
         private const string trackLinkApiUri = "api/{tenant}/{track}/!tracklinkdownparty";
 
@@ -43,10 +41,6 @@ namespace FoxIDs.Client.Services
         public async Task<List<OAuthClientSecretResponse>> GetOidcClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName1: nameof(partyName));
         public async Task CreateOidcClientSecretDownPartyAsync(OAuthClientSecretRequest clientSecret) => await PostAsync(oidcclientsecretApiUri, clientSecret);
         public async Task DeleteOidcClientSecretDownPartyAsync(string name) => await DeleteAsync(oidcclientsecretApiUri, name);
-
-        public async Task<PaginationResponse<RefreshTokenGrant>> GetRefreshTokenGrantsAsync(string filterUserIdentifier, string filterClientId, string filterAuthMethod, string paginationToken = null) => await GetListAsync<RefreshTokenGrant>(refreshTokenGrantsApiUri, filterUserIdentifier, filterClientId, filterAuthMethod, parmName1: nameof(filterUserIdentifier), parmName2: nameof(filterClientId), parmName3: nameof(filterAuthMethod), paginationToken: paginationToken);
-        public async Task<RefreshTokenGrant> GetRefreshTokenGrantAsync(string refreshToken) => await GetAsync<RefreshTokenGrant>(refreshTokenGrantApiUri, refreshToken, parmName1: nameof(refreshToken));
-        public async Task DeleteRefreshTokenGrantsAsync(string userIdentifier = null, string clientId = null, string authMethod = null) => await DeleteAsync(refreshTokenGrantsApiUri, userIdentifier, clientId, authMethod, parmName1: nameof(userIdentifier), parmName2: nameof(clientId), parmName3: nameof(authMethod));
 
         public async Task<SamlDownParty> GetSamlDownPartyAsync(string name) => await GetAsync<SamlDownParty>(samlApiUri, name);
         public async Task<SamlDownParty> CreateSamlDownPartyAsync(SamlDownParty party) => await PostResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);

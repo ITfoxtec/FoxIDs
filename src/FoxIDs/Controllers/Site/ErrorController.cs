@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
                     }
 
                     var routeException = FindException<RouteException>(exception);
-                    if (routeException != null)
+                    if (routeException != null && !(routeException.InnerException is EndpointException))
                     {
                         LogExceptionAsWarning(routeException);
                     }
@@ -221,13 +221,15 @@ namespace FoxIDs.Controllers
                 case PartyTypes.Oidc:                    
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequence.DownPartyId,
                         GetSequenceExceptionError(sequenceException),
-                        GetSequenceExceptionErrorDescription(sequenceException));
+                        GetSequenceExceptionErrorDescription(sequenceException),
+                        allowNullSequenceData: true);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequence.DownPartyId, status: Saml2StatusCodes.Responder);
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequence.DownPartyId, status: Saml2StatusCodes.Responder, allowNullSequenceData: true);
                 case PartyTypes.TrackLink:
                     return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequence.DownPartyId, null, 
                         GetSequenceExceptionError(sequenceException),
-                        GetSequenceExceptionErrorDescription(sequenceException));
+                        GetSequenceExceptionErrorDescription(sequenceException),
+                        allowNullSequenceData: true);
 
                 default:
                     throw new NotSupportedException($"Application registration type '{sequence.DownPartyType}' not supported.");

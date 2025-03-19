@@ -108,19 +108,20 @@ kubectl apply -f k8s-mongo-configmap.yaml -n foxids
 ```
 
 ### Optionally use PostgreSQL instead of MongoDB
-Change the username and password to match you own PostgreSQL instance in `k8s-postgres-secret.yaml`. The username and password is base64 encoded.
+Change the username value in `postgres-username` and password value in `postgres-password` to match you PostgreSQL instance in `k8s-postgres-secret.yaml`. The username and password is base64 encoded.
 
 Add the PostgreSQL secret
 ```cmd
 kubectl apply -f k8s-postgres-secret.yaml -n foxids
 ```
+Change the PostgreSQL database endpoint in `postgres-db` to match you PostgreSQL instance in `k8s-postgres-configmap.yaml`
 
 Add a `ConfigMap` for the PostgreSQL service
 ```cmd
 kubectl apply -f k8s-postgres-configmap.yaml -n foxids
 ```
 
-### Optionally, Redis
+### Optionally use Redis
 
 Optionally create Redis  
 ```cmd
@@ -160,8 +161,66 @@ This example show how to add Outlook / Microsoft 365 with SMTP:
     value: "xxxxxxx"
 ```
 
-**Optionally use PostgreSQL or Redis**  
-Optionally change the database and/or cache configuration in `k8s-foxids-deployment.yaml` to use PostgreSQL instead of MongoDB and/or to use Redis as cache.
+**Important if you are using PostgreSQL**  
+Change the database and cache configuration in `k8s-foxids-deployment.yaml` (two places in the file).
+
+Select PostgreSQL as database instead of MongoDb
+```yaml
+- name: "Settings__Options__DataStorage"
+   # value: "MongoDb"
+   value: "PostgreSql"  # PostgreSql database
+```
+
+Select PostgreSQL as cache instead of MongoDb unless you are using Redis
+```yaml
+- name: "Settings__Options__Cache"
+   # value: "MongoDb"
+   value: "PostgreSql"  # Cache in PostgreSql database
+   # value: "Redis"  # Cache in Redis 
+```
+
+Uncomment the PostgreSQL access configuration
+```yaml
+- name: POSTGRES_USERNAME
+    valueFrom:
+    secretKeyRef:
+        name: postgres-secret
+        key: postgres-username
+- name: POSTGRES_PASSWORD
+    valueFrom: 
+    secretKeyRef:
+        name: postgres-secret
+        key: postgres-password
+- name: POSTGRES_SERVER
+    valueFrom: 
+    configMapKeyRef:
+        name: postgres-configmap
+        key: database_url
+- name: "Settings__PostgreSql__ConnectionString"
+    value: "Host=$(POSTGRES_SERVER);Username=$(POSTGRES_USERNAME);Password=$(POSTGRES_PASSWORD);Database=FoxIDs"
+```
+
+**Important if you are using Redis**  
+Change the cache configuration in `k8s-foxids-deployment.yaml` (two places in the file).
+
+Select Redis as cache instead of MongoDb
+```yaml
+- name: "Settings__Options__Cache"
+   # value: "MongoDb"
+   # value: "PostgreSql"  # Cache in PostgreSql database
+   value: "Redis"  # Cache in Redis
+```
+
+Uncomment the Redis access configuration
+```yaml
+- name: REDIS_SERVER
+    valueFrom: 
+    configMapKeyRef:
+        name: redis-configmap
+        key: database_url
+- name: "Settings__RedisCache__ConnectionString"
+    value: "$(REDIS_SERVER):6379"
+```
 
 **Deploy**  
 Create the two FoxIDs websites

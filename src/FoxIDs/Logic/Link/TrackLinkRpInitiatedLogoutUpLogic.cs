@@ -23,8 +23,9 @@ namespace FoxIDs.Logic
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -33,6 +34,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutLogic = singleLogoutLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         public async Task<IActionResult> LogoutRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
@@ -83,12 +85,11 @@ namespace FoxIDs.Logic
                     return await SingleLogoutDoneAsync(party.Id);
                 }                
             }
-            else
-            {
-                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
-                _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-                sequenceData.SessionId = session.ExternalSessionId;
-            }
+
+            await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsBySessionIdAsync(sequenceData.SessionId);
+            sequenceData.SessionId = session.ExternalSessionId;
 
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true, partyName: partyId.PartyIdToName());
 

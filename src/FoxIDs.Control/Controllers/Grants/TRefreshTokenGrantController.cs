@@ -63,7 +63,7 @@ namespace FoxIDs.Controllers
         /// <param name="refreshToken">The refresh token.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRefreshTokenGrants(string refreshToken)
+        public async Task<IActionResult> DeleteRefreshTokenGrant(string refreshToken)
         {
             try
             {

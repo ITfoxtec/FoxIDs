@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
             var session = await sessionTrackCookieRepository.GetAsync();
             if (session != null && session.Groups?.Count() > 0)
             {
-                var sessionGroup = session.Groups.Where(g => g.SequenceId == Sequence.Id || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).FirstOrDefault();
+                var sessionGroup = session.Groups.Where(g => (g.SequenceId != null && g.SequenceId == Sequence?.Id) || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true).FirstOrDefault();
                 if (sessionGroup != null)
                 {
                     var sessionId = sessionGroup.Claims?.Where(c => c.Claim == JwtClaimTypes.SessionId).Select(c => c.Values?.FirstOrDefault()).FirstOrDefault();
@@ -101,7 +101,7 @@ namespace FoxIDs.Logic
             else
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var sessionGroups = session.Groups?.Where(g => (downPartyLink != null && g.DownPartyLinks?.Any(d => d.Id == downPartyLink.Id) == true) || g.SequenceId == Sequence.Id || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true);
+                var sessionGroups = session.Groups?.Where(g => (downPartyLink != null && g.DownPartyLinks?.Any(d => d.Id == downPartyLink.Id) == true) || (g.SequenceId  != null && g.SequenceId == Sequence?.Id) || g.UpPartyLinks?.Any(u => u.Id == upParty.Id) == true);
                 if (!(sessionGroups?.Count() > 0))
                 {
                     sessionGroups = AddNewSessionTrackCookieSequenceGroups(session);
@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
             {
                 session.Groups = new List<SessionTrackCookieGroup>();
             }
-            var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence.Id };
+            var sessionGroup = new SessionTrackCookieGroup { SequenceId = Sequence?.Id };
             session.Groups.Add(sessionGroup);
             return [sessionGroup];
         }

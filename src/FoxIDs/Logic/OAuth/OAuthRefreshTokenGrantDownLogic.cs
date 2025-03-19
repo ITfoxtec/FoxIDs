@@ -229,8 +229,8 @@ namespace FoxIDs.Logic
                 grant.Username = null;
             }
 
-            grant.AuthMethod = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethod);
-            grant.AuthMethodType = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethodType);
+            grant.UpPartyName = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethod);
+            grant.UpPartyType = GetTruncatedClaimValue(claims, Constants.JwtClaimTypes.AuthMethodType);
 
             await grant.SetIdAsync(new RefreshTokenGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, RefreshToken = refreshToken });
             await tenantDataRepository.SaveAsync(grant);

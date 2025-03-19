@@ -60,12 +60,12 @@ namespace FoxIDs.Models
         public string Username { get; set; }
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
-        [JsonProperty(PropertyName = "auth_method")]
-        public string AuthMethod { get; set; }
+        [JsonProperty(PropertyName = "up_party_name")]
+        public string UpPartyName { get; set; }
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
-        [JsonProperty(PropertyName = "auth_method_type")]
-        public string AuthMethodType { get; set; }
+        [JsonProperty(PropertyName = "up_party_type")]
+        public string UpPartyType { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "ct")]

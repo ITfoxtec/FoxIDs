@@ -71,7 +71,7 @@ spec:
             #     secretKeyRef:
             #       name: postgres-secret
             #       key: postgres-password
-            # - name: MONGO_SERVER
+            # - name: POSTGRES_SERVER
             #   valueFrom: 
             #     configMapKeyRef:
             #       name: postgres-configmap
@@ -166,7 +166,7 @@ spec:
             #     secretKeyRef:
             #       name: postgres-secret
             #       key: postgres-password
-            # - name: MONGO_SERVER
+            # - name: POSTGRES_SERVER
             #   valueFrom: 
             #     configMapKeyRef:
             #       name: postgres-configmap

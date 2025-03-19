@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -200,29 +201,56 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null)
+        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null, IdPInitiatedDownPartyLink idPInitiatedLink = null, bool allowNullSequenceData = false)
         {
-            logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
+            logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var party = await tenantDataRepository.GetAsync<SamlDownParty>(partyId);
 
-            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
+            if (idPInitiatedLink != null && !party.AllowUpParties.Where(p => p.Name == idPInitiatedLink.UpPartyName && p.Type == idPInitiatedLink.UpPartyType).Any())
+            {
+                throw new Exception($"The authentication method '{idPInitiatedLink.UpPartyName}' ({idPInitiatedLink.UpPartyType}) is not a allowed for the application '{party.Name}' ({party.Type}).");
+            }
 
+            var sequenceData = idPInitiatedLink == null ? await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(remove: false, allowNull: allowNullSequenceData) : null;
+            if (allowNullSequenceData && sequenceData == null)
+            {
+                return null;
+            }
+
+            var acsResponseUrl = idPInitiatedLink == null ? sequenceData.AcsResponseUrl : GetIdPInitiatedAcsResponseUrl(party, idPInitiatedLink);
+
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
             try
             {
                 var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
-                return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
+                return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData?.Id, sequenceData?.RelayState, acsResponseUrl, status, claims);
             }
             catch (SamlRequestException ex)
             {
                 if (status == Saml2StatusCodes.Success)
                 {
                     logger.Error(ex);
-                    return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, Saml2StatusCodes.Responder);
+                    return await AuthnResponseAsync(party, sequenceData, samlConfig, sequenceData?.Id, sequenceData?.RelayState, acsResponseUrl, Saml2StatusCodes.Responder);
                 }
                 throw;
+            }
+        }
+
+        private string GetIdPInitiatedAcsResponseUrl(SamlDownParty party, IdPInitiatedDownPartyLink idPInitiatedLink)
+        {
+            if (!idPInitiatedLink.DownPartyRedirectUrl.IsNullOrEmpty())
+            {
+                if (!party.AcsUrls.Any(u => party.DisableAbsoluteUrls ? idPInitiatedLink.DownPartyRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) : u.Equals(idPInitiatedLink.DownPartyRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new Exception($"Invalid IdP-Initiated login assertion consumer service URL '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected relaying party).");
+                }
+                return idPInitiatedLink.DownPartyRedirectUrl;
+            }
+            else
+            {
+                return party.AcsUrls.First();
             }
         }
 
@@ -249,7 +277,7 @@ namespace FoxIDs.Logic
 
             var saml2AuthnResponse = new FoxIDsSaml2AuthnResponse(settings, samlConfig)
             {
-                InResponseTo = new Saml2Id(inResponseTo),
+                InResponseTo = !inResponseTo.IsNullOrEmpty() ? new Saml2Id(inResponseTo) : null,
                 Status = status,
                 Destination = new Uri(acsUrl),
             };

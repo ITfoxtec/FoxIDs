@@ -1,9 +1,8 @@
-﻿using FoxIDs.Client.Shared.Components;
-using FoxIDs.Models.Api;
+﻿using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralRefreshTokenGrantViewModel : RefreshTokenGrant
+    public class GeneralRefreshTokenGrantViewModel : RefreshTokenGrantViewModel
     {
         public GeneralRefreshTokenGrantViewModel()
         { }
@@ -15,8 +14,10 @@ namespace FoxIDs.Client.Models.ViewModels
             Phone = refreshTokenGrant.Phone;
             Username = refreshTokenGrant.Username;
             ClientId = refreshTokenGrant.ClientId;
-            AuthMethod = refreshTokenGrant.AuthMethod;
-            AuthMethodType = refreshTokenGrant.AuthMethodType;
+            UpPartyName = refreshTokenGrant.UpPartyName;
+            UpPartyType = refreshTokenGrant.UpPartyType;
+            CreateTime = refreshTokenGrant.CreateTime;
+            TimeToLive = refreshTokenGrant.TimeToLive;
         }
 
         public string Error { get; set; }

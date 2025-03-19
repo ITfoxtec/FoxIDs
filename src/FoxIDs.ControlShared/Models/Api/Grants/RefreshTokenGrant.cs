@@ -38,14 +38,19 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [Display(Name = "Authentication method (technical name)")]
-        public string AuthMethod { get; set; }
+        public string UpPartyName { get; set; }
 
         [MaxLength(Constants.Models.Claim.ValueLength)]
         [Display(Name = "Authentication method type")]
-        public string AuthMethodType { get; set; }
+        public string UpPartyType { get; set; }
 
-        [Display(Name = "Expire at")]
-        public DateTime? ExpireAt { get; set; }
+        [Required]
+        [Display(Name = "Create time")]
+        public long CreateTime { get; set; }
+
+        [Required]
+        [Display(Name = "Time to live")]
+        public int? TimeToLive { get; set; }
 
         [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
         public List<ClaimAndValues> Claims { get; set; }

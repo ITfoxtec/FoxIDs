@@ -27,6 +27,7 @@ FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/o
 How to guides:
 
 - Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -124,7 +125,7 @@ Scopes configured in the client is validated if the scopes exist on the API. If 
 ## Scopes
 The scopes can be configured in the client configuration tab. It is possible to define new scopes and a sets of claims which should be issued for the scopes in the `Voluntary claims` list.
 
-> Change the claims the application registration issues with [claim transforms](claim-transform.md).
+> You can change the claims and do claim tasks with [claim transforms and claim tasks](claim-transform-task.md).
 
 If you are creating a new claim, add the claim or `*` to the `Issue claims` list or alternatively add the claim to the `Voluntary claims` list and request the scope from your application.
 

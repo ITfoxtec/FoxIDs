@@ -4,14 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class RefreshTokenGrantViewModel : RefreshTokenGrant
+    public class FailingLoginLockViewModel : FailingLoginLock
     {
+        public string Error { get; set; }
+
         [Display(Name = "Expire at")]
         public string ExpireAtText
         {
             get
             {
-                return TimeToLive.HasValue ? DateTimeOffset.FromUnixTimeSeconds(CreateTime + TimeToLive.Value).ToUniversalTime().ToLocalTime().ToString() : string.Empty;
+                return DateTimeOffset.FromUnixTimeSeconds(CreateTime + TimeToLive).ToUniversalTime().ToLocalTime().ToString();
             }
             set { }
         }

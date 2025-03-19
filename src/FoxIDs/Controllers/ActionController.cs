@@ -25,10 +25,11 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly AccountLogic accountLogic;
+        private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -38,6 +39,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountActionLogic = accountActionLogic;
             this.accountLogic = accountLogic;
+            this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
             this.planCacheLogic = planCacheLogic;
         }
@@ -53,10 +55,21 @@ namespace FoxIDs.Controllers
 
                 await planUsageLogic.VerifyCanSendSmsAsync();
 
-                var codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
-                if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                var codeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
+                try
                 {
-                    await planUsageLogic.LogConfirmationSmsEventAsync(sequenceData.Phone);
+                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Phone, FailingLoginTypes.SmsCode);
+
+                    codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
+                    if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                    {
+                        await planUsageLogic.LogConfirmationSmsEventAsync(sequenceData.Phone);
+                    }
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -159,10 +172,21 @@ namespace FoxIDs.Controllers
 
                 await planUsageLogic.VerifyCanSendEmailAsync();
 
-                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
-                if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                var codeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
+                try
                 {
-                    planUsageLogic.LogConfirmationEmailEvent();
+                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Email, FailingLoginTypes.EmailCode);
+
+                    codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
+                    if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                    {
+                        planUsageLogic.LogConfirmationEmailEvent();
+                    }
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);

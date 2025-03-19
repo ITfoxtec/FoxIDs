@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +10,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Ext = FoxIDs.Models.External;
-using System.Net.Mime;
-using FoxIDs.Util;
-using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {

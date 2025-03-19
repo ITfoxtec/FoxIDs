@@ -17,7 +17,7 @@ using FoxIDs.Client.Logic;
 using System.Linq;
 using ITfoxtec.Identity;
 
-namespace FoxIDs.Client.Pages.UsersAndGrants
+namespace FoxIDs.Client.Pages.Users
 {
     public partial class ExternalUsers
     {
@@ -26,7 +26,8 @@ namespace FoxIDs.Client.Pages.UsersAndGrants
         private PageEditForm<FilterExternalUserViewModel> externalUserFilterForm;
         private List<GeneralExternalUserViewModel> externalUsers = new List<GeneralExternalUserViewModel>();
         private string paginationToken;
-        private string usersHref;
+        private string internalUsersHref;
+        private string failingLoginsHref;
         private string refreshTokenGrantsHref;
 
         [Inject]
@@ -46,7 +47,8 @@ namespace FoxIDs.Client.Pages.UsersAndGrants
 
         protected override async Task OnInitializedAsync()
         {
-            usersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/users";
+            internalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/internalusers";
+            failingLoginsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/failingloginlocks";
             refreshTokenGrantsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/refreshtokengrants";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

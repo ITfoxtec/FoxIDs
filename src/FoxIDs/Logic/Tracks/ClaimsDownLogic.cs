@@ -412,20 +412,24 @@ namespace FoxIDs.Logic
             if (RouteBinding.AutoMapSamlClaims && newMappings?.Count() > 0)
             {
                 var tenantDataRepository = httpContextAccessor.HttpContext.RequestServices.GetService<ITenantDataRepository>();
-                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
+                var trackCacheLogic = httpContextAccessor.HttpContext.RequestServices.GetService<TrackCacheLogic>();                 
 
-                if (mTrack.ClaimMappings == null)
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var track = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
+
+                if (track.ClaimMappings == null)
                 {
-                    mTrack.ClaimMappings = new List<ClaimMap>();
+                    track.ClaimMappings = new List<ClaimMap>();
                 }
                 foreach (var claimMap in newMappings)
                 {
-                    mTrack.ClaimMappings.Add(claimMap);
+                    track.ClaimMappings.Add(claimMap);
                 }
 
-                await tenantDataRepository.UpdateAsync(mTrack);
-                RouteBinding.ClaimMappings = mTrack.ClaimMappings;
+                await tenantDataRepository.UpdateAsync(track);
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
+
+                RouteBinding.ClaimMappings = track.ClaimMappings;
             }
         }
     }

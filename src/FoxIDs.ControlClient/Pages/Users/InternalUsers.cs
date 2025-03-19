@@ -16,14 +16,15 @@ using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
 using ITfoxtec.Identity;
 
-namespace FoxIDs.Client.Pages.UsersAndGrants
+namespace FoxIDs.Client.Pages.Users
 {
-    public partial class Users
+    public partial class InternalUsers
     {
         private PageEditForm<FilterUserViewModel> userFilterForm;
         private List<GeneralUserViewModel> users = new List<GeneralUserViewModel>();
         private string paginationToken;
         private string externalUsersHref;
+        private string failingLoginsHref;
         private string refreshTokenGrantsHref;
 
         [Inject]
@@ -41,6 +42,7 @@ namespace FoxIDs.Client.Pages.UsersAndGrants
         protected override async Task OnInitializedAsync()
         {
             externalUsersHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/externalusers";
+            failingLoginsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/failingloginlocks";
             refreshTokenGrantsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/refreshtokengrants";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

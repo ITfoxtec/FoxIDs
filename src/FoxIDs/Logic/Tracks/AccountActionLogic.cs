@@ -360,7 +360,7 @@ namespace FoxIDs.Logic
 
         private async Task<User> VerifyCodeAsync(SendType sendType, string keyElement, string userIdentifier, string code, Func<User, string, Task> sendActionAsync, Func<User, Task> onSuccess, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
         {
-            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, GetFailingLoginTypes(sendType));
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
 
             var cacheKey = CodeCacheKey(keyElement, userIdentifier);
             var confirmationCodeValue = await cacheProvider.GetAsync(cacheKey);
@@ -369,7 +369,7 @@ namespace FoxIDs.Logic
                 var confirmationCode = confirmationCodeValue.ToObject<ConfirmationCode>();
                 if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code.ToUpper()))
                 {
-                    await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, GetFailingLoginTypes(sendType));
+                    await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
 
                     var user = await accountLogic.GetUserAsync(userIdentifier);
                     if (user == null || user.DisableAccount)
@@ -410,7 +410,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, GetFailingLoginTypes(sendType));
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
                     logger.ScopeTrace(() => $"Failing count increased for user '{userIdentifier}', {logText} invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                     throw new InvalidCodeException($"Invalid {logText}, user '{userIdentifier}'.");
                 }
@@ -423,7 +423,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private FailingLoginTypes GetFailingLoginTypes(SendType sendType)
+        private FailingLoginTypes GetFailingLoginType(SendType sendType)
         {
             switch (sendType)
             {

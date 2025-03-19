@@ -1,0 +1,72 @@
+﻿@page "/{tenantName}/failingloginlocks"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@internalUsersHref">Internal Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Failing Login Locks</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@refreshTokenGrantsHref">Refresh Token Grants</a>
+    </li>
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        Users are locked for an observation period after two failed logins. Users are locked for @FailingLoginObservationPeriodMinuts minutes and automatically unlocked after the observation period.
+    </div>
+</div>
+
+<PageEditForm @ref="failingLoginFilterForm" TModel="FilterFailingLoginViewModel" OnValidSubmit="OnFailingLoginsFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="failingLoginFilterForm.Model.FilterUserIdentifier" For="@(() => failingLoginFilterForm.Model.FilterUserIdentifier)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @if (failingLogins.Count() > 0) 
+    {
+        @foreach (var failingLogin in failingLogins)
+        {
+            <li class="list-group-item">
+                @if (!failingLogin.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @failingLogin.Error
+                    </div>
+                }
+                <div class="d-flex">
+                    <div class="mr-auto">
+                        <span>User identifier: @failingLogin.UserIdentifier</span>
+                        <br />
+                        <span>Failing login type: @GetFailingLoginTypeText(failingLogin.FailingLoginType)</span>
+                        <br />
+                        <span>Expire at: @failingLogin.ExpireAtText</span>
+                    </div>
+                    <div class="py-2">
+                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteFailingLoginAsync(failingLogin))">
+                            End observation period
+                        </button>
+                    </div>
+                </div>
+            </li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="font-italic pl-1">No users locked by observation period</div>
+        </li>
+    }
+</ul>
+@if (paginationToken != null)
+{
+    <div class="pl-3 pt-3">
+        <button type="button" class="btn btn-secondary" @onclick="LoadMoreUsersAsync">
+            Load more
+        </button>
+    </div>
+}

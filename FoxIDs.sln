@@ -159,6 +159,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-reverse-proxy-secret.png = docs\images\configure-reverse-proxy-secret.png
 		docs\images\configure-saml-adfs-auth-method.png = docs\images\configure-saml-adfs-auth-method.png
 		docs\images\configure-saml-app-reg.png = docs\images\configure-saml-app-reg.png
+		docs\images\configure-saml-auth-method-idp-initiated.png = docs\images\configure-saml-auth-method-idp-initiated.png
 		docs\images\configure-saml-auth-method.png = docs\images\configure-saml-auth-method.png
 		docs\images\configure-saml-googleworkspace-add-app.png = docs\images\configure-saml-googleworkspace-add-app.png
 		docs\images\configure-saml-googleworkspace-app.png = docs\images\configure-saml-googleworkspace-app.png

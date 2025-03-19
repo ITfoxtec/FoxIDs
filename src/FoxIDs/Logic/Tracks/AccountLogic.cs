@@ -32,11 +32,11 @@ namespace FoxIDs.Logic
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
 
-            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
 
             if (user == null || user.DisableAccount)
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for not existing user '{userIdentifier}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(password);
                 throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled."); // UI message: Wrong email or password / Your email was not found
@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
             if (await secretHashLogic.ValidateSecretAsync(user, password))
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+                await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 if (user.ChangePassword)
                 {
                     logger.ScopeTrace(() => $"User '{userIdentifier}' and password valid, user have to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for user '{userIdentifier}', password invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 throw new InvalidPasswordException($"Password invalid, user '{userIdentifier}'."); // UI message: Wrong email or password / Wrong password
             }
@@ -82,11 +82,11 @@ namespace FoxIDs.Logic
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
 
-            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
 
             if (user == null || user.DisableAccount)
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for not existing user '{userIdentifier}', trying to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
                 throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to change password.");
@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier}' exists, with user id '{user.UserId}', trying to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
             if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(GetFailingLoginUserId(user, userIdentifier), FailingLoginTypes.Login);
+                await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"User '{userIdentifier}', current password valid, changing password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
 
                 if (currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
@@ -117,7 +117,5 @@ namespace FoxIDs.Logic
                 throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
             }
         }
-
-        private static string GetFailingLoginUserId(User user, string userIdentifier) => user != null ? user.UserId : userIdentifier;
     }
 }

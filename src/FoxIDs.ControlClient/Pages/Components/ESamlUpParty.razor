@@ -368,6 +368,7 @@
                         <SamlMetadataAttributeConsumingServices Model="samlUpParty.Form.Model" />
                         <SamlMetadataOrganization Model="samlUpParty.Form.Model" />
                         <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
+                        <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" />
                     }
                 }
             }

@@ -15,7 +15,6 @@
             <div asp-validation-summary="ModelOnly"></div>
             <div class="info-message-sub">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your email."] : Localizer["A two-factor code has just been sent to your email."])</div>
             <input type="hidden" asp-for="Email" autocomplete="off" />
-            <div asp-validation-summary="ModelOnly"></div>
             <div class="form-group active-group active">
                 <input asp-for="Email" id="showEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
                 <label asp-for="Email" id="showEmail" class="label-control"></label>

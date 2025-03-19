@@ -141,7 +141,7 @@ The user session become a persistent session if either the persistent session li
 ![Configure Login](images/configure-login-session.png)
 
 ### Configure claims
-You can change the claims the login authentication method forwards with [claim transforms](claim-transform.md).
+You can change the claims and do claim tasks with [claim transforms and claim tasks](claim-transform-task.md).
 
 ### All login configurations
 All login configurations are available after clicking **Show advanced**.

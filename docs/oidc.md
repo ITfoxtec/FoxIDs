@@ -12,13 +12,16 @@ Configure [OpenID Connect authentication method](auth-method-oidc.md) which trus
 
 How to guides:
 
-- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
-- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
+- Connect [Amazon Cognito](auth-method-howto-oidc-amazon-cognito.md)
+- Connect [Google](auth-method-howto-oidc-google.md)
+- Connect [Facebook](auth-method-howto-oidc-facebook.md)
 - Connect [Signicat](auth-method-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)
+- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
 
 ## Application registration
 

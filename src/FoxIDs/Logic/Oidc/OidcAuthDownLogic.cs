@@ -271,7 +271,7 @@ namespace FoxIDs.Logic
             throw new OAuthRequestException($"Unsupported response type '{authenticationRequest.ResponseType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
         }
 
-        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
+        public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
@@ -281,7 +281,25 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Application Client not configured.");
             }
 
+            if (idPInitiatedLink != null)
+            {
+                if (!party.AllowUpParties.Where(p => p.Name == idPInitiatedLink.UpPartyName && p.Type == idPInitiatedLink.UpPartyType).Any())
+                {
+                    throw new Exception($"The IdP-Initiated login authentication method '{idPInitiatedLink.UpPartyName}' ({idPInitiatedLink.UpPartyType}) is not a allowed for the application '{party.Name}' ({party.Type}).");
+                }
+                if (idPInitiatedLink.DownPartyRedirectUrl.IsNullOrEmpty())
+                {
+                    throw new Exception($"The IdP-Initiated login redirect URL is empty.");
+                }
+                if (!party.Client.RedirectUris.Any(u => party.Client.DisableAbsoluteUris ? idPInitiatedLink.DownPartyRedirectUrl.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(idPInitiatedLink.DownPartyRedirectUrl, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new Exception($"Invalid IdP-Initiated login redirect URI '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected client).");
+                }
+                return new RedirectResult(idPInitiatedLink.DownPartyRedirectUrl);
+            }
+          
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
+
             try
             {
 
@@ -399,12 +417,16 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
+        public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null, bool allowNullSequenceData = false)
         {
             logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(remove: true, allowNull: allowNullSequenceData);
+            if (allowNullSequenceData && sequenceData == null)
+            {
+                return null;
+            }
 
             return AuthenticationResponseError(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }

@@ -8,6 +8,6 @@ namespace FoxIDs.Logic
         public LogicSequenceBase(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
 
-        public Sequence Sequence => HttpContext.GetSequence();
+        public Sequence Sequence => HttpContext.GetSequence(allowNull: true);
     }
 }

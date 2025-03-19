@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/users"
+﻿@page "/{tenantName}/internalusers"
 @inherits PageBase
 
 <ul class="nav nav-tabs">
@@ -7,6 +7,9 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@failingLoginsHref">Failing Login Locks</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@refreshTokenGrantsHref">Refresh Token Grants</a>

@@ -26,10 +26,11 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorAppLogic accountTwoFactorAppLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -40,6 +41,7 @@ namespace FoxIDs.Controllers
             this.accountLogic = accountLogic;
             this.accountTwoFactorAppLogic = accountTwoFactorAppLogic;
             this.accountActionLogic = accountActionLogic;
+            this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
             this.planCacheLogic = planCacheLogic;
         }
@@ -219,6 +221,16 @@ namespace FoxIDs.Controllers
 
                 planUsageLogic.LogMfaAuthAppEvent();
 
+                try
+                {
+                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.UserIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
+
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -347,7 +359,17 @@ namespace FoxIDs.Controllers
                 await planUsageLogic.VerifyCanSendSmsAsync();
                 await planUsageLogic.LogMfaSmsEventAsync(sequenceData.Phone);
 
-                await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
+                try
+                {
+                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Phone, FailingLoginTypes.TwoFactorSmsCode);
+
+                    await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -463,7 +485,17 @@ namespace FoxIDs.Controllers
                 await planUsageLogic.VerifyCanSendEmailAsync(isMfa: true);
                 planUsageLogic.LogMfaEmailEvent();
 
-                await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
+                try
+                {
+                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Email, FailingLoginTypes.TwoFactorEmailCode);
+
+                    await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);

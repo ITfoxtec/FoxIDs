@@ -1,10 +1,10 @@
 # Claims
 
-Claims are processed first in the [authentication method](#authentication-method) and then the [application registration](#application-registration), where it is possible to decide, which claims are passed to the next step and to do [claim transforms](claim-transform.md).
+Claims are processed first in the [authentication method](#authentication-method) and then the [application registration](#application-registration), where it is possible to decide, which claims are passed to the next step and to do [claim transforms and claim tasks](claim-transform-task.md).
 
 > All claim comparisons are case-sensitive.
 
-The claims process starts in the [authentication method](connections.md#authentication-method) when a user authenticates. There it is possible to do [claim transforms](claim-transform.md) and configure which claims have to be carried forward to the next step.
+The claims process starts in the [authentication method](connections.md#authentication-method) when a user authenticates. There it is possible to do [claim transforms and claim tasks](claim-transform-task.md) and configure which claims have to be carried forward to the next step.
 Then the claims process continues in the [application registration](connections.md#application-registration) where it is also possible do claim transforms and configure which claims have to be issued to the application / API.
 
 In a [Client Credentials Grant](app-reg-oauth-2.0.md#client-credentials-grant) scenario, the claims process is only done in the application registration. The same goes for the claim transforms and the configuration of which claims have to be issued to the application / API.
@@ -12,7 +12,7 @@ In a [Client Credentials Grant](app-reg-oauth-2.0.md#client-credentials-grant) s
 ## Authentication method
 In both an [OpenID Connect](auth-method-oidc.md) and [SAML 2.0](auth-method-saml-2.0.md) authentication method claims are carried forward by adding them to the `Forward claims` list. All claims are carried forward if a wildcard `*` is added to the `Forward claims` list.
 
-An authentication method issues two claims which can be read in the application registration and used in [claim transforms](claim-transform.md). The claims always apply to the last authentication method.  
+An authentication method issues two claims which can be read in the application registration and used in [claim transforms and claim tasks](claim-transform-task.md). The claims always apply to the last authentication method.  
 The authentication method issued claims (default forward):
 
 - `auth_method` contain the authentication method name, the name is unique in a environment.

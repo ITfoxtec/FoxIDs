@@ -262,6 +262,7 @@ namespace FoxIDs
                 public const string UpParty = "party:up";
                 public const string DownParty = "party:down";
                 public const string User = "user";
+                public const string FailingLoginLock = "flock";
                 public const string UserControlProfile = "ucp";                
                 public const string ExternalUser = "extu";
                 public const string AuthCodeTtlGrant = "acgrant";
@@ -520,8 +521,7 @@ namespace FoxIDs
             public static class User
             {
                 public const int IdLength = 180;
-                public const string IdRegExPattern = @"^[\w:\-.+@]*$";
-
+                public const string IdRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
 
                 public const int AdditionalIdsMin = 0;
                 public const int AdditionalIdsMax = 5;
@@ -539,6 +539,15 @@ namespace FoxIDs
                 public const int ConfirmationCodeEmailLength = 8;
                 public const int ConfirmationCodeSmsLength = 5;
                 public const int TwoFactorAppCodeLength = 50;
+            }
+
+            public static class FailingLoginLock
+            {
+                public const int IdLength = 186;
+                public const string IdRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
+
+                public const int UserIdentifierLength = 60;
+                public const string UserIdentifierRegExPattern = @"^[\p{L}0-9:\-_.+@]*$";
             }
 
             public static class UserControlProfile

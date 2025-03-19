@@ -3,10 +3,13 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link" href="@usersHref">Internal Users</a>
+        <a class="nav-link" href="@internalUsersHref">Internal Users</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@externalUsersHref">External Users</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@failingLoginsHref">Failing Login Locks</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active">Refresh Token Grants</a>
@@ -155,6 +158,8 @@
                         <span>Authentication method: @refreshTokenGrant.UpPartyName (@refreshTokenGrant.UpPartyType)</span>
                         <br />
                         <span>Application: @refreshTokenGrant.ClientId</span>
+                        <br />
+                        <span>Expire at: @refreshTokenGrant.ExpireAtText</span>
                     </button>
                 }
             </li>

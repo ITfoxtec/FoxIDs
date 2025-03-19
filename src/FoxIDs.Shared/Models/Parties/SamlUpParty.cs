@@ -127,6 +127,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
+        [JsonProperty(PropertyName = "enable_idp_initiated")]
+        public bool EnableIdPInitiated { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

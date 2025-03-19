@@ -195,6 +195,7 @@ The authentication methods samples show different IdPs connected to FoxIDs, wher
 ### AspNetCoreSamlIdPSample
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 authentication method in FoxIDs.
+The sample also show how to do IdP-Initiated login.
 
 You can test this [sample online](https://aspnetsamlidpsample.itfoxtec.com).
 

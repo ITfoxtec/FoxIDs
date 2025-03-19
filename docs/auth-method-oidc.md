@@ -8,13 +8,16 @@ It is possible to configure multiple OpenID Connect authentication methods which
 
 How to guides:
 
-- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
-- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
+- Connect [Amazon Cognito](auth-method-howto-oidc-amazon-cognito.md)
+- Connect [Google](auth-method-howto-oidc-google.md)
+- Connect [Facebook](auth-method-howto-oidc-facebook.md)
 - Connect [Signicat](auth-method-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)
+- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -43,7 +46,7 @@ The authentication method only forwards default claims and claims added in the `
 
 Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
-> Change the claims the authentication method forwards with [claim transforms](claim-transform.md).
+> You can change the claims and do claim tasks with [claim transforms and claim tasks](claim-transform-task.md).
 
 FoxIDs default use the brackets connection pattern `.../(auth-method)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes connection pattern `.../~auth-method~/...` or dot connection pattern `.../.auth-method./...`.
 

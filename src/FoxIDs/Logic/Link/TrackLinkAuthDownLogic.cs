@@ -99,13 +99,18 @@ namespace FoxIDs.Logic
             };
         }
 
-        public async Task<IActionResult> AuthResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null)
+        public async Task<IActionResult> AuthResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null, bool allowNullSequenceData = false)
         {
             logger.ScopeTrace(() => "AppReg, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantDataRepository.GetAsync<TrackLinkDownParty>(partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false, allowNull: allowNullSequenceData);
+            if (allowNullSequenceData && sequenceData == null)
+            {
+                return null;
+            }
+
             if (error.IsNullOrEmpty())
             {
                 try

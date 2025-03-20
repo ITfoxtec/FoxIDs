@@ -4,6 +4,10 @@ Deploy FoxIDs in Docker Desktop on a dev or test machine.
 
 This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login).
 
+A FoxIDs installation is like a bucket, there is no external dependencies and it's easy to archive a very high uptime with little effort. 
+FoxIDs are updated by updating the two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general)
+to a new version. New FoxIDs releases is backwards compatible, please consult the [release notes](https://github.com/ITfoxtec/FoxIDs/releases) before updating.
+
 Pre requirements:
 - You have Docker Desktop installed. 
 - You have basic knowledge about Docker.

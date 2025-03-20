@@ -434,14 +434,7 @@ namespace FoxIDs.Logic
                 {
                     if (samlHttpRequest.Binding.RelayState?.StartsWith("app_name=") == true)
                     {
-                        try
-                        {
-                            throw new Exception("IdP-Initiated login is not enabled.");
-                        }
-                        catch (Exception iex)
-                        {
-                            logger.Warning(iex);
-                        }
+                        throw new Exception("IdP-Initiated login is not enabled.");
                     }
 
                     await sequenceLogic.ValidateExternalSequenceIdAsync(samlHttpRequest.Binding.RelayState);
@@ -450,8 +443,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Invalid RelayState '{samlHttpRequest.Binding.RelayState}' returned from the IdP.");
-                throw;
+                throw new Exception($"Invalid RelayState '{samlHttpRequest.Binding.RelayState}' from the external IdP.", ex);
             }
         }
 

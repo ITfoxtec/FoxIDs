@@ -4,6 +4,10 @@ Deploy FoxIDs in your Kubernetes (K8s) cluster or Docker Desktop with Kubernetes
 
 This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login) as well as some [considerations](#considerations). It is expected that you will need to customize the yaml files to suit your needs, preferences and environment.
 
+A FoxIDs installation is like a bucket, there is no external dependencies and it's easy to archive a very high uptime with little effort. 
+FoxIDs are updated by updating the two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general)
+to a new version. New FoxIDs releases is backwards compatible, please consult the [release notes](https://github.com/ITfoxtec/FoxIDs/releases) before updating.
+
 Pre requirements:
 - You have a Kubernetes cluster or Docker Desktop with Kubernetes enabled. 
 - You have basic knowledge about Kubernetes.

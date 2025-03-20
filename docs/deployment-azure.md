@@ -1,6 +1,11 @@
 ﻿# Azure App Service Container
 
 Deploy FoxIDs in your Azure tenant as your own private cloud.  
+
+A FoxIDs installation is like a bucket, there is no external dependencies and it's easy to archive a very high uptime with little effort. 
+FoxIDs are updated by updating the two App Services to the new FoxIDs version. 
+New FoxIDs releases is backwards compatible, please consult the [release notes](https://github.com/ITfoxtec/FoxIDs/releases) before updating.
+
 FoxIDs is deployed in the resource group `FoxIDs` (optional name) where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
 
 [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)

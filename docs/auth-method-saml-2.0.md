@@ -84,6 +84,8 @@ The elements has each a name and a value and they are decided by `&`. The redire
 
 > The SAML 2.0 identity provider (IdP) .NET sample [AspNetCoreSamlIdPSample](https://localhost:44333/docs/samples#aspnetcoresamlidpsample) show how to create a IdP-Initiated Login with a relay state.
 
+![FoxIDs SAML 2.0 authentication method](images/connections-auth-method-saml-idpi.svg)
+
 #### SAML 2.0 application
 
 If you want to foreword the authentication to the SAML 2.0 application named `my-saml2-app`, the relay state is:

@@ -15,7 +15,7 @@ namespace FoxIDs.Infrastructure
         private readonly TelemetryScopedStreamLogger telemetryScopedStreamLogger;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly List<TraceMessageItem> traceMessages = new List<TraceMessageItem>();
-        private Models.Logging logging;
+        private Logging logging;
 
         public TelemetryScopedLogger(TelemetryLogger telemetryLogger, TelemetryScopedProperties telemetryScopedProperties, TelemetryScopedStreamLogger telemetryScopedStreamLogger, IHttpContextAccessor httpContextAccessor)
         {
@@ -25,7 +25,7 @@ namespace FoxIDs.Infrastructure
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Models.Logging Logging
+        public Logging Logging
         {
             get
             {

@@ -20,6 +20,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string claimMappingsHref;
         private string textsHref;
         private string plansHref;
+        private string smsPricesHref;
         private string riskPasswordsHref;
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
@@ -52,6 +53,7 @@ namespace FoxIDs.Client.Pages.Settings
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";
             plansHref = $"{TenantName}/plans";
+            smsPricesHref = $"{TenantName}/smsprices";
             riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

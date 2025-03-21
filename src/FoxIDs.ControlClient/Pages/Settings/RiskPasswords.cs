@@ -20,6 +20,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string claimMappingsHref;
         private string textsHref;
         private string plansHref;
+        private string smsPricesHref;
 
         private string riskPasswordLoadError;
         private RiskPasswordInfo uploadRiskPassword { get; set; }
@@ -46,6 +47,7 @@ namespace FoxIDs.Client.Pages.Settings
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";
             plansHref = $"{TenantName}/plans";
+            smsPricesHref = $"{TenantName}/smsprices";
             await base.OnInitializedAsync();
             await DefaultRiskPasswordLoadAsync();
         }

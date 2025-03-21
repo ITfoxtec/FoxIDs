@@ -2,28 +2,28 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
     public class SmsPrice
     {
         //[Required]
         [MaxLength(Constants.Models.SmsPrices.CountryNameLength)]
-        [JsonProperty(PropertyName = "country_name")]
+        [Display(Name = "Country name")]
         public string CountryName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.SmsPrices.Iso2Length)]
-        [JsonProperty(PropertyName = "iso2")]
+        [Display(Name = "ISO2")]
         public string Iso2 { get; set; }
 
         [Required]
         [Min(Constants.Models.SmsPrices.PhoneCodeMin)]
-        [JsonProperty(PropertyName = "phone_code")]
+        [Display(Name = "Phone code")]
         public int PhoneCode { get; set; }
 
         [Required]
         [Min(Constants.Models.SmsPrices.PriceMin)]
-        [JsonProperty(PropertyName = "price")]
+        [Display(Name = "Price")]
         public decimal Price { get; set; }
     }
 }

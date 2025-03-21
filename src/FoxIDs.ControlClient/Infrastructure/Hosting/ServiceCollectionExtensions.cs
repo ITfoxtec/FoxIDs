@@ -48,6 +48,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<HelpersNoAccessTokenService>();
             
             services.AddScoped<PlanService>();
+            services.AddScoped<SmsPriceService>();
             services.AddScoped<RiskPasswordService>();
 
             return services;

@@ -24,11 +24,13 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<Plan, Api.PlanInfo>();
 
+            CreateMap<SmsPrice, Api.SmsPrice>()
+                .ReverseMap();
+
             CreateMap<ResourceEnvelope, Api.Resource>()
                 .ReverseMap();
             CreateMap<ResourceName, Api.ResourceName>()
                 .ReverseMap();
-     
 
             CreateMap<RiskPassword, Api.RiskPassword>()
                 .ForMember(d => d.PasswordSha1Hash, opt => opt.MapFrom(s => s.Id.Substring(s.Id.LastIndexOf(':') + 1)))

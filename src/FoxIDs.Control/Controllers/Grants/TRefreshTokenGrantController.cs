@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TRefreshTokenGrantController : ApiController
     {
         private readonly TelemetryScopedLogger logger;

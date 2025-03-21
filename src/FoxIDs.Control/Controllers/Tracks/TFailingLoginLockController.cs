@@ -11,7 +11,7 @@ using FoxIDs.Models;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TFailingLoginLockController : ApiController
     {
         private readonly TelemetryScopedLogger logger;

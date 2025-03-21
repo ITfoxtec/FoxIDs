@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string mailSettingsHref;
         private string claimMappingsHref;
         private string plansHref;
+        private string smsPricesHref;
         private string riskPasswordsHref;
 
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
@@ -55,6 +56,7 @@ namespace FoxIDs.Client.Pages.Settings
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             plansHref = $"{TenantName}/plans";
+            smsPricesHref = $"{TenantName}/smsprices";
             riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

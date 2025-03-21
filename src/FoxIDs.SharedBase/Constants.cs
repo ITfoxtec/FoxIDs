@@ -355,6 +355,10 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w@:\-]*$";
                 public const int CountriesMin = 0;
                 public const int CountriesMax = 500;
+                public const int CountryNameLength = 200;
+                public const int Iso2Length = 2; 
+                public const int PhoneCodeMin = 1;
+                public const int PriceMin = 0;
             }
 
             public static class Currency

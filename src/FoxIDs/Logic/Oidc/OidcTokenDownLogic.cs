@@ -123,7 +123,9 @@ namespace FoxIDs.Logic
 
                 if (scopes.Contains(IdentityConstants.DefaultOidcScopes.OfflineAccess))
                 {
-                    tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
+                    (var refreshTokenGrant, var refreshToken) = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
+                    tokenResponse.RefreshToken = refreshToken;
+                    SetRefreshTokenExpiresIn(refreshTokenGrant, tokenResponse);
                 }
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJson()}'.", traceType: TraceTypes.Message);
@@ -155,7 +157,6 @@ namespace FoxIDs.Logic
             }
             try
             {
-
                 var tokenResponse = new TokenResponse
                 {
                     TokenType = IdentityConstants.TokenTypes.Bearer,
@@ -173,6 +174,7 @@ namespace FoxIDs.Logic
                 if (!newRefreshToken.IsNullOrEmpty())
                 {
                     tokenResponse.RefreshToken = newRefreshToken;
+                    SetRefreshTokenExpiresIn(refreshTokenGrant, tokenResponse);
                 }
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJson()}'.", traceType: TraceTypes.Message);
@@ -182,6 +184,19 @@ namespace FoxIDs.Logic
             catch (KeyException kex)
             {
                 throw new OAuthRequestException(kex.Message, kex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.ServerError };
+            }
+        }
+
+        private static void SetRefreshTokenExpiresIn(RefreshTokenGrant refreshTokenGrant, TokenResponse tokenResponse)
+        {
+            if (refreshTokenGrant is RefreshTokenTtlGrant refreshTokenTtlGrant)
+            {
+                var grantExpireAt = DateTimeOffset.FromUnixTimeSeconds(refreshTokenTtlGrant.CreateTime).AddSeconds(refreshTokenTtlGrant.TimeToLive);
+                var utcNow = DateTimeOffset.UtcNow;
+                if (grantExpireAt > utcNow)
+                {
+                    tokenResponse.RefreshTokenExpiresIn = Convert.ToInt64((grantExpireAt - utcNow).TotalSeconds);
+                }
             }
         }
     }

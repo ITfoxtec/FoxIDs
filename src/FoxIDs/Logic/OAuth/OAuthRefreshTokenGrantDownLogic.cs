@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
-        public async Task<string> CreateRefreshTokenGrantAsync(TClient client, List<Claim> claims, string scope)
+        public async Task<(RefreshTokenGrant, string)> CreateRefreshTokenGrantAsync(TClient client, List<Claim> claims, string scope)
         {
             logger.ScopeTrace(() => $"Create Refresh Token grant, Route '{RouteBinding.Route}'.");
 
@@ -34,10 +34,10 @@ namespace FoxIDs.Logic
             var grantClaims = await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var refreshToken = CreateRefreshToken(client);
-            _ = await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);
+            var grant = await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);
 
             logger.ScopeTrace(() => $"Refresh token grant created, Refresh Token '{refreshToken}'.");
-            return refreshToken;
+            return (grant, refreshToken);
         }
 
         public async Task<(RefreshTokenGrant, string)> ValidateAndUpdateRefreshTokenGrantAsync(TClient client, string refreshToken)

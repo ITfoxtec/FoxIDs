@@ -42,7 +42,7 @@ namespace FoxIDs.Models.Queues
 
         [ListLength(Constants.Models.UpParty.HrdIPAddressAndRangeMin, Constants.Models.UpParty.HrdIPAddressAndRangeMax, Constants.Models.UpParty.HrdIPAddressAndRangeLength, Constants.Models.UpParty.HrdIPAddressAndRangeRegExPattern, Constants.Models.UpParty.HrdIPAddressAndRangeTotalMax)]
         [JsonProperty(PropertyName = "hi")]
-        public List<string> HrdIPAddressAndRanges { get; set; }
+        public List<string> HrdIPAddressesAndRanges { get; set; }
 
         [JsonProperty(PropertyName = "hbi")]
         public bool HrdShowButtonWithIPAddressAndRange { get; set; }

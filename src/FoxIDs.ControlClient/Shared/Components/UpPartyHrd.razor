@@ -1,4 +1,6 @@
-﻿@if (!HideDomains)
+﻿<FInputTextList @bind-ValueList="Model.HrdIPAddressesAndRanges" For="@(() => Model.HrdIPAddressesAndRanges)" DynamicFirstRow="true" />
+<FInputToggle @bind-Value="Model.HrdShowButtonWithIPAddressAndRange" For="@(() => Model.HrdShowButtonWithIPAddressAndRange)" TextType="y.n" />
+@if (!HideDomains)
 {
     <FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
     <FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />
@@ -8,6 +10,8 @@ else
     Model.HrdDomains = null;
     Model.HrdShowButtonWithDomain = false;
 }
+<FInputTextList @bind-ValueList="Model.HrdRegularExpressions" For="@(() => Model.HrdRegularExpressions)" DynamicFirstRow="true" />
+<FInputToggle @bind-Value="Model.HrdShowButtonWithRegularExpression" For="@(() => Model.HrdShowButtonWithRegularExpression)" TextType="y.n" />
 <FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
 <FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
 

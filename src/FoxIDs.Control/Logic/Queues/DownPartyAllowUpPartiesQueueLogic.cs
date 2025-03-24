@@ -156,7 +156,7 @@ namespace FoxIDs.Logic.Queues
                 Issuers = newUpParty.Issuers,
                 SpIssuer = newUpParty.SpIssuer,
                 HrdDisplayName = newUpParty.HrdDisplayName,
-                HrdIPAddressAndRanges = newUpParty.HrdIPAddressAndRanges,
+                HrdIPAddressesAndRanges = newUpParty.HrdIPAddressesAndRanges,
                 HrdShowButtonWithIPAddressAndRange = newUpParty.HrdShowButtonWithIPAddressAndRange,
                 HrdDomains = newUpParty.HrdDomains,
                 HrdShowButtonWithDomain = newUpParty.HrdShowButtonWithDomain,
@@ -305,7 +305,7 @@ namespace FoxIDs.Logic.Queues
                         upParty.DisplayName = message.DisplayName;
                         upParty.Issuers = message.Issuers;
                         upParty.SpIssuer = message.SpIssuer;
-                        upParty.HrdIPAddressAndRanges = message.HrdIPAddressAndRanges;
+                        upParty.HrdIPAddressesAndRanges = message.HrdIPAddressesAndRanges;
                         upParty.HrdShowButtonWithIPAddressAndRange = message.HrdShowButtonWithIPAddressAndRange;
                         upParty.HrdDomains = message.HrdDomains;
                         upParty.HrdShowButtonWithDomain = message.HrdShowButtonWithDomain;

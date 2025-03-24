@@ -77,6 +77,15 @@ namespace FoxIDs.Logic
                 isValid = false;
             }
 
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, party.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.OidcUpParty.HrdIPAddressesAndRanges)))
+            {
+                isValid = false;
+            }
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, party.HrdRegularExpressions, errorFieldName: nameof(Api.OidcUpParty.HrdRegularExpressions)))
+            {
+                isValid = false;
+            }
+
             return isValid;
         }
 

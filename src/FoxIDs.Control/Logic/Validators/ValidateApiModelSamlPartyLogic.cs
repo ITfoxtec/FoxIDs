@@ -31,7 +31,9 @@ namespace FoxIDs.Logic
                 ValidateMetadataNameIdFormats(modelState, samlUpParty) &&
                 validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.ExternalUserLoadedClaimTransforms)) &&
                 validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, samlUpParty.LinkExternalUser?.Elements) &&
-                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.LinkExternalUser.ClaimTransforms));
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.LinkExternalUser.ClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, samlUpParty.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.SamlUpParty.HrdIPAddressesAndRanges)) && 
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, samlUpParty.HrdRegularExpressions, errorFieldName: nameof(Api.SamlUpParty.HrdRegularExpressions));
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)

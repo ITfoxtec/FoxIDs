@@ -22,7 +22,9 @@ namespace FoxIDs.Logic
         {
             return validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.ExternalUserLoadedClaimTransforms)) && 
                 validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements) &&
-                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.LinkExternalUser.ClaimTransforms));
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.LinkExternalUser.ClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, party.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.ExternalLoginUpParty.HrdIPAddressesAndRanges)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, party.HrdRegularExpressions, errorFieldName: nameof(Api.ExternalLoginUpParty.HrdRegularExpressions));
         }
     }
 }

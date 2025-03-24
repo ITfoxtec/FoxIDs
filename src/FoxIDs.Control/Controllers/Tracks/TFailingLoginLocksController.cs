@@ -11,11 +11,10 @@ using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models;
-using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TFailingLoginLocksController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
@@ -38,7 +37,7 @@ namespace FoxIDs.Controllers
         /// <returns>Failing login locks.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.FailingLoginLock>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.FailingLoginLock>>> GetFailingLoginLocks(string filterUserIdentifier, FailingLoginTypes? filterFailingLoginType = null, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.FailingLoginLock>>> GetFailingLoginLocks(string filterUserIdentifier, Api.FailingLoginTypes? filterFailingLoginType = null, string paginationToken = null)
         {
             try
             {

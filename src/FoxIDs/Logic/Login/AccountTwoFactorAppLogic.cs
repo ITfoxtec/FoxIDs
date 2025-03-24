@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
-using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
 {

@@ -1,0 +1,110 @@
+﻿@page "/{tenantName}/smsprices"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTenant)
+    {
+        <li class="nav-item">
+            <a class="nav-link active">SMS Prices</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@plansHref">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="mr-auto">
+    </div>
+    <div class="p-2">
+        <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateSmsPrice())">
+            <span class="oi oi-plus" aria-hidden="true"></span> Create SMS price
+        </button>
+    </div>
+</div>
+
+
+<PageEditForm @ref="smsPriceFilterForm" TModel="FilterSmsPriceViewModel" OnValidSubmit="OnSmsPriceFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="smsPriceFilterForm.Model.FilterName" For="@(() => smsPriceFilterForm.Model.FilterName)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @foreach (var smsPrice in smsPrices)
+    {
+        <li class="list-group-item @(smsPrice.Edit ? "active" : string.Empty)">
+            @if (!smsPrice.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @smsPrice.Error
+                </div>
+            }
+            @if (smsPrice.Edit)
+            {
+                <PageEditForm @ref="smsPrice.Form" TModel="SmsPrice" OnValidSubmit="@(async (editContext) => await OnEditSmsPriceValidSubmitAsync(smsPrice, editContext))">
+                    <div class="modal-header">
+                        SmsPrice
+                    </div>
+                    <div class="modal-body">
+                        <FInputText @bind-Value="smsPrice.Form.Model.CountryName" For="@(() => smsPrice.Form.Model.CountryName)" Focus="smsPrice.CreateMode" />
+                        @if (smsPrice.CreateMode)
+                        {
+                            <FInputText @bind-Value="smsPrice.Form.Model.Iso2" For="@(() => smsPrice.Form.Model.Iso2)" />
+                        }
+                        else
+                        {
+                            <FFieldText @bind-Value="smsPrice.Form.Model.Iso2" For="@(() => smsPrice.Form.Model.Iso2)" />
+                            <input type="hidden" @bind="smsPrice.Form.Model.Iso2" />
+                        }
+
+                        <FInputNumber @bind-Value="smsPrice.Form.Model.PhoneCode" For="@(() => smsPrice.Form.Model.PhoneCode)" />
+                        <FInputNumberD @bind-Value="smsPrice.Form.Model.Price" For="@(() => smsPrice.Form.Model.Price)" />                       
+                    </div>
+                    @if (!smsPrice.CreateMode && smsPrice.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete SmsPrice "@SmsPriceDisplayName(smsPrice)", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSmsPriceAsync(smsPrice))">Yes delete smsPrice</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => smsPrice.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!smsPrice.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => smsPrice.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        <button type="submit" class="btn btn-primary">@(smsPrice.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => SmsPriceCancel(smsPrice))">@(@smsPrice.CreateMode ? "Cancel" : "Close")</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateSmsPriceAsync(smsPrice))">
+                    @SmsPriceDisplayName(smsPrice)
+                </button>
+            }
+        </li>
+    }
+</ul>

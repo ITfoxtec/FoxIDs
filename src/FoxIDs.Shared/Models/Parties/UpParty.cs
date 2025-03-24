@@ -86,12 +86,26 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_single_logout")]
         public bool DisableSingleLogout { get; set; }
 
+        [ListLength(Constants.Models.UpParty.HrdIPAddressAndRangeMin, Constants.Models.UpParty.HrdIPAddressAndRangeMax, Constants.Models.UpParty.HrdIPAddressAndRangeLength, Constants.Models.UpParty.HrdIPAddressAndRangeRegExPattern, Constants.Models.UpParty.HrdIPAddressAndRangeTotalMax)]
+        [JsonProperty(PropertyName = "hrd_ipaddress_ranges")]
+        public List<string> HrdIPAddressAndRanges { get; set; }
+
+        [JsonProperty(PropertyName = "hrd_show_buttom_with_ipaddress_range")]
+        public bool HrdShowButtonWithIPAddressAndRange { get; set; }
+
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern, Constants.Models.UpParty.HrdDomainTotalMax)]
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }
 
         [JsonProperty(PropertyName = "hrd_show_buttom_with_domain")]
         public bool HrdShowButtonWithDomain { get; set; }
+
+        [ListLength(Constants.Models.UpParty.HrdRegularExpressionMin, Constants.Models.UpParty.HrdRegularExpressionMax, Constants.Models.UpParty.HrdRegularExpressionLength, Constants.Models.UpParty.HrdRegularExpressionTotalMax)]
+        [JsonProperty(PropertyName = "hrd_regexs")]
+        public List<string> HrdRegularExpressions { get; set; }
+
+        [JsonProperty(PropertyName = "hrd_show_buttom_with_regex")]
+        public bool HrdShowButtonWithRegularExpression { get; set; }
 
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]

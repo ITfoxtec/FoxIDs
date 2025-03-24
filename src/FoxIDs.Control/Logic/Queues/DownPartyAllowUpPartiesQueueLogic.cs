@@ -156,8 +156,12 @@ namespace FoxIDs.Logic.Queues
                 Issuers = newUpParty.Issuers,
                 SpIssuer = newUpParty.SpIssuer,
                 HrdDisplayName = newUpParty.HrdDisplayName,
-                HrdShowButtonWithDomain = newUpParty.HrdShowButtonWithDomain,
+                HrdIPAddressAndRanges = newUpParty.HrdIPAddressAndRanges,
+                HrdShowButtonWithIPAddressAndRange = newUpParty.HrdShowButtonWithIPAddressAndRange,
                 HrdDomains = newUpParty.HrdDomains,
+                HrdShowButtonWithDomain = newUpParty.HrdShowButtonWithDomain,
+                HrdRegularExpressions = newUpParty.HrdRegularExpressions,
+                HrdShowButtonWithRegularExpression = newUpParty.HrdShowButtonWithRegularExpression,
                 HrdLogoUrl = newUpParty.HrdLogoUrl,
                 DisableUserAuthenticationTrust = newUpParty.DisableUserAuthenticationTrust,
                 DisableTokenExchangeTrust = newUpParty.DisableTokenExchangeTrust,
@@ -301,8 +305,12 @@ namespace FoxIDs.Logic.Queues
                         upParty.DisplayName = message.DisplayName;
                         upParty.Issuers = message.Issuers;
                         upParty.SpIssuer = message.SpIssuer;
+                        upParty.HrdIPAddressAndRanges = message.HrdIPAddressAndRanges;
+                        upParty.HrdShowButtonWithIPAddressAndRange = message.HrdShowButtonWithIPAddressAndRange;
                         upParty.HrdDomains = message.HrdDomains;
                         upParty.HrdShowButtonWithDomain = message.HrdShowButtonWithDomain;
+                        upParty.HrdRegularExpressions = message.HrdRegularExpressions;
+                        upParty.HrdShowButtonWithRegularExpression = message.HrdShowButtonWithRegularExpression;
                         upParty.HrdDisplayName = message.HrdDisplayName;
                         upParty.HrdLogoUrl = message.HrdLogoUrl;
                         upParty.DisableUserAuthenticationTrust = message.DisableUserAuthenticationTrust;

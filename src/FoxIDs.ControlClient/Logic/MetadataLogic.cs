@@ -14,11 +14,12 @@ namespace FoxIDs.Client.Logic
             this.trackSelectedLogic = trackSelectedLogic;
         }
 
-        public (string, string) GetDownAuthorityAndOIDCDiscovery(string partyName, bool addUpParty, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
+        public (string authority, string oidcDiscovery, string authorize, string token) GetDownAuthorityAndOIDCDiscovery(string partyName, bool addUpParty, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "--application-name--" : partyName.ToLower()).ToDownPartyBinding(addUpParty, partyBindingPattern);
             var authority = $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/{partyBinding}/";
-            return (authority, authority + IdentityConstants.OidcDiscovery.Path);
+            var oauthUrl = $"{authority}{Constants.Routes.OAuthController}/";
+            return (authority, authority + IdentityConstants.OidcDiscovery.Path, oauthUrl + Constants.Endpoints.Authorize, oauthUrl + Constants.Endpoints.Token);
         }
 
         public string GetDownSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
@@ -27,14 +28,14 @@ namespace FoxIDs.Client.Logic
             return $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
         }
 
-        public (string, string, string) GetUpRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
+        public (string redirect, string postLogoutRedirect, string frontChannelLogout) GetUpRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             var oauthUrl = $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
             return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
         }
 
-        public (string, string, string) GetUpSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
+        public (string metadata, string entityId, string acs) GetUpSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             var samlBaseUrl = $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/";

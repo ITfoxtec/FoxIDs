@@ -654,6 +654,8 @@ namespace FoxIDs
                 public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:;.,=\[\]\-_]*$";
 
+                public const int RouteUrlLength = 500;
+
                 public static class Grant
                 {
                     public const int IdLength = 220;

@@ -60,6 +60,9 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
+        [Display(Name = "Use matching issuer and authority with application specific issuer")]
+        public bool UsePartyIssuer { get; set; }
+
         #region TestApp
         /// <summary>
         /// Is test.

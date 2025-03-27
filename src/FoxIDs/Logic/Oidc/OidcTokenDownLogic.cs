@@ -64,24 +64,24 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.AuthorizationCode:
                         var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
                         ValidateAuthCodeRequest(party.Client, tokenRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !validatePkce);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !validatePkce);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.AuthorizationCode);
-                        return await AuthorizationCodeGrantAsync(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
+                        return await AuthorizationCodeGrantAsync(party, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !party.Client.RequirePkce);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !party.Client.RequirePkce);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.RefreshToken);
-                        return await RefreshTokenGrantAsync(party.Client, tokenRequest);
+                        return await RefreshTokenGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
                         logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJson()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.TokenExchange);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
 
@@ -95,12 +95,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected override async Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
+        protected override async Task<IActionResult> AuthorizationCodeGrantAsync(TParty party, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
-            var authCodeGrant = await oauthAuthCodeGrantDownLogic.GetAndValidateAuthCodeGrantAsync(tokenRequest.Code, tokenRequest.RedirectUri, client.ClientId);
+            var authCodeGrant = await oauthAuthCodeGrantDownLogic.GetAndValidateAuthCodeGrantAsync(tokenRequest.Code, tokenRequest.RedirectUri, party.Client.ClientId);
             if (validatePkce)
             {
-                await ValidatePkceAsync(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
+                await ValidatePkceAsync(party.Client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
             }
             logger.ScopeTrace(() => "AppReg, OIDC Authorization code grant accepted.", triggerEvent: true);
 
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
                 var tokenResponse = new TokenResponse
                 {
                     TokenType = IdentityConstants.TokenTypes.Bearer,
-                    ExpiresIn = client.AccessTokenLifetime,
+                    ExpiresIn = party.Client.AccessTokenLifetime,
                 };
 
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
@@ -117,13 +117,13 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
                 var scopes = authCodeGrant.Scope.ToSpaceList();
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
-                tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(client, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
+                tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
 
                 if (scopes.Contains(IdentityConstants.DefaultOidcScopes.OfflineAccess))
                 {
-                    (var refreshTokenGrant, var refreshToken) = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
+                    (var refreshTokenGrant, var refreshToken) = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(party.Client, claims, authCodeGrant.Scope);
                     tokenResponse.RefreshToken = refreshToken;
                     SetRefreshTokenExpiresIn(refreshTokenGrant, tokenResponse);
                 }
@@ -138,9 +138,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected override async Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
+        protected override async Task<IActionResult> RefreshTokenGrantAsync(TParty party, TokenRequest tokenRequest)
         {
-            (var refreshTokenGrant, var newRefreshToken) = await oauthRefreshTokenGrantDownLogic.ValidateAndUpdateRefreshTokenGrantAsync(client, tokenRequest.RefreshToken);
+            (var refreshTokenGrant, var newRefreshToken) = await oauthRefreshTokenGrantDownLogic.ValidateAndUpdateRefreshTokenGrantAsync(party.Client, tokenRequest.RefreshToken);
             logger.ScopeTrace(() => "AppReg, OIDC Refresh Token grant accepted.", triggerEvent: true);
 
             var scopes = refreshTokenGrant.Scope.ToSpaceList();
@@ -160,16 +160,16 @@ namespace FoxIDs.Logic
                 var tokenResponse = new TokenResponse
                 {
                     TokenType = IdentityConstants.TokenTypes.Bearer,
-                    ExpiresIn = client.AccessTokenLifetime,
+                    ExpiresIn = party.Client.AccessTokenLifetime,
                 };
 
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
                 var claims = refreshTokenGrant.Claims.ToClaimList();
                 logger.SetUserScopeProperty(claims);
 
-                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
-                tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(client, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
+                tokenResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
 
                 if (!newRefreshToken.IsNullOrEmpty())
                 {

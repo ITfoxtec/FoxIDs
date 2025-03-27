@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
 
-        public async Task<string> CreateAccessTokenAsync(TClient client, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm)
+        public async Task<string> CreateAccessTokenAsync(TClient client, string routeUrl, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm)
         {
             var accessTokenClaims = new List<Claim>();
 
@@ -56,11 +56,11 @@ namespace FoxIDs.Logic
 
             var adjustedClaims = claimsOAuthDownLogic.AdjustClaims(accessTokenClaims);
             logger.ScopeTrace(() => $"AppReg, JWT access token claims '{adjustedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, adjustedClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
+            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(routeUrl), audiences, adjustedClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }
 
-        public async Task<ClaimsPrincipal> ValidatePartyClientTokenAsync(TClient client, string token, bool validateLifetime = true)
+        public async Task<ClaimsPrincipal> ValidatePartyClientTokenAsync(TClient client, string routeUrl, string token, bool validateLifetime = true)
         {
             var issuerSigningKeys = new List<JsonWebKey>
             {
@@ -73,7 +73,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, audience: client.ClientId, validateLifetime: validateLifetime));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(routeUrl), issuerSigningKeys, audience: client.ClientId, validateLifetime: validateLifetime));
                 return claimsPrincipal;
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, string audience = null, bool validateLifetime = true)
+        public async Task<ClaimsPrincipal> ValidateTokenAsync(string routeUrl, string token, string audience = null, bool validateLifetime = true)
         {
             var issuerSigningKeys = new List<JsonWebKey>
             {
@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace(), validateLifetime: validateLifetime));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(routeUrl), issuerSigningKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace(), validateLifetime: validateLifetime));
                 return claimsPrincipal;
             }
             catch (Exception ex)

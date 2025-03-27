@@ -8,16 +8,16 @@ namespace FoxIDs
 {
     public static class HttpContextExtensions
     {
-        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
+        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null, bool useConfig = false)
         {
             var routeBinding = context.GetRouteBinding();
             if (!routeBinding.UseCustomDomain)
             {
-                return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }
             else
             {
-                return UrlCombine.Combine(context.GetHost(), trackName ?? routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), trackName ?? routeBinding.TrackName);
             }
         }
 

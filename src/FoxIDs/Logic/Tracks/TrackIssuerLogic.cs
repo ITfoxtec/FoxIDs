@@ -12,7 +12,7 @@ namespace FoxIDs.Logic
         {
             if (routeUrl.IsNullOrWhiteSpace())
             {
-                var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack();
+                var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack(useConfig: true);
                 return $"{issuerWithoutSlash}/";
             }
             else

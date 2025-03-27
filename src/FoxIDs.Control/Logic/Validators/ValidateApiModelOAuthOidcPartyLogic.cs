@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -19,12 +18,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantService;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
+        private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
 
-        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantService, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantService, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
             this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
+            this.validateApiModelGenericPartyLogic = validateApiModelGenericPartyLogic;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OAuthUpParty party)
@@ -61,7 +62,26 @@ namespace FoxIDs.Logic
                 party.Client.UseIdTokenClaims = false;
             }
 
-            if(!validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements))
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.OidcUpParty.ExternalUserLoadedClaimTransforms)))
+            {
+                isValid = false;
+            }
+
+            if (!validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements))
+            {
+                isValid = false;
+            }
+
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.OidcUpParty.LinkExternalUser.ClaimTransforms)))
+            {
+                isValid = false;
+            }
+
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, party.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.OidcUpParty.HrdIPAddressesAndRanges)))
+            {
+                isValid = false;
+            }
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, party.HrdRegularExpressions, errorFieldName: nameof(Api.OidcUpParty.HrdRegularExpressions)))
             {
                 isValid = false;
             }

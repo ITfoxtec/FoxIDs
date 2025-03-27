@@ -62,26 +62,117 @@ The environment properties can be configured by clicking the top right setting i
 ## FoxIDs Control API
 Control API is a REST API and has a [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v1/swagger.json) interface description.
 
-Control API require that the client calling the API is granted appropriate [access rights](#api-access-rights) by scopes and roles.
+If you host FoxIDs your self the Swagger (OpenApi) interface document is exposed in FoxIDs Control on `.../api/swagger/v1/swagger.json`.  
 
-This shows the Control API configuration in a tenants master environment with a default set of scopes that grants access to tenants data.
+> FoxIDs Cloud Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
+
+The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[environment_name]/...`. 
+To call your API you replace the `[tenant_name]` element with your tenant name and the `[environment_name]` element with the environment name of the environment you want to call.
+
+If you e.g. want to read a OpenID Connect application registration on FoxIDs Cloud with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
+
+You can either call the Control API as a system/demon with a OAuth 2.0 client or in the context of a user via a OpenID Connect client. 
+
+In the following we will create a OAuth 2.0 client and grant the client admin [access rights](#api-access-rights) by scopes and roles.
+
+Create a OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+
+1. Select the **master** environment (in the header)
+2. Select the **Applications** tab
+3. Click **New Application**
+4. Click **Backend Application**
+    a. Add a name e.g., **My API Client**
+    b. Click **Register**
+    c. Remember the **Client ID** and **Client secret**.
+    d. Click **Close**
+5. Click on your client registration in the list to open it
+6. In the **Resource and scopes** section - *This will granted the client access to your tenant*
+    a. Click **Add Resource and scope** and add the resource `foxids_control_api`
+    b. Then click **Add Scope** and add the scope `foxids:tenant` 
+7. Select **Show advanced**
+8. In the **Issue claims** section - *This will granted the client the tenant administrator role*
+    a. Click **Add Claim** and add the claim `role`
+    b. Then click **Add Value** and add the claim value `foxids:tenant.admin`
+9. Click **Update**
+
+Then do a OAuth 2.0 Client Credentials Grant call to obtain an access token for the Control API.
+
+*Replace the `[tenant_name]`, `[environment_name]`, `[client_id]` and `[client_secret]`. And change the domain if you are using a custom domain or you are self-hosting.*
+
+**HTTP request sample** that performs OAuth 2.0 Client Credentials Grant and uses the application registration's token endpoint.
+
+```plaintext 
+POST https://foxids.com/[tenant_name]/[environment_name]/[client_id](*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=[client_id]
+&client_secret=[client_secret]
+&grant_type=client_credentials
+&scope=foxids_control_api%3Afoxids%3Atenant
+```
+
+Token JSON response:
+
+```plaintext
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+    "access_token":"eyJhGfjlc...nNjH3iIWvMdCM",
+    "token_type":"Bearer",
+    "expires_in":3600
+}
+```
+
+The `access_token` is for the Control API.
+
+**C# code sample** that performs OAuth 2.0 Client Credentials Grant and uses the application registration's OpenID Discovery endpoint.
+
+```C#
+// NuGet package: ITfoxtec.Identity
+using ITfoxtec.Identity.Helpers
+
+var oidcDiscoveryUrl = "https://foxids.com/[tenant_name]/[environment_name]/[client_id](*)/.well-known/openid-configuration";
+// Inject IHttpClientFactory httpClientFactory
+var oidcDiscovery = new OidcDiscoveryHandler(httpClientFactory, oidcDiscoveryUrl);
+
+// Inject IHttpClientFactory httpClientFactory
+var tokenHelper = new TokenHelper(httpClientFactory, oidcDiscovery);
+
+var clientId = "[client_id]";
+var clientSecret = "[client_secret]";
+var scope = "foxids_control_api:foxids:tenant";
+(var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialGrantAsync(clientId, clientSecret, scope);
+
+```
+
+Then call the Control API with the access token as a Authorization Bearer header. Defined in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
+
+**C# code sample** shows how to add the access token to the `HttpClient`.
+
+```C#
+// NuGet package: ITfoxtec.Identity
+using ITfoxtec.Identity
+
+// Inject IHttpClientFactory httpClientFactory
+var httpClient = httpClientFactory.CreateClient();
+// Add the access token
+httpClient.SetAuthorizationHeaderBearer(accessToken);
+
+// Call Control API using the httpClient
+// E.g. read a OpenID Connect application registration
+using var response = await client.GetAsync("https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app");
+```
+
+### API access rights
+This shows the Control API configuration in a tenants master environment with the default set of scopes that grants access to tenants data.
 
 ![Configure foxids_control_api](images/configure-foxids_control_api.png)
 
-More scopes can be added to extend the [API access rights](#api-access-rights) for the different environments. To achieve least privileges access rights for each environment.
+More scopes can be added to extend the Control API access rights in the different environments. To achieve least privileges access rights for each environment.
 
-Control API is called with an access token as described in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
-
-If you host FoxIDs your self the Swagger (OpenApi) interface document is exposed in FoxIDs Control on `.../api/swagger/v1/swagger.json`.  
-
-> FoxIDs.com Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
-
-The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[environment_name]/...`. 
-To call the API you replace the `[tenant_name]` element with your tenant name and the `[environment_name]` element with the environment name of the environment you want to call.
-
-If you e.g. want to read a OpenID Connect application registration on FoxIDs.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
-
-### API access rights
 Access to Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
 The Control API resource `foxids_control_api` is defined in each tenant's master environment and the configured set of scopes grant access the tenants data through the Control API.
 

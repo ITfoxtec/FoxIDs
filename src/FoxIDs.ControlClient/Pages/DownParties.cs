@@ -358,7 +358,7 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOidcForm.Model.Name = oidcDownPartyResult.Name;
                 newDownPartyOidcForm.Model.DisplayName = oidcDownPartyResult.DisplayName;
-                (var clientAuthority, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
+                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
                 newDownPartyOidcForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOidcDownPartyViewModel(new DownParty { Type = PartyTypes.Oidc, Name = newDownPartyOidcForm.Model.Name, DisplayName = newDownPartyOidcForm.Model.DisplayName });
                 downParties.Add(generalDownPartyViewModel);
@@ -400,11 +400,12 @@ namespace FoxIDs.Client.Pages
 
                 var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
-                    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
-
                     afterMap.Client = new OAuthDownClient
                     {
                         RequirePkce = false,
+                        DisableClientCredentialsGrant = newDownPartyModal.OAuthType == DownPartyOAuthTypes.Resource,
+                        DisableClientAsTokenExchangeActor = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,
+                        DisableTokenExchangeGrant = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,
                     };
                 });
 
@@ -414,7 +415,7 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
                 newDownPartyOAuthClientForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
-                (var clientAuthority, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
+                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
                 newDownPartyOAuthClientForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthClientForm.Model.Name, DisplayName = newDownPartyOAuthClientForm.Model.DisplayName });
                 downParties.Add(generalDownPartyViewModel);
@@ -469,7 +470,7 @@ namespace FoxIDs.Client.Pages
                 newDownPartyOAuthResourceForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
                 newDownPartyOAuthResourceForm.Model.Scopes = oauthDownParty.Resource.Scopes;
                 newDownPartyOAuthResourceForm.Model.ClientScopes = oauthDownParty.Resource.Scopes.Select(s => $"{oauthDownPartyResult.Name}:{s}").ToList();
-                (var clientAuthority, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
+                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
                 newDownPartyOAuthResourceForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthResourceForm.Model.Name, DisplayName = newDownPartyOAuthResourceForm.Model.DisplayName });
                 downParties.Add(generalDownPartyViewModel);

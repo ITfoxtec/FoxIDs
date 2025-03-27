@@ -103,7 +103,7 @@ The authentication call is foreword to the SAML 2.0 application as an IdP-Initia
 
 #### OpenID Connect application
 
-OpenID Connect does not support IdP-Initiated Login. Therefor, the IdP-Initiated Login is revived in the authentication method and forwarded to the OpenID Connect application by 
+OpenID Connect does not support IdP-Initiated Login. Therefor, the IdP-Initiated Login is verified in the authentication method and forwarded to the OpenID Connect application by 
 calling the application's redirect URL `app_redirect` which should start the login flow.  
 You need a page in the OpenID Connect application that requires the user to be authenticated and therefore starts the login flow when called.
 The OpenID Connect application can make a general login request with an `*`, FoxIDs know where to route the login request.

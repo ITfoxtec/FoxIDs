@@ -68,14 +68,14 @@ namespace FoxIDs.Logic
                         throw new NotImplementedException();
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
                         logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJson()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
-                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        await ValidateClientAuthenticationAsync(party, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.TokenExchange);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
 
@@ -133,23 +133,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected async Task ValidateClientAuthenticationAsync(TClient client, TokenRequest tokenRequest, IHeaderDictionary headers, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
+        protected async Task ValidateClientAuthenticationAsync(TParty party, TokenRequest tokenRequest, IHeaderDictionary headers, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
         {
-            if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic) 
+            if (party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic) 
             {
-                await ValidateClientSecretBasicAsync(client, tokenRequest, headers, clientAuthenticationRequired);
+                await ValidateClientSecretBasicAsync(party.Client, tokenRequest, headers, clientAuthenticationRequired);
             }
-            else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
+            else if (party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
             {
-                await ValidateClientSecretPostAsync(client, tokenRequest, headers, formDictionary, clientAuthenticationRequired);
+                await ValidateClientSecretPostAsync(party.Client, tokenRequest, headers, formDictionary, clientAuthenticationRequired);
             }
-            else if(client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
+            else if(party.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
-                await ValidateClientAssertionAsync(client, tokenRequest, formDictionary, clientAuthenticationRequired);
+                await ValidateClientAssertionAsync(party.Client, party.UsePartyIssuer, tokenRequest, formDictionary, clientAuthenticationRequired);
             }
             else
             {
-                throw new NotImplementedException($"Client authentication method '{client.ClientAuthenticationMethod}' not implemented");
+                throw new NotImplementedException($"Client authentication method '{party.Client.ClientAuthenticationMethod}' not implemented");
             }
         }
 
@@ -220,7 +220,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task ValidateClientAssertionAsync(TClient client, TokenRequest tokenRequest, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
+        private async Task ValidateClientAssertionAsync(TClient client, bool usePartyIssuer, TokenRequest tokenRequest, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
         {
             if (!clientAuthenticationRequired && !(client.ClientKeys?.Count() > 0))
             {
@@ -269,7 +269,7 @@ namespace FoxIDs.Logic
                         throw new OAuthRequestException($"Client credentials assertion issuer '{clientAssertion.Issuer}' is invalid. It should be client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
                     }
 
-                    var tokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token);
+                    var tokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(usePartyIssuer), Constants.Routes.OAuthController, Constants.Endpoints.Token);
                     var claimsPrincipal = await oauthJwtDownLogic.ValidateClientAssertionAsync(clientAssertionCredentials.ClientAssertion, client.ClientId, validClientKeys, tokenEndpoint);
 
                     if (!client.ClientId.Equals(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject)))
@@ -340,12 +340,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected virtual Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
+        protected virtual Task<IActionResult> AuthorizationCodeGrantAsync(TParty party, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             throw new NotImplementedException();
         }
 
-        protected virtual Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
+        protected virtual Task<IActionResult> RefreshTokenGrantAsync(TParty party, TokenRequest tokenRequest)
         {
             throw new NotImplementedException();
         }
@@ -376,7 +376,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
-                tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, claims, scopes, algorithm);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);

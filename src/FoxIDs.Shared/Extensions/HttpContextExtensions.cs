@@ -1,35 +1,12 @@
-﻿using FoxIDs.Models.Config;
-using ITfoxtec.Identity;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 
 namespace FoxIDs
 {
     public static class HttpContextExtensions
     {
-        public static string GetHost(this HttpContext context, bool addTrailingSlash = true, bool useConfig = false)
+        public static string GetHost(this HttpContext context, bool addTrailingSlash = true)
         {
-            if (useConfig)
-            {
-                var routeBinding = context.GetRouteBinding();
-                if (routeBinding != null && !routeBinding.UseCustomDomain)
-                {
-                    var settings = context.RequestServices.GetService<Settings>();
-                    if (settings != null)
-                    {
-                        if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
-                        {
-                            return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
-                        }
-                        if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
-                        {
-                            return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
-                        }
-                    }
-                }
-            }
-
             return AddSlash($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/", addTrailingSlash);
         }
 

@@ -45,5 +45,9 @@ namespace FoxIDs.Models.Sequences
         [MaxLength(IdentityConstants.MessageLength.CodeChallengeMethodMax)]
         [JsonProperty(PropertyName = "cm")]
         public string CodeChallengeMethod { get; set; }
+
+        [MaxLength(Constants.Models.OAuthDownParty.RouteUrlLength)]
+        [JsonProperty(PropertyName = "rou")]
+        public string RouteUrl { get; set; }
     }
 }

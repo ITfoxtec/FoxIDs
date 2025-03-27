@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(transformedClaims);
 
                 var scopes = tokenExchangeRequest.Scope.ToSpaceList();
-                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, transformedClaims, scopes, algorithm);
+                tokenExchangeResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, transformedClaims, scopes, algorithm);
 
                 logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJson()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);
@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
 
         private async Task<(List<Claim> claims, bool sameTrack)> ValidateSubjectTokenAsync(TParty party, string subjectToken, string subjectTokenType)
         {
-            var trackIssuer = trackIssuerLogic.GetIssuer();
+            var trackIssuer = trackIssuerLogic.GetIssuer(party.UsePartyIssuer ? RouteBinding.RouteUrl : null);
             (string subjectTokenIssuer, IEnumerable<string> subjectTokenAudiences) = ReadSubjectTokenIssuerAndAudiences(subjectToken, subjectTokenType);
 
             var claims = await ValidateSubjectTokenByUpPartyAsync(party, trackIssuer, subjectToken, subjectTokenType, subjectTokenIssuer, subjectTokenAudiences);
@@ -202,7 +202,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "AppReg, OAuth validate same environment token exchange subject token.");
 
-            var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(subjectToken, audience: party.Name);
+            var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, subjectToken, audience: party.Name);
             if (claimsPrincipal == null)
             {
                 throw new OAuthRequestException($"Subject token not accepted in the same environment, perhaps due to incorrect audience. Client id (required audience) '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };

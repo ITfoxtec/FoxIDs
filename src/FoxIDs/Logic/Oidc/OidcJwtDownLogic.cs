@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
-        public async Task<string> CreateIdTokenAsync(TClient client, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string nonce, IEnumerable<string> responseTypes, string code, string accessToken, string algorithm)
+        public async Task<string> CreateIdTokenAsync(TClient client, string routeUrl, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string nonce, IEnumerable<string> responseTypes, string code, string accessToken, string algorithm)
         {
             if (!(client is OidcDownClient))
             {
@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
 
             var adjustedClaims = claimsOAuthDownLogic.AdjustClaims(idTokenClaims);
             logger.ScopeTrace(() => $"AppReg, JWT ID token claims '{adjustedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, adjustedClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
+            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(routeUrl), client.ClientId, adjustedClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Logic
 {
@@ -7,10 +8,18 @@ namespace FoxIDs.Logic
         public TrackIssuerLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
 
-        public string GetIssuer()
+        public string GetIssuer(string routeUrl = null)
         {
-            var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack(useConfig: true);
-            return $"{issuerWithoutSlash}/";
+            if (routeUrl.IsNullOrWhiteSpace())
+            {
+                var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack();
+                return $"{issuerWithoutSlash}/";
+            }
+            else
+            {
+                var issuerWithoutSlash = HttpContext.GetHostWithRoute(routeUrl);
+                return $"{issuerWithoutSlash}";
+            }
         }
     }
 }

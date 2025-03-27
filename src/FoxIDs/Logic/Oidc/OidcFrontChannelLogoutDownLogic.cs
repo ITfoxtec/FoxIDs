@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, OIDC Front Channel logout request.");
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
-                Issuer = trackIssuerLogic.GetIssuer(),
+                Issuer = sequenceData.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Issuer) ?? trackIssuerLogic.GetIssuer(),
                 SessionId = sequenceData.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId)
             };
             var nameValueCollection = frontChannelLogoutRequest.ToDictionary();

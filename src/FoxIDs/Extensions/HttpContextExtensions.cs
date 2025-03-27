@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -9,16 +8,42 @@ namespace FoxIDs
 {
     public static class HttpContextExtensions
     {
-        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null, bool useConfig = false)
+        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
         {
             var routeBinding = context.GetRouteBinding();
             if (!routeBinding.UseCustomDomain)
             {
-                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }
             else
             {
-                return UrlCombine.Combine(context.GetHost(useConfig: useConfig), trackName ?? routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(), trackName ?? routeBinding.TrackName);
+            }
+        }
+
+        public static string GetHostWithRoute(this HttpContext context, string routeUrl)
+        {
+            var routeBinding = context.GetRouteBinding();
+            if (!routeBinding.UseCustomDomain)
+            {
+                return UrlCombine.Combine(context.GetHost(), routeUrl);
+            }
+            else
+            {
+                return UrlCombine.Combine(context.GetHost(), routeUrl);
+            }
+        }
+
+        public static string GetHostWithRouteOrBinding(this HttpContext context, bool usePartyIssuer)
+        {
+            var routeBinding = context.GetRouteBinding();
+            if (usePartyIssuer)
+            {
+                return context.GetHostWithRoute(routeBinding.RouteUrl);
+            }
+            else
+            {
+                return UrlCombine.Combine(context.GetHostWithTenantAndTrack(), routeBinding.PartyNameAndBinding);
             }
         }
 

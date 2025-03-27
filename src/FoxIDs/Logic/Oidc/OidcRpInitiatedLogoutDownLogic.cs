@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SetCultureAsync(rpInitiatedLogoutRequest.UiLocales.ToSpaceList());
             }
 
-            (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, rpInitiatedLogoutRequest.IdTokenHint);
+            (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party, rpInitiatedLogoutRequest.IdTokenHint);
             if (!validIdToken)
             {
                 if (party.Client.RequireLogoutIdTokenHint)
@@ -190,11 +190,11 @@ namespace FoxIDs.Logic
             };
         }
 
-        private async Task<(bool, string, IEnumerable<Claim>)> ValidateIdTokenHintAsync(TClient client, string idToken)
+        private async Task<(bool, string, IEnumerable<Claim>)> ValidateIdTokenHintAsync(TParty party, string idToken)
         {
             if (!idToken.IsNullOrEmpty())
             {
-                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(client, idToken, validateLifetime: false);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(party.Client, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, idToken, validateLifetime: false);
                 if (claimsPrincipal != null)
                 {
                     return (true, claimsPrincipal.FindFirstValue(JwtClaimTypes.SessionId), claimsPrincipal.Claims);

@@ -36,7 +36,7 @@ FoxIDs is former known as ITfoxtec.
 
 ## Is matching issuer and authority support?
 The [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html) standard specifies:  
-*The issuer value returned MUST be identical to the Issuer URL that was used as the prefix to /.well-known/openid-configuration to retrieve the configuration information.*
+*The issuer value returned MUST be identical to the Issuer URL that was used as the prefix to `/.well-known/openid-configuration` to retrieve the configuration information.*
 
 However, this part of the specification is known to be problematic, forcing the OpenID Provider to provide separate issuers for clients and resources to enable specific OIDC Discovery for clients and resources.  
 By default, FoxIDs therefore provide one issuer per environment.

@@ -62,6 +62,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "allow_cors_origins")]
         public List<string> AllowCorsOrigins { get; set; }
 
+        [JsonProperty(PropertyName = "use_party_issuer")]
+        public bool UsePartyIssuer { get; set; }
+
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

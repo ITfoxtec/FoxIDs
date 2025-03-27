@@ -63,16 +63,19 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
+        [Display(Name = "Use matching issuer and authority with application specific issuer")]
+        public bool UsePartyIssuer { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
             if (Client == null && Resource == null)
             {
-                results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
+                results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", [nameof(Client), nameof(Resource)]));
             }
 
             if (AllowUpPartyNames?.Count() > 0 && AllowUpParties?.Count() > 0)

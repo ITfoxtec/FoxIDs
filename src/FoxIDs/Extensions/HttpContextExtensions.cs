@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -19,6 +18,32 @@ namespace FoxIDs
             else
             {
                 return UrlCombine.Combine(context.GetHost(useConfig: useConfig), trackName ?? routeBinding.TrackName);
+            }
+        }
+
+        public static string GetHostWithRoute(this HttpContext context, string routeUrl)
+        {
+            var routeBinding = context.GetRouteBinding();
+            if (!routeBinding.UseCustomDomain)
+            {
+                return UrlCombine.Combine(context.GetHost(), routeUrl);
+            }
+            else
+            {
+                return UrlCombine.Combine(context.GetHost(), routeUrl);
+            }
+        }
+
+        public static string GetHostWithRouteOrBinding(this HttpContext context, bool usePartyIssuer)
+        {
+            var routeBinding = context.GetRouteBinding();
+            if (usePartyIssuer)
+            {
+                return context.GetHostWithRoute(routeBinding.RouteUrl);
+            }
+            else
+            {
+                return UrlCombine.Combine(context.GetHostWithTenantAndTrack(), routeBinding.PartyNameAndBinding);
             }
         }
 

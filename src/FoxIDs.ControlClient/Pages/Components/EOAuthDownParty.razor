@@ -54,6 +54,16 @@
                 <option value="@PartyBindingPatterns.Dot">Dot pattern .../application.auth-method./...</option>
             </FInputSelect>
 
+            @if (oauthDownParty.Form.Model.UsePartyIssuer)
+            {
+                <div class="info-text">
+                    By using an application specific issuer, the issuer will change if the selected authentication methods in the authority URL change.
+                    If you use APIs (resources), be aware that the issuer changes depending on the calling application (client).
+                    Token exchange is only possible with corresponding authentication methods.
+                </div>
+            }
+            <FInputToggle @bind-Value="oauthDownParty.Form.Model.UsePartyIssuer" For="@(() => oauthDownParty.Form.Model.UsePartyIssuer)" TextType="e.d" />
+
             <FInputSelect TValue="DownPartyOAuthTypes" @bind-Value="oauthDownParty.DownPartyType" For="@(() => oauthDownParty.DownPartyType)" OnValidChange="@((type) => OnOAuthDownPartyTypeChange(oauthDownParty, type))">
                 <option value="@DownPartyOAuthTypes.Client">OAuth 2.0 Client</option>
                 <option value="@DownPartyOAuthTypes.Resource">OAuth 2.0 Resource</option>

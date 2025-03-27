@@ -29,3 +29,28 @@ FoxIDs is build with open-source security components owned by FoxIDs ApS.
 - OpenID Connect in the Control Client is implemented with the [ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect](https://github.com/ITfoxtec/ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect) component.
 
 FoxIDs is former known as ITfoxtec.
+
+##### Is matching issuer and authority support?
+The [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html) standard specifies:  
+*The issuer value returned MUST be identical to the Issuer URL that was used as the prefix to /.well-known/openid-configuration to retrieve the configuration information.*
+
+However, this part of the specification is known to be problematic, forcing the OpenID Provider to provide separate issuers for clients and resources to enable specific OIDC Discovery for clients and resources.  
+By default, FoxIDs therefore provide one issuer per environment.
+
+You can enable matching issuer and authority on OpenID Connect and OAuth 2.0 applications.
+
+1. Find and open the application registration
+2. Select **Show advanced**
+3. Enable **Use matching issuer and authority with application specific issuer**
+ 
+![Configure matching issuer and authority](images/fqa-matching-issuer-authority.png)
+
+By using an application specific issuer, the issuer will change if the selected authentication methods in the authority URL change.
+If you use APIs (resources), be aware that the issuer changes depending on the calling application (client).  
+Token exchange is only possible with corresponding authentication methods.
+
+
+
+
+
+

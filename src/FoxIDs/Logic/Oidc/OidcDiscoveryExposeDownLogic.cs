@@ -33,12 +33,12 @@ namespace FoxIDs.Logic
 
             var oidcDiscovery = new OidcDiscovery
             {
-                Issuer = trackIssuerLogic.GetIssuer(),
-                AuthorizationEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Authorize),
-                TokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token),
-                UserInfoEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.UserInfo),
-                EndSessionEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.EndSession),
-                JwksUri = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
+                Issuer = trackIssuerLogic.GetIssuer(party.UsePartyIssuer ? RouteBinding.RouteUrl : null),
+                AuthorizationEndpoint = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(party.UsePartyIssuer), Constants.Routes.OAuthController, Constants.Endpoints.Authorize),
+                TokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(party.UsePartyIssuer), Constants.Routes.OAuthController, Constants.Endpoints.Token),
+                UserInfoEndpoint = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(party.UsePartyIssuer), Constants.Routes.OAuthController, Constants.Endpoints.UserInfo),
+                EndSessionEndpoint = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(party.UsePartyIssuer), Constants.Routes.OAuthController, Constants.Endpoints.EndSession),
+                JwksUri = UrlCombine.Combine(HttpContext.GetHostWithRouteOrBinding(party.UsePartyIssuer), IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
                 FrontchannelLogoutSupported = true,
                 FrontchannelLogoutSessionSupported = true,
                 TokenEndpointAuthMethodsSupported = [IdentityConstants.TokenEndpointAuthMethods.ClientSecretPost, IdentityConstants.TokenEndpointAuthMethods.ClientSecretBasic, IdentityConstants.TokenEndpointAuthMethods.PrivateKeyJwt],

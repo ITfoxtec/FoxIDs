@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var claims = await GetAccessTokenClaims();
+                var claims = await GetAccessTokenClaims(party);
 
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.UserInfo);
 
@@ -79,14 +79,14 @@ namespace FoxIDs.Logic
             return claimsResult;
         }
 
-        private async Task<IEnumerable<Claim>> GetAccessTokenClaims()
+        private async Task<IEnumerable<Claim>> GetAccessTokenClaims(TParty party)
         {
             try
             {
                 var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
                 logger.ScopeTrace(() => $"Access token '{accessToken}'.");
 
-                var claimsPrincipal = await oidcJwtDownLogic.ValidateTokenAsync(accessToken);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, accessToken);
                 if (claimsPrincipal == null)
                 {
                     throw new Exception("Access token not valid.");

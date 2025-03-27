@@ -62,6 +62,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Allow CORS origins")]
         public List<string> AllowCorsOrigins { get; set; }
 
+        [Display(Name = "Use matching issuer and authority with application specific issuer")]
+        public bool UsePartyIssuer { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

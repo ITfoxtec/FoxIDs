@@ -110,7 +110,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
                 ShowResourceId = track.ShowResourceId,
-                PlanLogLifetime = plan?.LogLifetime,
+                PlanLogLifetime = plan?.LogLifetime
             };
 
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);

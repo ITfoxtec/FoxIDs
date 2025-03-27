@@ -87,6 +87,7 @@ namespace FoxIDs.Logic
                     Nonce = authenticationRequest.Nonce,
                     CodeChallenge = codeChallengeSecret?.CodeChallenge,
                     CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
+                    RouteUrl = party.UsePartyIssuer ? RouteBinding.RouteUrl : null
                 });
 
                 (var toUpParties, _) = await serviceProvider.GetService<SessionUpPartyLogic>().GetSessionOrRouteBindingUpParty(RouteBinding.ToUpParties);
@@ -141,7 +142,7 @@ namespace FoxIDs.Logic
 
             if (!authenticationRequest.IdTokenHint.IsNullOrEmpty())
             {
-                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(party.Client as TClient, authenticationRequest.IdTokenHint, validateLifetime: false);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(party.Client as TClient, party.UsePartyIssuer ? RouteBinding.RouteUrl : null, authenticationRequest.IdTokenHint, validateLifetime: false);
                 if (claimsPrincipal == null)
                 {
                     throw new OAuthRequestException("Invalid ID token hint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
@@ -370,11 +371,11 @@ namespace FoxIDs.Logic
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
                 {
                     authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
-                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
+                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
                 }
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
                 {
-                    authenticationResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
+                    authenticationResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client as TClient, sequenceData.RouteUrl, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
                 }
 
                 logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);

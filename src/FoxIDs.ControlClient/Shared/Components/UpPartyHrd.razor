@@ -1,19 +1,58 @@
-﻿<FInputTextList @bind-ValueList="Model.HrdIPAddressesAndRanges" For="@(() => Model.HrdIPAddressesAndRanges)" DynamicFirstRow="true" />
-<FInputToggle @bind-Value="Model.HrdShowButtonWithIPAddressAndRange" For="@(() => Model.HrdShowButtonWithIPAddressAndRange)" TextType="y.n" />
+﻿<FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
+<FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
+
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body">
+                <div class="info-text">
+                    Select the authentication method based on the client device's / PCs IP address.
+                </div>
+                <FInputTextList @bind-ValueList="Model.HrdIPAddressesAndRanges" For="@(() => Model.HrdIPAddressesAndRanges)" DynamicFirstRow="true" />
+                <FInputToggle @bind-Value="Model.HrdShowButtonWithIPAddressAndRange" For="@(() => Model.HrdShowButtonWithIPAddressAndRange)" TextType="y.n" />
+            </div>
+        </div>
+        <label class="label-control">HRD based on client IP address</label>
+    </div>
+</div>
+
 @if (!HideDomains)
 {
-    <FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
-    <FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />
+    <div class="pt-2">
+        <div class="active-group active">
+            <div class="card">
+                <div class="card-body">
+                    <div class="info-text">
+                        Select the authentication method based on the users email domain.
+                    </div>
+                    <FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
+                    <FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />
+                </div>
+            </div>
+            <label class="label-control">HRD based on domain</label>
+        </div>
+    </div>
 }
 else
 {
     Model.HrdDomains = null;
     Model.HrdShowButtonWithDomain = false;
 }
-<FInputTextList @bind-ValueList="Model.HrdRegularExpressions" For="@(() => Model.HrdRegularExpressions)" DynamicFirstRow="true" />
-<FInputToggle @bind-Value="Model.HrdShowButtonWithRegularExpression" For="@(() => Model.HrdShowButtonWithRegularExpression)" TextType="y.n" />
-<FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
-<FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
+
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body">
+                <div class="info-text">
+                    Select the authentication method based on regular expression match of the users email, phone and username.
+                </div>
+                <FInputTextList @bind-ValueList="Model.HrdRegularExpressions" For="@(() => Model.HrdRegularExpressions)" DynamicFirstRow="true" />
+                <FInputToggle @bind-Value="Model.HrdShowButtonWithRegularExpression" For="@(() => Model.HrdShowButtonWithRegularExpression)" TextType="y.n" />
+            </div>
+        </div>
+        <label class="label-control">HRD based on regular expressions</label>
+    </div>
+</div>
 
 @code {
     [Parameter]

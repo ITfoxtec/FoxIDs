@@ -23,11 +23,23 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "t")]
         public PartyTypes Type { get; set; }
 
+        [JsonProperty(PropertyName = "hi")]
+        public List<string> HrdIPAddressesAndRanges { get; set; }
+
+        [JsonProperty(PropertyName = "his")]
+        public bool HrdShowButtonWithIPAddressAndRange { get; set; }
+
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 
         [JsonProperty(PropertyName = "hs")]
         public bool HrdShowButtonWithDomain { get; set; }
+
+        [JsonProperty(PropertyName = "hr")]
+        public List<string> HrdRegularExpressions { get; set; }
+
+        [JsonProperty(PropertyName = "hrs")]
+        public bool HrdShowButtonWithRegularExpression { get; set; }
 
         [JsonProperty(PropertyName = "hn")]
         public string HrdDisplayName { get; set; }

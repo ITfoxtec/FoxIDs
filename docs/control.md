@@ -81,7 +81,7 @@ Create a OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-contr
 2. Select the **Applications** tab
 3. Click **New Application**
 4. Click **Backend Application**
-    a. Add a name e.g., **My API Client**
+    a. Add a **Name** e.g., `My API Client`
     b. Click **Register**
     c. Remember the **Client ID** and **Client secret**.
     d. Click **Close**

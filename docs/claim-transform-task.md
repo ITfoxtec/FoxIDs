@@ -100,7 +100,7 @@ The API has a base URL and the functionality is divided into folders. Currently,
 
 If the base URL for the API is `https://somewhere.org/myclaimsstore` the URL for the `claims` folder will be `https://somewhere.org/myclaimsstore/claims`.
 
-> FoxIDs cloud calls your API from the IP address `57.128.60.142`.  
+> FoxIDs Cloud calls your API from the IP address `57.128.60.142`.  
   *The outgoing IP address can be changed and more can be added over time.*
 
 #### Request

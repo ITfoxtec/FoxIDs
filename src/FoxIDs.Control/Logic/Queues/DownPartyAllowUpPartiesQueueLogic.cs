@@ -157,11 +157,9 @@ namespace FoxIDs.Logic.Queues
                 SpIssuer = newUpParty.SpIssuer,
                 HrdDisplayName = newUpParty.HrdDisplayName,
                 HrdIPAddressesAndRanges = newUpParty.HrdIPAddressesAndRanges,
-                HrdShowButtonWithIPAddressAndRange = newUpParty.HrdShowButtonWithIPAddressAndRange,
                 HrdDomains = newUpParty.HrdDomains,
-                HrdShowButtonWithDomain = newUpParty.HrdShowButtonWithDomain,
                 HrdRegularExpressions = newUpParty.HrdRegularExpressions,
-                HrdShowButtonWithRegularExpression = newUpParty.HrdShowButtonWithRegularExpression,
+                HrdAlwaysShowButton = newUpParty.HrdAlwaysShowButton,
                 HrdLogoUrl = newUpParty.HrdLogoUrl,
                 DisableUserAuthenticationTrust = newUpParty.DisableUserAuthenticationTrust,
                 DisableTokenExchangeTrust = newUpParty.DisableTokenExchangeTrust,
@@ -306,11 +304,9 @@ namespace FoxIDs.Logic.Queues
                         upParty.Issuers = message.Issuers;
                         upParty.SpIssuer = message.SpIssuer;
                         upParty.HrdIPAddressesAndRanges = message.HrdIPAddressesAndRanges;
-                        upParty.HrdShowButtonWithIPAddressAndRange = message.HrdShowButtonWithIPAddressAndRange;
                         upParty.HrdDomains = message.HrdDomains;
-                        upParty.HrdShowButtonWithDomain = message.HrdShowButtonWithDomain;
                         upParty.HrdRegularExpressions = message.HrdRegularExpressions;
-                        upParty.HrdShowButtonWithRegularExpression = message.HrdShowButtonWithRegularExpression;
+                        upParty.HrdAlwaysShowButton = message.HrdAlwaysShowButton;
                         upParty.HrdDisplayName = message.HrdDisplayName;
                         upParty.HrdLogoUrl = message.HrdLogoUrl;
                         upParty.DisableUserAuthenticationTrust = message.DisableUserAuthenticationTrust;

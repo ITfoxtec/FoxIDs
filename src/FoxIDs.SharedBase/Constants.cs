@@ -749,7 +749,7 @@ namespace FoxIDs
                 public const int HrdIPAddressAndRangeMax = 10;
                 public const int HrdIPAddressAndRangeLength = 100;
                 public const int HrdIPAddressAndRangeTotalMax = 500;
-                public const string HrdIPAddressAndRangeRegExPattern = @"^[a-f0-9\.:\-/%]*$";
+                public const string HrdIPAddressAndRangeRegExPattern = @"^[a-f0-9\.:\- /%]*$";
                 public const int HrdDomainMin = 0;
                 public const int HrdDomainMax = 200;
                 public const int HrdDomainLength = 50;

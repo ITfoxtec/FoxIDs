@@ -14,6 +14,8 @@ using FoxIDs.Models.Sequences;
 using System.Linq;
 using FoxIDs.Logic.Tracks;
 using System.Text.RegularExpressions;
+using NetTools;
+using System.Net;
 
 namespace FoxIDs.Logic
 {
@@ -120,7 +122,37 @@ namespace FoxIDs.Logic
             // Handle up-parties with HRD "*" selection last.
             var toUpPartiesDomainOrdered = toUpParties.OrderBy(u => u.HrdDomains?.Where(h => h == "*").Any() == true);
 
-            // 1) Select specified authentication method by domain
+            // 1) Select specified authentication method IP address
+            if (HttpContext.Connection?.RemoteIpAddress != null)
+            {
+                foreach (var up in toUpParties)
+                {
+                    if (up.HrdIPAddressesAndRanges != null && up.HrdIPAddressesAndRanges.Any())
+                    {
+                        foreach (var ipar in up.HrdIPAddressesAndRanges)
+                        {
+                            if (ipar.Contains('-') || ipar.Contains('/'))
+                            {
+                                if(IPAddressRange.Parse(ipar).Contains(HttpContext.Connection.RemoteIpAddress))
+                                {
+                                    // A profile is not possible.
+                                    return new UpPartyLink { Name = up.Name, Type = up.Type };
+                                }
+                            }
+                            else
+                            {
+                                if (IPAddress.Parse(ipar) == HttpContext.Connection.RemoteIpAddress)
+                                {
+                                    // A profile is not possible.
+                                    return new UpPartyLink { Name = up.Name, Type = up.Type };
+                                }
+                            }
+                        }
+                    }
+                } 
+            }
+
+            // 2) Select specified authentication method by domain
             if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
                 var emailSplit = userIdentifier.Split('@');
@@ -136,7 +168,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            // 2) Select specified authentication method by regex
+            // 3) Select specified authentication method by regex
             if (!userIdentifier.IsNullOrWhiteSpace())
             {
                 foreach (var up in toUpParties)
@@ -156,7 +188,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            // 3) Select authentication method by HRD
+            // 4) Select authentication method by HRD
             var hrdUpParties = await hrdLogic.GetHrdSelectionAsync();
             if (hrdUpParties?.Count() > 0)
             {
@@ -167,7 +199,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            // 4) Select authentication method by star
+            // 5) Select authentication method by star
             if (!userIdentifier.IsNullOrWhiteSpace() && userIdentifier.Contains('@'))
             {
                 var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Any() == true).FirstOrDefault();
@@ -192,11 +224,9 @@ namespace FoxIDs.Logic
                     ProfileDisplayName = up.ProfileDisplayName,
                     Type = up.Type,
                     HrdIPAddressesAndRanges = up.HrdIPAddressesAndRanges,
-                    HrdShowButtonWithIPAddressAndRange = up.HrdShowButtonWithIPAddressAndRange,
                     HrdDomains = up.HrdDomains,
-                    HrdShowButtonWithDomain = up.HrdShowButtonWithDomain,
                     HrdRegularExpressions = up.HrdRegularExpressions,
-                    HrdShowButtonWithRegularExpression = up.HrdShowButtonWithRegularExpression,
+                    HrdAlwaysShowButton = up.HrdAlwaysShowButton,
                     HrdDisplayName = up.HrdDisplayName,
                     HrdLogoUrl = up.HrdLogoUrl
                 };

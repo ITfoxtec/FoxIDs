@@ -2,7 +2,7 @@
 You can [create a tenant](https://www.foxids.com/action/createtenant) on FoxIDs Cloud or you can [deploy](deployment.md) FoxIDs anywhere yourself.
 
 > **FoxIDs Cloud**  
-> FoxIDs.com is hosted in Europe as an Identity Services (IDS).
+> FoxIDs.com is hosted in Europe as an Identity Service (IDS).
 >   
 > [Create a new tenant](https://www.foxids.com/action/createtenant) or [log in](https://www.foxids.com/action/createtenant) to your tenant. 
 > 

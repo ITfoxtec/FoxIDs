@@ -1,4 +1,4 @@
-**FoxIDs is a Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
+**FoxIDs is a Identity Service (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
 > Hosted in Europe / Ownership and data in Europe.
 
@@ -20,7 +20,7 @@ FoxIDs consist of two services:
 
 Hosting:
 
-- FoxIDs SaaS is available at [FoxIDs Cloud](https://www.foxids.com/action/createtenant) as an Identity Services (IDS).  
+- FoxIDs SaaS is available at [FoxIDs Cloud](https://www.foxids.com/action/createtenant) as an Identity Service (IDS).  
 - You can [deploy](deployment.md) FoxIDs anywhere using Docker or Kubernetes (K8s).
 
 > For more information please see the [get started](get-started.md) guide.

@@ -91,4 +91,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_ORG }}/foxids-control
           readme-filepath: ./Docker/README-FoxIDs-Control-image.md
-          short-description: "FoxIDs Control is the admin site for the Identity Services FoxIDs."
+          short-description: "FoxIDs Control is the admin site for the Identity Service FoxIDs."

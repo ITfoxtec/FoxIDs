@@ -270,7 +270,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            throw new OAuthRequestException($"Unsupported response type '{authenticationRequest.ResponseType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
+            throw new OAuthRequestException($"Response type '{authenticationRequest.ResponseType}' not configured.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, IdPInitiatedDownPartyLink idPInitiatedLink = null)

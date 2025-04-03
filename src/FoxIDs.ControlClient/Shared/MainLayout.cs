@@ -317,7 +317,7 @@ namespace FoxIDs.Client.Shared
                     return;
                 }
 
-                if (await SelectTrackAsync("test") || await SelectTrackAsync("dev") || await SelectTrackAsync("-"))
+                if (await SelectNotTrackAsync("-") || await SelectTrackAsync("-"))
                 {
                     return;
                 }
@@ -377,6 +377,17 @@ namespace FoxIDs.Client.Shared
         private async Task<bool> SelectTrackAsync(string trackName)
         {
             var track = selectTrackTasks.Where(t => t.Name == trackName).FirstOrDefault();
+            if (track != null)
+            {
+                await SelectTrackAsync(track);
+                return true;
+            }
+            return false;
+        }
+
+        private async Task<bool> SelectNotTrackAsync(string trackName)
+        {
+            var track = selectTrackTasks.Where(t => t.Name != trackName && t.Name != Constants.Routes.MasterTrackName).FirstOrDefault();
             if (track != null)
             {
                 await SelectTrackAsync(track);

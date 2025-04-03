@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>1.16.8</Version>
+		<Version>1.16.9</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
-		<Company>ITfoxtec</Company>
+		<Company>FoxIDs</Company>
 		<Copyright>Copyright © 2025</Copyright>		
 	</PropertyGroup>
 

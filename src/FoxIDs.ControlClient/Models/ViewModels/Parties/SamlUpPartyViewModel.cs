@@ -258,8 +258,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
-        [Display(Name = "IdP-Initiated login")]
+        [Display(Name = "IdP-Initiated Login")]
         public bool EnableIdPInitiated { get; set; }
+
+        [Range(-1, Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMax)]
+        [Display(Name = "IdP-Initiated Login grant lifetime for OpenID Connect applications (active if greater than 0)")]
+        public int? IdPInitiatedGrantLifetime { get; set; }
 
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();

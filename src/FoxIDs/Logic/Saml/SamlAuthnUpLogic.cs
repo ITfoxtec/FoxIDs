@@ -93,6 +93,23 @@ namespace FoxIDs.Logic
             }
 
             var party = await tenantDataRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
+            if (party.EnableIdPInitiated)
+            {
+                var sessionId = await sessionUpPartyLogic.GetSessionIdAsync(party);
+                if (!sessionId.IsNullOrEmpty())
+                {
+                    var idPInitiatedTtlGrant = await serviceProvider.GetService<SamlAuthnUpIdPInitiatedGrantLogic>().GetGrantAsync(party, sessionId);
+
+                    if (idPInitiatedTtlGrant != null && idPInitiatedTtlGrant.DownPartyId == samlUpSequenceData.DownPartyLink?.Id && idPInitiatedTtlGrant.DownPartyType == samlUpSequenceData.DownPartyLink?.Type)
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                        var claims = idPInitiatedTtlGrant.Claims.ToClaimList();
+                        logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+                        return await AuthnResponseDownAsync(samlUpSequenceData, Saml2StatusCodes.Success, claims);
+                    }
+                }
+            }
             party = await samlMetadataReadUpLogic.CheckMetadataAndUpdateUpPartyAsync(party);
 
             switch (party.AuthnBinding.RequestBinding)
@@ -427,7 +444,6 @@ namespace FoxIDs.Logic
                         }
                         idPInitiatedLink.DownPartyRedirectUrl = HttpUtility.UrlDecode(rsSplit[2].Substring("app_redirect=".Count()));
                     }
-
                     return (null,  idPInitiatedLink);
                 }
                 else
@@ -486,6 +502,10 @@ namespace FoxIDs.Logic
             if (!sessionId.IsNullOrEmpty())
             {
                 transformedJwtClaims.AddOrReplaceClaim(JwtClaimTypes.SessionId, sessionId);
+                if (idPInitiatedLink != null && idPInitiatedLink.DownPartyType == PartyTypes.Oidc && party.IdPInitiatedGrantLifetime > 0)
+                {
+                    await serviceProvider.GetService<SamlAuthnUpIdPInitiatedGrantLogic>().CreateGrantAsync(party, sessionId, transformedJwtClaims, idPInitiatedLink);
+                }
             }
 
             if (sequenceData != null)
@@ -494,7 +514,7 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{transformedJwtClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims, idPInitiatedLink: idPInitiatedLink);          
+            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims, idPInitiatedLink: idPInitiatedLink);
         }
 
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)

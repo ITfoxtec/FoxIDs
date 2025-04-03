@@ -46,7 +46,7 @@ namespace FoxIDs
             return split[split.Length - 1];
         }
 
-        public static Task<string> HashIdStringAsync(this string linkClaim) => linkClaim?.ToLower()?.Sha256HashBase64urlEncodedAsync();
+        public static Task<string> HashIdStringAsync(this string idString) => idString?.ToLower()?.Sha256HashBase64urlEncodedAsync();
 
         public static string Compress(this string text)
         {

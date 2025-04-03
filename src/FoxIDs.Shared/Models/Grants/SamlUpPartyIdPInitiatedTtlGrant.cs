@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class AuthCodeTtlGrant : DataTtlDocument
+    public class SamlUpPartyIdPInitiatedTtlGrant : DataTtlDocument
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            return $"{Constants.Models.DataType.AuthCodeTtlGrant}:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
+            return $"{Constants.Models.DataType.SamlUpPartyIdPInitiatedTtlGrant}:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
         }
 
         [Required]
@@ -28,29 +27,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 
-        [MaxLength(Constants.Models.Party.NameLength)]
-        [JsonProperty(PropertyName = "client_id")]
-        public string ClientId { get; set; }
+        [Required]
+        [MaxLength(Constants.Models.Party.IdLength)]
+        [JsonProperty(PropertyName = "down_party_id")]
+        public string DownPartyId { get; set; }
 
-        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
-        [JsonProperty(PropertyName = "redirect_uri")]
-        public string RedirectUri { get; set; }
-
-        [MaxLength(IdentityConstants.MessageLength.ScopeMax)]
-        [JsonProperty(PropertyName = "scope")]
-        public string Scope { get; set; }
-
-        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
-        [JsonProperty(PropertyName = "nonce")]
-        public string Nonce { get; set; }
-
-        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMax)]
-        [JsonProperty(PropertyName = "code_challenge")]
-        public string CodeChallenge { get; set; }
-
-        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMethodMax)]
-        [JsonProperty(PropertyName = "code_challenge_method")]
-        public string CodeChallengeMethod { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "down_party_type")]
+        public PartyTypes DownPartyType { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {

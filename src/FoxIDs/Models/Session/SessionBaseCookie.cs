@@ -1,7 +1,6 @@
 ﻿using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FoxIDs.Models.Session
 {

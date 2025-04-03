@@ -15,11 +15,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
+        private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
 
-        public ValidateApiModelSamlPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelSamlPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
+            this.validateApiModelGenericPartyLogic = validateApiModelGenericPartyLogic;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
@@ -27,7 +29,11 @@ namespace FoxIDs.Logic
             return ValidateSignatureAlgorithmAndSigningKeys(modelState, samlUpParty) && 
                 ValidateLogout(modelState, samlUpParty) &&
                 ValidateMetadataNameIdFormats(modelState, samlUpParty) &&
-                validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, samlUpParty.LinkExternalUser?.Elements);
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.ExternalUserLoadedClaimTransforms)) &&
+                validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, samlUpParty.LinkExternalUser?.Elements) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.LinkExternalUser.ClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, samlUpParty.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.SamlUpParty.HrdIPAddressesAndRanges)) && 
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, samlUpParty.HrdRegularExpressions, errorFieldName: nameof(Api.SamlUpParty.HrdRegularExpressions));
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)

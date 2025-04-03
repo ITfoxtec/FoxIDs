@@ -20,8 +20,11 @@ namespace FoxIDs.Logic
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.ExternalLoginUpParty party)
         {
-            return validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements) &&
-                   validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.LinkExternalUser.ClaimTransforms));
+            return validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.ExternalUserLoadedClaimTransforms)) && 
+                validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.LinkExternalUser.ClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, party.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.ExternalLoginUpParty.HrdIPAddressesAndRanges)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelHrdRegularExpressions(modelState, party.HrdRegularExpressions, errorFieldName: nameof(Api.ExternalLoginUpParty.HrdRegularExpressions));
         }
     }
 }

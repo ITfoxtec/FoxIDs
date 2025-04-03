@@ -103,12 +103,13 @@ The authentication call is foreword to the SAML 2.0 application as an IdP-Initia
 
 #### OpenID Connect application
 
-OpenID Connect does not support IdP-Initiated Login. Therefor, the IdP-Initiated Login is revived in the authentication method and forwarded to the OpenID Connect application by 
-calling the application's redirect URL `app_redirect` which should start the login flow.  
-You need a page in the OpenID Connect application that requires the user to be authenticated and therefore starts the login flow when called.
+OpenID Connect does not support IdP-Initiated Login. Therefor, the IdP-Initiated Login is verified in the authentication method and forwarded to the OpenID Connect application by 
+calling the application with redirect URL `app_redirect` which should start the login flow (OpenID Connect standard: Initiating Login from a Third Party).  
+You need a page in the OpenID Connect application that requires the user to be authenticated and therefore starts the login flow when called. 
+A issuer `iss` parameter is passed along in the query that you can choose to validate.  
 The OpenID Connect application can make a general login request with an `*`, FoxIDs know where to route the login request.
 
-then the OpenID Connect application calls FoxIDs, which in turn call the external IdP with an SP-Initiated Login flow. The external IdP uses the Single Sign-On (SSO) context and replies to FoxIDs, 
+Then the OpenID Connect application calls FoxIDs, which in turn call the external IdP with an SP-Initiated Login flow. The external IdP uses the Single Sign-On (SSO) context and replies to FoxIDs, 
 which translates to OpenID Connect and forewords the authentication to the OpenID Connect application.
 
 If you want to foreword the authentication to the OpenID Connect application named `my-oidc-app` with the login initiating URL `https://my-domain.com/secure-page`, 

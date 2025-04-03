@@ -6,10 +6,10 @@ Name and address for you company, organisation or system can be configured on ea
 
 The name and address is configured in the environment settings in [FoxIDs Control Client](control.md#foxids-control-client).
 
-1. Select Settings
-2. Select Environment
+1. Select **Settings**
+2. Select **Environment**
 3. Fill in the name and address
-4. Click Update
+4. Click **Update**
 
 ![Name and address](images/configure-env-name-address.png)
 
@@ -24,10 +24,10 @@ If you do not specify a login authentication method as an allowed authentication
 
 Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
-1. Add the browser title text
-2. Add the browser icon URL from an external site, supported image formats: ico, png, gif, jpeg and webp
-3. Add the CSS to the CSS field, if necessary drag the field bigger
-4. Click Update
+1. Add the **Browser Title** text
+2. Add the **Browser Icon URL** from an external site, supported image formats: ico, png, gif, jpeg and webp
+3. Add your **CSS**, if necessary drag the field bigger
+4. Click **Update**
 
 After update the title, icon and CSS is instantly active.
 

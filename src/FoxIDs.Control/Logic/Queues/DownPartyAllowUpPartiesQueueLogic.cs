@@ -86,6 +86,13 @@ namespace FoxIDs.Logic.Queues
                     update = true;
                 }
 
+                var oldHrdIPAddressesAndRanges = oldUpParty.HrdIPAddressesAndRanges != null ? string.Join(',', oldUpParty.HrdIPAddressesAndRanges) : string.Empty;
+                var newHrdIPAddressesAndRanges = newUpParty.HrdIPAddressesAndRanges != null ? string.Join(',', newUpParty.HrdIPAddressesAndRanges) : string.Empty;
+                if (oldHrdIPAddressesAndRanges != newHrdIPAddressesAndRanges)
+                {
+                    update = true;
+                }
+
                 var oldHrdDomains = oldUpParty.HrdDomains != null ? string.Join(',', oldUpParty.HrdDomains) : string.Empty;
                 var newHrdDomains = newUpParty.HrdDomains != null ? string.Join(',', newUpParty.HrdDomains) : string.Empty;
                 if (oldHrdDomains != newHrdDomains)
@@ -93,7 +100,14 @@ namespace FoxIDs.Logic.Queues
                     update = true;
                 }
 
-                if (oldUpParty.HrdShowButtonWithDomain != newUpParty.HrdShowButtonWithDomain)
+                var oldHrdRegularExpressions = oldUpParty.HrdRegularExpressions != null ? string.Join(',', oldUpParty.HrdRegularExpressions) : string.Empty;
+                var newHrdRegularExpressions = newUpParty.HrdRegularExpressions != null ? string.Join(',', newUpParty.HrdRegularExpressions) : string.Empty;
+                if (oldHrdRegularExpressions != newHrdRegularExpressions)
+                {
+                    update = true;
+                }
+
+                if (oldUpParty.HrdAlwaysShowButton != newUpParty.HrdAlwaysShowButton)
                 {
                     update = true;
                 }

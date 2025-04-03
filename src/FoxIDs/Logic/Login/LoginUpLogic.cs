@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
                             }
                             else
                             {
-                                if (IPAddress.Parse(ipar) == HttpContext.Connection.RemoteIpAddress)
+                                if (IPAddress.Parse(ipar).Equals(HttpContext.Connection.RemoteIpAddress))
                                 {
                                     // A profile is not possible.
                                     return new UpPartyLink { Name = up.Name, Type = up.Type };

@@ -13,15 +13,40 @@ A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 applic
 The login authentication method authenticates users in a two-step login UI with the username and password input on two separate pages.
 
 ## Home Realm Discovery (HRD)
-When you create a application registration it is most often the best solution to use the default star notation `(*)` to [select](index.md#selection-by-url) the authentication methods. 
+When you create a application registration it is most often the best solution to use the default star notation `(*)` to [select](index.md#selection-by-url) all the authentication methods. 
 If a application registration is configured to only be allowed to use one authentication method the user is immediately redirected to that particular authentication method. 
-If more than one authentication method is allowed the user is redirected to a login authentication method which make it possible to select an authentication method either by writing an email (looking at the domain) or by clicking a HRD button.
+If more than one authentication method is allowed the user is redirected to a login authentication method which make it possible to select an authentication method either by client IP address, email domains or regular expressions.
+The login UI is not shown if an authentication method is selected based the client IP address.
 
-It is possible to select up to 4 authentication methods by name or use the star notation `(*)`, please see more about [selection](index.md#selection-by-url).
+**Client IP address**  
+Select the authentication method based on the client device's / PCs IP address.
 
-One or more domains can be configured for each authentication method and if an HRD button should be shown to the user. An HRD button will be displayed for the authentication method if no domain or wildcard is configured.
+Select by IP address or with an IP range:
+
+- `192.168.0.0/255.255.255.0` selects from '192.168.0.0' to '192.168.0.255'
+- `192.168.10.0/24` selects from '192.168.10.0' to '192.168.10.255'
+- `192.168.0.10 - 192.168.10.20` selects from '192.168.0.10' to '192.168.10.20'
+- `192.168.10.10-20` selects from '192.168.10.10' to '192.168.10.20'
+- `fe80::/10` select e.g. 'fe80::d503:4ee:3882:c586%3'
+
+**Email domain**  
+Select the authentication method based on the users email domain.
+
+Select by domains or use `(*)` to select all domains not configured on another authentication method.
+
+**Regular expression**  
+Select the authentication method based on case-insensitive regular expression match of the users email, phone and username.
+
+Select by regular expression:
+
+- `xyz$` match emails and usernames ending with 'xyz'
+- `^+45` match phone numbers starting with phone code '+45'
+- `abd` match emails and usernames containing 'abc'
+- `^q10.*@@xyz\.com$` match emails starting with 'q10' at the domain 'xyz.com'
 
 ![Home Realm Discovery configuration](images/configure-login-hrd.png)
+
+It can be selected if the HRD button should be displayed for the authentication method even if IP address / range, HRD domain or regular expression is configured.
 
 An example of how a login screen with HRD looks like, it can be [customised](title-icon-css.md).
 ![Home Realm Discovery configuration](images/configure-login-hrd-example.png)

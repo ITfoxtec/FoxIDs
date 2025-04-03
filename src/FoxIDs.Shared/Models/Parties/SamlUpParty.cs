@@ -130,6 +130,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_idp_initiated")]
         public bool EnableIdPInitiated { get; set; }
 
+        [Range(Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMin, Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMax)]
+        [JsonProperty(PropertyName = "idp_initiated_code_lifetime")]
+        public int? IdPInitiatedGrantLifetime { get; set; }
+
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

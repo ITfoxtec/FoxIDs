@@ -15,7 +15,7 @@ The custom domain can be configured with [Control Client](control.md#foxids-cont
 Custom domains is not supported in the master tenant and master environments.
 
 ## FoxIDs Cloud
-Configuring a custom domain in your FoxIDs cloud tenant.
+Configuring a custom domain in your FoxIDs Cloud tenant.
 
 Steps:
 

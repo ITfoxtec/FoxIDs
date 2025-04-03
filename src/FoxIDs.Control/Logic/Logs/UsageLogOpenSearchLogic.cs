@@ -55,7 +55,7 @@ namespace FoxIDs.Logic
 
                         if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
                         {
-                            var hour = date.Hour + logRequest.TimeOffset;
+                            var hour = date.Hour;
                             if (hour != hourPointer)
                             {
                                 hourPointer = hour;

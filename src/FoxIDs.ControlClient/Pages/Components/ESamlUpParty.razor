@@ -369,6 +369,7 @@
                         <SamlMetadataOrganization Model="samlUpParty.Form.Model" />
                         <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
                         <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableIdPInitiated" For="@(() => samlUpParty.Form.Model.EnableIdPInitiated)" TextType="e.d" />
+                        <FInputNumberN @bind-Value="samlUpParty.Form.Model.IdPInitiatedGrantLifetime" For="@(() => samlUpParty.Form.Model.IdPInitiatedGrantLifetime)" />
                     }
                 }
             }

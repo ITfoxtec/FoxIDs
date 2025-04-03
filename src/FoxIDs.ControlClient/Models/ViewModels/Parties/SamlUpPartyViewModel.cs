@@ -219,18 +219,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD IP addresses and IP ranges")]
         public List<string> HrdIPAddressesAndRanges { get; set; }
 
-        [Display(Name = "Show HRD button with IP address / range")]
-        public bool HrdShowButtonWithIPAddressAndRange { get; set; }
-
         /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern, Constants.Models.UpParty.HrdDomainTotalMax)]
         [Display(Name = "HRD domains")]
         public List<string> HrdDomains { get; set; }
-
-        [Display(Name = "Show HRD button with domain")]
-        public bool HrdShowButtonWithDomain { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) regular expressions.
@@ -239,8 +233,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD regular expressions")]
         public List<string> HrdRegularExpressions { get; set; }
 
-        [Display(Name = "Show HRD button with regular expression")]
-        public bool HrdShowButtonWithRegularExpression { get; set; }
+        [Display(Name = "Show HRD button while using IP address / range, HRD domain or regular expression")]
+        public bool HrdAlwaysShowButton { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) display name.
@@ -264,8 +258,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
-        [Display(Name = "IdP-Initiated login")]
+        [Display(Name = "IdP-Initiated Login")]
         public bool EnableIdPInitiated { get; set; }
+
+        [Range(-1, Constants.Models.SamlParty.Up.IdPInitiatedGrantLifetimeMax)]
+        [Display(Name = "IdP-Initiated Login grant lifetime for OpenID Connect applications (active if greater than 0)")]
+        public int? IdPInitiatedGrantLifetime { get; set; }
 
         [ValidateComplexType]
         public LinkExternalUserViewModel LinkExternalUser { get; set; } = new LinkExternalUserViewModel();

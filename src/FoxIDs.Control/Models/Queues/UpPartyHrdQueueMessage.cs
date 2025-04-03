@@ -44,22 +44,16 @@ namespace FoxIDs.Models.Queues
         [JsonProperty(PropertyName = "hi")]
         public List<string> HrdIPAddressesAndRanges { get; set; }
 
-        [JsonProperty(PropertyName = "hbi")]
-        public bool HrdShowButtonWithIPAddressAndRange { get; set; }
-
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
-
-        [JsonProperty(PropertyName = "hb")]
-        public bool HrdShowButtonWithDomain { get; set; }
 
         [ListLength(Constants.Models.UpParty.HrdRegularExpressionMin, Constants.Models.UpParty.HrdRegularExpressionMax, Constants.Models.UpParty.HrdRegularExpressionLength, Constants.Models.UpParty.HrdRegularExpressionTotalMax)]
         [JsonProperty(PropertyName = "hr")]
         public List<string> HrdRegularExpressions { get; set; }
 
-        [JsonProperty(PropertyName = "hbr")]
-        public bool HrdShowButtonWithRegularExpression { get; set; }
+        [JsonProperty(PropertyName = "hb")]
+        public bool HrdAlwaysShowButton { get; set; }
 
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]

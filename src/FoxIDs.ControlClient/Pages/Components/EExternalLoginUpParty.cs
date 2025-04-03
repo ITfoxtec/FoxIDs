@@ -116,7 +116,6 @@ namespace FoxIDs.Client.Pages.Components
                 if(generalExtLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)
                 {
                     generalExtLoginUpParty.Form.Model.HrdDomains = null;
-                    generalExtLoginUpParty.Form.Model.HrdShowButtonWithDomain = false;
                 }
 
                 var extLoginUpParty = generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>

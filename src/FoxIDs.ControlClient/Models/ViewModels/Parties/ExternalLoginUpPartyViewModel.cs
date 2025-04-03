@@ -136,8 +136,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD domains")]
         public List<string> HrdDomains { get; set; }
 
-        [Display(Name = "Show HRD button with domain")]
-        public bool HrdShowButtonWithDomain { get; set; }
+        [Display(Name = "Show HRD button while using IP address / range, HRD domain or regular expression")]
+        public bool HrdAlwaysShowButton { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) regular expressions.

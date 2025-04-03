@@ -5,7 +5,7 @@ namespace FoxIDs.Models
 {
     public interface IUpParty : IParty
     {
-        [Obsolete("Use Issuers instead.")]
+        [Obsolete($"Use {nameof(Issuers)} instead.")]
         string Issuer { set; }
         List<string> Issuers { get; set; }
         string SpIssuer { get; set; }
@@ -15,8 +15,12 @@ namespace FoxIDs.Models
         bool PersistentSessionLifetimeUnlimited { get; set; }
         int PersistentSessionAbsoluteLifetime { get; set; }
         bool DisableSingleLogout { get; set; }
+        List<string> HrdIPAddressesAndRanges { get; set; }
         List<string> HrdDomains { get; set; }
-        bool HrdShowButtonWithDomain { get; set; }
+        List<string> HrdRegularExpressions { get; set; }
+        bool HrdAlwaysShowButton { get; set; }
+        [Obsolete($"Use {nameof(HrdAlwaysShowButton)} instead.")]
+        bool? HrdShowButtonWithDomain { get; set; }
         string HrdDisplayName { get; set; }
         string HrdLogoUrl { get; set; }
         bool DisableUserAuthenticationTrust { get; set; }

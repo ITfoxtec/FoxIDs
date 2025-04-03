@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
                         upPartyLink.Issuers = upParty.Issuers;
                         upPartyLink.SpIssuer = upParty.SpIssuer;
                         upPartyLink.HrdDomains = upParty.HrdDomains;
-                        upPartyLink.HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain;
+                        upPartyLink.HrdAlwaysShowButton = upParty.HrdAlwaysShowButton;
                         upPartyLink.HrdDisplayName = upParty.HrdDisplayName;
                         upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
                         upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;

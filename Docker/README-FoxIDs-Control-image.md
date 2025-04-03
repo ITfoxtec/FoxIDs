@@ -1,5 +1,5 @@
 # What is FoxIDs?
-[FoxIDs](https://www.foxids.com) is a Identity Services that easily allows you to implement Identity Management on your websites against a variety of industry standards (OAuth 2.0, OpenID Connect and SAML 2.0) 
+[FoxIDs](https://www.foxids.com) is a Identity Service that easily allows you to implement Identity Management on your websites against a variety of industry standards (OAuth 2.0, OpenID Connect and SAML 2.0) 
 and services like Microsoft, Google and Facebook, etc.
 
 FoxIDs consist of two services:

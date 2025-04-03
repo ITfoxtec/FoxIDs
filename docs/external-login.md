@@ -30,7 +30,7 @@ The API has a base URL and the functionality is divided into folders. Currently,
 
 If the base URL for the API is `https://somewhere.org/mystore` the URL for the `authentication` folder will be `https://somewhere.org/mystore/authentication`.
 
-> FoxIDs cloud calls your API from the IP address `57.128.60.142`.  
+> FoxIDs Cloud calls your API from the IP address `57.128.60.142`.  
   *The outgoing IP address can be changed and more can be added over time.*
 
 ### Request

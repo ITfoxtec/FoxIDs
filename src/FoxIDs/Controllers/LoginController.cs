@@ -282,7 +282,7 @@ namespace FoxIDs.Controllers
 
         private IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
-            var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0)))
+            var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdAlwaysShowButton || (!(up.HrdIPAddressesAndRanges?.Count() > 0) && !(up.HrdDomains?.Count() > 0) && !(up.HrdRegularExpressions?.Count() > 0))))
                 .Select(up => new IdentifierUpPartyViewModel { Name = up.Name, ProfileName = up.ProfileName, DisplayName = GetDisplayName(up), LogoUrl = up.HrdLogoUrl });
 
             foreach (var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))

@@ -149,6 +149,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 model.Claims = new List<string> { "*" };
                 model.DisableLoginHint = true;
+                model.IdPInitiatedGrantLifetime = 30;
             }
         }
 
@@ -318,6 +319,11 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();
                     afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
+
+                    if (!afterMap.EnableIdPInitiated || !(afterMap.IdPInitiatedGrantLifetime > 0))
+                    {
+                        afterMap.IdPInitiatedGrantLifetime = null;
+                    }
 
                     if (generalSamlUpParty.Form.Model.Profiles?.Count() > 0)
                     {

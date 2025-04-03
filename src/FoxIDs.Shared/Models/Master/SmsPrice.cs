@@ -6,7 +6,7 @@ namespace FoxIDs.Models
 {
     public class SmsPrice
     {
-        //[Required]
+        [Required]
         [MaxLength(Constants.Models.SmsPrices.CountryNameLength)]
         [JsonProperty(PropertyName = "country_name")]
         public string CountryName { get; set; }

@@ -187,10 +187,6 @@
                             <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
                                 @tenant.Name
                             </button>
-                            @if (tenant.Name != Constants.Routes.MasterTenantName)
-                            {
-                                <a class="btn btn-sm btn-outline-dark" href="@tenant.LoginUri" target="_blank">Open tenant</a>
-                            }
                         }
                     </li>
                 }

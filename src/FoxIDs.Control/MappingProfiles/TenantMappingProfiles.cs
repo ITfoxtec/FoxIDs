@@ -201,9 +201,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<UpPartyProfile, Api.UpPartyProfile>();
 
             CreateMap<LoginUpParty, Api.LoginUpParty>()
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.MapFrom(s => s.HrdAlwaysShowButton))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.HrdAlwaysShowButton, opt => opt.MapFrom(s => s.HrdShowButtonWithDomain.HasValue && s.HrdShowButtonWithDomain.Value ? s.HrdShowButtonWithDomain.Value : s.HrdAlwaysShowButton))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.Ignore());
 
             CreateMap<CreateUser, Api.CreateUser>()
                 .ReverseMap();
@@ -220,9 +223,12 @@ namespace FoxIDs.MappingProfiles
                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
 
             CreateMap<OidcUpParty, Api.OidcUpParty>()
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.MapFrom(s => s.HrdAlwaysShowButton))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.HrdAlwaysShowButton, opt => opt.MapFrom(s => s.HrdShowButtonWithDomain.HasValue && s.HrdShowButtonWithDomain.Value ? s.HrdShowButtonWithDomain.Value : s.HrdAlwaysShowButton))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.Ignore());
             CreateMap<OidcUpClient, Api.OidcUpClient>()
                 .ForMember(d => d.ClientSecret, opt => opt.MapFrom(s => s.ClientSecret != null && s.ClientSecret.Length > 20 ? s.ClientSecret.Substring(0, 3) : s.ClientSecret))
                .ReverseMap()
@@ -239,6 +245,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AuthnResponseBinding, opt => opt.MapFrom(s => s.AuthnBinding.ResponseBinding))
                 .ForMember(d => d.LogoutRequestBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.RequestBinding : null))
                 .ForMember(d => d.LogoutResponseBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.ResponseBinding : null))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.MapFrom(s => s.HrdAlwaysShowButton))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
@@ -257,24 +264,32 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AuthnContextClassReferences, opt => opt.MapFrom(s => s.AuthnContextClassReferences.OrderBy(c => c)))
                 .ForMember(d => d.MetadataNameIdFormats, opt => opt.MapFrom(s => s.MetadataNameIdFormats.OrderBy(f => f)))
                 .ForMember(d => d.MetadataAttributeConsumingServices, opt => opt.MapFrom(s => s.MetadataAttributeConsumingServices.OrderBy(a => a.ServiceName.Name)))
-                .ForMember(d => d.MetadataContactPersons, opt => opt.MapFrom(s => s.MetadataContactPersons.OrderBy(c => c.ContactType)));
+                .ForMember(d => d.MetadataContactPersons, opt => opt.MapFrom(s => s.MetadataContactPersons.OrderBy(c => c.ContactType)))
+                .ForMember(d => d.HrdAlwaysShowButton, opt => opt.MapFrom(s => s.HrdShowButtonWithDomain.HasValue && s.HrdShowButtonWithDomain.Value ? s.HrdShowButtonWithDomain.Value : s.HrdAlwaysShowButton))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.Ignore());
             CreateMap<SamlUpPartyProfile, Api.SamlUpPartyProfile>()
                 .ReverseMap();
 
             CreateMap<TrackLinkUpParty, Api.TrackLinkUpParty>()
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.MapFrom(s => s.HrdAlwaysShowButton))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+                .ForMember(d => d.HrdAlwaysShowButton, opt => opt.MapFrom(s => s.HrdShowButtonWithDomain.HasValue && s.HrdShowButtonWithDomain.Value ? s.HrdShowButtonWithDomain.Value : s.HrdAlwaysShowButton))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.Ignore());
             CreateMap<TrackLinkUpPartyProfile, Api.TrackLinkUpPartyProfile>()
                 .ReverseMap();
 
             CreateMap<ExternalLoginUpParty, Api.ExternalLoginUpParty>()
                 .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret != null && s.Secret.Length > 20 ? s.Secret.Substring(0, 3) : s.Secret))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.MapFrom(s => s.HrdAlwaysShowButton))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+                .ForMember(d => d.HrdAlwaysShowButton, opt => opt.MapFrom(s => s.HrdShowButtonWithDomain.HasValue && s.HrdShowButtonWithDomain.Value ? s.HrdShowButtonWithDomain.Value : s.HrdAlwaysShowButton))
+                .ForMember(d => d.HrdShowButtonWithDomain, opt => opt.Ignore());
             CreateMap<ExternalLoginUpPartyProfile, Api.ExternalLoginUpPartyProfile>()
                 .ReverseMap();
         }

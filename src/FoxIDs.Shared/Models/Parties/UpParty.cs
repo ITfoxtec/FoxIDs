@@ -37,7 +37,7 @@ namespace FoxIDs.Models
         // Support back words capability in CosmosDB - single issuer in SAML 2.0 up-parties
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
-        [Obsolete("Use Issuers instead.")]
+        [Obsolete($"Use {nameof(Issuers)} instead.")]
         public string Issuer
         {
             get
@@ -86,12 +86,37 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_single_logout")]
         public bool DisableSingleLogout { get; set; }
 
+        [ListLength(Constants.Models.UpParty.HrdIPAddressAndRangeMin, Constants.Models.UpParty.HrdIPAddressAndRangeMax, Constants.Models.UpParty.HrdIPAddressAndRangeLength, Constants.Models.UpParty.HrdIPAddressAndRangeRegExPattern, Constants.Models.UpParty.HrdIPAddressAndRangeTotalMax)]
+        [JsonProperty(PropertyName = "hrd_ipaddresses_ranges")]
+        public List<string> HrdIPAddressesAndRanges { get; set; }
+
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern, Constants.Models.UpParty.HrdDomainTotalMax)]
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }
 
+        [ListLength(Constants.Models.UpParty.HrdRegularExpressionMin, Constants.Models.UpParty.HrdRegularExpressionMax, Constants.Models.UpParty.HrdRegularExpressionLength, Constants.Models.UpParty.HrdRegularExpressionTotalMax)]
+        [JsonProperty(PropertyName = "hrd_regexs")]
+        public List<string> HrdRegularExpressions { get; set; }
+
+        [JsonProperty(PropertyName = "hrd_always_show_buttom")]
+        public bool HrdAlwaysShowButton { get; set; }
+
         [JsonProperty(PropertyName = "hrd_show_buttom_with_domain")]
-        public bool HrdShowButtonWithDomain { get; set; }
+        [Obsolete($"Use {nameof(HrdAlwaysShowButton)} instead.")]
+        public bool? HrdShowButtonWithDomain
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                if (value.HasValue && value.Value)
+                {
+                    HrdAlwaysShowButton = value.Value;
+                }
+            }
+        }
 
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]

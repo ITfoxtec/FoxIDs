@@ -40,12 +40,20 @@ namespace FoxIDs.Models.Queues
         [JsonProperty(PropertyName = "si")]
         public string SpIssuer { get; set; }
 
+        [ListLength(Constants.Models.UpParty.HrdIPAddressAndRangeMin, Constants.Models.UpParty.HrdIPAddressAndRangeMax, Constants.Models.UpParty.HrdIPAddressAndRangeLength, Constants.Models.UpParty.HrdIPAddressAndRangeRegExPattern, Constants.Models.UpParty.HrdIPAddressAndRangeTotalMax)]
+        [JsonProperty(PropertyName = "hi")]
+        public List<string> HrdIPAddressesAndRanges { get; set; }
+
         [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 
+        [ListLength(Constants.Models.UpParty.HrdRegularExpressionMin, Constants.Models.UpParty.HrdRegularExpressionMax, Constants.Models.UpParty.HrdRegularExpressionLength, Constants.Models.UpParty.HrdRegularExpressionTotalMax)]
+        [JsonProperty(PropertyName = "hr")]
+        public List<string> HrdRegularExpressions { get; set; }
+
         [JsonProperty(PropertyName = "hb")]
-        public bool HrdShowButtonWithDomain { get; set; }
+        public bool HrdAlwaysShowButton { get; set; }
 
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]

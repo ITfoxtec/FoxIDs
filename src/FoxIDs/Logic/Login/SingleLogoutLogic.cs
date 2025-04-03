@@ -42,8 +42,8 @@ namespace FoxIDs.Logic
             var sessionTrackCookieGroup = await sessionUpPartyLogic.GetAndDeleteSessionTrackCookieGroupAsync(upParty);
 
             var upPartyLinks = sessionTrackCookieGroup?.UpPartyLinks?.Where(p => p.Id != upParty.Id);
-            var downPartyLinks = sessionTrackCookieGroup?.DownPartyLinks?.Where(p => p.SupportSingleLogout && initiatingDownParty == null || p.Id != initiatingDownParty.Id);
-            if (!(upPartyLinks?.Count() > 0) && (!(downPartyLinks?.Count() > 0) || !(sessionTrackCookieGroup.Claims?.Count() > 0)))
+            var downPartyLinks = sessionTrackCookieGroup?.DownPartyLinks?.Where(p => p.SupportSingleLogout && initiatingDownParty == null || p.Id != initiatingDownParty?.Id);
+            if (sessionTrackCookieGroup?.UpPartyLinks == null || !(upPartyLinks?.Count() > 0) && (sessionTrackCookieGroup?.DownPartyLinks == null || !(downPartyLinks?.Count() > 0) || !(sessionTrackCookieGroup?.Claims?.Count() > 0)))
             {
                 return (false, null);
             }

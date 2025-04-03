@@ -14,6 +14,7 @@ using System.Security.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace FoxIDs.Logic
 {
@@ -269,7 +270,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            throw new OAuthRequestException($"Unsupported response type '{authenticationRequest.ResponseType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
+            throw new OAuthRequestException($"Response type '{authenticationRequest.ResponseType}' not configured.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedResponseType };
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims, IdPInitiatedDownPartyLink idPInitiatedLink = null)
@@ -296,7 +297,8 @@ namespace FoxIDs.Logic
                 {
                     throw new Exception($"Invalid IdP-Initiated login redirect URI '{idPInitiatedLink.DownPartyRedirectUrl}' (maybe the request URL do not match the expected client).");
                 }
-                return new RedirectResult(idPInitiatedLink.DownPartyRedirectUrl);
+                var issuer = serviceProvider.GetService<TrackIssuerLogic>().GetIssuer(); // Matching issuer and authority is not support.
+                return new RedirectResult(QueryHelpers.AddQueryString(idPInitiatedLink.DownPartyRedirectUrl, JwtClaimTypes.Issuer, issuer));
             }
           
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);

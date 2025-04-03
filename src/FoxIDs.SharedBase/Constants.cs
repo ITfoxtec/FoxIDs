@@ -267,6 +267,7 @@ namespace FoxIDs
                 public const string ExternalUser = "extu";
                 public const string AuthCodeTtlGrant = "acgrant";
                 public const string RefreshTokenGrant = "rtgrant";
+                public const string SamlUpPartyIdPInitiatedTtlGrant = "idpigrant";
                 public const string RiskPassword = "prisk";
                 public const string Plan = "plan";
                 public const string DataProtection = "datap";
@@ -660,6 +661,8 @@ namespace FoxIDs
                 {
                     public const int IdLength = 220;
                     public const string IdRegExPattern = @"^[\w:\-_]*$";
+                    public const int CodeLength = 100;
+                    public const string CodeRegExPattern = @"^[\w-_]*$";
                     public const int RefreshTokenLength = 100;
                     public const string RefreshTokenRegExPattern = @"^[\w-_]*$";
                     public const int ClaimsMin = 1;
@@ -745,11 +748,20 @@ namespace FoxIDs
                 public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
                 public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
                 public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
+                public const int HrdIPAddressAndRangeMin = 0;
+                public const int HrdIPAddressAndRangeMax = 10;
+                public const int HrdIPAddressAndRangeLength = 100;
+                public const int HrdIPAddressAndRangeTotalMax = 500;
+                public const string HrdIPAddressAndRangeRegExPattern = @"^[a-f0-9\.:\- /%]*$";
                 public const int HrdDomainMin = 0;
                 public const int HrdDomainMax = 200;
                 public const int HrdDomainLength = 50;
                 public const int HrdDomainTotalMax = 2000;
                 public const string HrdDomainRegExPattern = @"^((?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]|\*)$";
+                public const int HrdRegularExpressionMin = 0;
+                public const int HrdRegularExpressionMax = 10;
+                public const int HrdRegularExpressionLength = 500;
+                public const int HrdRegularExpressionTotalMax = 1000;
                 public const int HrdDisplayNameLength = 100;
                 public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
                 public const int HrdLogoUrlLength = 500;
@@ -848,6 +860,9 @@ namespace FoxIDs
                     public const int AuthnContextClassReferencesMax = 20;
 
                     public const int AuthnRequestExtensionsXmlLength = 1000;
+
+                    public const int IdPInitiatedGrantLifetimeMin = 5; // 5 seconds 
+                    public const int IdPInitiatedGrantLifetimeMax = 300; // 5 minutes
                 }
 
                 public static class Down

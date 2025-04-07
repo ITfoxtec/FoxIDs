@@ -114,7 +114,7 @@ The client could also be an OAuth 2.0 client using [client credentials grant](ap
 ![Token exchange, Access token to Access token in API](images/token-exchange-access-token-in-api.svg)
 
 The environment includes two resources and the OpenID Connect client is allowed to call the first resource directly. The OpenID Connect client is NOT allowed to call the second resource directly. On the first resource a client is configured allowing access tokens with the client/resource audience to be exchange to an access token' valid for the second resource.  
-The flowing client on the first resource is configured with a certificate as client credentials.
+The flowing client on the first resource is configured with a certificate as client credential.
 
 ![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-environment-app-reg.png)
 

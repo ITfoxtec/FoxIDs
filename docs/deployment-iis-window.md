@@ -1,4 +1,4 @@
-# Windows Server
+# IIS on Windows Server
 
 Deploy FoxIDs on Windows Server with MongoDB and OpenSearch.
 
@@ -32,14 +32,47 @@ Or optionally download and install [PostgreSQL](https://www.postgresql.org/downl
 
 MongoDB's default endpoint `mongodb://localhost:27017`
  
+    ?? mongo db password ??
 
 
 ### .NET runtime
 
-Download the ASP.NET Core Runtime - Hosting Bundle from https://dotnet.microsoft.com/en-us/download/dotnet (matching the FoxIDs release).  
-For example for .NET 9.0 it is: ASP.NET Core 9.0 Runtime (v9.0.3) - Windows Hosting Bundle Installer https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-9.0.3-windows-hosting-bundle-installer 
 
+1)
 Install on Windows Server(s) with Internet Information Services (IIS).
+
+2)
+Create two websites in IIS 
+ -corresponding folders
+ -domains
+ -hosts localhost to domains
+ -change app service **.NET CLR Version** to `No Managed Code`
+
+3)
+Install your own certificate or Let's encrypt
+
+4)
+xcoppy the two FoxIDs sites to folders
+   -change config
+        -domains
+        -maybe DB
+
+
+m
+
+
+Find logs in: C:\inetpub\logs\LogFiles
+Depending on the load, considder using OpenSearch in production
+
+
+
+
+
+
+
+
+
+
 
 
 

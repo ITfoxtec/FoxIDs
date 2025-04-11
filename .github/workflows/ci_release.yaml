@@ -53,8 +53,8 @@ jobs:
           cp "ReleaseConfig/FoxIDs.Control/appsettings.json" "$release_name/FoxIDs.Control"
 
           if [ "${{ matrix.target }}" == "win-x64" ]; then
-            cp "ReleaseConfig/FoxIDs/${matrix.target}/web.config" "$release_name/FoxIDs"
-            cp "ReleaseConfig/FoxIDs.Control/${matrix.target}/web.config" "$release_name/FoxIDs.Control"
+            cp "ReleaseConfig/FoxIDs/win/web.config" "$release_name/FoxIDs"
+            cp "ReleaseConfig/FoxIDs.Control/win/web.config" "$release_name/FoxIDs.Control"
 
             7z a -tzip "${release_name}.zip" "./${release_name}/*"
           else

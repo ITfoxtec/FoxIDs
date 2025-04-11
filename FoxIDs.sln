@@ -366,18 +366,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoxIDs.Control", "FoxIDs.Co
 		ReleaseConfig\FoxIDs.Control\appsettings.json = ReleaseConfig\FoxIDs.Control\appsettings.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux-x64", "linux-x64", "{D0FDF21E-B7D2-4D9A-AA35-79B71D34B760}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux-x64", "linux-x64", "{52CD708A-DC7B-4995-A736-99A9DD403956}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win-x64", "win-x64", "{E4622C4B-780C-45A7-BFEE-EAEE590F36AC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win", "win", "{E4622C4B-780C-45A7-BFEE-EAEE590F36AC}"
 	ProjectSection(SolutionItems) = preProject
-		ReleaseConfig\FoxIDs\win-x64\web.config = ReleaseConfig\FoxIDs\win-x64\web.config
+		ReleaseConfig\FoxIDs\win\web.config = ReleaseConfig\FoxIDs\win\web.config
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win-x64", "win-x64", "{0588A320-7C07-4E24-87E7-5A4C52140780}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win", "win", "{0588A320-7C07-4E24-87E7-5A4C52140780}"
 	ProjectSection(SolutionItems) = preProject
-		ReleaseConfig\FoxIDs.Control\win-x64\web.config = ReleaseConfig\FoxIDs.Control\win-x64\web.config
+		ReleaseConfig\FoxIDs.Control\win\web.config = ReleaseConfig\FoxIDs.Control\win\web.config
 	EndProjectSection
 EndProject
 Global
@@ -459,8 +455,6 @@ Global
 		{587EE9E3-D16A-4D85-A6B5-43ADCCF54288} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{4680A3C4-E70C-4922-8A2E-90BFAB58FA6A} = {587EE9E3-D16A-4D85-A6B5-43ADCCF54288}
 		{A65357EF-19B7-4487-88FB-E3888B9F6618} = {587EE9E3-D16A-4D85-A6B5-43ADCCF54288}
-		{D0FDF21E-B7D2-4D9A-AA35-79B71D34B760} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
-		{52CD708A-DC7B-4995-A736-99A9DD403956} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 		{E4622C4B-780C-45A7-BFEE-EAEE590F36AC} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
 		{0588A320-7C07-4E24-87E7-5A4C52140780} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 	EndGlobalSection

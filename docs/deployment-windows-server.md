@@ -31,7 +31,7 @@ Download and install [MongoDB Community Edition](https://www.mongodb.com/docs/ma
 Or optionally download and install [PostgreSQL](https://www.postgresql.org/download/windows/).
 
 MongoDB's default endpoint `mongodb://localhost:27017`
-
+ 
 
 
 ### .NET runtime
@@ -48,8 +48,11 @@ Install on Windows Server(s) with Internet Information Services (IIS).
 Download the source code from the desired FoxIDs [release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the ZIP file.  
 
 
-
+MongoDB Community Server Download download
 https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/
+
+Separate MongoDB Compass Download (GUI) download - also part of the MongoDB Community Server Download
+https://www.mongodb.com/try/download/compass
 
 
 

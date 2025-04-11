@@ -326,6 +326,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
+		.github\workflows\ci_release.yaml = .github\workflows\ci_release.yaml
 		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
 	EndProjectSection
 EndProject

@@ -22,8 +22,9 @@ namespace FoxIDs.Infrastructure.Hosting
             if (!(IsHealthCheck(context) || IsLoopback(context)))
             {
                 ReadClientIp(context);
-                ReadSchemeFromHeader(context);
-                _ = ValidateProxySecret(context);
+                var settings = context.RequestServices.GetService<Settings>();
+                ReadSchemeFromHeader(context, settings);
+                _ = ValidateProxySecret(context, settings);
             }
 
             SetScopeProperty(context);
@@ -56,9 +57,8 @@ namespace FoxIDs.Infrastructure.Hosting
             return false;
         }
 
-        protected bool ValidateProxySecret(HttpContext context, Settings settings = null)
+        protected bool ValidateProxySecret(HttpContext context, Settings settings)
         {
-            settings = settings ?? context.RequestServices.GetService<Settings>();
             if (!settings.ProxySecret.IsNullOrEmpty())
             {
                 string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];
@@ -80,7 +80,7 @@ namespace FoxIDs.Infrastructure.Hosting
             string ipHeader = context.Request.Headers["X-Forwarded-For"];
             if (ipHeader.IsNullOrWhiteSpace())
             {
-                ipHeader = context.Request.Headers["CF-Connecting-IP"]; 
+                ipHeader = context.Request.Headers["CF-Connecting-IP"];
             }
             if (ipHeader.IsNullOrWhiteSpace())
             {
@@ -96,9 +96,8 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected void ReadSchemeFromHeader(HttpContext context)
+        protected void ReadSchemeFromHeader(HttpContext context, Settings settings)
         {
-            var settings = context.RequestServices.GetService<Settings>();
             if (settings.TrustProxySchemeHeader)
             {
                 string schemeHeader = context.Request.Headers["X-Forwarded-Scheme"];

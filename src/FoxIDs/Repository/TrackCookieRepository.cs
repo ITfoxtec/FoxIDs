@@ -96,7 +96,7 @@ namespace FoxIDs.Repository
             httpContextAccessor.HttpContext.Response.Headers.SetCookie = httpContextAccessor.HttpContext.Response.Headers.SetCookie.Where(c => !c.StartsWith($"{cookieName}=")).ToArray();
             var cookieOptions = new CookieOptions
             {
-                Secure = true,
+                Secure = httpContextAccessor.HttpContext.Request.Scheme != Uri.UriSchemeHttp,
                 HttpOnly = true,
                 SameSite = message.SameSite,
                 IsEssential = true,

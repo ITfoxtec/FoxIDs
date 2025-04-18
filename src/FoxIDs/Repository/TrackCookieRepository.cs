@@ -7,23 +7,19 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using System.Linq;
 
 namespace FoxIDs.Repository
 {
-    public class TrackCookieRepository<TMessage> where TMessage : CookieMessage, new()
+    public class TrackCookieRepository<TMessage> : CookieRepositoryBase<TMessage> where TMessage : CookieMessage, new()
     {
-        private ConcurrentDictionary<string, TMessage> cookieCache = new ConcurrentDictionary<string, TMessage>();
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtection;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public TrackCookieRepository(TelemetryScopedLogger logger, IDataProtectionProvider dataProtection, IHttpContextAccessor httpContextAccessor)
+        public TrackCookieRepository(TelemetryScopedLogger logger, IDataProtectionProvider dataProtection, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.dataProtection = dataProtection;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public Task<TMessage> GetAsync()
@@ -51,13 +47,12 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Get environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
-            var cookieName = CookieName();
-            if (cookieCache.TryGetValue(cookieName, out TMessage cacheCookie))
+            if (TryGetCacheCookie(out TMessage cacheCookie))
             {
                 return cacheCookie;
             }
 
-            var cookie = httpContextAccessor.HttpContext.Request.Cookies[cookieName];
+            var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
             {
                 try
@@ -68,7 +63,7 @@ namespace FoxIDs.Repository
                 catch (CryptographicException ex)
                 {
                     logger.Warning(ex, $"Unable to unprotect environment cookie '{typeof(TMessage).Name}', deleting cookie.");
-                    DeleteByName(routeBinding, cookieName);
+                    DeleteByName(routeBinding);
                     return null;
                 }
                 catch (Exception ex)
@@ -90,20 +85,19 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Save environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
-            var cookieName = CookieName();
-            cookieCache[cookieName] = message;
+            SetCacheCookie(message);
 
-            httpContextAccessor.HttpContext.Response.Headers.SetCookie = httpContextAccessor.HttpContext.Response.Headers.SetCookie.Where(c => !c.StartsWith($"{cookieName}=")).ToArray();
+            httpContextAccessor.HttpContext.Response.Headers.SetCookie = httpContextAccessor.HttpContext.Response.Headers.SetCookie.Where(c => !c.StartsWith($"{CookieName()}=")).ToArray();
             var cookieOptions = new CookieOptions
             {
-                Secure = httpContextAccessor.HttpContext.Request.Scheme != Uri.UriSchemeHttp,
+                Secure = httpContextAccessor.HttpContext.Request.IsHttps,
                 HttpOnly = true,
-                SameSite = message.SameSite,
+                SameSite = GetSameSite(message.SameSite),
                 IsEssential = true,
                 Path = GetPath(routeBinding),
             };
             httpContextAccessor.HttpContext.Response.Cookies.Append(
-                cookieName,
+                CookieName(),
                 new CookieEnvelope<TMessage>
                 {
                     Message = message,
@@ -119,38 +113,22 @@ namespace FoxIDs.Repository
 
             logger.ScopeTrace(() => $"Delete environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
-            DeleteByName(routeBinding, CookieName());
+            DeleteByName(routeBinding);
         }
 
-        private void CheckRouteBinding(RouteBinding routeBinding)
+        private void DeleteByName(RouteBinding routeBinding)
         {
-            if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
-            if (routeBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(routeBinding.TenantName), routeBinding.GetTypeName());
-            if (routeBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(routeBinding.TrackName), routeBinding.GetTypeName());
-        }
-
-        private bool RouteBindingDoNotExists(RouteBinding routeBinding)
-        {
-            if (routeBinding == null) return true;
-            if (routeBinding.TenantName.IsNullOrEmpty()) return true;
-            if (routeBinding.TrackName.IsNullOrEmpty()) return true;
-
-            return false;
-        }
-
-        private void DeleteByName(RouteBinding routeBinding, string name)
-        {
-            cookieCache.TryRemove(name, out TMessage cacheCookie);
+            TryRemoveCacheCookie();
 
             httpContextAccessor.HttpContext.Response.Cookies.Append(
-                name,
+                CookieName(),
                 string.Empty,
                 new CookieOptions
                 {
                     Expires = DateTimeOffset.UtcNow.AddMonths(-1),
-                    Secure = true,
+                    Secure = httpContextAccessor.HttpContext.Request.IsHttps,
                     HttpOnly = true,
-                    SameSite = new TMessage().SameSite,
+                    SameSite = GetSameSite(new TMessage().SameSite),
                     IsEssential = true,
                     Path = GetPath(routeBinding),
                 });
@@ -165,12 +143,5 @@ namespace FoxIDs.Repository
         {
             return dataProtection.CreateProtector([routeBinding.TenantName, routeBinding.TrackName]);
         }
-
-        private string CookieName()
-        {
-            return typeof(TMessage).Name.ToLower();
-        }
-
-        private RouteBinding GetRouteBinding() => httpContextAccessor.HttpContext.GetRouteBinding();
     }
 }

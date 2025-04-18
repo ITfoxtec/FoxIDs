@@ -1,25 +1,24 @@
 # IIS on Windows Server
 
-Deploy FoxIDs on Windows Server with MongoDB and OpenSearch.
+Deploy FoxIDs on Windows Server with MongoDB or PostgreSQL.
 
 This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login).
 
 A FoxIDs installation is like a bucket, there is no external dependencies and it's easy to archive a very high uptime with little effort. 
-**FoxIDs are updated by downloading source code from the [release](https://github.com/ITfoxtec/FoxIDs/releases) and ????  **
-New FoxIDs releases is backwards compatible, please consult the [release notes](https://github.com/ITfoxtec/FoxIDs/releases) before updating.
+**FoxIDs are updated by downloading FoxIDs-x.x.x-win-x64.zip from the new [release](https://github.com/ITfoxtec/FoxIDs/releases) and updating the two websites.
+New FoxIDs releases is backwards compatible, please consult the release notes before updating.
 
 Pre requirements:
-- You have a Windows Server with Internet Information Services (IIS) - fully updated. 
+- You have a Windows Server (or Windows 10/11) with Internet Information Services (IIS) - fully updated. 
 - You have basic knowledge about Windows Servers and IIS.
 
-This guid describe how to install FoxIDs on a single server but you can easily divide the installation on to different servers.
+This guid describe how to install FoxIDs on a single server but you can divide the installation on to different servers.
 
 This deployment include:
 
-- Two websites one for FoxIDs and one for the FoxIDs Control (Client and API) deployed with xcopy from source code.
+- Two websites one for FoxIDs and one for the FoxIDs Control (Admin Client and API).
 - The two websites is exposed on two different domains / sub-domains.
-- MongoDB is a NoSQL database and contains all data including tenants, environments and users. Deploy [MongoDB Community Edition](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/) on Windows. You can optionally use your own PostgreSQL instance instead of MongoDB.
-- Default holds the cache in the database. Optionally use a Redis cache if you are installing a FoxIDs cluster with high throughput. The cache holds sequences (e.g., login and logout) and handle counters to secure authentication against various attacks and data cache (Redis only) to improve performance. Redis is deployed with the [official Redis](https://hub.docker.com/_/redis) Docker image.
+- NoSQL database and contains all data including tenants, environments and users. Either deploy [MongoDB Community Edition](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/) or [PostgreSQL](https://www.postgresql.org/download/windows/).
 
 ## Deployment
 
@@ -27,15 +26,24 @@ The deployment is carried out in the described order.
 
 ### Install database
 
-Download and install [MongoDB Community Edition](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/).  
-Or optionally download and install [PostgreSQL](https://www.postgresql.org/download/windows/).
+Download and install [MongoDB Community Edition](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/) or download and install [PostgreSQL](https://www.postgresql.org/download/windows/).
 
-MongoDB's default endpoint `mongodb://localhost:27017`
- 
-    ?? mongo db password ??
+**MongoDB**  
+A self-managed MongoDB deployment is default installed with access control disabled. Consider to [configure MongoDB authentication](https://www.mongodb.com/docs/manual/tutorial/configure-scram-client-authentication/) depending on your installation.  
+MongoDBs default endpoint / connection string: `mongodb://localhost:27017`
+
+**PostgreSQL**  
+PostgreSQL is default deployed with the user `postgres` and a password provided by you during installation.
+
+- Open pgAdmin and create a database for FoxIDs called `FoxIDs`
+
+PostgreSQL default endpoint / connection string: `Host=localhost;Username=postgres;Password=xxxx;Database=FoxIDs`
+
+### Install FoxIDs websites
 
 
-### .NET runtime
+> The FoxIDs release is self contained and therefore you do not need to install .NET.
+
 
 
 1)

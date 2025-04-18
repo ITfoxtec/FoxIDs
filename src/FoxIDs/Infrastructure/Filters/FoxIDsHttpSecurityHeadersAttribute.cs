@@ -74,7 +74,7 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 if (allowIframeOnDomains != null && allowIframeOnDomains.Count() == 1 && allowIframeOnDomains.Where(d => !d.Contains("*")).Count() == 1)
                 {
-                    httpContext.Response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
+                    httpContext.Response.SetHeader("X-Frame-Options", $"allow-from {httpContext.Request.Scheme}://{allowIframeOnDomains.First()}/");
                 }
                 else
                 {

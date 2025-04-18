@@ -103,7 +103,7 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return CspFrameAncestors(httpContext);
                 }
 
-                if (!environment.IsDevelopment())
+                if (httpContext.Request.Scheme != Uri.UriSchemeHttp && !environment.IsDevelopment())
                 {
                     yield return "upgrade-insecure-requests;";
                 }

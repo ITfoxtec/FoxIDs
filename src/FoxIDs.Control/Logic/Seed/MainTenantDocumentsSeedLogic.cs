@@ -51,7 +51,7 @@ namespace FoxIDs.Logic.Seed
 
         private async Task<bool> CreateAndValidateMainTenantDocumentAsync(string foxIDsEndpoint)
         {
-            var mainTenant = new Tenant();
+            var mainTenant = new Tenant { ForUsage = false };
             await mainTenant.SetIdAsync(new Tenant.IdKey { TenantName = Constants.Routes.MainTenantName });
 
             var tenant = await tenantDataRepository.GetAsync<Tenant>(mainTenant.Id, required: false);

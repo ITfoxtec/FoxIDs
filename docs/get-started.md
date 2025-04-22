@@ -21,7 +21,7 @@ You can select another environment, create a new environment or start building i
 
 ## 2) Configure your first application
 Let's configure the first OpenID Connect application and log in with a test user.  
-You can optionally start by taking a look at the [sample applications](samples.md) which also can be [configured](samples.md#configure-samples-in-foxids-environment) in the you test environment. 
+You may want to start by looking at the [sample applications](samples.md), which can also be [configured](samples.md#configure-samples-in-foxids-environment) in your test environment. 
 
 Click `New application` to configure your OpenID Connect application and select the type of application.
 
@@ -38,7 +38,9 @@ Click `Register` to save the application configuration. Copy the `Authority`, `C
 Configure your application with the `Authority`, `Client ID` and `Client secret`.  
 You are presented with a detailed configuration view then you close the pop-up. If needed you can find the OpenID Connect (OIDC) Discovery endpoint and do configuration changes.
 
-Open you application and start the login flow. You are then redirected to the FoxIDs login prompt where you can create a new test user.
+Open you application and start the login flow. You are then redirected to the FoxIDs login prompt where you can select to create a new test user.
+
+> Each environment has a separate user store. You cannot log in with your administrator user, which only exists in the master environment. Therefore, you need to create a new or the same user in the test environment.
 
 ![Create test user](images/get-started-test-user.png)
 

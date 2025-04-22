@@ -2,7 +2,7 @@
 
 Deploy FoxIDs in Docker Desktop on a dev or test machine.
 
-This is a description of how to make a default [deployment](#deployment) and [log in for the first time](#first-login).
+This is a description of how to do a default [deployment](#deployment) and [log in for the first time](#first-login).
 
 A FoxIDs installation is like a bucket, there is no external dependencies and it's easy to archive a very high uptime with little effort. 
 FoxIDs are updated by updating the two docker images [foxids/foxids](https://hub.docker.com/repository/docker/foxids/foxids/general) and [foxids/foxids-control](https://hub.docker.com/repository/docker/foxids/foxids-control/general)
@@ -89,10 +89,14 @@ docker-compose -f docker-compose-project.yaml -f docker-compose.development-http
 ```
 
 ## First login
-Open your FoxIDs Control site (<a href="http://localhost:8801" target="_blank">http://localhost:8801</a> or <a href="https://localhost:8401" target="_blank">https://localhost:8401</a>) in a browser. It should redirect to the FoxIDs site where you login with the default admin user `admin@foxids.com` and password `FirstAccess!` (you are required to change the password on first login).  
-You are then redirected back to the FoxIDs Control site in the `master` tenant. You can add more tenants in the master tenant and e.g., configure admin users.
+Open your FoxIDs Control site (<a href="http://localhost:8801" target="_blank">http://localhost:8801</a> or <a href="https://localhost:8401" target="_blank">https://localhost:8401</a>) in a browser. 
+It should redirect to the FoxIDs site where you login with the default admin user `admin@foxids.com` and password `FirstAccess!` (you are required to change the password on first login).  
+You are then redirected back to the FoxIDs Control site in the `master` tenant. You can add more admin users in the master tenant.
 
-Then click on the `main` tenant and authenticate once again with the same default admin user email and password (the default admin user email and password is the same for both the `master` tenant and the `main` tenant, but it is two different users).  
+Then click on the `main` tenant and authenticate once again with the same default admin user `admin@foxids.com` and password `FirstAccess!` (again, you are required to change the password).
+
+> The default admin user and password are the same for both the `master` tenant and the `main` tenant, but it is two different users. 
+
 You are now logged into the `main` tenant and can start to configure your [applications and authentication methods](connections.md).
 
 ## Useful commands

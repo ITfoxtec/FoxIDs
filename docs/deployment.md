@@ -3,10 +3,11 @@
 FoxIDs support multiple deployment options and you can host it yourself both in the cloud or on-premises.
 
 - Deploy using [Kubernetes](deployment-k8s.md) on-premises or in the cloud
-- Deploy using [Docker](deployment-docker.md) on-premises - most for dev and test
-- Deploy using Docker in [Azure App Service Container](deployment-azure.md) 
+- Deploy using [Docker](deployment-docker.md) on-premises or in the cloud - most for dev and test
+- Deploy on [Windows Server with IIS](deployment-window-iis.md)
+- Deploy in [Azure App Service Container](deployment-azure.md) 
 
-or use [FoxIDs Cloud](https://www.foxids.com/action/createtenant).
+or use [FoxIDs Cloud](https://www.foxids.com/action/signup).
 
 After deployment consider to:
 

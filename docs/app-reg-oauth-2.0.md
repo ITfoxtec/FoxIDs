@@ -34,8 +34,29 @@ Access tokens can be issued with a list of audiences and thereby be issued to mu
 
 > You can change the claims and do claim tasks with [claim transforms and claim tasks](claim-transform-task.md).
 
+
+### Authenticate with certificate as client credential
+
+The client can authenticate with a certificate, if `private key JWT` is selected as client authentication method and a client certificate has been uploaded. 
+
+Sample Client Credentials Grant with `private key JWT` POST request to the token endpoint:
+
+```plaintext 
+POST https://foxids.com/test-corp/-/my-backend-client(*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
+&client_assertion=eyJhbGcrOiI...kyX3NhbXBsZS
+&grant_type=client_credentials
+&scope=party-api2%3Aread1
+```
+
+
+### Client secrets
+It is important to store client secrets securely, therefor client secrets are hashed inside FoxIDs with the same [hash algorithm](login.md#password-hash) as passwords. If the secret is more than 20 character (which it should be) the first 3 characters is saved as information and is shown for each secret in FoxIDs Control. 
+
+
 ## Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported for security reasons because it is insecure and should not be used.
 
-## Client secrets
-It is important to store client secrets securely, therefor client secrets are hashed inside FoxIDs with the same [hash algorithm](login.md#password-hash) as passwords. If the secret is more than 20 character (which it should be) the first 3 characters is saved as information and is shown for each secret in FoxIDs Control. 

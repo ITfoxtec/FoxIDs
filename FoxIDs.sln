@@ -68,9 +68,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\deployment-azure.md = docs\deployment-azure.md
 		docs\deployment-docker.md = docs\deployment-docker.md
 		docs\deployment-k8s.md = docs\deployment-k8s.md
+		docs\deployment-window-iis.md = docs\deployment-window-iis.md
 		docs\deployment.md = docs\deployment.md
-		docs\development.md = docs\development.md
 		docs\description.md = docs\description.md
+		docs\development.md = docs\development.md
 		docs\email.md = docs\email.md
 		docs\external-login.md = docs\external-login.md
 		docs\faq.md = docs\faq.md
@@ -185,6 +186,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\connections-saml.svg = docs\images\connections-saml.svg
 		docs\images\connections.svg = docs\images\connections.svg
 		docs\images\connections.vsdx = docs\images\connections.vsdx
+		docs\images\deployment-window-iis-add-website.png = docs\images\deployment-window-iis-add-website.png
+		docs\images\deployment-window-iis-my-cert.png = docs\images\deployment-window-iis-my-cert.png
 		docs\images\environments.vsdx = docs\images\environments.vsdx
 		docs\images\example-claim-transform-name-to-given_name-family_name.png = docs\images\example-claim-transform-name-to-given_name-family_name.png
 		docs\images\example-claim-transform-remove-post-auth-method-name.png = docs\images\example-claim-transform-remove-post-auth-method-name.png
@@ -325,6 +328,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
+		.github\workflows\ci_release.yaml = .github\workflows\ci_release.yaml
+		.github\workflows\ci_seed_tool_release.yaml = .github\workflows\ci_seed_tool_release.yaml
 		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
 	EndProjectSection
 EndProject
@@ -351,6 +356,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.PGMigrator", "tools\FoxIDs.PGMigrator\FoxIDs.PGMigrator.csproj", "{1F4B9025-B6EC-4648-9895-EA8C435A3FEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.IntegrationTests", "test\FoxIDs.IntegrationTests\FoxIDs.IntegrationTests.csproj", "{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseConfig", "ReleaseConfig", "{587EE9E3-D16A-4D85-A6B5-43ADCCF54288}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoxIDs", "FoxIDs", "{4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseConfig\FoxIDs\appsettings.json = ReleaseConfig\FoxIDs\appsettings.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoxIDs.Control", "FoxIDs.Control", "{A65357EF-19B7-4487-88FB-E3888B9F6618}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseConfig\FoxIDs.Control\appsettings.json = ReleaseConfig\FoxIDs.Control\appsettings.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win", "win", "{E4622C4B-780C-45A7-BFEE-EAEE590F36AC}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseConfig\FoxIDs\win\web.config = ReleaseConfig\FoxIDs\win\web.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "win", "win", "{0588A320-7C07-4E24-87E7-5A4C52140780}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseConfig\FoxIDs.Control\win\web.config = ReleaseConfig\FoxIDs.Control\win\web.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -428,6 +455,11 @@ Global
 		{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
 		{1F4B9025-B6EC-4648-9895-EA8C435A3FEB} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804} = {ADF3A7A1-55CD-466B-9CE2-76B159582B17}
+		{587EE9E3-D16A-4D85-A6B5-43ADCCF54288} = {E3CC6B59-BC6D-42C2-8613-C0FC896E31AE}
+		{4680A3C4-E70C-4922-8A2E-90BFAB58FA6A} = {587EE9E3-D16A-4D85-A6B5-43ADCCF54288}
+		{A65357EF-19B7-4487-88FB-E3888B9F6618} = {587EE9E3-D16A-4D85-A6B5-43ADCCF54288}
+		{E4622C4B-780C-45A7-BFEE-EAEE590F36AC} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
+		{0588A320-7C07-4E24-87E7-5A4C52140780} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

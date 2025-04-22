@@ -20,7 +20,7 @@ FoxIDs consist of two services:
 
 Hosting:
 
-- FoxIDs SaaS is available at [FoxIDs.com](https://www.foxids.com/action/createtenant) as an Identity Service (IDS).  
+- FoxIDs SaaS is available at [FoxIDs.com](https://www.foxids.com/action/signup) as an Identity Service (IDS).  
 - You can [deploy](https://www.foxids.com/docs/deployment) FoxIDs anywhere using Docker or Kubernetes (K8s).
 
 > For more information please see the [get started](https://www.foxids.com/docs/get-started) guide.

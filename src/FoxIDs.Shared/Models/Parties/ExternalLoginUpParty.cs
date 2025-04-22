@@ -82,13 +82,6 @@ namespace FoxIDs.Models
                 {
                     results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required if the {nameof(ExternalLoginType)} is '{ExternalLoginType}'.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
                 }
-                else
-                {
-                    if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
-                    }
-                }
 
                 if (Secret.IsNullOrWhiteSpace())
                 {

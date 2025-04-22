@@ -21,6 +21,7 @@
 - [Deployment](deployment.md)
   - [Kubernetes](deployment-k8s.md)
   - [Docker](deployment-docker.md)  
+  - [Windows with IIS](deployment-window-iis.md)
   - [Azure Container](deployment-azure.md)
   - [Risk Passwords](risk-passwords.md)
   - [Reverse proxy](reverse-proxy.md)

@@ -198,7 +198,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             if (generalUser.CreateMode)
             {
-                user.ConfirmAccount = true;
+                user.ConfirmAccount = false;
                 user.EmailVerified = false;
                 user.PhoneVerified = false;
                 user.ChangePassword = true;

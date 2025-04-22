@@ -205,10 +205,6 @@ namespace FoxIDs.Client.Models.ViewModels
                                 {
                                     results.Add(new ValidationResult($"The field is required.", [nameof(ApiUrl)]));
                                 }
-                                else if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    results.Add(new ValidationResult($"The field is required to start with HTTPS.", [nameof(ApiUrl)]));
-                                }
                                 if (Secret.IsNullOrWhiteSpace())
                                 {
                                     results.Add(new ValidationResult($"The field is required.", [nameof(Secret)]));

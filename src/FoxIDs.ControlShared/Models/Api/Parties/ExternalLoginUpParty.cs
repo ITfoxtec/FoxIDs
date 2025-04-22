@@ -173,13 +173,6 @@ namespace FoxIDs.Models.Api
                 {
                     results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required.", [nameof(ApiUrl)]));
                 }
-                else
-                {
-                    if (!ApiUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required to start with HTTPS.", [nameof(ApiUrl), nameof(ExternalLoginType)]));
-                    }
-                }
             }
 
             if (UsernameType == ExternalLoginUsernameTypes.Text)

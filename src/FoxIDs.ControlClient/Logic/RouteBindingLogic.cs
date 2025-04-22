@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Logic
         {
             if (trackSelectedLogic.Track != null && !IsMasterTrack && !IsMasterTenant && myTenant != null && myTenant.CustomDomainVerified)
             {
-                return $"https://{myTenant.CustomDomain}";
+                return $"{(navigationManager.BaseUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ? "http" : "https")}://{myTenant.CustomDomain}";
             }
             else
             {

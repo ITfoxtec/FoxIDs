@@ -25,8 +25,8 @@ namespace FoxIDs.Logic
 
         public async Task<List<Api.UsageLogItem>> QueryLogsAsync(Api.UsageLogRequest logRequest, string tenantName, string trackName, List<Api.UsageLogItem> items)
         {
-            var dayPointer = 0;
-            var hourPointer = 0;
+            var dayPointer = -1;
+            var hourPointer = -1;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
             var aggregations = await LoadUsageEventsAsync(tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest);
@@ -37,66 +37,69 @@ namespace FoxIDs.Logic
 
                 foreach ((var usageType, var bucketItem) in userTypesAggregations)
                 {
-                    if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
+                    if (bucketItem.DocCount.HasValue && bucketItem.DocCount.Value > 0)
                     {
-                        var date = bucketItem.Date;
-                        if (date.Day != dayPointer)
+                        if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
                         {
-                            dayPointer = date.Day;
-                            hourPointer = 0;
-                            var dayItem = new Api.UsageLogItem
+                            var date = bucketItem.Date.AddHours(logRequest.TimeOffset);
+                            if (date.Day != dayPointer)
                             {
-                                Type = Api.UsageLogTypes.Day,
-                                Value = date.Day
-                            };
-                            dayItem.SubItems = itemsPointer = dayItemsPointer = new List<Api.UsageLogItem>();
-                            items.Add(dayItem);
-                        }
-
-                        if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
-                        {
-                            var hour = date.Hour;
-                            if (hour != hourPointer)
-                            {
-                                hourPointer = hour;
-                                var hourItem = new Api.UsageLogItem
+                                dayPointer = date.Day;
+                                hourPointer = -1;
+                                var dayItem = new Api.UsageLogItem
                                 {
-                                    Type = Api.UsageLogTypes.Hour,
-                                    Value = hour
+                                    Type = Api.UsageLogTypes.Day,
+                                    Value = date.Day
                                 };
-                                hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
-                                dayItemsPointer.Add(hourItem);
+                                dayItem.SubItems = itemsPointer = dayItemsPointer = new List<Api.UsageLogItem>();
+                                items.Add(dayItem);
+                            }
+
+                            if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
+                            {
+                                var hour = date.Hour;
+                                if (hour != hourPointer)
+                                {
+                                    hourPointer = hour;
+                                    var hourItem = new Api.UsageLogItem
+                                    {
+                                        Type = Api.UsageLogTypes.Hour,
+                                        Value = hour
+                                    };
+                                    hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
+                                    dayItemsPointer.Add(hourItem);
+                                }
                             }
                         }
+
+                        var logType = GetLogType(usageType);
+                        var item = new Api.UsageLogItem
+                        {
+                            Type = logType,
+                        };
+
+                        switch (logType)
+                        {
+                            case Api.UsageLogTypes.Login:
+                            case Api.UsageLogTypes.TokenRequest:
+                                (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem);
+                                item.Value = totalCount;
+                                item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
+                                break;
+                            case Api.UsageLogTypes.Confirmation:
+                            case Api.UsageLogTypes.ResetPassword:
+                            case Api.UsageLogTypes.Mfa:
+                                (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(bucketItem);
+                                item.Value = itemCount;
+                                item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount, SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.SmsPrice, Value = smsPrice }] }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
+                                break;
+                            default:
+                                item.Value = GetCount(bucketItem);
+                                break;
+                        } 
+
+                        itemsPointer.Add(item);
                     }
-
-                    var logType = GetLogType(usageType);
-                    var item = new Api.UsageLogItem
-                    {
-                        Type = logType,
-                    };
-
-                    switch (logType)
-                    {
-                        case Api.UsageLogTypes.Login:
-                        case Api.UsageLogTypes.TokenRequest:
-                            (var totalCount, var realCount, var extraCount) = GetCountAndRealEstra(bucketItem);
-                            item.Value = totalCount;
-                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
-                            break;
-                        case Api.UsageLogTypes.Confirmation:
-                        case Api.UsageLogTypes.ResetPassword:
-                        case Api.UsageLogTypes.Mfa:
-                            (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(bucketItem);
-                            item.Value = itemCount;
-                            item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.Sms, Value = smsCount, SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.SmsPrice, Value = smsPrice }] }, new Api.UsageLogItem { Type = Api.UsageLogTypes.Email, Value = emailCount }];
-                            break;
-                        default:
-                            item.Value = GetCount(bucketItem);
-                            break;
-                    }
-
-                    itemsPointer.Add(item);
                 }
             }
 

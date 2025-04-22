@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
             {
                 DisplayName = "Default",
                 Name = Constants.DefaultLogin.Name,
-                EnableCreateUser = true,
+                EnableCreateUser = true,                
                 EnableCancelLogin = false,
                 SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,

@@ -1,0 +1,73 @@
+name: ci_release
+
+on:
+  release:
+    types: [published] 
+
+jobs:
+  release:
+    name: Release
+    strategy:
+      matrix:
+        kind: ['linux', 'windows']
+        include:
+          - kind: linux
+            os: ubuntu-latest
+            target: linux-x64
+            ready-to-run: false
+          - kind: windows
+            os: windows-latest
+            target: win-x64
+            ready-to-run: true
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0
+
+      - name: Restore dependencies
+        if: ${{  matrix.target  == 'linux-x64' }}
+        run: dotnet restore
+      - name: General build for test
+        if: ${{  matrix.target  == 'linux-x64' }}
+        run: dotnet build --no-restore
+      - name: Test
+        if: ${{  matrix.target  == 'linux-x64' }}
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Build
+        shell: bash
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="FoxIDs-$tag-${{ matrix.target }}"
+
+          # publish both sites
+          dotnet publish src/FoxIDs/FoxIDs.csproj --framework net9.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name/FoxIDs" --self-contained -p:PublishReadyToRun=${{ matrix.ready-to-run }} -p:ShouldUnsetParentConfigurationAndPlatform=false
+          dotnet publish src/FoxIDs.Control/FoxIDs.Control.csproj --framework net9.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name/FoxIDs.Control" --self-contained -p:ShouldUnsetParentConfigurationAndPlatform=false
+
+          cp "ReleaseConfig/FoxIDs/appsettings.json" "$release_name/FoxIDs"
+          cp "ReleaseConfig/FoxIDs.Control/appsettings.json" "$release_name/FoxIDs.Control"
+
+          if [ "${{ matrix.target }}" == "win-x64" ]; then
+            cp "ReleaseConfig/FoxIDs/win/web.config" "$release_name/FoxIDs"
+            cp "ReleaseConfig/FoxIDs.Control/win/web.config" "$release_name/FoxIDs.Control"
+
+            7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          else
+            tar czvf "${release_name}.tar.gz" "$release_name"
+          fi
+
+          # Delete output directory
+          rm -r "$release_name"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "FoxIDs-*"
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

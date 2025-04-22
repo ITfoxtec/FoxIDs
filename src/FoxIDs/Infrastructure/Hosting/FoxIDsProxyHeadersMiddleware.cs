@@ -9,15 +9,15 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsProxyHeadersMiddleware : ProxyHeadersMiddleware
     {
-        public FoxIDsProxyHeadersMiddleware(RequestDelegate next) : base(next) { }    
+        public FoxIDsProxyHeadersMiddleware(RequestDelegate next) : base(next) { }
 
         public override async Task Invoke(HttpContext context)
         {
+            var settings = context.RequestServices.GetService<FoxIDsSettings>();
             if (!(IsHealthCheck(context) || IsLoopback(context)))
             {
                 ReadClientIp(context);
-                ReadSchemeFromHeader(context);
-                var settings = context.RequestServices.GetService<FoxIDsSettings>();
+                ReadSchemeFromHeader(context, settings);
                 var host = ReadHostFromHeader(context, settings);
                 if (!host.IsNullOrWhiteSpace())
                 {
@@ -29,6 +29,13 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = context.Request.Host.Host;
                     }
+                }
+            }
+            else if (settings.ReadLoopbackRequestDomain)
+            {
+                if (settings.RequestDomainAsCustomDomain)
+                {
+                    context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = context.Request.Host.Host;
                 }
             }
 
@@ -47,9 +54,8 @@ namespace FoxIDs.Infrastructure.Hosting
         }
 
 
-        private bool TrustProxyHeaders(HttpContext context)
+        private bool TrustProxyHeaders(HttpContext context, FoxIDsSettings settings)
         {
-            var settings = context.RequestServices.GetService<FoxIDsSettings>();
             if (settings.TrustProxyHeaders)
             {
                 return true;
@@ -60,7 +66,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private string ReadHostFromHeader(HttpContext context, FoxIDsSettings settings)
         {
-            var trustProxyHeaders = TrustProxyHeaders(context);
+            var trustProxyHeaders = TrustProxyHeaders(context, settings);
             if (trustProxyHeaders)
             {
                 string hostHeader = context.Request.Headers["X-ORIGINAL-HOST"];

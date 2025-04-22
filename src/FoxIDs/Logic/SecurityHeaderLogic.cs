@@ -9,7 +9,7 @@ namespace FoxIDs.Logic
     public class SecurityHeaderLogic : LogicSequenceBase
     {
         private const int domainsMaxCount = 20;
-        private static Regex urlsInTextRegex = new Regex(@"https:\/\/[\w/\-?=%.]+\.[\w/\-&?=%.]+", RegexOptions.Compiled);
+        private static Regex urlsInTextRegex = new Regex(@"https?:\/\/[\w\/\-?=%.]+\.[\w\/\-&?=%.]+", RegexOptions.Compiled);
 
         public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }

@@ -94,11 +94,11 @@ Download the `win-acme.v2.x.x.x64.pluggable.zip` file from the latest [win-acme 
 
 The two websites now have `https` bindings with the certificate created by Let's encrypt and the certificate will automatically be updated for every 3 months or so.
 
-### Add FoxIDs to the websites
+### Xcopy deploy FoxIDs to websites
 Download the `FoxIDs-x.x.x-win-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the ZIP file. The zip file contains two folders one for the FoxIDs site and one for the FoxIDs Control site.
 
-- Copy the zip file folder FoxIDs into the websites physical path e.g. `C:\inetpub\FoxIDs`
-- And copy the zip file folder FoxIDs.Control into the websites physical path e.g. `C:\inetpub\FoxIDs.Control`
+- Xcopy the zip file folder FoxIDs into the websites physical path e.g. `C:\inetpub\FoxIDs`
+- And Xcopy the zip file folder FoxIDs.Control into the websites physical path e.g. `C:\inetpub\FoxIDs.Control`
 
 Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.json` files, located in e.g. `C:\inetpub\FoxIDs\appsettings.json` and `C:\inetpub\FoxIDs.Control\appsettings.json`
 

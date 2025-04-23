@@ -4,20 +4,20 @@ You can achieve higher password quality and a higher level of security by using 
 
 Hundreds of millions of real world passwords previously exposed in data breaches is collected as risk passwords. By validating that the leaked passwords are not reused, you significantly increase the level of password security.
 
-**1) Download risk passwords (pwned passwords)**  
+> The risk passwords are uploaded ones per FoxIDs deployment in the master tenant and can be used in all tenants and environments.
+
+
+## 1) Download risk passwords (pwned passwords)
 Download the `SHA-1` pwned passwords in a single file from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords) using the [PwnedPasswordsDownloader tool](https://github.com/HaveIBeenPwned/PwnedPasswordsDownloader).
 
 > Be aware that it takes some time to download all risk passwords.
 
-**2) Upload risk passwords to FoxIDs**  
-You can upload risk passwords with the FoxIDs seed tool console application. The seed tool code is [downloaded](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.SeedTool) and need to be compiled and [configured](#configure-the-seed-tool) to run.
+## 2) Upload risk passwords to FoxIDs
+You then upload the risk passwords with the FoxIDs seed tool console application.  
 
-> The risk passwords is uploaded ones per FoxIDs deployment in the master tenant.
+Download the `FoxIDs.SeedTool-x.x.x-win-x64.zip` or `FoxIDs.SeedTool-x.x.x-linux-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the seed tool.
 
-**3) Test**  
-You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
-
-## Configure the Seed Tool
+### Configure the Seed Tool
 
 The seed tool is configured in the `appsettings.json` file.
 
@@ -59,10 +59,14 @@ Add your FoxIDs and FoxIDs Control API endpoints and client secret and local ris
 }
 ```
 
-## Run the Seed Tool
+### Run the Seed Tool
 
-Run the seed tool executable SeedTool.exe or run the seed tool directly from Visual Studio. 
+1. Start a Command Prompt 
+2. Run the seed tool with `SeedTool.exe`
+3. Click `U` to start uploading risk passwords  
 
-* Click 'p' to start uploading risk passwords  
+> The risk password upload will take a while.
 
-The risk password upload will take a while.
+## 3) Test
+You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Settings / Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
+

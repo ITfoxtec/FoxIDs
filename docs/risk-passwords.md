@@ -51,8 +51,8 @@ Add your FoxIDs and FoxIDs Control API endpoints and client secret and local ris
 
 ```json
 "SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net",
-    "FoxIDsControlEndpoint": "https://foxidscontrolxxxx.azurewebsites.net",
+    "FoxIDsEndpoint": "https://foxidsxxxx.com", // custom domain or local development https://localhost:44330
+    "FoxIDsControlEndpoint": "https://control.foxidsxxxx.com", // custom domain or local development https://localhost:44331
     "ClientSecret": "xxx",
     ...
     "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"

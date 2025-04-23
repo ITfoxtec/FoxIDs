@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using OpenSearch.Net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,5 +25,10 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public string LogName { get; set; } = Constants.Logs.LogName;
+
+        /// <summary>
+        /// Allow insecure certificates.
+        /// </summary>
+        public bool AllowInsecureCertificates { get; set; }
     }
 }

@@ -153,8 +153,13 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 var openSearchSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
                     .RequestTimeout(TimeSpan.FromSeconds(2))
-                    .MaxRetryTimeout(TimeSpan.FromSeconds(4))
+                    .MaxRetryTimeout(TimeSpan.FromSeconds(4))                    
                     .ThrowExceptions();
+
+                if (settings.OpenSearch.AllowInsecureCertificates)
+                {
+                    openSearchSettings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+                }
 
                 services.AddSingleton(new OpenSearchClient(openSearchSettings));
                 services.AddSingleton<OpenSearchTelemetryLogger>();

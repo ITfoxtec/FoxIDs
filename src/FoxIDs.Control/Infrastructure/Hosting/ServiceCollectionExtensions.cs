@@ -147,6 +147,11 @@ namespace FoxIDs.Infrastructure.Hosting
                     .MaxRetryTimeout(TimeSpan.FromSeconds(30))
                     .ThrowExceptions();
 
+                if (settings.OpenSearch.AllowInsecureCertificates)
+                {
+                    openSearchQueryLogSettings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+                }
+
                 services.AddSingleton(new OpenSearchClientQueryLog(openSearchQueryLogSettings));
             }
 

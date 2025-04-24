@@ -19,7 +19,7 @@ namespace FoxIDs.Models.Config
         /// Optional, OpenSearch Query configuration.
         /// </summary>
         [ValidateComplexType]
-        public OpenSearchBaseSettings OpenSearchQuery { get; set; }
+        public OpenSearchQuerySettings OpenSearchQuery { get; set; }
 
         [ValidateComplexType]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }

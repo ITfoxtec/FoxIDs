@@ -1,19 +1,9 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using OpenSearch.Net;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Config
 {
-    public class OpenSearchSettings
+    public class OpenSearchSettings : OpenSearchBaseSettings
     {
-        /// <summary>
-        /// Specify one or many nodes in the OpenSearch cluster.
-        /// </summary>
-        [ListLength(1, 100)]
-        public List<Uri> Nodes { get; set; }
-
         /// <summary>
         /// Default log lifetime.
         /// </summary>

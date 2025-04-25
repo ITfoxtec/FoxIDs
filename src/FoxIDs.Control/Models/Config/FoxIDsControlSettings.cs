@@ -15,6 +15,12 @@ namespace FoxIDs.Models.Config
         [Required]
         public string DownParty { get; set; } = Constants.ControlApi.ResourceName;
 
+        /// <summary>
+        /// Optional, OpenSearch Query configuration.
+        /// </summary>
+        [ValidateComplexType]
+        public OpenSearchQuerySettings OpenSearchQuery { get; set; }
+
         [ValidateComplexType]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }
 

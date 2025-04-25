@@ -52,8 +52,8 @@
                 <FInputText @bind-Value="mailSettingsForm.Model.FromName" For="@(() => mailSettingsForm.Model.FromName)" />
 
                 <FInputSelect @bind-Value="mailSettingsForm.Model.MailProvider" For="@(() => mailSettingsForm.Model.MailProvider)">
-                    <option value="@MailProviders.SendGrid">SendGrid</option>
                     <option value="@MailProviders.Smtp">SMTP</option>
+                    <option value="@MailProviders.SendGrid">SendGrid</option>
                 </FInputSelect>
 
                 @if (mailSettingsForm.Model.MailProvider == MailProviders.SendGrid)

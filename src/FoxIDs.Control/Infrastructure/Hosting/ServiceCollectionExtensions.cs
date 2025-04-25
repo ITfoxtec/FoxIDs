@@ -142,10 +142,16 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
-                var openSearchQueryLogSettings = new ConnectionSettings(settings.OpenSearch.Nodes.Count == 1 ? new SingleNodeConnectionPool(settings.OpenSearch.Nodes.First()) : new StaticConnectionPool(settings.OpenSearch.Nodes))
+                var openSearchNodes = settings.OpenSearchQuery != null ? settings.OpenSearchQuery.Nodes : settings.OpenSearch.Nodes;
+                var openSearchQueryLogSettings = new ConnectionSettings(openSearchNodes.Count == 1 ? new SingleNodeConnectionPool(openSearchNodes.First()) : new StaticConnectionPool(openSearchNodes))
                     .RequestTimeout(TimeSpan.FromSeconds(20))
                     .MaxRetryTimeout(TimeSpan.FromSeconds(30))
                     .ThrowExceptions();
+
+                if (settings.OpenSearch.AllowInsecureCertificates)
+                {
+                    openSearchQueryLogSettings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+                }
 
                 services.AddSingleton(new OpenSearchClientQueryLog(openSearchQueryLogSettings));
             }

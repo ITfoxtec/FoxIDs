@@ -68,7 +68,7 @@ namespace FoxIDs.Models
                 hasProvider = true;
             }
 
-            if (!SmtpHost.IsNullOrWhiteSpace() && SmtpPort > 0 && !SmtpUsername.IsNullOrWhiteSpace() && !SmtpPassword.IsNullOrWhiteSpace())
+            if (!SmtpHost.IsNullOrWhiteSpace() && SmtpPort > 0)
             {
                 hasProvider = true;
             }
@@ -77,8 +77,8 @@ namespace FoxIDs.Models
 
             if (!hasProvider)
             {
-                results.Add(new ValidationResult($"At least one email providers is required. The field {nameof(SendgridApiKey)} or SMTP fields is required.",
-                    [nameof(SendgridApiKey), nameof(SmtpHost), nameof(SmtpPort), nameof(SmtpUsername), nameof(SmtpPassword)]));
+                results.Add(new ValidationResult($"At least one email providers is required. The Sendgrid field {nameof(SendgridApiKey)} or SMTP fields {nameof(SmtpHost)} and {nameof(SmtpPort)} is required.",
+                    [nameof(SendgridApiKey), nameof(SmtpHost), nameof(SmtpPort)]));
 
             }
             return results;

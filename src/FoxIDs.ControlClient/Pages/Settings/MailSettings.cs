@@ -83,7 +83,7 @@ namespace FoxIDs.Client.Pages.Settings
                 }
                 await mailSettingsForm.InitAsync(mailSettings.Map<MailSettingsViewModel>(afterMap =>
                 {
-                    afterMap.MailProvider = mailSettings.SmtpHost?.IsNullOrWhiteSpace() == false ? MailProviders.Smtp : MailProviders.SendGrid;
+                    afterMap.MailProvider = !mailSettings.SendgridApiKey.IsNullOrWhiteSpace() ? MailProviders.SendGrid : MailProviders.Smtp;
                 }));
             }
             catch (TokenUnavailableException)
@@ -134,13 +134,11 @@ namespace FoxIDs.Client.Pages.Settings
                     }
                     if (mailSettingsForm.Model.SmtpUsername.IsNullOrWhiteSpace())
                     {
-                        mailSettingsForm.SetFieldError(nameof(mailSettingsForm.Model.SmtpUsername), "SMTP username is required.");
-                        smtpOk = false;
+                        mailSettingsForm.Model.SmtpUsername = null;
                     }
                     if (mailSettingsForm.Model.SmtpPassword.IsNullOrWhiteSpace())
                     {
-                        mailSettingsForm.SetFieldError(nameof(mailSettingsForm.Model.SmtpPassword), "SMTP password is required.");
-                        smtpOk = false;
+                        mailSettingsForm.Model.SmtpPassword = null;
                     }
 
                     if (smtpOk)

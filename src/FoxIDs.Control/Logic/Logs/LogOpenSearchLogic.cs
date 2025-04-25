@@ -254,6 +254,16 @@ namespace FoxIDs.Logic
 
         private IEnumerable<string> GetIndexName()
         {
+            foreach(var name in GetIndexBaseName()) { yield return name; }
+
+            if (settings.OpenSearchQuery != null && !string.IsNullOrWhiteSpace(settings.OpenSearchQuery?.CrossClusterSearchClusterName))
+            {
+                foreach (var name in GetIndexBaseName()) { yield return $"{settings.OpenSearchQuery.CrossClusterSearchClusterName}:{name}"; }
+            }
+        }
+
+        private IEnumerable<string> GetIndexBaseName()
+        {
             yield return $"{settings.OpenSearch.LogName}*";
             // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
             yield return $"{settings.OpenSearch.LogName}-r*";

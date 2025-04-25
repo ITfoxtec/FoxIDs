@@ -173,7 +173,10 @@ namespace FoxIDs.Logic
 
                 using var client = new SmtpClient();
                 client.Connect(emailSettings.SmtpHost, emailSettings.SmtpPort, SecureSocketOptions.Auto);
-                client.Authenticate(emailSettings.SmtpUsername, emailSettings.SmtpPassword);
+                if (!emailSettings.SmtpUsername.IsNullOrWhiteSpace() && !emailSettings.SmtpPassword.IsNullOrWhiteSpace())
+                {
+                    client.Authenticate(emailSettings.SmtpUsername, emailSettings.SmtpPassword);
+                }
                 await client.SendAsync(message);
                 client.Disconnect(true);
 
@@ -203,8 +206,7 @@ namespace FoxIDs.Logic
                 };
             }
 
-            if (!string.IsNullOrWhiteSpace(settings.Smtp?.FromEmail) && !string.IsNullOrWhiteSpace(settings.Smtp?.Host) && settings.Smtp?.Port > 0 &&
-                !string.IsNullOrWhiteSpace(settings.Smtp?.Username) && !string.IsNullOrWhiteSpace(settings.Smtp?.Password))
+            if (!string.IsNullOrWhiteSpace(settings.Smtp?.FromEmail) && !string.IsNullOrWhiteSpace(settings.Smtp?.Host) && settings.Smtp?.Port > 0)
             {
                 return new SendEmail
                 {

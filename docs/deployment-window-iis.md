@@ -161,14 +161,18 @@ Create a task to rune OpenSearch
 3. Add the **Name** `OpenSearch`
 4. Change the account that run the task, click **Change User or Group...**
 5. Write `NETWORK SERVICE` and click **OK**
-6. Select the **Actions** tab
+6. Select the **Triggers** tab
 7. Click **New...**
-8. In **Program/script** start the `.bat` file e.g., write `C:\opensearch\opensearch-x.x.x\opensearch-windows-install.bat` and click **OK**
-9. Select the **Settings** tab
-10. Select the setting **If the task fails, restart every:**
-11. Deselect the setting (remove the checkmark) **Stop the task if it runs longer then:**
-12. Click **OK**
-13. Start the task
+8. In **Begin the task** select `At startup` and click **OK**
+9. Select the **Actions** tab
+10. Click **New...**
+11. In **Program/script** start the `.bat` file e.g., write `C:\opensearch\opensearch-x.x.x\opensearch-windows-install.bat` and click **OK**
+12. Select the **Settings** tab
+13. Select the setting **Run task as soon as possible after a scheduled start is missed**
+14. Select the setting **If the task fails, restart every:**
+15. Deselect the setting (remove the checkmark) **Stop the task if it runs longer then:**
+16. Click **OK**
+17. Start the task or restert the server
 
 OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 

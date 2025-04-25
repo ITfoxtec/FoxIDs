@@ -18,7 +18,8 @@ This deployment include:
 
 - Two websites one for FoxIDs and one for the FoxIDs Control (Admin Client and API).
 - The two websites are exposed on two different domains / sub-domains.
-- NoSQL database containing all data including tenants, environments and users. Either deploy [MongoDB Community Edition](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/) or [PostgreSQL](https://www.postgresql.org/download/windows/).
+- NoSQL database containing all data including tenants, environments and users. Either deploy **MongoDB Community Edition** or **PostgreSQL**.
+- FoxIDs logs are default saved in files. Depending on the load, consider to use [OpenSearch](#opensearch) in production.
 
 ## Deployment
 
@@ -94,11 +95,11 @@ Download the `win-acme.v2.x.x.x64.pluggable.zip` file from the latest [win-acme 
 
 The two websites now have `https` bindings with the certificate created by Let's encrypt and the certificate will automatically be updated for every 3 months or so.
 
-### Add FoxIDs to the websites
+### Xcopy deploy FoxIDs to websites
 Download the `FoxIDs-x.x.x-win-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the ZIP file. The zip file contains two folders one for the FoxIDs site and one for the FoxIDs Control site.
 
-- Copy the zip file folder FoxIDs into the websites physical path e.g. `C:\inetpub\FoxIDs`
-- And copy the zip file folder FoxIDs.Control into the websites physical path e.g. `C:\inetpub\FoxIDs.Control`
+- Xcopy the zip file folder FoxIDs into the websites physical path e.g. `C:\inetpub\FoxIDs`
+- And Xcopy the zip file folder FoxIDs.Control into the websites physical path e.g. `C:\inetpub\FoxIDs.Control`
 
 Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.json` files, located in e.g. `C:\inetpub\FoxIDs\appsettings.json` and `C:\inetpub\FoxIDs.Control\appsettings.json`
 
@@ -128,7 +129,7 @@ Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.j
         "DataCache": "None"
     },
     "PostgreSql": {
-      "ConnectionString": "Host=localhost;Username=postgres;Password=xxxx;Database=FoxIDs"
+      "ConnectionString": "Host=localhost;Username=postgres;Password=xxxxxxxx;Database=FoxIDs"
     },
     ```
 5. Optionally configure to send emails with SMTP.
@@ -136,7 +137,54 @@ Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.j
 ### FoxIDs Logs
 FoxIDs log files are default saved in `C:\inetpub\logs\LogFiles`. You can change the path in the `web.config` file in the two websites.
 
-The logs contain errors, warnings, events and trace. Depending on the load, consider using [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-configure/install-opensearch/windows/) in production.
+The logs contain errors, warnings, events and trace.
+
+### OpenSearch
+Depending on the load, consider to use OpenSearch in production instead of log files.
+
+Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-configure/install-opensearch/windows/) or download from the [download page](https://opensearch.org/downloads/).
+
+1. Create a folder on a permanent place e.g. `C:\opensearch` on the C drive. The OpenSearch `.bat` file is subsequently registered to run in Windows Task Scheduler.
+2. Move the downloaded file `opensearch-x.x.x-windows-x64.zip` to the folder and unpack the file - *the file names are to log to unpack in the default download folder*
+3. Start a Command Prompt 
+4. Navigate to the `opensearch-x.x.x` folder
+5. Set an administrator password, run `set OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>`
+6. Start service, run `.\opensearch-windows-install.bat`
+7. Start another Command Prompt 
+8. Test the OpenSearch, run test request `curl.exe -X GET https://localhost:9200 -u "admin:<custom-admin-password>" --insecure`
+9. Test the OpenSearch plugins, run test request `curl.exe -X GET https://localhost:9200/_cat/plugins?v -u "admin:<custom-admin-password>" --insecure`
+10. Go back to the OpenSearch Command Prompt and stop OpenSearch by clicking `ctrl+c` and then `y`
+
+Create a task to rune OpenSearch
+1. Open **Task Scheduler**
+2. Click **Create Task...**
+3. Add the **Name** `OpenSearch`
+4. Change the account that run the task, click **Change User or Group...**
+5. Write `NETWORK SERVICE` and click **OK**
+6. Select the **Actions** tab
+7. Click **New...**
+8. In **Program/script** start the `.bat` file e.g., write `C:\opensearch\opensearch-x.x.x\opensearch-windows-install.bat` and click **OK**
+9. Select the **Settings** tab
+10. Select the setting **If the task fails, restart every:**
+11. Deselect the setting (remove the checkmark) **Stop the task if it runs longer then:**
+12. Click **OK**
+13. Start the task
+
+OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
+
+Configure OpenSearch in both the FoxIDs site and the FoxIDs Control site in the `appsettings.json` files, located in e.g. `C:\inetpub\FoxIDs\appsettings.json` and `C:\inetpub\FoxIDs.Control\appsettings.json`
+
+```json
+"Options": {
+    "Log": "OpenSearchAndStdoutErrors",
+    //DB configuration...
+},
+"OpenSearch": {
+    "Nodes": [ "https://admin:xxxxxxxx@localhost:9200/" ],
+    "LogLifetime": "Max180Days", 
+    "AllowInsecureCertificates": true //Accept self-signed certificate
+},
+```
 
 ## First login
 Open your FoxIDs Control site (<a href="http://control.my-domain.com" target="_blank">http://control.my-domain.com</a> or <a href="https://control.my-domain.com" target="_blank">https://control.my-domain.com</a>) in a browser. 

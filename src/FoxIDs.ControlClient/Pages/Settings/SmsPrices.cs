@@ -72,6 +72,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            smsPriceFilterForm?.ClearError();
             try
             {
                 SetGeneralSmsPrices(await SmsPriceService.GetSmsPricesAsync(null));

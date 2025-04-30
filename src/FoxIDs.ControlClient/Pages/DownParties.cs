@@ -75,6 +75,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            downPartyFilterForm?.ClearError();
             try
             {
                 SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(null));
@@ -85,6 +86,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
+                downParties?.Clear();
                 downPartyFilterForm.SetError(ex.Message);
             }
         }
@@ -134,7 +136,6 @@ namespace FoxIDs.Client.Pages
         private void SetGeneralDownParties(PaginationResponse<DownParty> dataDownParties, bool addParties = false)
         {
             var dps = new List<GeneralDownPartyViewModel>();
-            dps.Clear();
             foreach (var dp in dataDownParties.Data)
             {
                 if (dp.Type == PartyTypes.Oidc)

@@ -80,6 +80,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            resourceFilterForm?.ClearError();
             try
             {
                 SetGeneralResources(await TrackService.GetResourceNamesAsync(null));

@@ -242,13 +242,19 @@ namespace FoxIDs.Logic
             yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/logout_callback");
         }
 
-        public async Task CreateDefaultTracksDocmentsAsync(string tenantName)
+        public async Task CreateDefaultTracksDocmentsAsync(string tenantName, string defaultUserEmail = null, string defaultUserPassword = null)
         {
-            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, RandomName.GenerateDefaultName());
-            await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName);
+            var testTrackName = await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackTestDisplayName, RandomName.GenerateDefaultName());
+            var prodTrackName = await CreateTrackDocumentsAsync(tenantName, Constants.TrackDefaults.DefaultTrackProductionDisplayName, Constants.TrackDefaults.DefaultTrackProductionName);
+
+            if (!defaultUserEmail.IsNullOrWhiteSpace() && !defaultUserPassword.IsNullOrWhiteSpace())
+            {
+                await CreateDefaultUserDocumentAsync(tenantName, testTrackName, defaultUserEmail, defaultUserPassword);
+                await CreateDefaultUserDocumentAsync(tenantName, prodTrackName, defaultUserEmail, defaultUserPassword);
+            }
         }
 
-        private async Task CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName)
+        private async Task<string> CreateTrackDocumentsAsync(string tenantName, string trackDisplayName, string trackName)
         {
             var mTrack = new Track
             {
@@ -258,6 +264,13 @@ namespace FoxIDs.Logic
             };
             await CreateTrackDocumentAsync(tenantName, mTrack);
             await CreateLoginDocumentAsync(tenantName, mTrack.Name);
+            return mTrack.Name;
+        }
+
+        public async Task CreateDefaultUserDocumentAsync(string tenantName, string trackName, string email, string password)
+        {
+            var claims = new List<Claim> { new Claim("info", "This user can be deleted.") };
+            await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password, claims: claims, tenantName: tenantName, trackName: trackName, checkUserAndPasswordPolicy: false, emailVerified: true);
         }
     }
 }

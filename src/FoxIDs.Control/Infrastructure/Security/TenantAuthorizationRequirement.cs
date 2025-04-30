@@ -20,7 +20,7 @@ namespace FoxIDs.Infrastructure.Security
                 {
                     foreach (var segment in segments)
                     {
-                        if (segment == Constants.ControlApi.Segment.Base)
+                        if (segment == Constants.ControlApi.Segment.Basic)
                         {
                             AddScopeAndRole(acceptedScopes, acceptedRoles, httpMethod,
                                 $"{Constants.ControlApi.ResourceAndScope.Tenant}{segment}",

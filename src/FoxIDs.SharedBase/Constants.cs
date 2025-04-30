@@ -927,7 +927,7 @@ namespace FoxIDs
 
             public static class Segment
             {
-                public const string Base = ":base"; 
+                public const string Basic = ":basic"; 
                 public const string Usage = ":usage";
                 public const string Log = ":log";
                 public const string User = ":user";

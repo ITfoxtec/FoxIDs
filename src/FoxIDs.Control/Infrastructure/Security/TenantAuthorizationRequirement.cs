@@ -16,6 +16,10 @@ namespace FoxIDs.Infrastructure.Security
 
             if (!trackName.IsNullOrWhiteSpace())
             {
+                AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, httpMethod,
+                    $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                    $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}");
+
                 if (segments?.Count() > 0)
                 {
                     foreach (var segment in segments)
@@ -34,12 +38,6 @@ namespace FoxIDs.Infrastructure.Security
                                     segment);
                         }       
                     }
-                }
-                else
-                {
-                    AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, httpMethod, 
-                        $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
-                        $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}");
                 }
             }
 

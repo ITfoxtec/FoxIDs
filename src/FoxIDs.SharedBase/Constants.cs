@@ -173,6 +173,7 @@ namespace FoxIDs
             public const string OperationId = "OperationId";
             public const string RequestId = "RequestId";
             public const string RequestPath = "RequestPath";
+            public const string RequestMethod = "RequestMethod";
             public const string TenantName = "TenantName";
             public const string TrackName = "TrackName";
             public const string GrantType = "GrantType";
@@ -216,6 +217,7 @@ namespace FoxIDs
                 public const string OperationId = "OperationId";
                 public const string RequestId = "RequestId";
                 public const string RequestPath = "RequestPath";
+                public const string RequestMethod = "RequestMethod";
                 public const string MachineName = "MachineName";
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";

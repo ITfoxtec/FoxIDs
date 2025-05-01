@@ -186,7 +186,7 @@ namespace FoxIDs.Logic
 
         private async Task<bool> LoadExceptionsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter, bool includeErrors, bool includeWarnings)
         {
-            var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath {GetGeneralQueryExtend()}";
+            var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath | extend RequestMethod = Properties.RequestMethod {GetGeneralQueryExtend()}";
             var where = filter.IsNullOrEmpty() ? null : $"| where Details contains '{filter}' or RequestId contains '{filter}' or RequestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
             var exceptionsQuery = GetQuery(tenantName, trackName, "AppExceptions", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), exceptionsQuery, queryTimeRange);
@@ -400,7 +400,7 @@ namespace FoxIDs.Logic
             if (Properties != null)
             {
                 var cdResult = Properties.ToObject<Dictionary<string, string>>();
-                var cdValues = cdResult.Where(r => r.Key.StartsWith("f_", StringComparison.Ordinal) || r.Key == Constants.Logs.Results.RequestId || r.Key == Constants.Logs.Results.RequestPath);
+                var cdValues = cdResult.Where(r => r.Key.StartsWith("f_", StringComparison.Ordinal) || r.Key == Constants.Logs.Results.RequestId || r.Key == Constants.Logs.Results.RequestPath || r.Key == Constants.Logs.Results.RequestMethod);
                 foreach (var cdValue in cdValues)
                 {
                     var value = cdValue.Value?.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{cdValue.Value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : cdValue.Value;

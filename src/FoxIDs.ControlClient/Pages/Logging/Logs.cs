@@ -89,6 +89,7 @@ namespace FoxIDs.Client.Pages.Logging
             }
             catch (Exception ex)
             {
+                logResponse = null;
                 logLoadError = ex.Message;
             }
         }

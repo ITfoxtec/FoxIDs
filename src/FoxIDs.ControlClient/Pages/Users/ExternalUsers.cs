@@ -72,6 +72,7 @@ namespace FoxIDs.Client.Pages.Users
 
         private async Task DefaultLoadAsync()
         {
+            externalUserFilterForm?.ClearError();
             try
             {
                 await SetGeneralExternalUsersAsync(await ExternalUserService.GetExternalUsersAsync(null));
@@ -82,6 +83,7 @@ namespace FoxIDs.Client.Pages.Users
             }
             catch (Exception ex)
             {
+                externalUsers?.Clear();
                 externalUserFilterForm.SetError(ex.Message);
             }
         }

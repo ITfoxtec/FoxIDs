@@ -145,6 +145,7 @@ namespace FoxIDs.Logic
             AddValue(values, nameof(item.UserAgent), item.UserAgent);
             AddValue(values, nameof(item.RequestId), item.RequestId);
             AddValue(values, nameof(item.RequestPath), item.RequestPath);
+            AddValue(values, nameof(item.RequestMethod), item.RequestMethod);
             AddValue(values, nameof(item.TenantName), item.TenantName);
             AddValue(values, nameof(item.TrackName), item.TrackName);
             AddValue(values, nameof(item.GrantType), item.GrantType);
@@ -290,6 +291,7 @@ namespace FoxIDs.Logic
                             .Field(f => f.OperationId)
                             .Field(f => f.RequestId)
                             .Field(f => f.RequestPath)
+                            .Field(f => f.RequestMethod)
                             .Field(f => f.ClientIP)
                             .Field(f => f.DownPartyId)
                             .Field(f => f.UpPartyId)

@@ -112,6 +112,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            tenantSettingsForm?.ClearError();
             try
             {
                 tenantWorking = false;

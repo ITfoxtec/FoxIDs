@@ -5,6 +5,7 @@
         public string Message { get; set; }
         public string Domain { get; set; }
         public string RequestPath { get; set; }
+        public string RequestMethod { get; set; }
         public string GrantType { get; set; }
         public string UpPartyClientId { get; set; }
         public string UpPartyStatus { get; set; }

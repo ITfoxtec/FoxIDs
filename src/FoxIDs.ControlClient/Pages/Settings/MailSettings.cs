@@ -74,6 +74,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            mailSettingsForm?.ClearError();
             try
             {
                 var mailSettings = await TrackService.GetTrackSendEmailAsync();       

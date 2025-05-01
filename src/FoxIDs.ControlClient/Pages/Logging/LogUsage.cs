@@ -106,6 +106,7 @@ namespace FoxIDs.Client.Pages.Logging
             }
             catch (Exception ex)
             {
+                usageLogResponse = null;
                 logLoadError = ex.Message;
             }
         }

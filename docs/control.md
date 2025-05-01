@@ -190,7 +190,8 @@ The tenant access rights is at the same time both scopes and roles.
 
 > If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope.
 
-The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
+The `:track[xxxx]` specifies an environment by the technical name. e.g., a `Test` environment with the technical name `hsgm7je5` is `:track[hsgm7je5]` 
+and a `Production` environment with the technical name `-` is `:track[-]`.
 
 <table>
     <tr>
@@ -272,7 +273,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>Access to everything in a specific environment in a tenant.</i></td>
+        <td colspan=2><i>Access to everything in a specific environment in a tenant. `xxxx` is the environments technical name.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track[xxxx]</code></td>

@@ -11,7 +11,7 @@ using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Basic)]
     public class TUserControlProfileController : ApiController
     {
         private readonly TelemetryScopedLogger logger;

@@ -77,6 +77,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            trackSettingsForm?.ClearError();
             try
             {
                 trackWorking = false;

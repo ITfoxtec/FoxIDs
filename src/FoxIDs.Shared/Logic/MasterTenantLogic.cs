@@ -120,8 +120,8 @@ namespace FoxIDs.Logic
                 Constants.ControlApi.Access.Tenant,
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Read}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}",
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}{Constants.ControlApi.AccessElement.Read}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Basic}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Basic}{Constants.ControlApi.AccessElement.Read}",
 
 
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]",

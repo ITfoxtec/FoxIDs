@@ -106,6 +106,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            searchTenantForm?.ClearError();
             try
             {
                 await DefaultTenantLoadAsync();

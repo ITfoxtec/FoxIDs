@@ -71,6 +71,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            upPartyFilterForm?.ClearError();
             try
             {
                 SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(null));
@@ -81,6 +82,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
+                upParties?.Clear();
                 upPartyFilterForm.SetError(ex.Message);
             }
         }

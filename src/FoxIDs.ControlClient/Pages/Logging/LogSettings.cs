@@ -88,7 +88,7 @@ namespace FoxIDs.Client.Pages.Logging
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
                 generalLogSettings.Error = ex.Message;
             }

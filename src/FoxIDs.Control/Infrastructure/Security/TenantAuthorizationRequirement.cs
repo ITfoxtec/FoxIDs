@@ -6,7 +6,12 @@ namespace FoxIDs.Infrastructure.Security
 {
     public class TenantAuthorizationRequirement : BaseAuthorizationRequirement<TenantAuthorizationRequirement, TenantScopeAuthorizeAttribute>
     {
-        protected override (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string trackName, string httpMethod)
+        public TenantAuthorizationRequirement()
+        {
+            supportAccessToTracks = true;       
+        }
+
+        protected override (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string trackName, string httpMethod, IEnumerable<string> accessToTrackNames = null)
         {
             var acceptedScopes = new List<string>();
             var acceptedRoles = new List<string>();
@@ -30,12 +35,18 @@ namespace FoxIDs.Infrastructure.Security
                                 $"{Constants.ControlApi.ResourceAndScope.Tenant}{segment}",
                                 $"{Constants.ControlApi.Access.Tenant}{segment}");
                         }
+                        else if (segment == Constants.ControlApi.Segment.AnyTrack)
+                        {
+                            AddScopeAndRoleAnyTrack(acceptedScopes, acceptedRoles, accessToTrackNames, httpMethod,
+                                $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}");
+                        }
                         else
                         {
                             AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, httpMethod, 
-                                    $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
-                                    $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}",
-                                    segment);
+                                $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                                segment);
                         }       
                     }
                 }
@@ -52,6 +63,17 @@ namespace FoxIDs.Infrastructure.Security
             }
 
             AddScopeAndRole(acceptedScopes, acceptedRoles, httpMethod, $"{subScope}[{trackName}]{segment}", $"{subRole}[{trackName}]{segment}", segment);
+        }
+
+        private void AddScopeAndRoleAnyTrack(List<string> acceptedScopes, List<string> acceptedRoles, IEnumerable<string> accessToTrackNames, string httpMethod, string subScope, string subRole)
+        {
+            if (accessToTrackNames?.Count() > 0)
+            {
+                foreach (string accessToTrackName in accessToTrackNames)
+                {
+                    AddScopeAndRole(acceptedScopes, acceptedRoles, httpMethod, $"{subScope}[{accessToTrackName}]", $"{subRole}[{accessToTrackName}]");
+                }
+            }
         }
     }
 }

@@ -900,6 +900,9 @@ namespace FoxIDs
 
             public const string ResourceName = "foxids_control_api";
 
+            public const string AccessToAnyTrackKey = "access_to_any_track";
+            public const string AccessToTrackNamesKey = "access_to_track_names";
+
             public static class ResourceAndScope
             {
                 public readonly static string Master = $"{ResourceName}:{Access.Master}";
@@ -927,7 +930,8 @@ namespace FoxIDs
 
             public static class Segment
             {
-                public const string Basic = ":basic"; 
+                public const string AnyTrack = ":track*";
+                public const string Basic = ":basic";
                 public const string Usage = ":usage";
                 public const string Log = ":log";
                 public const string User = ":user";

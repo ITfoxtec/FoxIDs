@@ -49,15 +49,21 @@ jobs:
           dotnet publish src/FoxIDs/FoxIDs.csproj --framework net9.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name/FoxIDs" --self-contained -p:PublishReadyToRun=${{ matrix.ready-to-run }} -p:ShouldUnsetParentConfigurationAndPlatform=false
           dotnet publish src/FoxIDs.Control/FoxIDs.Control.csproj --framework net9.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name/FoxIDs.Control" --self-contained -p:ShouldUnsetParentConfigurationAndPlatform=false
 
-          cp "ReleaseConfig/FoxIDs/appsettings.json" "$release_name/FoxIDs"
-          cp "ReleaseConfig/FoxIDs.Control/appsettings.json" "$release_name/FoxIDs.Control"
-
           if [ "${{ matrix.target }}" == "win-x64" ]; then
+            cp "ReleaseConfig/FoxIDs/win/appsettings.json" "$release_name/FoxIDs"
+            cp "ReleaseConfig/FoxIDs.Control/win/appsettings.json" "$release_name/FoxIDs.Control"
+
             cp "ReleaseConfig/FoxIDs/win/web.config" "$release_name/FoxIDs"
             cp "ReleaseConfig/FoxIDs.Control/win/web.config" "$release_name/FoxIDs.Control"
 
             7z a -tzip "${release_name}.zip" "./${release_name}/*"
           else
+            cp "ReleaseConfig/FoxIDs/linux/appsettings.json" "$release_name/FoxIDs"
+            cp "ReleaseConfig/FoxIDs.Control/linux/appsettings.json" "$release_name/FoxIDs.Control"
+
+            cp "ReleaseConfig/FoxIDs/linux/web.config" "$release_name/FoxIDs"
+            cp "ReleaseConfig/FoxIDs.Control/linux/web.config" "$release_name/FoxIDs.Control"
+
             tar czvf "${release_name}.tar.gz" "$release_name"
           fi
 

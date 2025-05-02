@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
         /// <param name="testDownPartyRequest">Down-party test start request.</param>
         /// <returns>Down-party test.</returns>
         [ProducesResponseType(typeof(Api.DownPartyTestStartResponse), StatusCodes.Status200OK)]
-        [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
+        [TenantScopeAuthorize(Constants.ControlApi.Segment.Basic, Constants.ControlApi.Segment.Party)]
         public async Task<ActionResult<Api.DownPartyTestStartResponse>> PostDownPartyTest([FromBody] Api.DownPartyTestStartRequest testDownPartyRequest)
         {
             if (!await ModelState.TryValidateObjectAsync(testDownPartyRequest)) return BadRequest(ModelState);

@@ -57,6 +57,7 @@ namespace FoxIDs.Client.Pages.Usage
 
         private async Task DefaultLoadAsync()
         {
+            searchUsageForm?.ClearError();
             try
             {
                 var thisMonth = DateTimeOffset.Now;
@@ -69,6 +70,7 @@ namespace FoxIDs.Client.Pages.Usage
             }
             catch (Exception ex)
             {
+                usedList?.Clear();
                 searchUsageForm.SetError(ex.Message);
             }
         }

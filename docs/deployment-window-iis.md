@@ -144,35 +144,24 @@ Depending on the load, consider to use OpenSearch in production instead of log f
 
 Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-configure/install-opensearch/windows/) or download from the [download page](https://opensearch.org/downloads/).
 
-1. Create a folder on a permanent place e.g. `C:\opensearch` on the C drive. The OpenSearch `.bat` file is subsequently registered to run in Windows Task Scheduler.
-2. Move the downloaded file `opensearch-x.x.x-windows-x64.zip` to the folder and unpack the file - *the file names are to log to unpack in the default download folder*
-3. Start a Command Prompt 
-4. Navigate to the `opensearch-x.x.x` folder
-5. Set an administrator password, run `set OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>`
-6. Start service, run `.\opensearch-windows-install.bat`
-7. Start another Command Prompt 
-8. Test the OpenSearch, run test request `curl.exe -X GET https://localhost:9200 -u "admin:<custom-admin-password>" --insecure`
-9. Test the OpenSearch plugins, run test request `curl.exe -X GET https://localhost:9200/_cat/plugins?v -u "admin:<custom-admin-password>" --insecure`
-10. Go back to the OpenSearch Command Prompt and stop OpenSearch by clicking `ctrl+c` and then `y`
-
-Create a task to rune OpenSearch
-1. Open **Task Scheduler**
-2. Click **Create Task...**
-3. Add the **Name** `OpenSearch`
-4. Change the account that run the task, click **Change User or Group...**
-5. Write `NETWORK SERVICE` and click **OK**
-6. Select the **Triggers** tab
-7. Click **New...**
-8. In **Begin the task** select `At startup` and click **OK**
-9. Select the **Actions** tab
-10. Click **New...**
-11. In **Program/script** start the `.bat` file e.g., write `C:\opensearch\opensearch-x.x.x\opensearch-windows-install.bat` and click **OK**
-12. Select the **Settings** tab
-13. Select the setting **Run task as soon as possible after a scheduled start is missed**
-14. Select the setting **If the task fails, restart every:**
-15. Deselect the setting (remove the checkmark) **Stop the task if it runs longer then:**
-16. Click **OK**
-17. Start the task or restert the server
+1. Create a folder on a permanent place e.g. `C:\opensearch` on the C drive. OpenSearch is subsequently installed to run as a Windows Service.
+2. Move the downloaded file `opensearch-x.x.x-windows-x64.zip` to the `C:\temp` folder (or another folder with a short name) and unpack the file - *the file names are to log to unpack in the default download folder*
+3. Move the unpacked files to the `C:\opensearch` folder
+4. Start an elevated Command Prompt in administrative mode 
+5. Navigate to the `C:\opensearch` folder
+6. Set an administrator password, run `set OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>`
+7. Start service, run `.\opensearch-windows-install.bat`
+8. Start another Command Prompt 
+9. Test the OpenSearch, run test request `curl.exe -X GET https://localhost:9200 -u "admin:<custom-admin-password>" --insecure`
+10. Test the OpenSearch plugins, run test request `curl.exe -X GET https://localhost:9200/_cat/plugins?v -u "admin:<custom-admin-password>" --insecure`
+11. Go back to the OpenSearch Command Prompt and stop OpenSearch by clicking `ctrl+c` and then `y`
+12. The settings is found in `C:\opensearch\config\opensearch.yml`, please review the settings.
+13. Navigate to the `C:\opensearch\bin` folder in the OpenSearch Command Prompt
+14. Run `opensearch-service.bat install` to install the OpenSearch Windows Service
+15. Open the **Windows Services** 
+16. Find and open the OpenSearch Windows Service,
+17. Set **Startup type:** to `Automatic` and click **OK**
+17. Start the Windows Service or restart the server
 
 OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 

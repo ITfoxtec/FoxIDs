@@ -74,6 +74,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            trackClaimMappingForm?.ClearError();
             try
             {
                 var trackClaimMapping = await TrackService.GetTrackClaimMappingAsync();
@@ -86,6 +87,7 @@ namespace FoxIDs.Client.Pages.Settings
             }
             catch (Exception ex)
             {
+                await trackClaimMappingForm?.InitAsync();
                 trackClaimMappingForm.SetError(ex.Message);
             }
         }

@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Client.Logic
 {
@@ -154,7 +155,21 @@ namespace FoxIDs.Client.Logic
             if (authenticationState.User.Identity.IsAuthenticated && !IsMasterTenant)
             {
                 var myTenantService = serviceProvider.GetService<MyTenantService>();
-                SetMyTenant(await myTenantService.GetTenantAsync());
+                try
+                {
+                    SetMyTenant(await myTenantService.GetTenantAsync());
+                }
+                catch (FoxIDsApiException ex)
+                {
+                    if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                    {
+                        Console.WriteLine("Forbidden, you do not possess the required scope and role to load the tenant data.");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
         }
     }

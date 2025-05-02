@@ -66,6 +66,7 @@ namespace FoxIDs.Client.Pages.Users
 
         private async Task DefaultLoadAsync()
         {
+            failingLoginFilterForm?.ClearError();
             try
             {
                 SetGeneralFailingLogins(await UserService.GetFailingLoginLocksAsync(null));
@@ -76,6 +77,7 @@ namespace FoxIDs.Client.Pages.Users
             }
             catch (Exception ex)
             {
+                failingLogins?.Clear();
                 failingLoginFilterForm.SetError(ex.Message);
             }
         }

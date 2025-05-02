@@ -106,6 +106,8 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
+                trackKey = null;
+                certificates?.Clear();
                 certificateLoadError = ex.Message;
             }
         }

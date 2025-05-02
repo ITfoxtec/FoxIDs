@@ -70,7 +70,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             deleteRtGrantFilter = null;
             deleteRtGrantError = null;
-
+            refreshTokenGrantFilterForm?.ClearError();
             try
             {
                 SetGeneralRefreshTokenGrants(await UserService.GetRefreshTokenGrantsAsync(null, null, null));
@@ -81,6 +81,7 @@ namespace FoxIDs.Client.Pages.Users
             }
             catch (Exception ex)
             {
+                refreshTokenGrants?.Clear();
                 refreshTokenGrantFilterForm.SetError(ex.Message);
             }
         }

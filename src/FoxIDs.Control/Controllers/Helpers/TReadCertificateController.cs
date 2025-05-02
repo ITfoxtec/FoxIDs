@@ -13,7 +13,7 @@ using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Basic, Constants.ControlApi.Segment.Party)]
     public class TReadCertificateController : ApiController
     {
         private readonly IMapper mapper;

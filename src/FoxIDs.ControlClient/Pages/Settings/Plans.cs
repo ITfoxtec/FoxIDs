@@ -72,6 +72,7 @@ namespace FoxIDs.Client.Pages.Settings
 
         private async Task DefaultLoadAsync()
         {
+            planFilterForm?.ClearError();
             try
             {
                 SetGeneralPlans(await PlanService.GetPlansAsync(null));

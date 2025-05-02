@@ -173,6 +173,7 @@ namespace FoxIDs
             public const string OperationId = "OperationId";
             public const string RequestId = "RequestId";
             public const string RequestPath = "RequestPath";
+            public const string RequestMethod = "RequestMethod";
             public const string TenantName = "TenantName";
             public const string TrackName = "TrackName";
             public const string GrantType = "GrantType";
@@ -216,6 +217,7 @@ namespace FoxIDs
                 public const string OperationId = "OperationId";
                 public const string RequestId = "RequestId";
                 public const string RequestPath = "RequestPath";
+                public const string RequestMethod = "RequestMethod";
                 public const string MachineName = "MachineName";
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
@@ -898,6 +900,9 @@ namespace FoxIDs
 
             public const string ResourceName = "foxids_control_api";
 
+            public const string AccessToAnyTrackKey = "access_to_any_track";
+            public const string AccessToTrackNamesKey = "access_to_track_names";
+
             public static class ResourceAndScope
             {
                 public readonly static string Master = $"{ResourceName}:{Access.Master}";
@@ -925,7 +930,8 @@ namespace FoxIDs
 
             public static class Segment
             {
-                public const string Base = ":base"; 
+                public const string AnyTrack = ":track*";
+                public const string Basic = ":basic";
                 public const string Usage = ":usage";
                 public const string Log = ":log";
                 public const string User = ":user";

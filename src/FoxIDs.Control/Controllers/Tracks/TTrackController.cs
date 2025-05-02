@@ -16,7 +16,7 @@ using FoxIDs.Util;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.AnyTrack)]
     public class TTrackController : ApiController
     {
         private readonly FoxIDsControlSettings settings;
@@ -53,6 +53,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
+                HttpContext.TenantScopeGrantAccessToTrackName(name);
 
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
@@ -81,6 +82,7 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
                 track.Name = await GetTrackNameAsync(track.Name);
+                HttpContext.TenantScopeGrantAccessToTrackName(track.Name);
 
                 if (track.Name == Constants.Routes.ControlSiteName || track.Name == Constants.Routes.HealthController)
                 {
@@ -131,6 +133,7 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
                 track.Name = await GetTrackNameAsync(track.Name);
+                HttpContext.TenantScopeGrantAccessToTrackName(track.Name);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
@@ -180,6 +183,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
+                HttpContext.TenantScopeGrantAccessToTrackName(name);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);

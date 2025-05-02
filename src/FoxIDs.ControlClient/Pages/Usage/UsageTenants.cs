@@ -100,6 +100,7 @@ namespace FoxIDs.Client.Pages.Usage
 
         private async Task DefaultLoadAsync()
         {
+            searchTenantForm?.ClearError();
             try
             {
                 SetGeneralTenants(await TenantService.GetUsageTenantsAsync(null));
@@ -111,6 +112,7 @@ namespace FoxIDs.Client.Pages.Usage
             }
             catch (Exception ex)
             {
+                tenants?.Clear();
                 searchTenantForm.SetError(ex.Message);
             }
         }

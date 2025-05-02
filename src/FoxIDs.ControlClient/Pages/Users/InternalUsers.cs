@@ -66,6 +66,7 @@ namespace FoxIDs.Client.Pages.Users
 
         private async Task DefaultLoadAsync()
         {
+            userFilterForm?.ClearError();
             try
             {
                 SetGeneralUsers(await UserService.GetUsersAsync(null, null, null, null));
@@ -76,6 +77,7 @@ namespace FoxIDs.Client.Pages.Users
             }
             catch (Exception ex)
             {
+                users?.Clear();
                 userFilterForm.SetError(ex.Message);
             }
         }

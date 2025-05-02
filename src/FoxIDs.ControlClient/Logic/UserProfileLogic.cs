@@ -26,7 +26,11 @@ namespace FoxIDs.Client.Logic
                 }
                 catch (FoxIDsApiException ex)
                 {
-                    if (ex.StatusCode != System.Net.HttpStatusCode.NotFound)
+                    if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                    {
+                        Console.WriteLine("Forbidden, you do not possess the required scope and role to update the user profile.");
+                    }
+                    else if (ex.StatusCode != System.Net.HttpStatusCode.NotFound)
                     {
                         throw;
                     }

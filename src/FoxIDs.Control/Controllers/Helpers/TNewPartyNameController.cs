@@ -8,7 +8,7 @@ using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Basic, Constants.ControlApi.Segment.Party)]
     public class TNewPartyNameController : ApiController
     {
         private readonly PartyLogic partyLogic;

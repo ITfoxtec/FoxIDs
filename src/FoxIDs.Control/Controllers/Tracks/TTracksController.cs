@@ -14,7 +14,7 @@ using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.AnyTrack)]
     public class TTracksController : ApiController
     {
         private const string dataType = Constants.Models.DataType.Track;
@@ -41,11 +41,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mTracks, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) : 
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
-                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
+                (var mTracks, var nextPaginationToken) = await GetFilterTrackInternalAsync(filterName, paginationToken);
 
                 var response = new Api.PaginationResponse<Api.Track>
                 {
@@ -67,6 +63,31 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<(IReadOnlyCollection<Track> mTracks, string nextPaginationToken)> GetFilterTrackInternalAsync(string filterName, string paginationToken)
+        {
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName };
+
+            if (HttpContext.GetTenantScopeAccessToAnyTrack())
+            {
+                return filterName.IsNullOrWhiteSpace() ?
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) :
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
+            }
+
+            var accessToTrackNames = HttpContext.GetTenantScopeAccessToTrackNames();
+            if (accessToTrackNames?.Count() > 0)
+            {
+                return filterName.IsNullOrWhiteSpace() ?
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name), paginationToken: paginationToken) :
+                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name) &&
+                        (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
+
+            }
+
+            return (new List<Track>(), null);
         }
     }
 }

@@ -183,7 +183,9 @@ Each access right is both defined as a scope and a role. This makes it possible 
 
 The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the roles `foxids:tenant` and `foxids:master`.
 
-> A client request a scope by requesting a scope on a resource, separating the resource and scope with a semicolon. E.g., to request the `foxids:tenant:track:party.create` scope the client request for `foxids_control_api:foxids:tenant:track:party.create`.
+A client request a scope by requesting a scope on a resource, separating the resource and scope with a semicolon. E.g., to request the `foxids:tenant:track:party.create` scope the client request for `foxids_control_api:foxids:tenant:track:party.create`.
+
+> If a request is denied due to insufficient access rights, a trace item is logged with the possible authorising scopes and roles along with the users actual scopes and roles.
 
 #### Tenant access rights
 The tenant access rights is at the same time both scopes and roles.

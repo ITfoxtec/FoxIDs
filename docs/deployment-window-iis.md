@@ -19,7 +19,7 @@ This deployment include:
 - Two websites one for FoxIDs and one for the FoxIDs Control (Admin Client and API).
 - The two websites are exposed on two different domains / sub-domains.
 - NoSQL database containing all data including tenants, environments and users. Either deploy **MongoDB Community Edition** or **PostgreSQL**.
-- FoxIDs logs are default saved in files. Depending on the load, consider to use [OpenSearch](#opensearch) in production.
+- FoxIDs logs are default [saved in files](#foxids-log-files). Depending on the load, consider to use [OpenSearch](#opensearch) in production.
 
 ## Deployment
 
@@ -43,7 +43,12 @@ PostgreSQL is default deployed with the user `postgres` and a password provided 
 PostgreSQL default endpoint / connection string: `Host=localhost;Username=postgres;Password=xxxx;Database=FoxIDs`
 
 ### Add two websites
-Add two websites on IIS.
+Enable ASP.NET Core hosting and add the two FoxIDs websites to IIS.
+
+Add ASP.NET Core Module (ANCM) for IIS
+- Install [.NET Core Hosting Bundle installer (direct download)](https://dotnet.microsoft.com/permalink/dotnetcore-current-windows-runtime-bundle-installer) 
+to add the ASP.NET Core Module (ANCM) for IIS, which is required to run ASP.NET Core applications, even throw the FoxIDs websites are self-contained.
+- Restart IIS or the server
 
 Add the FoxIDs website:
 - Site name `FoxIDs`
@@ -134,8 +139,10 @@ Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.j
     ```
 5. Optionally configure to send emails with SMTP.
 
-### FoxIDs Logs
-FoxIDs log files are default saved in `C:\inetpub\logs\LogFiles`. You can change the path in the `web.config` file in the two websites.
+### FoxIDs log files
+FoxIDs log files are default saved in the `C:\inetpub\logs\LogFiles\foxids\` folder. You can change the path in the `web.config` file in the two websites.
+
+Create the `\foxids\` folder in `C:\inetpub\logs\LogFiles\` and grant the two IIS App Pools `iis apppool\foxids` and `iis apppool\foxids.control` full access to the `\foxids\` folder.
 
 The logs contain errors, warnings, events and trace.
 
@@ -144,35 +151,23 @@ Depending on the load, consider to use OpenSearch in production instead of log f
 
 Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-configure/install-opensearch/windows/) or download from the [download page](https://opensearch.org/downloads/).
 
-1. Create a folder on a permanent place e.g. `C:\opensearch` on the C drive. The OpenSearch `.bat` file is subsequently registered to run in Windows Task Scheduler.
-2. Move the downloaded file `opensearch-x.x.x-windows-x64.zip` to the folder and unpack the file - *the file names are to log to unpack in the default download folder*
-3. Start a Command Prompt 
-4. Navigate to the `opensearch-x.x.x` folder
-5. Set an administrator password, run `set OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>`
-6. Start service, run `.\opensearch-windows-install.bat`
-7. Start another Command Prompt 
-8. Test the OpenSearch, run test request `curl.exe -X GET https://localhost:9200 -u "admin:<custom-admin-password>" --insecure`
-9. Test the OpenSearch plugins, run test request `curl.exe -X GET https://localhost:9200/_cat/plugins?v -u "admin:<custom-admin-password>" --insecure`
-10. Go back to the OpenSearch Command Prompt and stop OpenSearch by clicking `ctrl+c` and then `y`
-
-Create a task to rune OpenSearch
-1. Open **Task Scheduler**
-2. Click **Create Task...**
-3. Add the **Name** `OpenSearch`
-4. Change the account that run the task, click **Change User or Group...**
-5. Write `NETWORK SERVICE` and click **OK**
-6. Select the **Triggers** tab
-7. Click **New...**
-8. In **Begin the task** select `At startup` and click **OK**
-9. Select the **Actions** tab
-10. Click **New...**
-11. In **Program/script** start the `.bat` file e.g., write `C:\opensearch\opensearch-x.x.x\opensearch-windows-install.bat` and click **OK**
-12. Select the **Settings** tab
-13. Select the setting **Run task as soon as possible after a scheduled start is missed**
-14. Select the setting **If the task fails, restart every:**
-15. Deselect the setting (remove the checkmark) **Stop the task if it runs longer then:**
-16. Click **OK**
-17. Start the task or restert the server
+1. Create a folder on a permanent place e.g. `C:\opensearch` on the C drive. OpenSearch is subsequently installed to run as a Windows Service.
+2. Move the downloaded file `opensearch-x.x.x-windows-x64.zip` to the `C:\temp` folder (or another folder with a short name) and unpack the file - *the file names are to log to unpack in the default download folder*
+3. Move the unpacked files to the `C:\opensearch` folder
+4. Start an elevated Command Prompt in administrative mode 
+5. Navigate to the `C:\opensearch` folder
+6. Set an administrator password, run `set OPENSEARCH_INITIAL_ADMIN_PASSWORD=<custom-admin-password>`
+7. Start service, run `.\opensearch-windows-install.bat`
+8. Start another Command Prompt 
+9. Test the OpenSearch, run test request `curl.exe -X GET https://localhost:9200 -u "admin:<custom-admin-password>" --insecure`
+10. Test the OpenSearch plugins, run test request `curl.exe -X GET https://localhost:9200/_cat/plugins?v -u "admin:<custom-admin-password>" --insecure`
+11. Go back to the OpenSearch Command Prompt and stop OpenSearch by clicking `ctrl+c` and then `y`
+12. The settings is found in `C:\opensearch\config\opensearch.yml`, please review the settings.
+13. Navigate to the `C:\opensearch\bin` folder in the OpenSearch Command Prompt
+14. Run `opensearch-service.bat install` to install the OpenSearch Windows Service
+15. Run `opensearch-service.bat manager` to open the OpenSearch Windows Service settings
+16. Set **Startup type:** to `Automatic` and click **OK**
+17. Run `opensearch-service.bat start` to start the OpenSearch Windows Service
 
 OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 
@@ -184,7 +179,7 @@ Configure OpenSearch in both the FoxIDs site and the FoxIDs Control site in the 
     //DB configuration...
 },
 "OpenSearch": {
-    "Nodes": [ "https://admin:xxxxxxxx@localhost:9200/" ],
+    "Nodes": [ "https://admin:xxxxxxxx@localhost:9200" ],
     "LogLifetime": "Max180Days", 
     "AllowInsecureCertificates": true //Accept self-signed certificate
 },

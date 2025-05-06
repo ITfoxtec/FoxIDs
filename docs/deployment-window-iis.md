@@ -19,7 +19,7 @@ This deployment include:
 - Two websites one for FoxIDs and one for the FoxIDs Control (Admin Client and API).
 - The two websites are exposed on two different domains / sub-domains.
 - NoSQL database containing all data including tenants, environments and users. Either deploy **MongoDB Community Edition** or **PostgreSQL**.
-- FoxIDs logs are default saved in files. Depending on the load, consider to use [OpenSearch](#opensearch) in production.
+- FoxIDs logs are default [saved in files](#foxids-log-files). Depending on the load, consider to use [OpenSearch](#opensearch) in production.
 
 ## Deployment
 
@@ -43,7 +43,12 @@ PostgreSQL is default deployed with the user `postgres` and a password provided 
 PostgreSQL default endpoint / connection string: `Host=localhost;Username=postgres;Password=xxxx;Database=FoxIDs`
 
 ### Add two websites
-Add two websites on IIS.
+Enable ASP.NET Core hosting and add the two FoxIDs websites to IIS.
+
+Add ASP.NET Core Module (ANCM) for IIS
+- Install [.NET Core Hosting Bundle installer (direct download)](https://dotnet.microsoft.com/permalink/dotnetcore-current-windows-runtime-bundle-installer) 
+to add the ASP.NET Core Module (ANCM) for IIS, which is required to run ASP.NET Core applications, even throw the FoxIDs websites are self-contained.
+- Restart IIS or the server
 
 Add the FoxIDs website:
 - Site name `FoxIDs`
@@ -134,8 +139,10 @@ Configure both the FoxIDs site and the FoxIDs Control site in the `appsettings.j
     ```
 5. Optionally configure to send emails with SMTP.
 
-### FoxIDs Logs
-FoxIDs log files are default saved in `C:\inetpub\logs\LogFiles`. You can change the path in the `web.config` file in the two websites.
+### FoxIDs log files
+FoxIDs log files are default saved in the `C:\inetpub\logs\LogFiles\foxids\` folder. You can change the path in the `web.config` file in the two websites.
+
+Create the `\foxids\` folder in `C:\inetpub\logs\LogFiles\` and grant the two IIS App Pools `iis apppool\foxids` and `iis apppool\foxids.control` full access to the `\foxids\` folder.
 
 The logs contain errors, warnings, events and trace.
 
@@ -158,10 +165,9 @@ Download [OpenSearch](https://docs.opensearch.org/docs/latest/install-and-config
 12. The settings is found in `C:\opensearch\config\opensearch.yml`, please review the settings.
 13. Navigate to the `C:\opensearch\bin` folder in the OpenSearch Command Prompt
 14. Run `opensearch-service.bat install` to install the OpenSearch Windows Service
-15. Open the **Windows Services** 
-16. Find and open the OpenSearch Windows Service,
-17. Set **Startup type:** to `Automatic` and click **OK**
-17. Start the Windows Service or restart the server
+15. Run `opensearch-service.bat manager` to open the OpenSearch Windows Service settings
+16. Set **Startup type:** to `Automatic` and click **OK**
+17. Run `opensearch-service.bat start` to start the OpenSearch Windows Service
 
 OpenSearch is default started with a self-signed certificate. You can configure a domain and a certificate but, in this guide, the self-signed certificate is retained and FoxIDs is configured to accept the certificate.
 
@@ -173,7 +179,7 @@ Configure OpenSearch in both the FoxIDs site and the FoxIDs Control site in the 
     //DB configuration...
 },
 "OpenSearch": {
-    "Nodes": [ "https://admin:xxxxxxxx@localhost:9200/" ],
+    "Nodes": [ "https://admin:xxxxxxxx@localhost:9200" ],
     "LogLifetime": "Max180Days", 
     "AllowInsecureCertificates": true //Accept self-signed certificate
 },

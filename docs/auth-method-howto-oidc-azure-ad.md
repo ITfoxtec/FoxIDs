@@ -47,10 +47,12 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
     - Optionally, select show advanced, change the client authentication method to `private key JWT` and upload the client certificate
  5. Select use claims from ID token
  6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Microsoft Entra ID access token to application registrations.  
- It is possible to see the claims returned from the Microsoft Entra ID app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the received JWTs
+ 7. Select `No` in Front channel logout session required
  7. Click create
 
 That's it, you are done. 
+
+It is possible to see the claims returned from the Microsoft Entra ID app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the received JWTs
 
 > The new authentication method can now be selected as an allowed authentication method in a application registration.  
 > The application registration can read the claims from the authentication method. It is possible to add the access_token claim to include the Microsoft Entra ID access token as a claim in the issued access token.

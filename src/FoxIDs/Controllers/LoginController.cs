@@ -1000,8 +1000,6 @@ namespace FoxIDs.Controllers
                     if (user != null)
                     {
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
-                        // Do direct login instead of starting the login sequence from scratch.
-                        //return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
                     }
                 }
                 catch (UserExistsException uex)

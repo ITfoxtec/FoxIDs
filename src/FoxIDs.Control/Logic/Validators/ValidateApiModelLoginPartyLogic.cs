@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    if (!validateApiModelDynamicElementLogic.ValidateApiModelCreateUserElements(modelState, party.CreateUser.Elements))
+                    if (!validateApiModelDynamicElementLogic.ValidateApiModelCreateUserElements(modelState, party.Passwordless, party.CreateUser.Elements))
                     {
                         isValid = false;
                     }

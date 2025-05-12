@@ -32,14 +32,25 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Phone verified")]
         public bool PhoneVerified { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
+        /// <summary>
+        /// Passwordless require the user to have a email or phone user identifier.
+        /// </summary>
+        [Display(Name = "Use passwordless")]
+        public bool Passwordless { get; set; }
+
         [Display(Name = "User must change password")]
         public bool ChangePassword { get; set; }
+
+        /// <summary>
+        /// SetPassword require the user to have a email or phone user identifier.
+        /// </summary>
+        [Display(Name = "User must set password with email or phone confirmation")]
+        public bool SetPassword { get; set; }
 
         [Display(Name = "Disable account")]
         public bool DisableAccount { get; set; }
@@ -67,6 +78,29 @@ namespace FoxIDs.Models.Api
             if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty() && Username.IsNullOrEmpty())
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
+            }
+
+            if (Passwordless)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use passwordless.", [nameof(Email), nameof(Phone), nameof(Passwordless)]));
+                }
+            }
+            else
+            {
+                if (Password.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Password)} is required.", [nameof(Password)]));
+                }
+            }
+
+            if (SetPassword)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use set password.", [nameof(Email), nameof(Phone), nameof(SetPassword)]));
+                }
             }
 
             if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

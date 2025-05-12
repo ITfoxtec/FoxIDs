@@ -30,29 +30,30 @@ namespace FoxIDs.Models.Api
         public bool EnableUsernameIdentifier { get; set; }
 
         /// <summary>
+        /// Passwordless require the user to have a email or phone user identifier.
+        /// </summary>
+        public bool Passwordless { get; set; }
+
+        /// <summary>
         /// Default false.
         /// </summary>
-        [Required]
-        public bool EnableCancelLogin { get; set; } = false;
+        public bool EnableCancelLogin { get; set; } 
 
         /// <summary>
         /// Default true.
         /// </summary>
-        [Required]
         public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
         /// Default false.
         /// </summary>
-        [Required]
-        public bool DisableResetPassword { get; set; } = false;
+        public bool DisableResetPassword { get; set; } 
 
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
         /// <summary>
         /// Default if required.
         /// </summary>
-        [Required]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         public bool DisableTwoFactorApp { get; set; }
@@ -121,7 +122,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Default false.
         /// </summary>
-        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+        public bool PersistentSessionLifetimeUnlimited { get; set; }
 
         public bool DisableSingleLogout { get; set; }
 
@@ -183,6 +184,14 @@ namespace FoxIDs.Models.Api
             if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
             {
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+
+            if (Passwordless)
+            {
+                if (!EnableEmailIdentifier && !EnablePhoneIdentifier)
+                {
+                    results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} is required to use passwordless.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(Passwordless)]));
+                }
             }
 
             if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

@@ -22,6 +22,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_username_idf")]
         public bool EnableUsernameIdentifier { get; set; }
 
+        /// <summary>
+        /// Passwordless require the user to have a email or phone user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "passwordless")]
+        public bool Passwordless { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }
@@ -97,6 +103,14 @@ namespace FoxIDs.Models
             if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
             {
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+
+            if (Passwordless)
+            {
+                if (!EnableEmailIdentifier && !EnablePhoneIdentifier)
+                {
+                    results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} is required to use passwordless.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(Passwordless)]));
+                }
             }
 
             if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

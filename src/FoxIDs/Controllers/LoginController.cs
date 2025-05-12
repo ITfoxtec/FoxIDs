@@ -1121,12 +1121,15 @@ namespace FoxIDs.Controllers
                         IsUserIdentifier = true
                     });
                 }
-                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                if (!loginUpParty.Passwordless)
                 {
-                    Type = DynamicElementTypes.Password,
-                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                    Required = true
-                });
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Password,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true
+                    });
+                }
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement
                 {
                     Type = DynamicElementTypes.GivenName,

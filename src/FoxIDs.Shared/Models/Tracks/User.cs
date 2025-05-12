@@ -49,23 +49,32 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "user_id")]
         public string UserId { get; set; }        
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashAlgorithmLength)]
         [JsonProperty(PropertyName = "hash_algorithm")]
         public string HashAlgorithm { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashLength)]
         [JsonProperty(PropertyName = "hash")]
         public string Hash { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 
+        /// <summary>
+        /// Passwordless require the user to have a email or phone user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "passwordless")]
+        public bool Passwordless { get; set; }
+
         [JsonProperty(PropertyName = "change_password")]
         public bool ChangePassword  { get; set; }
+
+        /// <summary>
+        /// SetPassword require the user to have a email or phone user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "set_password")]
+        public bool SetPassword { get; set; }
 
         [MaxLength(Constants.Models.User.EmailLength)]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
@@ -147,12 +156,35 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
             }
 
+            if(Passwordless)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use passwordless.", [nameof(Email), nameof(Phone), nameof(Passwordless)]));
+                }
+            }
+            else
+            {
+                if (HashAlgorithm.IsNullOrWhiteSpace() || Hash.IsNullOrWhiteSpace() || HashSalt.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(HashAlgorithm)} or the field {nameof(Hash)} or the field {nameof(HashSalt)} is required.", [nameof(HashAlgorithm), nameof(Hash), nameof(HashSalt)]));
+                }
+            }
+
+            if (SetPassword)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use set password.", [nameof(Email), nameof(Phone), nameof(SetPassword)]));
+                }
+            }
+
             if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(DisableTwoFactorApp)} or the field {nameof(DisableTwoFactorSms)} or the field {nameof(DisableTwoFactorEmail)} should be False if the field {nameof(RequireMultiFactor)} is True.",
                     [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireMultiFactor)]));
             }
-
+            
             return results;
         }
 

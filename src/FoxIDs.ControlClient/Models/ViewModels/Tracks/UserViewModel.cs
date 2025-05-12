@@ -43,8 +43,14 @@ namespace FoxIDs.Client.Models.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Display(Name = "Passwordless (login without a password)")]
+        public bool Passwordless { get; set; }
+
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
+
+        [Display(Name = "Require set password with email or phone confirmation")]
+        public bool SetPassword { get; set; }
 
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
@@ -80,6 +86,29 @@ namespace FoxIDs.Client.Models.ViewModels
             if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty() && Username.IsNullOrEmpty())
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
+            }
+
+            if (Passwordless)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use passwordless.", [nameof(Email), nameof(Phone), nameof(Passwordless)]));
+                }
+            }
+            else
+            {
+                if (Password.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Password)} is required.", [nameof(Password)]));
+                }
+            }
+
+            if (SetPassword)
+            {
+                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use set password.", [nameof(Email), nameof(Phone), nameof(SetPassword)]));
+                }
             }
 
             if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

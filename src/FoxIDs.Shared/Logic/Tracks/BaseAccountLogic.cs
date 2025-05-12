@@ -28,7 +28,8 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUserAsync(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
+        public async Task<User> CreateUserAsync(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null,
+            bool checkUserAndPasswordPolicy = true, bool passwordless = false, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
             bool requireMultiFactor = false, bool disableTwoFactorApp = false, bool DisableTwoFactorSms = false, bool DisableTwoFactorEmail = false)
         {
             userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
@@ -45,6 +46,7 @@ namespace FoxIDs.Logic
                 Email = userIdentifier.Email,
                 Phone = userIdentifier.Phone,
                 Username = userIdentifier.Username,
+                Passwordless = passwordless,
                 ConfirmAccount = confirmAccount,
                 EmailVerified = emailVerified,
                 PhoneVerified = phoneVerified,
@@ -59,7 +61,11 @@ namespace FoxIDs.Logic
             trackName = trackName ?? RouteBinding.TrackName;
             await SetIdsAsync(user, tenantName, trackName);
 
-            await secretHashLogic.AddSecretHashAsync(user, password);
+            if (!passwordless)
+            {
+                await secretHashLogic.AddSecretHashAsync(user, password);
+            }
+            
             if (claims?.Count() > 0)
             {
                 var userIdentifierClaimTypes = new List<string>();
@@ -88,9 +94,15 @@ namespace FoxIDs.Logic
                 {
                     throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
                 }
-                await ValidatePasswordPolicyAsync(userIdentifier, password);
+                if (!passwordless)
+                {
+                    await ValidatePasswordPolicyAsync(userIdentifier, password);
+                }
             }
-            user.ChangePassword = changePassword;
+            if (!passwordless)
+            {
+                user.ChangePassword = changePassword;
+            }
             await tenantDataRepository.CreateAsync(user);
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' created, with user id '{user.UserId}'.");

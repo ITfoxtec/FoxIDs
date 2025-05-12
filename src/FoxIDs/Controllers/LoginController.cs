@@ -996,10 +996,12 @@ namespace FoxIDs.Controllers
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
                     userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
                     
-                    var user = await accountLogic.CreateUserAsync(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+                    var user = await accountLogic.CreateUserAsync(userIdentifier, password, claims: claims, passwordless: loginUpParty.Passwordless, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
-                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+                        // Do direct login instead of starting the login sequence from scratch.
+                        //return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
                     }
                 }
                 catch (UserExistsException uex)

@@ -504,7 +504,7 @@ namespace FoxIDs.Controllers
                 IconUrl = loginUpParty.IconUrl,
                 Css = loginUpParty.Css,
                 EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                EnableResetPassword = !loginUpParty.DisableResetPassword,
+                EnableSetPassword = !loginUpParty.DisableSetPassword,
                 EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
                 DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
             };
@@ -585,7 +585,7 @@ namespace FoxIDs.Controllers
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                        EnableResetPassword = !loginUpParty.DisableResetPassword,
+                        EnableSetPassword = !loginUpParty.DisableSetPassword,
                         EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
                         DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
                     };

@@ -47,7 +47,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Default false.
         /// </summary>
-        public bool DisableResetPassword { get; set; } 
+        public bool DisableSetPassword { get; set; } 
 
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 

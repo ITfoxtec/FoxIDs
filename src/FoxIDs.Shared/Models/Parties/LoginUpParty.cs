@@ -28,17 +28,27 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "passwordless")]
         public bool Passwordless { get; set; }
 
-        [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }
 
-        [Required]
         [JsonProperty(PropertyName = "enable_create_user")]
         public bool EnableCreateUser { get; set; }
 
-        [Required]
         [JsonProperty(PropertyName = "disable_reset_password")]
-        public bool DisableResetPassword { get; set; }
+        public bool? DisableResetPassword 
+        {
+            get { return null; }
+            set
+            {
+                if (value == true)
+                {
+                    DisableSetPassword = true;
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "disable_set_new_password")]
+        public bool DisableSetPassword { get; set; }
 
         [JsonProperty(PropertyName = "delete_refresh_token_grants_on_change_password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }

@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class PhoneResetPasswordViewModel : ViewModel
+    public class PhoneSetPasswordViewModel : ViewModel
     {
         public string SequenceString { get; set; }
 
@@ -13,8 +13,8 @@ namespace FoxIDs.Models.ViewModels
 
         [Display(Name = "Confirmation code")]
         [Required]
-        [MinLength(Constants.Models.User.ConfirmationCodeSmsLength, ErrorMessage = "Please enter a reset password confirmation code.")]
-        [MaxLength(Constants.Models.User.ConfirmationCodeSmsLength, ErrorMessage = "Please enter a reset password confirmation code.")]
+        [MinLength(Constants.Models.User.ConfirmationCodeSmsLength, ErrorMessage = "Please enter the confirmation code.")]
+        [MaxLength(Constants.Models.User.ConfirmationCodeSmsLength, ErrorMessage = "Please enter the confirmation code.")]
         public string ConfirmationCode { get; set; }
 
         public ConfirmationCodeSendStatus ConfirmationCodeSendStatus { get; set; }

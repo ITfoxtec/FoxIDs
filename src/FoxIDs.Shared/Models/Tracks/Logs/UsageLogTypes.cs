@@ -1,22 +1,17 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
 
 namespace FoxIDs.Models
 {
     public enum UsageLogTypes
     {
-        [EnumMember(Value = "login")]
         Login = 20,
-        [EnumMember(Value = "token_request")]
         TokenRequest = 30,
-        [EnumMember(Value = "control_api_get")]
         ControlApiGet = 40,
-        [EnumMember(Value = "control_api_update")]
         ControlApiUpdate = 50,
-        [EnumMember(Value = "confirmation")]
         Confirmation = 100,
-        [EnumMember(Value = "reset_password")]
-        ResetPassword = 200,
-        [EnumMember(Value = "mfa")]
+        SetPassword = 200,
+        [Obsolete("Delete after 2026-06-01 and in combination with FoxIDs.Models.Api.UsageLogTypes.ResetPassword.")]
+        ResetPassword = 201,
         Mfa = 300
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace FoxIDs.Models.Api
+﻿using System;
+
+namespace FoxIDs.Models.Api
 {
     public enum UsageLogTypes
     {
@@ -12,7 +14,9 @@
         ControlApiGet = 500,
         ControlApiUpdate = 520,
         Confirmation = 600,
-        ResetPassword = 700,
+        SetPassword = 700,   
+        [Obsolete("Delete after 2026-06-01 and in combination with FoxIDs.Models.UsageLogTypes.ResetPassword.")]
+        ResetPassword = 701,
         Mfa = 800,
         RealCount = 10100,
         ExtraCount = 10120,

@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
             return new SmsContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Sms = localizer["Your{0}SMS confirmation code: {1}", $" {GetCompanyName()} ", code]
+                Sms = localizer["{0} is your {1} confirmation code to verify your phone number. Don't share your code with anyone.", code, GetCompanyName()]
             };
         }
 
@@ -92,8 +92,8 @@ namespace FoxIDs.Logic
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}email confirmation", $"{GetCompanyName()} - "],
-                Body = localizer["Your{0}email confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
+                Subject = localizer["{0} verify your phone number", $"{GetCompanyName()} -"],
+                Body = GetBodyHtml(localizer["This is you {0} confirmation code to verify your phone number. Don't share your code with anyone.", GetCompanyName()], localizer["Confirmation code: {0}", GetCodeHtml(code)])
             };
         }
 
@@ -109,17 +109,17 @@ namespace FoxIDs.Logic
         #endregion
 
         #region PasswordCode
-        public Task<ConfirmationCodeSendStatus> SendPhoneResetPasswordCodeSmsAsync(string phone, bool forceNewCode)
+        public Task<ConfirmationCodeSendStatus> SendPhoneSetPasswordCodeSmsAsync(string phone, bool forceNewCode)
         {
             phone = phone?.Trim();
-            return SendCodeAsync(SmsResetPasswordCodeKeyElement, phone, GetSmsSendResetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
+            return SendCodeAsync(SmsSetPasswordCodeKeyElement, phone, GetSmsSendSetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
         }
 
-        public async Task<User> VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
+        public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             phone = phone?.Trim();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.Sms, SmsResetPasswordCodeKeyElement, phone, code, GetSmsSendResetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsResetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.Sms, SmsSetPasswordCodeKeyElement, phone, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByPhoneAsync(phone);
@@ -127,17 +127,17 @@ namespace FoxIDs.Logic
             return user;
         }
 
-        public Task<ConfirmationCodeSendStatus> SendEmailResetPasswordCodeAsync(string email, bool forceNewCode)
+        public Task<ConfirmationCodeSendStatus> SendEmailSetPasswordCodeAsync(string email, bool forceNewCode)
         {
             email = email?.Trim()?.ToLower();
-            return SendCodeAsync(EmailResetPasswordCodeKeyElement, email, GetEmailSendResetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
+            return SendCodeAsync(EmailSetPasswordCodeKeyElement, email, GetEmailSendSetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
         }
 
-        public async Task<User> VerifyEmailResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
+        public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             email = email?.Trim()?.ToLower();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.Email, EmailResetPasswordCodeKeyElement, email, code, GetEmailSendResetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailResetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.Email, EmailSetPasswordCodeKeyElement, email, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByEmailAsync(email);
@@ -145,39 +145,39 @@ namespace FoxIDs.Logic
             return user;
         }
 
-        private string SmsResetPasswordCodeLogText => "Phone (SMS) reset password code";
-        private string SmsResetPasswordCodeKeyElement => "sms_reset_password_code";
+        private string SmsSetPasswordCodeLogText => "Phone (SMS) set password code";
+        private string SmsSetPasswordCodeKeyElement => "sms_set_password_code";
 
-        private string EmailResetPasswordCodeLogText => "Email reset password code";
-        private string EmailResetPasswordCodeKeyElement => "reset_password_code";
+        private string EmailSetPasswordCodeLogText => "Email set password code";
+        private string EmailSetPasswordCodeKeyElement => "set_password_code";
 
-        private SmsContent GetPhoneResetPasswordCodeSms(string code)
+        private SmsContent GetPhoneSetPasswordCodeSms(string code)
         {
             return new SmsContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Sms = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", code]
+                Sms = localizer["{0} is your {1} confirmation code to set your desired password. Don't share your code with anyone.", code, GetCompanyName()]
             };
         }
 
-        private EmailContent GetEmailResetPasswordCodeEmailContent(string code)
+        private EmailContent GetEmailSetPasswordCodeEmailContent(string code)
         {
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}reset password", $"{GetCompanyName()} - "],
-                Body = localizer["Your{0}reset password confirmation code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
+                Subject = localizer["{0} set password", $"{GetCompanyName()} -"],
+                Body = GetBodyHtml(localizer["This is you {0} confirmation code to set your desired password. Don't share your code with anyone.", GetCompanyName()], localizer["Confirmation code: {0}", GetCodeHtml(code)])
             };
         }
 
-        private Func<User, string, Task> GetSmsSendResetPasswordAction()
+        private Func<User, string, Task> GetSmsSendSetPasswordAction()
         {
-            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneResetPasswordCodeSms(code));
+            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneSetPasswordCodeSms(code));
         }
 
-        private Func<User, string, Task> GetEmailSendResetPasswordAction()
+        private Func<User, string, Task> GetEmailSendSetPasswordAction()
         {
-            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailResetPasswordCodeEmailContent(code)));
+            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailSetPasswordCodeEmailContent(code)));
         }
         #endregion
 
@@ -217,7 +217,7 @@ namespace FoxIDs.Logic
             return new SmsContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Sms = localizer["Your{0}SMS two-factor code: {1}", $" {GetCompanyName()} ", code]
+                Sms = localizer["{0} is your {1} two-factor code. Don't share your code with anyone.", code, GetCompanyName()]
             };
         }
 
@@ -226,8 +226,8 @@ namespace FoxIDs.Logic
             return new EmailContent
             {
                 ParentCulture = HttpContext.GetCultureParentName(),
-                Subject = localizer["{0}email two-factor", $"{GetCompanyName()} - "],
-                Body = localizer["Your{0}email two-factor code: {1}", $" {GetCompanyName()} ", GetCodeHtml(code)]
+                Subject = localizer["{0} two-factor code", $"{GetCompanyName()} -"],
+                Body = GetBodyHtml(localizer["This is you {0} two-factor code. Don't share your code with anyone.", GetCompanyName()], localizer["Two-factor code: {0}", GetCodeHtml(code)])
             };
         }
 
@@ -247,18 +247,39 @@ namespace FoxIDs.Logic
             return HttpUtility.HtmlEncode(RouteBinding.CompanyName.IsNullOrWhiteSpace() ? "FoxIDs" : RouteBinding.CompanyName);
         }
 
+        private string GetBodyHtml(string section1, string section2)
+        {
+            var codeHtml = string.Format(
+@"<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
+  <tbody>
+    <tr>
+      <td>
+        {0}
+      </td>
+    </tr>
+    <tr><td style=""height: 10px;"">&nbsp;</td></tr>
+    <tr>
+      <td>
+        {1}
+      </td>
+    </tr>
+</tbody>
+</table>", section1, section2);
+            return codeHtml;
+        }
+
         private string GetCodeHtml(string code)
         {
             var codeHtml = string.Format(
 @"<table border=""0"" cellpadding=""5"" cellspacing=""0"" width=""100%"">
   <tbody>
     <tr><td style=""height: 20px;"">&nbsp;</td></tr>
-      <tr>
-        <td>
-          <div align=""center"">
-            <strong>{0}</strong>
+    <tr>
+      <td>
+        <div align=""center"">
+          <strong>{0}</strong>
         </div>
-    </td>
+      </td>
     </tr>
     <tr><td style=""height: 20px;"">&nbsp;</td></tr>
 </tbody>

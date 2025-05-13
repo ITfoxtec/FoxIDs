@@ -269,11 +269,11 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public async Task<IActionResult> ResetPassword()
+        public async Task<IActionResult> SetPassword()
         {
             try
             {
-                logger.ScopeTrace(() => "Start reset password.");
+                logger.ScopeTrace(() => "Start set password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -283,26 +283,26 @@ namespace FoxIDs.Controllers
                 {
                     sequenceData.Phone = user.Phone;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneResetPassword, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneSetPassword, includeSequence: true).ToRedirectResult();
                 }
                 else if (!string.IsNullOrWhiteSpace(user?.Email))
                 {
                     sequenceData.Email = user.Email;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 }
-                return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.EmailResetPassword, includeSequence: true).ToRedirectResult();
+                return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.EmailSetPassword, includeSequence: true).ToRedirectResult();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Set password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> PhoneResetPassword(bool newCode = false)
+        public async Task<IActionResult> PhoneSetPassword(bool newCode = false)
         {
             try
             {
-                logger.ScopeTrace(() => "Start phone reset password.");
+                logger.ScopeTrace(() => "Start phone set password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -320,28 +320,28 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                if (loginUpParty.DisableResetPassword)
+                if (loginUpParty.DisableSetPassword)
                 {
-                    throw new InvalidOperationException("Reset password not enabled.");
+                    throw new InvalidOperationException("Set password not enabled.");
                 }
 
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendPhoneResetPasswordCodeSmsAsync(sequenceData.Phone, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendPhoneSetPasswordCodeSmsAsync(sequenceData.Phone, newCode);
                 }
                 catch (UserNotExistsException uex)
                 {
-                    // log warning if reset password is requested for an unknown phone number.
+                    // log warning if set password is requested for an unknown phone number.
                     logger.Warning(uex);
                 }
 
                 if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    await planUsageLogic.LogResetPasswordSmsEventAsync(sequenceData.Phone);
+                    await planUsageLogic.LogSetPasswordSmsEventAsync(sequenceData.Phone);
                 }
 
-                return View(new PhoneResetPasswordViewModel
+                return View(new PhoneSetPasswordViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
@@ -354,17 +354,17 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Set password with phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PhoneResetPassword(PhoneResetPasswordViewModel resetPassword)
+        public async Task<IActionResult> PhoneSetPassword(PhoneSetPasswordViewModel setPassword)
         {
             try
             {
-                logger.ScopeTrace(() => "Phone, resetting password.");
+                logger.ScopeTrace(() => "Phone, set password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -382,19 +382,19 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                if (loginUpParty.DisableResetPassword)
+                if (loginUpParty.DisableSetPassword)
                 {
-                    throw new InvalidOperationException("Reset password not enabled.");
+                    throw new InvalidOperationException("Set password not enabled.");
                 }
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    resetPassword.SequenceString = SequenceString;
-                    resetPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    resetPassword.IconUrl = loginUpParty.IconUrl;
-                    resetPassword.Css = loginUpParty.Css;
-                    resetPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    return View(resetPassword);
+                    setPassword.SequenceString = SequenceString;
+                    setPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
+                    setPassword.IconUrl = loginUpParty.IconUrl;
+                    setPassword.Css = loginUpParty.Css;
+                    setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    return View(setPassword);
                 };
 
                 if (!ModelState.IsValid)
@@ -404,23 +404,23 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyPhoneResetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, resetPassword.ConfirmationCode, resetPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
+                    var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException uex)
                 {
-                    // log warning if reset password is requested for an unknown phone number.
+                    // log warning if set password is requested for an unknown phone number.
                     logger.Warning(uex);
                 }
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Please use the new reset password confirmation code just sent to your phone."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Please use the new confirmation code that has just been sent to your phone."]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Invalid reset password confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -430,54 +430,54 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the phone number."]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewResponse();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Set password with phone failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> EmailResetPassword(bool newCode = false)
+        public async Task<IActionResult> EmailSetPassword(bool newCode = false)
         {
             try
             {
-                logger.ScopeTrace(() => "Start email reset password.");
+                logger.ScopeTrace(() => "Start email set password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -486,28 +486,28 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                if (loginUpParty.DisableResetPassword)
+                if (loginUpParty.DisableSetPassword)
                 {
-                    throw new InvalidOperationException("Reset password not enabled.");
+                    throw new InvalidOperationException("Set password not enabled.");
                 }
 
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    confirmationCodeSendStatus = await accountActionLogic.SendEmailResetPasswordCodeAsync(sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
+                    confirmationCodeSendStatus = await accountActionLogic.SendEmailSetPasswordCodeAsync(sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
                 }
                 catch (UserNotExistsException uex)
                 {
-                    // log warning if reset password is requested for an unknown email address.
+                    // log warning if set password is requested for an unknown email address.
                     logger.Warning(uex);
                 }
 
                 if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
                 {
-                    planUsageLogic.LogResetPasswordEmailEvent();
+                    planUsageLogic.LogSetPasswordEmailEvent();
                 }
 
-                return View(new EmailResetPasswordViewModel
+                return View(new EmailSetPasswordViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
@@ -520,17 +520,17 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Set password with email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EmailResetPassword(EmailResetPasswordViewModel resetPassword)
+        public async Task<IActionResult> EmailSetPassword(EmailSetPasswordViewModel setPassword)
         {
             try
             {
-                logger.ScopeTrace(() => "Email, resetting password.");
+                logger.ScopeTrace(() => "Email, set password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
@@ -539,19 +539,19 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                if (loginUpParty.DisableResetPassword)
+                if (loginUpParty.DisableSetPassword)
                 {
-                    throw new InvalidOperationException("Reset password not enabled.");
+                    throw new InvalidOperationException("Set password not enabled.");
                 }
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    resetPassword.SequenceString = SequenceString;
-                    resetPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    resetPassword.IconUrl = loginUpParty.IconUrl;
-                    resetPassword.Css = loginUpParty.Css;
-                    resetPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    return View(resetPassword);
+                    setPassword.SequenceString = SequenceString;
+                    setPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
+                    setPassword.IconUrl = loginUpParty.IconUrl;
+                    setPassword.Css = loginUpParty.Css;
+                    setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    return View(setPassword);
                 };
 
                 if (!ModelState.IsValid)
@@ -561,23 +561,23 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailResetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, resetPassword.ConfirmationCode, resetPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
+                    var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException uex)
                 {
-                    // log warning if reset password is requested for an unknown email address.
+                    // log warning if set password is requested for an unknown email address.
                     logger.Warning(uex);
                 }
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Please use the new reset password confirmation code just sent to your email."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Please use the new confirmation code that has just been sent to your email."]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Invalid reset password confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -587,46 +587,46 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the phone number."]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewResponse();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password reset email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Set password with email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

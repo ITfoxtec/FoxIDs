@@ -102,7 +102,7 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.Passwordless" For="@(() => loginUpParty.Form.Model.Passwordless)" TextType="e.d" />
                 @if (loginUpParty.ShowAdvanced && !loginUpParty.Form.Model.Passwordless)
                 {
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPassword" For="@(() => loginUpParty.Form.Model.DisableSetPassword)" Negation="true" TextType="e.d" />
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
                 }
                 <div class="active-group active">

@@ -8,7 +8,7 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCancelLogin { get; set; }
 
-        public bool EnableResetPassword { get; set; }
+        public bool EnableSetPassword { get; set; }
 
         public bool EnableCreateUser { get; set; }
 

@@ -78,8 +78,8 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default true.
         /// </summary>
-        [Display(Name = "Users can reset the password")]
-        public bool DisableResetPassword { get; set; }
+        [Display(Name = "Users can set the password")]
+        public bool DisableSetPassword { get; set; }
 
         /// <summary>
         /// Default false.

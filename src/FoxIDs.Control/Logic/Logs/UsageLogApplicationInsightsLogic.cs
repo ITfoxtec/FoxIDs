@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                         item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                         break;
                     case Api.UsageLogTypes.Confirmation:
-                    case Api.UsageLogTypes.ResetPassword:
+                    case Api.UsageLogTypes.SetPassword:
                     case Api.UsageLogTypes.Mfa:
                         (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(row);
                         item.Value = itemCount;
@@ -140,6 +140,12 @@ namespace FoxIDs.Logic
             {
                 throw new Exception($"Value '{typeValue}' cannot be converted to enum type '{nameof(Api.UsageLogTypes)}'.");
             }
+
+            if (logType == Api.UsageLogTypes.ResetPassword)
+            {
+                logType = Api.UsageLogTypes.SetPassword;
+            }
+
             return logType;
         }
 
@@ -252,6 +258,7 @@ namespace FoxIDs.Logic
             if (logRequest.IncludeAdditional)
             {
                 yield return UsageLogTypes.Confirmation.ToString();
+                yield return UsageLogTypes.SetPassword.ToString();
                 yield return UsageLogTypes.ResetPassword.ToString();
                 yield return UsageLogTypes.Mfa.ToString();
             }

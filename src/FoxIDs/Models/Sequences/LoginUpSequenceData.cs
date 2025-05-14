@@ -78,5 +78,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "spr")]
         public bool ShowPasswordRiskError { get; set; }
+
+        [JsonProperty(PropertyName = "cuep")]
+        public bool CanUseExistingPassword { get; set; }
     }
 }

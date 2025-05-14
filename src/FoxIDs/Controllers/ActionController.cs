@@ -279,6 +279,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+                sequenceData.CanUseExistingPassword = !string.IsNullOrEmpty(user?.Hash);
                 if (user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(user?.Phone)))
                 {
                     sequenceData.Phone = user.Phone;
@@ -348,6 +349,7 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                    EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
                     Phone = sequenceData.Phone
                 });
@@ -394,6 +396,7 @@ namespace FoxIDs.Controllers
                     setPassword.IconUrl = loginUpParty.IconUrl;
                     setPassword.Css = loginUpParty.Css;
                     setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    setPassword.EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword;
                     return View(setPassword);
                 };
 
@@ -514,6 +517,7 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                    EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
                     Email = sequenceData.Email ?? sequenceData.UserIdentifier
                 });
@@ -551,6 +555,7 @@ namespace FoxIDs.Controllers
                     setPassword.IconUrl = loginUpParty.IconUrl;
                     setPassword.Css = loginUpParty.Css;
                     setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    setPassword.EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword;
                     return View(setPassword);
                 };
 

@@ -113,31 +113,31 @@ namespace FoxIDs.Models.Api
 
             if (PasswordlessEmail)
             {
-                if (Email.IsNullOrEmpty())
+                if (Email.IsNullOrEmpty() && UpdateEmail.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to use passwordless email.", [nameof(Email), nameof(PasswordlessEmail)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(UpdateEmail)} is required to use passwordless email.", [nameof(Email), nameof(UpdateEmail), nameof(PasswordlessEmail)]));
                 }
             }
             if (PasswordlessSms)
             {
-                if (Phone.IsNullOrEmpty())
+                if (Phone.IsNullOrEmpty() && UpdatePhone.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to use passwordless SMS.", [nameof(Phone), nameof(PasswordlessSms)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} or the field {nameof(UpdatePhone)} is required to use passwordless SMS.", [nameof(Phone), nameof(UpdatePhone), nameof(PasswordlessSms)]));
                 }
             }
 
             if (SetPasswordEmail)
             {
-                if (Email.IsNullOrEmpty())
+                if (Email.IsNullOrEmpty() && UpdateEmail.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(UpdateEmail)} is required to set password with email.", [nameof(Email), nameof(UpdateEmail), nameof(SetPasswordEmail)]));
                 }
             }
             if (SetPasswordSms)
             {
-                if (Phone.IsNullOrEmpty())
+                if (Phone.IsNullOrEmpty() && UpdatePhone.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} or the field {nameof(UpdatePhone)} is required to set password with SMS.", [nameof(Phone), nameof(UpdatePhone), nameof(SetPasswordSms)]));
                 }
             }
 

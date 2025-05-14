@@ -218,11 +218,27 @@ namespace FoxIDs.Controllers
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = mUser.Email.IsNullOrEmpty() ? false : user.EmailVerified;
                 mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
+
+                if (mUser.PasswordlessEmail && !user.PasswordlessEmail && !user.PasswordlessSms)
+                {
+                    mUser.SetPasswordEmail = true;
+                }
+                else
+                {
+                    mUser.SetPasswordEmail = user.SetPasswordEmail;
+                }
+                if (mUser.PasswordlessSms && !user.PasswordlessEmail && !user.PasswordlessSms)
+                {
+                    mUser.SetPasswordSms = true;
+                }
+                else
+                {
+                    mUser.SetPasswordSms = user.SetPasswordSms;
+                }
                 mUser.PasswordlessEmail = user.PasswordlessEmail;
                 mUser.PasswordlessSms = user.PasswordlessSms;
+
                 mUser.ChangePassword = user.ChangePassword;
-                mUser.SetPasswordEmail = user.SetPasswordEmail;
-                mUser.SetPasswordSms = user.SetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;

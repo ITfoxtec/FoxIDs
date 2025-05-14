@@ -201,7 +201,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var sessionUserIdentifier, var user, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -213,7 +213,7 @@ namespace FoxIDs.Controllers
                     sequenceData.UserIdentifier = sessionUserIdentifier;
                     sequenceData.DoSessionUserRequireLogin = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return await PasswordInternalAsync();
+                    return await StartPasswordInternal(sequenceData, loginUpParty);
                 }
 
                 var identifierViewModel = new IdentifierViewModel
@@ -458,35 +458,11 @@ namespace FoxIDs.Controllers
                 LoginHint = sequenceData.LoginHint,
                 Acr = sequenceData.Acr
             };
-        }
-        
-        private async Task<IActionResult> PasswordInternalAsync()
-        {
-            try
-            {
-                logger.ScopeTrace(() => "Start password.");
-
-                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                if (sequenceData.DoLoginIdentifierStep)
-                {
-                    throw new InvalidOperationException("Sequence not aimed for the password step.");
-                }
-                loginPageLogic.CheckUpParty(sequenceData);
-                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
-
-                return await StartPasswordInternal(sequenceData, loginUpParty);
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
+        }       
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (_, _, var user, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -496,6 +472,15 @@ namespace FoxIDs.Controllers
             {
                 throw new InvalidOperationException("Required user identifier is empty in sequence.");
             }
+
+            var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+            if (user != null && !user.DisableAccount)
+            {
+                if (user.SetPasswordEmail || user.SetPasswordSms)
+                {
+                    return new RedirectResult($"../../{Constants.Routes.ActionController}/{Constants.Endpoints.SetPassword}/_{SequenceString}");
+                }
+            } 
 
             var passwordViewModel = new PasswordViewModel
             {
@@ -546,21 +531,21 @@ namespace FoxIDs.Controllers
             return View("Password",passwordViewModel);
         }
 
-        public async Task<(bool validSession, string userIdentifier, User user, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequireMfa(user, upParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, session?.UserIdentifier, user, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
+                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, session?.UserIdentifier, user, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
+                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
             }
 
-            return (validSession, session?.UserIdentifier, user, null);
+            return (validSession, session?.UserIdentifier, null);
         }
 
         private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)

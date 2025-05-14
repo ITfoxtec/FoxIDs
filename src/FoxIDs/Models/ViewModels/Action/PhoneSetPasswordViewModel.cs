@@ -8,6 +8,8 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCancelLogin { get; set; }
 
+        public bool EnableExistingPasswordLogin { get; set; }
+
         [Display(Name = "Phone")]
         public string Phone { get; set; }
 

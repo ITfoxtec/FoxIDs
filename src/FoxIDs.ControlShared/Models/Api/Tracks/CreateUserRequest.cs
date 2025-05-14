@@ -105,14 +105,14 @@ namespace FoxIDs.Models.Api
             {
                 if (Email.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to use passwordless email.", [nameof(Email), nameof(PasswordlessEmail)]));
+                    results.Add(new ValidationResult($"The field {nameof(Email)} is required to use passwordless email.", [nameof(Email), nameof(PasswordlessEmail)]));
                 }
             }
             if (PasswordlessSms)
             {
                 if (Phone.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to use passwordless SMS.", [nameof(Phone), nameof(PasswordlessSms)]));
+                    results.Add(new ValidationResult($"The field {nameof(Phone)} is required to use passwordless SMS.", [nameof(Phone), nameof(PasswordlessSms)]));
                 }
             }
 
@@ -120,14 +120,14 @@ namespace FoxIDs.Models.Api
             {
                 if (Email.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
+                    results.Add(new ValidationResult($"The field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
                 }
             }
             if (SetPasswordSms)
             {
                 if (Phone.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
+                    results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
                 }
             }
 

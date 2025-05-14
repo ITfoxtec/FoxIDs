@@ -64,8 +64,16 @@
                             <label class="label-control">User identifiers</label>
                         </div>
 
-                        <FInputToggle @bind-Value="user.Form.Model.Passwordless" For="@(() => user.Form.Model.Passwordless)" TextType="e.d" />
-                        @if (!user.Form.Model.Passwordless)
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <FInputToggle @bind-Value="user.Form.Model.PasswordlessEmail" For="@(() => user.Form.Model.PasswordlessEmail)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="user.Form.Model.PasswordlessSms" For="@(() => user.Form.Model.PasswordlessSms)" TextType="e.d" />
+                                </div>
+                            </div>
+                            <label class="label-control">Passwordless</label>
+                        </div>
+                        @if (!(user.Form.Model.PasswordlessSms || user.Form.Model.PasswordlessEmail))
                         {
                             @if (user.CreateMode)
                             {
@@ -92,11 +100,12 @@
                             </div>
                             <label class="label-control">User confirmation</label>
                         </div>
-                        @if (!user.Form.Model.Passwordless)
+                        @if (!(user.Form.Model.PasswordlessEmail || user.Form.Model.PasswordlessSms))
                         {
                             <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
-                            <FInputToggle @bind-Value="user.Form.Model.SetPassword" For="@(() => user.Form.Model.SetPassword)" TextType="y.n" />
                         }
+                        <FInputToggle @bind-Value="user.Form.Model.SetPasswordEmail" For="@(() => user.Form.Model.SetPasswordEmail)" TextType="y.n" />
+                        <FInputToggle @bind-Value="user.Form.Model.SetPasswordSms" For="@(() => user.Form.Model.SetPasswordSms)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
                         @if (user.ShowAdvanced)
                         {

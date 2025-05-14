@@ -201,7 +201,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var user, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -486,7 +486,7 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var user, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -546,21 +546,21 @@ namespace FoxIDs.Controllers
             return View("Password",passwordViewModel);
         }
 
-        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        public async Task<(bool validSession, string userIdentifier, User user, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequireMfa(user, upParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return (validSession, session?.UserIdentifier, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
+                return (validSession, session?.UserIdentifier, user, await loginPageLogic.LoginResponseUpdateSessionAsync(upParty, sequenceData, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return (validSession, session?.UserIdentifier, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
+                return (validSession, session?.UserIdentifier, user, await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, loginError: LoginSequenceError.LoginRequired));
             }
 
-            return (validSession, session?.UserIdentifier, null);
+            return (validSession, session?.UserIdentifier, user, null);
         }
 
         private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)
@@ -996,7 +996,16 @@ namespace FoxIDs.Controllers
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
                     userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
                     
-                    var user = await accountLogic.CreateUserAsync(userIdentifier, password, claims: claims, passwordless: loginUpParty.Passwordless, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+                    var user = await accountLogic.CreateUserAsync(new CreateUserObj
+                    {
+                        UserIdentifier = userIdentifier,
+                        Password = password, 
+                        Claims = claims, 
+                        PasswordlessSms = loginUpParty.CreateUser.PasswordlessSms,
+                        PasswordlessEmail = loginUpParty.CreateUser.PasswordlessEmail,
+                        ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
+                        RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
+                    });
                     if (user != null)
                     {
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
@@ -1121,7 +1130,7 @@ namespace FoxIDs.Controllers
                         IsUserIdentifier = true
                     });
                 }
-                if (!loginUpParty.Passwordless)
+                if (!(loginUpParty.CreateUser.PasswordlessEmail || loginUpParty.CreateUser.PasswordlessEmail))
                 {
                     loginUpParty.CreateUser.Elements.Add(new DynamicElement
                     {

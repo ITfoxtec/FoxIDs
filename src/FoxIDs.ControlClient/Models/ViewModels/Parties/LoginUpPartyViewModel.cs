@@ -60,9 +60,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Username")]
         public bool EnableUsernameIdentifier { get; set; }
 
-        [Display(Name = "Passwordless (login without a password)")]
-        public bool Passwordless { get; set; }
-
         /// <summary>
         /// Default false.
         /// </summary>
@@ -193,11 +190,18 @@ namespace FoxIDs.Client.Models.ViewModels
                 results.Add(new ValidationResult($"At lease one user identifier 'email', 'phone' or 'username' should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
 
-            if (Passwordless)
+            if (CreateUser?.PasswordlessEmail == true)
             {
-                if (!EnableEmailIdentifier && !EnablePhoneIdentifier)
+                if (!EnableEmailIdentifier)
                 {
-                    results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} is required to use passwordless.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(Passwordless)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled to create users with passwordless email.", [nameof(EnableEmailIdentifier)]));
+                }
+            }
+            if (CreateUser?.PasswordlessSms == true)
+            {
+                if (!EnablePhoneIdentifier)
+                {
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled to create users with passwordless SMS.", [nameof(EnablePhoneIdentifier)]));
                 }
             }
 

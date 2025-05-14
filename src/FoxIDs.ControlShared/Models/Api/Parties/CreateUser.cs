@@ -6,6 +6,18 @@ namespace FoxIDs.Models.Api
 {
     public class CreateUser
     {
+        /// <summary>
+        /// Passwordless with email require the user to have a email user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with email (one-time password)")]
+        public bool PasswordlessEmail { get; set; }
+
+        /// <summary>
+        /// Passwordless with SMS require the user to have a phone user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with SMS (one-time password)")]
+        public bool PasswordlessSms { get; set; }
+
         [Display(Name = "User must confirm account")]
         public bool ConfirmAccount { get; set; }
 

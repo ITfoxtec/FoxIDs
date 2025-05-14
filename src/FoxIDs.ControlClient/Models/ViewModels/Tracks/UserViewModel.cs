@@ -43,14 +43,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Display(Name = "Passwordless (login without a password)")]
-        public bool Passwordless { get; set; }
+        [Display(Name = "Passwordless with email (one-time password)")]
+        public bool PasswordlessEmail { get; set; }
+
+        [Display(Name = "Passwordless with SMS (one-time password)")]
+        public bool PasswordlessSms { get; set; }
 
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
 
-        [Display(Name = "Require set password with email or phone confirmation")]
-        public bool SetPassword { get; set; }
+        [Display(Name = "Require set password with email confirmation")]
+        public bool SetPasswordEmail { get; set; }
+
+        [Display(Name = "Require set password with phone confirmation")]
+        public bool SetPasswordSms { get; set; }
 
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
@@ -88,26 +94,33 @@ namespace FoxIDs.Client.Models.ViewModels
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
             }
 
-            if (Passwordless)
+            if (PasswordlessEmail)
             {
-                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                if (Email.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use passwordless.", [nameof(Email), nameof(Phone), nameof(Passwordless)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to use passwordless email.", [nameof(Email), nameof(PasswordlessEmail)]));
                 }
             }
-            else
+            if (PasswordlessSms)
             {
-                if (Password.IsNullOrWhiteSpace())
+                if (Phone.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Password)} is required.", [nameof(Password)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to use passwordless SMS.", [nameof(Phone), nameof(PasswordlessSms)]));
                 }
             }
 
-            if (SetPassword)
+            if (SetPasswordEmail)
             {
-                if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty())
+                if (Email.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} is required to use set password.", [nameof(Email), nameof(Phone), nameof(SetPassword)]));
+                    results.Add(new ValidationResult($"Either the field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
+                }
+            }
+            if (SetPasswordSms)
+            {
+                if (Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Either the field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
                 }
             }
 

@@ -30,11 +30,6 @@ namespace FoxIDs.Models.Api
         public bool EnableUsernameIdentifier { get; set; }
 
         /// <summary>
-        /// Passwordless require the user to have a email or phone user identifier.
-        /// </summary>
-        public bool Passwordless { get; set; }
-
-        /// <summary>
         /// Default false.
         /// </summary>
         public bool EnableCancelLogin { get; set; } 
@@ -186,11 +181,18 @@ namespace FoxIDs.Models.Api
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
 
-            if (Passwordless)
+            if (CreateUser?.PasswordlessEmail == true)
             {
-                if (!EnableEmailIdentifier && !EnablePhoneIdentifier)
+                if (!EnableEmailIdentifier)
                 {
-                    results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} is required to use passwordless.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(Passwordless)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled to create users with passwordless email.", [nameof(EnableEmailIdentifier)]));
+                }
+            }
+            if (CreateUser?.PasswordlessSms == true)
+            {
+                if (!EnablePhoneIdentifier)
+                {
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled to create users with passwordless SMS.", [nameof(EnablePhoneIdentifier)]));
                 }
             }
 

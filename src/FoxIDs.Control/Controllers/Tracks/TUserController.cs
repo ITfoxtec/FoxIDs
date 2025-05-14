@@ -116,13 +116,27 @@ namespace FoxIDs.Controllers
                         }
                     }
                 }
-                
-                var mUser = await accountLogic.CreateUserAsync(new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username }, 
-                    createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
-                    confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, phoneVerified: createUserRequest.PhoneVerified, 
-                    disableAccount: createUserRequest.DisableAccount, 
-                    disableTwoFactorApp: createUserRequest.DisableTwoFactorApp, DisableTwoFactorSms: createUserRequest.DisableTwoFactorSms, DisableTwoFactorEmail: createUserRequest.DisableTwoFactorEmail, 
-                    requireMultiFactor: createUserRequest.RequireMultiFactor);
+
+                var passwordless = createUserRequest.PasswordlessEmail || createUserRequest.PasswordlessSms;
+                var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
+                {
+                    UserIdentifier = new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username },
+                    PasswordlessEmail = createUserRequest.PasswordlessEmail,
+                    PasswordlessSms = createUserRequest.PasswordlessSms,
+                    Password = passwordless ? null : createUserRequest.Password,
+                    ChangePassword = passwordless ? false : createUserRequest.ChangePassword,
+                    SetPasswordEmail = createUserRequest.SetPasswordEmail,
+                    SetPasswordSms = createUserRequest.SetPasswordSms,
+                    Claims = claims,
+                    ConfirmAccount = createUserRequest.ConfirmAccount,
+                    EmailVerified = createUserRequest.EmailVerified,
+                    PhoneVerified = createUserRequest.PhoneVerified,
+                    DisableAccount = createUserRequest.DisableAccount,
+                    DisableTwoFactorApp = createUserRequest.DisableTwoFactorApp,
+                    DisableTwoFactorSms = createUserRequest.DisableTwoFactorSms,
+                    DisableTwoFactorEmail = createUserRequest.DisableTwoFactorEmail,
+                    RequireMultiFactor = createUserRequest.RequireMultiFactor
+                });
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -204,7 +218,11 @@ namespace FoxIDs.Controllers
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = mUser.Email.IsNullOrEmpty() ? false : user.EmailVerified;
                 mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
+                mUser.PasswordlessEmail = user.PasswordlessEmail;
+                mUser.PasswordlessSms = user.PasswordlessSms;
                 mUser.ChangePassword = user.ChangePassword;
+                mUser.SetPasswordEmail = user.SetPasswordEmail;
+                mUser.SetPasswordSms = user.SetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;

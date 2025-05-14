@@ -279,7 +279,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
-                if (!string.IsNullOrWhiteSpace(user?.Phone))
+                if (user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(user?.Phone)))
                 {
                     sequenceData.Phone = user.Phone;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);

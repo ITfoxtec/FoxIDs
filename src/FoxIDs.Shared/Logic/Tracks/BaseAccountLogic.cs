@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -28,84 +27,87 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUserAsync(UserIdentifier userIdentifier, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null,
-            bool checkUserAndPasswordPolicy = true, bool passwordless = false, bool confirmAccount = true, bool emailVerified = false, bool phoneVerified = false, bool disableAccount = false, 
-            bool requireMultiFactor = false, bool disableTwoFactorApp = false, bool DisableTwoFactorSms = false, bool DisableTwoFactorEmail = false)
+        public async Task<User> CreateUserAsync(CreateUserObj createUserObj, bool checkUserAndPasswordPolicy = true, string tenantName = null, string trackName = null)
         {
-            userIdentifier.Email = userIdentifier.Email?.Trim().ToLower();
-            userIdentifier.Email = !userIdentifier.Email.IsNullOrEmpty() ? userIdentifier.Email : null;
-            userIdentifier.Phone = userIdentifier.Phone?.Trim();
-            userIdentifier.Phone = !userIdentifier.Phone.IsNullOrEmpty() ? userIdentifier.Phone : null;
-            userIdentifier.Username = userIdentifier.Username?.Trim()?.ToLower();
-            userIdentifier.Username = !userIdentifier.Username.IsNullOrEmpty() ? userIdentifier.Username : null;
-            logger.ScopeTrace(() => $"Creating user '{userIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
+            createUserObj.UserIdentifier.Email = createUserObj.UserIdentifier.Email?.Trim().ToLower();
+            createUserObj.UserIdentifier.Email = !createUserObj.UserIdentifier.Email.IsNullOrEmpty() ? createUserObj.UserIdentifier.Email : null;
+            createUserObj.UserIdentifier.Phone = createUserObj.UserIdentifier.Phone?.Trim();
+            createUserObj.UserIdentifier.Phone = !createUserObj.UserIdentifier.Phone.IsNullOrEmpty() ? createUserObj.UserIdentifier.Phone : null;
+            createUserObj.UserIdentifier.Username = createUserObj.UserIdentifier.Username?.Trim()?.ToLower();
+            createUserObj.UserIdentifier.Username = !createUserObj.UserIdentifier.Username.IsNullOrEmpty() ? createUserObj.UserIdentifier.Username : null;
+            logger.ScopeTrace(() => $"Creating user '{createUserObj.UserIdentifier.ToJson()}', Route '{RouteBinding?.Route}'.");
 
             var user = new User
             {
                 UserId = Guid.NewGuid().ToString(),
-                Email = userIdentifier.Email,
-                Phone = userIdentifier.Phone,
-                Username = userIdentifier.Username,
-                Passwordless = passwordless,
-                ConfirmAccount = confirmAccount,
-                EmailVerified = emailVerified,
-                PhoneVerified = phoneVerified,
-                DisableAccount = disableAccount,
-                RequireMultiFactor = requireMultiFactor,
-                DisableTwoFactorApp = disableTwoFactorApp,
-                DisableTwoFactorSms = DisableTwoFactorSms,
-                DisableTwoFactorEmail = DisableTwoFactorEmail
+                Email = createUserObj.UserIdentifier.Email,
+                Phone = createUserObj.UserIdentifier.Phone,
+                Username = createUserObj.UserIdentifier.Username,
+                PasswordlessSms = createUserObj.PasswordlessSms,
+                PasswordlessEmail = createUserObj.PasswordlessEmail,
+                ConfirmAccount = createUserObj.ConfirmAccount,
+                SetPasswordSms = createUserObj.SetPasswordSms,
+                SetPasswordEmail = createUserObj.SetPasswordEmail,
+                EmailVerified = createUserObj.EmailVerified,
+                PhoneVerified = createUserObj.PhoneVerified,
+                DisableAccount = createUserObj.DisableAccount,
+                RequireMultiFactor = createUserObj.RequireMultiFactor,
+                DisableTwoFactorApp = createUserObj.DisableTwoFactorApp,
+                DisableTwoFactorSms = createUserObj.DisableTwoFactorSms,
+                DisableTwoFactorEmail = createUserObj.DisableTwoFactorEmail
             };
 
             tenantName = tenantName ?? RouteBinding.TenantName;
             trackName = trackName ?? RouteBinding.TrackName;
             await SetIdsAsync(user, tenantName, trackName);
 
-            if (!passwordless)
+            var requerePassword = !(createUserObj.PasswordlessEmail || createUserObj.PasswordlessSms || createUserObj.SetPasswordEmail || createUserObj.SetPasswordSms);
+            if (requerePassword)
             {
-                await secretHashLogic.AddSecretHashAsync(user, password);
+                await secretHashLogic.AddSecretHashAsync(user, createUserObj.Password);
             }
             
-            if (claims?.Count() > 0)
+            if (createUserObj.Claims?.Count() > 0)
             {
                 var userIdentifierClaimTypes = new List<string>();
-                if (!userIdentifier.Email.IsNullOrEmpty())
+                if (!createUserObj.UserIdentifier.Email.IsNullOrEmpty())
                 {
                     userIdentifierClaimTypes.Add(JwtClaimTypes.Email);
                 }
-                if (!userIdentifier.Phone.IsNullOrEmpty())
+                if (!createUserObj.UserIdentifier.Phone.IsNullOrEmpty())
                 {
                     userIdentifierClaimTypes.Add(JwtClaimTypes.PhoneNumber);
                 }
-                if (!userIdentifier.Username.IsNullOrEmpty())
+                if (!createUserObj.UserIdentifier.Username.IsNullOrEmpty())
                 {
                     userIdentifierClaimTypes.Add(JwtClaimTypes.PreferredUsername);
                 }
-                claims = claims.Where(c => !userIdentifierClaimTypes.Where(t => t == c.Type).Any()).ToList();
-                user.Claims = claims.ToClaimAndValues();
+                createUserObj.Claims = createUserObj.Claims.Where(c => !userIdentifierClaimTypes.Where(t => t == c.Type).Any()).ToList();
+                user.Claims = createUserObj.Claims.ToClaimAndValues();
             }
 
             if (checkUserAndPasswordPolicy)
             {
-                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = userIdentifier.Email, UserIdentifier = userIdentifier.Phone ?? userIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
-                    (!userIdentifier.Phone.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Phone }), queryAdditionalIds: true)) ||
-                    (!userIdentifier.Username.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = userIdentifier.Username }), queryAdditionalIds: true)) ||
+                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = createUserObj.UserIdentifier.Email, UserIdentifier = createUserObj.UserIdentifier.Phone ?? createUserObj.UserIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
+                    (!createUserObj.UserIdentifier.Phone.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Phone }), queryAdditionalIds: true)) ||
+                    (!createUserObj.UserIdentifier.Username.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Username }), queryAdditionalIds: true)) ||
                     (!user.UserId.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
                 {
-                    throw new UserExistsException($"User '{userIdentifier.ToJson()}' already exists.") { UserIdentifier = userIdentifier };
+                    throw new UserExistsException($"User '{createUserObj.UserIdentifier.ToJson()}' already exists.") { UserIdentifier = createUserObj.UserIdentifier };
                 }
-                if (!passwordless)
+
+                if (requerePassword)
                 {
-                    await ValidatePasswordPolicyAsync(userIdentifier, password);
+                    await ValidatePasswordPolicyAsync(createUserObj.UserIdentifier, createUserObj.Password);
                 }
             }
-            if (!passwordless)
+            if (!(createUserObj.PasswordlessEmail || createUserObj.PasswordlessSms))
             {
-                user.ChangePassword = changePassword;
+                user.ChangePassword = createUserObj.ChangePassword;
             }
             await tenantDataRepository.CreateAsync(user);
 
-            logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' created, with user id '{user.UserId}'.");
+            logger.ScopeTrace(() => $"User '{createUserObj.UserIdentifier.ToJson()}' created, with user id '{user.UserId}'.");
 
             return user;
         }
@@ -141,6 +143,11 @@ namespace FoxIDs.Logic
             {
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' do not exist or is disabled, trying to change password.");
+            }
+
+            if (user.PasswordlessEmail || user.PasswordlessSms)
+            {
+                throw new Exception($"Passwordless user with user id '{user.UserId}' can not change password.");
             }
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' exists, with user id '{user.UserId}', trying to change password.");
@@ -181,7 +188,11 @@ namespace FoxIDs.Logic
             await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
+            user.PasswordlessEmail = false;
+            user.PasswordlessSms = false;
             user.ChangePassword = false;
+            user.SetPasswordEmail = false;
+            user.SetPasswordSms = false;
             await tenantDataRepository.SaveAsync(user);
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);

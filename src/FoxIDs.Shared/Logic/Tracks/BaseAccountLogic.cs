@@ -43,11 +43,13 @@ namespace FoxIDs.Logic
                 Email = createUserObj.UserIdentifier.Email,
                 Phone = createUserObj.UserIdentifier.Phone,
                 Username = createUserObj.UserIdentifier.Username,
-                PasswordlessSms = createUserObj.PasswordlessSms,
-                PasswordlessEmail = createUserObj.PasswordlessEmail,
+                DisablePasswordAuth = createUserObj.DisablePasswordAuth,
+                EnablePasswordlessEmail = createUserObj.EnablePasswordlessEmail,
+                EnablePasswordlessSms = createUserObj.EnablePasswordlessSms,
                 ConfirmAccount = createUserObj.ConfirmAccount,
-                SetPasswordSms = createUserObj.SetPasswordSms,
-                SetPasswordEmail = createUserObj.SetPasswordEmail,
+                ChangePassword = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.ChangePassword : false,
+                SetPasswordEmail = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.SetPasswordEmail : false,
+                SetPasswordSms = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.SetPasswordSms : false,
                 EmailVerified = createUserObj.EmailVerified,
                 PhoneVerified = createUserObj.PhoneVerified,
                 DisableAccount = createUserObj.DisableAccount,
@@ -61,8 +63,7 @@ namespace FoxIDs.Logic
             trackName = trackName ?? RouteBinding.TrackName;
             await SetIdsAsync(user, tenantName, trackName);
 
-            var requerePassword = !(createUserObj.PasswordlessEmail || createUserObj.PasswordlessSms || createUserObj.SetPasswordEmail || createUserObj.SetPasswordSms);
-            if (requerePassword)
+            if (!(user.DisablePasswordAuth == true) && !createUserObj.Password.IsNullOrWhiteSpace())
             {
                 await secretHashLogic.AddSecretHashAsync(user, createUserObj.Password);
             }
@@ -96,14 +97,10 @@ namespace FoxIDs.Logic
                     throw new UserExistsException($"User '{createUserObj.UserIdentifier.ToJson()}' already exists.") { UserIdentifier = createUserObj.UserIdentifier };
                 }
 
-                if (requerePassword)
+                if (!(user.DisablePasswordAuth == true) && !createUserObj.Password.IsNullOrWhiteSpace())
                 {
                     await ValidatePasswordPolicyAsync(createUserObj.UserIdentifier, createUserObj.Password);
                 }
-            }
-            if (!(createUserObj.PasswordlessEmail || createUserObj.PasswordlessSms))
-            {
-                user.ChangePassword = createUserObj.ChangePassword;
             }
             await tenantDataRepository.CreateAsync(user);
 
@@ -145,9 +142,9 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' do not exist or is disabled, trying to change password.");
             }
 
-            if (user.PasswordlessEmail || user.PasswordlessSms)
+            if (user.DisablePasswordAuth == true)
             {
-                throw new Exception($"Passwordless user with user id '{user.UserId}' can not change password.");
+                throw new Exception($"User with user id '{user.UserId}' can not change password, because password authentication is disabled.");
             }
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' exists, with user id '{user.UserId}', trying to change password.");
@@ -185,11 +182,14 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
+            if (user.DisablePasswordAuth == true)
+            {
+                throw new Exception($"Password authentication is disabled for user '{userIdentifier.ToJson()}', trying to set password.");
+            }
+
             await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
-            user.PasswordlessEmail = false;
-            user.PasswordlessSms = false;
             user.ChangePassword = false;
             user.SetPasswordEmail = false;
             user.SetPasswordSms = false;

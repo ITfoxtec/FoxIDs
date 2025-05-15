@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,12 +23,28 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_username_idf")]
         public bool EnableUsernameIdentifier { get; set; }
 
+        [JsonProperty(PropertyName = "disable_pauth")]
+        public bool? DisablePasswordAuth { get; set; }
+
+        /// <summary>
+        /// Passwordless with email require the user to have a email user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "enable_pless_email")]
+        public bool? EnablePasswordlessEmail { get; set; }
+
+        /// <summary>
+        /// Passwordless with SMS require the user to have a phone user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "enable_pless_sms")]
+        public bool? EnablePasswordlessSms { get; set; }
+
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }
 
         [JsonProperty(PropertyName = "enable_create_user")]
         public bool EnableCreateUser { get; set; }
 
+        [Obsolete("Delete after 2026-06-01.")]
         [JsonProperty(PropertyName = "disable_reset_password")]
         public bool? DisableResetPassword 
         {
@@ -41,7 +58,7 @@ namespace FoxIDs.Models
             }
         }
 
-        [JsonProperty(PropertyName = "disable_set_new_password")]
+        [JsonProperty(PropertyName = "disable_set_password")]
         public bool DisableSetPassword { get; set; }
 
         [JsonProperty(PropertyName = "delete_refresh_token_grants_on_change_password")]
@@ -109,18 +126,23 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
 
-            if (CreateUser?.PasswordlessEmail == true)
+            if (DisablePasswordAuth == true && !(EnablePasswordlessEmail == true || EnablePasswordlessSms == true))
+            {
+                results.Add(new ValidationResult($"Either enable {nameof(EnablePasswordlessEmail)} or {nameof(EnablePasswordlessSms)} if {nameof(DisablePasswordAuth)} is true.", [nameof(DisablePasswordAuth), nameof(EnablePasswordlessEmail), nameof(EnablePasswordlessSms)]));
+            }
+
+            if (EnablePasswordlessEmail == true)
             {
                 if (!EnableEmailIdentifier)
                 {
-                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled to create users with passwordless email.", [nameof(EnableEmailIdentifier)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled using passwordless with email.", [nameof(EnableEmailIdentifier)]));
                 }
             }
-            if (CreateUser?.PasswordlessSms == true)
+            if (EnablePasswordlessSms == true)
             {
                 if (!EnablePhoneIdentifier)
                 {
-                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled to create users with passwordless SMS.", [nameof(EnablePhoneIdentifier)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled using passwordless with SMS.", [nameof(EnablePhoneIdentifier)]));
                 }
             }
 

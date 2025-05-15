@@ -29,6 +29,21 @@ namespace FoxIDs.Models.Api
 
         public bool EnableUsernameIdentifier { get; set; }
 
+        [Display(Name = "Disable password authentication")]
+        public bool? DisablePasswordAuth { get; set; }
+
+        /// <summary>
+        /// Passwordless with email require the user to have a email user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with email (one-time password)")]
+        public bool? EnablePasswordlessEmail { get; set; }
+
+        /// <summary>
+        /// Passwordless with SMS require the user to have a phone user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with SMS (one-time password)")]
+        public bool? EnablePasswordlessSms { get; set; }
+
         /// <summary>
         /// Default false.
         /// </summary>
@@ -181,18 +196,23 @@ namespace FoxIDs.Models.Api
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
             }
 
-            if (CreateUser?.PasswordlessEmail == true)
+            if (DisablePasswordAuth == true && !(EnablePasswordlessEmail == true || EnablePasswordlessSms == true))
+            {
+                results.Add(new ValidationResult($"Either enable {nameof(EnablePasswordlessEmail)} or {nameof(EnablePasswordlessSms)} if {nameof(DisablePasswordAuth)} is true.", [nameof(DisablePasswordAuth), nameof(EnablePasswordlessEmail), nameof(EnablePasswordlessSms)]));
+            }
+
+            if (EnablePasswordlessEmail == true)
             {
                 if (!EnableEmailIdentifier)
                 {
-                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled to create users with passwordless email.", [nameof(EnableEmailIdentifier)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled using passwordless with  email.", [nameof(EnableEmailIdentifier)]));
                 }
             }
-            if (CreateUser?.PasswordlessSms == true)
+            if (EnablePasswordlessSms == true)
             {
                 if (!EnablePhoneIdentifier)
                 {
-                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled to create users with passwordless SMS.", [nameof(EnablePhoneIdentifier)]));
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled using passwordless with SMS.", [nameof(EnablePhoneIdentifier)]));
                 }
             }
 

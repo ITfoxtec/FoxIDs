@@ -986,8 +986,9 @@ namespace FoxIDs.Controllers
                         UserIdentifier = userIdentifier,
                         Password = password, 
                         Claims = claims, 
-                        PasswordlessSms = loginUpParty.CreateUser.PasswordlessSms,
-                        PasswordlessEmail = loginUpParty.CreateUser.PasswordlessEmail,
+                        DisablePasswordAuth = loginUpParty.DisablePasswordAuth,
+                        EnablePasswordlessEmail = loginUpParty.EnablePasswordlessEmail,
+                        EnablePasswordlessSms = loginUpParty.EnablePasswordlessSms,
                         ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });
@@ -1115,13 +1116,13 @@ namespace FoxIDs.Controllers
                         IsUserIdentifier = true
                     });
                 }
-                if (!(loginUpParty.CreateUser.PasswordlessEmail || loginUpParty.CreateUser.PasswordlessEmail))
+                if (!(loginUpParty.DisablePasswordAuth == true))
                 {
                     loginUpParty.CreateUser.Elements.Add(new DynamicElement
                     {
                         Type = DynamicElementTypes.Password,
                         Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                        Required = true
+                        Required = !(loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true)
                     });
                 }
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement

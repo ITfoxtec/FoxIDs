@@ -135,11 +135,14 @@ namespace FoxIDs.Client.Pages.Components
                     });
                 }
 
-                generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                if (!(generalLoginUpParty.Form.Model.DisablePasswordAuth == true))
                 {
-                    Type = DynamicElementTypes.Password,
-                    Required = true
-                });
+                    generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Password,
+                        Required = !(generalLoginUpParty.Form.Model.EnablePasswordlessEmail == true || generalLoginUpParty.Form.Model.EnablePasswordlessSms == true)
+                    });
+                }
 
                 generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                 {

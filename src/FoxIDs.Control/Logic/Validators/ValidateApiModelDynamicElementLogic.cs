@@ -63,9 +63,9 @@ namespace FoxIDs.Logic
                         }
                         else
                         {
-                            if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password && e.Required).Count() != 1)
+                            if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element set as required of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
+                                throw new ValidationException($"One dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
                             }
                         }
 

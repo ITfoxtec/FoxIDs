@@ -1122,7 +1122,7 @@ namespace FoxIDs.Controllers
                     {
                         Type = DynamicElementTypes.Password,
                         Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                        Required = !(loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true)
+                        Required = true
                     });
                 }
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement

@@ -140,7 +140,7 @@ namespace FoxIDs.Client.Pages.Components
                     generalLoginUpParty.Form.Model.CreateUser.Elements.Add(new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Password,
-                        Required = !(generalLoginUpParty.Form.Model.EnablePasswordlessEmail == true || generalLoginUpParty.Form.Model.EnablePasswordlessSms == true)
+                        Required = true
                     });
                 }
 

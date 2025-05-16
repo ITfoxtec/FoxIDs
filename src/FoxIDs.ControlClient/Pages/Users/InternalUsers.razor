@@ -63,27 +63,14 @@
                             </div>
                             <label class="label-control">User identifiers</label>
                         </div>
-                        <div class="active-group active">
-                            <div class="card">
-                                <div class="card-body pt-3 pb-0">
-                                    <FInputToggleN @bind-Value="user.Form.Model.DisablePasswordAuth" For="@(() => user.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
-                                    <FInputToggleN @bind-Value="user.Form.Model.EnablePasswordlessEmail" For="@(() => user.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
-                                    <FInputToggleN @bind-Value="user.Form.Model.EnablePasswordlessSms" For="@(() => user.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
-                                </div>
-                            </div>
-                            <label class="label-control">Authentication</label>
-                        </div>
-                        @if (user.Form.Model.RequirePassword())
+                        @if (user.CreateMode)
                         {
-                            @if (user.CreateMode)
-                            {
-                                <FInputPassword @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
-                            }
-                            else
-                            {
-                                <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
-                                <input type="hidden" @bind="user.Form.Model.Password" />
-                            }
+                            <FInputPassword @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                        }
+                        else
+                        {
+                            <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                            <input type="hidden" @bind="user.Form.Model.Password" />
                         }
 
                         @if (!user.CreateMode)
@@ -100,22 +87,16 @@
                             </div>
                             <label class="label-control">User confirmation</label>
                         </div>
-                        @if (user.Form.Model.RequirePassword())
-                        {
-                            <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
-                        }
-                        @if (!(user.Form.Model.DisablePasswordAuth == true))
-                        {
-                            <div class="active-group active">
-                                <div class="card">
-                                    <div class="card-body pt-3 pb-0">
-                                        <FInputToggle @bind-Value="user.Form.Model.SetPasswordEmail" For="@(() => user.Form.Model.SetPasswordEmail)" TextType="y.n" />
-                                        <FInputToggle @bind-Value="user.Form.Model.SetPasswordSms" For="@(() => user.Form.Model.SetPasswordSms)" TextType="y.n" />
-                                    </div>
+                        <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" TextType="y.n" />
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body pt-3 pb-0">
+                                    <FInputToggle @bind-Value="user.Form.Model.SetPasswordEmail" For="@(() => user.Form.Model.SetPasswordEmail)" TextType="y.n" />
+                                    <FInputToggle @bind-Value="user.Form.Model.SetPasswordSms" For="@(() => user.Form.Model.SetPasswordSms)" TextType="y.n" />
                                 </div>
-                                <label class="label-control">Set password</label>
                             </div>
-                        }
+                            <label class="label-control">Set password</label>
+                        </div>
                         <FInputToggle @bind-Value="user.Form.Model.DisableAccount" For="@(() => user.Form.Model.DisableAccount)" Negation="true" TextType="e.d" />
                         @if (user.ShowAdvanced)
                         {

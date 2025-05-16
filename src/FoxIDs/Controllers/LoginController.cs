@@ -1244,9 +1244,6 @@ namespace FoxIDs.Controllers
                         UserIdentifier = userIdentifier,
                         Password = password, 
                         Claims = claims, 
-                        DisablePasswordAuth = loginUpParty.DisablePasswordAuth,
-                        EnablePasswordlessEmail = loginUpParty.EnablePasswordlessEmail,
-                        EnablePasswordlessSms = loginUpParty.EnablePasswordlessSms,
                         ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
                         RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
                     });

@@ -120,11 +120,8 @@ namespace FoxIDs.Controllers
                 var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
                     UserIdentifier = new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username },
-                    DisablePasswordAuth = createUserRequest.DisablePasswordAuth,
-                    EnablePasswordlessEmail = createUserRequest.EnablePasswordlessEmail,
-                    EnablePasswordlessSms = createUserRequest.EnablePasswordlessSms,
                     Password = createUserRequest.Password,
-                    ChangePassword = createUserRequest.ChangePassword,
+                    ChangePassword = createUserRequest.Password.IsNullOrWhiteSpace() ? false : createUserRequest.ChangePassword,
                     SetPasswordEmail = createUserRequest.SetPasswordEmail,
                     SetPasswordSms = createUserRequest.SetPasswordSms,
                     Claims = claims,
@@ -219,36 +216,9 @@ namespace FoxIDs.Controllers
                 mUser.EmailVerified = mUser.Email.IsNullOrEmpty() ? false : user.EmailVerified;
                 mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
 
-                if (!(user.DisablePasswordAuth == true))
-                {
-                    if (mUser.EnablePasswordlessEmail == true && !(user.EnablePasswordlessEmail == true) && !(user.EnablePasswordlessSms == true))
-                    {
-                        mUser.SetPasswordEmail = true;
-                    }
-                    else
-                    {
-                        mUser.SetPasswordEmail = user.SetPasswordEmail;
-                    }
-                    if (mUser.EnablePasswordlessSms == true && !(user.EnablePasswordlessEmail == true) && !(user.EnablePasswordlessSms == true))
-                    {
-                        mUser.SetPasswordSms = true;
-                    }
-                    else
-                    {
-                        mUser.SetPasswordSms = user.SetPasswordSms;
-                    }
-                }
-                else
-                {
-                    mUser.SetPasswordEmail = false;
-                    mUser.SetPasswordSms = false;
-                }
-
-                mUser.DisablePasswordAuth = user.DisablePasswordAuth;
-                mUser.EnablePasswordlessEmail = user.EnablePasswordlessEmail;
-                mUser.EnablePasswordlessSms = user.EnablePasswordlessSms;
-
-                mUser.ChangePassword = !(user.DisablePasswordAuth == true) ? user.ChangePassword : false;
+                mUser.ChangePassword = mUser.Hash.IsNullOrWhiteSpace() ? false : user.ChangePassword;
+                mUser.SetPasswordEmail = user.SetPasswordEmail;
+                mUser.SetPasswordSms = user.SetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;

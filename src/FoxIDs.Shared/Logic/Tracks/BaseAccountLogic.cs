@@ -43,13 +43,10 @@ namespace FoxIDs.Logic
                 Email = createUserObj.UserIdentifier.Email,
                 Phone = createUserObj.UserIdentifier.Phone,
                 Username = createUserObj.UserIdentifier.Username,
-                DisablePasswordAuth = createUserObj.DisablePasswordAuth,
-                EnablePasswordlessEmail = createUserObj.EnablePasswordlessEmail,
-                EnablePasswordlessSms = createUserObj.EnablePasswordlessSms,
                 ConfirmAccount = createUserObj.ConfirmAccount,
-                ChangePassword = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.ChangePassword : false,
-                SetPasswordEmail = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.SetPasswordEmail : false,
-                SetPasswordSms = !(createUserObj.DisablePasswordAuth == true) ? createUserObj.SetPasswordSms : false,
+                ChangePassword = createUserObj.ChangePassword,
+                SetPasswordEmail = createUserObj.SetPasswordEmail,
+                SetPasswordSms = createUserObj.SetPasswordSms,
                 EmailVerified = createUserObj.EmailVerified,
                 PhoneVerified = createUserObj.PhoneVerified,
                 DisableAccount = createUserObj.DisableAccount,
@@ -63,7 +60,7 @@ namespace FoxIDs.Logic
             trackName = trackName ?? RouteBinding.TrackName;
             await SetIdsAsync(user, tenantName, trackName);
 
-            if (!(user.DisablePasswordAuth == true) && !createUserObj.Password.IsNullOrWhiteSpace())
+            if (!createUserObj.Password.IsNullOrWhiteSpace())
             {
                 await secretHashLogic.AddSecretHashAsync(user, createUserObj.Password);
             }
@@ -97,7 +94,7 @@ namespace FoxIDs.Logic
                     throw new UserExistsException($"User '{createUserObj.UserIdentifier.ToJson()}' already exists.") { UserIdentifier = createUserObj.UserIdentifier };
                 }
 
-                if (!(user.DisablePasswordAuth == true) && !createUserObj.Password.IsNullOrWhiteSpace())
+                if (!createUserObj.Password.IsNullOrWhiteSpace())
                 {
                     await ValidatePasswordPolicyAsync(createUserObj.UserIdentifier, createUserObj.Password);
                 }
@@ -142,9 +139,9 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' do not exist or is disabled, trying to change password.");
             }
 
-            if (user.DisablePasswordAuth == true)
+            if (user.Hash.IsNullOrWhiteSpace())
             {
-                throw new Exception($"User with user id '{user.UserId}' can not change password, because password authentication is disabled.");
+                throw new Exception($"User with user id '{user.UserId}' can not change password, because the user do not have a password.");
             }
 
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}' exists, with user id '{user.UserId}', trying to change password.");
@@ -180,11 +177,6 @@ namespace FoxIDs.Logic
             if (user.DisableAccount)
             {
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
-            }
-
-            if (user.DisablePasswordAuth == true)
-            {
-                throw new Exception($"Password authentication is disabled for user '{userIdentifier.ToJson()}', trying to set password.");
             }
 
             await ValidatePasswordPolicyAsync(userIdentifier, newPassword);

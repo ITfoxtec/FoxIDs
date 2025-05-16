@@ -9,12 +9,6 @@ namespace FoxIDs.Models.Logic
 
         public string Password { get; set; }
 
-        public bool? DisablePasswordAuth { get; set; }
-
-        public bool? EnablePasswordlessEmail { get; set; }
-
-        public bool? EnablePasswordlessSms { get; set; }
-
         public bool ChangePassword { get; set; }
 
         public bool SetPasswordSms { get; set; }

@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
         public async Task SendPhonePasswordlessCodeSmsAsync(string phone)
         {
             phone = phone?.Trim();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.PasswordlessSms);
+            await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.InternalLogin, sendingCode: true);
             (_, var user) = await SendCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, phone, GetSmsSendPasswordlessCodeAction(), true, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
             await planUsageLogic.LogPasswordlessSmsEventAsync(user?.Phone ?? phone);
             return;
@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
         public async Task SendEmailPasswordlessCodeAsync(string email)
         {
             email = email?.Trim()?.ToLower();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.PasswordlessEmail);
+            await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.InternalLogin, sendingCode: true);
             _ = await SendCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, email, GetEmailSendPasswordlessCodeAction(), true, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
             planUsageLogic.LogPasswordlessEmailEvent();
             return;
@@ -81,10 +81,10 @@ namespace FoxIDs.Logic
             return VerifyCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, email, code, GetEmailSendPasswordlessCodeAction(), null, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
         }
 
-        private string SmsPasswordlessCodeLogText => "Phone (SMS) passwordless code";
+        private string SmsPasswordlessCodeLogText => "Passwordless one-time password via SMS";
         private string SmsPasswordlessCodeKeyElement => "sms_passwordless_code";
 
-        private string EmailPasswordlessCodeLogText => "Email passwordless code";
+        private string EmailPasswordlessCodeLogText => "Passwordless one-time password via email";
         private string EmailPasswordlessCodeKeyElement => "email_passwordless_code";
 
         private SmsContent GetPhonePasswordlessCodeSms(string code)
@@ -514,7 +514,8 @@ namespace FoxIDs.Logic
 
         private async Task<User> VerifyCodeAsync(SendType sendType, string keyElement, string userIdentifier, string code, Func<User, string, Task> sendActionAsync, Func<User, Task> onSuccess, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
         {
-            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
+            var failingLoginType = GetFailingLoginType(sendType);
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, failingLoginType, sendingCode: failingLoginType == FailingLoginTypes.InternalLogin);
 
             var cacheKey = CodeCacheKey(keyElement, userIdentifier);
             var confirmationCodeValue = await cacheProvider.GetAsync(cacheKey);
@@ -523,7 +524,7 @@ namespace FoxIDs.Logic
                 var confirmationCode = confirmationCodeValue.ToObject<ConfirmationCode>();
                 if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code.ToUpper()))
                 {
-                    await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
+                    await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, failingLoginType);
 
                     var user = await GetAccountLogic().GetUserAsync(userIdentifier);
                     if (user == null || user.DisableAccount)
@@ -566,7 +567,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, GetFailingLoginType(sendType));
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, failingLoginType);
                     logger.ScopeTrace(() => $"Failing count increased for user '{userIdentifier}', {logText} invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                     throw new InvalidCodeException($"Invalid {logText}, user '{userIdentifier}'.");
                 }
@@ -584,9 +585,8 @@ namespace FoxIDs.Logic
             switch (sendType)
             {
                 case SendType.PasswordlessSms:
-                    return FailingLoginTypes.PasswordlessSms;
                 case SendType.PasswordlessEmail:
-                    return FailingLoginTypes.PasswordlessEmail;
+                    return FailingLoginTypes.InternalLogin;
                 case SendType.Sms:
                     return FailingLoginTypes.SmsCode;
                 case SendType.Email:

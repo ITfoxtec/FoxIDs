@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             return await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
         }
 
-        public async Task<User> ValidateUser(string userIdentifier, string password)
+        public async Task<User> ValidateUser(string userIdentifier, string password, bool passwordlessSendCodeEnabled)
         {
             userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Validating user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
 
-            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
+            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin, sendingCode: passwordlessSendCodeEnabled);
 
             if (user == null || user.DisableAccount)
             {
@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> ValidateUserChangePassword(string userIdentifier, string currentPassword, string newPassword)
+        public async Task<User> ValidateUserChangePassword(string userIdentifier, string currentPassword, string newPassword, bool passwordlessSendCodeEnabled)
         {
             userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Change password user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier });
             var user = await tenantDataRepository.GetAsync<User>(id, required: false, queryAdditionalIds: true);
 
-            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
+            var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin, sendingCode: passwordlessSendCodeEnabled);
 
             if (user == null || user.DisableAccount)
             {

@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             await cacheProvider.DeleteAsync(FailingLoginCountCacheKey(userIdentifier, failingLoginType));
         }
 
-        public async Task<long> VerifyFailingLoginCountAsync(string userIdentifier, FailingLoginTypes failingLoginType)
+        public async Task<long> VerifyFailingLoginCountAsync(string userIdentifier, FailingLoginTypes failingLoginType, bool sendingCode = false)
         {
             var failingLoginId = await FailingLoginLock.IdFormatAsync(new FailingLoginLock.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, UserIdentifier = userIdentifier, FailingLoginType = failingLoginType });
             var failingLogin = await tenantDataRepository.GetAsync<FailingLoginLock>(failingLoginId, required: false);
@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
 
             var key = FailingLoginCountCacheKey(userIdentifier, failingLoginType);
             var failingLoginCount = await cacheProvider.GetNumberAsync(key);
-            if (failingLoginCount >= GetMaxFailingLoginsAndSendCode(failingLoginType))
+            if (failingLoginCount >= GetMaxFailingLoginsAndSendCode(failingLoginType, sendingCode))
             {
                 var newFailingLogin = new FailingLoginLock
                 {
@@ -67,16 +67,21 @@ namespace FoxIDs.Logic
             return failingLoginCount;
         }
 
-        private int GetMaxFailingLoginsAndSendCode(FailingLoginTypes failingLoginType)
+        private int GetMaxFailingLoginsAndSendCode(FailingLoginTypes failingLoginType, bool sendingCode)
         {
             switch (failingLoginType)
             {
                 case FailingLoginTypes.InternalLogin:
                 case FailingLoginTypes.ExternalLogin:
-                    return RouteBinding.MaxFailingLogins;
+                    if (sendingCode)
+                    {
+                        return RouteBinding.MaxFailingLogins + settings.MaxSendingCodes;
+                    }
+                    else
+                    {
+                        return RouteBinding.MaxFailingLogins;
+                    }
 
-                case FailingLoginTypes.PasswordlessSms:
-                case FailingLoginTypes.PasswordlessEmail:
                 case FailingLoginTypes.SmsCode:
                 case FailingLoginTypes.EmailCode:
                 case FailingLoginTypes.TwoFactorSmsCode:
@@ -100,10 +105,6 @@ namespace FoxIDs.Logic
                     return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
-                case FailingLoginTypes.PasswordlessSms:
-                    return "One-time password via SMS";
-                case FailingLoginTypes.PasswordlessEmail:
-                    return "One-time password via email";
                 case FailingLoginTypes.TwoFactorSmsCode:
                     return "SMS two-factor code";
                 case FailingLoginTypes.TwoFactorEmailCode:

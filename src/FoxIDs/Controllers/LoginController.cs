@@ -692,7 +692,7 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var user = await accountLogic.ValidateUser(sequenceData.UserIdentifier, login.Password);
+                var user = await accountLogic.ValidateUser(sequenceData.UserIdentifier, login.Password, loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true);
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
             }
             catch (ChangePasswordException cpex)
@@ -1236,7 +1236,9 @@ namespace FoxIDs.Controllers
                     userIdentifier.Email = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.Email, userIdentifier.Email);
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
                     userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
-                    
+
+                    userIdentifier.Phone = countryCodesLogic.ReturnFullPhoneOnly(userIdentifier.Phone);
+
                     var user = await accountLogic.CreateUserAsync(new CreateUserObj
                     {
                         UserIdentifier = userIdentifier,
@@ -1500,7 +1502,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword, loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true);
                     if (loginUpParty.DeleteRefreshTokenGrantsOnChangePassword)
                     {
                         await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier, upPartyType: loginUpParty.Type);

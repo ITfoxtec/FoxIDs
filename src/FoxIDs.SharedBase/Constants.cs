@@ -204,7 +204,7 @@ namespace FoxIDs
 
             public static class Results
             {
-                public const int PropertiesValueMaxLength = 100;
+                public const int PropertiesValueMaxLength = 150;
 
                 public const string Name = "Name";
                 public const string Sum = "Sum";
@@ -227,6 +227,7 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
+                public const string FailingLoginCount = "FailingLoginCount";
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
             }

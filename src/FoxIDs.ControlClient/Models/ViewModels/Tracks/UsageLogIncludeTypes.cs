@@ -11,6 +11,7 @@
         public const string ControlApi = "Control API";
         public const string ControlApiGets = "Control API gets";
         public const string ControlApiUpdates = "Control API updates";
+        public const string Passwordless = "Passwordless";
         public const string Confirmation = "Confirmation";
         public const string SetPassword = "Set password";
         public const string Mfa = "MFA";

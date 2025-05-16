@@ -699,6 +699,82 @@
     {
       "name": "Two-factor code: {0}",
       "id": 169
+    },
+    {
+      "name": "One-time password",
+      "id": 170
+    },
+    {
+      "name": "Use one-time password via <a href=\"{0}\" class=\"{1}\">SMS</a> or <a href=\"{2}\" class=\"{3}\">email</a>.",
+      "id": 171
+    },
+    {
+      "name": "A one-time password has just been sent to your phone.",
+      "id": 172
+    },
+    {
+      "name": "Please enter a valid one-time password.",
+      "id": 173
+    },
+    {
+      "name": "Send new one-time password",
+      "id": 174
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">one-time password via email</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+      "id": 175
+    },
+    {
+      "name": "{0} one-time password",
+      "id": 176
+    },
+    {
+      "name": "This is you {0} one-time password for logging in. Don't share your one-time password with anyone.",
+      "id": 177
+    },
+    {
+      "name": "One-time password: {0}",
+      "id": 178
+    },
+    {
+      "name": "A one-time password has just been sent to your email.",
+      "id": 179
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">one-time password via SMS</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+      "id": 180
+    },
+    {
+      "name": "Invalid one-time password, please try one more time.",
+      "id": 181
+    },
+    {
+      "name": "Wrong username, phone number, email or one-time password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 182
+    },
+    {
+      "name": "A new one-time password has been sent to your email.",
+      "id": 183
+    },
+    {
+      "name": "{0} is your {1} one-time password for logging in. Don't share your one-time password with anyone.",
+      "id": 184
+    },
+    {
+      "name": "A new one-time password has been sent to your phone.",
+      "id": 185
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via email.</a>",
+      "id": 186
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use your password.</a>",
+      "id": 187
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
+      "id": 188
     }
   ],
   "resources": [
@@ -23379,6 +23455,196 @@
           "culture": "uk",
           "value": "Двофакторний код: {0}",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 170,
+      "items": [
+        {
+          "culture": "en",
+          "value": "One-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use one-time password via <a href=\"{0}\" class=\"{1}\">SMS</a> or <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A one-time password has just been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a valid one-time password.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Send new one-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via email</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0} one-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "items": [
+        {
+          "culture": "en",
+          "value": "This is you {0} one-time password for logging in. Don't share your one-time password with anyone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "items": [
+        {
+          "culture": "en",
+          "value": "One-time password: {0}",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 179,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A one-time password has just been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 180,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via SMS</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 181,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid one-time password, please try one more time.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 182,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number, email or one-time password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new one-time password has been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0} is your {1} one-time password for logging in. Don't share your one-time password with anyone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new one-time password has been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 186,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via email.</a>",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 187,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use your password.</a>",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
+          "edit_level": 100
         }
       ]
     }

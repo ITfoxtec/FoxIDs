@@ -6,11 +6,17 @@ namespace FoxIDs.Models.ViewModels
     {
         public string SequenceString { get; set; }
 
-        public bool EnableCancelLogin { get; set; }
+        public bool ShowCancelLogin { get; set; }
 
-        public bool EnableSetPassword { get; set; }
+        public bool ShowPasswordAuth { get; set; }
 
-        public bool EnableCreateUser { get; set; }
+        public bool ShowPasswordlessEmail { get; set; }
+
+        public bool ShowPasswordlessSms { get; set; }
+
+        public bool ShowSetPassword { get; set; }
+
+        public bool ShowCreateUser { get; set; }
 
         public bool DisableChangeUserIdentifier { get; set; }
 

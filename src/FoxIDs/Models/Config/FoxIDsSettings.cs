@@ -51,6 +51,11 @@ namespace FoxIDs.Models.Config
         public bool DeleteUsedSequences { get; set; }
 
         /// <summary>
+        /// Max number of times to send a code with SMS or email. The number is added to RouteBinding.MaxFailingLogins.
+        /// </summary>
+        public int MaxSendingCodes { get; set; } = 3;
+
+        /// <summary>
         /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]

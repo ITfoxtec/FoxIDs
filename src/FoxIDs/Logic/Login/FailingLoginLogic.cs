@@ -6,23 +6,26 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic.Caches.Providers;
 using FoxIDs.Repository;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Logic
 {
     public class FailingLoginLogic : LogicSequenceBase
     {
+        private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly ICacheProvider cacheProvider;
 
-        public FailingLoginLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public FailingLoginLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, ICacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.logger = logger;
             this.tenantDataRepository = tenantDataRepository;
             this.cacheProvider = cacheProvider;
         }
 
-        public async Task<long> IncreaseFailingLoginCountAsync(string userIdentifier, FailingLoginTypes failingLoginType)
+        public async Task<long> IncreaseFailingLoginOrSendingCountAsync(string userIdentifier, FailingLoginTypes failingLoginType)
         {
             var key = FailingLoginCountCacheKey(userIdentifier, failingLoginType);
             return await cacheProvider.IncrementNumberAsync(key, RouteBinding.FailingLoginCountLifetime);
@@ -45,7 +48,7 @@ namespace FoxIDs.Logic
 
             var key = FailingLoginCountCacheKey(userIdentifier, failingLoginType);
             var failingLoginCount = await cacheProvider.GetNumberAsync(key);
-            if (failingLoginCount >= RouteBinding.MaxFailingLogins)
+            if (failingLoginCount >= GetMaxFailingLoginsAndSendCode(failingLoginType))
             {
                 var newFailingLogin = new FailingLoginLock
                 {
@@ -64,6 +67,27 @@ namespace FoxIDs.Logic
             return failingLoginCount;
         }
 
+        private int GetMaxFailingLoginsAndSendCode(FailingLoginTypes failingLoginType)
+        {
+            switch (failingLoginType)
+            {
+                case FailingLoginTypes.InternalLogin:
+                case FailingLoginTypes.ExternalLogin:
+                    return RouteBinding.MaxFailingLogins;
+
+                case FailingLoginTypes.PasswordlessSmsCode:
+                case FailingLoginTypes.PasswordlessEmailCode:
+                case FailingLoginTypes.SmsCode:
+                case FailingLoginTypes.EmailCode:
+                case FailingLoginTypes.TwoFactorSmsCode:
+                case FailingLoginTypes.TwoFactorEmailCode:
+                case FailingLoginTypes.TwoFactorAuthenticator:
+                    return RouteBinding.MaxFailingLogins + settings.MaxSendingCodes;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         private string GetFailingLoginTypeText(FailingLoginTypes failingLoginType)
         {
             switch (failingLoginType)
@@ -76,6 +100,10 @@ namespace FoxIDs.Logic
                     return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
+                case FailingLoginTypes.PasswordlessSmsCode:
+                    return "One-time password via SMS";
+                case FailingLoginTypes.PasswordlessEmailCode:
+                    return "One-time password via email";
                 case FailingLoginTypes.TwoFactorSmsCode:
                     return "SMS two-factor code";
                 case FailingLoginTypes.TwoFactorEmailCode:

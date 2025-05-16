@@ -357,12 +357,9 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);              
 
                 await planUsageLogic.VerifyCanSendSmsAsync();
-                await planUsageLogic.LogMfaSmsEventAsync(sequenceData.Phone);
 
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Phone, FailingLoginTypes.TwoFactorSmsCode);
-
                     await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
                 }
                 catch (UserObservationPeriodException uoex)
@@ -483,12 +480,9 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 await planUsageLogic.VerifyCanSendEmailAsync(isMfa: true);
-                planUsageLogic.LogMfaEmailEvent();
 
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Email, FailingLoginTypes.TwoFactorEmailCode);
-
                     await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
                 }
                 catch (UserObservationPeriodException uoex)

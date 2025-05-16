@@ -51,6 +51,15 @@ namespace FoxIDs.Logic
             LogEvent(UsageLogTypes.ControlApiUpdate);
         }
 
+        public async Task LogPasswordlessSmsEventAsync(string phone)
+        {
+            await LogSmsEventAsync(UsageLogTypes.Passwordless, phone);
+        }
+        public void LogPasswordlessEmailEvent()
+        {
+            LogEmailEvent(UsageLogTypes.Passwordless);
+        }
+
         public async Task LogConfirmationSmsEventAsync(string phone)
         {
             await LogSmsEventAsync(UsageLogTypes.Confirmation, phone);

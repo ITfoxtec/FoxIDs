@@ -10,11 +10,15 @@ namespace FoxIDs.Logic
 {
     public class AccountLogic : BaseAccountLogic
     {
+        private readonly AccountActionLogic accountActionLogic;
         private readonly FailingLoginLogic failingLoginLogic;
+        private readonly PlanUsageLogic planUsageLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, AccountActionLogic accountActionLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
         {
+            this.accountActionLogic = accountActionLogic;
             this.failingLoginLogic = failingLoginLogic;
+            this.planUsageLogic = planUsageLogic;
         }
 
         public async Task<User> GetUserAsync(string userIdentifier)
@@ -36,7 +40,7 @@ namespace FoxIDs.Logic
 
             if (user == null || user.DisableAccount)
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for not existing user '{userIdentifier}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(password);
                 throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled."); // UI message: Wrong email or password / Your email was not found
@@ -68,7 +72,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for user '{userIdentifier}', password invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 throw new InvalidPasswordException($"Password invalid, user '{userIdentifier}'."); // UI message: Wrong email or password / Wrong password
             }
@@ -86,7 +90,7 @@ namespace FoxIDs.Logic
 
             if (user == null || user.DisableAccount)
             {
-                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
+                var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, FailingLoginTypes.InternalLogin);
                 logger.ScopeTrace(() => $"Failing login count increased for not existing user '{userIdentifier}', trying to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
                 throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to change password.");
@@ -116,6 +120,42 @@ namespace FoxIDs.Logic
             {
                 throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
             }
+        }
+
+        public async Task SendPhonePasswordlessCodeSmsAsync(string userIdentifier)
+        {
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
+            logger.ScopeTrace(() => $"Send passwordless code SMS for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
+
+            await planUsageLogic.VerifyCanSendSmsAsync();
+
+            await accountActionLogic.SendPhonePasswordlessCodeSmsAsync(userIdentifier);
+        }
+
+        public async Task<User> VerifyPhonePasswordlessCodeSmsAsync(string userIdentifier, string code)
+        {
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
+            logger.ScopeTrace(() => $"Verify passwordless code SMS for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
+
+            return await accountActionLogic.VerifyPhonePasswordlessCodeSmsAsync(userIdentifier, code);
+        }
+
+        public async Task SendEmailPasswordlessCodeSmsAsync(string userIdentifier)
+        {
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
+            logger.ScopeTrace(() => $"Send passwordless code email for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
+
+            await planUsageLogic.VerifyCanSendEmailAsync();
+
+            await accountActionLogic.SendEmailPasswordlessCodeAsync(userIdentifier);
+        }
+
+        public async Task<User> VerifyEmailPasswordlessCodeSmsAsync(string userIdentifier, string code)
+        {
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
+            logger.ScopeTrace(() => $"Verify passwordless code email for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
+
+            return await accountActionLogic.VerifyEmailPasswordlessCodeAsync(userIdentifier, code);
         }
     }
 }

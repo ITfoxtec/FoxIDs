@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
             }
             else 
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{userIdentifier}', two-factor app code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidAppCodeException($"Invalid two-factor app code, user '{userIdentifier}'.");
             }
@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(userIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{userIdentifier}', two-factor app recovery code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{userIdentifier}'.");
             }

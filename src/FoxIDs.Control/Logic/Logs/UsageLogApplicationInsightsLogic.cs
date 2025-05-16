@@ -81,6 +81,7 @@ namespace FoxIDs.Logic
                         item.Value = totalCount;
                         item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                         break;
+                    case Api.UsageLogTypes.Passwordless:
                     case Api.UsageLogTypes.Confirmation:
                     case Api.UsageLogTypes.SetPassword:
                     case Api.UsageLogTypes.Mfa:
@@ -257,6 +258,7 @@ namespace FoxIDs.Logic
             }
             if (logRequest.IncludeAdditional)
             {
+                yield return UsageLogTypes.Passwordless.ToString();
                 yield return UsageLogTypes.Confirmation.ToString();
                 yield return UsageLogTypes.SetPassword.ToString();
                 yield return UsageLogTypes.ResetPassword.ToString();

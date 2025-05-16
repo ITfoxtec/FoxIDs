@@ -86,6 +86,7 @@ namespace FoxIDs.Logic
                                 item.Value = totalCount;
                                 item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                                 break;
+                            case Api.UsageLogTypes.Passwordless:
                             case Api.UsageLogTypes.Confirmation:
                             case Api.UsageLogTypes.SetPassword:
                             case Api.UsageLogTypes.Mfa:
@@ -124,6 +125,11 @@ namespace FoxIDs.Logic
             }
             if (logRequest.IncludeAdditional)
             {
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Passwordless.ToString()))
+                {
+                    yield return bucketItem;
+                }
+
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Confirmation.ToString()))
                 {
                     yield return bucketItem;
@@ -342,6 +348,7 @@ namespace FoxIDs.Logic
             }
             if (logRequest.IncludeAdditional)
             {
+                AddFilter(filters, UsageLogTypes.Passwordless.ToString());
                 AddFilter(filters, UsageLogTypes.Confirmation.ToString());
                 AddFilter(filters, UsageLogTypes.SetPassword.ToString());
                 AddFilter(filters, UsageLogTypes.ResetPassword.ToString());

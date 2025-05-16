@@ -125,7 +125,7 @@ namespace FoxIDs.Logic
                     case HttpStatusCode.Forbidden:
                         var resultError = await response.Content.ReadAsStringAsync();
                         var errorResponse = resultError.ToObject<Ext.ErrorResponse>();
-                        var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
+                        var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(username, FailingLoginTypes.ExternalLogin);
                         logger.ScopeTrace(() => $"Failing login count increased for external user '{username}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                         logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.", traceType: TraceTypes.Message);
 
@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
 
                     default:
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
-                        var increasedfailingLoginCountDefault = await failingLoginLogic.IncreaseFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
+                        var increasedfailingLoginCountDefault = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(username, FailingLoginTypes.ExternalLogin);
                         logger.ScopeTrace(() => $"Failing login count increased for external user '{username}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCountDefault), triggerEvent: true);
                         throw new Exception($"AuthMethod, External login, Authentication API error '{resultUnexpectedStatus}'. Status code={response.StatusCode}.");
                 }

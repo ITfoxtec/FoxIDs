@@ -58,13 +58,7 @@ namespace FoxIDs.Controllers
                 var codeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Phone, FailingLoginTypes.SmsCode);
-
                     codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
-                    if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
-                    {
-                        await planUsageLogic.LogConfirmationSmsEventAsync(sequenceData.Phone);
-                    }
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -175,13 +169,7 @@ namespace FoxIDs.Controllers
                 var codeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Email, FailingLoginTypes.EmailCode);
-
                     codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
-                    if (codeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
-                    {
-                        planUsageLogic.LogConfirmationEmailEvent();
-                    }
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -336,10 +324,10 @@ namespace FoxIDs.Controllers
                     // log warning if set password is requested for an unknown phone number.
                     logger.Warning(uex);
                 }
-
-                if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                catch (UserObservationPeriodException uoex)
                 {
-                    await planUsageLogic.LogSetPasswordSmsEventAsync(sequenceData.Phone);
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
                 return View(new PhoneSetPasswordViewModel
@@ -504,10 +492,10 @@ namespace FoxIDs.Controllers
                     // log warning if set password is requested for an unknown email address.
                     logger.Warning(uex);
                 }
-
-                if (confirmationCodeSendStatus != ConfirmationCodeSendStatus.UseExistingCode)
+                catch (UserObservationPeriodException uoex)
                 {
-                    planUsageLogic.LogSetPasswordEmailEvent();
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
                 return View(new EmailSetPasswordViewModel

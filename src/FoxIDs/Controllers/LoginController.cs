@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(bool passwordAuth = false, bool passwordLessEmail = false, bool passwordLessSms = false, bool newCode = false)
         {
             try
             {
@@ -62,8 +62,39 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 if (!sequenceData.DoLoginIdentifierStep)
                 {
-                    sequenceData.DoLoginIdentifierStep = true;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    if ((sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction) && newCode)
+                    {
+                        return await ContinueAuthenticationInternalAsync(sequenceData, newCode);
+                    }
+
+                    sequenceData.DoLoginPasswordAction = false;
+                    sequenceData.DoLoginPasswordlessEmailAction = false;
+                    sequenceData.DoLoginPasswordlessSmsAction = false;
+
+                    if (passwordAuth)
+                    {
+                        sequenceData.DoLoginPasswordAction = true;
+                    }
+                    else if(passwordLessEmail)
+                    {
+                        sequenceData.DoLoginPasswordlessEmailAction = true;
+                    }
+                    else if (passwordLessSms)
+                    {
+                        sequenceData.DoLoginPasswordlessSmsAction = true;
+                    }
+
+                    if (!(sequenceData.DoLoginPasswordAction || sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction))
+                    {                      
+                        sequenceData.DoLoginIdentifierStep = true;
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        return await ContinueAuthenticationInternalAsync(sequenceData);
+                    }
+
                 }
                 return await IdentifierInternalAsync(sequenceData);
             }
@@ -201,7 +232,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectActionAsync(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -213,7 +244,7 @@ namespace FoxIDs.Controllers
                     sequenceData.UserIdentifier = sessionUserIdentifier;
                     sequenceData.DoSessionUserRequireLogin = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return await StartAuthenticationInternal(sequenceData, loginUpParty);
+                    return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
                 }
 
                 var identifierViewModel = new IdentifierViewModel
@@ -403,7 +434,7 @@ namespace FoxIDs.Controllers
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
                 ModelState.Clear();
-                return await StartAuthenticationInternal(sequenceData, loginUpParty);
+                return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
             }
             catch (Exception ex)
             {
@@ -460,9 +491,9 @@ namespace FoxIDs.Controllers
             };
         }       
 
-        private async Task<IActionResult> StartAuthenticationInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        private async Task<IActionResult> StartAuthenticationInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var redirectAction) = await CheckSessionReturnRedirectActionAsync(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -484,15 +515,21 @@ namespace FoxIDs.Controllers
 
             if (!(loginUpParty.DisablePasswordAuth == true))
             {
-                return await StartPasswordInternal(sequenceData, loginUpParty);
+                sequenceData.DoLoginPasswordAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartPasswordInternal(sequenceData, loginUpParty);
             }
             else if (loginUpParty.EnablePasswordlessSms == true)
             {
-                    throw new NotImplementedException();
+                sequenceData.DoLoginPasswordlessSmsAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await StartPasswordlessSmsInternalAsync(sequenceData, loginUpParty);
             }
             else if (loginUpParty.EnablePasswordlessEmail == true)
             {
-                throw new NotImplementedException();
+                sequenceData.DoLoginPasswordlessEmailAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await StartPasswordlessEmailInternalAsync(sequenceData, loginUpParty);
             }
             else
             {
@@ -500,61 +537,90 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        private async Task<IActionResult> ContinueAuthenticationInternalAsync(LoginUpSequenceData sequenceData, bool newCode = false)
         {
-            sequenceData.DoLoginPasswordAction = true;
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            loginPageLogic.CheckUpParty(sequenceData);
+            var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+            securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+            securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-            var passwordViewModel = new PasswordViewModel
+            if (sequenceData.DoLoginPasswordAction)
             {
-                SequenceString = SequenceString,
-                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                IconUrl = loginUpParty.IconUrl,
-                Css = loginUpParty.Css,
-                EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                EnableSetPassword = !loginUpParty.DisableSetPassword,
-                EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
-            };
-
-            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                return StartPasswordInternal(sequenceData, loginUpParty);
             }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            else if (sequenceData.DoLoginPasswordlessSmsAction)
             {
-                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                return await StartPasswordlessSmsInternalAsync(sequenceData, loginUpParty, newCode);
             }
-            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            else if (sequenceData.DoLoginPasswordlessEmailAction)
             {
-                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier)
-            {
-                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnablePhoneIdentifier)
-            {
-                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+                return await StartPasswordlessEmailInternalAsync(sequenceData, loginUpParty, newCode);
             }
             else
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException("Authentication not implemented.");
             }
+        }
+        private IActionResult StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        {
+            logger.ScopeTrace(() => "Start password authentication.");
 
-            logger.ScopeTrace(() => "Show password dialog.");
+            var passwordViewModel = GetAuthenticationWithIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+
             return View("Password", passwordViewModel);
         }
 
-        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        private async Task<IActionResult> StartPasswordlessSmsInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool newCode = false)
+        {
+            logger.ScopeTrace(() => "Start passwordless SMS authentication.");
+
+            var passwordlessSmsViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+            passwordlessSmsViewModel.ForceNewCode = newCode;
+
+            try
+            {
+                await accountLogic.SendPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return View("PasswordlesSms", passwordlessSmsViewModel);
+        }
+
+        private async Task<IActionResult> StartPasswordlessEmailInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool newCode = false)
+        {
+            logger.ScopeTrace(() => "Start passwordless email authentication.");
+
+            var passwordlessEmailViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+            passwordlessEmailViewModel.ForceNewCode = newCode;
+
+            try
+            {
+                await accountLogic.SendEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return View("PasswordlessEmail", passwordlessEmailViewModel);
+        }
+
+        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectActionAsync(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequireMfa(user, upParty, sequenceData));
@@ -588,13 +654,13 @@ namespace FoxIDs.Controllers
                 {
                     return await PasswordInternalAsync(sequenceData, login, loginUpParty);
                 }
-                else if (sequenceData.DoLoginPasswordlessEmailAction)
-                {
-                    throw new NotImplementedException();
-                }
                 else if (sequenceData.DoLoginPasswordlessSmsAction)
                 {
-                    throw new NotImplementedException();
+                    return await PasswordlessSmsInternalAsync(sequenceData, login, loginUpParty);
+                }
+                else if (sequenceData.DoLoginPasswordlessEmailAction)
+                {
+                    return await PasswordlessEmailInternalAsync(sequenceData, login, loginUpParty);
                 }
                 else
                 {
@@ -611,50 +677,8 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var password = new PasswordViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableSetPassword = !loginUpParty.DisableSetPassword,
-                    EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                    DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
-                };
-                if (login.EmailIdentifier != null)
-                {
-                    password.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
-                }
-                else if (login.PhoneIdentifier != null)
-                {
-                    password.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
-                }
-                else if (login.UsernameIdentifier != null)
-                {
-                    password.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
-                }
-                else if (login.UsernameEmailIdentifier != null)
-                {
-                    password.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
-                }
-                else if (login.UsernamePhoneIdentifier != null)
-                {
-                    password.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
-                }
-                else if (login.PhoneEmailIdentifier != null)
-                {
-                    password.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
-                }
-                else if (login.UsernamePhoneEmailIdentifier != null)
-                {
-                    password.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-                return View("Password", password);
+                var passwordViewModel = GetAuthenticationWithIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+                return View("Password", passwordViewModel);
             };
 
             if (!ModelState.IsValid)
@@ -702,35 +726,225 @@ namespace FoxIDs.Controllers
             return viewError();
         }
 
-        private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty)
+
+        private async Task<IActionResult> PasswordlessSmsInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty)
         {
+            Func<IActionResult> viewError = () =>
+            {
+                var passwordlessSmsViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+                return View("PasswordlessSms", passwordlessSmsViewModel);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return viewError();
+            }
+
+            logger.ScopeTrace(() => "Passwordless SMS post.");
+
+            try
+            {
+                var user = await accountLogic.VerifyPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.Code);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (CodeNotExistsException cneex)
+            {
+                logger.ScopeTrace(() => cneex.Message);
+                ModelState.AddModelError(nameof(login.Code), localizer["Please use the new one-time password just sent to your phone."]);
+            }
+            catch (InvalidCodeException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message);
+                ModelState.AddModelError(nameof(login.Code), localizer["Invalid one-time password, please try one more time."]);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return viewError();
+        }
+
+
+        private async Task<IActionResult> PasswordlessEmailInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty)
+        {
+            Func<IActionResult> viewError = () =>
+            {
+                var passwordlessEmailViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+                return View("PasswordlessEmail", passwordlessEmailViewModel);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return viewError();
+            }
+
+            logger.ScopeTrace(() => "Passwordless email post.");
+
+            try
+            {
+                var user = await accountLogic.VerifyEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.Code);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (CodeNotExistsException cneex)
+            {
+                logger.ScopeTrace(() => cneex.Message);
+                ModelState.AddModelError(nameof(login.Code), localizer["Please use the new one-time password just sent to your email."]);
+            }
+            catch (InvalidCodeException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message);
+                ModelState.AddModelError(nameof(login.Code), localizer["Invalid one-time password, please try one more time."]);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return viewError();
+        }
+
+        private T GetAuthenticationWithIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
+        {
+            var passwordViewModel = GetAuthenticationViewModel<T>(sequenceData, loginUpParty);
+
             if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, email or password.";
+                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnableEmailIdentifier)
             {
-                return "Wrong email or password.";
+                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
             }
             else if (loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username or password.";
+                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            return passwordViewModel;
+        }
+
+        private T GetAuthenticationWithIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
+        {
+            var passwordViewModel = GetAuthenticationViewModel<T>(sequenceData, loginUpParty);
+
+            if (login.EmailIdentifier != null)
+            {
+                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
+            }
+            else if (login.PhoneIdentifier != null)
+            {
+                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
+            }
+            else if (login.UsernameIdentifier != null)
+            {
+                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
+            }
+            else if (login.UsernameEmailIdentifier != null)
+            {
+                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
+            }
+            else if (login.UsernamePhoneIdentifier != null)
+            {
+                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
+            }
+            else if (login.PhoneEmailIdentifier != null)
+            {
+                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
+            }
+            else if (login.UsernamePhoneEmailIdentifier != null)
+            {
+                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            return passwordViewModel;
+        }
+
+        private T GetAuthenticationViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
+        {
+            return new T
+            {
+                SequenceString = SequenceString,
+                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                IconUrl = loginUpParty.IconUrl,
+                Css = loginUpParty.Css,
+                ShowCancelLogin = loginUpParty.EnableCancelLogin,
+                ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
+                ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
+                ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
+                ShowSetPassword = !loginUpParty.DisableSetPassword,
+                ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
+                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
+            };
+        }
+
+        private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty, bool isPasswordless = false)
+        {
+            var passwordlesText = isPasswordless ? "one-time " : string.Empty;
+
+            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return $"Wrong username, phone number, email or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            {
+                return $"Wrong phone number, email or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return $"Wrong username, phone number or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                return $"Wrong username, email or {passwordlesText}password.";
+            }
+            else if (loginUpParty.EnableEmailIdentifier)
+            {
+                return $"Wrong email or {passwordlesText}password.";
+            }
+            else if (loginUpParty.EnablePhoneIdentifier)
+            {
+                return $"Wrong phone number or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
+            }
+            else if (loginUpParty.EnableUsernameIdentifier)
+            {
+                return $"Wrong username or {passwordlesText}password.";
             }
             else
             {

@@ -13,6 +13,7 @@ namespace FoxIDs.Models.Api
         TokenRequest = 400,
         ControlApiGet = 500,
         ControlApiUpdate = 520,
+        Passwordless = 580,
         Confirmation = 600,
         SetPassword = 700,   
         [Obsolete("Delete after 2026-06-01 and in combination with FoxIDs.Models.UsageLogTypes.ResetPassword.")]

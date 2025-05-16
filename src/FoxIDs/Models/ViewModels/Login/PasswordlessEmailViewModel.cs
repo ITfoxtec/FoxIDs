@@ -8,8 +8,8 @@ namespace FoxIDs.Models.ViewModels
 
         [Display(Name = "One-time password")]
         [Required]
-        [MinLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a valid one-time password code.")]
-        [MaxLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a valid one-time password code.")]
-        public string Code { get; set; }
+        [MinLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a valid one-time password.")]
+        [MaxLength(Constants.Models.User.ConfirmationCodeEmailLength, ErrorMessage = "Please enter a valid one-time password.")]
+        public string OneTimePassword { get; set; }
     }
 }

@@ -75,8 +75,8 @@ namespace FoxIDs.Logic
                 case FailingLoginTypes.ExternalLogin:
                     return RouteBinding.MaxFailingLogins;
 
-                case FailingLoginTypes.PasswordlessSmsCode:
-                case FailingLoginTypes.PasswordlessEmailCode:
+                case FailingLoginTypes.PasswordlessSms:
+                case FailingLoginTypes.PasswordlessEmail:
                 case FailingLoginTypes.SmsCode:
                 case FailingLoginTypes.EmailCode:
                 case FailingLoginTypes.TwoFactorSmsCode:
@@ -100,9 +100,9 @@ namespace FoxIDs.Logic
                     return "SMS code";
                 case FailingLoginTypes.EmailCode:
                     return "Email code";
-                case FailingLoginTypes.PasswordlessSmsCode:
+                case FailingLoginTypes.PasswordlessSms:
                     return "One-time password via SMS";
-                case FailingLoginTypes.PasswordlessEmailCode:
+                case FailingLoginTypes.PasswordlessEmail:
                     return "One-time password via email";
                 case FailingLoginTypes.TwoFactorSmsCode:
                     return "SMS two-factor code";

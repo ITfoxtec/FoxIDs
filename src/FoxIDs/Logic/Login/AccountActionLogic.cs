@@ -8,6 +8,7 @@ using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using MimeKit;
 using System;
@@ -21,11 +22,11 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly ICacheProvider cacheProvider;
         private readonly IStringLocalizer localizer;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SecretHashLogic secretHashLogic;
-        private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendSmsLogic sendSmsLogic;
         private readonly SendEmailLogic sendEmailLogic;
@@ -33,14 +34,14 @@ namespace FoxIDs.Logic
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, PlanUsageLogic planUsageLogic, TrackCacheLogic trackCacheLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)        {
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ICacheProvider cacheProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, SendSmsLogic sendSmsLogic, SendEmailLogic sendEmailLogic, PlanUsageLogic planUsageLogic, TrackCacheLogic trackCacheLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)        {
             this.settings = settings;
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.cacheProvider = cacheProvider;
             this.localizer = localizer;
             this.tenantDataRepository = tenantDataRepository;
             this.secretHashLogic = secretHashLogic;
-            this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.sendSmsLogic = sendSmsLogic;
             this.sendEmailLogic = sendEmailLogic;
@@ -53,7 +54,7 @@ namespace FoxIDs.Logic
         public async Task SendPhonePasswordlessCodeSmsAsync(string phone)
         {
             phone = phone?.Trim();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.PasswordlessSmsCode);
+            await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.PasswordlessSms);
             (_, var user) = await SendCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, phone, GetSmsSendPasswordlessCodeAction(), true, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
             await planUsageLogic.LogPasswordlessSmsEventAsync(user?.Phone ?? phone);
             return;
@@ -68,7 +69,7 @@ namespace FoxIDs.Logic
         public async Task SendEmailPasswordlessCodeAsync(string email)
         {
             email = email?.Trim()?.ToLower();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.PasswordlessSmsCode);
+            await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.PasswordlessEmail);
             _ = await SendCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, email, GetEmailSendPasswordlessCodeAction(), true, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
             planUsageLogic.LogPasswordlessEmailEvent();
             return;
@@ -205,7 +206,7 @@ namespace FoxIDs.Logic
         public async Task<User> VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(string phone, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             phone = phone?.Trim();
-            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
+            Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
             var user = await VerifyCodeAsync(SendType.Sms, SmsSetPasswordCodeKeyElement, phone, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
@@ -229,7 +230,7 @@ namespace FoxIDs.Logic
         public async Task<User> VerifyEmailSetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword, bool deleteRefreshTokenGrants)
         {
             email = email?.Trim()?.ToLower();
-            Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUserAsync(user, newPassword);
+            Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
             var user = await VerifyCodeAsync(SendType.Email, EmailSetPasswordCodeKeyElement, email, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
@@ -404,15 +405,45 @@ namespace FoxIDs.Logic
         {
             var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, GetFailingLoginType(sendType));
 
-            var user = await accountLogic.GetUserAsync(userIdentifier);
-            if (user == null || user.DisableAccount)
+            try
             {
-                throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to send {logText}.");
-            }
+                var user = await GetAccountLogic().GetUserAsync(userIdentifier);
+                if (user == null || user.DisableAccount)
+                {
+                    throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to send {logText}.");
+                }
 
-            await sendActionAsync(user, await confirmationCodeActionAsync(cacheKey));
-            logger.ScopeTrace(() => $"{logText} send to '{userIdentifier}' for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
-            return user;
+                switch (sendType)
+                {
+                    case SendType.PasswordlessSms:
+                    case SendType.Sms:
+                    case SendType.TwoFactorSms:
+                        if (user.Phone.IsNullOrWhiteSpace())
+                        {
+                            throw new UserNotExistsException($"User '{userIdentifier}' do not have a phone number, trying to send {logText}.");
+                        }
+                        break;
+                    case SendType.PasswordlessEmail:
+                    case SendType.Email:
+                    case SendType.TwoFactorEmail:
+                        if (user.Email.IsNullOrWhiteSpace())
+                        {
+                            throw new UserNotExistsException($"User '{userIdentifier}' do not have a emali, trying to send {logText}.");
+                        }
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                await sendActionAsync(user, await confirmationCodeActionAsync(cacheKey));
+                logger.ScopeTrace(() => $"{logText} send to '{userIdentifier}' for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
+                return user;
+            }
+            catch
+            {
+                logger.ScopeTrace(() => $"{logText} NOT send to '{userIdentifier}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
+                throw;
+            }
         }
 
         private async Task<EmailContent> AddAddressAndInfoAsync(EmailContent emailContent)
@@ -494,7 +525,7 @@ namespace FoxIDs.Logic
                 {
                     await failingLoginLogic.ResetFailingLoginCountAsync(userIdentifier, GetFailingLoginType(sendType));
 
-                    var user = await accountLogic.GetUserAsync(userIdentifier);
+                    var user = await GetAccountLogic().GetUserAsync(userIdentifier);
                     if (user == null || user.DisableAccount)
                     {
                         throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to do {logText}.");
@@ -502,6 +533,7 @@ namespace FoxIDs.Logic
 
                     switch (sendType)
                     {
+                        case SendType.PasswordlessSms:
                         case SendType.Sms:
                         case SendType.TwoFactorSms:
                             if (!user.PhoneVerified)
@@ -510,6 +542,7 @@ namespace FoxIDs.Logic
                                 await tenantDataRepository.SaveAsync(user);
                             }
                             break;
+                        case SendType.PasswordlessEmail:
                         case SendType.Email:
                         case SendType.TwoFactorEmail:
                             if (!user.EmailVerified)
@@ -551,9 +584,9 @@ namespace FoxIDs.Logic
             switch (sendType)
             {
                 case SendType.PasswordlessSms:
-                    return FailingLoginTypes.PasswordlessSmsCode;
+                    return FailingLoginTypes.PasswordlessSms;
                 case SendType.PasswordlessEmail:
-                    return FailingLoginTypes.PasswordlessEmailCode;
+                    return FailingLoginTypes.PasswordlessEmail;
                 case SendType.Sms:
                     return FailingLoginTypes.SmsCode;
                 case SendType.Email:
@@ -587,6 +620,8 @@ namespace FoxIDs.Logic
             }
             return displayName;
         }
+
+        private AccountLogic GetAccountLogic() => serviceProvider.GetService<AccountLogic>();
 
         private Func<string, Task<string>> GetConfirmationCodeSmsAction()
         {

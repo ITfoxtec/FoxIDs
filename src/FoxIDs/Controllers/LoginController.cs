@@ -118,6 +118,7 @@ namespace FoxIDs.Controllers
                 if (sequenceData.DoLoginIdentifierStep)
                 {
                     ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
+                    ModelState[nameof(login.OneTimePassword)].ValidationState = ModelValidationState.Valid;
                     return await IdentifierInternalAsync(sequenceData, login);
                 }
                 else
@@ -583,16 +584,15 @@ namespace FoxIDs.Controllers
             }
             catch (UserObservationPeriodException uoex)
             {
-                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
             catch (UserNotExistsException unex)
             {
                 logger.ScopeTrace(() => unex.Message, triggerEvent: true);
-                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+                // Do not inform about non existing user in error message.
             }
 
-            return View("PasswordlesSms", passwordlessSmsViewModel);
+            return View("PasswordlessSms", passwordlessSmsViewModel);
         }
 
         private async Task<IActionResult> StartPasswordlessEmailInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool newCode = false)
@@ -608,13 +608,12 @@ namespace FoxIDs.Controllers
             }
             catch (UserObservationPeriodException uoex)
             {
-                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
             catch (UserNotExistsException unex)
             {
                 logger.ScopeTrace(() => unex.Message, triggerEvent: true);
-                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+                // Do not inform about non existing user in error message.
             }
 
             return View("PasswordlessEmail", passwordlessEmailViewModel);
@@ -652,14 +651,17 @@ namespace FoxIDs.Controllers
 
                 if (sequenceData.DoLoginPasswordAction)
                 {
+                    ModelState[nameof(login.OneTimePassword)].ValidationState = ModelValidationState.Valid;
                     return await PasswordInternalAsync(sequenceData, login, loginUpParty);
                 }
                 else if (sequenceData.DoLoginPasswordlessSmsAction)
                 {
+                    ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
                     return await PasswordlessSmsInternalAsync(sequenceData, login, loginUpParty);
                 }
                 else if (sequenceData.DoLoginPasswordlessEmailAction)
                 {
+                    ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
                     return await PasswordlessEmailInternalAsync(sequenceData, login, loginUpParty);
                 }
                 else
@@ -707,7 +709,6 @@ namespace FoxIDs.Controllers
             }
             catch (UserObservationPeriodException uoex)
             {
-                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
             catch (AccountException aex)
@@ -744,22 +745,21 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var user = await accountLogic.VerifyPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.Code);
+                var user = await accountLogic.VerifyPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.OneTimePassword);
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
             }
             catch (CodeNotExistsException cneex)
             {
                 logger.ScopeTrace(() => cneex.Message);
-                ModelState.AddModelError(nameof(login.Code), localizer["Please use the new one-time password just sent to your phone."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your phone."]);
             }
             catch (InvalidCodeException pcex)
             {
                 logger.ScopeTrace(() => pcex.Message);
-                ModelState.AddModelError(nameof(login.Code), localizer["Invalid one-time password, please try one more time."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
             }
             catch (UserObservationPeriodException uoex)
             {
-                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
             catch (UserNotExistsException unex)
@@ -789,22 +789,21 @@ namespace FoxIDs.Controllers
 
             try
             {
-                var user = await accountLogic.VerifyEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.Code);
+                var user = await accountLogic.VerifyEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.OneTimePassword);
                 return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
             }
             catch (CodeNotExistsException cneex)
             {
                 logger.ScopeTrace(() => cneex.Message);
-                ModelState.AddModelError(nameof(login.Code), localizer["Please use the new one-time password just sent to your email."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your email."]);
             }
             catch (InvalidCodeException pcex)
             {
                 logger.ScopeTrace(() => pcex.Message);
-                ModelState.AddModelError(nameof(login.Code), localizer["Invalid one-time password, please try one more time."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
             }
             catch (UserObservationPeriodException uoex)
             {
-                logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
             catch (UserNotExistsException unex)
@@ -1510,7 +1509,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (InvalidPasswordException ipex)

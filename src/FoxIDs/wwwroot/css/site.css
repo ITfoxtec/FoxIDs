@@ -194,6 +194,10 @@ code {
     margin-top: 15px;
 }
 
+    .button-group.nested-group {
+        padding-top: 0px;
+    }
+
 .active-group {
     position: relative;
     padding: 15px 0px;
@@ -296,6 +300,7 @@ code {
 
 .validation-summary-errors {
     color: #a94442;
+    margin-bottom: 1.5rem;
 }
 
 .field-validation-error {

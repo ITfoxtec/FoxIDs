@@ -154,6 +154,10 @@ namespace FoxIDs.Client.Pages.Users
                     return "Internal user";
                 case FailingLoginTypes.ExternalLogin:
                     return "External user";
+                case FailingLoginTypes.PasswordlessSms:
+                    return "One-time password via SMS";
+                case FailingLoginTypes.PasswordlessEmail:
+                    return "One-time password via email";
                 case FailingLoginTypes.SmsCode:
                     return "SMS code";
                 case FailingLoginTypes.EmailCode:

@@ -35,6 +35,6 @@ namespace FoxIDs.Models.ViewModels
         [Required]
         [MinLength(Constants.Models.User.ConfirmationCodeSmsLength)]
         [MaxLength(Constants.Models.User.ConfirmationCodeEmailLength)]
-        public string Code { get; set; }
+        public string OneTimePassword { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -10,13 +11,13 @@ namespace FoxIDs.Logic
 {
     public class AccountLogic : BaseAccountLogic
     {
-        private readonly AccountActionLogic accountActionLogic;
+        private readonly IServiceProvider serviceProvider;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, AccountActionLogic accountActionLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
         {
-            this.accountActionLogic = accountActionLogic;
+            this.serviceProvider = serviceProvider;
             this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
         }
@@ -129,7 +130,7 @@ namespace FoxIDs.Logic
 
             await planUsageLogic.VerifyCanSendSmsAsync();
 
-            await accountActionLogic.SendPhonePasswordlessCodeSmsAsync(userIdentifier);
+            await GetAccountActionLogicLogic().SendPhonePasswordlessCodeSmsAsync(userIdentifier);
         }
 
         public async Task<User> VerifyPhonePasswordlessCodeSmsAsync(string userIdentifier, string code)
@@ -137,7 +138,7 @@ namespace FoxIDs.Logic
             userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Verify passwordless code SMS for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
 
-            return await accountActionLogic.VerifyPhonePasswordlessCodeSmsAsync(userIdentifier, code);
+            return await GetAccountActionLogicLogic().VerifyPhonePasswordlessCodeSmsAsync(userIdentifier, code);
         }
 
         public async Task SendEmailPasswordlessCodeSmsAsync(string userIdentifier)
@@ -147,7 +148,7 @@ namespace FoxIDs.Logic
 
             await planUsageLogic.VerifyCanSendEmailAsync();
 
-            await accountActionLogic.SendEmailPasswordlessCodeAsync(userIdentifier);
+            await GetAccountActionLogicLogic().SendEmailPasswordlessCodeAsync(userIdentifier);
         }
 
         public async Task<User> VerifyEmailPasswordlessCodeSmsAsync(string userIdentifier, string code)
@@ -155,7 +156,10 @@ namespace FoxIDs.Logic
             userIdentifier = userIdentifier?.Trim()?.ToLower();
             logger.ScopeTrace(() => $"Verify passwordless code email for user '{userIdentifier}', Route '{RouteBinding?.Route}'.");
 
-            return await accountActionLogic.VerifyEmailPasswordlessCodeAsync(userIdentifier, code);
+            return await GetAccountActionLogicLogic().VerifyEmailPasswordlessCodeAsync(userIdentifier, code);
         }
+
+        private AccountActionLogic GetAccountActionLogicLogic() => serviceProvider.GetService<AccountActionLogic>();
+
     }
 }

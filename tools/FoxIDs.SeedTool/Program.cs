@@ -20,9 +20,9 @@ namespace FoxIDs.SeedTool
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
                 Console.WriteLine("Select seed action");
-                Console.WriteLine("U: Upload risk passwords");
-                Console.WriteLine("D: Delete all risk passwords");
-                Console.WriteLine("A: Delete all risk passwords (only supported by MongoDB)");
+                Console.WriteLine("R: Upload risk passwords");
+                Console.WriteLine("I: Delete all risk passwords in one DB call (only supported by MongoDB)");
+                Console.WriteLine("S: Delete all risk passwords in many DB calls");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);

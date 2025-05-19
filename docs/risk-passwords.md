@@ -63,7 +63,7 @@ Add your FoxIDs and FoxIDs Control API endpoints and client secret and local ris
 
 1. Start a Command Prompt 
 2. Run the seed tool with `SeedTool.exe`
-3. Click `U` to start uploading risk passwords  
+3. Click `R` to start uploading risk passwords  
 
 > The risk password upload will take a while.
 

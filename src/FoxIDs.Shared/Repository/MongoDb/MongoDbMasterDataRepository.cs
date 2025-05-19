@@ -216,7 +216,13 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(firstItem);
-                await collection.InsertManyAsync(items);
+
+                var updates = new List<WriteModel<T>>();
+                foreach (var item in items)
+                {
+                    updates.Add(new ReplaceOneModel<T>(Builders<T>.Filter.Where(d => d.Id == item.Id), item) { IsUpsert = true });
+                }
+                await collection.BulkWriteAsync(updates, new BulkWriteOptions() { IsOrdered = false });
             }
             catch (Exception ex)
             {

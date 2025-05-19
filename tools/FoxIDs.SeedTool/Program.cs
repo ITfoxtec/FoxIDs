@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using FoxIDs.MasterSeedTool.Infrastructure;
-using FoxIDs.MasterSeedTool.SeedLogic;
+using FoxIDs.SeedTool.Infrastructure;
+using FoxIDs.SeedTool.SeedLogic;
 
-namespace FoxIDs.MasterSeedTool
+namespace FoxIDs.SeedTool
 {
     class Program
     {
@@ -20,9 +20,9 @@ namespace FoxIDs.MasterSeedTool
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
                 Console.WriteLine("Select seed action:");
-                Console.WriteLine("R: Upload risk passwords");
-                Console.WriteLine("I: Delete all risk passwords with one DB call (recommended, only supported by MongoDB)");
-                Console.WriteLine("S: Delete all risk passwords with many DB calls");
+                Console.WriteLine("U: Upload users in an environment");
+                Console.WriteLine("E: Delete all users in an environment with one DB call (recommended, only supported by MongoDB)");
+                Console.WriteLine("R: Delete all users in an environment with many DB calls");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -30,14 +30,14 @@ namespace FoxIDs.MasterSeedTool
 
                 switch (char.ToLower(key.KeyChar))
                 {
+                    case 'u':
+                        await serviceProvider.GetService<UserSeedLogic>().SeedAsync();
+                        break;
+                    case 'e':
+                        await serviceProvider.GetService<UserSeedLogic>().DeleteAllInPartitionAsync();
+                        break;
                     case 'r':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
-                        break;
-                    case 'i':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllInPartitionAsync();
-                        break;
-                    case 's':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
+                        await serviceProvider.GetService<UserSeedLogic>().DeleteAllAsync();
                         break;
 
                     default:

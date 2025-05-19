@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Util;
 
-namespace FoxIDs.MasterSeedTool.Models
+namespace FoxIDs.SeedTool.Models
 {
     public class SeedSettings
     {
@@ -22,9 +22,14 @@ namespace FoxIDs.MasterSeedTool.Models
         [Required]
         public string FoxIDsEndpoint { get; set; }
         /// <summary>
-        /// Authority for "master tenant/master environment/app-reg".
+        /// Tenant.
         /// </summary>
-        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, "master", "master", ClientId);
+        [Required]
+        public string Tenant { get; set; }
+        /// <summary>
+        ///  Authority for "tenant/master environment/app-reg".
+        /// </summary>
+        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, Tenant, "master", ClientId);
 
         /// <summary>
         /// FoxIDs control endpoint.
@@ -37,14 +42,14 @@ namespace FoxIDs.MasterSeedTool.Models
         /// </summary>
         public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api");
         /// <summary>
-        /// FoxIDs master API control endpoint.
+        /// FoxIDs tenant API control endpoint.
         /// </summary>
-        public string FoxIDsMasterControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, "@master");
+        public string FoxIDsTenantControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, Tenant);
 
         /// <summary>
-        /// Pwned passwords (SHA1 ordered by count) path.
+        /// Path to CSV file with users.
         /// </summary>
         [Required]
-        public string PwnedPasswordsPath { get; set; }
+        public string UsersPath { get; set; }
     }
 }

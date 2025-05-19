@@ -388,6 +388,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{71C64DBE
 		ReleaseConfig\FoxIDs.Control\linux\web.config = ReleaseConfig\FoxIDs.Control\linux\web.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{19139648-C13A-42CF-AFD3-BB55EDE95634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -442,6 +444,10 @@ Global
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -471,6 +477,7 @@ Global
 		{0588A320-7C07-4E24-87E7-5A4C52140780} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 		{A5BB6949-EFE0-4B5A-BD65-8F14E5673A07} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
 		{71C64DBE-14A9-4986-A899-89C12DFF4BCE} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
+		{19139648-C13A-42CF-AFD3-BB55EDE95634} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

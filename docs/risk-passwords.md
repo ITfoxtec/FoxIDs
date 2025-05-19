@@ -51,10 +51,10 @@ Add your FoxIDs and FoxIDs Control API endpoints and client secret and local ris
 
 ```json
 "SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.com", // custom domain or local development https://localhost:44330
-    "FoxIDsControlEndpoint": "https://control.foxidsxxxx.com", // custom domain or local development https://localhost:44331
+    "FoxIDsEndpoint": "https://id.yyyyxxxx.com", // custom domain or local development https://localhost:44330
+    "FoxIDsControlEndpoint": "https://control.yyyyxxxx.com", // custom domain or local development https://localhost:44331
+    "ClientId": "foxids_master_seed",
     "ClientSecret": "xxx",
-    ...
     "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"
 }
 ```

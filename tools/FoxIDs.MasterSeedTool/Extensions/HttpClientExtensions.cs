@@ -9,7 +9,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoxIDs.SeedTool
+namespace FoxIDs.MasterSeedTool
 {
     public static class HttpClientExtensions
     {

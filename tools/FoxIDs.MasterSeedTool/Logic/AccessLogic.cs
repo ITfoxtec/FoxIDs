@@ -1,9 +1,9 @@
 ﻿using ITfoxtec.Identity.Helpers;
-using FoxIDs.SeedTool.Model;
+using FoxIDs.MasterSeedTool.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace FoxIDs.SeedTool.Logic
+namespace FoxIDs.MasterSeedTool.Logic
 {
     public class AccessLogic
     {

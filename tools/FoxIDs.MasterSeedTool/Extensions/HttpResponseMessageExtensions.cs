@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FoxIDs.SeedTool
+namespace FoxIDs.MasterSeedTool
 {
     public static class HttpResponseMessageExtensions
     {

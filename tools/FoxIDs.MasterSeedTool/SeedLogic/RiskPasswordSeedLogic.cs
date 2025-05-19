@@ -1,5 +1,5 @@
-﻿using FoxIDs.SeedTool.Logic;
-using FoxIDs.SeedTool.Model;
+﻿using FoxIDs.MasterSeedTool.Logic;
+using FoxIDs.MasterSeedTool.Models;
 using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
@@ -9,8 +9,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
+using FoxIDs.MasterSeedTool.Models.ApiModels;
 
-namespace FoxIDs.SeedTool.SeedLogic
+namespace FoxIDs.MasterSeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {

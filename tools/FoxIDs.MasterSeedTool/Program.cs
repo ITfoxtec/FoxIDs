@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using FoxIDs.SeedTool.Infrastructure;
-using FoxIDs.SeedTool.SeedLogic;
+using FoxIDs.MasterSeedTool.Infrastructure;
+using FoxIDs.MasterSeedTool.SeedLogic;
 
-namespace FoxIDs.SeedTool
+namespace FoxIDs.MasterSeedTool
 {
     class Program
     {
@@ -19,7 +19,7 @@ namespace FoxIDs.SeedTool
             {
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
-                Console.WriteLine("Select seed action");
+                Console.WriteLine("Select seed action:");
                 Console.WriteLine("R: Upload risk passwords");
                 Console.WriteLine("I: Delete all risk passwords in one DB call (recommended, only supported by MongoDB)");
                 Console.WriteLine("S: Delete all risk passwords in many DB calls");

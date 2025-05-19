@@ -13,25 +13,25 @@ Download the `SHA-1` pwned passwords in a single file from [haveibeenpwned.com/p
 > Be aware that it takes some time to download all risk passwords.
 
 ## 2) Upload risk passwords to FoxIDs
-You then upload the risk passwords with the FoxIDs seed tool console application.  
+You then upload the risk passwords with the FoxIDs master seed tool console application.  
 
-Download the `FoxIDs.SeedTool-x.x.x-win-x64.zip` or `FoxIDs.SeedTool-x.x.x-linux-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the seed tool.
+Download the `FoxIDs.MasterSeedTool-x.x.x-win-x64.zip` or `FoxIDs.MasterSeedTool-x.x.x-linux-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the master seed tool.
 
-### Configure the Seed Tool
+### Configure the master seed tool
 
-The seed tool is configured in the `appsettings.json` file.
+The master seed tool is configured in the `appsettings.json` file.
 
 Access to upload risk passwords is granted in the `master` tenant.
 
-Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+Create a master seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
 1. Login to the **master** tenant
 2. Select the **Applications** tab
 3. Click **New Application**
 4. Click **Backend Application**
     a. Select **Show advanced**
-    b. Add a **Name** e.g., `Seed tool`
-    c. Set the **Client ID** to `foxids_seed`
+    b. Add a **Name** e.g., `Master seed tool`
+    c. Set the **Client ID** to `foxids_master_seed`
     d. Click **Register**
     e. Remember the **Client secret**.
     f. Click **Close**
@@ -45,9 +45,9 @@ Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#fo
     b. Then click **Add Value** and add the claim value `foxids:tenant.admin`
 9. Click **Update**
 
-![FoxIDs Control Client - seed tool client](images/upload-risk-passwords-seed-client.png)
+![FoxIDs Control Client - master seed tool client](images/master-seed-client.png)
 
-Add your FoxIDs and FoxIDs Control API endpoints and client secret and local risk passwords (pwned passwords) file to the seed tool configuration. 
+Add your FoxIDs and FoxIDs Control API endpoints and client secret and local risk passwords (pwned passwords) file to the master seed tool configuration. 
 
 ```json
 "SeedSettings": {
@@ -59,10 +59,10 @@ Add your FoxIDs and FoxIDs Control API endpoints and client secret and local ris
 }
 ```
 
-### Run the Seed Tool
+### Run the master seed tool
 
 1. Start a Command Prompt 
-2. Run the seed tool with `SeedTool.exe`
+2. Run the master seed tool with `MasterSeedTool.exe`
 3. Click `R` to start uploading risk passwords  
 
 > The risk password upload will take a while.

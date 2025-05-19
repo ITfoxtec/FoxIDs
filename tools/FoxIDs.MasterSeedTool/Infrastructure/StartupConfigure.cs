@@ -1,19 +1,17 @@
-﻿using FoxIDs.Logic;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FoxIDs.SeedTool.Logic;
-using FoxIDs.SeedTool.Model;
-using FoxIDs.SeedTool.SeedLogic;
+using FoxIDs.MasterSeedTool.Logic;
+using FoxIDs.MasterSeedTool.Models;
+using FoxIDs.MasterSeedTool.SeedLogic;
 using System;
 using System.Net.Http;
 using System.IO;
 using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Helpers;
 
-namespace FoxIDs.SeedTool.Infrastructure
+namespace FoxIDs.MasterSeedTool.Infrastructure
 {
     public class StartupConfigure
     {
@@ -39,16 +37,12 @@ namespace FoxIDs.SeedTool.Infrastructure
 
         private static void AddLogic(ServiceCollection services)
         {
-            services.AddTransient<SecretHashLogic>();
-
             services.AddSingleton<AccessLogic>();            
         }
 
         private static void AddInfrastructure(ServiceCollection services)
         {
             services.AddHttpClient();
-
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessorSeedHelper>();
 
             services.AddTransient<TokenHelper>();
             services.AddSingleton(serviceProvider =>

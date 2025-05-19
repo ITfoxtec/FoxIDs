@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Util;
 
-namespace FoxIDs.SeedTool.Model
+namespace FoxIDs.MasterSeedTool.Models
 {
     public class SeedSettings
     {
         /// <summary>
         /// Seed tool client id.
         /// </summary>
-        public string ClientId => DownParty;
+        [Required]
+        public string ClientId { get; set; }
         /// <summary>
         /// Seed tool client secret.
         /// </summary>
@@ -31,14 +32,9 @@ namespace FoxIDs.SeedTool.Model
         [Required]
         public string MasterTrack { get; set; }
         /// <summary>
-        /// Seed tool application registration (client id).
-        /// </summary>
-        [Required]
-        public string DownParty { get; set; }
-        /// <summary>
         /// FoxIDs tenant/environment/app-reg authority.
         /// </summary>
-        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
+        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, ClientId);
 
         /// <summary>
         /// FoxIDs control endpoint.

@@ -22,6 +22,8 @@ namespace FoxIDs.Repository
         public abstract ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         //public abstract ValueTask DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         public abstract ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
+        public abstract ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
+        public abstract ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
 
         protected string PartitionIdFormat<T>(Track.IdKey idKey) where T : IDataDocument
         {

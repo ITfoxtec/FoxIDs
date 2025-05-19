@@ -85,7 +85,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete risk passwords.
         /// </summary>
-        /// <param name="riskPasswordDelete">Risk passwords to delete.</param>
+        /// <param name="riskPasswordDelete">Delete all risk passwords if empty. Alternatively, select to delete specific risk passwords.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete = null)

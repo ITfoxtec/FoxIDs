@@ -283,5 +283,41 @@ namespace FoxIDs.Repository
                 throw new FoxIDsDataException(partitionId, ex);
             }
         }
+
+        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        {
+            if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
+            var firstId = ids.First();
+            if (firstId.IsNullOrEmpty()) throw new ArgumentNullException($"First id {nameof(firstId)}.", ids.GetType().Name);
+
+            var partitionId = firstId.IdToTenantPartitionId();
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId) && 
+                    (ids.Where(id => id.Equals(f.Id)).Any() || 
+                    (queryAdditionalIds && ids.Where(id => f.AdditionalIds.Where(a => id.Equals(a)).Any()).Any()))
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
+        }
+
+        public override async ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null)
+        {
+            var partitionId = PartitionIdFormat<T>(idKey);
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
+                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId));
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
+        }
     }
 }

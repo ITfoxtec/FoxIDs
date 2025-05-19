@@ -270,6 +270,27 @@ namespace FoxIDs.Repository
             return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
+        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        {
+            foreach (string id in ids)
+            {
+                if (!queryAdditionalIds)
+                {
+                    var partitionId = id.IdToTenantPartitionId();
+                    _ = await db.RemoveAsync(id, partitionId);
+                }
+                else
+                {
+                    _ = await GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                }
+            }
+        }
+
+        public override ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null)
+        {
+            throw new NotSupportedException("Not supported by PostgreSql.");
+        }
+
         public async Task RemoveAllExpiredGlobalAsync()
         {
             _ = await db.RemoveAllExpiredGlobalAsync();

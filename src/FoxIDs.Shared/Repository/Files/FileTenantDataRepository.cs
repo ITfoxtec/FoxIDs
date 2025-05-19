@@ -247,6 +247,27 @@ namespace FoxIDs.Repository
             }
         }
 
+        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        {
+            foreach (string id in ids)
+            {
+                if (!queryAdditionalIds)
+                {
+                    var partitionId = id.IdToMasterPartitionId();
+                    await fileDataRepository.DeleteAsync(id, partitionId, required: false);
+                }
+                else
+                {
+                    _ = GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                }
+            }
+        }
+
+        public override async ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null)
+        {
+            throw new NotSupportedException("Not supported by file repository.");
+        }
+
         private string GetDataType<T>() where T : IDataDocument
         {
             var type = typeof(T);

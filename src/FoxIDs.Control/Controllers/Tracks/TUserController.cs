@@ -105,18 +105,6 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                var claims = new List<Claim>();
-                if (createUserRequest.Claims?.Count > 0)
-                {
-                    foreach (var claimAndValue in createUserRequest.Claims)
-                    {
-                        foreach(var value in claimAndValue.Values)
-                        {
-                            claims.Add(new Claim(claimAndValue.Claim, value));
-                        }
-                    }
-                }
-
                 var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
                     UserIdentifier = new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username },
@@ -124,7 +112,7 @@ namespace FoxIDs.Controllers
                     ChangePassword = createUserRequest.Password.IsNullOrWhiteSpace() ? false : createUserRequest.ChangePassword,
                     SetPasswordEmail = createUserRequest.SetPasswordEmail,
                     SetPasswordSms = createUserRequest.SetPasswordSms,
-                    Claims = claims,
+                    Claims = createUserRequest.Claims.ToClaimList(),
                     ConfirmAccount = createUserRequest.ConfirmAccount,
                     EmailVerified = createUserRequest.EmailVerified,
                     PhoneVerified = createUserRequest.PhoneVerified,
@@ -242,8 +230,7 @@ namespace FoxIDs.Controllers
                     mUser.TwoFactorAppRecoveryCode = null;
                 }
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
-                var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
-                mUser.Claims = mClaims;
+                mUser.Claims = mapper.Map<List<ClaimAndValues>>(user.Claims);
 
                 if (user.UpdateEmail != null || user.UpdatePhone != null || user.UpdateUsername != null)
                 {

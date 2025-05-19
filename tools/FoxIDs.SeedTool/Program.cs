@@ -30,14 +30,14 @@ namespace FoxIDs.SeedTool
 
                 switch (char.ToLower(key.KeyChar))
                 {
-                    case 'u':
+                    case 'r':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
-                    case 'd':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
-                        break;
-                    case 'a':
+                    case 'i':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllInPartitionAsync();
+                        break;
+                    case 's':
+                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
                         break;
 
                     default:

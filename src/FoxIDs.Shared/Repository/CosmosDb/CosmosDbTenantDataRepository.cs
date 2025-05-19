@@ -315,6 +315,26 @@ namespace FoxIDs.Repository
             return (item != null, totalRU);
         }
 
+        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        {
+            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
+            var firstItem = items.First();
+            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
+
+            var partitionId = firstItem.Id.IdToTenantPartitionId();
+            foreach (var item in items)
+            {
+                item.PartitionId = partitionId;
+                item.SetDataType();
+                await item.ValidateObjectAsync();
+            }
+
+            foreach (var item in items)
+            {
+                await SaveAsync(item, scopedLogger: scopedLogger);
+            }
+        }
+
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));

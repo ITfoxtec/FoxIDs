@@ -21,7 +21,7 @@ namespace FoxIDs.SeedTool
 
                 Console.WriteLine("Select seed action");
                 Console.WriteLine("R: Upload risk passwords");
-                Console.WriteLine("I: Delete all risk passwords in one DB call (only supported by MongoDB)");
+                Console.WriteLine("I: Delete all risk passwords in one DB call (recommended, only supported by MongoDB)");
                 Console.WriteLine("S: Delete all risk passwords in many DB calls");
 
                 var key = Console.ReadKey();

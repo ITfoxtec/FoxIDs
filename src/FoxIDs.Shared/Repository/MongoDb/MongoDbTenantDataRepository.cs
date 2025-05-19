@@ -207,6 +207,37 @@ namespace FoxIDs.Repository
             }
         }
 
+        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        {
+            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
+            var firstItem = items.First();
+            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
+
+            var partitionId = firstItem.Id.IdToTenantPartitionId();
+            foreach (var item in items)
+            {
+                item.PartitionId = partitionId;
+                item.SetDataType();
+                await item.ValidateObjectAsync();
+            }
+
+            try
+            {
+                var collection = mongoDbRepositoryClient.GetTenantsCollection(firstItem);
+
+                var updates = new List<WriteModel<T>>();
+                foreach (var item in items)
+                {
+                    updates.Add(new ReplaceOneModel<T>(Builders<T>.Filter.Where(d => d.Id == item.Id), item) { IsUpsert = true });
+                }
+                await collection.BulkWriteAsync(updates, new BulkWriteOptions() { IsOrdered = false });
+            }
+            catch (Exception ex)
+            {
+                throw new FoxIDsDataException(partitionId, ex);
+            }
+        }
+
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));

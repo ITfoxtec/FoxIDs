@@ -161,19 +161,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId) && f.Id.Equals(item.Id);
-                var data = await collection.Find(filter).FirstOrDefaultAsync();
-                if (data == null)
-                {
-                    await collection.InsertOneAsync(item);
-                }
-                else
-                {
-                    var result = await collection.ReplaceOneAsync(filter, item);
-                    if (!result.IsAcknowledged || !(result.MatchedCount > 0))
-                    {
-                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
-                    }
-                }
+                await collection.ReplaceOneAsync(filter, item, options: new ReplaceOptions { IsUpsert = true });
             }
             catch (FoxIDsDataException)
             {

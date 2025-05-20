@@ -26,13 +26,10 @@
                     @Localizer["Please verify your phone number with the confirmation code sent to your phone."]
                 }
             </div>
-            <input type="hidden" asp-for="Phone" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="form-group active-group active">
-                <input asp-for="Phone" id="showPhone" disabled autocomplete="off" class="form-control input-control bg-light" />
-                <label asp-for="Phone" id="showPhone" class="label-control"></label>
-                <span asp-validation-for="Phone"></span>
-            </div>
+            @{
+                await Html.RenderPartialAsync("_UserIdentifiers");
+            }
             <div class="form-group active-group">
                 <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
                 <label asp-for="ConfirmationCode" class="label-control"></label>
@@ -40,7 +37,7 @@
             </div>
             <div class="form-group button-group">
                 <input type="submit" value="@Localizer["Confirm phone"]" class="btn btn-primary" />
-                @if (Model.EnableCancelLogin)
+                @if (Model.ShowCancelLogin)
                 {
                     <a href="../../../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                 }

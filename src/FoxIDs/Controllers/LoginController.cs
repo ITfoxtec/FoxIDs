@@ -566,7 +566,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start password authentication.");
 
-            var passwordViewModel = GetAuthenticationWithIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+            var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
 
             return View("Password", passwordViewModel);
         }
@@ -575,7 +575,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start passwordless SMS authentication.");
 
-            var passwordlessSmsViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+            var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
             passwordlessSmsViewModel.ForceNewCode = newCode;
 
             try
@@ -599,7 +599,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start passwordless email authentication.");
 
-            var passwordlessEmailViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+            var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
             passwordlessEmailViewModel.ForceNewCode = newCode;
 
             try
@@ -679,7 +679,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordViewModel = GetAuthenticationWithIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+                var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
                 return View("Password", passwordViewModel);
             };
 
@@ -732,7 +732,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordlessSmsViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+                var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
                 return View("PasswordlessSms", passwordlessSmsViewModel);
             };
 
@@ -776,7 +776,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordlessEmailViewModel = GetAuthenticationWithIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+                var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
                 return View("PasswordlessEmail", passwordlessEmailViewModel);
             };
 
@@ -813,104 +813,6 @@ namespace FoxIDs.Controllers
             }
 
             return viewError();
-        }
-
-        private T GetAuthenticationWithIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
-        {
-            var passwordViewModel = GetAuthenticationViewModel<T>(sequenceData, loginUpParty);
-
-            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
-            {
-                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier)
-            {
-                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnablePhoneIdentifier)
-            {
-                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-
-            return passwordViewModel;
-        }
-
-        private T GetAuthenticationWithIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
-        {
-            var passwordViewModel = GetAuthenticationViewModel<T>(sequenceData, loginUpParty);
-
-            if (login.EmailIdentifier != null)
-            {
-                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
-            }
-            else if (login.PhoneIdentifier != null)
-            {
-                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
-            }
-            else if (login.UsernameIdentifier != null)
-            {
-                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
-            }
-            else if (login.UsernameEmailIdentifier != null)
-            {
-                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
-            }
-            else if (login.UsernamePhoneIdentifier != null)
-            {
-                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
-            }
-            else if (login.PhoneEmailIdentifier != null)
-            {
-                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
-            }
-            else if (login.UsernamePhoneEmailIdentifier != null)
-            {
-                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-
-            return passwordViewModel;
-        }
-
-        private T GetAuthenticationViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : AuthenticationViewModel, new()
-        {
-            return new T
-            {
-                SequenceString = SequenceString,
-                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                IconUrl = loginUpParty.IconUrl,
-                Css = loginUpParty.Css,
-                ShowCancelLogin = loginUpParty.EnableCancelLogin,
-                ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
-                ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
-                ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
-                ShowSetPassword = !loginUpParty.DisableSetPassword,
-                ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
-            };
         }
 
         private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty, bool isPasswordless = false)

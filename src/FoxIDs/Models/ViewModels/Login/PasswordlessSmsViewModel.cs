@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class PasswordlessSmsViewModel : AuthenticationViewModel
+    public class PasswordlessSmsViewModel : LoginBaseViewModel
     {
         public bool ForceNewCode { get; set; }
 

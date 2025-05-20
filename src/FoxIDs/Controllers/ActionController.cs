@@ -25,11 +25,10 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly AccountLogic accountLogic;
-        private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -39,7 +38,6 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountActionLogic = accountActionLogic;
             this.accountLogic = accountLogic;
-            this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
             this.planCacheLogic = planCacheLogic;
         }
@@ -69,16 +67,9 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new PhoneConfirmationViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    ConfirmationCodeSendStatus = codeSendStatus,
-                    Phone = sequenceData.Phone
-                });
+                var phoneConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneConfirmationViewModel>(sequenceData, loginUpParty);
+                phoneConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
+                return View(phoneConfirmationViewModel);
             }
             catch (Exception ex)
             {
@@ -112,12 +103,9 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    phoneConfirmation.SequenceString = SequenceString;
-                    phoneConfirmation.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    phoneConfirmation.IconUrl = loginUpParty.IconUrl;
-                    phoneConfirmation.Css = loginUpParty.Css;
-                    phoneConfirmation.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    return View(phoneConfirmation);
+                    var phoneConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneConfirmationViewModel>(sequenceData, loginUpParty);
+                    phoneConfirmationViewModel.ConfirmationCodeSendStatus = phoneConfirmation.ConfirmationCodeSendStatus;
+                    return View(phoneConfirmationViewModel);
                 };
 
                 if (!ModelState.IsValid)
@@ -178,16 +166,9 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new EmailConfirmationViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    ConfirmationCodeSendStatus = codeSendStatus,
-                    Email = sequenceData.Email
-                });
+                var emailConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailConfirmationViewModel>(sequenceData, loginUpParty);
+                emailConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
+                return View(emailConfirmationViewModel);
             }
             catch (Exception ex)
             {
@@ -212,12 +193,9 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    emailConfirmation.SequenceString = SequenceString;
-                    emailConfirmation.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    emailConfirmation.IconUrl = loginUpParty.IconUrl;
-                    emailConfirmation.Css = loginUpParty.Css;
-                    emailConfirmation.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    return View(emailConfirmation);
+                    var emailConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailConfirmationViewModel>(sequenceData, loginUpParty);
+                    emailConfirmationViewModel.ConfirmationCodeSendStatus = emailConfirmation.ConfirmationCodeSendStatus;
+                    return View(emailConfirmationViewModel);
                 };
 
                 if (!ModelState.IsValid)
@@ -315,27 +293,19 @@ namespace FoxIDs.Controllers
                 {
                     confirmationCodeSendStatus = await accountActionLogic.SendPhoneSetPasswordCodeSmsAsync(sequenceData.Phone, newCode);
                 }
-                catch (UserNotExistsException uex)
+                catch (UserNotExistsException unex)
                 {
-                    // log warning if set password is requested for an unknown phone number.
-                    logger.Warning(uex);
+                    logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                    // Do not inform about non existing user in error message.
                 }
                 catch (UserObservationPeriodException uoex)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
-                return View(new PhoneSetPasswordViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword,
-                    ConfirmationCodeSendStatus = confirmationCodeSendStatus,
-                    Phone = sequenceData.Phone
-                });
+                var phoneSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneSetPasswordViewModel>(sequenceData, loginUpParty);
+                phoneSetPasswordViewModel.ConfirmationCodeSendStatus = confirmationCodeSendStatus;
+                return View(phoneSetPasswordViewModel);
             }
             catch (Exception ex)
             {
@@ -374,13 +344,9 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    setPassword.SequenceString = SequenceString;
-                    setPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    setPassword.IconUrl = loginUpParty.IconUrl;
-                    setPassword.Css = loginUpParty.Css;
-                    setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    setPassword.EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword;
-                    return View(setPassword);
+                    var phoneSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneSetPasswordViewModel>(sequenceData, loginUpParty);
+                    phoneSetPasswordViewModel.ConfirmationCodeSendStatus = setPassword.ConfirmationCodeSendStatus;
+                    return View(phoneSetPasswordViewModel);
                 };
 
                 if (!ModelState.IsValid)
@@ -393,10 +359,10 @@ namespace FoxIDs.Controllers
                     var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
-                catch (UserNotExistsException uex)
+                catch (UserNotExistsException unex)
                 {
-                    // log warning if set password is requested for an unknown phone number.
-                    logger.Warning(uex);
+                    logger.ScopeTrace(() => unex.Message);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
                 catch (CodeNotExistsException cneex)
                 {
@@ -481,27 +447,19 @@ namespace FoxIDs.Controllers
                 {
                     confirmationCodeSendStatus = await accountActionLogic.SendEmailSetPasswordCodeAsync(sequenceData.Email ?? sequenceData.UserIdentifier, newCode);
                 }
-                catch (UserNotExistsException uex)
+                catch (UserNotExistsException unex)
                 {
-                    // log warning if set password is requested for an unknown email address.
-                    logger.Warning(uex);
+                    logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                    // Do not inform about non existing user in error message.
                 }
                 catch (UserObservationPeriodException uoex)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
-                return View(new EmailSetPasswordViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword,
-                    ConfirmationCodeSendStatus = confirmationCodeSendStatus,
-                    Email = sequenceData.Email ?? sequenceData.UserIdentifier
-                });
+                var emailSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailSetPasswordViewModel>(sequenceData, loginUpParty);
+                emailSetPasswordViewModel.ConfirmationCodeSendStatus = confirmationCodeSendStatus;
+                return View(emailSetPasswordViewModel);
             }
             catch (Exception ex)
             {
@@ -531,13 +489,9 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewResponse = () =>
                 {
-                    setPassword.SequenceString = SequenceString;
-                    setPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    setPassword.IconUrl = loginUpParty.IconUrl;
-                    setPassword.Css = loginUpParty.Css;
-                    setPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    setPassword.EnableExistingPasswordLogin = sequenceData.CanUseExistingPassword;
-                    return View(setPassword);
+                    var emailSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailSetPasswordViewModel>(sequenceData, loginUpParty);
+                    emailSetPasswordViewModel.ConfirmationCodeSendStatus = setPassword.ConfirmationCodeSendStatus;
+                    return View(emailSetPasswordViewModel);
                 };
 
                 if (!ModelState.IsValid)
@@ -550,10 +504,10 @@ namespace FoxIDs.Controllers
                     var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
-                catch (UserNotExistsException uex)
+                catch (UserNotExistsException unex)
                 {
-                    // log warning if set password is requested for an unknown email address.
-                    logger.Warning(uex);
+                    logger.ScopeTrace(() => unex.Message);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
                 catch (CodeNotExistsException cneex)
                 {

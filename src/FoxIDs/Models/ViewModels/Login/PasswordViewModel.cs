@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class PasswordViewModel : AuthenticationViewModel
+    public class PasswordViewModel : LoginBaseViewModel
     {
         [Display(Name = "Password")]
         [Required]

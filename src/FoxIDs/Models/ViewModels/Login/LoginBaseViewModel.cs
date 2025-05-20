@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class AuthenticationViewModel : ViewModel
+    public abstract class LoginBaseViewModel : ViewModel
     {
         public string SequenceString { get; set; }
 

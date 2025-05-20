@@ -12,8 +12,8 @@
     <div class="col-md page-content">
         <form method="post">
             <input type="hidden" asp-for="ForceNewCode" autocomplete="off" />
+            <div class="info-message">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your phone."] : Localizer["A two-factor code has just been sent to your phone."])</div>
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="info-message-sub">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your phone."] : Localizer["A two-factor code has just been sent to your phone."])</div>
             <input type="hidden" asp-for="Phone" autocomplete="off" />
             <div class="form-group active-group active">
                 <input asp-for="Phone" id="showPhone" disabled autocomplete="off" class="form-control input-control bg-light" />

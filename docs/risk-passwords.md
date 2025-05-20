@@ -15,7 +15,7 @@ Download the `SHA-1` pwned passwords in a single file from [haveibeenpwned.com/p
 ## 2) Upload risk passwords to FoxIDs
 You then upload the risk passwords with the FoxIDs master seed tool console application.  
 
-Download the `FoxIDs.MasterSeedTool-x.x.x-win-x64.zip` or `FoxIDs.MasterSeedTool-x.x.x-linux-x64.zip` file from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the master seed tool.
+Download the `FoxIDs.MasterSeedTool-x.x.x-win-x64.zip` file for Windows or `FoxIDs.MasterSeedTool-x.x.x-linux-x64.zip` file for Linux from the [FoxIDs release](https://github.com/ITfoxtec/FoxIDs/releases) and unpack the master seed tool.
 
 ### Configure the master seed tool
 
@@ -25,27 +25,29 @@ Access to upload risk passwords is granted in the `master` tenant.
 
 Create a master seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
+*This will grant the master seed tool full access to the FoxIDs installation.*
+
 1. Login to the **master** tenant
 2. Select the **Applications** tab
 3. Click **New Application**
 4. Click **Backend Application**
     a. Select **Show advanced**
     b. Add a **Name** e.g., `Master seed tool`
-    c. Set the **Client ID** to `foxids_master_seed`
+    c. Change the **Client ID** to `foxids_master_seed`
     d. Click **Register**
     e. Remember the **Client secret**.
     f. Click **Close**
 5. Click on your client registration in the list to open it
-6. In the **Resource and scopes** section - *This will granted the client access to the master tenant*
+6. In the **Resource and scopes** section
     a. Click **Add Resource and scope** and add the resource `foxids_control_api`
     b. Then click **Add Scope** and add the scope `foxids:master` 
 7. Select **Show advanced**
-8. In the **Issue claims** section - *This will granted the client the tenant administrator role*
+8. In the **Issue claims** section
     a. Click **Add Claim** and add the claim `role`
     b. Then click **Add Value** and add the claim value `foxids:tenant.admin`
 9. Click **Update**
 
-![FoxIDs Control Client - master seed tool client](images/master-seed-client.png)
+![FoxIDs Control Client - master seed tool client](images/master-seed-tool-client.png)
 
 Add your FoxIDs and FoxIDs Control API endpoints and client secret and local risk passwords (pwned passwords) file to the master seed tool configuration. 
 

@@ -61,6 +61,11 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public override ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public override ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
@@ -72,6 +77,11 @@ namespace FoxIDs.UnitTests.Mocks
         //}
 
         public override ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }

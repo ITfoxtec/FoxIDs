@@ -43,12 +43,12 @@ namespace FoxIDs.Logic.Usage
                     TenantName = tenant.Name
                 };
 
-                used.PeriodBeginDate = new DateOnly(datePointer.Year, datePointer.Month, 1);
+                used.PeriodBeginDate = new DateOnlySerializable(datePointer.Year, datePointer.Month, 1);
                 used.PeriodEndDate = used.PeriodBeginDate.AddMonths(1).AddDays(-1);
                 if (tenant.CreateTime.HasValue && tenant.CreateTime.Value > 0)
                 {
                     var tenantCreateDate = DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeSeconds(tenant.CreateTime.Value).LocalDateTime);
-                    used.PeriodBeginDate = used.PeriodBeginDate < tenantCreateDate && tenantCreateDate < used.PeriodEndDate ? tenantCreateDate : used.PeriodBeginDate;
+                    used.PeriodBeginDate = (used.PeriodBeginDate.ToDateOnly() < tenantCreateDate && tenantCreateDate < used.PeriodEndDate.ToDateOnly() ? tenantCreateDate : used.PeriodBeginDate.ToDateOnly()).ToDateOnlySerializable();
                 }
             }
 

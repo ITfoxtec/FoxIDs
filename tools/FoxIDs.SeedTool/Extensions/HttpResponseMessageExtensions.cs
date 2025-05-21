@@ -15,12 +15,10 @@ namespace FoxIDs.SeedTool
                     return;
                 case HttpStatusCode.NoContent:
                     return;
-                //case HttpStatusCode.Found:
-                //    return;
 
                 default:
                     var result = await responseMessage.Content.ReadAsStringAsync();
-                    throw new Exception($"Http status code '{responseMessage.StatusCode}', response '{result}'.");
+                    throw new Exception($"Http status code: {responseMessage.StatusCode}, response: {result}");
             }
         }
     }

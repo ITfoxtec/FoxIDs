@@ -80,9 +80,9 @@ namespace FoxIDs
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
-            public const string ResetPassword = "resetpassword";
-            public const string PhoneResetPassword = "phoneresetpassword";
-            public const string EmailResetPassword = "emailresetpassword";
+            public const string SetPassword = "setpassword";
+            public const string PhoneSetPassword = "phonesetpassword";
+            public const string EmailSetPassword = "emailsetpassword";
             public const string PhoneConfirmation = "phoneconfirmation";
             public const string EmailConfirmation = "emailconfirmation";
             public const string AppTwoFactorRegister = "apptwofactorreg";
@@ -204,7 +204,7 @@ namespace FoxIDs
 
             public static class Results
             {
-                public const int PropertiesValueMaxLength = 100;
+                public const int PropertiesValueMaxLength = 150;
 
                 public const string Name = "Name";
                 public const string Sum = "Sum";
@@ -227,6 +227,7 @@ namespace FoxIDs
                 public const string DownPartyId = "DownPartyId";
                 public const string UserId = "UserId";
                 public const string Email = "Email";
+                public const string FailingLoginCount = "FailingLoginCount";
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
             }
@@ -902,6 +903,9 @@ namespace FoxIDs
 
             public const string AccessToAnyTrackKey = "access_to_any_track";
             public const string AccessToTrackNamesKey = "access_to_track_names";
+
+            public const int SaveAndDeleteManyMin = 1;
+            public const int SaveAndDeleteManyMax = 1000;
 
             public static class ResourceAndScope
             {

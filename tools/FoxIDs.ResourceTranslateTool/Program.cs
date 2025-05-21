@@ -19,25 +19,22 @@ try
 
     Console.WriteLine("DeepL");
     await serviceProvider.GetService<DeepLTranslateLogic>().TranslateAllAsync();
-    await resourceLogic.SaveResourcesAsync();
 
     Console.WriteLine(string.Empty);
     Console.WriteLine("Google");
     var googleTranslateLogic = serviceProvider.GetService<GoogleTranslateLogic>();
-    try
-    {
+    //try
+    //{
         await googleTranslateLogic.TranslateAllAsync();
-    }
-    catch (Exception iex)
-    {
-        Console.WriteLine(string.Empty);
-        Console.WriteLine($"Error: {iex}");
-        Console.WriteLine(string.Empty);
+    //}
+    //catch (Exception iex)
+    //{
+    //    Console.WriteLine(string.Empty);
+    //    Console.WriteLine($"Error: {iex}");
+    //    Console.WriteLine(string.Empty);
 
-        googleTranslateLogic.TranslateAllByInput();
-    }
-    await resourceLogic.SaveResourcesAsync();
-
+    //    await googleTranslateLogic.TranslateAllByInputAsync();
+    //}
 }
 catch (Exception ex)
 {

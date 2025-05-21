@@ -14,5 +14,6 @@
         public double UsageSms { get; set; }
         public double UsageSmsPrice { get; set; }
         public double UsageEmail { get; set; }
+        public int FailingLoginCount { get; set; }
     }
 }

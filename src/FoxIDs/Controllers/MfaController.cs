@@ -153,7 +153,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
@@ -227,7 +226,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
@@ -307,7 +305,6 @@ namespace FoxIDs.Controllers
                     }
                     catch (UserObservationPeriodException uoex)
                     {
-                        logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                         ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                     }
 
@@ -330,7 +327,6 @@ namespace FoxIDs.Controllers
                     }
                     catch (UserObservationPeriodException uoex)
                     {
-                        logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                         ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                     }
 
@@ -357,17 +353,13 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);              
 
                 await planUsageLogic.VerifyCanSendSmsAsync();
-                await planUsageLogic.LogMfaSmsEventAsync(sequenceData.Phone);
 
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Phone, FailingLoginTypes.TwoFactorSmsCode);
-
                     await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
@@ -375,18 +367,12 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new TwoFactorSmsViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink,
-                    ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp,
-                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
-                    ForceNewCode = newCode,
-                    Phone = sequenceData.Phone
-                });
+                var twoFactorSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorSmsViewModel>(sequenceData, loginUpParty);
+                twoFactorSmsViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                twoFactorSmsViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                twoFactorSmsViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                twoFactorSmsViewModel.ForceNewCode = newCode;
+                return View(twoFactorSmsViewModel);
             }
             catch (Exception ex)
             {
@@ -422,14 +408,12 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.SequenceString = SequenceString;
-                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
-                    registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
-                    registerTwoFactor.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
-                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
-                    return View(registerTwoFactor);
+                    var twoFactorSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorSmsViewModel>(sequenceData, loginUpParty);
+                    twoFactorSmsViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                    twoFactorSmsViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                    twoFactorSmsViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                    twoFactorSmsViewModel.ForceNewCode = registerTwoFactor.ForceNewCode;
+                    return View(twoFactorSmsViewModel);
                 };
 
                 logger.ScopeTrace(() => "SMS two-factor login post.");
@@ -457,7 +441,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
@@ -483,17 +466,13 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 await planUsageLogic.VerifyCanSendEmailAsync(isMfa: true);
-                planUsageLogic.LogMfaEmailEvent();
 
                 try
                 {
-                    await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.Email, FailingLoginTypes.TwoFactorEmailCode);
-
                     await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 
@@ -501,18 +480,12 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new TwoFactorEmailViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink,
-                    ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp,
-                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
-                    ForceNewCode = newCode,
-                    Email = sequenceData.Email
-                });
+                var twoFactorEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorEmailViewModel>(sequenceData, loginUpParty);
+                twoFactorEmailViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                twoFactorEmailViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                twoFactorEmailViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                twoFactorEmailViewModel.ForceNewCode = newCode;
+                return View(twoFactorEmailViewModel);
             }
             catch (Exception ex)
             {
@@ -548,14 +521,12 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.SequenceString = SequenceString;
-                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
-                    registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
-                    registerTwoFactor.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
-                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
-                    return View(registerTwoFactor);
+                    var twoFactorEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorEmailViewModel>(sequenceData, loginUpParty);
+                    twoFactorEmailViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
+                    twoFactorEmailViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
+                    twoFactorEmailViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                    twoFactorEmailViewModel.ForceNewCode = registerTwoFactor.ForceNewCode;
+                    return View(twoFactorEmailViewModel);
                 };
 
                 logger.ScopeTrace(() => "Email two-factor login post.");
@@ -583,7 +554,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
 

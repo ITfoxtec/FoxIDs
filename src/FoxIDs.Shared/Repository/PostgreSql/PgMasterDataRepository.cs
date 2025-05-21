@@ -101,7 +101,7 @@ namespace FoxIDs.Repository
             await db.RemoveAsync(item.Id, item.PartitionId);
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -133,18 +133,18 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override ValueTask DeleteBulkAsync<T>()
-        {
-            throw new NotSupportedException("Not supported by PostgreSql.");
-        }
-
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
         {
             foreach (string id in ids)
             {
                 var partitionId = id.IdToMasterPartitionId();
                 _ = await db.RemoveAsync(id, partitionId);
             }
+        }
+
+        public override ValueTask DeleteListAsync<T>()
+        {
+            throw new NotSupportedException("Not supported by PostgreSql.");
         }
     }
 }

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>1.17.7</Version>
+		<Version>1.18.2</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>
@@ -30,8 +30,7 @@
 		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.46.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.7.0" />
-		<!--Mongo CamelCaseElementNameConvention for DateOnly do not work in DateOnly "MongoDB.Driver" version 3.0.0.-->
-		<PackageReference Include="MongoDB.Driver" Version="2.30.0" />
+		<PackageReference Include="MongoDB.Driver" Version="3.4.0" />
 		<PackageReference Include="OpenSearch.Client" Version="1.8.0" />
 		<PackageReference Include="PgKeyValueDB" Version="1.2.3" />
 		<PackageReference Include="RSAKeyVaultProvider" Version="2.1.1" />

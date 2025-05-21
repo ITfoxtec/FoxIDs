@@ -43,6 +43,15 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "li")]
         public bool DoLoginIdentifierStep { get; set; }
 
+        [JsonProperty(PropertyName = "lpa")]
+        public bool DoLoginPasswordAction { get; set; }
+
+        [JsonProperty(PropertyName = "lplea")]
+        public bool DoLoginPasswordlessEmailAction { get; set; }
+
+        [JsonProperty(PropertyName = "lplsa")]
+        public bool DoLoginPasswordlessSmsAction { get; set; }
+
         [JsonProperty(PropertyName = "am")]
         public IEnumerable<string> AuthMethods { get; set; }
 
@@ -78,5 +87,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "spr")]
         public bool ShowPasswordRiskError { get; set; }
+
+        [JsonProperty(PropertyName = "cuep")]
+        public bool CanUseExistingPassword { get; set; }
     }
 }

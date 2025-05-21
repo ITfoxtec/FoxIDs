@@ -197,7 +197,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (AccountException aex)

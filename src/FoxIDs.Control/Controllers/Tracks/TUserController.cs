@@ -105,24 +105,23 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                var claims = new List<Claim>();
-                if (createUserRequest.Claims?.Count > 0)
+                var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
-                    foreach (var claimAndValue in createUserRequest.Claims)
-                    {
-                        foreach(var value in claimAndValue.Values)
-                        {
-                            claims.Add(new Claim(claimAndValue.Claim, value));
-                        }
-                    }
-                }
-                
-                var mUser = await accountLogic.CreateUserAsync(new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username }, 
-                    createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
-                    confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, phoneVerified: createUserRequest.PhoneVerified, 
-                    disableAccount: createUserRequest.DisableAccount, 
-                    disableTwoFactorApp: createUserRequest.DisableTwoFactorApp, DisableTwoFactorSms: createUserRequest.DisableTwoFactorSms, DisableTwoFactorEmail: createUserRequest.DisableTwoFactorEmail, 
-                    requireMultiFactor: createUserRequest.RequireMultiFactor);
+                    UserIdentifier = new UserIdentifier { Email = createUserRequest.Email, Phone = createUserRequest.Phone, Username = createUserRequest.Username },
+                    Password = createUserRequest.Password,
+                    ChangePassword = createUserRequest.Password.IsNullOrWhiteSpace() ? false : createUserRequest.ChangePassword,
+                    SetPasswordEmail = createUserRequest.SetPasswordEmail,
+                    SetPasswordSms = createUserRequest.SetPasswordSms,
+                    Claims = createUserRequest.Claims.ToClaimList(),
+                    ConfirmAccount = createUserRequest.ConfirmAccount,
+                    EmailVerified = createUserRequest.EmailVerified,
+                    PhoneVerified = createUserRequest.PhoneVerified,
+                    DisableAccount = createUserRequest.DisableAccount,
+                    DisableTwoFactorApp = createUserRequest.DisableTwoFactorApp,
+                    DisableTwoFactorSms = createUserRequest.DisableTwoFactorSms,
+                    DisableTwoFactorEmail = createUserRequest.DisableTwoFactorEmail,
+                    RequireMultiFactor = createUserRequest.RequireMultiFactor
+                });
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -204,7 +203,10 @@ namespace FoxIDs.Controllers
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = mUser.Email.IsNullOrEmpty() ? false : user.EmailVerified;
                 mUser.PhoneVerified = mUser.Phone.IsNullOrEmpty() ? false : user.PhoneVerified;
-                mUser.ChangePassword = user.ChangePassword;
+
+                mUser.ChangePassword = mUser.Hash.IsNullOrWhiteSpace() ? false : user.ChangePassword;
+                mUser.SetPasswordEmail = user.SetPasswordEmail;
+                mUser.SetPasswordSms = user.SetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;
@@ -228,8 +230,7 @@ namespace FoxIDs.Controllers
                     mUser.TwoFactorAppRecoveryCode = null;
                 }
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
-                var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
-                mUser.Claims = mClaims;
+                mUser.Claims = mapper.Map<List<ClaimAndValues>>(user.Claims);
 
                 if (user.UpdateEmail != null || user.UpdatePhone != null || user.UpdateUsername != null)
                 {

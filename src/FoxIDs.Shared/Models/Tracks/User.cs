@@ -47,25 +47,34 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.User.UserIdLength)]
         [RegularExpression(Constants.Models.User.UserIdRegExPattern)]
         [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; set; }        
+        public string UserId { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashAlgorithmLength)]
         [JsonProperty(PropertyName = "hash_algorithm")]
         public string HashAlgorithm { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashLength)]
         [JsonProperty(PropertyName = "hash")]
         public string Hash { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 
         [JsonProperty(PropertyName = "change_password")]
         public bool ChangePassword  { get; set; }
+
+        /// <summary>
+        /// SetPasswordEmail require the user to have a email user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "set_password_email")]
+        public bool SetPasswordEmail { get; set; }
+
+        /// <summary>
+        /// SetPasswordSms require the user to have a phone user identifier.
+        /// </summary>
+        [JsonProperty(PropertyName = "set_password_sms")]
+        public bool SetPasswordSms { get; set; }
 
         [MaxLength(Constants.Models.User.EmailLength)]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
@@ -147,12 +156,27 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
             }
 
+            if (SetPasswordEmail)
+            {
+                if (Email.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
+                }
+            }
+            if (SetPasswordSms)
+            {
+                if (Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
+                }
+            }
+
             if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(DisableTwoFactorApp)} or the field {nameof(DisableTwoFactorSms)} or the field {nameof(DisableTwoFactorEmail)} should be False if the field {nameof(RequireMultiFactor)} is True.",
                     [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireMultiFactor)]));
             }
-
+            
             return results;
         }
 

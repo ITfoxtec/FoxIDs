@@ -177,7 +177,7 @@ namespace FoxIDs.Logic.Usage
                 IsCreditNote = true,
                 InvoiceNumber = await GetInvoiceNumberAsync(await GetUsageSettingsAsync()),
                 IsCardPayment = invoice.IsCardPayment,
-                IssueDate = DateOnly.FromDateTime(DateTime.Now),
+                IssueDate = DateOnly.FromDateTime(DateTime.Now).ToDateOnlySerializable(),
                 Seller = mapper.Map<Seller>(settings.Usage.Seller),
                 Customer = invoice.Customer,
                 Currency = invoice.Currency,
@@ -285,7 +285,7 @@ namespace FoxIDs.Logic.Usage
         {
             var invoice = new Invoice
             {
-                IssueDate = DateOnly.FromDateTime(DateTime.Now),
+                IssueDate = DateOnly.FromDateTime(DateTime.Now).ToDateOnlySerializable(),
                 Seller = mapper.Map<Seller>(settings.Usage.Seller),
                 Customer = tenant.Customer,
                 Currency = tenant.Currency.IsNullOrEmpty() ? Constants.Models.Currency.Eur : tenant.Currency,
@@ -486,8 +486,8 @@ namespace FoxIDs.Logic.Usage
             invoiceRequest.SendInvoice = sendInvoice;
             invoiceRequest.IsPaid = used.PaymentStatus == UsagePaymentStatus.Paid;
             invoiceRequest.TenantName = used.TenantName;
-            invoiceRequest.PeriodBeginDate = used.PeriodBeginDate;
-            invoiceRequest.PeriodEndDate = used.PeriodEndDate;
+            invoiceRequest.PeriodBeginDate = used.PeriodBeginDate.ToDateOnly();
+            invoiceRequest.PeriodEndDate = used.PeriodEndDate.ToDateOnly();
             await invoiceRequest.ValidateObjectAsync();
 
             var httpClient = httpClientFactory.CreateClient();

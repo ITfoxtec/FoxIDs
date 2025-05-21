@@ -183,6 +183,26 @@ namespace FoxIDs.Repository
             await fileDataRepository.SaveAsync(item.Id, item.PartitionId, item.ToJson());
         }
 
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        {
+            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
+            var firstItem = items.First();
+            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
+
+            var partitionId = firstItem.Id.IdToTenantPartitionId();
+            foreach (var item in items)
+            {
+                item.PartitionId = partitionId;
+                item.SetDataType();
+                await item.ValidateObjectAsync();
+            }
+
+            foreach (var item in items)
+            {
+                await fileDataRepository.SaveAsync(item.Id, item.PartitionId, item.ToJson());
+            }
+        }
+
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
@@ -224,6 +244,15 @@ namespace FoxIDs.Repository
                     await fileDataRepository.DeleteAsync(item.Id, item.PartitionId);
                 }
                 return deleteItems.Count();
+            }
+        }
+
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        {
+            foreach (string id in ids)
+            {
+                var partitionId = id.IdToMasterPartitionId();
+                await fileDataRepository.DeleteAsync(id, partitionId, required: false);
             }
         }
 

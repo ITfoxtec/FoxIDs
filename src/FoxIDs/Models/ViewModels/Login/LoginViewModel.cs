@@ -30,5 +30,11 @@ namespace FoxIDs.Models.ViewModels
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Display(Name = "One-time password")]
+        [Required]
+        [MinLength(Constants.Models.User.ConfirmationCodeSmsLength)]
+        [MaxLength(Constants.Models.User.ConfirmationCodeEmailLength)]
+        public string OneTimePassword { get; set; }
     }
 }

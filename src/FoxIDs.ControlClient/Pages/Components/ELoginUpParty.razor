@@ -99,11 +99,6 @@
             @if (loginUpParty.ShowLoginTab)
             {
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
-                @if (loginUpParty.ShowAdvanced)
-                {
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
-                }
                 <div class="active-group active">
                     <div class="card">
                         <div class="card-body pb-0">
@@ -115,6 +110,24 @@
                     </div>
                     <label class="label-control">User identifiers</label>
                 </div>
+                <div class="active-group active">
+                    <div class="card">
+                    <div class="card-body pt-3 pb-0">
+                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.DisablePasswordAuth" For="@(() => loginUpParty.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
+                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
+                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessSms" For="@(() => loginUpParty.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
+                    </div>
+                    </div>
+                    <label class="label-control">Authentication</label>
+                </div>
+                @if (loginUpParty.ShowAdvanced)
+                {
+                    @if (!(loginUpParty.Form.Model.DisablePasswordAuth == true))
+                    {
+                        <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPassword" For="@(() => loginUpParty.Form.Model.DisableSetPassword)" Negation="true" TextType="e.d" />
+                    }
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
+                }
                 @if (loginUpParty.ShowAdvanced)
                 {
                     <div class="active-group active">

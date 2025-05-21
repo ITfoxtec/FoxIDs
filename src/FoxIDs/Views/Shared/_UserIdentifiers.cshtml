@@ -8,14 +8,14 @@
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="EmailIdentifier.Email" id="showEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="EmailIdentifier.Email" id="showEmail" class="label-control"></label>
         <span asp-validation-for="EmailIdentifier.Email"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change email"]</a>
         }
@@ -27,14 +27,14 @@ else if (Model.PhoneIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="PhoneIdentifier.Phone" id="showPhone" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="PhoneIdentifier.Phone" id="showPhone" class="label-control"></label>
         <span asp-validation-for="PhoneIdentifier.Phone"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change phone"]</a>
         }
@@ -46,14 +46,14 @@ else if (Model.UsernameIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="UsernameIdentifier.Username" id="showUsername" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="UsernameIdentifier.Username" id="showUsername" class="label-control"></label>
         <span asp-validation-for="UsernameIdentifier.Username"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change username"]</a>
         }
@@ -65,14 +65,14 @@ else if (Model.UsernameEmailIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="UsernameEmailIdentifier.UserIdentifier" id="showUsernameEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="UsernameEmailIdentifier.UserIdentifier" id="showUsernameEmail" class="label-control"></label>
         <span asp-validation-for="UsernameEmailIdentifier.UserIdentifier"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change username or email"]</a>
         }
@@ -85,14 +85,14 @@ else if (Model.UsernamePhoneIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="UsernamePhoneIdentifier.UserIdentifier" id="showUsernamePhone" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="UsernamePhoneIdentifier.UserIdentifier" id="showUsernamePhone" class="label-control"></label>
         <span asp-validation-for="UsernamePhoneIdentifier.UserIdentifier"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change username or phone"]</a>
         }
@@ -104,14 +104,14 @@ else if (Model.PhoneEmailIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="PhoneEmailIdentifier.UserIdentifier" id="showPhoneEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="PhoneEmailIdentifier.UserIdentifier" id="showPhoneEmail" class="label-control"></label>
         <span asp-validation-for="PhoneEmailIdentifier.UserIdentifier"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change phone or email"]</a>
         }
@@ -123,14 +123,14 @@ else if (Model.UsernamePhoneEmailIdentifier != null)
     <div class="form-group active-group active">
         <div class="base-for-overlap">
             <input asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" id="showUsernamePhoneEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
-            @if (!Model.DisableChangeUserIdentifier)
+            @if (Model.EnableChangeUserIdentifier)
             {
                 <div class="overlap" onclick="location.href = '../_@Model.SequenceString';"></div>
             }
         </div>
         <label asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" id="showUsernamePhoneEmail" class="label-control"></label>
         <span asp-validation-for="UsernamePhoneEmailIdentifier.UserIdentifier"></span>
-        @if (!Model.DisableChangeUserIdentifier)
+        @if (Model.EnableChangeUserIdentifier)
         {
             <a href="../_@Model.SequenceString" class="btn btn-link btn-xs">@Localizer["Change username or phone or email"]</a>
         }

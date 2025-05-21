@@ -18,7 +18,7 @@ namespace FoxIDs.Models.ViewModels
 
         public bool ShowCreateUser { get; set; }
 
-        public bool DisableChangeUserIdentifier { get; set; }
+        public bool EnableChangeUserIdentifier { get; set; }
 
         [ValidateComplexType]
         public EmailPasswordViewModel EmailIdentifier { get; set; }

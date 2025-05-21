@@ -566,7 +566,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start password authentication.");
 
-            var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+            var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
 
             return View("Password", passwordViewModel);
         }
@@ -575,7 +575,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start passwordless SMS authentication.");
 
-            var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+            var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
             passwordlessSmsViewModel.ForceNewCode = newCode;
 
             try
@@ -599,7 +599,7 @@ namespace FoxIDs.Controllers
         {
             logger.ScopeTrace(() => "Start passwordless email authentication.");
 
-            var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+            var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
             passwordlessEmailViewModel.ForceNewCode = newCode;
 
             try
@@ -679,7 +679,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty);
+                var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
                 return View("Password", passwordViewModel);
             };
 
@@ -732,7 +732,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty);
+                var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
                 return View("PasswordlessSms", passwordlessSmsViewModel);
             };
 
@@ -776,7 +776,7 @@ namespace FoxIDs.Controllers
         {
             Func<IActionResult> viewError = () =>
             {
-                var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty);
+                var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
                 return View("PasswordlessEmail", passwordlessEmailViewModel);
             };
 

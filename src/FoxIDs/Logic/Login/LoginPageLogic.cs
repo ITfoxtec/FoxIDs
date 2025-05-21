@@ -417,9 +417,9 @@ namespace FoxIDs.Logic
             return (transformedClaims, null);
         }
 
-        internal T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : LoginBaseViewModel, new()
+        internal T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier = false) where T : LoginBaseViewModel, new()
         {
-            var passwordViewModel = GetLoginViewModel<T>(sequenceData, loginUpParty);
+            var passwordViewModel = GetLoginViewModel<T>(sequenceData, loginUpParty, supportChangeUserIdentifier);
 
             if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
@@ -457,47 +457,7 @@ namespace FoxIDs.Logic
             return passwordViewModel;
         }
 
-        //private T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty) where T : LoginBaseViewModel, new()
-        //{
-        //    var passwordViewModel = GetLoginViewModel<T>(sequenceData, loginUpParty);
-
-        //    if (login.EmailIdentifier != null)
-        //    {
-        //        passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
-        //    }
-        //    else if (login.PhoneIdentifier != null)
-        //    {
-        //        passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
-        //    }
-        //    else if (login.UsernameIdentifier != null)
-        //    {
-        //        passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
-        //    }
-        //    else if (login.UsernameEmailIdentifier != null)
-        //    {
-        //        passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
-        //    }
-        //    else if (login.UsernamePhoneIdentifier != null)
-        //    {
-        //        passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
-        //    }
-        //    else if (login.PhoneEmailIdentifier != null)
-        //    {
-        //        passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
-        //    }
-        //    else if (login.UsernamePhoneEmailIdentifier != null)
-        //    {
-        //        passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
-        //    }
-        //    else
-        //    {
-        //        throw new NotSupportedException();
-        //    }
-
-        //    return passwordViewModel;
-        //}
-
-        private T GetLoginViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty) where T : LoginBaseViewModel, new()
+        private T GetLoginViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier) where T : LoginBaseViewModel, new()
         {
             return new T
             {
@@ -511,7 +471,7 @@ namespace FoxIDs.Logic
                 ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
                 ShowSetPassword = !loginUpParty.DisableSetPassword,
                 ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
+                EnableChangeUserIdentifier = supportChangeUserIdentifier && !sequenceData.DoSessionUserRequireLogin,
             };
         }
     }

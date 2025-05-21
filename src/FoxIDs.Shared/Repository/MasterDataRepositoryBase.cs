@@ -16,10 +16,10 @@ namespace FoxIDs.Repository
         public abstract ValueTask UpdateAsync<T>(T item) where T : MasterDocument;
         public abstract ValueTask SaveAsync<T>(T item) where T : MasterDocument;
         public abstract ValueTask DeleteAsync<T>(T item) where T : MasterDocument;
-        public abstract ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
+        public abstract ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
         public abstract ValueTask DeleteAsync<T>(string id) where T : MasterDocument;
-        public abstract ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
-        public abstract ValueTask DeleteBulkAsync<T>() where T : MasterDocument;
+        public abstract ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
+        public abstract ValueTask DeleteListAsync<T>() where T : MasterDocument;
 
         protected string TypeToMasterPartitionId<T>() where T : MasterDocument
         {

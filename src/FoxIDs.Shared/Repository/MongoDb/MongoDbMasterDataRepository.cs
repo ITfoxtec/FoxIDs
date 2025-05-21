@@ -199,7 +199,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -255,7 +255,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();
@@ -274,7 +274,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>()
+        public override async ValueTask DeleteListAsync<T>()
         {
             var partitionId = TypeToMasterPartitionId<T>();
             try

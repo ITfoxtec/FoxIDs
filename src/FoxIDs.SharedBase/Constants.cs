@@ -904,6 +904,9 @@ namespace FoxIDs
             public const string AccessToAnyTrackKey = "access_to_any_track";
             public const string AccessToTrackNamesKey = "access_to_track_names";
 
+            public const int SaveAndDeleteManyMin = 1;
+            public const int SaveAndDeleteManyMax = 1000;
+
             public static class ResourceAndScope
             {
                 public readonly static string Master = $"{ResourceName}:{Access.Master}";

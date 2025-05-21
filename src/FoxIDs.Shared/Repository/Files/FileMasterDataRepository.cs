@@ -116,7 +116,7 @@ namespace FoxIDs.Repository
             await fileDataRepository.DeleteAsync(item.Id, item.PartitionId);
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -142,7 +142,7 @@ namespace FoxIDs.Repository
             await fileDataRepository.DeleteAsync(id, partitionId);
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
         {
             foreach (string id in ids)
             {
@@ -151,7 +151,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override ValueTask DeleteBulkAsync<T>()
+        public override ValueTask DeleteListAsync<T>()
         {
             throw new NotSupportedException("Not supported by file repository.");
         }

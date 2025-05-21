@@ -45,9 +45,9 @@ namespace FoxIDs.Controllers
         /// <param name="filterUserId">Filter by user ID.</param>
         /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Users.</returns>
-        [ProducesResponseType(typeof(HashSet<Api.User>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Api.PaginationResponse<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
         {
             try
             {
@@ -140,39 +140,29 @@ namespace FoxIDs.Controllers
                 }
             }
 
-            var users = new List<User>();
+            var mUsers = new List<User>();
             foreach (var user in usersRequest.Users)
             {
-                user.Email = user.Email?.Trim().ToLower();
-                user.Phone = user.Phone?.Trim();
-                user.Username = user.Username?.Trim()?.ToLower();
-
-                if(!await tenantDataRepository.ExistsAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email, UserIdentifier = user.Phone ?? user.Username }), queryAdditionalIds: true))
+                mUsers.Add(await accountLogic.CreateUserAsync(new CreateUserObj
                 {
-                    _ = await accountLogic.CreateUserAsync(new CreateUserObj
-                    {
-                        UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
-                        Password = user.Password,
-                        ChangePassword = user.Password.IsNullOrWhiteSpace() ? false : user.ChangePassword,
-                        SetPasswordEmail = user.SetPasswordEmail,
-                        SetPasswordSms = user.SetPasswordSms,
-                        Claims = user.Claims.ToClaimList(),
-                        ConfirmAccount = user.ConfirmAccount,
-                        EmailVerified = user.EmailVerified,
-                        PhoneVerified = user.PhoneVerified,
-                        DisableAccount = user.DisableAccount,
-                        DisableTwoFactorApp = user.DisableTwoFactorApp,
-                        DisableTwoFactorSms = user.DisableTwoFactorSms,
-                        DisableTwoFactorEmail = user.DisableTwoFactorEmail,
-                        RequireMultiFactor = user.RequireMultiFactor
-                    });
-                }
-                else
-                {
-                    // Bulk user update is not supported.
-                    logger.Event($"User '{new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }.ToJson()}' exist and is not updated in bulk.");
-                }
+                    UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
+                    Password = user.Password,
+                    ChangePassword = user.Password.IsNullOrWhiteSpace() ? false : user.ChangePassword,
+                    SetPasswordEmail = user.SetPasswordEmail,
+                    SetPasswordSms = user.SetPasswordSms,
+                    Claims = user.Claims.ToClaimList(),
+                    ConfirmAccount = user.ConfirmAccount,
+                    EmailVerified = user.EmailVerified,
+                    PhoneVerified = user.PhoneVerified,
+                    DisableAccount = user.DisableAccount,
+                    DisableTwoFactorApp = user.DisableTwoFactorApp,
+                    DisableTwoFactorSms = user.DisableTwoFactorSms,
+                    DisableTwoFactorEmail = user.DisableTwoFactorEmail,
+                    RequireMultiFactor = user.RequireMultiFactor
+                }, saveUser: false));
             }
+
+            await tenantDataRepository.SaveListAsync(mUsers);
 
             return NoContent();
         }
@@ -187,7 +177,7 @@ namespace FoxIDs.Controllers
         {
             if (usersDelete == null)
             {
-                await tenantDataRepository.DeleteBulkAsync<User>();
+                await tenantDataRepository.DeleteListAsync<User>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: t => t.DataType.Equals(Constants.Models.DataType.User));
             }
             else
             {
@@ -199,7 +189,11 @@ namespace FoxIDs.Controllers
                     ids.Add(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = userIdentifier }));
                 }
 
-                await tenantDataRepository.DeleteBulkAsync<User>(ids, queryAdditionalIds: true);
+                if (ids.Count() <= 0)
+                {
+                    throw new Exception("User identifiers is empty.");
+                }
+                await tenantDataRepository.DeleteListAsync<User>(ids, queryAdditionalIds: true);
             }
 
             return NoContent();

@@ -207,7 +207,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -284,7 +284,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();
@@ -299,20 +299,6 @@ namespace FoxIDs.Repository
                     (ids.Where(id => id.Equals(f.Id)).Any() || 
                     (queryAdditionalIds && ids.Where(id => f.AdditionalIds.Where(a => id.Equals(a)).Any()).Any()))
                 );
-            }
-            catch (Exception ex)
-            {
-                throw new FoxIDsDataException(partitionId, ex);
-            }
-        }
-
-        public override async ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null)
-        {
-            var partitionId = PartitionIdFormat<T>(idKey);
-            try
-            {
-                var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                var result = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId));
             }
             catch (Exception ex)
             {

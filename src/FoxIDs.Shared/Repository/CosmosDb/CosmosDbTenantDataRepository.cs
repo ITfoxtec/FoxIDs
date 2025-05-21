@@ -315,7 +315,7 @@ namespace FoxIDs.Repository
             return (item != null, totalRU);
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -435,7 +435,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             foreach (string id in ids)
             {
@@ -472,11 +472,6 @@ namespace FoxIDs.Repository
                     _ = await ReadItemAsync<T>(id, partitionId, false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
                 }
             }
-        }
-
-        public override ValueTask DeleteBulkAsync<T>(Track.IdKey idKey = null, TelemetryScopedLogger scopedLogger = null)
-        {
-            throw new NotSupportedException("Not supported by CosmosDB.");
         }
 
         private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int pageSize = 1, string continuationToken = null, bool usePartitionId = true)

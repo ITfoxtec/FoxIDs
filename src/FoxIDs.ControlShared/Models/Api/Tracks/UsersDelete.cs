@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Api
 {
     public class UsersDelete
     {
-        [ListLength(1, 10000)]
+        [ListLength(Constants.ControlApi.SaveAndDeleteManyMin, Constants.ControlApi.SaveAndDeleteManyMax)]
         public List<string> UserIdentifiers { get; set; }
     }
 }

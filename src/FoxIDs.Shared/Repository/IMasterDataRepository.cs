@@ -28,13 +28,13 @@ namespace FoxIDs.Repository
         /// <summary>
         /// Create or update many documents.
         /// </summary>
-        ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
+        ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
 
         /// <summary>
         /// Delete document. Throws exception if not already exists.
         /// </summary>
         ValueTask DeleteAsync<T>(string id) where T : MasterDocument;
-        ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
-        ValueTask DeleteBulkAsync<T>() where T : MasterDocument;
+        ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
+        ValueTask DeleteListAsync<T>() where T : MasterDocument;
     }
 }

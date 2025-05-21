@@ -16,8 +16,8 @@ namespace FoxIDs.SeedTool.SeedLogic
 {
     public class UserSeedLogic
     {
-        private const int maxUserToUpload = 0; // 1000000; // 0 is unlimited
-        private const int uploadUserBlockSize = 10000; // 1000;
+        private const int maxUserToUpload = 0; // 0 is unlimited
+        private const int uploadUserBlockSize = 1000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -33,11 +33,10 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         public async Task SeedAsync()
         {
-            Console.Write("Uploading users");
+            Console.WriteLine("**Upload users**");
             var headers = new List<string>();
             var firstLine = true;
             var addCount = 0;
-            var readCount = 0;
             var stop = false;
             var users = new List<CreateUserApiModel>();            
             using (var streamReader = File.OpenText(settings.UsersSvcPath))
@@ -61,7 +60,6 @@ namespace FoxIDs.SeedTool.SeedLogic
                     }
                     else
                     {
-                        readCount++;
                         if (headers.Count() != items.Count())
                         {
                             throw new Exception("Not the same number of elements in the line as headers.");
@@ -69,24 +67,16 @@ namespace FoxIDs.SeedTool.SeedLogic
 
                         users.Add(GetCreateUserApiModel(headers, items));
                         addCount++;
-                        if (addCount % 1000 == 0)
-                        {
-                            Console.Write($"{Environment.NewLine}Users read '{readCount}'");
-                        }
-                        else if (addCount % 100 == 0)
-                        {
-                            Console.Write(".");
-                        }
 
-                        if (maxUserToUpload > 0 && addCount >= maxUserToUpload)
+                        if (maxUserToUpload > 0 && users.Count() >= maxUserToUpload)
                         {
-                            await UploadAsync(users);
+                            await UploadAsync(users, addCount);
                             stop = true;
                             break;
                         }
                         if (users.Count() >= uploadUserBlockSize)
                         {
-                            await UploadAsync(users);
+                            await UploadAsync(users, addCount);
                             users = new List<CreateUserApiModel>();
                         }
                     }
@@ -94,11 +84,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
                 if (!stop && users.Count() > 0)
                 {
-                    await UploadAsync(users);
+                    await UploadAsync(users, addCount);
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}Users total read '{readCount}', total uploaded '{addCount}'");
+            Console.WriteLine($"{Environment.NewLine}Total uploaded users: {addCount}.");
         }
 
         private CreateUserApiModel GetCreateUserApiModel(List<string> headers, IEnumerable<string> items)
@@ -138,24 +128,26 @@ namespace FoxIDs.SeedTool.SeedLogic
             }
         }
 
-        private async Task UploadAsync(List<CreateUserApiModel> users)
+        private async Task UploadAsync(List<CreateUserApiModel> users, int addCount)
         {
-            await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), users);
-            Console.WriteLine($"{Environment.NewLine}Users uploaded '{users.Count()}'");            
+            var accessToken = await accessLogic.GetAccessTokenAsync();
+            Console.WriteLine("Uploading...");
+            await SavePasswordsRiskListAsync(accessToken, users);
+            Console.WriteLine($"Users uploaded: {addCount}");
         }
 
         public async Task DeleteAllAsync()
         {
-            Console.WriteLine("Delete all users");
+            Console.WriteLine("**Delete all users**");
             var totalCount = 0;
             while (true)
             {
-                var users = await GetUserIdentifiersFirstListAsync(await accessLogic.GetAccessTokenAsync());
-                if(users?.Count > 0)
+                var usersResult = await GetUserIdentifiersFirstListAsync(await accessLogic.GetAccessTokenAsync());
+                if(usersResult?.Data?.Count > 0)
                 {
-                    totalCount = totalCount + users.Count();
-                    await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), GetUserIdentifiers(users).ToList());
-                    Console.WriteLine($"Users deleted '{totalCount}'");
+                    totalCount = totalCount + usersResult.Data.Count();
+                    await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), GetUserIdentifiers(usersResult.Data).ToList());
+                    Console.WriteLine($"Users deleted: {totalCount}");
                 }
                 else
                 {
@@ -163,22 +155,22 @@ namespace FoxIDs.SeedTool.SeedLogic
                 }
             }
 
-            Console.WriteLine($"All '{totalCount}' users deleted");
+            Console.WriteLine($"All {totalCount} users have been deleted");
         }
 
-        private IEnumerable<string> GetUserIdentifiers(List<UserApiModel> users)
+        private IEnumerable<string> GetUserIdentifiers(HashSet<UserApiModel> users)
         {
             foreach (var user in users)
             {
-                if (user.Email.IsNullOrWhiteSpace())
+                if (!user.Email.IsNullOrWhiteSpace())
                 {
                     yield return user.Email;
                 }
-                else if (user.Phone.IsNullOrWhiteSpace())
+                else if (!user.Phone.IsNullOrWhiteSpace())
                 {
                     yield return user.Phone;
                 }
-                else if (user.Username.IsNullOrWhiteSpace())
+                else if (!user.Username.IsNullOrWhiteSpace())
                 {
                     yield return user.Username;
                 }
@@ -191,9 +183,9 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         public async Task DeleteAllInPartitionAsync()
         {
-            Console.WriteLine("Delete all users");
+            Console.WriteLine("**Delete all users**");
             await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
-            Console.WriteLine("All users deleted");
+            Console.WriteLine("All users have been deleted");
         }
         private async Task SavePasswordsRiskListAsync(string accessToken, List<CreateUserApiModel> users)
         {
@@ -203,14 +195,14 @@ namespace FoxIDs.SeedTool.SeedLogic
             await response.ValidateResponseAsync();
         }
 
-        private async Task<List<UserApiModel>> GetUserIdentifiersFirstListAsync(string accessToken)
+        private async Task<PaginationResponse<UserApiModel>> GetUserIdentifiersFirstListAsync(string accessToken)
         {
             var client = httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
             using var response = await client.GetAsync(UsersApiEndpoint);
             await response.ValidateResponseAsync();
             var result = await response.Content.ReadAsStringAsync();
-            return result.ToObject<List<UserApiModel>>();   
+            return result.ToObject<PaginationResponse<UserApiModel>>();   
         }
 
         private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> userIdentifiers = null)

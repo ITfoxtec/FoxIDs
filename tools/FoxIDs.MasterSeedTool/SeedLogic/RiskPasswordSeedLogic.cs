@@ -15,9 +15,9 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {
-        private const int maxRiskPasswordToUpload = 0; // 1000000; // 0 is unlimited
-        private const int riskPasswordMoreThenBreachesCount = 100; // 1000;
-        private const int uploadRiskPasswordBlockSize = 10000; // 1000;
+        private const int maxRiskPasswordToUpload = 0; // 0 is unlimited
+        private const int riskPasswordMoreThenBreachesCount = 100; 
+        private const int uploadRiskPasswordBlockSize = 1000; 
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;

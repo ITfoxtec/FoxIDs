@@ -58,17 +58,17 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
+        public override ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
+        public override ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteBulkAsync<T>()
+        public override ValueTask DeleteListAsync<T>()
         {
             throw new NotImplementedException();
         }

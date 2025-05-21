@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUserAsync(CreateUserObj createUserObj, bool checkUserAndPasswordPolicy = true, string tenantName = null, string trackName = null)
+        public async Task<User> CreateUserAsync(CreateUserObj createUserObj, bool checkUserAndPasswordPolicy = true, string tenantName = null, string trackName = null, bool saveUser = true)
         {
             createUserObj.UserIdentifier.Email = createUserObj.UserIdentifier.Email?.Trim().ToLower();
             createUserObj.UserIdentifier.Email = !createUserObj.UserIdentifier.Email.IsNullOrEmpty() ? createUserObj.UserIdentifier.Email : null;
@@ -86,12 +86,15 @@ namespace FoxIDs.Logic
 
             if (checkUserAndPasswordPolicy)
             {
-                if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = createUserObj.UserIdentifier.Email, UserIdentifier = createUserObj.UserIdentifier.Phone ?? createUserObj.UserIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
-                    (!createUserObj.UserIdentifier.Phone.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Phone }), queryAdditionalIds: true)) ||
-                    (!createUserObj.UserIdentifier.Username.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Username }), queryAdditionalIds: true)) ||
-                    (!user.UserId.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
+                if (saveUser)
                 {
-                    throw new UserExistsException($"User '{createUserObj.UserIdentifier.ToJson()}' already exists.") { UserIdentifier = createUserObj.UserIdentifier };
+                    if (await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, Email = createUserObj.UserIdentifier.Email, UserIdentifier = createUserObj.UserIdentifier.Phone ?? createUserObj.UserIdentifier.Username, UserId = user.UserId }), queryAdditionalIds: true) ||
+                        (!createUserObj.UserIdentifier.Phone.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Phone }), queryAdditionalIds: true)) ||
+                        (!createUserObj.UserIdentifier.Username.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserIdentifier = createUserObj.UserIdentifier.Username }), queryAdditionalIds: true)) ||
+                        (!user.UserId.IsNullOrEmpty() && await tenantDataRepository.ExistsAsync<User>(await User.IdFormatAsync(new User.IdKey { TenantName = tenantName, TrackName = trackName, UserId = user.UserId }), queryAdditionalIds: true)))
+                    {
+                        throw new UserExistsException($"User '{createUserObj.UserIdentifier.ToJson()}' already exists.") { UserIdentifier = createUserObj.UserIdentifier };
+                    }
                 }
 
                 if (!createUserObj.Password.IsNullOrWhiteSpace())
@@ -99,9 +102,12 @@ namespace FoxIDs.Logic
                     await ValidatePasswordPolicyAsync(createUserObj.UserIdentifier, createUserObj.Password);
                 }
             }
-            await tenantDataRepository.CreateAsync(user);
 
-            logger.ScopeTrace(() => $"User '{createUserObj.UserIdentifier.ToJson()}' created, with user id '{user.UserId}'.");
+            if (saveUser)
+            {
+                await tenantDataRepository.CreateAsync(user);
+                logger.ScopeTrace(() => $"User '{createUserObj.UserIdentifier.ToJson()}' created, with user id '{user.UserId}'.");
+            }
 
             return user;
         }

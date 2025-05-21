@@ -34,7 +34,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
 
         public async Task SeedAsync()
         {
-            Console.Write("Uploading risk passwords");
+            Console.WriteLine("**Uploading risk passwords**");
             var addCount = 0;
             var readCount = 0;
             var stop = false;
@@ -50,24 +50,16 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                     {
                         riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
                         addCount++;
-                        if (addCount % 1000 == 0)
-                        {
-                            Console.Write($"{Environment.NewLine}Risk passwords read '{readCount}'");
-                        }
-                        else if (addCount % 100 == 0)
-                        {
-                            Console.Write(".");
-                        }
 
                         if (maxRiskPasswordToUpload > 0 && addCount >= maxRiskPasswordToUpload)
                         {
-                            await UploadAsync(riskPasswords);
+                            await UploadAsync(riskPasswords, readCount, addCount);
                             stop = true;
                             break;
                         }
                         if (riskPasswords.Count() >= uploadRiskPasswordBlockSize)
                         {
-                            await UploadAsync(riskPasswords);
+                            await UploadAsync(riskPasswords, readCount, addCount);
                             riskPasswords = new List<RiskPasswordApiModel>();
                         }
                     }
@@ -75,22 +67,22 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
 
                 if (!stop && riskPasswords.Count() > 0)
                 {
-                    await UploadAsync(riskPasswords);
+                    await UploadAsync(riskPasswords, readCount, addCount);
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}', total uploaded '{addCount}'");
+            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}' and total uploaded '{addCount}'");
         }
 
-        private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords)
+        private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords, int readCount, int addCount)
         {
             await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
-            Console.WriteLine($"{Environment.NewLine}Risk passwords uploaded '{riskPasswords.Count()}'");            
+            Console.WriteLine($"Risk passwords read '{readCount}' and uploaded '{addCount}'");            
         }
 
         public async Task DeleteAllAsync()
         {
-            Console.WriteLine("Delete all risk passwords");
+            Console.WriteLine("**Delete all risk passwords**");
             var totalCount = 0;
             while (true)
             {
@@ -112,7 +104,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
 
         public async Task DeleteAllInPartitionAsync()
         {
-            Console.WriteLine("Delete all risk passwords");
+            Console.WriteLine("**Delete all risk passwords**");
             await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
             Console.WriteLine("All risk passwords deleted");
         }

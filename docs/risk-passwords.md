@@ -35,12 +35,14 @@ Create a master seed tool OAuth 2.0 client in the [FoxIDs Control Client](contro
     b. Add a **Name** e.g., `Master seed tool`
     c. Change the **Client ID** to `foxids_master_seed`
     d. Click **Register**
-    e. Remember the **Client secret**.
-    f. Click **Close**
-5. Click on your client registration in the list to open it
+    e. Remember the **Authority**.
+    f. Remember the **Client secret**.
+    g. Click **Close**
+5. Click on the application in the list to open it
 6. In the **Resource and scopes** section
-    a. Click **Add Resource and scope** and add the resource `foxids_control_api`
-    b. Then click **Add Scope** and add the scope `foxids:master` 
+    a. Remove the check mark from **Default resource 'foxids_master_seed' for the application itself**
+    b. Click **Add Resource and scope** and add the resource `foxids_control_api`
+    c. Then click **Add Scope** and add the scope `foxids:master` 
 7. Select **Show advanced**
 8. In the **Issue claims** section
     a. Click **Add Claim** and add the claim `role`
@@ -49,14 +51,15 @@ Create a master seed tool OAuth 2.0 client in the [FoxIDs Control Client](contro
 
 ![FoxIDs Control Client - master seed tool client](images/master-seed-tool-client.png)
 
-Add your FoxIDs and FoxIDs Control API endpoints and client secret and local risk passwords (pwned passwords) file to the master seed tool configuration. 
+Add your FoxIDs Control API endpoint and the master seed tool **Authority**, **Client secret** and local risk passwords (pwned passwords) file to the master seed tool configuration. 
 
 ```json
 "SeedSettings": {
-    "FoxIDsEndpoint": "https://id.yyyyxxxx.com", // custom domain or local development https://localhost:44330
-    "FoxIDsControlEndpoint": "https://control.yyyyxxxx.com", // custom domain or local development https://localhost:44331
+    "FoxIDsControlEndpoint": "https://control.foxids.com", // self-hosted "https://control.yyyyxxxx.com" or local development https://localhost:44331
+    "Authority": "https://id.foxids.com/zzzzz/master/foxids_seed/", // custom domain, self-hosted or local development "https://https://localhost:44331/zzzzz/master/foxids_seed/"
     "ClientId": "foxids_master_seed",
-    "ClientSecret": "xxx",
+    "ClientSecret": "xxxxxx",
+    "Scope": "foxids_control_api:foxids:master",
     "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"
 }
 ```

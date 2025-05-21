@@ -10,7 +10,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
 using FoxIDs.SeedTool.Models.ApiModels;
-using MimeKit.Encodings;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
@@ -29,51 +29,113 @@ namespace FoxIDs.SeedTool.SeedLogic
             this.accessLogic = accessLogic;
         }
 
-        public string UsersApiEndpoint => UrlCombine.Combine(settings.FoxIDsTenantControlApiEndpoint, "!users");
+        public string UsersApiEndpoint => UrlCombine.Combine(settings.FoxIDsControlApiEndpoint, "!users");
 
         public async Task SeedAsync()
         {
             Console.Write("Uploading users");
+            var headers = new List<string>();
+            var firstLine = true;
             var addCount = 0;
             var readCount = 0;
+            var stop = false;
             var users = new List<CreateUserApiModel>();            
-            using (var streamReader = File.OpenText(settings.UsersPath))
+            using (var streamReader = File.OpenText(settings.UsersSvcPath))
             {
                 while (streamReader.Peek() >= 0)
                 {
-                    var split = streamReader.ReadLine().Split(':');
+                    var items = GetItems(streamReader.ReadLine());
+                    if (firstLine)
+                    {
+                        headers.AddRange(items);
+                        if (headers.Count() < 2)
+                        {
+                            throw new Exception("At least two headers is required.");
+                        }
+                        var duplicatedHeader = headers.GroupBy(h => h).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                        if (headers.GroupBy(h => h).Where(g => g.Count() > 1).Any())
+                        {
+                            throw new ValidationException($"Duplicated header '{duplicatedHeader}'");
+                        }
+                        firstLine = false;
+                    }
+                    else
+                    {
+                        readCount++;
+                        if (headers.Count() != items.Count())
+                        {
+                            throw new Exception("Not the same number of elements in the line as headers.");
+                        }
 
-                    //TODO read user in CSV
+                        users.Add(GetCreateUserApiModel(headers, items));
+                        addCount++;
+                        if (addCount % 1000 == 0)
+                        {
+                            Console.Write($"{Environment.NewLine}Users read '{readCount}'");
+                        }
+                        else if (addCount % 100 == 0)
+                        {
+                            Console.Write(".");
+                        }
 
-                    users.Add(new CreateUserApiModel 
-                    { 
-                        //TODO add user
-                    });
-                    addCount++;
-                    if (addCount % 1000 == 0)
-                    {
-                        Console.Write($"{Environment.NewLine}Users read '{readCount}'");
+                        if (maxUserToUpload > 0 && addCount >= maxUserToUpload)
+                        {
+                            await UploadAsync(users);
+                            stop = true;
+                            break;
+                        }
+                        if (users.Count() >= uploadUserBlockSize)
+                        {
+                            await UploadAsync(users);
+                            users = new List<CreateUserApiModel>();
+                        }
                     }
-                    else if (addCount % 100 == 0)
-                    {
-                        Console.Write(".");
-                    }
+                }
 
-                    if (maxUserToUpload > 0 && addCount >= maxUserToUpload)
-                    {
-                        await UploadAsync(users);
-                        break;
-                    }
-                    if (users.Count() >= uploadUserBlockSize)
-                    {
-                        await UploadAsync(users);
-                        users = new List<CreateUserApiModel>();
-                    }
-                    
+                if (!stop && users.Count() > 0)
+                {
+                    await UploadAsync(users);
                 }
             }
 
             Console.WriteLine($"{Environment.NewLine}Users total read '{readCount}', total uploaded '{addCount}'");
+        }
+
+        private CreateUserApiModel GetCreateUserApiModel(List<string> headers, IEnumerable<string> items)
+        {
+            var properties = new Dictionary<string, string>();
+            var count = 0;
+            List<ClaimAndValuesApiModel> claims = null;
+            foreach (var item in items)
+            {
+                var header = headers[count++];
+                if (!item.IsNullOrWhiteSpace())
+                {
+                    if (header == "Claims")
+                    {
+                        claims = item.ToObject<List<ClaimAndValuesApiModel>>();
+                    }
+                    else
+                    {
+                        properties.Add(header, item);
+                    }
+                }
+            }
+
+            var createUserApiModel = properties.ToObject<CreateUserApiModel>();
+            createUserApiModel.Claims = claims;
+            return createUserApiModel;
+        }
+
+        private IEnumerable<string> GetItems(string line)
+        {
+            var split = line.Split(';');
+            foreach (var item in split)
+            {
+                var itemValue = item.Trim('"');
+                itemValue = itemValue.Replace("\"\"", "\"");
+                yield return itemValue;
+            }
         }
 
         private async Task UploadAsync(List<CreateUserApiModel> users)

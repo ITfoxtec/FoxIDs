@@ -59,9 +59,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Two-factor with email disabled")]
         public bool DisableTwoFactorEmail { get; set; }
 
-        [Display(Name = "Active two-factor authenticator App")]
-        public bool ActiveTwoFactorApp { get; set; }
-
         [Display(Name = "Require multi-factor (2FA/MFA)")]
         public bool RequireMultiFactor { get; set; }
 

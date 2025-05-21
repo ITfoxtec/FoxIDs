@@ -20,7 +20,7 @@ namespace FoxIDs.SeedTool
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
                 Console.WriteLine("Select seed action:");
-                Console.WriteLine("U: Upload users in an environment");
+                Console.WriteLine("U: Upload users to an environment");
                 Console.WriteLine("E: Delete all users in an environment with one DB call (recommended, only supported by MongoDB)");
                 Console.WriteLine("R: Delete all users in an environment with many DB calls");
 

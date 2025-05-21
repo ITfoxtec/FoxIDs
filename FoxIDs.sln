@@ -279,6 +279,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\search-logs.png = docs\images\search-logs.png
 		docs\images\search-usage-logs.png = docs\images\search-usage-logs.png
+		docs\images\seed-tool-client.png = docs\images\seed-tool-client.png
 		docs\images\structure.png = docs\images\structure.png
 		docs\images\structure.svg = docs\images\structure.svg
 		docs\images\structure.vsdx = docs\images\structure.vsdx

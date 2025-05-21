@@ -29,6 +29,10 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.User.UsernameRegExPattern)]
         public string UpdateUsername { get; set; }
 
+
+        [Display(Name = "Active two-factor authenticator App")]
+        public bool ActiveTwoFactorApp { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

@@ -121,7 +121,7 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="usersRequest">Users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PutUser([FromBody] Api.UsersRequest usersRequest)
+        public async Task<IActionResult> PutUsers([FromBody] Api.UsersRequest usersRequest)
         {
             if (!await ModelState.TryValidateObjectAsync(usersRequest)) return BadRequest(ModelState);
 
@@ -167,8 +167,11 @@ namespace FoxIDs.Controllers
                         RequireMultiFactor = user.RequireMultiFactor
                     });
                 }
-
-                // Bulk user update is not supported.
+                else
+                {
+                    // Bulk user update is not supported.
+                    logger.Event($"User '{new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }.ToJson()}' exist and is not updated in bulk.");
+                }
             }
 
             return NoContent();
@@ -180,7 +183,7 @@ namespace FoxIDs.Controllers
         /// <param name="usersDelete">Delete all users if empty. Alternatively, select to delete specific users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUser([FromBody] Api.UsersDelete usersDelete = null)
+        public async Task<IActionResult> DeleteUsers([FromBody] Api.UsersDelete usersDelete = null)
         {
             if (usersDelete == null)
             {

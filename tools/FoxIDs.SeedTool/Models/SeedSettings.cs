@@ -6,10 +6,29 @@ namespace FoxIDs.SeedTool.Models
     public class SeedSettings
     {
         /// <summary>
+        /// FoxIDs control endpoint.
+        /// </summary>
+        [Required]
+        public string FoxIDsControlEndpoint { get; set; }
+
+        [Required]
+        public string Tenant { get; set; }
+
+        [Required]
+        public string Environment { get; set; }
+
+        /// <summary>
+        /// Seed tool authority.
+        /// </summary>
+        [Required]
+        public string Authority { get; set; }
+
+        /// <summary>
         /// Seed tool client id.
         /// </summary>
         [Required]
         public string ClientId { get; set; }
+
         /// <summary>
         /// Seed tool client secret.
         /// </summary>
@@ -17,39 +36,20 @@ namespace FoxIDs.SeedTool.Models
         public string ClientSecret { get; set; }
 
         /// <summary>
-        /// FoxIDs endpoint.
+        /// Seed tool scope.
         /// </summary>
         [Required]
-        public string FoxIDsEndpoint { get; set; }
-        /// <summary>
-        /// Tenant.
-        /// </summary>
-        [Required]
-        public string Tenant { get; set; }
-        /// <summary>
-        ///  Authority for "tenant/master environment/app-reg".
-        /// </summary>
-        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, Tenant, "master", ClientId);
+        public string Scope { get; set; }
 
         /// <summary>
-        /// FoxIDs control endpoint.
+        /// FoxIDs API control endpoint.
         /// </summary>
-        [Required]
-        public string FoxIDsControlEndpoint { get; set; }
-
-        /// <summary>
-        /// FoxIDs control API endpoint.
-        /// </summary>
-        public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api");
-        /// <summary>
-        /// FoxIDs tenant API control endpoint.
-        /// </summary>
-        public string FoxIDsTenantControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, Tenant);
+        public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api", Tenant, Environment);
 
         /// <summary>
         /// Path to CSV file with users.
         /// </summary>
         [Required]
-        public string UsersPath { get; set; }
+        public string UsersSvcPath { get; set; }
     }
 }

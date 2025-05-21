@@ -37,6 +37,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
             Console.Write("Uploading risk passwords");
             var addCount = 0;
             var readCount = 0;
+            var stop = false;
             var riskPasswords = new List<RiskPasswordApiModel>();            
             using (var streamReader = File.OpenText(settings.PwnedPasswordsPath))
             {
@@ -61,6 +62,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                         if (maxRiskPasswordToUpload > 0 && addCount >= maxRiskPasswordToUpload)
                         {
                             await UploadAsync(riskPasswords);
+                            stop = true;
                             break;
                         }
                         if (riskPasswords.Count() >= uploadRiskPasswordBlockSize)
@@ -69,6 +71,11 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                             riskPasswords = new List<RiskPasswordApiModel>();
                         }
                     }
+                }
+
+                if (!stop && riskPasswords.Count() > 0)
+                {
+                    await UploadAsync(riskPasswords);
                 }
             }
 

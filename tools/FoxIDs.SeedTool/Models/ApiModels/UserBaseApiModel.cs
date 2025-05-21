@@ -30,8 +30,6 @@ namespace FoxIDs.SeedTool.Models.ApiModels
 
         public bool DisableTwoFactorEmail { get; set; }
 
-        public bool ActiveTwoFactorApp { get; set; }
-
         public bool RequireMultiFactor { get; set; }
 
         public List<ClaimAndValuesApiModel> Claims { get; set; }

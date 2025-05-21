@@ -131,7 +131,6 @@ namespace FoxIDs.SeedTool.SeedLogic
         private async Task UploadAsync(List<CreateUserApiModel> users, int addCount)
         {
             var accessToken = await accessLogic.GetAccessTokenAsync();
-            Console.WriteLine("Uploading...");
             await SavePasswordsRiskListAsync(accessToken, users);
             Console.WriteLine($"Users uploaded: {addCount}");
         }

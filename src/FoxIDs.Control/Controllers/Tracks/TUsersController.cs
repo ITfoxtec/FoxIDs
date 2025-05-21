@@ -193,7 +193,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new Exception("User identifiers is empty.");
                 }
-                await tenantDataRepository.DeleteListAsync<User>(ids, queryAdditionalIds: true);
+                await tenantDataRepository.DeleteListAsync<User>(ids);
             }
 
             return NoContent();

@@ -81,7 +81,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }

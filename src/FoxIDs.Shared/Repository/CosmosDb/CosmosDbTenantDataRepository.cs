@@ -435,41 +435,34 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
         {
             foreach (string id in ids)
             {
                 var partitionId = id.IdToTenantPartitionId();
-                if (!queryAdditionalIds)
+                double totalRU = 0;
+                try
                 {
-                    double totalRU = 0;
-                    try
-                    {
-                        var container = GetContainer<T>();
-                        var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
-                        totalRU += deleteResponse.RequestCharge;
-                    }
-                    catch (CosmosException ex)
-                    {
-                        if (ex.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            return;
-                        }
-                        throw new FoxIDsDataException(id, partitionId, ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new FoxIDsDataException(id, partitionId, ex);
-                    }
-                    finally
-                    {
-                        scopedLogger = scopedLogger ?? GetScopedLogger();
-                        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
-                    }
+                    var container = GetContainer<T>();
+                    var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
+                    totalRU += deleteResponse.RequestCharge;
                 }
-                else
+                catch (CosmosException ex)
                 {
-                    _ = await ReadItemAsync<T>(id, partitionId, false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                    if (ex.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return;
+                    }
+                    throw new FoxIDsDataException(id, partitionId, ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new FoxIDsDataException(id, partitionId, ex);
+                }
+                finally
+                {
+                    scopedLogger = scopedLogger ?? GetScopedLogger();
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }

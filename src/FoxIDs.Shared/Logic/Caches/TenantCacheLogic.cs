@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var tenants, _) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !(t.ForUsage == true) && t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
+                (var tenants, _) = await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => !(t.ForUsage == true) && t.CustomDomain.Equals(customDomain, StringComparison.CurrentCultureIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
             catch (FoxIDsDataException ex)

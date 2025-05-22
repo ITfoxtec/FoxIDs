@@ -145,7 +145,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetManyAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var query = GetQueryAsync<T>(partitionId, pageSize: pageSize, continuationToken: paginationToken);
@@ -315,7 +315,7 @@ namespace FoxIDs.Repository
             return (item != null, totalRU);
         }
 
-        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -399,7 +399,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> DeleteManyAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -435,34 +435,41 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             foreach (string id in ids)
             {
                 var partitionId = id.IdToTenantPartitionId();
-                double totalRU = 0;
-                try
+                if (!queryAdditionalIds)
                 {
-                    var container = GetContainer<T>();
-                    var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
-                    totalRU += deleteResponse.RequestCharge;
-                }
-                catch (CosmosException ex)
-                {
-                    if (ex.StatusCode == HttpStatusCode.NotFound)
+                    double totalRU = 0;
+                    try
                     {
-                        return;
+                        var container = GetContainer<T>();
+                        var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
+                        totalRU += deleteResponse.RequestCharge;
                     }
-                    throw new FoxIDsDataException(id, partitionId, ex);
+                    catch (CosmosException ex)
+                    {
+                        if (ex.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            return;
+                        }
+                        throw new FoxIDsDataException(id, partitionId, ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new FoxIDsDataException(id, partitionId, ex);
+                    }
+                    finally
+                    {
+                        scopedLogger = scopedLogger ?? GetScopedLogger();
+                        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw new FoxIDsDataException(id, partitionId, ex);
-                }
-                finally
-                {
-                    scopedLogger = scopedLogger ?? GetScopedLogger();
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    _ = await ReadItemAsync<T>(id, partitionId, false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
                 }
             }
         }

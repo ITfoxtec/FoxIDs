@@ -5,7 +5,7 @@ Upload your users to an environment, with or without a password:
 - You can upload the users with there password, if you know the users' passwords. 
 - Otherwise, you can upload the users without a password and the users are then requested to set a password with an email or SMS conformation code. Require the users to have either an email or phone number.
 
-The users are bulk uploaded to an environment with 10,000 users at the time and supporting upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+The users are bulk uploaded to an environment with 1,000 users at the time and supporting upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
 
 ## Upload with seed tool
 
@@ -81,7 +81,7 @@ Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#fo
 
 *This will grant the seed tool full access to your tenant, for least privileges please see [API access rights](control.md#api-access-rights).*
 
-1. Login to your tenant
+1. Login to your tenant (in self-hosted the main tenant)
 2. Select the **master** environment (in the top centre environment selector)
 3. Select the **Applications** tab
 4. Click **New Application**

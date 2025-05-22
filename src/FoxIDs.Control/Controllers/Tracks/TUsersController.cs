@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                     whereQuery = whereQuery.AndAlso(filterWhereQuery);
                 }
 
-                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetListAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
                 var response = new Api.PaginationResponse<Api.User>
                 {
@@ -162,7 +162,7 @@ namespace FoxIDs.Controllers
                 }, saveUser: false));
             }
 
-            await tenantDataRepository.SaveListAsync(mUsers);
+            await tenantDataRepository.SaveManyAsync(mUsers);
 
             return NoContent();
         }
@@ -170,31 +170,24 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete users.
         /// </summary>
-        /// <param name="usersDelete">Delete all users if empty. Alternatively, select to delete specific users.</param>
+        /// <param name="usersDelete">Delete specified users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUsers([FromBody] Api.UsersDelete usersDelete = null)
+        public async Task<IActionResult> DeleteUsers([FromBody] Api.UsersDelete usersDelete)
         {
-            if (usersDelete == null)
-            {
-                await tenantDataRepository.DeleteListAsync<User>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: t => t.DataType.Equals(Constants.Models.DataType.User));
-            }
-            else
-            {
-                if (!await ModelState.TryValidateObjectAsync(usersDelete)) return BadRequest(ModelState);
+            if (!await ModelState.TryValidateObjectAsync(usersDelete)) return BadRequest(ModelState);
 
-                var ids = new List<string>();
-                foreach (var userIdentifier in usersDelete.UserIdentifiers)
-                {
-                    ids.Add(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = userIdentifier }));
-                }
-
-                if (ids.Count() <= 0)
-                {
-                    throw new Exception("User identifiers is empty.");
-                }
-                await tenantDataRepository.DeleteListAsync<User>(ids);
+            var ids = new List<string>();
+            foreach (var userIdentifier in usersDelete.UserIdentifiers)
+            {
+                ids.ConcatOnce(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { UserIdentifier = userIdentifier }));
             }
+
+            if (ids.Count() <= 0)
+            {
+                throw new Exception("User identifiers is empty.");
+            }
+            await tenantDataRepository.DeleteManyAsync<User>(ids, queryAdditionalIds: true);
 
             return NoContent();
         }

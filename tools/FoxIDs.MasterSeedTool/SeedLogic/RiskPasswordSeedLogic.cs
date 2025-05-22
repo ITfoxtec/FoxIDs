@@ -71,7 +71,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}' and total uploaded '{addCount}'");
+            Console.WriteLine($"{Environment.NewLine}Risk passwords total read: {readCount}, and total uploaded: {addCount}");
         }
 
         private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords, int readCount, int addCount)
@@ -86,12 +86,15 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
             var totalCount = 0;
             while (true)
             {
-                var riskPasswords = await GetPasswordsRiskFirstListAsync(await accessLogic.GetAccessTokenAsync());
+                var accessToken = await accessLogic.GetAccessTokenAsync();
+                Console.Write("Get risk passwords");
+                var riskPasswords = await GetPasswordsRiskFirstListAsync(accessToken);
                 if(riskPasswords?.Count > 0)
                 {
+                    Console.WriteLine($": {riskPasswords?.Count}");
                     totalCount = totalCount + riskPasswords.Count();
                     await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords.Select(r => r.PasswordSha1Hash).ToList());
-                    Console.WriteLine($"Risk passwords deleted '{totalCount}'");
+                    Console.WriteLine($"Risk passwords deleted: {totalCount}");
                 }
                 else
                 {
@@ -99,15 +102,9 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                 }
             }
 
-            Console.WriteLine($"All '{totalCount}' risk passwords deleted");
+            Console.WriteLine($"{Environment.NewLine}All '{totalCount}' risk passwords deleted");
         }
 
-        public async Task DeleteAllInPartitionAsync()
-        {
-            Console.WriteLine("**Delete all risk passwords**");
-            await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
-            Console.WriteLine("All risk passwords deleted");
-        }
         private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordApiModel> riskPasswords)
         {
             var client = httpClientFactory.CreateClient();
@@ -126,17 +123,16 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
             return result.ToObject<List<RiskPasswordApiModel>>();   
         }
 
-        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs = null)
+        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> passwordSha1Hashs)
         {
             var request = new HttpRequestMessage();
             request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
-            if (passwordSha1Hashs != null)
-            {
-                var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
-                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
-                content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                request.Content = content;
-            }
+
+            var body = new RiskPasswordDeleteApiModel { PasswordSha1Hashs = passwordSha1Hashs };
+            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            request.Content = content;
+
             request.Method = new HttpMethod("DELETE");
             request.RequestUri = new Uri(PasswordRiskListApiEndpoint);
             var client = httpClientFactory.CreateClient();

@@ -21,8 +21,7 @@ namespace FoxIDs.MasterSeedTool
 
                 Console.WriteLine("Select seed action:");
                 Console.WriteLine("R: Upload risk passwords");
-                Console.WriteLine("I: Delete all risk passwords with one DB call (recommended, only supported by MongoDB)");
-                Console.WriteLine("S: Delete all risk passwords with many DB calls");
+                Console.WriteLine("A: Delete all risk passwords");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -33,10 +32,7 @@ namespace FoxIDs.MasterSeedTool
                     case 'r':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
-                    case 'i':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllInPartitionAsync();
-                        break;
-                    case 's':
+                    case 'a':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
                         break;
 

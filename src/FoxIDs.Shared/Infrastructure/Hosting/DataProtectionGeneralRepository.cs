@@ -29,7 +29,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 var masterDataRepository = scope.ServiceProvider.GetRequiredService<IMasterDataRepository>();
 
-                var dataProtections = masterDataRepository.GetListAsync<DataProtection>().GetAwaiter().GetResult();
+                var dataProtections = masterDataRepository.GetManyAsync<DataProtection>().GetAwaiter().GetResult();
                 foreach (var item in dataProtections)
                 {
                     yield return XElement.Parse(item.KeyData);

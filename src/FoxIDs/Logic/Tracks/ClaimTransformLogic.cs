@@ -589,7 +589,7 @@ namespace FoxIDs.Logic
                         }
                     }
 
-                    (var users, _) = await tenantDataRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && 
+                    (var users, _) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.User) && !u.DisableAccount && 
                         u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
 
                     if (users?.Count() == 1)
@@ -610,7 +610,7 @@ namespace FoxIDs.Logic
                     break;
 
                 case ClaimTransformTasks.QueryExternalUser:
-                    (var externalUsers, _) = await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && 
+                    (var externalUsers, _) = await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(Constants.Models.DataType.ExternalUser) && !u.DisableAccount && u.UpPartyName.Equals(claimTransform.UpPartyName) && 
                         u.Claims.Where(c => c.Claim == selectUserClaim && c.Values.Any(v => v == selectUserClaimValue)).Any());
 
                     if (externalUsers?.Count() == 1)

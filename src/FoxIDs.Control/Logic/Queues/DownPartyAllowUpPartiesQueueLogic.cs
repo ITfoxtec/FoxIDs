@@ -238,7 +238,7 @@ namespace FoxIDs.Logic.Queues
             string paginationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, paginationToken) = await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == upPartyName).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
+                (var downParties, paginationToken) = await tenantDataRepository.GetManyAsync<DownParty>(idKey, whereQuery: p => p.DataType == Constants.Models.DataType.DownParty && p.AllowUpParties.Where(up => up.Name == upPartyName).Any(), pageSize: 100, paginationToken: paginationToken, scopedLogger: logger);
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();

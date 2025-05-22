@@ -98,6 +98,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                 }
                 else
                 {
+                    Console.WriteLine(": 0");
                     break;
                 }
             }

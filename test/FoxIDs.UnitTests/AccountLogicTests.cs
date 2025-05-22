@@ -18,7 +18,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordLength_ReturnsUser(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
-            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password });
             Assert.NotNull(user);
         }
 
@@ -30,7 +30,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordLength_ThrowPasswordLengthException(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordComplexity: false, checkPasswordRisk: false);
-            await Assert.ThrowsAsync<PasswordLengthException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+            await Assert.ThrowsAsync<PasswordLengthException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
         [Theory]
@@ -44,7 +44,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordComplexity_ReturnsUser(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
-            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password });
             Assert.NotNull(user);
         }
 
@@ -53,7 +53,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordComplexity_ThrowPasswordEmailTextComplexityException(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
-            await Assert.ThrowsAsync<PasswordEmailTextComplexityException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+            await Assert.ThrowsAsync<PasswordEmailTextComplexityException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
         [Theory]
@@ -63,7 +63,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordComplexity_ThrowPasswordUrlTextComplexityException(string email, string password)
         {
             var accountLogic = AccountLogicInstance(checkPasswordRisk: false);
-            await Assert.ThrowsAsync<PasswordUrlTextComplexityException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+            await Assert.ThrowsAsync<PasswordUrlTextComplexityException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
         [Theory]
@@ -71,7 +71,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordRisk_ReturnsUser(string email, string password)
         {
             var accountLogic = AccountLogicInstance();
-            var user = await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password);
+            var user = await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password });
             Assert.NotNull(user);
         }
 
@@ -80,7 +80,7 @@ namespace FoxIDs.UnitTests
         public async Task CreateUserCheckPasswordRisk_ThrowPasswordRiskException(string email, string password)
         {
             var accountLogic = AccountLogicInstance();
-            await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password));
+            await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUserAsync(new CreateUserObj { UserIdentifier = new UserIdentifier { Email = email }, Password = password }));
         }
 
         private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)

@@ -104,7 +104,7 @@ namespace FoxIDs.Controllers
                         tenant.PlanName = tenant.PlanName.ToLower();
                         if (tenant.PlanName != RouteBinding.PlanName)
                         {
-                            var mPlans = await masterDataRepository.GetListAsync<Plan>();
+                            var mPlans = await masterDataRepository.GetManyAsync<Plan>();
                             decimal currentCost = RouteBinding.PlanName.IsNullOrEmpty() ? 0 : mPlans.Where(p => p.Name == RouteBinding.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
                             decimal updateCost = mPlans.Where(p => p.Name == tenant.PlanName).Select(p => p.CostPerMonth).FirstOrDefault();
                             if (updateCost >= currentCost)
@@ -173,11 +173,11 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetManyAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name };
-                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteManyAsync<DefaultElement>(trackIdKey);
                     await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())

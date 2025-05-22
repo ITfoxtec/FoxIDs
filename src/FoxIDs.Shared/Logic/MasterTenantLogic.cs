@@ -102,7 +102,14 @@ namespace FoxIDs.Logic
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool isMasterTenant = false)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, isMasterTenant ? Constants.ControlApi.Access.TenantAdminRole : Constants.ControlApi.Access.Tenant) };
-            await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
+            await accountLogic.CreateUserAsync(new CreateUserObj 
+            {
+                UserIdentifier = new UserIdentifier { Email = email },
+                Password = password, 
+                ChangePassword = changePassword,
+                Claims = claims, 
+                ConfirmAccount = confirmAccount 
+            }, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName);
         }
 
         public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool isMasterTenant = false)
@@ -270,7 +277,13 @@ namespace FoxIDs.Logic
         public async Task CreateDefaultUserDocumentAsync(string tenantName, string trackName, string email, string password)
         {
             var claims = new List<Claim> { new Claim("info", "This user can be deleted.") };
-            await accountLogic.CreateUserAsync(new UserIdentifier { Email = email }, password, claims: claims, tenantName: tenantName, trackName: trackName, checkUserAndPasswordPolicy: false, emailVerified: true);
+            await accountLogic.CreateUserAsync(new CreateUserObj 
+            {
+                UserIdentifier = new UserIdentifier { Email = email },
+                Password = password, 
+                Claims = claims,
+                EmailVerified = true 
+            }, checkUserAndPasswordPolicy: false, tenantName: tenantName, trackName: trackName);
         }
     }
 }

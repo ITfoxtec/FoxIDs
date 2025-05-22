@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
+using System;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles
@@ -13,6 +14,9 @@ namespace FoxIDs.MappingProfiles
 
         private void Mapping()
         {
+            CreateMap<DateOnlySerializable, DateOnly>()
+               .ReverseMap();
+
             CreateMap<string, string>()
                 .ConvertUsing(str => str == null ? null : str.Trim());
 

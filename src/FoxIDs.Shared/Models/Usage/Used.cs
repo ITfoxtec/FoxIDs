@@ -47,11 +47,11 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "period_begin_date")]
-        public DateOnly PeriodBeginDate { get; set; }
+        public DateOnlySerializable PeriodBeginDate { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "period_end_date")]
-        public DateOnly PeriodEndDate { get; set; } 
+        public DateOnlySerializable PeriodEndDate { get; set; } 
 
         [JsonProperty(PropertyName = "is_usage_calculated")]
         public bool IsUsageCalculated { get; set; }

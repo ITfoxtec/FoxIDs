@@ -141,7 +141,7 @@ A default login authentication method is created in each environment.
 The [title, icon and CSS](title-icon-css.md) configured on the default login authentication method is use in the case where no login authentication method is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login authentication method.
 
 ### Configure login options
-It can be configured whether users should be allowed to reset there password, whether users are allowed to create a [new user online](users.md#internal-users), which user identifiers to use, the [UI can be customised](title-icon-css.md) and much more.  
+It can be configured whether users should be allowed to set there password, whether users are allowed to create a [new user online](users.md#internal-users), which user identifiers to use, the [UI can be customised](title-icon-css.md) and much more.  
 New users can be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-login.png)

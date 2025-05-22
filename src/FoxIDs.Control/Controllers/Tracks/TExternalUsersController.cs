@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mExternalUsers, var nextPaginationToken) = filterValue.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 
-                    await tenantDataRepository.GetListAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 
+                    await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType) && 
                         ((u.LinkClaimValue != null && u.LinkClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) || 
                         (u.RedemptionClaimValue != null && u.RedemptionClaimValue.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)) || 
                         u.UserId.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);

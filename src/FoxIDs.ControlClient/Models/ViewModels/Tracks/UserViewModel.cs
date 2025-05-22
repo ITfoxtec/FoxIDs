@@ -38,13 +38,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Phone verified")]
         public bool PhoneVerified { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
+
+        [Display(Name = "Require set password with email confirmation")]
+        public bool SetPasswordEmail { get; set; }
+
+        [Display(Name = "Require set password with phone confirmation")]
+        public bool SetPasswordSms { get; set; }
 
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
@@ -80,6 +85,21 @@ namespace FoxIDs.Client.Models.ViewModels
             if (Email.IsNullOrEmpty() && Phone.IsNullOrEmpty() && Username.IsNullOrEmpty())
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Email)} or the field {nameof(Phone)} or the field {nameof(Username)} is required.", [nameof(Email), nameof(Phone), nameof(Username)]));
+            }
+
+            if (SetPasswordEmail)
+            {
+                if (Email.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
+                }
+            }
+            if (SetPasswordSms)
+            {
+                if (Phone.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));
+                }
             }
 
             if (RequireMultiFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

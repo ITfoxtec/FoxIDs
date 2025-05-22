@@ -306,11 +306,11 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                (var mTracks, _) = await tenantDataRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantDataRepository.GetManyAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     var trackIdKey = new Track.IdKey { TenantName = name, TrackName = mTrack.Name };
-                    await tenantDataRepository.DeleteListAsync<DefaultElement>(trackIdKey);
+                    await tenantDataRepository.DeleteManyAsync<DefaultElement>(trackIdKey);
                     await tenantDataRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault && !mTrack.Key.ExternalName.IsNullOrWhiteSpace())

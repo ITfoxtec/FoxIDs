@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Logic
 
         public ValueTask WriteTextAsync(string text)
         {
-            return _jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+            return _jsRuntime.InvokeVoidAsync("clipboardWriteText", text);
         }
     }
 }

@@ -51,6 +51,15 @@ namespace FoxIDs.Logic
             LogEvent(UsageLogTypes.ControlApiUpdate);
         }
 
+        public async Task LogPasswordlessSmsEventAsync(string phone)
+        {
+            await LogSmsEventAsync(UsageLogTypes.Passwordless, phone);
+        }
+        public void LogPasswordlessEmailEvent()
+        {
+            LogEmailEvent(UsageLogTypes.Passwordless);
+        }
+
         public async Task LogConfirmationSmsEventAsync(string phone)
         {
             await LogSmsEventAsync(UsageLogTypes.Confirmation, phone);
@@ -60,13 +69,13 @@ namespace FoxIDs.Logic
             LogEmailEvent(UsageLogTypes.Confirmation);
         }
 
-        public async Task LogResetPasswordSmsEventAsync(string phone)
+        public async Task LogSetPasswordSmsEventAsync(string phone)
         {
-            await LogSmsEventAsync(UsageLogTypes.ResetPassword, phone);
+            await LogSmsEventAsync(UsageLogTypes.SetPassword, phone);
         }
-        public void LogResetPasswordEmailEvent()
+        public void LogSetPasswordEmailEvent()
         {
-            LogEmailEvent(UsageLogTypes.ResetPassword);
+            LogEmailEvent(UsageLogTypes.SetPassword);
         }
 
         public void LogMfaAuthAppEvent()

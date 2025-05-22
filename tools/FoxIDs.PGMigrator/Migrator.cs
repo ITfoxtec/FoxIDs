@@ -12,22 +12,22 @@ public class Migrator(
 {
     public async Task RunAsync()
     {
-        var tenants = await cosmosDbTenantDataRepository.GetListAsync<Tenant>();
+        var tenants = await cosmosDbTenantDataRepository.GetManyAsync<Tenant>();
         foreach (var tenant in tenants.items)
         {
             await tenantDb.CreateAsync(tenant.Id, tenant, tenant.PartitionId);
             var idKey = new Track.IdKey { TenantName = tenant.Name, TrackName = "" };
-            var tracks = await cosmosDbTenantDataRepository.GetListAsync<Track>(idKey, t => t.DataType.Equals(Constants.Models.DataType.Track));
+            var tracks = await cosmosDbTenantDataRepository.GetManyAsync<Track>(idKey, t => t.DataType.Equals(Constants.Models.DataType.Track));
             foreach (var track in tracks.items)
             {
                 await tenantDb.CreateAsync(track.Id, track, track.PartitionId);
                 idKey = new Track.IdKey { TenantName = tenant.Name, TrackName = track.Name };
-                var users = await cosmosDbTenantDataRepository.GetListAsync<User>(idKey, t => t.DataType.Equals(Constants.Models.DataType.User));
+                var users = await cosmosDbTenantDataRepository.GetManyAsync<User>(idKey, t => t.DataType.Equals(Constants.Models.DataType.User));
                 foreach (var user in users.items)
                 {
                     await tenantDb.CreateAsync(user.Id, user, user.PartitionId);
                 }
-                var downparties = await cosmosDbTenantDataRepository.GetListAsync<DownParty>(idKey, t => t.DataType.Equals(Constants.Models.DataType.DownParty));
+                var downparties = await cosmosDbTenantDataRepository.GetManyAsync<DownParty>(idKey, t => t.DataType.Equals(Constants.Models.DataType.DownParty));
                 foreach (var downparty in downparties.items)
                 {
                     if (downparty.Type == PartyTypes.OAuth2) {
@@ -39,7 +39,7 @@ public class Migrator(
                         await tenantDb.CreateAsync(oidcDownParty.Id, oidcDownParty, oidcDownParty.PartitionId);
                     }
                 }
-                var upparties = await cosmosDbTenantDataRepository.GetListAsync<UpParty>(idKey, t => t.DataType.Equals(Constants.Models.DataType.UpParty));
+                var upparties = await cosmosDbTenantDataRepository.GetManyAsync<UpParty>(idKey, t => t.DataType.Equals(Constants.Models.DataType.UpParty));
                 foreach (var upparty in upparties.items)
                 {
                     if (upparty.Type == PartyTypes.Saml2) {

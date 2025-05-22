@@ -71,19 +71,19 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken);
+                return tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken);
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+                return tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+                return tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
             }
             else
             {
-                return tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+                return tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage != true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
             }
         }
     }

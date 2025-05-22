@@ -117,6 +117,12 @@
         {
             <div>@Constants.Logs.Results.Email.GetDisplayLogKey(): @email.GetDisplayLogValue()</div>
         }
+        var failingLoginCount = @Item.Values.GetValue(Constants.Logs.Results.FailingLoginCount);
+        if (!failingLoginCount.IsNullOrWhiteSpace() && failingLoginCount != "0")
+        {
+            <div>@Constants.Logs.Results.FailingLoginCount.GetDisplayLogKey(): @failingLoginCount.GetDisplayLogValue()</div>
+        }
+
     }
     else if (Item.Type == LogItemTypes.Metric)
     {

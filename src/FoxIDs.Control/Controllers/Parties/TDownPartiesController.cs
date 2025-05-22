@@ -49,8 +49,8 @@ namespace FoxIDs.Controllers
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mDownPartys, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) : 
-                    await tenantDataRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
+                    await tenantDataRepository.GetManyAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) : 
+                    await tenantDataRepository.GetManyAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
                         (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)), paginationToken: paginationToken);
 
                 var response = new Api.PaginationResponse<Api.DownParty>

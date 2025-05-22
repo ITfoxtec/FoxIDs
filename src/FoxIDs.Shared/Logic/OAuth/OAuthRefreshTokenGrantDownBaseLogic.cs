@@ -48,8 +48,8 @@ namespace FoxIDs.Logic
             (var ttlGrantsPaginationToken, var grantsPaginationToken) = GetGrantPaginationTokens(paginationToken);
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: ttlGrantsPaginationToken);
-            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: grantsPaginationToken);
+            (var ttlGrants, var nextTtlGrantsPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: ttlGrantsPaginationToken);
+            (var grants, var nextGrantsPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName), paginationToken: grantsPaginationToken);
 
             return (ttlGrants, grants, CreateCombinedPaginationToken(nextTtlGrantsPaginationToken, nextGrantsPaginationToken));
         }
@@ -88,13 +88,13 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', User identifier '{userIdentifier}', Sub '{sub}', Client ID '{clientId}', Auth method '{upPartyName}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync(idKey, GetQuery<RefreshTokenTtlGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted.");
             }
 
-            var grantCount = await tenantDataRepository.DeleteListAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
+            var grantCount = await tenantDataRepository.DeleteManyAsync(idKey, GetQuery<RefreshTokenGrant>(userIdentifier, sub, clientId, upPartyName, upPartyType));
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted.");

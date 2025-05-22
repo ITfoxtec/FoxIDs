@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.UnitTests", "test\Fo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.MasterSeedTool", "tools\FoxIDs.MasterSeedTool\FoxIDs.MasterSeedTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ControlClient", "src\FoxIDs.ControlClient\FoxIDs.ControlClient.csproj", "{841451D6-66A5-4E7A-8952-BFF9A9375B6B}"
 EndProject
@@ -99,6 +99,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\samples.md = docs\samples.md
 		docs\standard-support.md = docs\standard-support.md
 		docs\token-exchange.md = docs\token-exchange.md
+		docs\users-upload.md = docs\users-upload.md
 		docs\users.md = docs\users.md
 		docs\_sidebar.md = docs\_sidebar.md
 	EndProjectSection
@@ -273,10 +274,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\language-spanish.png = docs\images\language-spanish.png
 		docs\images\main-tenant.png = docs\images\main-tenant.png
 		docs\images\master-tenant-admin-user.png = docs\images\master-tenant-admin-user.png
+		docs\images\master-seed-tool-client.png = docs\images\master-seed-tool-client.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\search-logs.png = docs\images\search-logs.png
 		docs\images\search-usage-logs.png = docs\images\search-usage-logs.png
+		docs\images\seed-tool-client.png = docs\images\seed-tool-client.png
 		docs\images\structure.png = docs\images\structure.png
 		docs\images\structure.svg = docs\images\structure.svg
 		docs\images\structure.vsdx = docs\images\structure.vsdx
@@ -293,7 +296,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\token-exchange-saml-by-trust-auth-method.png = docs\images\token-exchange-saml-by-trust-auth-method.png
 		docs\images\token-exchange-saml-by-trust.svg = docs\images\token-exchange-saml-by-trust.svg
 		docs\images\token-exchange.vsdx = docs\images\token-exchange.vsdx
-		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 		docs\images\user-create-new-account-config.png = docs\images\user-create-new-account-config.png
 		docs\images\user-create-new-account.png = docs\images\user-create-new-account.png
 		docs\images\user-email-phone-username-user-identifier.png = docs\images\user-email-phone-username-user-identifier.png
@@ -328,6 +330,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E754CB-5FEF-4D2E-9FEF-DBE31827528D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci_main_docker.yaml = .github\workflows\ci_main_docker.yaml
+		.github\workflows\ci_master_seed_tool_release.yaml = .github\workflows\ci_master_seed_tool_release.yaml
 		.github\workflows\ci_release.yaml = .github\workflows\ci_release.yaml
 		.github\workflows\ci_seed_tool_release.yaml = .github\workflows\ci_seed_tool_release.yaml
 		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
@@ -387,6 +390,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{71C64DBE
 		ReleaseConfig\FoxIDs.Control\linux\web.config = ReleaseConfig\FoxIDs.Control\linux\web.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{19139648-C13A-42CF-AFD3-BB55EDE95634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -441,6 +446,10 @@ Global
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7EAAB1B-DE16-45BF-9A4C-B5D5161A0804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19139648-C13A-42CF-AFD3-BB55EDE95634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -470,6 +479,7 @@ Global
 		{0588A320-7C07-4E24-87E7-5A4C52140780} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
 		{A5BB6949-EFE0-4B5A-BD65-8F14E5673A07} = {4680A3C4-E70C-4922-8A2E-90BFAB58FA6A}
 		{71C64DBE-14A9-4986-A899-89C12DFF4BCE} = {A65357EF-19B7-4487-88FB-E3888B9F6618}
+		{19139648-C13A-42CF-AFD3-BB55EDE95634} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

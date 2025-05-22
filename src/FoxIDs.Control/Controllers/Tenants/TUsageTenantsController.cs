@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             try
             {
                 (var mTenants, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ?
-                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken) :
-                    await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+                    await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken) :
+                    await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
 
                 var response = new Api.PaginationResponse<Api.Tenant>
                 {

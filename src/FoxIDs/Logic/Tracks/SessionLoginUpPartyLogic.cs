@@ -142,7 +142,7 @@ namespace FoxIDs.Logic
                     var email = session.Email;
                     if (session.Email.IsNullOrEmpty() && session.UserIdentifier.IsNullOrEmpty() && session.UserId.IsNullOrEmpty())
                     {
-                        // For backwards before version 1.15.0 - January 2025, can be deleted in about a year from now.
+                        // For backwards before version 1.15.0 - can be deleted at 2026.03.01.
                         email = session.EmailClaim;
                     }
                     var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email, UserIdentifier = session.UserIdentifier, UserId = session.UserId });

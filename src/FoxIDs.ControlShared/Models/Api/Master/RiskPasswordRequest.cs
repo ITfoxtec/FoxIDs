@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Api
 {
     public class RiskPasswordRequest
     {
-        [ListLength(1, 10000)]
+        [ListLength(Constants.ControlApi.SaveAndDeleteManyMin, Constants.ControlApi.SaveAndDeleteManyMax)]
         public List<RiskPassword> RiskPasswords { get; set; }
     }
 }

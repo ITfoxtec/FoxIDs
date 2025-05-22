@@ -14,6 +14,7 @@ using FoxIDs.Models.Logic;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Repository;
+using FoxIDs.Models.ViewModels;
 
 namespace FoxIDs.Logic
 {
@@ -414,6 +415,64 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return (transformedClaims, null);
+        }
+
+        internal T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier = false) where T : LoginBaseViewModel, new()
+        {
+            var passwordViewModel = GetLoginViewModel<T>(sequenceData, loginUpParty, supportChangeUserIdentifier);
+
+            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            {
+                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableEmailIdentifier)
+            {
+                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnablePhoneIdentifier)
+            {
+                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
+            }
+            else if (loginUpParty.EnableUsernameIdentifier)
+            {
+                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            return passwordViewModel;
+        }
+
+        private T GetLoginViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier) where T : LoginBaseViewModel, new()
+        {
+            return new T
+            {
+                SequenceString = SequenceString,
+                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                IconUrl = loginUpParty.IconUrl,
+                Css = loginUpParty.Css,
+                ShowCancelLogin = loginUpParty.EnableCancelLogin,
+                ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
+                ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
+                ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
+                ShowSetPassword = !loginUpParty.DisableSetPassword,
+                ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
+                EnableChangeUserIdentifier = supportChangeUserIdentifier && !sequenceData.DoSessionUserRequireLogin,
+            };
         }
     }
 }

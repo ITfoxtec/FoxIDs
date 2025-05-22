@@ -32,7 +32,7 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                     var translationServiceClient = await TranslationServiceClient.CreateAsync();
 
                     var text = resource.Items.Where(i => i.Culture == LanguageCode.English).Select(i => i.Value).Single();
-                    Console.Write($"Translating resource '{text}'");
+                    Console.Write($"Translating resource [{resource.Id}]: '{text}'");
 
                     var cultures = resource.Items.Select(i => i.Culture);
                     var resourceLanguageCodes = languageCodes.Where(c => !cultures.Contains(c)).ToList();
@@ -56,6 +56,8 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                     resource.Items = resource.Items.OrderBy(i => i.Culture).ToList();
                     Console.WriteLine($" - done.");
                     Console.WriteLine(string.Empty);
+
+                    await resourceLogic.SaveResourcesAsync();
                 }
                 catch (Exception ex)
                 {
@@ -64,7 +66,7 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             }
         }
 
-        public void TranslateAllByInput()
+        public async Task TranslateAllByInputAsync()
         {
             var languageCodes = GetLanguageCodes();
             resourceLogic.UpdateSupportedCultures(languageCodes);
@@ -75,7 +77,7 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             foreach (var resource in resourceLogic.ResourceEnvelope.Resources)
             {
                 var text = resource.Items.Where(i => i.Culture == LanguageCode.English).Select(i => i.Value).Single();
-                Console.WriteLine($"Translating EN resource: {text}");
+                Console.WriteLine($"Translating EN resource [{resource.Id}]: {text}");
 
                 var cultures = resource.Items.Select(i => i.Culture);
                 var resourceLanguageCodes = languageCodes.Where(c => !cultures.Contains(c)).ToList();
@@ -98,6 +100,8 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                 resource.Items = resource.Items.OrderBy(i => i.Culture).ToList();
                 Console.WriteLine($" - done.");
                 Console.WriteLine(string.Empty);
+
+                await resourceLogic.SaveResourcesAsync();
             }
         }
 

@@ -23,9 +23,6 @@
   - [Docker](deployment-docker.md)  
   - [Windows with IIS](deployment-window-iis.md)
   - [Azure Container](deployment-azure.md)
-  - [Risk Passwords](risk-passwords.md)
-  - [Reverse proxy](reverse-proxy.md)
-  - [Monitoring](monitoring.md)
 - Topics
   - [Users](users.md)
   - [Claims](claim.md)

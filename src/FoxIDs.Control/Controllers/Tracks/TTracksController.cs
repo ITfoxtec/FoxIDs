@@ -72,8 +72,8 @@ namespace FoxIDs.Controllers
             if (HttpContext.GetTenantScopeAccessToAnyTrack())
             {
                 return filterName.IsNullOrWhiteSpace() ?
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) :
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
+                    await tenantDataRepository.GetManyAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType), paginationToken: paginationToken) :
+                    await tenantDataRepository.GetManyAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) &&
                         (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
             }
 
@@ -81,8 +81,8 @@ namespace FoxIDs.Controllers
             if (accessToTrackNames?.Count() > 0)
             {
                 return filterName.IsNullOrWhiteSpace() ?
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name), paginationToken: paginationToken) :
-                    await tenantDataRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name) &&
+                    await tenantDataRepository.GetManyAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name), paginationToken: paginationToken) :
+                    await tenantDataRepository.GetManyAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && accessToTrackNames.Any(at => at == p.Name) &&
                         (p.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.CurrentCultureIgnoreCase)), paginationToken: paginationToken);
 
             }

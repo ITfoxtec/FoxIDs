@@ -71,11 +71,11 @@ namespace FoxIDs.Controllers
         {
             if (filterName.IsNullOrWhiteSpace())
             {
-                return masterDataRepository.GetListAsync<Plan>();
+                return masterDataRepository.GetManyAsync<Plan>();
             }
             else
             {
-                return masterDataRepository.GetListAsync<Plan>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
+                return masterDataRepository.GetManyAsync<Plan>(whereQuery: t => t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));
             }
         }
     }

@@ -55,8 +55,8 @@ namespace FoxIDs.Controllers
                 }
 
                 (var mUsedList, var nextPaginationToken) = filterTenantName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year, paginationToken: paginationToken) :
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
+                    await tenantDataRepository.GetManyAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year, paginationToken: paginationToken) :
+                    await tenantDataRepository.GetManyAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);
 
                 var response = new Api.PaginationResponse<Api.UsedBase>
                 {

@@ -9,5 +9,7 @@ namespace FoxIDs.Logic
         { }
 
         public Sequence Sequence => HttpContext.GetSequence(allowNull: true);
+
+        public string SequenceString => HttpContext.GetSequenceString();
     }
 }

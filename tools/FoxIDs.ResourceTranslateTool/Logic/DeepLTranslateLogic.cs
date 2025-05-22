@@ -26,7 +26,7 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                 try
                 {
                     var text = resource.Items.Where(i => i.Culture == LanguageCode.English).Select(i => i.Value).Single();
-                    Console.Write($"Translating resource '{text}'");
+                    Console.Write($"Translating resource [{resource.Id}]: '{text}'");
 
                     var cultures = resource.Items.Select(i => i.Culture);
                     var resourceLanguageCodes = languageCodes.Where(c => !cultures.Contains(c.Substring(0, 2))).ToList();
@@ -50,6 +50,8 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                     resource.Items = resource.Items.OrderBy(i => i.Culture).ToList();
                     Console.WriteLine($" - done.");
                     Console.WriteLine(string.Empty);
+
+                    await resourceLogic.SaveResourcesAsync();
                 }
                 catch (Exception ex)
                 {

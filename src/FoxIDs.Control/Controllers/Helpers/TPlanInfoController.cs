@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mPlans = await masterDataRepository.GetListAsync<Plan>();
+                var mPlans = await masterDataRepository.GetManyAsync<Plan>();
                 var aPlans = new HashSet<Api.PlanInfo>(mPlans.Count());
                 foreach (var mPlan in mPlans.OrderBy(p => p.CostPerMonth).ThenBy(t => t.Name))
                 {

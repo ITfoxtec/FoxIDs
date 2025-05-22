@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FoxIDs.SeedTool.Model
+namespace FoxIDs.MasterSeedTool.Models.ApiModels
 {
     public class RiskPasswordDeleteApiModel
     {

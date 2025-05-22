@@ -2,7 +2,7 @@
 {
     public interface IUiLoginUpParty : IDataDocument
     {
-        bool DisableResetPassword { get; set; }
+        bool DisableSetPassword { get; set; }
 
         public string Title { get; set; }
         public string IconUrl { get; set; }

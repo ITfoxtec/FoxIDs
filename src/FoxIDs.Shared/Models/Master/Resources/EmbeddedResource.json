@@ -3363,7 +3363,7 @@
         },
         {
           "culture": "da",
-          "value": "Adgangskoden er blevet observeret i tidligere databrud. Vælg venligst et mere sikkert alternativt.",
+          "value": "Kodeordet er blevet observeret i tidligere databrud. Vælg venligst et mere sikkert alternativt.",
           "edit_level": 100
         },
         {
@@ -14298,7 +14298,7 @@
         },
         {
           "culture": "da",
-          "value": "{0} angiv adgangskode",
+          "value": "{0} angiv kodeord",
           "edit_level": 40
         },
         {
@@ -14838,7 +14838,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert brugernavn eller adgangskode.",
+          "value": "Forkert brugernavn eller kodeord.",
           "edit_level": 40
         },
         {
@@ -15648,7 +15648,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert telefonnummer eller adgangskode. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
+          "value": "Forkert telefonnummer eller kodeord. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
           "edit_level": 40
         },
         {
@@ -16053,7 +16053,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert telefonnummer, e-mail eller adgangskode. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
+          "value": "Forkert telefonnummer, e-mail eller kodeord. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
           "edit_level": 40
         },
         {
@@ -16458,7 +16458,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert brugernavn, telefonnummer, e-mail eller adgangskode. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
+          "value": "Forkert brugernavn, telefonnummer, e-mail eller kodeord. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
           "edit_level": 40
         },
         {
@@ -16863,7 +16863,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert brugernavn, e-mail eller adgangskode.",
+          "value": "Forkert brugernavn, e-mail eller kodeord.",
           "edit_level": 40
         },
         {
@@ -17268,7 +17268,7 @@
         },
         {
           "culture": "da",
-          "value": "Forkert brugernavn, telefonnummer eller adgangskode. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
+          "value": "Forkert brugernavn, telefonnummer eller kodeord. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
           "edit_level": 40
         },
         {
@@ -23462,9 +23462,134 @@
       "id": 170,
       "items": [
         {
+          "culture": "bg",
+          "value": "Еднократна парола",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Contrasenya d&#39;un sol ús",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Jednorázové heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Engangskodeord",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Einmaliges Passwort",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός πρόσβασης μίας χρήσης",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "One-time password",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Contraseña de un solo uso",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Ühekordne parool",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kertasalasana",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Mot de passe unique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Jednokratna lozinka",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Einnota lykilorð",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Password unica",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Vienkartinis slaptažodis",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Vienreizēja parole",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Engangspassord",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Eenmalig wachtwoord",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Hasło jednorazowe",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Palavra-passe única",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Parolă unică",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Jednorazové heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Enkratno geslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Engångslösenord",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Tek kullanımlık şifre",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Одноразовий пароль",
+          "edit_level": 40
         }
       ]
     },
@@ -23472,9 +23597,134 @@
       "id": 171,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте еднократна парола чрез <a href=\"{0}\" class=\"{1}\">SMS</a> или <a href=\"{2}\" class=\"{3}\">електронна поща</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Utilitzeu una contrasenya d&#39;un sol ús per <a href=\"{0}\" class=\"{1}\">SMS</a> o <a href=\"{2}\" class=\"{3}\">correu electrònic</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte jednorázové heslo prostřednictvím <a href=\"{0}\" class=\"{1}\">SMS</a> nebo <a href=\"{2}\" class=\"{3}\">emailu</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug engangskodeord via <a href=\"{0}\" class=\"{1}\">SMS</a> eller <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie ein Einmal-Passwort per <a href=\"{0}\" class=\"{1}\">SMS</a> oder <a href=\"{2}\" class=\"{3}\">E-Mail</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε κωδικό πρόσβασης μίας χρήσης μέσω <a href=\"{0}\" class=\"{1}\">SMS</a> ή <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use one-time password via <a href=\"{0}\" class=\"{1}\">SMS</a> or <a href=\"{2}\" class=\"{3}\">email</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice la contraseña de un solo uso a través de <a href=\"{0}\" class=\"{1}\">SMS</a> o <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage ühekordset salasõna <a href=\"{0}\" class=\"{1}\">SMS</a> või <a href=\"{2}\" class=\"{3}\">E-mail</a> kaudu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä kertakäyttösalasanaa <a href=\"{0}\" class=\"{1}\">SMS</a> tai <a href=\"{2}\" class=\"{3}\">sähköpostitse</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez un mot de passe à usage unique via <a href=\"{0}\" class=\"{1}\">SMS</a> ou <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Koristite jednokratnu lozinku putem <a href=\"{0}\" class=\"{1}\">SMS-a</a> ili <a href=\"{2}\" class=\"{3}\">e-pošte</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notið einnota lykilorð í gegnum <a href=\"{0}\" class=\"{1}\">SMS</a> eða <a href=\"{2}\" class=\"{3}\">tölvupóst</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzare la password unica tramite <a href=\"{0}\" class=\"{1}\">SMS</a> o <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite vienkartinį slaptažodį per <a href=\"{0}\" class=\"{1}\">SMS</a> arba <a href=\"{2}\" class=\"{3}\">paštu</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet vienreizēju paroli, izmantojot <a href=\"{0}\" class=\"{1}\">SMS</a> vai <a href=\"{2}\" class=\"{3}\">pasta</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk engangspassord via <a href=\"{0}\" class=\"{1}\">SMS</a> eller <a href=\"{2}\" class=\"{3}\">e-post</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik een eenmalig wachtwoord via <a href=\"{0}\" class=\"{1}\">SMS</a> of <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj jednorazowego hasła za pośrednictwem <a href=\"{0}\" class=\"{1}\">SMS</a> lub <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilizar uma palavra-passe de uso único através de <a href=\"{0}\" class=\"{1}\">SMS</a> ou <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați parola unică prin <a href=\"{0}\" class=\"{1}\">SMS</a> sau <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite jednorazové heslo prostredníctvom <a href=\"{0}\" class=\"{1}\">SMS</a> alebo <a href=\"{2}\" class=\"{3}\">emailu</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite enkratno geslo prek <a href=\"{0}\" class=\"{1}\">SMS</a> ali <a href=\"{2}\" class=\"{3}\">pošte</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd engångslösenord via <a href=\"{0}\" class=\"{1}\">SMS</a> eller <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS</a> veya <a href=\"{2}\" class=\"{3}\">e-posta</a> yoluyla tek seferlik şifre kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте одноразовий пароль через <a href=\"{0}\" class=\"{1}\">SMS</a> або <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 40
         }
       ]
     },
@@ -23482,9 +23732,134 @@
       "id": 172,
       "items": [
         {
+          "culture": "bg",
+          "value": "Току-що на телефона ви е изпратена еднократна парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "T&#39;acaben d&#39;enviar una contrasenya d&#39;un sol ús al telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš telefon bylo právě odesláno jednorázové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En engangskodeord er netop blevet sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein Einmalpasswort wurde soeben an Ihr Telefon geschickt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μόλις εστάλη στο τηλέφωνό σας ένας κωδικός πρόσβασης μιας χρήσης.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A one-time password has just been sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Una contraseña de un solo uso acaba de ser enviada a tu teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie telefonile on just saadetud ühekordne parool.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Puhelimeesi on juuri lähetetty kertakäyttösalasana.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un mot de passe à usage unique vient d'être envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Jednokratna lozinka je upravo poslana na vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Einnota lykilorð hefur verið sent í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Una password unica è stata appena inviata al vostro telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų telefoną ką tik buvo išsiųstas vienkartinis slaptažodis.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu tālruni ir nosūtīta vienreizēja parole.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et engangspassord har nettopp blitt sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is zojuist een eenmalig wachtwoord naar uw telefoon gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Jednorazowe hasło zostało właśnie wysłane na Twój telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Acabou de ser enviada uma palavra-passe única para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "O parolă unică tocmai a fost trimisă pe telefonul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Do vášho telefónu bolo práve odoslané jednorazové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "V vaš telefon je bilo pravkar poslano enkratno geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett engångslösenord har just skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonunuza tek kullanımlık bir şifre gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Одноразовий пароль щойно надіслано на ваш телефон.",
+          "edit_level": 40
         }
       ]
     },
@@ -23492,9 +23867,134 @@
       "id": 173,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, въведете валидна еднократна парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, introduïu una contrasenya d&#39;un sol ús vàlida.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Zadejte platné jednorázové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Indtast venligst en gyldig engangskodeord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte geben Sie ein gültiges Einmal-Passwort ein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε εισάγετε έναν έγκυρο κωδικό πρόσβασης μιας χρήσης.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please enter a valid one-time password.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Introduzca una contraseña válida de un solo uso.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun sisestage kehtiv ühekordne parool.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Anna voimassa oleva kertakäyttösalasana.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez saisir un mot de passe à usage unique valide.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo unesite važeću jednokratnu lozinku.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast sláðu inn gilt einnota lykilorð.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inserire una password unica valida.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Įveskite galiojantį vienkartinį slaptažodį.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, ievadiet derīgu vienreizējo paroli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst skriv inn et gyldig engangspassord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Voer een geldig eenmalig wachtwoord in.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wprowadź prawidłowe hasło jednorazowe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Introduza uma palavra-passe única válida.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să introduceți o parolă valabilă o singură dată.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zadajte platné jednorazové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vnesite veljavno enkratno geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ange ett giltigt engångslösenord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen geçerli bir tek kullanımlık şifre girin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, введіть дійсний одноразовий пароль.",
+          "edit_level": 40
         }
       ]
     },
@@ -23502,9 +24002,134 @@
       "id": 174,
       "items": [
         {
+          "culture": "bg",
+          "value": "Изпращане на нова еднократна парола",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Envia una nova contrasenya d&#39;un sol ús",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Odeslání nového jednorázového hesla",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Send ny engangskodeord",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Neues Einmal-Passwort senden",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αποστολή νέου κωδικού πρόσβασης μίας χρήσης",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Send new one-time password",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Enviar nueva contraseña de un solo uso",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Uue ühekordse parooli saatmine",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Lähetä uusi kertakäyttösalasana",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Envoyer un nouveau mot de passe à usage unique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pošalji novu jednokratnu lozinku",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Senda nýtt einnota lykilorð",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inviare una nuova password unica",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Siųsti naują vienkartinį slaptažodį",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nosūtīt jaunu vienreizējo paroli",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Send nytt engangspassord",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Nieuw eenmalig wachtwoord verzenden",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wyślij nowe hasło jednorazowe",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Enviar nova palavra-passe de uso único",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Trimiteți o nouă parolă unică",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Odoslanie nového jednorazového hesla",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Pošlji novo enkratno geslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Skicka nytt engångslösenord",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yeni tek kullanımlık parola gönder",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Надіслати новий одноразовий пароль",
+          "edit_level": 40
         }
       ]
     },
@@ -23512,9 +24137,134 @@
       "id": 175,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте <a href=\"{0}\" class=\"{1}\">еднократна парола по имейл</a> или <a href=\"{2}\" class=\"{3}\">собствената си парола</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Feu servir <a href=\"{0}\" class=\"{1}\">una contrasenya d&#39;un sol ús per correu electrònic</a> o <a href=\"{2}\" class=\"{3}\">la vostra contrasenya</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte <a href=\"{0}\" class=\"{1}\">jednorázové heslo e-mailem</a> nebo <a href=\"{2}\" class=\"{3}\">vlastní heslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug <a href=\"{0}\" class=\"{1}\">engangskodeord via e-mail</a> eller <a href=\"{2}\" class=\"{3}\">dit kodeord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie <a href=\"{0}\" class=\"{1}\">einmaliges Passwort per E-Mail</a> oder <a href=\"{2}\" class=\"{3}\">Ihr Passwort</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε <a href=\"{0}\" class=\"{1}\">ένα κωδικό πρόσβασης μέσω email</a> ή <a href=\"{2}\" class=\"{3}\">τον δικό σας κωδικό πρόσβασης</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via email</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utiliza <a href=\"{0}\" class=\"{1}\">contraseña única por correo electrónico</a> o <a href=\"{2}\" class=\"{3}\">tu contraseña</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage <a href=\"{0}\" class=\"{1}\">kordset salasõna e-posti teel</a> või <a href=\"{2}\" class=\"{3}\">oma salasõna</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä <a href=\"{0}\" class=\"{1}\">kertakäyttösalasanaa sähköpostitse</a> tai <a href=\"{2}\" class=\"{3}\">oma salasana</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez <a href=\"{0}\" class=\"{1}\">mot de passe unique par courriel</a> ou <a href=\"{2}\" class=\"{3}\">votre mot de passe</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Koristite <a href=\"{0}\" class=\"{1}\">jednokratnu lozinku putem e-pošte</a> ili <a href=\"{2}\" class=\"{3}\">vlastitu lozinku</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notaðu <a href=\"{0}\" class=\"{1}\">einnota lykilorð í tölvupósti</a> eða <a href=\"{2}\" class=\"{3}\">lykilorðið þitt</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate <a href=\"{0}\" class=\"{1}\">una password unica via e-mail</a> o <a href=\"{2}\" class=\"{3}\">la vostra password</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite <a href=\"{0}\" class=\"{1}\">vienkartinį slaptažodį el. paštu</a> arba <a href=\"{2}\" class=\"{3}\">savo slaptažodį</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet <a href=\"{0}\" class=\"{1}\">vienreizēju paroli pa e-pastu</a> vai <a href=\"{2}\" class=\"{3}\">pašu paroli</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk <a href=\"{0}\" class=\"{1}\">engangspassord via e-post</a> eller <a href=\"{2}\" class=\"{3}\">dit eget passord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik <a href=\"{0}\" class=\"{1}\">eenmalig wachtwoord via e-mail</a> of <a href=\"{2}\" class=\"{3}\">uw wachtwoord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj <a href=\"{0}\" class=\"{1}\">jednorazowego hasła przez e-mail</a> lub <a href=\"{2}\" class=\"{3}\">swojego hasła</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize <a href=\"{0}\" class=\"{1}\">senha única por e-mail</a> ou <a href=\"{2}\" class=\"{3}\">sua senha</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați <a href=\"{0}\" class=\"{1}\">parolă unică prin e-mail</a> sau <a href=\"{2}\" class=\"{3}\">parola dumneavoastră</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite <a href=\"{0}\" class=\"{1}\">jednorazové heslo prostredníctvom e-mailu</a> alebo <a href=\"{2}\" class=\"{3}\">svoje heslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite <a href=\"{0}\" class=\"{1}\"> enkratno geslo po e-pošti</a> ali <a href=\"{2}\" class=\"{3}\">svoje geslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd <a href=\"{0}\" class=\"{1}\">engångslösenord via e-post</a> eller <a href=\"{2}\" class=\"{3}\">ditt lösenord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">e-posta yoluyla tek seferlik şifre</a> veya <a href=\"{2}\" class=\"{3}\">şifrenizi</a> kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">одноразовий пароль електронною поштою</a> або <a href=\"{2}\" class=\"{3}\">ваш пароль</a>.",
+          "edit_level": 40
         }
       ]
     },
@@ -23522,9 +24272,134 @@
       "id": 176,
       "items": [
         {
+          "culture": "bg",
+          "value": "{0} еднократна парола",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "{0} contrasenya d&#39;un sol ús",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "{0} jednorázové heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "{0} engangskodeord",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "{0} einmaliges Passwort",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "{0} κωδικός πρόσβασης μιας χρήσης",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "{0} one-time password",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "{0} contraseña de un solo uso",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "{0} ühekordne parool",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0} kertakäyttösalasana",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "{0} mot de passe à usage unique",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "{0} jednokratna lozinka",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0} einnota lykilorð",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "{0} password unica",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "{0} vienkartinis slaptažodis",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "{0} vienreizēja parole",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "{0} engangspassord",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "{0} eenmalig wachtwoord",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "{0} hasło jednorazowe",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "{0} palavra-passe de uso único",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "{0} parolă unică",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "{0} jednorazové heslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "{0} enkratno geslo",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "{0} engångslösenord",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0} tek kullanımlık şifre",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "{0} одноразовий пароль",
+          "edit_level": 40
         }
       ]
     },
@@ -23532,9 +24407,134 @@
       "id": 177,
       "items": [
         {
+          "culture": "bg",
+          "value": "Това е вашата {0} еднократна парола за влизане в системата. Не споделяйте еднократната си парола с никого.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Aquesta és la teva contrasenya d&#39;un sol ús {0} per iniciar la sessió. No la comparteixis amb ningú.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Toto je vaše {0} jednorázové heslo pro přihlášení. Své jednorázové heslo nikomu nesdělujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Dette er dit {0} engangskodeord til at logge ind med. Del ikke dit engangskodeord med nogen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Dies ist Ihr {0} einmaliges Passwort für die Anmeldung. Geben Sie Ihr Einmal-Passwort nicht an andere weiter.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αυτός είναι ο κωδικός πρόσβασης {0} μιας χρήσης για τη σύνδεση. Μην μοιραστείτε τον κωδικό πρόσβασης μιας χρήσης με κανέναν.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "This is you {0} one-time password for logging in. Don't share your one-time password with anyone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Esta es tu {0} contraseña de un solo uso para iniciar sesión. No compartas tu contraseña de un solo uso con nadie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "See on teie {0} ühekordne salasõna sisselogimiseks. Ärge jagage oma ühekordset parooli kellegagi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tämä on kertakäyttösalasanasi {0} kirjautumista varten. Älä jaa kertakäyttösalasanaasi kenenkään kanssa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Il s'agit de votre {0} mot de passe à usage unique pour vous connecter. Ne le communiquez à personne.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Ovo je vaša {0} jednokratna lozinka za prijavu. Ne dijelite svoju jednokratnu lozinku ni s kim.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Þetta er einnota lykilorðið þitt ({0}) til innskráningar. Ekki deila einnota lykilorðinu þínu með neinum.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Questa è la vostra {0} password unica per l'accesso. Non condividete la vostra password unica con nessuno.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Tai jūsų {0} vienkartinis prisijungimo slaptažodis. Savo vienkartinio slaptažodžio su niekuo nesidalykite.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Šī ir vienreizējā {0} parole, lai pieteiktos. Nevienam nedalieties ar savu vienreizējo paroli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Dette er ditt {0} engangspassord for innlogging. Ikke del engangspassordet ditt med noen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Dit is je {0} eenmalige wachtwoord om in te loggen. Deel je eenmalige wachtwoord met niemand.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "To jest {0} jednorazowe hasło do logowania. Nie udostępniaj nikomu swojego jednorazowego hasła.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Esta é a sua {0} palavra-passe única para iniciar sessão. Não partilhe a sua palavra-passe de uso único com ninguém.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Aceasta este parola dvs. unică {0} pentru conectare. Nu partajați parola unică cu nimeni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Toto je vaše {0} jednorazové heslo na prihlásenie. Svoje jednorazové heslo nikomu neposkytujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "To je vaše enkratno geslo {0} za prijavo. Svojega enkratnega gesla ne delite z nikomer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Detta är ditt {0} engångslösenord för inloggning. Dela inte ditt engångslösenord med någon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Bu, oturum açmak için {0} tek seferlik şifrenizdir. Tek kullanımlık şifrenizi kimseyle paylaşmayın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Це ваш {0} одноразовий пароль для входу в систему. Не повідомляйте свій одноразовий пароль нікому.",
+          "edit_level": 40
         }
       ]
     },
@@ -23542,9 +24542,134 @@
       "id": 178,
       "items": [
         {
+          "culture": "bg",
+          "value": "Еднократна парола: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Contrasenya d&#39;un sol ús: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Jednorázové heslo: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Engangskodeord: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Einmaliges Passwort: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός πρόσβασης μιας χρήσης: {0}",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "One-time password: {0}",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Contraseña de un solo uso: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Ühekordne parool: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kertasalasana: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Mot de passe unique : {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Jednokratna lozinka: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Einnota lykilorð: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Password unica: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Vienkartinis slaptažodis: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Vienreizēja parole: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Engangspassord: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Eenmalig wachtwoord: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Hasło jednorazowe: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Palavra-passe de uso único: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Parolă unică: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Jednorazové heslo: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Enkratno geslo: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Engångslösenord: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Tek kullanımlık şifre: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Одноразовий пароль: {0}",
+          "edit_level": 40
         }
       ]
     },
@@ -23552,9 +24677,134 @@
       "id": 179,
       "items": [
         {
+          "culture": "bg",
+          "value": "Току-що на имейла ви беше изпратена еднократна парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "T&#39;acabem d&#39;enviar una contrasenya d&#39;un sol ús al teu correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš e-mail bylo právě odesláno jednorázové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En engangskode er netop blevet sendt til din e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein einmaliges Passwort wurde soeben an Ihre E-Mail geschickt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μόλις εστάλη στο email σας ένας κωδικός πρόσβασης μιας χρήσης.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A one-time password has just been sent to your email.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Te acabamos de enviar una contraseña de un solo uso a tu correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie e-posti aadressile on just saadetud ühekordne parool.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kertakäyttösalasana on juuri lähetetty sähköpostiisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un mot de passe à usage unique vient d'être envoyé à votre adresse électronique.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Jednokratna lozinka je upravo poslana na vašu e-poštu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Einnota lykilorð hefur verið sent á netfangið þitt.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Una password unica è stata appena inviata al vostro indirizzo e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Vienkartinis slaptažodis ką tik buvo išsiųstas į jūsų el. paštą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu e-pasta adresi ir nosūtīta vienreizēja parole.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et engangspassord har nettopp blitt sendt til e-posten din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is zojuist een eenmalig wachtwoord naar uw e-mailadres verzonden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Jednorazowe hasło zostało właśnie wysłane na Twój adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Acabou de ser enviada uma palavra-passe única para o seu e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "O parolă unică tocmai a fost trimisă la adresa dvs. de e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Na váš e-mail bolo práve odoslané jednorazové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Na vaš e-poštni naslov je bilo pravkar poslano enkratno geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett engångslösenord har just skickats till din e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "E-posta adresinize tek kullanımlık bir şifre gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Одноразовий пароль щойно надіслано на вашу електронну пошту.",
+          "edit_level": 40
         }
       ]
     },
@@ -23562,9 +24812,134 @@
       "id": 180,
       "items": [
         {
+          "culture": "bg",
+          "value": "Използвайте <a href=\"{0}\" class=\"{1}\">еднократна парола чрез SMS</a> или <a href=\"{2}\" class=\"{3}\">вашата парола</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Feu servir <a href=\"{0}\" class=\"{1}\">una contrasenya d&#39;un sol ús via SMS</a> o <a href=\"{2}\" class=\"{3}\">la vostra contrasenya</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte <a href=\"{0}\" class=\"{1}\">jednorázové heslo prostřednictvím SMS</a> nebo <a href=\"{2}\" class=\"{3}\">vlastní heslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug <a href=\"{0}\" class=\"{1}\">engangskodeord via SMS</a> eller <a href=\"{2}\" class=\"{3}\">dit kodeord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Verwenden Sie <a href=\"{0}\" class=\"{1}\">einmaliges Passwort per SMS</a> oder <a href=\"{2}\" class=\"{3}\">Ihr Passwort</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Χρησιμοποιήστε <a href=\"{0}\" class=\"{1}\">ένα κωδικό πρόσβασης μιας χρήσης μέσω SMS</a> ή <a href=\"{2}\" class=\"{3}\">τον δικό σας κωδικό πρόσβασης</a>.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via SMS</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utiliza <a href=\"{0}\" class=\"{1}\">contraseña única por SMS</a> o <a href=\"{2}\" class=\"{3}\">tu contraseña</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kasutage <a href=\"{0}\" class=\"{1}\">kordset salasõna SMS-i teel</a> või <a href=\"{2}\" class=\"{3}\">oma salasõna</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä <a href=\"{0}\" class=\"{1}\">kertakäyttösalasanaa tekstiviestillä</a> tai <a href=\"{2}\" class=\"{3}\">oma salasanasi</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Utilisez <a href=\"{0}\" class=\"{1}\">mot de passe à usage unique par SMS</a> ou <a href=\"{2}\" class=\"{3}\">votre mot de passe</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Koristite <a href=\"{0}\" class=\"{1}\">jednokratnu lozinku putem SMS-a</a> ili <a href=\"{2}\" class=\"{3}\">vlastitu lozinku</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Notaðu <a href=\"{0}\" class=\"{1}\">einnota lykilorð í gegnum SMS</a> eða <a href=\"{2}\" class=\"{3}\">lykilorðið þitt</a>.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate <a href=\"{0}\" class=\"{1}\">una password unica via SMS</a> o <a href=\"{2}\" class=\"{3}\">la vostra password</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite <a href=\"{0}\" class=\"{1}\">vienkartinį slaptažodį SMS žinute</a> arba <a href=\"{2}\" class=\"{3}\">savo slaptažodį</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Izmantojiet <a href=\"{0}\" class=\"{1}\">vienreizēju paroli, izmantojot SMS</a> vai <a href=\"{2}\" class=\"{3}\">pašu paroli</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk <a href=\"{0}\" class=\"{1}\">engangspassord via SMS</a> eller <a href=\"{2}\" class=\"{3}\">dit eget passord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik <a href=\"{0}\" class=\"{1}\">eenmalig wachtwoord via sms</a> of <a href=\"{2}\" class=\"{3}\">uw wachtwoord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj <a href=\"{0}\" class=\"{1}\">jednorazowego hasła przez SMS</a> lub <a href=\"{2}\" class=\"{3}\">swojego hasła</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize <a href=\"{0}\" class=\"{1}\">senha de uso único via SMS</a> ou <a href=\"{2}\" class=\"{3}\">sua senha</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Utilizați <a href=\"{0}\" class=\"{1}\">parolă unică prin SMS</a> sau <a href=\"{2}\" class=\"{3}\">parola dumneavoastră</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite <a href=\"{0}\" class=\"{1}\">jednorazové heslo cez SMS</a> alebo <a href=\"{2}\" class=\"{3}\">všeobecné heslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite <a href=\"{0}\" class=\"{1}\"> enkratno geslo prek SMS</a> ali <a href=\"{2}\" class=\"{3}\">svoje geslo</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd <a href=\"{0}\" class=\"{1}\">engångslösenord via SMS</a> eller <a href=\"{2}\" class=\"{3}\">ditt lösenord</a>.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS yoluyla tek seferlik şifre</a> veya <a href=\"{2}\" class=\"{3}\">şifrenizi</a> kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Використовуйте <a href=\"{0}\" class=\"{1}\">одноразовий пароль через SMS</a> або <a href=\"{2}\" class=\"{3}\">ваш пароль</a>.",
+          "edit_level": 40
         }
       ]
     },
@@ -23572,9 +24947,134 @@
       "id": 181,
       "items": [
         {
+          "culture": "bg",
+          "value": "Невалидна еднократна парола, моля, опитайте още веднъж.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Contrasenya d&#39;un sol ús no vàlida, torneu a intentar-ho.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Neplatné jednorázové heslo, zkuste to prosím ještě jednou.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Ugyldig engangskodeord, prøv venligst en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ungültiges Einmal-Passwort, bitte versuchen Sie es noch einmal.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Μη έγκυρος κωδικός πρόσβασης μιας χρήσης, δοκιμάστε άλλη μια φορά.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Invalid one-time password, please try one more time.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Contraseña de un solo uso inválida, por favor inténtelo una vez más.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vigane ühekordne parool, palun proovige veel kord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kertakäyttösalasana on virheellinen, yritä vielä kerran.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Mot de passe unique non valide, veuillez réessayer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nevažeća jednokratna lozinka, pokušajte još jednom.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Ógilt einnota lykilorð, reyndu aftur.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Password unica non valida, provare un'altra volta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Netinkamas vienkartinis slaptažodis, pabandykite dar kartą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nederīga vienreizējā parole, lūdzu, mēģiniet vēlreiz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Ugyldig engangspassord, vennligst prøv en gang til.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Ongeldig eenmalig wachtwoord, probeer het nog een keer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowe hasło jednorazowe, spróbuj ponownie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Palavra-passe de utilização única inválida, tente mais uma vez.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Parolă unică invalidă, vă rugăm să mai încercați o dată.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Neplatné jednorazové heslo, skúste to ešte raz.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Neveljavno enkratno geslo, poskusite še enkrat.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ogiltigt engångslösenord, vänligen försök en gång till.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Geçersiz tek kullanımlık şifre, lütfen bir kez daha deneyin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильний одноразовий пароль, спробуйте ще раз.",
+          "edit_level": 40
         }
       ]
     },
@@ -23582,9 +25082,134 @@
       "id": 182,
       "items": [
         {
+          "culture": "bg",
+          "value": "Грешно потребителско име, телефонен номер, имейл или еднократна парола. Телефонният номер трябва да включва кода на страната, например +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Nom d&#39;usuari, número de telèfon, correu electrònic o contrasenya d&#39;un sol ús incorrectes. Un número de telèfon ha d&#39;incloure el codi del país, p. ex. +44XXXXXXXXX",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Špatné uživatelské jméno, telefonní číslo, e-mail nebo jednorázové heslo. Telefonní číslo musí obsahovat předvolbu země, např. +44XXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Forkert brugernavn, telefonnummer, e-mail eller engangskodeord. Et telefonnummer skal indeholde landekoden, f.eks. +44XXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Falscher Benutzername, falsche Telefonnummer, falsche E-Mail oder falsches Einmalpasswort. Eine Telefonnummer muss die Landesvorwahl enthalten, z. B. +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Λάθος όνομα χρήστη, αριθμός τηλεφώνου, email ή κωδικός πρόσβασης μιας χρήσης. Ο αριθμός τηλεφώνου πρέπει να περιλαμβάνει τον κωδικό της χώρας, π.χ. +44XXXXXXXXXXX",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Wrong username, phone number, email or one-time password. A phone number must include the country code e.g. +44XXXXXXXXX",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Nombre de usuario, número de teléfono, correo electrónico o contraseña de un solo uso incorrectos. Un número de teléfono debe incluir el código del país, por ejemplo +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Vale kasutajanimi, telefoninumber, e-posti aadress või ühekordne parool. Telefoninumber peab sisaldama riigi koodi, nt +44XXXXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Väärä käyttäjätunnus, puhelinnumero, sähköpostiosoite tai kertakäyttösalasana. Puhelinnumerossa on oltava maakoodi, esim. +44XXXXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Nom d'utilisateur, numéro de téléphone, courriel ou mot de passe à usage unique erronés. Un numéro de téléphone doit inclure l'indicatif du pays, par exemple +44XXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Pogrešno korisničko ime, telefonski broj, e-pošta ili jednokratna lozinka. Telefonski broj mora sadržavati pozivni broj države, npr. +44XXXXXXXXX",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Rangt notandanafn, símanúmer, netfang eða einnota lykilorð. Símanúmer verður að innihalda landsnúmer, t.d. +44XXXXXXXXX",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Nome utente, numero di telefono, e-mail o password unica errati. Il numero di telefono deve includere il prefisso internazionale, ad esempio +44XXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Neteisingas naudotojo vardas, telefono numeris, el. pašto adresas arba vienkartinis slaptažodis. Į telefono numerį turi būti įtrauktas šalies kodas, pvz., +44XXXXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Nepareizs lietotājvārds, tālruņa numurs, e-pasta adrese vai vienreizēja parole. Tālruņa numuram jāietver valsts kods, piemēram, +44XXXXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Feil brukernavn, telefonnummer, e-post eller engangspassord. Et telefonnummer må inneholde landskoden, f.eks. +44XXXXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Verkeerde gebruikersnaam, telefoonnummer, e-mail of eenmalig wachtwoord. Een telefoonnummer moet de landcode bevatten, bijvoorbeeld +44XXXXXXXXX.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nieprawidłowa nazwa użytkownika, numer telefonu, adres e-mail lub hasło jednorazowe. Numer telefonu musi zawierać numer kierunkowy kraju, np. +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Nome de utilizador, número de telefone, e-mail ou palavra-passe de uso único errados. Um número de telefone tem de incluir o indicativo do país, por exemplo, +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Nume de utilizator, număr de telefon, e-mail sau parolă unică greșite. Un număr de telefon trebuie să includă codul de țară, de exemplu +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Nesprávne používateľské meno, telefónne číslo, e-mail alebo jednorazové heslo. Telefónne číslo musí obsahovať kód krajiny, napr. +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Napačno uporabniško ime, telefonska številka, e-pošta ali enkratno geslo. Telefonska številka mora vsebovati kodo države, npr. +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Fel användarnamn, telefonnummer, e-post eller engångslösenord. Ett telefonnummer måste innehålla landskoden, t.ex. +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Yanlış kullanıcı adı, telefon numarası, e-posta veya tek kullanımlık şifre. Telefon numarası ülke kodunu içermelidir, örneğin +44XXXXXXXXX",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Неправильне ім'я користувача, номер телефону, електронна пошта або одноразовий пароль. Номер телефону повинен містити код країни, наприклад +44XXXXXXXXX",
+          "edit_level": 40
         }
       ]
     },
@@ -23592,9 +25217,134 @@
       "id": 183,
       "items": [
         {
+          "culture": "bg",
+          "value": "На вашия имейл е изпратена нова еднократна парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;ha enviat una nova contrasenya d&#39;un sol ús al vostre correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš e-mail bylo zasláno nové jednorázové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En ny engangskodeord er blevet sendt til din e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein neues Einmal-Passwort wurde an Ihre E-Mail-Adresse gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ένας νέος κωδικός πρόσβασης μιας χρήσης έχει σταλεί στο email σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A new one-time password has been sent to your email.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Se ha enviado una nueva contraseña de un solo uso a su correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie e-posti aadressile on saadetud uus ühekordne parool.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Uusi kertakäyttösalasana on lähetetty sähköpostiisi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un nouveau mot de passe à usage unique a été envoyé à votre adresse électronique.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nova jednokratna lozinka poslana je na vašu e-mail adresu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Nýtt einnota lykilorð hefur verið sent á netfangið þitt.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Una nuova password unica è stata inviata al vostro indirizzo e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naujas vienkartinis slaptažodis buvo išsiųstas į jūsų el. paštą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu e-pastu ir nosūtīta jauna vienreizēja parole.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et nytt engangspassord har blitt sendt til e-posten din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is een nieuw eenmalig wachtwoord naar uw e-mailadres verzonden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Nowe jednorazowe hasło zostało wysłane na Twój adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Foi enviada para o seu e-mail uma nova palavra-passe de uso único.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "O nouă parolă unică a fost trimisă la adresa dvs. de e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Na váš e-mail bolo odoslané nové jednorazové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Na vaš e-poštni naslov je bilo poslano novo enkratno geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett nytt engångslösenord har skickats till din e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "E-postanıza yeni bir tek kullanımlık şifre gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Новий одноразовий пароль надіслано на вашу електронну пошту.",
+          "edit_level": 40
         }
       ]
     },
@@ -23602,9 +25352,134 @@
       "id": 184,
       "items": [
         {
+          "culture": "bg",
+          "value": "{0} е вашата {1} еднократна парола за влизане в системата. Не споделяйте еднократната си парола с никого.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "{0} és la teva contrasenya d&#39;un sol ús {1} per iniciar la sessió. No la comparteixis amb ningú.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "{0} je vaše {1} jednorázové heslo pro přihlášení. Své jednorázové heslo nikomu nesdělujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "{0} er dit {1} engangskodeord til at logge ind med. Del ikke dit engangskodeord med nogen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "{0} ist Ihr {1} einmaliges Passwort für die Anmeldung. Geben Sie Ihr Einmal-Passwort nicht an andere weiter.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "{0} είναι ο {1} κωδικός πρόσβασης μιας χρήσης για τη σύνδεση. Μην μοιραστείτε τον κωδικό πρόσβασης μιας χρήσης με κανέναν.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "{0} is your {1} one-time password for logging in. Don't share your one-time password with anyone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "{0} es tu {1} contraseña de un solo uso para iniciar sesión. No compartas tu contraseña de un solo uso con nadie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "{0} on teie {1} ühekordne salasõna sisselogimiseks. Ärge jagage oma ühekordset parooli kellegagi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "{0} on {1} kertakäyttösalasanasi kirjautumista varten. Älä jaa kertakäyttösalasanaasi kenenkään kanssa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "{0} est votre {1} mot de passe à usage unique pour vous connecter. Ne communiquez votre mot de passe à usage unique à personne.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "{0} je vaša {1} jednokratna lozinka za prijavu. Ne dijelite svoju jednokratnu lozinku ni s kim.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "{0} er einnota lykilorðið þitt {1} til innskráningar. Ekki deila einnota lykilorðinu þínu með neinum.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "{0} è la password unica di accesso {1}. Non condividere la password unica con nessuno.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "{0} yra jūsų {1} vienkartinis prisijungimo slaptažodis. Savo vienkartinio slaptažodžio su niekuo nesidalykite.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "{0} ir jūsu {1} vienreizējā parole, ar kuru pierakstīties. Nevienam nedalieties ar savu vienreizējo paroli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "{0} er ditt {1} engangspassord for innlogging. Ikke del engangspassordet ditt med noen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "{0} is je {1} eenmalige wachtwoord om in te loggen. Deel je eenmalige wachtwoord met niemand.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "{0} to twoje {1} jednorazowe hasło do logowania. Nie udostępniaj nikomu swojego jednorazowego hasła.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "{0} é a sua palavra-passe de uso único {1} para iniciar sessão. Não partilhe a sua palavra-passe de uso único com ninguém.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "{0} este parola dvs. unică {1} pentru conectare. Nu partajați parola unică cu nimeni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "{0} je vaše {1} jednorazové heslo na prihlásenie. Svoje jednorazové heslo nikomu neposkytujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "{0} je vaše {1} enkratno geslo za prijavo. Svojega enkratnega gesla ne delite z nikomer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "{0} är ditt {1} engångslösenord för inloggning. Dela inte ditt engångslösenord med någon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "{0}, oturum açmak için kullandığınız {1} tek kullanımlık parolanızdır. Tek kullanımlık şifrenizi kimseyle paylaşmayın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "{0} - ваш {1} одноразовий пароль для входу в систему. Не повідомляйте свій одноразовий пароль нікому.",
+          "edit_level": 40
         }
       ]
     },
@@ -23612,9 +25487,134 @@
       "id": 185,
       "items": [
         {
+          "culture": "bg",
+          "value": "На телефона ви е изпратена нова еднократна парола.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "S&#39;ha enviat una nova contrasenya d&#39;un sol ús al teu telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Na váš telefon bylo odesláno nové jednorázové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "En ny engangskodeord er blevet sendt til din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Ein neues Einmalpasswort wurde an Ihr Telefon gesendet.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ένας νέος κωδικός πρόσβασης μιας χρήσης έχει σταλεί στο τηλέφωνό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A new one-time password has been sent to your phone.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Se ha enviado una nueva contraseña de un solo uso a tu teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Teie telefonile on saadetud uus ühekordne parool.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Uusi kertakäyttösalasana on lähetetty puhelimeesi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un nouveau mot de passe à usage unique a été envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Nova jednokratna lozinka poslana je na vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Nýtt einnota lykilorð hefur verið sent í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Una nuova password unica è stata inviata al vostro telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Į jūsų telefoną išsiųstas naujas vienkartinis slaptažodis.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Uz jūsu tālruni ir nosūtīta jauna vienreizēja parole.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et nytt engangspassord har blitt sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er is een nieuw eenmalig wachtwoord naar uw telefoon gestuurd.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Na Twój telefon zostało wysłane nowe jednorazowe hasło.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Foi enviada para o seu telemóvel uma nova palavra-passe de uso único.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "O nouă parolă unică a fost trimisă pe telefonul dvs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Do vášho telefónu bolo odoslané nové jednorazové heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Na vaš telefon je bilo poslano novo enkratno geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett nytt engångslösenord har skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Telefonunuza yeni bir tek kullanımlık şifre gönderildi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Новий одноразовий пароль надіслано на ваш телефон.",
+          "edit_level": 40
         }
       ]
     },
@@ -23622,9 +25622,134 @@
       "id": 186,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използвайте еднократна парола по имейл.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitzeu una contrasenya d&#39;un sol ús per correu electrònic.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použijte jednorázové heslo prostřednictvím e-mailu.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug engangskodeord via e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">Einmaliges Passwort per E-Mail verwenden.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε κωδικό πρόσβασης μίας χρήσης μέσω email.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via email.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar contraseña de un solo uso por correo electrónico.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage ühekordset salasõna e-posti teel.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä kertakäyttösalasana sähköpostitse.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliser le mot de passe à usage unique par courriel.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite jednokratnu lozinku putem e-pošte.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notið einnota lykilorð í tölvupósti.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizzare la password unica via email.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Panaudokite vienkartinį slaptažodį el. paštu.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantot vienreizēju paroli, izmantojot e-pastu.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk engangspassord via e-post.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik eenmalig wachtwoord via e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj jednorazowego hasła przez e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar a palavra-passe de uso único por correio eletrónico.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați parola unică prin e-mail.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použiť jednorazové heslo prostredníctvom e-mailu.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Uporaba enkratnega gesla prek e-pošte.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd engångslösenord via e-post.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">E-posta yoluyla tek seferlik şifre kullanın.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використовуйте одноразовий пароль електронною поштою.</a>",
+          "edit_level": 40
         }
       ]
     },
@@ -23632,9 +25757,134 @@
       "id": 187,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използвайте паролата си.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitza la teva contrasenya.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použijte své heslo.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug dit kodeord.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">Verwenden Sie Ihr Passwort.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε τον κωδικό πρόσβασής σας.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use your password.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Usa tu contraseña.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage oma parooli.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä salasanasi.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilisez votre mot de passe.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite svoju lozinku.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notaðu lykilorðið þitt.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Usa la tua password.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Naudokite savo slaptažodį.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantojiet savu paroli.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk passordet ditt.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik je wachtwoord.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj swojego hasła.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilize a sua palavra-passe.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați parola.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použite svoje heslo.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Uporabite svoje geslo.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd ditt lösenord.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Şifrenizi kullanın.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використайте свій пароль.</a>",
+          "edit_level": 40
         }
       ]
     },
@@ -23642,9 +25892,134 @@
       "id": 188,
       "items": [
         {
+          "culture": "bg",
+          "value": "<a href=\"{0}\" class=\"{1}\">Използване на еднократна парола чрез SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilitzeu una contrasenya d&#39;un sol ús via SMS.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použití jednorázového hesla prostřednictvím SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "<a href=\"{0}\" class=\"{1}\">Brug engangskodeord via SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "<a href=\"{0}\" class=\"{1}\">Einmaliges Passwort per SMS verwenden.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "<a href=\"{0}\" class=\"{1}\">Χρησιμοποιήστε κωδικό πρόσβασης μίας χρήσης μέσω SMS.</a>",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar contraseña de un solo uso por SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "<a href=\"{0}\" class=\"{1}\">Kasutage ühekordset salasõna SMS-i teel.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "<a href=\"{0}\" class=\"{1}\">Käytä kertakäyttösalasana tekstiviestillä.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utiliser le mot de passe à usage unique par SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "<a href=\"{0}\" class=\"{1}\">Koristite jednokratnu lozinku putem SMS-a.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "<a href=\"{0}\" class=\"{1}\">Notið einnota lykilorð í gegnum SMS.</a>",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizzare la password unica via SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Naudokite vienkartinį slaptažodį SMS žinute.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Izmantojiet vienreizējo paroli, izmantojot SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "<a href=\"{0}\" class=\"{1}\">Bruk engangspassord via SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Gebruik eenmalig wachtwoord via SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Użyj jednorazowego hasła przez SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizar palavra-passe de uso único através de SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "<a href=\"{0}\" class=\"{1}\">Utilizați parola unică prin SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Použiť jednorazové heslo prostredníctvom SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "<a href=\"{0}\" class=\"{1}\">Uporaba enkratnega gesla prek sporočila SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "<a href=\"{0}\" class=\"{1}\">Använd engångslösenord via SMS.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "<a href=\"{0}\" class=\"{1}\">SMS aracılığıyla tek kullanımlık şifre kullanın.</a>",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "<a href=\"{0}\" class=\"{1}\">Використовуйте одноразовий пароль через SMS.</a>",
+          "edit_level": 40
         }
       ]
     }

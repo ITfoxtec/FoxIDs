@@ -81,7 +81,7 @@ Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#fo
 
 *This will grant the seed tool full access to your tenant, for least privileges please see [API access rights](control.md#api-access-rights).*
 
-1. Login to your tenant
+1. Login to your tenant (in self-hosted the main tenant)
 2. Select the **master** environment (in the top centre environment selector)
 3. Select the **Applications** tab
 4. Click **New Application**

@@ -270,12 +270,19 @@ namespace FoxIDs.Repository
             return await db.RemoveAllAsync(partitionId, whereQuery);
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             foreach (string id in ids)
             {
-                var partitionId = id.IdToTenantPartitionId();
-                _ = await db.RemoveAsync(id, partitionId);
+                if (!queryAdditionalIds)
+                {
+                    var partitionId = id.IdToTenantPartitionId();
+                    _ = await db.RemoveAsync(id, partitionId);
+                }
+                else
+                {
+                    _ = await GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                }
             }
         }
 

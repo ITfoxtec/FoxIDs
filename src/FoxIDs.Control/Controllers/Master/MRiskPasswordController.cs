@@ -85,27 +85,20 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete risk passwords.
         /// </summary>
-        /// <param name="riskPasswordDelete">Delete all risk passwords if empty. Alternatively, select to delete specific risk passwords.</param>
+        /// <param name="riskPasswordDelete">Delete specified risk passwords.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete = null)
+        public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete)
         {
-            if (riskPasswordDelete == null)
-            {
-                await masterDataRepository.DeleteListAsync<RiskPassword>();
-            }
-            else
-            {
-                if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                var ids = new List<string>();
-                foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
-                {
-                    ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
-                }
-
-                await masterDataRepository.DeleteListAsync<RiskPassword>(ids);
+            var ids = new List<string>();
+            foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
+            {
+                ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
             }
+
+            await masterDataRepository.DeleteListAsync<RiskPassword>(ids);
 
             return NoContent();
         }

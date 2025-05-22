@@ -284,7 +284,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();
@@ -295,7 +295,10 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection<T>();
-                _ = await collection.DeleteManyAsync(f => f.PartitionId.Equals(partitionId) && ids.Where(id => id.Equals(f.Id)).Any());
+                foreach (var id in ids)
+                {
+                    _ = await collection.DeleteOneAsync(f => f.PartitionId.Equals(partitionId) && (f.Id.Equals(id) || (queryAdditionalIds && f.AdditionalIds.Where(a => a.Equals(id)).Any())));
+                }
             }
             catch (Exception ex)
             {

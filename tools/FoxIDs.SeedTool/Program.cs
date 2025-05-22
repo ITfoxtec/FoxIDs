@@ -21,8 +21,7 @@ namespace FoxIDs.SeedTool
 
                 Console.WriteLine("Select seed action:");
                 Console.WriteLine("U: Upload users to an environment");
-                Console.WriteLine("E: Delete all users in an environment with one DB call (recommended, only supported by MongoDB)");
-                Console.WriteLine("R: Delete all users in an environment with many DB calls");
+                Console.WriteLine("R: Delete all users in an environment");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -32,9 +31,6 @@ namespace FoxIDs.SeedTool
                 {
                     case 'u':
                         await serviceProvider.GetService<UserSeedLogic>().SeedAsync();
-                        break;
-                    case 'e':
-                        await serviceProvider.GetService<UserSeedLogic>().DeleteAllInPartitionAsync();
                         break;
                     case 'r':
                         await serviceProvider.GetService<UserSeedLogic>().DeleteAllAsync();

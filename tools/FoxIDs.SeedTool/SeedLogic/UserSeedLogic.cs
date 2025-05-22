@@ -141,9 +141,12 @@ namespace FoxIDs.SeedTool.SeedLogic
             var totalCount = 0;
             while (true)
             {
-                var usersResult = await GetUserIdentifiersFirstListAsync(await accessLogic.GetAccessTokenAsync());
+                var accessToken = await accessLogic.GetAccessTokenAsync();
+                Console.Write("Get users");
+                var usersResult = await GetUserIdentifiersFirstListAsync(accessToken);
                 if(usersResult?.Data?.Count > 0)
                 {
+                    Console.WriteLine($": {usersResult?.Data?.Count}");
                     totalCount = totalCount + usersResult.Data.Count();
                     await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), GetUserIdentifiers(usersResult.Data).ToList());
                     Console.WriteLine($"Users deleted: {totalCount}");
@@ -154,7 +157,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 }
             }
 
-            Console.WriteLine($"All {totalCount} users have been deleted");
+            Console.WriteLine($"{Environment.NewLine}All {totalCount} users have been deleted");
         }
 
         private IEnumerable<string> GetUserIdentifiers(HashSet<UserApiModel> users)
@@ -180,12 +183,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             }
         }
 
-        public async Task DeleteAllInPartitionAsync()
-        {
-            Console.WriteLine("**Delete all users**");
-            await DeletePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync());
-            Console.WriteLine("All users have been deleted");
-        }
         private async Task SavePasswordsRiskListAsync(string accessToken, List<CreateUserApiModel> users)
         {
             var client = httpClientFactory.CreateClient();
@@ -204,17 +201,16 @@ namespace FoxIDs.SeedTool.SeedLogic
             return result.ToObject<PaginationResponse<UserApiModel>>();   
         }
 
-        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> userIdentifiers = null)
+        private async Task DeletePasswordsRiskListAsync(string accessToken, List<string> userIdentifiers)
         {
             var request = new HttpRequestMessage();
             request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
-            if (userIdentifiers != null)
-            {
-                var body = new UsersDeleteApiModel { UserIdentifiers = userIdentifiers };
-                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
-                content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                request.Content = content;
-            }
+
+            var body = new UsersDeleteApiModel { UserIdentifiers = userIdentifiers };
+            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body));
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            request.Content = content;
+
             request.Method = new HttpMethod("DELETE");
             request.RequestUri = new Uri(UsersApiEndpoint);
             var client = httpClientFactory.CreateClient();

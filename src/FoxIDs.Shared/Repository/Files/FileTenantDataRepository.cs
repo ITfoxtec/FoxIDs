@@ -247,12 +247,19 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             foreach (string id in ids)
             {
-                var partitionId = id.IdToMasterPartitionId();
-                await fileDataRepository.DeleteAsync(id, partitionId, required: false);
+                if (!queryAdditionalIds)
+                {
+                    var partitionId = id.IdToMasterPartitionId();
+                    await fileDataRepository.DeleteAsync(id, partitionId, required: false);
+                }
+                else
+                {
+                    _ = GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                }
             }
         }
 

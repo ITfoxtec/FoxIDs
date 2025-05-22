@@ -86,8 +86,9 @@ namespace FoxIDs.Logic
                                 item.Value = totalCount;
                                 item.SubItems = [new Api.UsageLogItem { Type = Api.UsageLogTypes.RealCount, Value = realCount }, new Api.UsageLogItem { Type = Api.UsageLogTypes.ExtraCount, Value = extraCount }];
                                 break;
+                            case Api.UsageLogTypes.Passwordless:
                             case Api.UsageLogTypes.Confirmation:
-                            case Api.UsageLogTypes.ResetPassword:
+                            case Api.UsageLogTypes.SetPassword:
                             case Api.UsageLogTypes.Mfa:
                                 (var itemCount, var smsCount, var smsPrice, var emailCount) = GetCountAndSmsEmail(bucketItem);
                                 item.Value = itemCount;
@@ -124,12 +125,22 @@ namespace FoxIDs.Logic
             }
             if (logRequest.IncludeAdditional)
             {
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Passwordless.ToString()))
+                {
+                    yield return bucketItem;
+                }
+
                 foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.Confirmation.ToString()))
                 {
                     yield return bucketItem;
                 }
-           
-                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ResetPassword.ToString()))
+
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.SetPassword.ToString()))
+                {
+                    yield return bucketItem;
+                }
+
+                foreach (var bucketItem in GetAggregationItems(aggregations, Api.UsageLogTypes.ResetPassword.ToString())) 
                 {
                     yield return bucketItem;
                 }
@@ -170,6 +181,12 @@ namespace FoxIDs.Logic
             {
                 throw new Exception($"Value '{usageType}' cannot be converted to enum type '{nameof(Api.UsageLogTypes)}'.");
             }
+
+            if (logType == Api.UsageLogTypes.ResetPassword)
+            {
+                logType = Api.UsageLogTypes.SetPassword;
+            }
+
             return logType;
         }
 
@@ -331,7 +348,9 @@ namespace FoxIDs.Logic
             }
             if (logRequest.IncludeAdditional)
             {
+                AddFilter(filters, UsageLogTypes.Passwordless.ToString());
                 AddFilter(filters, UsageLogTypes.Confirmation.ToString());
+                AddFilter(filters, UsageLogTypes.SetPassword.ToString());
                 AddFilter(filters, UsageLogTypes.ResetPassword.ToString());
                 AddFilter(filters, UsageLogTypes.Mfa.ToString());
             }

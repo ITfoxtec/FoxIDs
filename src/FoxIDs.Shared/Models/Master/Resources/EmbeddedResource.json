@@ -201,27 +201,27 @@
       "id": 44
     },
     {
-      "name": "Reset password",
+      "name": "Set password",
       "id": 45
     },
     {
-      "name": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password.",
+      "name": "A confirmation code has just been sent to your email. Please use the confirmation code to set your desired password.",
       "id": 46
     },
     {
-      "name": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password.",
+      "name": "A confirmation code has been sent to your email. Please use the confirmation code to set your desired password.",
       "id": 47
     },
     {
-      "name": "Please use the new reset password confirmation code just sent to your email.",
+      "name": "Please use the new confirmation code that has just been sent to your email.",
       "id": 48
     },
     {
-      "name": "Invalid reset password confirmation code, please try one more time.",
+      "name": "Invalid confirmation code, please try one more time.",
       "id": 49
     },
     {
-      "name": "Please reset your password with the confirmation code sent to your email.",
+      "name": "Please set your desired password with the confirmation code sent to your email.",
       "id": 50
     },
     {
@@ -229,11 +229,11 @@
       "id": 51
     },
     {
-      "name": "Please enter a reset password confirmation code.",
+      "name": "Please enter the confirmation code.",
       "id": 52
     },
     {
-      "name": "Your{0}reset password confirmation code: {1}",
+      "name": "{0} is your {1} confirmation code to set your desired password. Don't share your code with anyone.",
       "id": 53
     },
     {
@@ -241,7 +241,7 @@
       "id": 54
     },
     {
-      "name": "Your{0}email confirmation code: {1}",
+      "name": "This is you {0} confirmation code to verify your phone number. Don't share your code with anyone.",
       "id": 55
     },
     {
@@ -429,11 +429,11 @@
       "id": 101
     },
     {
-      "name": "{0}reset password",
+      "name": "{0} set password",
       "id": 102
     },
     {
-      "name": "{0}email confirmation",
+      "name": "{0} verify your phone number",
       "id": 103
     },
     {
@@ -549,7 +549,7 @@
       "id": 131
     },
     {
-      "name": "Your{0}SMS confirmation code: {1}",
+      "name": "{0} is your {1} confirmation code to verify your phone number. Don't share your code with anyone.",
       "id": 132
     },
     {
@@ -557,15 +557,15 @@
       "id": 133
     },
     {
-      "name": "A reset password confirmation code has just been sent to your phone. Please use the confirmation code to reset your password.",
+      "name": "A confirmation code has just been sent to your phone. Please use the confirmation code to set your desired password.",
       "id": 134
     },
     {
-      "name": "Please reset your password with the confirmation code sent to your phone.",
+      "name": "Please set your desired password with the confirmation code sent to your phone.",
       "id": 135
     },
     {
-      "name": "A new reset password confirmation code has been sent to your phone. Please use the confirmation code to reset your password.",
+      "name": "A confirmation code has been sent to your phone. Please use the confirmation code to set your desired password.",
       "id": 136
     },
     {
@@ -613,7 +613,7 @@
       "id": 147
     },
     {
-      "name": "Your{0}SMS two-factor code: {1}",
+      "name": "{0} is your {1} two-factor code. Don't share your code with anyone.",
       "id": 148
     },
     {
@@ -645,11 +645,11 @@
       "id": 155
     },
     {
-      "name": "{0}email two-factor",
+      "name": "{0} two-factor code",
       "id": 156
     },
     {
-      "name": "Your{0}email two-factor code: {1}",
+      "name": "This is you {0} two-factor code. Don't share your code with anyone.",
       "id": 157
     },
     {
@@ -683,6 +683,98 @@
     {
       "name": "Please do not use the username or parts of it.",
       "id": 165
+    },
+    {
+      "name": "Please use the new confirmation code that has just been sent to your phone.",
+      "id": 166
+    },
+    {
+      "name": "This is you {0} confirmation code to set your desired password. Don't share your code with anyone.",
+      "id": 167
+    },
+    {
+      "name": "Confirmation code: {0}",
+      "id": 168
+    },
+    {
+      "name": "Two-factor code: {0}",
+      "id": 169
+    },
+    {
+      "name": "One-time password",
+      "id": 170
+    },
+    {
+      "name": "Use one-time password via <a href=\"{0}\" class=\"{1}\">SMS</a> or <a href=\"{2}\" class=\"{3}\">email</a>.",
+      "id": 171
+    },
+    {
+      "name": "A one-time password has just been sent to your phone.",
+      "id": 172
+    },
+    {
+      "name": "Please enter a valid one-time password.",
+      "id": 173
+    },
+    {
+      "name": "Send new one-time password",
+      "id": 174
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">one-time password via email</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+      "id": 175
+    },
+    {
+      "name": "{0} one-time password",
+      "id": 176
+    },
+    {
+      "name": "This is you {0} one-time password for logging in. Don't share your one-time password with anyone.",
+      "id": 177
+    },
+    {
+      "name": "One-time password: {0}",
+      "id": 178
+    },
+    {
+      "name": "A one-time password has just been sent to your email.",
+      "id": 179
+    },
+    {
+      "name": "Use <a href=\"{0}\" class=\"{1}\">one-time password via SMS</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+      "id": 180
+    },
+    {
+      "name": "Invalid one-time password, please try one more time.",
+      "id": 181
+    },
+    {
+      "name": "Wrong username, phone number, email or one-time password. A phone number must include the country code e.g. +44XXXXXXXXX",
+      "id": 182
+    },
+    {
+      "name": "A new one-time password has been sent to your email.",
+      "id": 183
+    },
+    {
+      "name": "{0} is your {1} one-time password for logging in. Don't share your one-time password with anyone.",
+      "id": 184
+    },
+    {
+      "name": "A new one-time password has been sent to your phone.",
+      "id": 185
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via email.</a>",
+      "id": 186
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use your password.</a>",
+      "id": 187
+    },
+    {
+      "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
+      "id": 188
     }
   ],
   "resources": [
@@ -6496,132 +6588,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Възстановяване на паролата",
+          "value": "Задаване на парола",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Restablir la contrasenya",
+          "value": "Estableix la contrasenya",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Obnovení hesla",
+          "value": "Nastavení hesla",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Nulstil kodeord",
+          "value": "Angive kodeord",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Passwort zurücksetzen",
+          "value": "Passwort festlegen",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Επαναφορά κωδικού πρόσβασης",
+          "value": "Ορισμός κωδικού πρόσβασης",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Reset password",
+          "value": "Set password",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Restablecer contraseña",
+          "value": "Establecer contraseña",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Parooli lähtestamine",
+          "value": "Määrake parool",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Nollaa salasana",
+          "value": "Aseta salasana",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Réinitialiser le mot de passe",
+          "value": "Définir le mot de passe",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Resetiranje lozinke",
+          "value": "Postavi lozinku",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Endur stilla lykilorð",
+          "value": "Setja lykilorð",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Reimpostare la password",
+          "value": "Impostare la password",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Iš naujo nustatyti slaptažodį",
+          "value": "Nustatyti slaptažodį",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Paroles atiestatīšana",
+          "value": "Iestatīt paroli",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Tilbakestill passord",
+          "value": "Angi passord",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Wachtwoord opnieuw instellen",
+          "value": "Wachtwoord instellen",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Resetowanie hasła",
+          "value": "Ustaw hasło",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Repor a palavra-passe",
+          "value": "Definir palavra-passe",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Resetare parolă",
+          "value": "Setați parola",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Obnovenie hesla",
+          "value": "Nastavenie hesla",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Ponastavitev gesla",
+          "value": "Nastavitev gesla",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Återställ lösenord",
+          "value": "Ange lösenord",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Şifreyi sıfırla",
+          "value": "Şifre belirleme",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Скинути пароль",
+          "value": "Встановити пароль",
           "edit_level": 40
         }
       ]
@@ -6631,132 +6723,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "На имейла ви току-що беше изпратен код за потвърждение на нулиране на паролата. Моля, използвайте кода за потвърждение, за да възстановите паролата си.",
+          "value": "На имейла ви току-що беше изпратен код за потвърждение. Моля, използвайте кода за потвърждение, за да зададете желаната от вас парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "S&#39;acaba d&#39;enviar un codi de confirmació de restabliment de la contrasenya al vostre correu electrònic. Si us plau, utilitzeu el codi de confirmació per restablir la vostra contrasenya.",
+          "value": "Acaba d&#39;enviar-te un codi de confirmació al teu correu electrònic. Si us plau, utilitza&#39;l per definir la contrasenya que desitgis.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Na váš e-mail byl právě odeslán kód pro potvrzení obnovení hesla. Pro obnovení hesla použijte potvrzovací kód.",
+          "value": "Na váš e-mail byl právě odeslán potvrzovací kód. Potvrzovací kód použijte k nastavení požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "En nulstil kodeords bekræftelseskode er netop blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden.",
+          "value": "En bekræftelseskode er netop blevet sendt til din e-mail. Brug venligst bekræftelseskoden til at angive dit ønskede kodeord.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ein Bestätigungscode zum Zurücksetzen des Passworts wurde soeben an Ihre E-Mail gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr Passwort zurückzusetzen.",
+          "value": "Sie haben soeben einen Bestätigungscode per E-Mail erhalten. Bitte verwenden Sie den Bestätigungscode, um Ihr gewünschtes Passwort festzulegen.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ένας κωδικός επιβεβαίωσης επαναφοράς κωδικού πρόσβασης μόλις εστάλη στο email σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να επαναφέρετε τον κωδικό πρόσβασής σας.",
+          "value": "Μόλις εστάλη ένας κωδικός επιβεβαίωσης στο email σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να ορίσετε τον επιθυμητό κωδικό πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password.",
+          "value": "A confirmation code has just been sent to your email. Please use the confirmation code to set your desired password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Acaba de recibir en su correo electrónico un código de confirmación para restablecer su contraseña. Utilice el código de confirmación para restablecer su contraseña.",
+          "value": "Se acaba de enviar un código de confirmación a su correo electrónico. Utilice el código de confirmación para establecer la contraseña deseada.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie e-posti aadressile on just saadetud parooli taastamise kinnituskood. Palun kasutage kinnituskoodi oma parooli lähtestamiseks.",
+          "value": "Kinnituskood on just saadetud teie e-posti aadressile. Palun kasutage kinnituskoodi, et määrata soovitud salasõna.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Salasanan vahvistuskoodi on juuri lähetetty sähköpostiisi. Käytä vahvistuskoodia salasanasi palauttamiseen.",
+          "value": "Vahvistuskoodi on juuri lähetetty sähköpostiisi. Käytä vahvistuskoodia asettaaksesi haluamasi salasanan.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Un code de confirmation de réinitialisation du mot de passe vient d'être envoyé à votre adresse électronique. Veuillez utiliser le code de confirmation pour réinitialiser votre mot de passe.",
+          "value": "Un code de confirmation vient d'être envoyé à votre adresse électronique. Veuillez utiliser ce code de confirmation pour définir le mot de passe que vous souhaitez.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Potvrdni kod za poništavanje lozinke upravo je poslan na vašu e-poštu. Upotrijebite kod za potvrdu za ponovno postavljanje lozinke.",
+          "value": "Potvrdni kod je upravo poslan na vašu e-poštu. Molimo vas da koristite potvrdni kod za postavljanje željene lozinke.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Staðfestingarkóði fyrir endurstillt lykilorð hefur verið sendur á netfangið þitt. Vinsamlegast notaðu staðfestingarkóðann til að endurstilla lykilorðið þitt.",
+          "value": "Staðfestingarkóði hefur verið sendur á netfangið þitt. Vinsamlegast notaðu staðfestingarkóðann til að stilla lykilorðið sem þú vilt nota.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Un codice di conferma per la reimpostazione della password è stato appena inviato al vostro indirizzo e-mail. Utilizzare il codice di conferma per reimpostare la password.",
+          "value": "Un codice di conferma è stato appena inviato al vostro indirizzo e-mail. Utilizzate il codice di conferma per impostare la password desiderata.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Į jūsų el. paštą ką tik išsiųstas slaptažodžio atstatymo patvirtinimo kodas. Naudokite patvirtinimo kodą, kad iš naujo nustatytumėte slaptažodį.",
+          "value": "Į jūsų el. paštą ką tik išsiųstas patvirtinimo kodas. Naudokite patvirtinimo kodą norimam slaptažodžiui nustatyti.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Uz jūsu e-pasta adresi ir nosūtīts paroles atiestatīšanas apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai atjaunotu paroli.",
+          "value": "Uz jūsu e-pastu ir nosūtīts apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai iestatītu vēlamo paroli.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "En bekreftelseskode for tilbakestilling av passord har nettopp blitt sendt til e-posten din. Bruk bekreftelseskoden til å tilbakestille passordet ditt.",
+          "value": "En bekreftelseskode har nettopp blitt sendt til din e-post. Bruk bekreftelseskoden til å angi ønsket passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Er is zojuist een bevestigingscode voor het resetten van je wachtwoord naar je e-mail gestuurd. Gebruik de bevestigingscode om je wachtwoord opnieuw in te stellen.",
+          "value": "Er is zojuist een bevestigingscode naar uw e-mail verzonden. Gebruik de bevestigingscode om je gewenste wachtwoord in te stellen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Kod potwierdzenia resetowania hasła został właśnie wysłany na Twój adres e-mail. Użyj kodu potwierdzającego, aby zresetować hasło.",
+          "value": "Kod potwierdzający został właśnie wysłany na Twój adres e-mail. Użyj kodu potwierdzającego, aby ustawić żądane hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Acabou de ser enviado para o seu e-mail um código de confirmação de reposição da palavra-passe. Utilize o código de confirmação para redefinir a sua palavra-passe.",
+          "value": "Acabou de ser enviado um código de confirmação para o seu e-mail. Utilize o código de confirmação para definir a palavra-passe pretendida.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Un cod de confirmare a parolei de resetare tocmai a fost trimis la adresa dvs. de e-mail. Vă rugăm să utilizați codul de confirmare pentru a vă reseta parola.",
+          "value": "Un cod de confirmare tocmai a fost trimis pe adresa dvs. de e-mail. Vă rugăm să utilizați codul de confirmare pentru a vă seta parola dorită.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Na váš e-mail bol práve odoslaný kód na potvrdenie obnovenia hesla. Na obnovenie hesla použite potvrdzovací kód.",
+          "value": "Na váš e-mail bol práve odoslaný potvrdzovací kód. Potvrdzovací kód použite na nastavenie požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Na vaš e-poštni naslov je bila pravkar poslana potrditvena koda za ponastavitev gesla. Uporabite potrditveno kodo za ponastavitev gesla.",
+          "value": "Na vaš e-poštni naslov je bila pravkar poslana potrditvena koda. S potrditveno kodo nastavite želeno geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "En bekräftelsekod för återställning av lösenord har just skickats till din e-post. Använd bekräftelsekoden för att återställa ditt lösenord.",
+          "value": "En bekräftelsekod har just skickats till din e-post. Använd bekräftelsekoden för att ställa in ditt önskade lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Az önce e-postanıza bir şifre sıfırlama onay kodu gönderildi. Lütfen şifrenizi sıfırlamak için onay kodunu kullanın.",
+          "value": "Az önce e-postanıza bir onay kodu gönderildi. Lütfen istediğiniz şifreyi belirlemek için onay kodunu kullanın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "На вашу електронну пошту було надіслано код підтвердження для зміни паролю. Будь ласка, використовуйте код підтвердження для зміни пароля.",
+          "value": "Код підтвердження щойно надіслано на вашу електронну пошту. Будь ласка, використовуйте код підтвердження, щоб встановити бажаний пароль.",
           "edit_level": 40
         }
       ]
@@ -6766,132 +6858,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "На електронната ви поща е изпратен нов код за потвърждение на нулиране на паролата. Моля, използвайте кода за потвърждение, за да възстановите паролата си.",
+          "value": "На имейла ви е изпратен код за потвърждение. Моля, използвайте кода за потвърждение, за да зададете желаната от вас парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "S&#39;ha enviat un nou codi de confirmació de restabliment de la contrasenya al vostre correu electrònic. Si us plau, utilitzeu el codi de confirmació per restablir la vostra contrasenya.",
+          "value": "S&#39;ha enviat un codi de confirmació al vostre correu electrònic. Si us plau, utilitzeu el codi de confirmació per definir la contrasenya desitjada.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Na váš e-mail byl zaslán nový kód pro potvrzení obnovení hesla. Pro obnovení hesla použijte potvrzovací kód.",
+          "value": "Na váš e-mail byl zaslán potvrzovací kód. Potvrzovací kód použijte k nastavení požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "En ny nulstil kodeords bekræftelseskode er blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden.",
+          "value": "Der er sendt en bekræftelseskode til din e-mail. Brug venligst bekræftelseskoden til at angive dit ønskede kodeord.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ein neuer Bestätigungscode zum Zurücksetzen des Passworts wurde an Ihre E-Mail gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr Passwort zurückzusetzen.",
+          "value": "Ein Bestätigungscode wurde Ihnen per E-Mail zugesandt. Bitte verwenden Sie den Bestätigungscode, um Ihr gewünschtes Passwort festzulegen.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ένας νέος κωδικός επιβεβαίωσης επαναφοράς κωδικού πρόσβασης έχει σταλεί στο email σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να επαναφέρετε τον κωδικό πρόσβασής σας.",
+          "value": "Ένας κωδικός επιβεβαίωσης έχει σταλεί στο email σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να ορίσετε τον επιθυμητό κωδικό πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password.",
+          "value": "A confirmation code has been sent to your email. Please use the confirmation code to set your desired password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Se ha enviado a su correo electrónico un nuevo código de confirmación para restablecer la contraseña. Utilice el código de confirmación para restablecer su contraseña.",
+          "value": "Se ha enviado un código de confirmación a su correo electrónico. Utilice el código de confirmación para establecer la contraseña deseada.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie e-posti aadressile on saadetud uus salasõna kinnituskood. Palun kasutage kinnituskoodi oma parooli lähtestamiseks.",
+          "value": "Kinnituskood on saadetud teie e-posti aadressile. Palun kasutage kinnituskoodi, et määrata soovitud salasõna.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Uusi salasanan vahvistuskoodi on lähetetty sähköpostiisi. Käytä vahvistuskoodia salasanasi palauttamiseen.",
+          "value": "Vahvistuskoodi on lähetetty sähköpostiisi. Käytä vahvistuskoodia asettaaksesi haluamasi salasanan.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Un nouveau code de confirmation de réinitialisation du mot de passe a été envoyé à votre adresse électronique. Veuillez utiliser le code de confirmation pour réinitialiser votre mot de passe.",
+          "value": "Un code de confirmation a été envoyé à votre adresse électronique. Veuillez utiliser le code de confirmation pour définir le mot de passe de votre choix.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Novi potvrdni kod za poništavanje lozinke poslan je na vašu e-poštu. Upotrijebite kod za potvrdu za ponovno postavljanje lozinke.",
+          "value": "Potvrdni kod je poslan na vašu e-poštu. Molimo vas da koristite potvrdni kod za postavljanje željene lozinke.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Nýr staðfestingarkóði fyrir endurstillt lykilorð hefur verið sendur á netfangið þitt. Vinsamlegast notaðu staðfestingarkóðann til að endurstilla lykilorðið þitt.",
+          "value": "Staðfestingarkóði hefur verið sendur á netfangið þitt. Vinsamlegast notaðu staðfestingarkóðann til að stilla lykilorðið sem þú vilt nota.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Un nuovo codice di conferma per la reimpostazione della password è stato inviato al vostro indirizzo e-mail. Utilizzare il codice di conferma per reimpostare la password.",
+          "value": "Un codice di conferma è stato inviato al vostro indirizzo e-mail. Utilizzare il codice di conferma per impostare la password desiderata.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Į jūsų el. paštą išsiųstas naujas slaptažodžio atstatymo patvirtinimo kodas. Naudokite patvirtinimo kodą, kad iš naujo nustatytumėte slaptažodį.",
+          "value": "Į jūsų el. paštą išsiųstas patvirtinimo kodas. Naudokite patvirtinimo kodą norimam slaptažodžiui nustatyti.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Uz jūsu e-pastu ir nosūtīts jauns paroles atiestatīšanas apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai atjaunotu paroli.",
+          "value": "Uz jūsu e-pastu ir nosūtīts apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai iestatītu vēlamo paroli.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "En ny bekreftelseskode for tilbakestilling av passord er sendt til e-posten din. Bruk bekreftelseskoden til å tilbakestille passordet ditt.",
+          "value": "En bekreftelseskode har blitt sendt til din e-post. Bruk bekreftelseskoden til å angi ønsket passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Er is een nieuwe bevestigingscode voor het resetten van je wachtwoord naar je e-mail gestuurd. Gebruik de bevestigingscode om je wachtwoord opnieuw in te stellen.",
+          "value": "Er is een bevestigingscode naar uw e-mail verzonden. Gebruik de bevestigingscode om je gewenste wachtwoord in te stellen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Na Twój adres e-mail został wysłany nowy kod potwierdzający zresetowanie hasła. Użyj kodu potwierdzającego, aby zresetować hasło.",
+          "value": "Kod potwierdzający został wysłany na Twój adres e-mail. Użyj kodu potwierdzającego, aby ustawić żądane hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Foi enviado para o seu correio eletrónico um novo código de confirmação de reposição da palavra-passe. Utilize o código de confirmação para redefinir a sua palavra-passe.",
+          "value": "Foi enviado um código de confirmação para o seu correio eletrónico. Utilize o código de confirmação para definir a palavra-passe pretendida.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Un nou cod de confirmare a parolei de resetare a fost trimis la adresa dvs. de e-mail. Vă rugăm să utilizați codul de confirmare pentru a vă reseta parola.",
+          "value": "Un cod de confirmare a fost trimis la adresa dvs. de e-mail. Vă rugăm să utilizați codul de confirmare pentru a vă seta parola dorită.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Na váš e-mail bol odoslaný nový kód na potvrdenie obnovenia hesla. Na obnovenie hesla použite potvrdzovací kód.",
+          "value": "Na váš e-mail bol odoslaný potvrdzovací kód. Potvrdzovací kód použite na nastavenie požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Na vaš e-poštni naslov je bila poslana nova potrditvena koda za ponastavitev gesla. Za ponastavitev gesla uporabite potrditveno kodo.",
+          "value": "Potrditvena koda je bila poslana v vaše e-poštno sporočilo. S potrditveno kodo nastavite želeno geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "En ny bekräftelsekod för återställning av lösenord har skickats till din e-post. Använd bekräftelsekoden för att återställa ditt lösenord.",
+          "value": "En bekräftelsekod har skickats till din e-post. Använd bekräftelsekoden för att ställa in önskat lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "E-postanıza yeni bir şifre sıfırlama onay kodu gönderildi. Lütfen şifrenizi sıfırlamak için onay kodunu kullanın.",
+          "value": "E-postanıza bir onay kodu gönderilmiştir. Lütfen istediğiniz şifreyi belirlemek için onay kodunu kullanın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "На вашу електронну пошту було надіслано новий код підтвердження для зміни паролю. Будь ласка, використовуйте код підтвердження для зміни пароля.",
+          "value": "Код підтвердження було надіслано на вашу електронну пошту. Будь ласка, використовуйте код підтвердження, щоб встановити бажаний пароль.",
           "edit_level": 40
         }
       ]
@@ -6901,132 +6993,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Моля, използвайте новия код за потвърждение на нулиране на паролата, който току-що е изпратен на имейла ви.",
+          "value": "Моля, използвайте новия код за потвърждение, който току-що беше изпратен на имейла ви.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Si us plau, utilitzeu el nou codi de confirmació de restabliment de la contrasenya que s&#39;acaba d&#39;enviar al vostre correu electrònic.",
+          "value": "Si us plau, feu servir el nou codi de confirmació que us acabem d&#39;enviar al correu electrònic.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Použijte prosím nový potvrzovací kód pro obnovení hesla, který vám byl právě zaslán na váš e-mail.",
+          "value": "Použijte prosím nový potvrzovací kód, který vám byl právě zaslán na e-mail.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Brug venligst den nye nulstil kodeords bekræftelseskode, der lige er sendt til din e-mail.",
+          "value": "Brug venligst den nye bekræftelseskode, som netop er blevet sendt til din e-mail.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Bitte verwenden Sie den neuen Bestätigungscode für das Zurücksetzen des Passworts, den Sie gerade per E-Mail erhalten haben.",
+          "value": "Bitte verwenden Sie den neuen Bestätigungscode, der Ihnen soeben per E-Mail zugesandt wurde.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Παρακαλούμε χρησιμοποιήστε τον νέο κωδικό επιβεβαίωσης επαναφοράς κωδικού πρόσβασης που μόλις εστάλη στο email σας.",
+          "value": "Παρακαλούμε χρησιμοποιήστε τον νέο κωδικό επιβεβαίωσης που μόλις εστάλη στο email σας.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Please use the new reset password confirmation code just sent to your email.",
+          "value": "Please use the new confirmation code that has just been sent to your email.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Utilice el nuevo código de confirmación de restablecimiento de contraseña que acabamos de enviarle a su correo electrónico.",
+          "value": "Utilice el nuevo código de confirmación que acabamos de enviarle a su correo electrónico.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Palun kasutage uut salasõna kinnituskoodi, mis saadeti just teie e-posti aadressile.",
+          "value": "Palun kasutage uut kinnituskoodi, mis on just saadetud teie e-posti aadressile.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Käytä uutta salasanan vahvistuskoodia, joka on juuri lähetetty sähköpostiisi.",
+          "value": "Käytä uutta vahvistuskoodia, joka on juuri lähetetty sähköpostiisi.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Veuillez utiliser le nouveau code de confirmation de réinitialisation du mot de passe qui vient de vous être envoyé par courrier électronique.",
+          "value": "Veuillez utiliser le nouveau code de confirmation qui vient de vous être envoyé par e-mail.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Upotrijebite novi potvrdni kod za poništavanje lozinke upravo poslan na vašu e-poštu.",
+          "value": "Molimo Vas da koristite novi potvrdni kod koji je upravo poslan na Vašu e-mail adresu.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Vinsamlegast notaðu nýja staðfestingarkóðann fyrir endurstillingu lykilorðs sem var nýlega sendur á netfangið þitt.",
+          "value": "Vinsamlegast notaðu nýja staðfestingarkóðann sem var sendur á netfangið þitt.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Utilizzate il nuovo codice di conferma della reimpostazione della password appena inviato al vostro indirizzo e-mail.",
+          "value": "Utilizzate il nuovo codice di conferma che vi è stato appena inviato via e-mail.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Naudokite naująjį slaptažodžio atstatymo patvirtinimo kodą, ką tik atsiųstą į jūsų el. paštą.",
+          "value": "Naudokite naują patvirtinimo kodą, kuris ką tik buvo išsiųstas į jūsų el. paštą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Lūdzu, izmantojiet jauno paroles atiestatīšanas apstiprinājuma kodu, kas tikko nosūtīts uz jūsu e-pastu.",
+          "value": "Lūdzu, izmantojiet jauno apstiprinājuma kodu, kas tikko tika nosūtīts uz jūsu e-pastu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Bruk den nye bekreftelseskoden for tilbakestilling av passord som nettopp er sendt til e-posten din.",
+          "value": "Vennligst bruk den nye bekreftelseskoden som nettopp er sendt til e-posten din.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Gebruik de nieuwe bevestigingscode voor het resetten van je wachtwoord die je zojuist per e-mail hebt ontvangen.",
+          "value": "Gebruik de nieuwe bevestigingscode die je zojuist per e-mail hebt ontvangen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Skorzystaj z nowego kodu potwierdzającego reset hasła, który właśnie został wysłany na Twój adres e-mail.",
+          "value": "Użyj nowego kodu potwierdzającego, który właśnie został wysłany na Twój adres e-mail.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Utilize o código de confirmação da nova palavra-passe que acabou de ser enviado para o seu e-mail.",
+          "value": "Utilize o novo código de confirmação que acaba de ser enviado para o seu correio eletrónico.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Vă rugăm să folosiți noul cod de confirmare a parolei de resetare care tocmai v-a fost trimis pe e-mail.",
+          "value": "Vă rugăm să folosiți noul cod de confirmare care tocmai v-a fost trimis pe e-mail.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Použite nový potvrdzovací kód na obnovenie hesla, ktorý vám bol práve zaslaný na váš e-mail.",
+          "value": "Použite nový potvrdzovací kód, ktorý vám bol práve zaslaný na e-mail.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Uporabite novo potrditveno kodo za ponastavitev gesla, ki ste jo pravkar prejeli po e-pošti.",
+          "value": "Uporabite novo potrditveno kodo, ki ste jo pravkar prejeli po e-pošti.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Använd den nya bekräftelsekoden för återställning av lösenord som just skickats till din e-post.",
+          "value": "Vänligen använd den nya bekräftelsekoden som just har skickats till din e-post.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Lütfen e-postanıza yeni gönderilen şifre sıfırlama onay kodunu kullanın.",
+          "value": "Lütfen e-postanıza yeni gönderilen onay kodunu kullanın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Будь ласка, використовуйте новий код підтвердження скидання пароля, щойно надісланий на вашу електронну пошту.",
+          "value": "Будь ласка, використовуйте новий код підтвердження, який було надіслано на вашу електронну пошту.",
           "edit_level": 40
         }
       ]
@@ -7036,132 +7128,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Невалиден код за потвърждение на нулиране на паролата, моля, опитайте още веднъж.",
+          "value": "Невалиден код за потвърждение, моля, опитайте още веднъж.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Codi de confirmació de restabliment de la contrasenya no vàlid, si us plau, prova-ho una vegada més.",
+          "value": "Codi de confirmació no vàlid, si us plau, torneu-ho a intentar.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Neplatný potvrzovací kód pro resetování hesla, zkuste to prosím ještě jednou.",
+          "value": "Neplatný potvrzovací kód, zkuste to prosím ještě jednou.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Ugyldig nulstil kodeords bekræftelseskode, prøv venligst igen.",
+          "value": "Ugyldig bekræftelseskode, prøv venligst igen.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ungültiger Bestätigungscode für das Zurücksetzen des Passworts, bitte versuchen Sie es noch einmal.",
+          "value": "Ungültiger Bestätigungscode, bitte versuchen Sie es noch einmal.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Μη έγκυρος κωδικός επιβεβαίωσης επαναφοράς κωδικού πρόσβασης, παρακαλώ δοκιμάστε άλλη μια φορά.",
+          "value": "Μη έγκυρος κωδικός επιβεβαίωσης, παρακαλώ δοκιμάστε άλλη μια φορά.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Invalid reset password confirmation code, please try one more time.",
+          "value": "Invalid confirmation code, please try one more time.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Código de confirmación de contraseña no válido, inténtelo una vez más.",
+          "value": "Código de confirmación inválido, por favor inténtelo una vez más.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Parooli kinnituskood on kehtetu, palun proovige veel kord.",
+          "value": "Vigane kinnituskood, palun proovige veel kord.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Salasanan vahvistuskoodi on virheellinen, yritä vielä kerran.",
+          "value": "Vahvistuskoodi on virheellinen, yritä vielä kerran.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Code de confirmation de réinitialisation du mot de passe invalide, veuillez réessayer.",
+          "value": "Code de confirmation non valide, veuillez réessayer.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Nevažeći potvrdni kod za ponovno postavljanje lozinke, pokušajte još jednom.",
+          "value": "Nevažeći potvrdni kod, pokušajte još jednom.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Ógildur staðfestingarkóði fyrir endurstillingu lykilorðs, vinsamlegast reyndu einu sinni enn.",
+          "value": "Ógildur staðfestingarkóði, reyndu aftur.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Codice di conferma della password di reset non valido, provare ancora una volta.",
+          "value": "Codice di conferma non valido, provare ancora una volta.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Neteisingas slaptažodžio atstatymo patvirtinimo kodas, bandykite dar kartą.",
+          "value": "Netinkamas patvirtinimo kodas, pabandykite dar kartą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Nederīgs paroles atiestatīšanas apstiprinājuma kods, lūdzu, mēģiniet vēlreiz.",
+          "value": "Nederīgs apstiprinājuma kods, lūdzu, mēģiniet vēlreiz.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Ugyldig bekreftelseskode for tilbakestilling av passord, prøv en gang til.",
+          "value": "Ugyldig bekreftelseskode, vennligst prøv en gang til.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Ongeldige bevestigingscode voor wachtwoord opnieuw instellen, probeer het nog een keer.",
+          "value": "Ongeldige bevestigingscode, probeer het nog een keer.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Nieprawidłowy kod potwierdzenia resetowania hasła, spróbuj ponownie.",
+          "value": "Nieprawidłowy kod potwierdzenia, spróbuj ponownie.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Código de confirmação da palavra-passe de reposição inválido, tente mais uma vez.",
+          "value": "Código de confirmação inválido, tente mais uma vez.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul de confirmare a parolei de resetare nu este valid, vă rugăm să mai încercați o dată.",
+          "value": "Cod de confirmare invalid, vă rugăm să mai încercați o dată.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Neplatný potvrdzovací kód na obnovenie hesla, skúste to ešte raz.",
+          "value": "Neplatný potvrdzovací kód, skúste to prosím ešte raz.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Nepravilna potrditvena koda za ponastavitev gesla, poskusite še enkrat.",
+          "value": "Neveljavna potrditvena koda, poskusite še enkrat.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Giltig bekräftelsekod för återställning av lösenord, försök en gång till.",
+          "value": "Ogiltig bekräftelsekod, vänligen försök en gång till.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Geçersiz şifre sıfırlama onay kodu, lütfen bir kez daha deneyin.",
+          "value": "Geçersiz onay kodu, lütfen bir kez daha deneyin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Неправильний код підтвердження скидання пароля, спробуйте ще раз.",
+          "value": "Невірний код підтвердження, спробуйте ще раз.",
           "edit_level": 40
         }
       ]
@@ -7171,132 +7263,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Моля, възстановете паролата си с кода за потвърждение, изпратен на имейла ви.",
+          "value": "Моля, задайте желаната парола с кода за потвърждение, изпратен на имейла ви.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Si us plau, restabliu la vostra contrasenya amb el codi de confirmació enviat al vostre correu electrònic.",
+          "value": "Si us plau, configureu la contrasenya desitjada amb el codi de confirmació que us hem enviat al correu electrònic.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Obnovte prosím své heslo pomocí potvrzovacího kódu zaslaného na váš e-mail.",
+          "value": "Nastavte si prosím požadované heslo pomocí potvrzovacího kódu zaslaného na váš e-mail.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Nulstil venligst dit kodeord med den bekræftelseskode der er sendt til din e-mail.",
+          "value": "Angive venligst dit ønskede kodeord med den bekræftelseskode der er sendt til din e-mail.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Bitte setzen Sie Ihr Passwort mit dem Bestätigungscode zurück, den Sie per E-Mail erhalten haben.",
+          "value": "Bitte setzen Sie Ihr gewünschtes Passwort mit dem Bestätigungscode, der Ihnen per E-Mail zugesandt wurde.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Παρακαλούμε επαναφέρετε τον κωδικό πρόσβασής σας με τον κωδικό επιβεβαίωσης που εστάλη στο email σας.",
+          "value": "Παρακαλούμε ορίστε τον επιθυμητό κωδικό πρόσβασης με τον κωδικό επιβεβαίωσης που αποστέλλεται στο email σας.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Please reset your password with the confirmation code sent to your email.",
+          "value": "Please set your desired password with the confirmation code sent to your email.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Por favor, restablezca su contraseña con el código de confirmación enviado a su correo electrónico.",
+          "value": "Establezca la contraseña que desee con el código de confirmación enviado a su correo electrónico.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Palun lähtestage oma salasõna, kasutades oma e-posti aadressile saadetud kinnituskoodi.",
+          "value": "Palun määrake soovitud parool e-posti aadressile saadetud kinnituskoodiga.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Palauta salasanasi sähköpostiin lähetetyllä vahvistuskoodilla.",
+          "value": "Aseta haluamasi salasana sähköpostiisi lähetetyn vahvistuskoodin avulla.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Veuillez réinitialiser votre mot de passe à l'aide du code de confirmation qui vous a été envoyé par courrier électronique.",
+          "value": "Veuillez définir le mot de passe souhaité à l'aide du code de confirmation qui vous a été envoyé par courrier électronique.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Molimo poništite svoju lozinku pomoću koda za potvrdu koji je poslan na vašu e-poštu.",
+          "value": "Molimo postavite željenu lozinku pomoću potvrdnog koda poslanog na vašu e-mail adresu.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Endurstilltu lykilorðið þitt með staðfestingarkóðanum sem sendur var á netfangið þitt.",
+          "value": "Vinsamlegast stilltu lykilorðið sem þú vilt með staðfestingarkóðanum sem sendur er á netfangið þitt.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Si prega di reimpostare la password con il codice di conferma inviato al vostro indirizzo e-mail.",
+          "value": "Si prega di impostare la password desiderata con il codice di conferma inviato al vostro indirizzo e-mail.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Iš naujo nustatykite slaptažodį naudodami į el. paštą atsiųstą patvirtinimo kodą.",
+          "value": "Nustatykite norimą slaptažodį naudodami į el. paštą atsiųstą patvirtinimo kodą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Lūdzu, atjaunojiet paroli, izmantojot uz jūsu e-pastu nosūtīto apstiprinājuma kodu.",
+          "value": "Lūdzu, iestatiet vēlamo paroli, izmantojot apstiprinājuma kodu, kas nosūtīts uz jūsu e-pastu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Tilbakestill passordet ditt med bekreftelseskoden som er sendt til e-posten din.",
+          "value": "Vennligst angi ønsket passord med bekreftelseskoden du har fått tilsendt på e-post.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Reset je wachtwoord met de bevestigingscode die je per e-mail hebt ontvangen.",
+          "value": "Stel uw gewenste wachtwoord in met de bevestigingscode die naar uw e-mail is verzonden.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Zresetuj hasło za pomocą kodu potwierdzającego wysłanego na Twój adres e-mail.",
+          "value": "Ustaw żądane hasło za pomocą kodu potwierdzającego wysłanego na Twój adres e-mail.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Reponha a sua palavra-passe com o código de confirmação enviado para o seu e-mail.",
+          "value": "Defina a palavra-passe pretendida com o código de confirmação enviado para o seu e-mail.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Vă rugăm să vă resetați parola cu ajutorul codului de confirmare trimis pe e-mail.",
+          "value": "Vă rugăm să vă setați parola dorită cu ajutorul codului de confirmare trimis la adresa dvs. de e-mail.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Obnovte svoje heslo pomocou potvrdzovacieho kódu zaslaného na váš e-mail.",
+          "value": "Nastavte si požadované heslo pomocou potvrdzovacieho kódu zaslaného na váš e-mail.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Ponastavite geslo s potrditveno kodo, ki ste jo prejeli po e-pošti.",
+          "value": "Želeno geslo nastavite s potrditveno kodo, ki ste jo prejeli po e-pošti.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Återställ ditt lösenord med bekräftelsekoden som skickats till din e-post.",
+          "value": "Ange önskat lösenord med hjälp av den bekräftelsekod som skickats till din e-post.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Lütfen e-postanıza gönderilen onay kodunu kullanarak şifrenizi sıfırlayın.",
+          "value": "Lütfen e-postanıza gönderilen onay kodu ile istediğiniz şifreyi belirleyin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Будь ласка, змініть пароль за допомогою коду підтвердження, надісланого на вашу електронну пошту.",
+          "value": "Будь ласка, встановіть бажаний пароль за допомогою коду підтвердження, надісланого на вашу електронну пошту.",
           "edit_level": 40
         }
       ]
@@ -7441,132 +7533,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Моля, въведете код за потвърждение на нулиране на паролата.",
+          "value": "Моля, въведете кода за потвърждение.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Introduïu un codi de confirmació de restabliment de la contrasenya.",
+          "value": "Si us plau, introduïu el codi de confirmació.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Zadejte prosím potvrzovací kód pro obnovení hesla.",
+          "value": "Zadejte prosím potvrzovací kód.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en nulstil kodeords bekræftelseskode.",
+          "value": "Indtast venligst bekræftelseskode.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Bitte geben Sie einen Bestätigungscode für das Zurücksetzen des Passworts ein.",
+          "value": "Bitte geben Sie den Bestätigungscode ein.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Παρακαλούμε εισάγετε έναν κωδικό επιβεβαίωσης επαναφοράς κωδικού πρόσβασης.",
+          "value": "Παρακαλώ εισάγετε τον κωδικό επιβεβαίωσης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Please enter a reset password confirmation code.",
+          "value": "Please enter the confirmation code.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Introduzca un código de confirmación para restablecer la contraseña.",
+          "value": "Por favor, introduzca el código de confirmación.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Palun sisestage parooli taastamise kinnituskood.",
+          "value": "Palun sisestage kinnituskood.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Anna salasanan vahvistuskoodi.",
+          "value": "Syötä vahvistuskoodi.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Veuillez saisir un code de confirmation de réinitialisation du mot de passe.",
+          "value": "Veuillez saisir le code de confirmation.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Unesite potvrdni kod za ponovno postavljanje lozinke.",
+          "value": "Molimo unesite potvrdni kod.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Vinsamlegast sláðu inn staðfestingarkóða fyrir endurstillt lykilorð.",
+          "value": "Vinsamlegast sláðu inn staðfestingarkóðann.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Inserire un codice di conferma per la reimpostazione della password.",
+          "value": "Inserire il codice di conferma.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Įveskite slaptažodžio atstatymo patvirtinimo kodą.",
+          "value": "Įveskite patvirtinimo kodą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Lūdzu, ievadiet paroles atiestatīšanas apstiprinājuma kodu.",
+          "value": "Lūdzu, ievadiet apstiprinājuma kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Vennligst skriv inn en bekreftelseskode for tilbakestilling av passord.",
+          "value": "Vennligst skriv inn bekreftelseskoden.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Voer een bevestigingscode voor het opnieuw instellen van het wachtwoord in.",
+          "value": "Voer de bevestigingscode in.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Wprowadź kod potwierdzenia resetowania hasła.",
+          "value": "Wprowadź kod potwierdzający.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Introduza um código de confirmação da palavra-passe de reposição.",
+          "value": "Introduzir o código de confirmação.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Vă rugăm să introduceți un cod de confirmare pentru resetarea parolei.",
+          "value": "Vă rugăm să introduceți codul de confirmare.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Zadajte potvrdzovací kód na obnovenie hesla.",
+          "value": "Zadajte potvrdzovací kód.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vnesite potrditveno kodo za ponastavitev gesla.",
+          "value": "Vnesite potrditveno kodo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Ange en bekräftelsekod för återställning av lösenord.",
+          "value": "Vänligen ange bekräftelsekoden.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Lütfen şifre sıfırlama onay kodunu girin.",
+          "value": "Lütfen onay kodunu girin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Будь ласка, введіть код підтвердження скидання пароля.",
+          "value": "Будь ласка, введіть код підтвердження.",
           "edit_level": 40
         }
       ]
@@ -7576,133 +7668,133 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Вашият{0}код за потвърждение на паролата за нулиране: {1}",
-          "edit_level": 100
+          "value": "{0} е вашият {1} код за потвърждение, за да зададете желаната парола. Не споделяйте кода си с никого.",
+          "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "El vostre{0}codi de confirmació de restabliment de la contrasenya: {1}",
+          "value": "{0} és el vostre codi de confirmació {1} per establir la contrasenya desitjada. No compartiu el vostre codi amb ningú.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Váš{0}kód pro potvrzení resetování hesla: {1}",
+          "value": "{0} je váš {1} potvrzovací kód pro nastavení požadovaného hesla. Svůj kód nikomu nesdělujte.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Din{0}nulstil kodeords bekræftelseskode: {1}",
+          "value": "{0} er din {1} bekræftelseskode til at angive dit ønskede kodeord. Del ikke din kode med nogen.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ihr{0}Bestätigungscode für das zurückgesetzte Passwort: {1}",
+          "value": "{0} ist Ihr {1} Bestätigungscode, um Ihr gewünschtes Passwort festzulegen. Geben Sie Ihren Code an niemanden weiter.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός επιβεβαίωσης επαναφοράς του κωδικού πρόσβασης{0}: {1}",
+          "value": "{0} είναι ο κωδικός επιβεβαίωσης {1} για να ορίσετε τον επιθυμητό κωδικό πρόσβασης. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Your{0}reset password confirmation code: {1}",
+          "value": "{0} is your {1} confirmation code to set your desired password. Don't share your code with anyone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Su{0}código de confirmación para restablecer la contraseña: {1}",
-          "edit_level": 100
+          "value": "{0} es su código de confirmación {1} para establecer la contraseña deseada. No compartas tu código con nadie.",
+          "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie{0}reset parooli kinnituskood: {1}",
+          "value": "{0} on teie {1} kinnituskood, et määrata soovitud salasõna. Ärge jagage oma koodi kellegagi.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Salasanan vahvistuskoodisi{0}reset: {1}",
+          "value": "{0} on {1} vahvistuskoodi, jolla voit asettaa haluamasi salasanan. Älä jaa koodiasi kenenkään kanssa.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Votre{0}code de confirmation du mot de passe de réinitialisation : {1}",
-          "edit_level": 100
+          "value": "{0} est votre code de confirmation {1} pour définir le mot de passe souhaité. Ne communiquez votre code à personne.",
+          "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Vaš{0}poništavanje potvrdnog koda zaporke: {1}",
+          "value": "{0} je vaš {1} potvrdni kod za postavljanje željene lozinke. Ne dijelite svoj kod ni s kim.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Staðfestingarkóði{0}endurstilla lykilorð: {1}",
-          "edit_level": 100
+          "value": "{0} er staðfestingarkóðinn þinn ({1}) til að stilla lykilorðið sem þú vilt nota. Ekki deila kóðanum með neinum.",
+          "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Il vostro{0}codice di conferma della password reimpostata: {1}",
+          "value": "{0} è il codice di conferma {1} per impostare la password desiderata. Non condividere il codice con nessuno.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0}nustatyto slaptažodžio patvirtinimo kodas: {1}",
+          "value": "{0} yra jūsų {1} patvirtinimo kodas, kad nustatytumėte norimą slaptažodį. Niekam nesidalykite savo kodu.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Jūsu{0}atjaunotās paroles apstiprinājuma kods: {1}",
+          "value": "{0} ir jūsu {1} apstiprinājuma kods, lai iestatītu vēlamo paroli. Nevienam nedalieties ar savu kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Din{0}bekreftelseskode for tilbakestilling av passord: {1}",
-          "edit_level": 100
+          "value": "{0} er din {1} bekreftelseskode for å angi ønsket passord. Ikke del koden din med noen.",
+          "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Uw{0}reset wachtwoordbevestigingscode: {1}",
+          "value": "{0} is je {1} bevestigingscode om je gewenste wachtwoord in te stellen. Deel je code met niemand.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Kod potwierdzenia resetowania hasła{0}: {1}",
-          "edit_level": 100
+          "value": "{0} to kod potwierdzający {1} do ustawienia żądanego hasła. Nie udostępniaj nikomu swojego kodu.",
+          "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "O seu código de confirmação da palavra-passe de redefinição{0}: {1}",
+          "value": "{0} é o seu código de confirmação {1} para definir a palavra-passe pretendida. Não partilhe o seu código com ninguém.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul de confirmare a parolei de resetare{0}: {1}",
+          "value": "{0} este codul dvs. de confirmare {1} pentru a seta parola dorită. Nu partajați codul dvs. cu nimeni.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Váš{0}kód na potvrdenie resetovania hesla: {1}",
+          "value": "{0} je váš {1} potvrdzovací kód na nastavenie požadovaného hesla. Svoj kód nikomu neposkytujte.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vaša{0}koda za potrditev ponastavljenega gesla: {1}",
-          "edit_level": 100
+          "value": "{0} je vaša {1} potrditvena koda za nastavitev želenega gesla. Svoje kode ne delite z nikomer.",
+          "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Din{0}bekräftelsekod för återställning av lösenord: {1}",
-          "edit_level": 100
+          "value": "{0} är din {1} bekräftelsekod för att ställa in önskat lösenord. Dela inte din kod med någon.",
+          "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}sıfırlama şifresi onay kodunuz: {1}",
-          "edit_level": 100
+          "value": "{0} istediğiniz şifreyi ayarlamak için {1} onay kodunuzdur. Kodunuzu kimseyle paylaşmayın.",
+          "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Ваш{0}код підтвердження скинутого пароля: {1}",
-          "edit_level": 100
+          "value": "{0} - ваш код підтвердження {1} для встановлення бажаного пароля. Не повідомляйте свій код нікому.",
+          "edit_level": 40
         }
       ]
     },
@@ -7846,133 +7938,133 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Код за потвърждаване на вашия{0}електронен адрес: {1}",
-          "edit_level": 100
+          "value": "Това е кодът за потвърждаване {0}, с който се проверява телефонният ви номер. Не споделяйте кода си с никого.",
+          "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "El vostre{0}codi de confirmació del correu electrònic: {1}",
+          "value": "Aquest és el teu codi de confirmació {0} per verificar el teu número de telèfon. No comparteixis el teu codi amb ningú.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Váš{0}kód pro potvrzení e-mailu: {1}",
+          "value": "Toto je váš {0} potvrzovací kód pro ověření vašeho telefonního čísla. Svůj kód nikomu nesdělujte.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Din{0}e-mailbekræftelseskode: {1}",
+          "value": "Dette er din {0} bekræftelseskode til at verificere dit telefonnummer. Del ikke din kode med nogen.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ihr{0}E-Mail-Bestätigungscode: {1}",
+          "value": "Dies ist Ihr {0} Bestätigungscode zur Verifizierung Ihrer Telefonnummer. Geben Sie Ihren Code an niemanden weiter.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός επιβεβαίωσης του email σας{0}: {1}",
-          "edit_level": 100
+          "value": "Αυτός είναι ο κωδικός επιβεβαίωσης {0} για την επαλήθευση του αριθμού τηλεφώνου σας. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
+          "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Your{0}email confirmation code: {1}",
+          "value": "This is you {0} confirmation code to verify your phone number. Don't share your code with anyone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Su código{0}de confirmación por correo electrónico: {1}",
-          "edit_level": 100
+          "value": "Este es tu {0} código de confirmación para verificar tu número de teléfono. No compartas tu código con nadie.",
+          "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie{0}e-posti kinnituskood: {1}",
-          "edit_level": 100
+          "value": "See on teie {0} kinnituskood teie telefoninumbri kinnitamiseks. Ärge jagage oma koodi kellelegi.",
+          "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Sähköpostisi{0}vahvistuskoodi: {1}",
-          "edit_level": 100
+          "value": "Tämä on sinun {0} vahvistuskoodisi, jolla tarkistat puhelinnumerosi. Älä jaa koodiasi kenenkään kanssa.",
+          "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Votre{0}code de confirmation de l'e-mail : {1}",
+          "value": "Il s'agit de votre code de confirmation {0} pour vérifier votre numéro de téléphone. Ne communiquez votre code à personne.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Vaš{0}potvrdni kôd e-pošte: {1}",
+          "value": "Ovo je vaš {0} potvrdni kod za potvrdu vašeg telefonskog broja. Ne dijelite svoj kod ni s kim.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}Staðfestingarkóði tölvupósts þíns: {1}",
+          "value": "Þetta er staðfestingarkóðinn þinn ({0}) til að staðfesta símanúmerið þitt. Ekki deila kóðanum með neinum.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Il tuo{0}codice di conferma dell'e-mail: {1}",
+          "value": "Questo è il codice di conferma {0} per verificare il vostro numero di telefono. Non condividete il codice con nessuno.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0}el. pašto patvirtinimo kodas: {1}",
-          "edit_level": 100
+          "value": "Tai {0} patvirtinimo kodas, kuriuo patvirtinamas jūsų telefono numeris. Niekam nesidalykite savo kodu.",
+          "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Jūsu{0}pasta apstiprinājuma kods: {1}",
-          "edit_level": 100
+          "value": "Tas ir jūsu {0} apstiprinājuma kods, lai pārbaudītu tālruņa numuru. Nevienam nedalieties ar savu kodu.",
+          "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Din{0}e-postbekreftelseskode: {1}",
-          "edit_level": 100
+          "value": "Dette er din {0} bekreftelseskode for å verifisere telefonnummeret ditt. Ikke del koden din med noen.",
+          "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Uw{0}e-mailbevestigingscode: {1}",
-          "edit_level": 100
+          "value": "Dit is je {0} bevestigingscode om je telefoonnummer te verifiëren. Deel uw code met niemand.",
+          "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Twój{0}kod potwierdzenia e-mail: {1}",
-          "edit_level": 100
+          "value": "Jest to kod potwierdzający {0} służący do weryfikacji numeru telefonu. Nie udostępniaj nikomu swojego kodu.",
+          "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "O seu{0}código de confirmação de correio eletrónico: {1}",
+          "value": "Este é o seu código de confirmação {0} para verificar o seu número de telefone. Não partilhe o seu código com ninguém.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul dvs.{0}de confirmare a e-mailului: {1}",
-          "edit_level": 100
+          "value": "Acesta este codul dvs. de confirmare {0} pentru a vă verifica numărul de telefon. Nu partajați codul dvs. cu nimeni.",
+          "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Váš{0}potvrdzovací kód e-mailu: {1}",
+          "value": "Toto je váš {0} potvrdzovací kód na overenie telefónneho čísla. Svoj kód nikomu nezdieľajte.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vaša{0}koda za potrditev e-pošte: {1}",
-          "edit_level": 100
+          "value": "To je vaša {0} potrditvena koda za preverjanje vaše telefonske številke. Svoje kode ne delite z nikomer.",
+          "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Din{0}bekräftelsekod för e-post{0}: {1}",
-          "edit_level": 100
+          "value": "Detta är din {0} bekräftelsekod för att verifiera ditt telefonnummer. Dela inte din kod med någon.",
+          "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}e-posta onay kodunuz: {1}",
-          "edit_level": 100
+          "value": "Bu, telefon numaranızı doğrulamak için {0} onay kodunuzdur. Kodunuzu kimseyle paylaşmayın.",
+          "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Ваш{0}код підтвердження на електронну пошту: {1}",
-          "edit_level": 100
+          "value": "Це ваш код підтвердження {0} для підтвердження номера телефону. Не повідомляйте свій код нікому.",
+          "edit_level": 40
         }
       ]
     },
@@ -14191,132 +14283,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "{0}изтриване на паролата",
+          "value": "{0} задаване на парола",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "{0}restableix la contrasenya",
+          "value": "{0} estableix la contrasenya",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "{0}reset Heslo",
+          "value": "{0} nastavit heslo",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "{0}nulstil adgangskode",
+          "value": "{0} angiv adgangskode",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "{0}Passwort zurücksetzen",
+          "value": "{0} Passwort setzen",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "{0}reset Κωδικός πρόσβασης",
+          "value": "{0} set password",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "{0}reset Password",
+          "value": "{0} set password",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "{0}reset Contraseña",
+          "value": "{0} establecer contraseña",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "{0}reset Password",
+          "value": "{0} set password",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "{0}reset Password",
+          "value": "{0} set password",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "{0}réinitialisation Mot de passe",
+          "value": "{0} set password",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "{0}poništi lozinku",
+          "value": "{0} postavi lozinku",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}endurstilla lykilorð",
+          "value": "{0} setja lykilorð",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "{0}reset Password",
+          "value": "{0} imposta password",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "{0}nustatyti slaptažodį",
+          "value": "{0} nustatyti slaptažodį",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "{0}atjaunināt paroli",
+          "value": "{0} iestatīt paroli",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "{0}tilbakestill passord",
+          "value": "{0} angi passord",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "{0}wachtwoord resetten",
+          "value": "{0} wachtwoord instellen",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "{0}reset Hasło",
+          "value": "{0} ustaw hasło",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "{0}redefinir Palavra-passe",
+          "value": "{0} definir palavra-passe",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "{0}reset Parolă",
+          "value": "{0} setați parola",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "{0}reset Heslo",
+          "value": "{0} nastaviť heslo",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "{0}nastavi geslo",
+          "value": "{0} nastavite geslo",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "{0}återställ Lösenord",
+          "value": "{0} ange lösenord",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}parolayı sıfırla",
+          "value": "{0} parola ayarla",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "{0}reset Password",
+          "value": "{0} встановити пароль",
           "edit_level": 40
         }
       ]
@@ -14326,132 +14418,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "{0}потвърждение по имейл",
+          "value": "{0} проверете телефонния си номер",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "{0}correu electrònic de confirmació",
+          "value": "{0} verifica el teu número de telèfon",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "{0}potvrzení e-mailu",
+          "value": "{0} ověřte své telefonní číslo",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "{0}e-mail-bekræftelse",
+          "value": "{0} verificere dit telefonnummer",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "{0}e-mail-bestätigung",
+          "value": "{0} Überprüfen Sie Ihre Rufnummer",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "{0}επιβεβαίωση ηλεκτρονικού ταχυδρομείου",
+          "value": "{0} επαληθεύστε τον αριθμό τηλεφώνου σας",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "{0}email confirmation",
+          "value": "{0} verify your phone number",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "{0}confirmación de correo electrónico",
+          "value": "{0} verifique su número de teléfono",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "{0}e-maili kinnitus",
+          "value": "{0} kontrollige seda telefoninumbrit",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "{0}sähköpostivahvistus",
+          "value": "{0} tarkista puhelinnumerosi",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "{0}confirmation par courriel",
+          "value": "{0} vérifiez votre numéro de téléphone",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "{0}potvrda e-pošte",
+          "value": "{0} potvrdite svoj telefonski broj",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}staðfesting í tölvupósti",
+          "value": "{0} staðfestu símanúmerið þitt",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "{0}conferma via e-mail",
+          "value": "{0} verificare questo numero di telefono",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "{0}el. pašto patvirtinimas",
+          "value": "{0} patikrinkite savo telefono numerį",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "{0}e-pasta apstiprinājums",
+          "value": "{0} pārbaudiet savu tālruņa numuru",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "{0}e-postbekreftelse",
+          "value": "{0} bekreft telefonnummeret ditt",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "{0}bevestiging per e-mail",
+          "value": "{0} controleer uw telefoonnummer",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "{0}potwierdzenie e-mail",
+          "value": "{0} zweryfikuj swój numer telefonu",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "{0}confirmação de correio eletrónico",
+          "value": "{0} verificar este número de telefone",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "{0}confirmare e-mail",
+          "value": "{0} verificați numărul dvs. de telefon",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "{0}potvrdenie e-mailom",
+          "value": "{0} overte svoje telefónne číslo",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "{0}potrditev po e-pošti",
+          "value": "{0} preverite svojo telefonsko številko",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "{0}bekräftelse via e-post",
+          "value": "{0} verifiera ditt telefonnummer",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}e-posta onayı",
+          "value": "{0} telefon numaranızı doğrulayın",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "{0}підтвердження електронної пошти",
+          "value": "{0} підтвердіть свій номер телефону",
           "edit_level": 40
         }
       ]
@@ -18241,132 +18333,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Вашият{0}SMS код за потвърждение: {1}",
+          "value": "{0} е вашият {1} код за потвърждение, за да проверите телефонния си номер. Не споделяйте кода си с никого.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "El vostre{0}codi de confirmació d&#39;SMS: {1}",
+          "value": "{0} és el vostre codi de confirmació {1} per verificar el vostre número de telèfon. No compartiu el vostre codi amb ningú.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Váš{0}Kód pro potvrzení SMS: {1}",
+          "value": "{0} je váš {1} potvrzovací kód pro ověření vašeho telefonního čísla. Svůj kód nikomu nesdělujte.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Din{0}SMS-bekræftelseskode: {1}",
-          "edit_level": 40
+          "value": "{0} er din {1} bekræftelseskode til at verificere dit telefonnummer. Del ikke din kode med nogen.",
+          "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ihr{0}SMS-Bestätigungscode: {1}",
+          "value": "{0} ist Ihr {1} Bestätigungscode zur Verifizierung Ihrer Telefonnummer. Geben Sie Ihren Code an niemanden weiter.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός επιβεβαίωσης του SMS σας{0}: {1}",
+          "value": "{0} είναι ο κωδικός επιβεβαίωσης {1} για την επαλήθευση του τηλεφωνικού σας αριθμού. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Your{0}SMS confirmation code: {1}",
+          "value": "{0} is your {1} confirmation code to verify your phone number. Don't share your code with anyone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Tu código de confirmación{0}SMS: {1}",
+          "value": "{0} es tu código de confirmación {1} para verificar tu número de teléfono. No compartas tu código con nadie.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie{0}SMSi kinnituskood: {1}",
+          "value": "{0} on teie {1} kinnituskood teie telefoninumbri kinnitamiseks. Ärge jagage oma koodi kellelegi.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "{0}SMS-vahvistuskoodisi: {1}",
+          "value": "{0} on {1} vahvistuskoodisi puhelinnumerosi vahvistamiseksi. Älä jaa koodiasi kenenkään kanssa.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Votre{0}code de confirmation SMS : {1}",
+          "value": "{0} est votre code de confirmation {1} pour vérifier votre numéro de téléphone. Ne communiquez votre code à personne.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Vaš{0}SMS potvrdni kod: {1}",
+          "value": "{0} je vaš {1} potvrdni kod za provjeru vašeg telefonskog broja. Ne dijelite svoj kod ni s kim.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}SMS staðfestingarkóði þinn: {1}",
+          "value": "{0} er staðfestingarkóðinn þinn ({1}) til að staðfesta símanúmerið þitt. Ekki deila kóðanum með neinum.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Il codice di conferma del tuo{0}SMS: {1}",
+          "value": "{0} è il codice di conferma {1} per verificare il numero di telefono. Non condividete il vostro codice con nessuno.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0}SMS patvirtinimo kodas: {1}",
+          "value": "{0} yra jūsų {1} patvirtinimo kodas, kuriuo patvirtinamas jūsų telefono numeris. Niekam nesidalykite savo kodu.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Jūsu{0}SMS apstiprinājuma kods: {1}",
+          "value": "{0} ir jūsu {1} apstiprinājuma kods, lai pārbaudītu jūsu tālruņa numuru. Nevienam nedalieties ar savu kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Din{0}SMS-bekreftelseskode: {1}",
+          "value": "{0} er din {1} bekreftelseskode for å verifisere telefonnummeret ditt. Ikke del koden din med noen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Uw{0}SMS-bevestigingscode: {1}",
+          "value": "{0} is je {1} bevestigingscode om je telefoonnummer te verifiëren. Deel uw code met niemand.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Twój{0}kod potwierdzenia SMS: {1}",
+          "value": "{0} to kod potwierdzający {1} służący do weryfikacji numeru telefonu. Nie udostępniaj nikomu swojego kodu.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "O seu código de confirmação{0}SMS: {1}",
+          "value": "{0} é o seu código de confirmação {1} para verificar o seu número de telefone. Não partilhe o seu código com ninguém.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul dvs. de confirmare{0}SMS: {1}",
+          "value": "{0} este codul dvs. de confirmare {1} pentru a vă verifica numărul de telefon. Nu partajați codul dvs. cu nimeni.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Váš{0}SMS potvrdzovací kód: {1}",
+          "value": "{0} je váš {1} potvrdzovací kód na overenie vášho telefónneho čísla. Svoj kód nikomu neposkytujte.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vaša{0}Koda za potrditev sporočila SMS: {1}",
+          "value": "{0} je vaša {1} potrditvena koda za preverjanje vaše telefonske številke. Svoje kode ne delite z nikomer.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Din {0}SMS-bekräftelsekod: {1}",
+          "value": "{0} är din {1} bekräftelsekod för att verifiera ditt telefonnummer. Dela inte din kod med någon.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}SMS onay kodunuz: {1}",
+          "value": "{0}, telefon numaranızı doğrulamak için {1} onay kodunuzdur. Kodunuzu kimseyle paylaşmayın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Ваш{0}SMS-код підтвердження: {1}",
+          "value": "{0} - це ваш код підтвердження {1} для підтвердження номера телефону. Не повідомляйте свій код нікому.",
           "edit_level": 40
         }
       ]
@@ -18511,132 +18603,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Току-що на телефона ви е изпратен код за потвърждение на нулиране на паролата. Моля, използвайте кода за потвърждение, за да възстановите паролата си.",
+          "value": "Току-що на телефона ви беше изпратен код за потвърждение. Моля, използвайте кода за потвърждение, за да зададете желаната парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "S&#39;acaba d&#39;enviar un codi de confirmació de restabliment de la contrasenya al vostre telèfon. Si us plau, utilitzeu el codi de confirmació per restablir la vostra contrasenya.",
+          "value": "Acaba d&#39;enviar-vos un codi de confirmació al telèfon. Si us plau, utilitzeu el codi de confirmació per definir la contrasenya desitjada.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Na váš telefon byl právě odeslán kód pro potvrzení obnovení hesla. Potvrzovací kód použijte k obnovení hesla.",
+          "value": "Na váš telefon byl právě odeslán potvrzovací kód. Potvrzovací kód použijte k nastavení požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "En bekræftelseskode til nulstilling af adgangskoden er netop blevet sendt til din telefon. Brug bekræftelseskoden til at nulstille din adgangskode.",
+          "value": "En bekræftelseskode er netop blevet sendt til din telefon. Brug venligst bekræftelseskoden til at angive dit ønskede kodeord.",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Ein Bestätigungscode zum Zurücksetzen des Passworts wurde soeben an Ihr Telefon gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr Passwort zurückzusetzen.",
+          "value": "Ein Bestätigungscode wurde soeben an Ihr Telefon gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr gewünschtes Passwort festzulegen.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Μόλις εστάλη στο τηλέφωνό σας ένας κωδικός επιβεβαίωσης επαναφοράς κωδικού πρόσβασης. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να επαναφέρετε τον κωδικό πρόσβασής σας.",
+          "value": "Μόλις εστάλη ένας κωδικός επιβεβαίωσης στο τηλέφωνό σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να ορίσετε τον επιθυμητό κωδικό πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "A reset password confirmation code has just been sent to your phone. Please use the confirmation code to reset your password.",
+          "value": "A confirmation code has just been sent to your phone. Please use the confirmation code to set your desired password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Acaba de recibir en su teléfono un código de confirmación para restablecer su contraseña. Utilice el código de confirmación para restablecer su contraseña.",
+          "value": "Se acaba de enviar un código de confirmación a su teléfono. Utilice el código de confirmación para establecer la contraseña que desee.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie telefonile on just saadetud parooli taastamise kinnituskood. Palun kasutage kinnituskoodi oma parooli lähtestamiseks.",
+          "value": "Kinnituskood on just saadetud teie telefoni. Palun kasutage kinnituskoodi, et määrata soovitud salasõna.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Puhelimeesi on juuri lähetetty salasanan vahvistuskoodi. Käytä vahvistuskoodia salasanasi palauttamiseen.",
+          "value": "Vahvistuskoodi on juuri lähetetty puhelimeesi. Käytä vahvistuskoodia asettaaksesi haluamasi salasanan.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Un code de confirmation de réinitialisation du mot de passe vient d'être envoyé sur votre téléphone. Veuillez utiliser ce code de confirmation pour réinitialiser votre mot de passe.",
+          "value": "Un code de confirmation vient d'être envoyé sur votre téléphone. Veuillez utiliser ce code de confirmation pour définir le mot de passe de votre choix.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Kôd potvrde poništavanja lozinke upravo je poslan na vaš telefon. Upotrijebite kod za potvrdu za ponovno postavljanje lozinke.",
+          "value": "Potvrdni kod je upravo poslan na vaš telefon. Molimo vas da pomoću potvrdnog koda postavite željenu lozinku.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Staðfestingarkóði fyrir endurstillt lykilorð hefur verið sendur í símann þinn. Vinsamlegast notaðu staðfestingarkóðann til að endurstilla lykilorðið þitt.",
+          "value": "Staðfestingarkóði hefur verið sendur í símann þinn. Notaðu staðfestingarkóðann til að stilla lykilorðið sem þú vilt nota.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Un codice di conferma per la reimpostazione della password è stato appena inviato al vostro telefono. Utilizzate il codice di conferma per reimpostare la password.",
+          "value": "Un codice di conferma è stato appena inviato al vostro telefono. Utilizzare il codice di conferma per impostare la password desiderata.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Į jūsų telefoną ką tik išsiųstas slaptažodžio atstatymo patvirtinimo kodas. Naudokite patvirtinimo kodą, kad iš naujo nustatytumėte slaptažodį.",
+          "value": "Į jūsų telefoną ką tik išsiųstas patvirtinimo kodas. Naudokite patvirtinimo kodą norimam slaptažodžiui nustatyti.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Uz jūsu tālruni ir nosūtīts paroles atiestatīšanas apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai atjaunotu paroli.",
+          "value": "Uz jūsu tālruni ir nosūtīts apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai iestatītu vēlamo paroli.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "En bekreftelseskode for tilbakestilling av passord har nettopp blitt sendt til telefonen din. Bruk bekreftelseskoden til å tilbakestille passordet ditt.",
+          "value": "En bekreftelseskode har nettopp blitt sendt til telefonen din. Bruk bekreftelseskoden til å angi ønsket passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Er is zojuist een bevestigingscode voor het resetten van je wachtwoord naar je telefoon gestuurd. Gebruik de bevestigingscode om je wachtwoord opnieuw in te stellen.",
+          "value": "Er is zojuist een bevestigingscode naar uw telefoon gestuurd. Gebruik de bevestigingscode om het gewenste wachtwoord in te stellen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Kod potwierdzający reset hasła został właśnie wysłany na Twój telefon. Użyj kodu potwierdzającego, aby zresetować hasło.",
+          "value": "Kod potwierdzający został właśnie wysłany na Twój telefon. Użyj kodu potwierdzającego, aby ustawić żądane hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Acabou de ser enviado para o seu telemóvel um código de confirmação de reposição da palavra-passe. Utilize o código de confirmação para repor a sua palavra-passe.",
+          "value": "Acabou de ser enviado um código de confirmação para o seu telemóvel. Utilize o código de confirmação para definir a palavra-passe pretendida.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Tocmai v-a fost trimis pe telefon un cod de confirmare pentru resetarea parolei. Vă rugăm să utilizați codul de confirmare pentru a vă reseta parola.",
+          "value": "Un cod de confirmare tocmai a fost trimis pe telefonul dumneavoastră. Vă rugăm să utilizați codul de confirmare pentru a vă seta parola dorită.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Na váš telefón bol práve odoslaný kód na potvrdenie obnovenia hesla. Na obnovenie hesla použite potvrdzovací kód.",
+          "value": "Na váš telefón bol práve odoslaný potvrdzovací kód. Potvrdzovací kód použite na nastavenie požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Na vaš telefon je bila pravkar poslana potrditvena koda za ponastavitev gesla. Uporabite potrditveno kodo za ponastavitev gesla.",
+          "value": "Na vaš telefon je bila pravkar poslana potrditvena koda. S potrditveno kodo nastavite želeno geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "En bekräftelsekod för återställning av lösenordet har just skickats till din telefon. Använd bekräftelsekoden för att återställa ditt lösenord.",
+          "value": "En bekräftelsekod har just skickats till din telefon. Använd bekräftelsekoden för att ställa in önskat lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Az önce telefonunuza bir şifre sıfırlama onay kodu gönderildi. Lütfen şifrenizi sıfırlamak için onay kodunu kullanın.",
+          "value": "Az önce telefonunuza bir onay kodu gönderildi. Lütfen istediğiniz şifreyi belirlemek için onay kodunu kullanın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "На ваш телефон було надіслано код підтвердження для зміни пароля. Будь ласка, використовуйте код підтвердження для зміни пароля.",
+          "value": "Код підтвердження щойно надіслано на ваш телефон. Будь ласка, використовуйте код підтвердження, щоб встановити бажаний пароль.",
           "edit_level": 40
         }
       ]
@@ -18646,132 +18738,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Моля, възстановете паролата си с кода за потвърждение, изпратен на телефона ви.",
+          "value": "Моля, задайте желаната парола с кода за потвърждение, изпратен на телефона ви.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Restableix la teva contrasenya amb el codi de confirmació enviat al teu telèfon.",
+          "value": "Si us plau, configureu la contrasenya desitjada amb el codi de confirmació que us hem enviat al telèfon.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Heslo obnovte pomocí potvrzovacího kódu zaslaného na váš telefon.",
+          "value": "Nastavte požadované heslo pomocí potvrzovacího kódu zaslaného na váš telefon.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Nulstil din adgangskode med den bekræftelseskode, der er sendt til din telefon.",
+          "value": "Angive venligst dit ønskede kodeord med den bekræftelseskode der er sendt til din telefon.",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Bitte setzen Sie Ihr Passwort mit dem Bestätigungscode zurück, der Ihnen auf Ihr Handy geschickt wurde.",
+          "value": "Bitte geben Sie Ihr gewünschtes Passwort mit dem Bestätigungscode ein, der Ihnen auf Ihr Handy geschickt wird.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Παρακαλούμε επαναφέρετε τον κωδικό πρόσβασής σας με τον κωδικό επιβεβαίωσης που εστάλη στο τηλέφωνό σας.",
+          "value": "Ορίστε τον επιθυμητό κωδικό πρόσβασης με τον κωδικό επιβεβαίωσης που αποστέλλεται στο τηλέφωνό σας.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Please reset your password with the confirmation code sent to your phone.",
+          "value": "Please set your desired password with the confirmation code sent to your phone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Por favor, restablezca su contraseña con el código de confirmación enviado a su teléfono.",
+          "value": "Establezca la contraseña que desee con el código de confirmación enviado a su teléfono.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Palun lähtestage oma salasõna, kasutades telefoni saadetud kinnituskoodi.",
+          "value": "Palun määrake soovitud parool telefoni saadetud kinnituskoodiga.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Palauta salasanasi puhelimeesi lähetetyn vahvistuskoodin avulla.",
+          "value": "Aseta haluamasi salasana puhelimeesi lähetetyn vahvistuskoodin avulla.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Veuillez réinitialiser votre mot de passe à l'aide du code de confirmation envoyé sur votre téléphone.",
+          "value": "Veuillez définir le mot de passe de votre choix à l'aide du code de confirmation envoyé sur votre téléphone.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Poništite svoju zaporku pomoću koda za potvrdu koji je poslan na vaš telefon.",
+          "value": "Molimo postavite željenu lozinku pomoću potvrdnog koda poslanog na vaš telefon.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Endurstilltu lykilorðið þitt með staðfestingarkóðanum sem sendur var í símann þinn.",
+          "value": "Vinsamlegast stilltu lykilorðið sem þú vilt með staðfestingarkóðanum sem sendur var í símann þinn.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Si prega di reimpostare la password con il codice di conferma inviato al telefono.",
+          "value": "Impostare la password desiderata con il codice di conferma inviato al telefono.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Iš naujo nustatykite slaptažodį naudodami į telefoną atsiųstą patvirtinimo kodą.",
+          "value": "Į telefoną atsiųstu patvirtinimo kodu nustatykite norimą slaptažodį.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Lūdzu, atjaunojiet paroli, izmantojot uz tālruni nosūtīto apstiprinājuma kodu.",
+          "value": "Lūdzu, iestatiet vēlamo paroli, izmantojot apstiprinājuma kodu, kas nosūtīts uz tālruni.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Tilbakestill passordet ditt med bekreftelseskoden som er sendt til telefonen din.",
+          "value": "Angi ønsket passord med bekreftelseskoden som sendes til telefonen din.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Reset je wachtwoord met de bevestigingscode die naar je telefoon is gestuurd.",
+          "value": "Stel je gewenste wachtwoord in met de bevestigingscode die naar je telefoon is gestuurd.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Zresetuj hasło za pomocą kodu potwierdzającego wysłanego na Twój telefon.",
+          "value": "Ustaw żądane hasło za pomocą kodu potwierdzającego wysłanego na Twój telefon.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Reponha a sua palavra-passe com o código de confirmação enviado para o seu telemóvel.",
+          "value": "Defina a palavra-passe pretendida com o código de confirmação enviado para o seu telemóvel.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Vă rugăm să vă resetați parola cu ajutorul codului de confirmare trimis pe telefon.",
+          "value": "Vă rugăm să vă setați parola dorită cu ajutorul codului de confirmare trimis pe telefon.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Obnovte si heslo pomocou potvrdzovacieho kódu zaslaného na váš telefón.",
+          "value": "Nastavte požadované heslo pomocou potvrdzovacieho kódu zaslaného na váš telefón.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Geslo ponastavite s potrditveno kodo, poslano na vaš telefon.",
+          "value": "Želeno geslo nastavite s potrditveno kodo, poslano na vaš telefon.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Återställ ditt lösenord med den bekräftelsekod som skickats till din telefon.",
+          "value": "Ange önskat lösenord med hjälp av den bekräftelsekod som skickas till din telefon.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Lütfen telefonunuza gönderilen onay kodu ile şifrenizi sıfırlayın.",
+          "value": "Lütfen telefonunuza gelen onay kodu ile istediğiniz şifreyi belirleyiniz.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Будь ласка, змініть пароль за допомогою коду підтвердження, надісланого на ваш телефон.",
+          "value": "Будь ласка, встановіть бажаний пароль за допомогою коду підтвердження, надісланого на ваш телефон.",
           "edit_level": 40
         }
       ]
@@ -18781,132 +18873,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "На телефона ви е изпратен нов код за потвърждение на нулиране на паролата. Моля, използвайте кода за потвърждение, за да възстановите паролата си.",
+          "value": "На телефона ви е изпратен код за потвърждение. Моля, използвайте кода за потвърждение, за да зададете желаната парола.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "S&#39;ha enviat un nou codi de confirmació de restabliment de la contrasenya al vostre telèfon. Si us plau, utilitzeu el codi de confirmació per restablir la vostra contrasenya.",
+          "value": "S&#39;ha enviat un codi de confirmació al vostre telèfon. Si us plau, utilitzeu el codi de confirmació per definir la contrasenya desitjada.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Na váš telefon byl odeslán nový potvrzovací kód pro resetování hesla. Pro obnovení hesla použijte potvrzovací kód.",
+          "value": "Na váš telefon byl odeslán potvrzovací kód. Potvrzovací kód použijte k nastavení požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "En ny bekræftelseskode til nulstilling af adgangskode er blevet sendt til din telefon. Brug bekræftelseskoden til at nulstille din adgangskode.",
+          "value": "Der er sendt en bekræftelseskode til din telefon. Brug venligst bekræftelseskoden til at angive dit ønskede kodeord.",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Ein neuer Bestätigungscode zum Zurücksetzen des Passworts wurde an Ihr Telefon gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr Passwort zurückzusetzen.",
+          "value": "Es wurde ein Bestätigungscode an Ihr Telefon gesendet. Bitte verwenden Sie den Bestätigungscode, um Ihr gewünschtes Passwort festzulegen.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ένας νέος κωδικός επιβεβαίωσης επαναφοράς κωδικού πρόσβασης έχει σταλεί στο τηλέφωνό σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να επαναφέρετε τον κωδικό πρόσβασής σας.",
+          "value": "Ένας κωδικός επιβεβαίωσης έχει σταλεί στο τηλέφωνό σας. Παρακαλούμε χρησιμοποιήστε τον κωδικό επιβεβαίωσης για να ορίσετε τον επιθυμητό κωδικό πρόσβασης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "A new reset password confirmation code has been sent to your phone. Please use the confirmation code to reset your password.",
+          "value": "A confirmation code has been sent to your phone. Please use the confirmation code to set your desired password.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Se ha enviado a su teléfono un nuevo código de confirmación para restablecer la contraseña. Utilice el código de confirmación para restablecer su contraseña.",
+          "value": "Se ha enviado un código de confirmación a su teléfono. Utilice el código de confirmación para establecer la contraseña que desee.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie telefonile on saadetud uus parooli lähtestamise kinnituskood. Palun kasutage kinnituskoodi oma parooli lähtestamiseks.",
+          "value": "Teie telefonile on saadetud kinnituskood. Palun kasutage kinnituskoodi, et määrata soovitud salasõna.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Uusi salasanan vahvistuskoodi on lähetetty puhelimeesi. Käytä vahvistuskoodia salasanasi palauttamiseen.",
+          "value": "Vahvistuskoodi on lähetetty puhelimeesi. Käytä vahvistuskoodia asettaaksesi haluamasi salasanan.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Un nouveau code de confirmation de réinitialisation du mot de passe a été envoyé sur votre téléphone. Veuillez utiliser le code de confirmation pour réinitialiser votre mot de passe.",
+          "value": "Un code de confirmation a été envoyé sur votre téléphone. Veuillez utiliser ce code de confirmation pour définir le mot de passe de votre choix.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Novi potvrdni kod za poništavanje lozinke poslan je na vaš telefon. Upotrijebite kod za potvrdu za ponovno postavljanje lozinke.",
+          "value": "Potvrdni kod je poslan na vaš telefon. Molimo vas da pomoću potvrdnog koda postavite željenu lozinku.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Nýr staðfestingarkóði fyrir endurstillingu lykilorðs hefur verið sendur í símann þinn. Vinsamlegast notaðu staðfestingarkóðann til að endurstilla lykilorðið þitt.",
+          "value": "Staðfestingarkóði hefur verið sendur í símann þinn. Vinsamlegast notaðu staðfestingarkóðann til að stilla lykilorðið sem þú vilt nota.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Un nuovo codice di conferma per la reimpostazione della password è stato inviato al vostro telefono. Utilizzate il codice di conferma per reimpostare la password.",
+          "value": "Un codice di conferma è stato inviato al vostro telefono. Utilizzare il codice di conferma per impostare la password desiderata.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Į jūsų telefoną išsiųstas naujas slaptažodžio atstatymo patvirtinimo kodas. Naudokite patvirtinimo kodą, kad iš naujo nustatytumėte slaptažodį.",
+          "value": "Į jūsų telefoną buvo išsiųstas patvirtinimo kodas. Naudokite patvirtinimo kodą norimam slaptažodžiui nustatyti.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Uz jūsu tālruni ir nosūtīts jauns paroles atiestatīšanas apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai atjaunotu paroli.",
+          "value": "Uz tālruni ir nosūtīts apstiprinājuma kods. Lūdzu, izmantojiet apstiprinājuma kodu, lai iestatītu vēlamo paroli.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "En ny bekreftelseskode for tilbakestilling av passord har blitt sendt til telefonen din. Bruk bekreftelseskoden til å tilbakestille passordet ditt.",
+          "value": "En bekreftelseskode har blitt sendt til telefonen din. Bruk bekreftelseskoden til å angi ønsket passord.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Er is een nieuwe bevestigingscode voor het resetten van je wachtwoord naar je telefoon gestuurd. Gebruik de bevestigingscode om je wachtwoord opnieuw in te stellen.",
+          "value": "Er is een bevestigingscode naar uw telefoon gestuurd. Gebruik de bevestigingscode om het gewenste wachtwoord in te stellen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Na Twój telefon został wysłany nowy kod potwierdzający zresetowanie hasła. Użyj kodu potwierdzającego, aby zresetować hasło.",
+          "value": "Na Twój telefon został wysłany kod potwierdzający. Użyj kodu potwierdzającego, aby ustawić żądane hasło.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Foi enviado para o seu telemóvel um novo código de confirmação da palavra-passe de reposição. Utilize o código de confirmação para repor a sua palavra-passe.",
+          "value": "Foi enviado um código de confirmação para o seu telemóvel. Utilize o código de confirmação para definir a palavra-passe pretendida.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Un nou cod de confirmare pentru resetarea parolei a fost trimis pe telefonul dumneavoastră. Vă rugăm să utilizați codul de confirmare pentru a vă reseta parola.",
+          "value": "Un cod de confirmare a fost trimis pe telefonul dumneavoastră. Vă rugăm să utilizați codul de confirmare pentru a seta parola dorită.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Na váš telefón bol odoslaný nový kód na potvrdenie obnovenia hesla. Na obnovenie hesla použite potvrdzovací kód.",
+          "value": "Na váš telefón bol odoslaný potvrdzovací kód. Potvrdzovací kód použite na nastavenie požadovaného hesla.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Na vaš telefon je bila poslana nova potrditvena koda za ponastavitev gesla. Potrditveno kodo uporabite za ponastavitev gesla.",
+          "value": "Na vaš telefon je bila poslana potrditvena koda. S potrditveno kodo nastavite želeno geslo.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "En ny bekräftelsekod för återställning av lösenord har skickats till din telefon. Använd bekräftelsekoden för att återställa ditt lösenord.",
+          "value": "En bekräftelsekod har skickats till din telefon. Använd bekräftelsekoden för att ställa in önskat lösenord.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Telefonunuza yeni bir şifre sıfırlama onay kodu gönderilmiştir. Lütfen şifrenizi sıfırlamak için onay kodunu kullanın.",
+          "value": "Telefonunuza bir onay kodu gönderildi. Lütfen istediğiniz şifreyi belirlemek için onay kodunu kullanın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "На ваш телефон було надіслано новий код підтвердження для скидання паролю. Будь ласка, використовуйте код підтвердження для зміни пароля.",
+          "value": "На ваш телефон було надіслано код підтвердження. Будь ласка, використовуйте код підтвердження, щоб встановити бажаний пароль.",
           "edit_level": 40
         }
       ]
@@ -20401,132 +20493,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Вашият{0}SMS код за два фактора: {1}",
+          "value": "{0} е вашият {1} двуфакторен код. Не споделяйте кода си с никого.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "El vostre{0}codi SMS de dos factors: {1}",
+          "value": "{0} és el teu codi de dos factors {1}. No comparteixis el teu codi amb ningú.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Váš{0}SMS dvoufaktorový kód: {1}",
+          "value": "{0} je váš dvoufaktorový kód {1}. Svůj kód nikomu nesdělujte.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Din{0}SMS to-faktor kode: {1}",
+          "value": "{0} er din {1} to-faktor kode. Del ikke din kode med nogen.",
           "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Ihr{0}SMS-Zwei-Faktor-Code: {1}",
+          "value": "{0} ist Ihr {1} Zwei-Faktor-Code. Geben Sie Ihren Code nicht an andere weiter.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός δύο παραγόντων σας{0}SMS: {1}",
+          "value": "{0} είναι ο {1} κωδικός δύο παραγόντων. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Your{0}SMS two-factor code: {1}",
+          "value": "{0} is your {1} two-factor code. Don't share your code with anyone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Su código de dos factores{0}SMS: {1}",
+          "value": "{0} es tu código de dos factores {1}. No compartas tu código con nadie.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie{0}SMS-i kahefaktoriline kood: {1}",
+          "value": "{0} on teie {1} kahe faktori kood. Ärge jagage oma koodi kellegagi.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Kaksitekijäkoodisi{0}SMS-koodisi: {1}",
+          "value": "{0} on {1} kaksitekijäkoodisi. Älä jaa koodiasi kenenkään kanssa.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Votre code à deux facteurs{0}SMS : {1}",
+          "value": "{0} est votre code à deux facteurs {1}. Ne communiquez votre code à personne.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Vaš{0}SMS dvostruki kôd: {1}",
+          "value": "{0} je vaš {1} dvofaktorski kod. Ne dijelite svoj kod ni s kim.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}Tveggja þátta SMS-kóði þinn: {1}",
+          "value": "{0} er tvíþátta kóðinn þinn {1}. Ekki deila kóðanum þínum með neinum.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Il tuo{0}Codice a due fattori SMS: {1}",
+          "value": "{0} è il vostro codice a due fattori {1}. Non condividete il vostro codice con nessuno.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0}SMS dviejų veiksnių kodas: {1}",
+          "value": "{0} yra jūsų {1} dviejų veiksnių kodas. Niekam nesidalykite savo kodu.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Jūsu{0}SMS divu faktoru kods: {1}",
+          "value": "{0} ir jūsu {1} divu faktoru kods. Nevienam nedalieties ar savu kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Din{0}SMS-tofaktorkode: {1}",
+          "value": "{0} er din {1} to-faktorkode. Ikke del koden din med noen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Uw{0}SMS twee-factor code: {1}",
+          "value": "{0} is je {1} twee-factorcode. Deel je code met niemand.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Twój{0}kod dwuskładnikowy SMS: {1}",
+          "value": "{0} to kod dwuskładnikowy {1}. Nie udostępniaj nikomu swojego kodu.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "O seu código de dois factores{0}SMS: {1}",
+          "value": "{0} é o seu código de dois factores {1}. Não partilhe o seu código com ninguém.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul dumneavoastră{0}SMS cu doi factori: {1}",
+          "value": "{0} este codul dvs. de doi factori {1}. Nu partajați codul dvs. cu nimeni.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Váš{0}SMS dvojfaktorový kód: {1}",
+          "value": "{0} je váš dvojfaktorový kód {1}. Svoj kód nikomu neposkytujte.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vaša{0}Koda za dva faktorja SMS: {1}",
+          "value": "{0} je vaša {1} dvostopenjska koda. Svoje kode ne delite z nikomer.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Din{0}SMS tvåfaktorkod: {1}",
+          "value": "{0} är din {1} tvåfaktorkod. Dela inte din kod med någon.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}SMS iki faktörlü kodunuz: {1}",
+          "value": "{0} sizin {1} iki faktörlü kodunuzdur. Kodunuzu kimseyle paylaşmayın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Ваш двофакторний код для СМС{0}: {1}",
+          "value": "{0} - це ваш двофакторний код {1}. Не діліться своїм кодом ні з ким.",
           "edit_level": 40
         }
       ]
@@ -21481,132 +21573,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "{0}електронна поща с два фактора",
+          "value": "{0} двуфакторен код",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "{0}correu electrònic de dos factors",
+          "value": "Codi de dos factors {0}",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "{0}e-mail dvoufaktorový",
+          "value": "{0} dvoufaktorový kód",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "{0}e-mail to-faktor",
-          "edit_level": 40
+          "value": "{0} to-faktor kode",
+          "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "{0}zwei-faktor-e-mail",
+          "value": "{0} Zwei-Faktor-Code",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "{0}email two-factor",
+          "value": "{0} κωδικός δύο παραγόντων",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "{0}email two-factor",
+          "value": "{0} two-factor code",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "{0}email dos factores",
+          "value": "{0} código de dos factores",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "{0}emaili kahefaktoriline",
+          "value": "{0} kahefaktoriline kood",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "{0}sähköpostin kaksoistekijä",
+          "value": "{0} kahden tekijän koodi",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "{0}courriel à deux facteurs",
+          "value": "{0} code à deux facteurs",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "{0}e-pošta u dva faktora",
+          "value": "{0} dvofaktorski kod",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}tvíþætt tölvupóstur",
+          "value": "{0} tveggja þátta kóði",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "{0}e-mail a due fattori",
+          "value": "{0} codice a due fattori",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "{0}el. pašto dviejų veiksnių",
+          "value": "{0} dviejų veiksnių kodas",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "{0}e-pasts ar diviem faktoriem",
+          "value": "{0} divu faktoru kods",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "{0}e-post to-faktor",
+          "value": "{0} to-faktorkode",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "{0}e-mail twee-factor",
+          "value": "{0} twee-factor code",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "{0}dwuskładnikowa poczta e-mail",
+          "value": "{0} kod dwuskładnikowy",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "{0}correio eletrónico de dois factores",
+          "value": "{0} código de dois factores",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "{0}email cu doi factori",
+          "value": "{0} cod cu doi factori",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "{0}e-mail s dvoma faktormi",
+          "value": "{0} dvojfaktorový kód",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "{0}e-pošta z dvema faktorjema",
+          "value": "{0} dvofaktorska koda",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "{0}e-post två-faktor",
+          "value": "{0} tvåfaktorkod",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}e-posta iki faktörlü",
+          "value": "{0} iki faktörlü kod",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "{0}поштова двофакторна",
+          "value": "{0} двофакторний код",
           "edit_level": 40
         }
       ]
@@ -21616,132 +21708,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Вашият{0}електронна поща двуфакторен код: {1}",
+          "value": "Това е вашият {0} двуфакторен код. Не споделяйте кода си с никого.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "El vostre{0}codi de dos factors de correu electrònic: {1}",
+          "value": "Aquest és el teu codi de dos factors {0}. No comparteixis el teu codi amb ningú.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Váš{0}emailový dvoufaktorový kód: {1}",
+          "value": "Toto je váš dvoufaktorový kód {0}. Svůj kód nikomu nesdělujte.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Din{0}e-mail to-faktor kode: {1}",
-          "edit_level": 40
+          "value": "Dette er din {0} to-faktor kode. Del ikke din kode med nogen.",
+          "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Ihr{0}E-Mail Zwei-Faktor-Code: {1}",
+          "value": "Dies ist Ihr {0} Zwei-Faktor-Code. Geben Sie Ihren Code nicht an andere weiter.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός δύο παραγόντων του email σας{0}: {1}",
+          "value": "Αυτός είναι ο κωδικός σας {0} δύο παραγόντων. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Your{0}email two-factor code: {1}",
+          "value": "This is you {0} two-factor code. Don't share your code with anyone.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Su correo electrónico{0}código de dos factores: {1}",
+          "value": "Este es tu código de dos factores {0}. No compartas tu código con nadie.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Teie{0}e-posti kahefaktoriline kood: {1}",
+          "value": "See on teie {0} kahefaktoriline kood. Ärge jagage oma koodi kellegagi.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "{0}sähköpostisi kaksitekijäkoodi: {1}",
+          "value": "Tämä on sinun {0} kaksitekijäkoodisi. Älä jaa koodiasi kenenkään kanssa.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Votre{0}code de messagerie à deux facteurs : {1}",
+          "value": "Il s'agit de votre code {0} à deux facteurs. Ne communiquez votre code à personne.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Vaša{0}dvostruka šifra e-pošte: {1}",
+          "value": "Ovo je vaš {0} dvofaktorski kod. Nemojte dijeliti svoj kod ni s kim.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "{0}tvíþátta kóði tölvupóstsins þíns: {1}",
+          "value": "Þetta er tvíþátta kóðinn þinn {0}. Ekki deila kóðanum þínum með neinum.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Il codice a due fattori della tua{0}email: {1}",
+          "value": "Questo è il vostro codice a due fattori {0}. Non condividete il vostro codice con nessuno.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0}pašto dviejų veiksnių kodas: {1}",
+          "value": "Tai yra jūsų {0} dviejų veiksnių kodas. Niekam nesidalykite savo kodu.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Jūsu{0}pasta divfaktoru kods: {1}",
+          "value": "Tas ir jūsu {0} divu faktoru kods. Nevienam nedalieties ar savu kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "To-faktorkoden for{0}e-post:: {1}",
+          "value": "Dette er din {0} to-faktorkode. Ikke del koden din med noen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Uw{0}email twee-factor code: {1}",
+          "value": "Dit is jouw {0} twee-factorcode. Deel je code met niemand.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Twój{0}dwuskładnikowy kod e-mail: {1}",
+          "value": "To jest twój {0} kod dwuskładnikowy. Nie udostępniaj nikomu swojego kodu.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "O código de dois factores do seu{0}email: {1}",
+          "value": "Este é o seu código de dois factores {0}. Não partilhe o seu código com ninguém.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Codul dvs.{0}email cu doi factori: {1}",
+          "value": "Acesta este codul dvs. de doi factori {0}. Nu partajați codul dvs. cu nimeni.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Váš{0}emailový dvojfaktorový kód: {1}",
+          "value": "Toto je váš dvojfaktorový kód {0}. Svoj kód nikomu neposkytujte.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Vaša{0}poštna dvostopenjska koda: {1}",
+          "value": "To je vaša {0} dvostopenjska koda. Svoje kode ne delite z nikomer.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Din tvåfaktorkod för{0}e-post: {1}",
+          "value": "Detta är din {0} tvåfaktorkod. Dela inte din kod med någon.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "{0}email iki faktörlü kodunuz: {1}",
+          "value": "Bu sizin {0} iki faktörlü kodunuz. Kodunuzu kimseyle paylaşmayın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Ваш{0}поштовий двофакторний код: {1}",
+          "value": "Це ваш {0} двофакторний код. Не діліться своїм кодом ні з ким.",
           "edit_level": 40
         }
       ]
@@ -22823,6 +22915,736 @@
           "culture": "uk",
           "value": "Будь ласка, не використовуйте ім'я користувача або його частину.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 166,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Моля, използвайте новия код за потвърждение, който току-що беше изпратен на телефона ви.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, feu servir el nou codi de confirmació que us acaben d&#39;enviar al telèfon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte prosím nový potvrzovací kód, který vám byl právě zaslán na váš telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug venligst den nye bekræftelseskode, som netop er blevet sendt til din telefon.",
+          "edit_level": 100
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie den neuen Bestätigungscode, den Sie soeben auf Ihr Handy erhalten haben.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε τον νέο κωδικό επιβεβαίωσης που μόλις εστάλη στο τηλέφωνό σας.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Please use the new confirmation code that has just been sent to your phone.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice el nuevo código de confirmación que acaba de recibir en su teléfono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage uut kinnituskoodi, mis on just saadetud teie telefoni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä uutta vahvistuskoodia, joka on juuri lähetetty puhelimeesi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser le nouveau code de confirmation qui vient de vous être envoyé sur votre téléphone.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo Vas da koristite novi potvrdni kod koji je upravo poslan na Vaš telefon.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notaðu nýja staðfestingarkóðann sem var sendur í símann þinn.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Utilizzate il nuovo codice di conferma che vi è stato appena inviato sul telefono.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite naują patvirtinimo kodą, kuris ką tik buvo atsiųstas į jūsų telefoną.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet jauno apstiprinājuma kodu, kas tikko tika nosūtīts uz jūsu tālruni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Vennligst bruk den nye bekreftelseskoden som nettopp er sendt til telefonen din.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik de nieuwe bevestigingscode die zojuist naar je telefoon is verzonden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Użyj nowego kodu potwierdzającego, który został właśnie wysłany na Twój telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize o novo código de confirmação que acaba de ser enviado para o seu telemóvel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți noul cod de confirmare care tocmai v-a fost trimis pe telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite nový potvrdzovací kód, ktorý vám bol práve zaslaný do telefónu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite novo potrditveno kodo, ki je bila pravkar poslana na vaš telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Vänligen använd den nya bekräftelsekoden som just har skickats till din telefon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen telefonunuza yeni gönderilen onay kodunu kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте новий код підтвердження, який щойно надійшов на ваш телефон.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 167,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Това е кодът за потвърждение {0}, за да зададете желаната парола. Не споделяйте кода си с никого.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Aquest és el teu codi de confirmació {0} per establir la contrasenya desitjada. No comparteixis el teu codi amb ningú.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Toto je potvrzovací kód {0} pro nastavení požadovaného hesla. Svůj kód nikomu nesdělujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Dette er din {0} bekræftelseskode til at angive dit ønskede kodeord. Del ikke din kode med nogen.",
+          "edit_level": 100
+        },
+        {
+          "culture": "de",
+          "value": "Dies ist Ihr {0} Bestätigungscode, um Ihr gewünschtes Passwort festzulegen. Geben Sie Ihren Code an niemanden weiter.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Αυτός είναι ο κωδικός επιβεβαίωσης {0} για να ορίσετε τον επιθυμητό κωδικό πρόσβασης. Μην μοιραστείτε τον κωδικό σας με κανέναν.",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "This is you {0} confirmation code to set your desired password. Don't share your code with anyone.",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Este es tu {0} código de confirmación para establecer la contraseña deseada. No compartas tu código con nadie.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "See on teie {0} kinnituskood soovitud salasõna seadmiseks. Ärge jagage oma koodi kellegagi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tämä on {0} vahvistuskoodi, jolla voit asettaa haluamasi salasanan. Älä jaa koodiasi kenenkään kanssa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Il s'agit de votre code de confirmation {0} pour définir le mot de passe souhaité. Ne communiquez votre code à personne.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Ovo je vaš {0} potvrdni kod za postavljanje željene lozinke. Ne dijelite svoj kod ni s kim.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Þetta er staðfestingarkóðinn þinn, {0}, til að stilla lykilorðið sem þú vilt nota. Ekki deila kóðanum með neinum.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Questo è il codice di conferma {0} per impostare la password desiderata. Non condividere il codice con nessuno.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Tai {0} patvirtinimo kodas, kuriuo nustatysite norimą slaptažodį. Niekam nesidalykite savo kodu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Tas ir jūsu {0} apstiprinājuma kods, lai iestatītu vēlamo paroli. Nevienam nedalieties ar savu kodu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Dette er din {0} bekreftelseskode for å angi ønsket passord. Ikke del koden din med noen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Dit is je {0} bevestigingscode om je gewenste wachtwoord in te stellen. Deel je code met niemand.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Jest to kod potwierdzający {0} do ustawienia żądanego hasła. Nie udostępniaj nikomu swojego kodu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Este é o seu código de confirmação {0} para definir a palavra-passe pretendida. Não partilhe o seu código com ninguém.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Acesta este codul dvs. de confirmare {0} pentru a seta parola dorită. Nu partajați codul dvs. cu nimeni.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Toto je váš {0} potvrdzovací kód na nastavenie požadovaného hesla. Svoj kód nikomu neposkytujte.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "To je {0} potrditvena koda za nastavitev želenega gesla. Svoje kode ne delite z nikomer.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Detta är din {0} bekräftelsekod för att ställa in ditt önskade lösenord. Dela inte din kod med någon.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Bu, istediğiniz şifreyi ayarlamak için {0} onay kodunuzdur. Kodunuzu kimseyle paylaşmayın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Це ваш код підтвердження {0} для встановлення бажаного паролю. Не повідомляйте свій код нікому.",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Код за потвърждение: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi de confirmació: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Potvrzovací kód: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Bekræftelseskode: {0}",
+          "edit_level": 100
+        },
+        {
+          "culture": "de",
+          "value": "Bestätigungscode: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός επιβεβαίωσης: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Confirmation code: {0}",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código de confirmación: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kinnituskood: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vahvistuskoodi: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code de confirmation: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Potvrdni kod: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Staðfestingarkóði: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice di conferma: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Patvirtinimo kodas: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Apstiprinājuma kods: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bekreftelseskode: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Bevestigingscode: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod potwierdzenia: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código de confirmação: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Codul de confirmare: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Potvrdzovací kód: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Potrditvena koda: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Bekräftelsekod: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Onay kodu: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Код підтвердження: {0}",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 169,
+      "items": [
+        {
+          "culture": "bg",
+          "value": "Двуфакторен код: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi de dos factors: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Dvoufaktorový kód: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "To-faktor kode: {0}",
+          "edit_level": 100
+        },
+        {
+          "culture": "de",
+          "value": "Zwei-Faktor-Code: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός δύο παραγόντων: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "en",
+          "value": "Two-factor code: {0}",
+          "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código de dos factores: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktoriline kood: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Kahden tekijän koodi: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code à deux facteurs: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Dvofaktorski kod: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Tvíþátta kóði: {0}",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice a due fattori: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Dviejų veiksnių kodas: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Divu faktoru kods: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "To-faktorkode: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Twee-factor code: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod dwuskładnikowy: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código de dois factores: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Cod cu doi factori: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Dvojfaktorový kód: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Dvofaktorska koda: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Tvåfaktorkod: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "İki faktörlü kod: {0}",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Двофакторний код: {0}",
+          "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 170,
+      "items": [
+        {
+          "culture": "en",
+          "value": "One-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use one-time password via <a href=\"{0}\" class=\"{1}\">SMS</a> or <a href=\"{2}\" class=\"{3}\">email</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A one-time password has just been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a valid one-time password.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Send new one-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via email</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0} one-time password",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "items": [
+        {
+          "culture": "en",
+          "value": "This is you {0} one-time password for logging in. Don't share your one-time password with anyone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "items": [
+        {
+          "culture": "en",
+          "value": "One-time password: {0}",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 179,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A one-time password has just been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 180,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Use <a href=\"{0}\" class=\"{1}\">one-time password via SMS</a> or <a href=\"{2}\" class=\"{3}\">your password</a>.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 181,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid one-time password, please try one more time.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 182,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong username, phone number, email or one-time password. A phone number must include the country code e.g. +44XXXXXXXXX",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new one-time password has been sent to your email.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0} is your {1} one-time password for logging in. Don't share your one-time password with anyone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new one-time password has been sent to your phone.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 186,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via email.</a>",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 187,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use your password.</a>",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
+          "edit_level": 100
         }
       ]
     }

@@ -19,10 +19,9 @@ namespace FoxIDs.SeedTool
             {
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
-                Console.WriteLine("Select seed action");
-                Console.WriteLine("U: Upload risk passwords");
-                Console.WriteLine("D: Delete all risk passwords");
-                Console.WriteLine("A: Delete all risk passwords (only supported by MongoDB)");
+                Console.WriteLine("Select seed action:");
+                Console.WriteLine("U: Upload users to an environment");
+                Console.WriteLine("R: Delete all users in an environment");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -31,13 +30,10 @@ namespace FoxIDs.SeedTool
                 switch (char.ToLower(key.KeyChar))
                 {
                     case 'u':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
+                        await serviceProvider.GetService<UserSeedLogic>().SeedAsync();
                         break;
-                    case 'd':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
-                        break;
-                    case 'a':
-                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllInPartitionAsync();
+                    case 'r':
+                        await serviceProvider.GetService<UserSeedLogic>().DeleteAllAsync();
                         break;
 
                     default:

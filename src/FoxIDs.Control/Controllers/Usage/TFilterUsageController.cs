@@ -57,8 +57,8 @@ namespace FoxIDs.Controllers
                 }
 
                 (var mUsedList, _) = filterTenantName.IsNullOrWhiteSpace() ? 
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year) :
-                    await tenantDataRepository.GetListAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
+                    await tenantDataRepository.GetManyAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year) :
+                    await tenantDataRepository.GetManyAsync<Used>(whereQuery: u => u.PeriodEndDate.Month == month && u.PeriodEndDate.Year == year && u.TenantName.Contains(filterTenantName, StringComparison.CurrentCultureIgnoreCase));
 
                 var aUsedList = new HashSet<Api.UsedBase>(mUsedList.Count());
                 foreach (var mUsed in mUsedList.OrderBy(t => t.TenantName))

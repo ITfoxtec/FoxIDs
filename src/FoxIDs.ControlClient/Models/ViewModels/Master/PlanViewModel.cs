@@ -28,7 +28,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain")]
         public bool EnableCustomDomain { get; set; }
 
-        [Display(Name = "SMS two-factor and reset password")]
+        [Display(Name = "SMS two-factor and set password")]
         public bool EnableSms { get; set; }
 
         [Display(Name = "Email two-factor")]

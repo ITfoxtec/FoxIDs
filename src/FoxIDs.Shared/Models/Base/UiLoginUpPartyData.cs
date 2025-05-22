@@ -11,9 +11,21 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [Required]
         [JsonProperty(PropertyName = "disable_reset_password")]
-        public bool DisableResetPassword { get; set; }
+        public bool? DisableResetPassword
+        {
+            get { return null; }
+            set
+            {
+                if (value == true)
+                {
+                    DisableSetPassword = true;
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "disable_set_new_password")]
+        public bool DisableSetPassword { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
         [JsonProperty(PropertyName = "title")]

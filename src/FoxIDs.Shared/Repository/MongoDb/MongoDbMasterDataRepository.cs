@@ -81,7 +81,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
+        public override async ValueTask<IReadOnlyCollection<T>> GetManyAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = TypeToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
@@ -161,19 +161,7 @@ namespace FoxIDs.Repository
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(item);
                 Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(item.PartitionId) && f.Id.Equals(item.Id);
-                var data = await collection.Find(filter).FirstOrDefaultAsync();
-                if (data == null)
-                {
-                    await collection.InsertOneAsync(item);
-                }
-                else
-                {
-                    var result = await collection.ReplaceOneAsync(filter, item);
-                    if (!result.IsAcknowledged || !(result.MatchedCount > 0))
-                    {
-                        throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
-                    }
-                }
+                await collection.ReplaceOneAsync(filter, item, options: new ReplaceOptions { IsUpsert = true });
             }
             catch (FoxIDsDataException)
             {
@@ -211,7 +199,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveBulkAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -228,7 +216,13 @@ namespace FoxIDs.Repository
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(firstItem);
-                await collection.InsertManyAsync(items);
+
+                var updates = new List<WriteModel<T>>();
+                foreach (var item in items)
+                {
+                    updates.Add(new ReplaceOneModel<T>(Builders<T>.Filter.Where(d => d.Id == item.Id), item) { IsUpsert = true });
+                }
+                await collection.BulkWriteAsync(updates, new BulkWriteOptions() { IsOrdered = false });
             }
             catch (Exception ex)
             {
@@ -261,7 +255,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();
@@ -280,7 +274,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteBulkAsync<T>()
+        public override async ValueTask DeleteManyAsync<T>()
         {
             var partitionId = TypeToMasterPartitionId<T>();
             try

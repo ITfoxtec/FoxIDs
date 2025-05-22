@@ -141,7 +141,7 @@ namespace FoxIDs.Logic.Usage
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var currentMonthStartingPoint = currentMonthPointer.ToUnixTimeSeconds();
-                    (var tenants, paginationToken) = await tenantDataRepository.GetListAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" && (!t.CreateTime.HasValue || t.CreateTime.Value < currentMonthStartingPoint), pageSize: loadPageSize, paginationToken: paginationToken);
+                    (var tenants, paginationToken) = await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => !string.IsNullOrEmpty(t.PlanName) && t.PlanName != "free" && (!t.CreateTime.HasValue || t.CreateTime.Value < currentMonthStartingPoint), pageSize: loadPageSize, paginationToken: paginationToken);
                     foreach (var tenant in tenants)
                     {
                         try
@@ -223,7 +223,7 @@ namespace FoxIDs.Logic.Usage
                 string paginationToken = null;
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    (var usedList, paginationToken) = await tenantDataRepository.GetListAsync<Used>(whereQuery: u => !u.IsInactive && !u.IsDone && u.PeriodEndDate.Month == invoicingDatePointer.Month && u.PeriodEndDate.Year == invoicingDatePointer.Year, pageSize: loadPageSize, paginationToken: paginationToken);
+                    (var usedList, paginationToken) = await tenantDataRepository.GetManyAsync<Used>(whereQuery: u => !u.IsInactive && !u.IsDone && u.PeriodEndDate.Month == invoicingDatePointer.Month && u.PeriodEndDate.Year == invoicingDatePointer.Year, pageSize: loadPageSize, paginationToken: paginationToken);
                     foreach (var used in usedList)
                     {
                         try

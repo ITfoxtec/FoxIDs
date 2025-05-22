@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(bool passwordAuth = false, bool passwordLessEmail = false, bool passwordLessSms = false, bool newCode = false)
         {
             try
             {
@@ -62,8 +62,39 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 if (!sequenceData.DoLoginIdentifierStep)
                 {
-                    sequenceData.DoLoginIdentifierStep = true;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    if ((sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction) && newCode)
+                    {
+                        return await ContinueAuthenticationInternalAsync(sequenceData, newCode);
+                    }
+
+                    sequenceData.DoLoginPasswordAction = false;
+                    sequenceData.DoLoginPasswordlessEmailAction = false;
+                    sequenceData.DoLoginPasswordlessSmsAction = false;
+
+                    if (passwordAuth)
+                    {
+                        sequenceData.DoLoginPasswordAction = true;
+                    }
+                    else if(passwordLessEmail)
+                    {
+                        sequenceData.DoLoginPasswordlessEmailAction = true;
+                    }
+                    else if (passwordLessSms)
+                    {
+                        sequenceData.DoLoginPasswordlessSmsAction = true;
+                    }
+
+                    if (!(sequenceData.DoLoginPasswordAction || sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction))
+                    {                      
+                        sequenceData.DoLoginIdentifierStep = true;
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        return await ContinueAuthenticationInternalAsync(sequenceData);
+                    }
+
                 }
                 return await IdentifierInternalAsync(sequenceData);
             }
@@ -87,6 +118,7 @@ namespace FoxIDs.Controllers
                 if (sequenceData.DoLoginIdentifierStep)
                 {
                     ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
+                    ModelState[nameof(login.OneTimePassword)].ValidationState = ModelValidationState.Valid;
                     return await IdentifierInternalAsync(sequenceData, login);
                 }
                 else
@@ -119,7 +151,7 @@ namespace FoxIDs.Controllers
                     {
                         ModelState[$"{nameof(login.UsernamePhoneEmailIdentifier)}.{nameof(login.UsernamePhoneEmailIdentifier.UserIdentifier)}"].ValidationState = ModelValidationState.Valid;
                     }
-                    return await PasswordInternalAsync(sequenceData, login);
+                    return await AuthenticationInternalAsync(sequenceData, login);
                 }
             }
             catch (EndpointException)
@@ -201,7 +233,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectActionAsync(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
@@ -213,7 +245,7 @@ namespace FoxIDs.Controllers
                     sequenceData.UserIdentifier = sessionUserIdentifier;
                     sequenceData.DoSessionUserRequireLogin = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return await PasswordInternalAsync();
+                    return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
                 }
 
                 var identifierViewModel = new IdentifierViewModel
@@ -403,7 +435,7 @@ namespace FoxIDs.Controllers
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
                 ModelState.Clear();
-                return await StartPasswordInternal(sequenceData, loginUpParty);
+                return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
             }
             catch (Exception ex)
             {
@@ -458,35 +490,11 @@ namespace FoxIDs.Controllers
                 LoginHint = sequenceData.LoginHint,
                 Acr = sequenceData.Acr
             };
-        }
-        
-        private async Task<IActionResult> PasswordInternalAsync()
+        }       
+
+        private async Task<IActionResult> StartAuthenticationInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            try
-            {
-                logger.ScopeTrace(() => "Start password.");
-
-                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                if (sequenceData.DoLoginIdentifierStep)
-                {
-                    throw new InvalidOperationException("Sequence not aimed for the password step.");
-                }
-                loginPageLogic.CheckUpParty(sequenceData);
-                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
-
-                return await StartPasswordInternal(sequenceData, loginUpParty);
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
-
-        private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
-        {
-            (_, _, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (_, _, var redirectAction) = await CheckSessionReturnRedirectActionAsync(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -497,56 +505,121 @@ namespace FoxIDs.Controllers
                 throw new InvalidOperationException("Required user identifier is empty in sequence.");
             }
 
-            var passwordViewModel = new PasswordViewModel
+            var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
+            if (user != null && !user.DisableAccount)
             {
-                SequenceString = SequenceString,
-                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                IconUrl = loginUpParty.IconUrl,
-                Css = loginUpParty.Css,
-                EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                EnableResetPassword = !loginUpParty.DisableResetPassword,
-                EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
-            };
+                if (user.SetPasswordEmail || user.SetPasswordSms)
+                {
+                    return new RedirectResult($"../../{Constants.Routes.ActionController}/{Constants.Endpoints.SetPassword}/_{SequenceString}");
+                }
+            }
 
-            if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            if (!(loginUpParty.DisablePasswordAuth == true))
             {
-                passwordViewModel.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                sequenceData.DoLoginPasswordAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartPasswordInternal(sequenceData, loginUpParty);
             }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
+            else if (loginUpParty.EnablePasswordlessSms == true)
             {
-                passwordViewModel.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
+                sequenceData.DoLoginPasswordlessSmsAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await StartPasswordlessSmsInternalAsync(sequenceData, loginUpParty);
             }
-            else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
+            else if (loginUpParty.EnablePasswordlessEmail == true)
             {
-                passwordViewModel.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableEmailIdentifier)
-            {
-                passwordViewModel.EmailIdentifier = new EmailPasswordViewModel { Email = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnablePhoneIdentifier)
-            {
-                passwordViewModel.PhoneIdentifier = new PhonePasswordViewModel { Phone = sequenceData.UserIdentifier };
-            }
-            else if (loginUpParty.EnableUsernameIdentifier)
-            {
-                passwordViewModel.UsernameIdentifier = new UsernamePasswordViewModel { Username = sequenceData.UserIdentifier };
+                sequenceData.DoLoginPasswordlessEmailAction = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await StartPasswordlessEmailInternalAsync(sequenceData, loginUpParty);
             }
             else
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException("Authentication not implemented.");
             }
-
-            logger.ScopeTrace(() => "Show password dialog.");
-            return View("Password",passwordViewModel);
         }
 
-        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty upParty)
+        private async Task<IActionResult> ContinueAuthenticationInternalAsync(LoginUpSequenceData sequenceData, bool newCode = false)
+        {
+            loginPageLogic.CheckUpParty(sequenceData);
+            var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+            securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+            securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+            if (sequenceData.DoLoginPasswordAction)
+            {
+                return StartPasswordInternal(sequenceData, loginUpParty);
+            }
+            else if (sequenceData.DoLoginPasswordlessSmsAction)
+            {
+                return await StartPasswordlessSmsInternalAsync(sequenceData, loginUpParty, newCode);
+            }
+            else if (sequenceData.DoLoginPasswordlessEmailAction)
+            {
+                return await StartPasswordlessEmailInternalAsync(sequenceData, loginUpParty, newCode);
+            }
+            else
+            {
+                throw new NotImplementedException("Authentication not implemented.");
+            }
+        }
+        private IActionResult StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        {
+            logger.ScopeTrace(() => "Start password authentication.");
+
+            var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+
+            return View("Password", passwordViewModel);
+        }
+
+        private async Task<IActionResult> StartPasswordlessSmsInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool newCode = false)
+        {
+            logger.ScopeTrace(() => "Start passwordless SMS authentication.");
+
+            var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+            passwordlessSmsViewModel.ForceNewCode = newCode;
+
+            try
+            {
+                await accountLogic.SendPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                // Do not inform about non existing user in error message.
+            }
+
+            return View("PasswordlessSms", passwordlessSmsViewModel);
+        }
+
+        private async Task<IActionResult> StartPasswordlessEmailInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool newCode = false)
+        {
+            logger.ScopeTrace(() => "Start passwordless email authentication.");
+
+            var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+            passwordlessEmailViewModel.ForceNewCode = newCode;
+
+            try
+            {
+                await accountLogic.SendEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                // Do not inform about non existing user in error message.
+            }
+
+            return View("PasswordlessEmail", passwordlessEmailViewModel);
+        }
+
+        public async Task<(bool validSession, string userIdentifier, IActionResult actionResult)> CheckSessionReturnRedirectActionAsync(LoginUpSequenceData sequenceData, LoginUpParty upParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(upParty);
             var validSession = session != null && loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequireMfa(user, upParty, sequenceData));
@@ -563,7 +636,7 @@ namespace FoxIDs.Controllers
             return (validSession, session?.UserIdentifier, null);
         }
 
-        private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)
+        private async Task<IActionResult> AuthenticationInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login)
         {
             try
             {
@@ -576,133 +649,203 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                Func<IActionResult> viewError = () =>
+                if (sequenceData.DoLoginPasswordAction)
                 {
-                    var password = new PasswordViewModel
-                    {
-                        SequenceString = SequenceString,
-                        Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                        IconUrl = loginUpParty.IconUrl,
-                        Css = loginUpParty.Css,
-                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                        EnableResetPassword = !loginUpParty.DisableResetPassword,
-                        EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
-                        DisableChangeUserIdentifier = sequenceData.DoSessionUserRequireLogin,
-                    };
-                    if (login.EmailIdentifier != null)
-                    {
-                        password.EmailIdentifier = new EmailPasswordViewModel { Email = login.EmailIdentifier.Email };
-                    }
-                    else if (login.PhoneIdentifier != null)
-                    {
-                        password.PhoneIdentifier = new PhonePasswordViewModel { Phone = login.PhoneIdentifier.Phone };
-                    }
-                    else if (login.UsernameIdentifier != null)
-                    {
-                        password.UsernameIdentifier = new UsernamePasswordViewModel { Username = login.UsernameIdentifier.Username };
-                    }
-                    else if (login.UsernameEmailIdentifier != null)
-                    {
-                        password.UsernameEmailIdentifier = new UsernameEmailPasswordViewModel { UserIdentifier = login.UsernameEmailIdentifier.UserIdentifier };
-                    }
-                    else if (login.UsernamePhoneIdentifier != null)
-                    {
-                        password.UsernamePhoneIdentifier = new UsernamePhonePasswordViewModel { UserIdentifier = login.UsernamePhoneIdentifier.UserIdentifier };
-                    }
-                    else if (login.PhoneEmailIdentifier != null)
-                    {
-                        password.PhoneEmailIdentifier = new PhoneEmailPasswordViewModel { UserIdentifier = login.PhoneEmailIdentifier.UserIdentifier };
-                    }
-                    else if (login.UsernamePhoneEmailIdentifier != null)
-                    {
-                        password.UsernamePhoneEmailIdentifier = new UsernamePhoneEmailPasswordViewModel { UserIdentifier = login.UsernamePhoneEmailIdentifier.UserIdentifier };
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                    return View("Password", password);
-                };
-
-                if (!ModelState.IsValid)
-                {
-                    return viewError();
+                    ModelState[nameof(login.OneTimePassword)].ValidationState = ModelValidationState.Valid;
+                    return await PasswordInternalAsync(sequenceData, login, loginUpParty);
                 }
-
-                logger.ScopeTrace(() => "Password post.");
-                
-                try
+                else if (sequenceData.DoLoginPasswordlessSmsAction)
                 {
-                    var user = await accountLogic.ValidateUser(sequenceData.UserIdentifier, login.Password);
-                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+                    ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
+                    return await PasswordlessSmsInternalAsync(sequenceData, login, loginUpParty);
                 }
-                catch (ChangePasswordException cpex)
+                else if (sequenceData.DoLoginPasswordlessEmailAction)
                 {
-                    logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
-                    return StartChangePassword();
+                    ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
+                    return await PasswordlessEmailInternalAsync(sequenceData, login, loginUpParty);
                 }
-                catch (PasswordRiskException prex)
+                else
                 {
-                    logger.ScopeTrace(() => prex.Message, triggerEvent: true);
-                    sequenceData.ShowPasswordRiskError = true;
-                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                    return StartChangePassword();
+                    throw new NotImplementedException("Authentication action not implemented.");
                 }
-                catch (UserObservationPeriodException uoex)
-                {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
-                }
-                catch (AccountException aex)
-                {
-                    if (aex is InvalidPasswordException || aex is UserNotExistsException)
-                    {
-                        logger.ScopeTrace(() => aex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty)]);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return viewError();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Authentication failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty)
+        private async Task<IActionResult> PasswordInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty)
         {
+            Func<IActionResult> viewError = () =>
+            {
+                var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                return View("Password", passwordViewModel);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return viewError();
+            }
+
+            logger.ScopeTrace(() => "Password post.");
+
+            try
+            {
+                var user = await accountLogic.ValidateUser(sequenceData.UserIdentifier, login.Password, loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (ChangePasswordException cpex)
+            {
+                logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
+                return StartChangePassword();
+            }
+            catch (PasswordRiskException prex)
+            {
+                logger.ScopeTrace(() => prex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordRiskError = true;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (AccountException aex)
+            {
+                if (aex is InvalidPasswordException || aex is UserNotExistsException)
+                {
+                    logger.ScopeTrace(() => aex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty)]);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return viewError();
+        }
+
+
+        private async Task<IActionResult> PasswordlessSmsInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty)
+        {
+            Func<IActionResult> viewError = () =>
+            {
+                var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                return View("PasswordlessSms", passwordlessSmsViewModel);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return viewError();
+            }
+
+            logger.ScopeTrace(() => "Passwordless SMS post.");
+
+            try
+            {
+                var user = await accountLogic.VerifyPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.OneTimePassword);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (CodeNotExistsException cneex)
+            {
+                logger.ScopeTrace(() => cneex.Message);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your phone."]);
+            }
+            catch (InvalidCodeException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return viewError();
+        }
+
+
+        private async Task<IActionResult> PasswordlessEmailInternalAsync(LoginUpSequenceData sequenceData, LoginViewModel login, LoginUpParty loginUpParty)
+        {
+            Func<IActionResult> viewError = () =>
+            {
+                var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                return View("PasswordlessEmail", passwordlessEmailViewModel);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return viewError();
+            }
+
+            logger.ScopeTrace(() => "Passwordless email post.");
+
+            try
+            {
+                var user = await accountLogic.VerifyEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier, login.OneTimePassword);
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+            }
+            catch (CodeNotExistsException cneex)
+            {
+                logger.ScopeTrace(() => cneex.Message);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your email."]);
+            }
+            catch (InvalidCodeException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
+            }
+            catch (UserObservationPeriodException uoex)
+            {
+                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+            }
+            catch (UserNotExistsException unex)
+            {
+                logger.ScopeTrace(() => unex.Message, triggerEvent: true);
+                ModelState.AddModelError(string.Empty, localizer[GetWrongUserIdentifierOrPasswordErrorText(loginUpParty, isPasswordless: true)]);
+            }
+
+            return viewError();
+        }
+
+        private string GetWrongUserIdentifierOrPasswordErrorText(LoginUpParty loginUpParty, bool isPasswordless = false)
+        {
+            var passwordlesText = isPasswordless ? "one-time " : string.Empty;
+
             if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                return $"Wrong username, phone number, email or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number, email or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                return $"Wrong phone number, email or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                return $"Wrong username, phone number or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username, email or password.";
+                return $"Wrong username, email or {passwordlesText}password.";
             }
             else if (loginUpParty.EnableEmailIdentifier)
             {
-                return "Wrong email or password.";
+                return $"Wrong email or {passwordlesText}password.";
             }
             else if (loginUpParty.EnablePhoneIdentifier)
             {
-                return "Wrong phone number or password. A phone number must include the country code e.g. +44XXXXXXXXX";
+                return $"Wrong phone number or {passwordlesText}password. A phone number must include the country code e.g. +44XXXXXXXXX";
             }
             else if (loginUpParty.EnableUsernameIdentifier)
             {
-                return "Wrong username or password.";
+                return $"Wrong username or {passwordlesText}password.";
             }
             else
             {
@@ -995,11 +1138,20 @@ namespace FoxIDs.Controllers
                     userIdentifier.Email = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.Email, userIdentifier.Email);
                     userIdentifier.Phone = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PhoneNumber, userIdentifier.Phone);
                     userIdentifier.Username = GetUserIdentifierValue(claims, userIdentifierClaimTypes, JwtClaimTypes.PreferredUsername, userIdentifier.Username);
-                    
-                    var user = await accountLogic.CreateUserAsync(userIdentifier, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
+
+                    userIdentifier.Phone = countryCodesLogic.ReturnFullPhoneOnly(userIdentifier.Phone);
+
+                    var user = await accountLogic.CreateUserAsync(new CreateUserObj
+                    {
+                        UserIdentifier = userIdentifier,
+                        Password = password, 
+                        Claims = claims, 
+                        ConfirmAccount = loginUpParty.CreateUser.ConfirmAccount, 
+                        RequireMultiFactor = loginUpParty.CreateUser.RequireMultiFactor
+                    });
                     if (user != null)
                     {
-                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Username ?? user.Phone ?? user.Email);
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                     }
                 }
                 catch (UserExistsException uex)
@@ -1121,12 +1273,15 @@ namespace FoxIDs.Controllers
                         IsUserIdentifier = true
                     });
                 }
-                loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                if (!(loginUpParty.DisablePasswordAuth == true))
                 {
-                    Type = DynamicElementTypes.Password,
-                    Order = loginUpParty.CreateUser.Elements.Count() + 1,
-                    Required = true
-                });
+                    loginUpParty.CreateUser.Elements.Add(new DynamicElement
+                    {
+                        Type = DynamicElementTypes.Password,
+                        Order = loginUpParty.CreateUser.Elements.Count() + 1,
+                        Required = true
+                    });
+                }
                 loginUpParty.CreateUser.Elements.Add(new DynamicElement
                 {
                     Type = DynamicElementTypes.GivenName,
@@ -1246,7 +1401,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await accountLogic.ValidateUserChangePassword(sequenceData.UserIdentifier, changePassword.CurrentPassword, changePassword.NewPassword, loginUpParty.EnablePasswordlessEmail == true || loginUpParty.EnablePasswordlessSms == true);
                     if (loginUpParty.DeleteRefreshTokenGrantsOnChangePassword)
                     {
                         await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier, upPartyType: loginUpParty.Type);
@@ -1255,7 +1410,6 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (InvalidPasswordException ipex)

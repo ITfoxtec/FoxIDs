@@ -1,8 +1,8 @@
 ﻿@inherits FInputBase<bool?>
 
 <div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
-    <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-c-light btn-outline-secondary off")" @onclick="@(() => ToggleCurrentValue())" data-toggle="toggle" role="button" style="width: @width; height: 38px;">
-        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
+    <div class="toggle btn @(CurrentValueAccessor == true ? "btn-outline-primary" : "btn-c-light btn-outline-secondary off") @(Disabled ? "disabled" : string.Empty)" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
+        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValueAccessor" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
             <label class="btn btn-outline-primary toggle-on">@onText</label>
             <label class="btn btn-c-light btn-outline-secondary toggle-off">@offText</label>
@@ -17,9 +17,11 @@
 </div>
 
 @code {
-    private string width = "65px";
     private string onText = "Yes";
     private string offText = "No";
+
+    [Parameter]
+    public bool Disabled { get; set; } = false;
 
     [Parameter]
     public bool IncludeActiveFormGroup { get; set; } = true;
@@ -28,7 +30,22 @@
     public bool IncludeLabelAndValidationMessage { get; set; } = true;
 
     [Parameter]
+    public bool Negation { get; set; }
+
+    [Parameter]
+    public string TextWidth { get; set; } = "65px";
+
+    [Parameter]
     public string TextType { get; set; }
+
+    [Parameter]
+    public EventCallback<bool?> OnValidChange { get; set; }
+
+    private bool? CurrentValueAccessor
+    {
+        get { return Negation ? !(CurrentValue == true) : CurrentValue == true; }
+        set { CurrentValue = Negation ? !value : value; }
+    }
 
     protected override void OnInitialized()
     {
@@ -36,7 +53,7 @@
         {
             onText = "Enabled";
             offText = "Disabled";
-            width = "105px";
+            TextWidth = "105px";
         }
         else if (TextType?.Equals("y.n", StringComparison.OrdinalIgnoreCase) == true)
         {
@@ -46,8 +63,14 @@
         base.OnInitialized();
     }
 
-    private void ToggleCurrentValue()
+    private async Task ToggleCurrentValueAsync()
     {
+        if (Disabled)
+        {
+            return;
+        }
+
+        var oldCurrentValue = CurrentValue;
         if (CurrentValue == true)
         {
             CurrentValue = false;
@@ -55,6 +78,10 @@
         else
         {
             CurrentValue = true;
+        }
+        if (oldCurrentValue != CurrentValue)
+        {
+            await OnValidChange.InvokeAsync(CurrentValue);
         }
     }
 }

@@ -29,30 +29,41 @@ namespace FoxIDs.Models.Api
 
         public bool EnableUsernameIdentifier { get; set; }
 
+        [Display(Name = "Disable password authentication")]
+        public bool? DisablePasswordAuth { get; set; }
+
+        /// <summary>
+        /// Passwordless with email require the user to have a email user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with email (one-time password)")]
+        public bool? EnablePasswordlessEmail { get; set; }
+
+        /// <summary>
+        /// Passwordless with SMS require the user to have a phone user identifier.
+        /// </summary>
+        [Display(Name = "Passwordless with SMS (one-time password)")]
+        public bool? EnablePasswordlessSms { get; set; }
+
         /// <summary>
         /// Default false.
         /// </summary>
-        [Required]
-        public bool EnableCancelLogin { get; set; } = false;
+        public bool EnableCancelLogin { get; set; } 
 
         /// <summary>
         /// Default true.
         /// </summary>
-        [Required]
         public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
         /// Default false.
         /// </summary>
-        [Required]
-        public bool DisableResetPassword { get; set; } = false;
+        public bool DisableSetPassword { get; set; } 
 
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
         /// <summary>
         /// Default if required.
         /// </summary>
-        [Required]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         public bool DisableTwoFactorApp { get; set; }
@@ -121,7 +132,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Default false.
         /// </summary>
-        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+        public bool PersistentSessionLifetimeUnlimited { get; set; }
 
         public bool DisableSingleLogout { get; set; }
 
@@ -183,6 +194,26 @@ namespace FoxIDs.Models.Api
             if (!EnableEmailIdentifier && !EnablePhoneIdentifier && !EnableUsernameIdentifier)
             {
                 results.Add(new ValidationResult($"At lease one user identifier {nameof(EnableEmailIdentifier)} or {nameof(EnablePhoneIdentifier)} or {nameof(EnableUsernameIdentifier)} should be enabled.", [nameof(EnableEmailIdentifier), nameof(EnablePhoneIdentifier), nameof(EnableUsernameIdentifier)]));
+            }
+
+            if (DisablePasswordAuth == true && !(EnablePasswordlessEmail == true || EnablePasswordlessSms == true))
+            {
+                results.Add(new ValidationResult($"Either enable {nameof(EnablePasswordlessEmail)} or {nameof(EnablePasswordlessSms)} if {nameof(DisablePasswordAuth)} is true.", [nameof(DisablePasswordAuth), nameof(EnablePasswordlessEmail), nameof(EnablePasswordlessSms)]));
+            }
+
+            if (EnablePasswordlessEmail == true)
+            {
+                if (!EnableEmailIdentifier)
+                {
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnableEmailIdentifier)} is required to be enabled using passwordless with  email.", [nameof(EnableEmailIdentifier)]));
+                }
+            }
+            if (EnablePasswordlessSms == true)
+            {
+                if (!EnablePhoneIdentifier)
+                {
+                    results.Add(new ValidationResult($"The user identifier {nameof(EnablePhoneIdentifier)} is required to be enabled using passwordless with SMS.", [nameof(EnablePhoneIdentifier)]));
+                }
             }
 
             if (RequireTwoFactor && DisableTwoFactorApp && DisableTwoFactorSms && DisableTwoFactorEmail)

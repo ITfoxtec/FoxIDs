@@ -84,6 +84,10 @@ namespace FoxIDs.Logic
             try
             {
                 var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
+                if (accessToken.IsNullOrWhiteSpace())
+                {
+                    throw new Exception("The access token is not found in the Bearer header.");
+                }
                 logger.ScopeTrace(() => $"Access token '{accessToken}'.");
 
                 var claimsPrincipal = await oidcJwtDownLogic.ValidateTokenAsync(party.UsePartyIssuer ? RouteBinding.RouteUrl : null, accessToken);

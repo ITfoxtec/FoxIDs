@@ -153,6 +153,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 }
                 else
                 {
+                    Console.WriteLine(": 0");
                     break;
                 }
             }

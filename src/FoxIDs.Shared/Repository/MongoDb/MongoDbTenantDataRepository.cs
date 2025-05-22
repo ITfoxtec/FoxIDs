@@ -94,7 +94,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetManyAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
@@ -207,7 +207,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -263,7 +263,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask<long> DeleteManyAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -284,7 +284,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
+        public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();

@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                     whereQuery = whereQuery.AndAlso(filterWhereQuery);
                 }
 
-                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetListAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
                 var response = new Api.PaginationResponse<Api.User>
                 {
@@ -162,7 +162,7 @@ namespace FoxIDs.Controllers
                 }, saveUser: false));
             }
 
-            await tenantDataRepository.SaveListAsync(mUsers);
+            await tenantDataRepository.SaveManyAsync(mUsers);
 
             return NoContent();
         }
@@ -187,7 +187,7 @@ namespace FoxIDs.Controllers
             {
                 throw new Exception("User identifiers is empty.");
             }
-            await tenantDataRepository.DeleteListAsync<User>(ids, queryAdditionalIds: true);
+            await tenantDataRepository.DeleteManyAsync<User>(ids, queryAdditionalIds: true);
 
             return NoContent();
         }

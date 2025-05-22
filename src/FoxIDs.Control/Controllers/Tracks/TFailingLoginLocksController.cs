@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
                 var mFailingLoginType = filterFailingLoginType != null ? (FailingLoginTypes?)(int)filterFailingLoginType.Value : null;
 
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mFailingLoginLocks, var nextPaginationToken) = await tenantDataRepository.GetListAsync<FailingLoginLock>(idKey, d => d.DataType.Equals(Constants.Models.DataType.FailingLoginLock) &&
+                (var mFailingLoginLocks, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<FailingLoginLock>(idKey, d => d.DataType.Equals(Constants.Models.DataType.FailingLoginLock) &&
                             (!queryByUserIdentifier || d.UserIdentifier == filterUserIdentifier) &&
                             (!mFailingLoginType.HasValue || d.FailingLoginType == mFailingLoginType.Value), paginationToken: paginationToken);
 

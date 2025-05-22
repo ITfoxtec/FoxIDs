@@ -81,12 +81,12 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.SessionId == sessionId);
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.SessionId == sessionId);
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.SessionId == sessionId);
+            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.SessionId == sessionId);
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted, Session ID '{sessionId}'.");
@@ -100,12 +100,12 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Phone '{phone}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Phone '{phone}'.");
             }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
+            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted, Phone '{phone}'.");
@@ -119,12 +119,12 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Email '{email}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
             if (ttlGrantCount > 0)
             {
                 logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Email '{email}'.");
             }
-            var grantCount = await tenantDataRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
+            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
             if (grantCount > 0)
             {
                 logger.ScopeTrace(() => $"Refresh Token grants deleted, Email '{email}'.");

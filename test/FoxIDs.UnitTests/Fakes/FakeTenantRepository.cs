@@ -41,7 +41,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask<(IReadOnlyCollection<T> items, string paginationToken)> GetManyAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize, string paginationToken = null, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +61,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public override ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
@@ -76,12 +76,12 @@ namespace FoxIDs.UnitTests.Mocks
         //    throw new NotImplementedException();
         //}
 
-        public override ValueTask<long> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask<long> DeleteManyAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids, TelemetryScopedLogger scopedLogger = null)
+        public override ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }

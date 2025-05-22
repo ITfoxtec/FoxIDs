@@ -50,7 +50,7 @@ namespace FoxIDs.Repository
             return item;
         }
 
-        public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
+        public override async ValueTask<IReadOnlyCollection<T>> GetManyAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = TypeToMasterPartitionId<T>();
             var dataItems = (await fileDataRepository.GetListAsync(partitionId, GetDataType<T>(), pageSize)).Select(i => i.DataJsonToObject<T>());
@@ -116,7 +116,7 @@ namespace FoxIDs.Repository
             await fileDataRepository.DeleteAsync(item.Id, item.PartitionId);
         }
 
-        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -142,7 +142,7 @@ namespace FoxIDs.Repository
             await fileDataRepository.DeleteAsync(id, partitionId);
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids)
         {
             foreach (string id in ids)
             {
@@ -151,7 +151,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override ValueTask DeleteListAsync<T>()
+        public override ValueTask DeleteManyAsync<T>()
         {
             throw new NotSupportedException("Not supported by file repository.");
         }

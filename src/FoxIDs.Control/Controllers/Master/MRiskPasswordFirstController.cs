@@ -35,7 +35,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.RiskPassword>>> GetRiskPasswordFirst()
         {
-            var mRiskPasswords = await masterDataRepository.GetListAsync<RiskPassword>(pageSize: Constants.Models.ListPageSize);
+            var mRiskPasswords = await masterDataRepository.GetManyAsync<RiskPassword>(pageSize: Constants.Models.ListPageSize);
             if (mRiskPasswords?.Count > 0) 
             {
                 return Ok(mapper.Map<HashSet<Api.RiskPassword>>(mRiskPasswords));

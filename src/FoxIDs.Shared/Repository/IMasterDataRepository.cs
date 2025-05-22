@@ -13,7 +13,7 @@ namespace FoxIDs.Repository
         ValueTask<long> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument;
 
         ValueTask<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument;
-        ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize) where T : MasterDocument;
+        ValueTask<IReadOnlyCollection<T>> GetManyAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize) where T : MasterDocument;
 
         /// <summary>
         /// Create document. Throws exception if already exists.
@@ -28,13 +28,13 @@ namespace FoxIDs.Repository
         /// <summary>
         /// Create or update many documents.
         /// </summary>
-        ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
+        ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items) where T : MasterDocument;
 
         /// <summary>
         /// Delete document. Throws exception if not already exists.
         /// </summary>
         ValueTask DeleteAsync<T>(string id) where T : MasterDocument;
-        ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
-        ValueTask DeleteListAsync<T>() where T : MasterDocument;
+        ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids) where T : MasterDocument;
+        ValueTask DeleteManyAsync<T>() where T : MasterDocument;
     }
 }

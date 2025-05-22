@@ -77,7 +77,7 @@ namespace FoxIDs.Controllers
                 });
             }
 
-            await masterDataRepository.SaveListAsync(riskPasswords);
+            await masterDataRepository.SaveManyAsync(riskPasswords);
 
             return NoContent();
         }
@@ -98,7 +98,7 @@ namespace FoxIDs.Controllers
                 ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
             }
 
-            await masterDataRepository.DeleteListAsync<RiskPassword>(ids);
+            await masterDataRepository.DeleteManyAsync<RiskPassword>(ids);
 
             return NoContent();
         }

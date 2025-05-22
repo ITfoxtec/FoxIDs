@@ -81,7 +81,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask<IReadOnlyCollection<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
+        public override async ValueTask<IReadOnlyCollection<T>> GetManyAsync<T>(Expression<Func<T, bool>> whereQuery = null, int pageSize = Constants.Models.ListPageSize)
         {
             var partitionId = TypeToMasterPartitionId<T>();
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
@@ -199,7 +199,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask SaveListAsync<T>(IReadOnlyCollection<T> items)
+        public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items)
         {
             if (items?.Count <= 0) new ArgumentNullException(nameof(items));
             var firstItem = items.First();
@@ -255,7 +255,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>(IReadOnlyCollection<string> ids)
+        public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids)
         {
             if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
             var firstId = ids.First();
@@ -274,7 +274,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public override async ValueTask DeleteListAsync<T>()
+        public override async ValueTask DeleteManyAsync<T>()
         {
             var partitionId = TypeToMasterPartitionId<T>();
             try

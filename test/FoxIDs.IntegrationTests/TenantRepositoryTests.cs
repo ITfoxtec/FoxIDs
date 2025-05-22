@@ -26,7 +26,7 @@ namespace FoxIDs.IntegrationTests
             var tenantRepository = TenantRepositoryInstance();
             var dbId = GetDbId(additionalId);
             Expression<Func<User, bool>> whereQuery = q => q.AdditionalIds.Contains(dbId);
-            (var items, string paginationToken) = await tenantRepository.GetListAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
+            (var items, string paginationToken) = await tenantRepository.GetManyAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
 
             output.WriteLine($"Test additionalId={additionalId}");
             foreach (var item in items)
@@ -45,7 +45,7 @@ namespace FoxIDs.IntegrationTests
             var tenantRepository = TenantRepositoryInstance();
             var dbId = GetDbId(id);
             Expression<Func<User, bool>> whereQuery = q => q.Id == dbId; 
-            (var items, string paginationToken) = await tenantRepository.GetListAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
+            (var items, string paginationToken) = await tenantRepository.GetManyAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
 
             output.WriteLine($"Test id={id}");
             foreach (var item in items)
@@ -68,7 +68,7 @@ namespace FoxIDs.IntegrationTests
             var tenantRepository = TenantRepositoryInstance();
             var dbId = GetDbId(idOrAdditionalId);
             Expression<Func<User, bool>> whereQuery = q => q.Id == dbId || q.AdditionalIds.Contains(dbId);
-            (var items, string paginationToken) = await tenantRepository.GetListAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
+            (var items, string paginationToken) = await tenantRepository.GetManyAsync(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" }, whereQuery, 1);
 
             output.WriteLine($"Test idOrAdditionalId={idOrAdditionalId}");
             foreach (var item in items)
@@ -116,7 +116,7 @@ namespace FoxIDs.IntegrationTests
         public async Task GetListAllUsers_ReturnsUsers()
         {
             var tenantRepository = TenantRepositoryInstance();
-            (var items, string paginationToken) = await tenantRepository.GetListAsync<User>(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" });
+            (var items, string paginationToken) = await tenantRepository.GetManyAsync<User>(new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" });
 
             foreach (var item in items)
             {

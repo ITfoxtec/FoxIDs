@@ -77,7 +77,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
         private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords, int readCount, int addCount)
         {
             await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
-            Console.WriteLine($"Risk passwords read '{readCount}' and uploaded '{addCount}'");            
+            Console.WriteLine($"Risk passwords read: {readCount}, and uploaded: {addCount}");
         }
 
         public async Task DeleteAllAsync()
@@ -103,7 +103,7 @@ namespace FoxIDs.MasterSeedTool.SeedLogic
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}All '{totalCount}' risk passwords deleted");
+            Console.WriteLine($"{Environment.NewLine}All {totalCount} risk passwords deleted");
         }
 
         private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordApiModel> riskPasswords)

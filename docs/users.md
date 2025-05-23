@@ -6,7 +6,7 @@ There are two different types of users:
 - [External users](#external-users) which are linked by an authenticated method to an external user/identity with a claim. The users are authenticated in an external Identity Provider and the users can be [redeemed](#provision-and-redeem) based on e.g. an `email` claim.
 
 ## Internal users
-Internal users can be authenticated in one or more [login](login.md) authentication methods in an environment, making is possible to [customised](customisation.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.
+Internal users can be authenticated in one or more [login](login.md) authentication methods in an environment, making it possible to [customised](customisation.md) the login experience e.g., depending on different [application](connections.md#application-registration) requirements.
 
 > [Upload your users](users-upload.md) from a SVC file, with or without a password.
 

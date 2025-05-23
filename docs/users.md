@@ -10,14 +10,25 @@ Internal users can be authenticated in one or more [login](login.md) authenticat
 
 > [Upload your users](users-upload.md) from a SVC file, with or without a password.
 
+### User identifiers
 Internal users support three user identifiers; email, phone number and username. The user identifiers is the username part when a user login with username and password. 
-You can select to only use one user identifier or them all.
+You can choose to use only one user identifier or all of them.
 
 Only phone number as user identifier.
 ![Phone number as user identifier](images/user-phone-user-identifier.png)
 
 Both email, phone number and username as user identifier.
 ![Email, phone number and username as user identifier](images/user-email-phone-username-user-identifier.png)
+
+### Password or one-time password
+The [login](login.md) authentication method is default set for user authenticate with username (user identifier) and password. 
+You can configure to support one-time password (OTP) via email and/or SMS. And optionally create many [login](login.md) authentication methods that support different authentication combinations.
+
+If you enable both password and one-time password all methods is available for the user. This UI also allows the user to create an account.
+![Login with password or select one-time password](images/user-auth-password.png)
+
+Or if only one-time password via email is enabled.
+![Login with one-time password via email](images/user-auth-otp-email.png)
 
 ### Create user
 Depending on the selected [login](login.md) authentication method's configuration, new users can create an account online.

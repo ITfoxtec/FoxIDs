@@ -35,6 +35,8 @@ How to guides:
 - Connect [Signicat](auth-method-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)
 
+
+
 ### SAML 2.0
 
 Configure [SAML 2.0](auth-method-saml-2.0.md) which trust an external Identity Provider (IdP).
@@ -49,6 +51,17 @@ How to guides:
 - Connect [Microsoft AD FS](auth-method-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in (Danish IdP)](auth-method-howto-saml-2.0-nemlogin.md)
 - Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
+
+
+### Verified platforms
+
+List of customer-verified platforms.
+
+- [MobilityGuard](https://www.mobilityguard.com/)
+- [F5 BIG-IP](https://www.f5.com/products/big-ip)
+- [Swedish E-Identitet](https://e-identitet.se/)
+- [PhenixID](https://www.phenixid.se/)
+- [Nexus Group](https://www.nexusgroup.com/)
 
 ## How to connect applications
 When you register an application with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 

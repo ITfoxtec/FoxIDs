@@ -25,7 +25,7 @@ The [login](login.md) authentication method is default set for user authenticate
 You can configure to support one-time password (OTP) via email and/or SMS. And optionally create many [login](login.md) authentication methods that support different authentication combinations.
 
 If you enable both password and one-time password all methods is available for the user. This UI also allows the user to create an account.
-![Login with password or select one-time password](images/user-auth-password.png)
+![Login with password or select to login with one-time password via email or SMS](images/user-auth-password.png)
 
 Or if only one-time password via email is enabled.
 ![Login with one-time password via email](images/user-auth-otp-email.png)

@@ -204,13 +204,16 @@ namespace FoxIDs.Infrastructure
    ""mappings"": {{
     ""properties"": {{
      ""tenantName"": {{
-      ""type"": ""keyword""
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
      }},
      ""trackName"": {{
-      ""type"": ""keyword""
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
      }},
      ""logType"": {{
-      ""type"": ""keyword""
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
      }}
     }}
    }}

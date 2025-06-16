@@ -281,9 +281,9 @@ namespace FoxIDs.Logic
                 boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
             }
            
-            boolQuery = boolQuery.Must(m => m
-                .Term(t => t.TenantName, tenantName) &&
-                    m.Term(t => t.TrackName, trackName)  &&
+            boolQuery = boolQuery.Must(m =>
+                    m.Term(t => t.TenantName, tenantName) &&
+                    m.Term(t => t.TrackName, trackName) &&
                     MustBeLogType(m, logRequest) && 
                     m.MultiMatch(ma => ma.
                         Fields(fs => fs

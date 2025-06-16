@@ -49,7 +49,7 @@ namespace FoxIDs.Models.Config
         /// File data configuration.
         /// </summary>
         [ValidateComplexType]
-        public FileDataSettings FileData { get; set; }
+        public FileDataSettings FileData { get; set; } = new FileDataSettings();
 
         /// <summary>
         /// Cosmos DB configuration.

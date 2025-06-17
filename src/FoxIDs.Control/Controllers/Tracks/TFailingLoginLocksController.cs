@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
             try
             {
                 filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
-                var queryByUserIdentifier = !filterUserIdentifier.IsNullOrWhiteSpace();
+                var queryByUserIdentifier = !string.IsNullOrWhiteSpace(filterUserIdentifier);
                 var mFailingLoginType = filterFailingLoginType != null ? (FailingLoginTypes?)(int)filterFailingLoginType.Value : null;
 
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };

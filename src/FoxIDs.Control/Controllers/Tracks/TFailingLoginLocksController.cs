@@ -42,14 +42,14 @@ namespace FoxIDs.Controllers
             try
             {
                 filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
-                var queryByUserIdentifier = !filterUserIdentifier.IsNullOrWhiteSpace();
-                var mFailingLoginType = filterFailingLoginType != null ? (FailingLoginTypes?)(int)filterFailingLoginType.Value : null;
+                var queryByUserIdentifier = !string.IsNullOrWhiteSpace(filterUserIdentifier);
+                var queryFailingLoginType = filterFailingLoginType.HasValue;
+                var mFailingLoginType = queryFailingLoginType ? (FailingLoginTypes)(int)filterFailingLoginType.Value : FailingLoginTypes.InternalLogin;
 
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mFailingLoginLocks, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<FailingLoginLock>(idKey, d => d.DataType.Equals(Constants.Models.DataType.FailingLoginLock) &&
                             (!queryByUserIdentifier || d.UserIdentifier == filterUserIdentifier) &&
-                            (!mFailingLoginType.HasValue || d.FailingLoginType == mFailingLoginType.Value), paginationToken: paginationToken);
-
+                            (!queryFailingLoginType || d.FailingLoginType == mFailingLoginType), paginationToken: paginationToken);
                 
                 var response = new Api.PaginationResponse<Api.FailingLoginLock>
                 {

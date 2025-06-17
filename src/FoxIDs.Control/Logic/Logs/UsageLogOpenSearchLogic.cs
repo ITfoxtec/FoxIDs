@@ -303,8 +303,6 @@ namespace FoxIDs.Logic
         private IEnumerable<string> GetIndexBaseName()
         {
             yield return $"{settings.OpenSearch.LogName}*";
-            // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
-            yield return $"{settings.OpenSearch.LogName}-r*";
         }
 
         private IBoolQuery GetQuery(BoolQueryDescriptor<OpenSearchLogItem> boolQuery, string tenantName, string trackName, (DateTime start, DateTime end) queryTimeRange)
@@ -331,9 +329,7 @@ namespace FoxIDs.Logic
 
         private static QueryContainer QueryEventLogType(QueryContainerDescriptor<OpenSearchLogItem> m)
         {
-            return m.Term(t => t.LogType, LogTypes.Event.ToString()) ||
-                // Remove in about 8 month (support logtype changed to keyword) from now 2025.01.17
-                m.Match(ma => ma.Field(f => f.LogType).Query(LogTypes.Event.ToString())); 
+            return m.Term(t => t.LogType, LogTypes.Event.ToString()); 
         }
 
         private IPromise<INamedFiltersContainer> GetFilters(NamedFiltersContainerDescriptor<OpenSearchLogItem> filters, Api.UsageLogRequest logRequest)

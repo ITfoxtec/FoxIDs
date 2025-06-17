@@ -2,6 +2,7 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -12,13 +13,15 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly Settings settings;
+        private readonly IDataProtectionProvider dataProtection;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly MasterTenantLogic masterTenantLogic;
 
-        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantDataRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, IDataProtectionProvider dataProtection, ITenantDataRepository tenantDataRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
+            this.dataProtection = dataProtection;
             this.tenantDataRepository = tenantDataRepository;
             this.masterTenantLogic = masterTenantLogic;
         }
@@ -31,6 +34,8 @@ namespace FoxIDs.Logic.Seed
                 {
                     return false;
                 }
+
+                SeedDataProtectorKeyData();
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MasterTenantName);
@@ -60,6 +65,11 @@ namespace FoxIDs.Logic.Seed
             masterTenant.CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             await tenantDataRepository.CreateAsync(masterTenant);
             return true;
+        }
+
+        private void SeedDataProtectorKeyData()
+        {
+            var initData = dataProtection.CreateProtector(nameof(MasterTenantDocumentsSeedLogic)).Protect(nameof(MasterTenantDocumentsSeedLogic));
         }
     }
 }

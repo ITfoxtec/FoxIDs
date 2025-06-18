@@ -207,7 +207,7 @@ namespace FoxIDs.Logic
         {
             claims = externalUserLogic.AddExternalUserClaims(party, claims, externalUserClaims);
 
-            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExternalUserLoadedClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)
             {
                 return (null, actionResult);

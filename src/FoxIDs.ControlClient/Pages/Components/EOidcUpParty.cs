@@ -147,9 +147,9 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
-                if (afterMap.ExternalUserLoadedClaimTransforms?.Count > 0)
+                if (afterMap.ExitClaimTransforms?.Count > 0)
                 {
-                    afterMap.ExternalUserLoadedClaimTransforms = afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransforms();
+                    afterMap.ExitClaimTransforms = afterMap.ExitClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
@@ -192,7 +192,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalOidcUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
-                generalOidcUpParty.Form.Model.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalOidcUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalOidcUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
@@ -205,7 +205,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                    afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsAfterMap();
+                    afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
                 });
 

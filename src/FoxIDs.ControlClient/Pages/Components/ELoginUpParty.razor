@@ -164,10 +164,28 @@
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {
-                <div class="info-text" role="alert">
-                    This claim transforms is executed after the user has logged in.
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="info-text" role="alert">
+                                The first-level claim transforms is executed after the user has logged in and before the optional extended UI.
+                            </div>
+                            <OAuthClaimTransforms ClaimTransforms="loginUpParty.Form.Model.ClaimTransforms" />
+                        </div>
+                    </div>
+                    <label class="label-control">First-level claim transforms</label>
                 </div>
-                <OAuthClaimTransforms ClaimTransforms="loginUpParty.Form.Model.ClaimTransforms" ExcludeDkPrivilege="true" />
+                <div class="active-group active">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="info-text" role="alert">
+                                The second-level claim transforms are executed after the optional extended UI.
+                            </div>
+                            <OAuthClaimTransforms ClaimTransforms="loginUpParty.Form.Model.ExitClaimTransforms" />
+                        </div>
+                    </div>
+                    <label class="label-control">Second-level claim transforms</label>
+                </div>
                 <div class="alert alert-info" role="alert">
                     If you create a new claim in the claim transforms the claim is forwarded to the application registration where you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>

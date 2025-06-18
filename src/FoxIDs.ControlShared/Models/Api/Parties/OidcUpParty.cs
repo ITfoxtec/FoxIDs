@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity;
 using System.Linq;
-using Newtonsoft.Json;
 using System;
 
 namespace FoxIDs.Models.Api
@@ -114,7 +113,6 @@ namespace FoxIDs.Models.Api
         /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [JsonProperty(PropertyName = "exit_claim_transforms")]
         public List<OAuthClaimTransform> ExitClaimTransforms { get; set; }
 
         /// <summary>

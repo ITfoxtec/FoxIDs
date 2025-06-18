@@ -281,24 +281,33 @@ namespace FoxIDs.Logic
             return session;
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, IEnumerable<Claim> acrClaims = null, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             List<Claim> claims;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), acrClaims))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session, GetLoginUserIdentifier(user, sequenceData.UserIdentifier)))
             {
                 claims = session.Claims.ToClaimList();
             }
             else
             {
                 var sessionId = await sessionLogic.GetSessionIdAsync(loginUpParty);
-                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId, acrClaims);
+                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId);
                 if (actionResult != null)
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                     return actionResult;
                 }
+
+                //TODO handle extended UI 
+
+                (claims, var exitActionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+                if (actionResult != null)
+                {
+                    return exitActionResult;
+                }
+
                 await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 

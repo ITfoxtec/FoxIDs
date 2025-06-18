@@ -86,6 +86,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalLoginUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalLoginUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 if (generalLoginUpParty.CreateMode)
@@ -97,6 +98,7 @@ namespace FoxIDs.Client.Pages.Components
                         if (afterMap.CreateUser != null)
                         {
                             afterMap.CreateUser.Elements.MapLinkExternalUserAfterMap();
+                            afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
                             afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                         }                        
                     }));

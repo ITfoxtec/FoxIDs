@@ -1,7 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Schemas;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -68,7 +67,6 @@ namespace FoxIDs.Models.Api
         /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        [JsonProperty(PropertyName = "exit_claim_transforms")]
         public List<OAuthClaimTransform> ExitClaimTransforms { get; set; }
 
         [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]

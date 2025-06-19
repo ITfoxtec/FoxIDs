@@ -46,7 +46,7 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
-        [Display(Name = "Optionally set a output claim type")]
+        [Display(Name = "Output claim type")]
         public string ClaimOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

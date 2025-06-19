@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -74,6 +75,16 @@ namespace FoxIDs.Logic
                     case DynamicElementTypes.FamilyName:
                         yield return element.Required ? new FamilyNameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new FamilyNameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
+                    case DynamicElementTypes.Custom:
+                        yield return new CustomDElement { Name = element.Name, DField1 = valueElement?.DField1, Required = element.Required, DisplayName = element.DisplayName, MaxLength = element.MaxLength, RegEx = element.RegEx, ErrorMessage = element.ErrorMessage, ClaimOut = element.ClaimOut };
+                        break;
+                    case DynamicElementTypes.Text:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content };
+                        break;
+                    case DynamicElementTypes.Html:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = true };
+                        break;
+
                     default:
                         throw new NotImplementedException();
                 }
@@ -142,12 +153,26 @@ namespace FoxIDs.Logic
                 element.DField1 = element.DField2 = countryCodesLogic.ReturnFullPhoneOnly(element.DField1);
             }
 
-            var elementValidation = await element.ValidateObjectResultsAsync();
-            if (!elementValidation.isValid)
+            if (!(element is ContentDElement))
             {
-                foreach (var result in elementValidation.results)
+                var elementValidation = await element.ValidateObjectResultsAsync();
+                if (!elementValidation.isValid)
                 {
-                    modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", result.ErrorMessage);
+                    foreach (var result in elementValidation.results)
+                    {
+                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", result.ErrorMessage);
+                    }
+                }
+            }
+
+            if (element is CustomDElement customDElement)
+            {
+                if (!customDElement.RegEx.IsNullOrWhiteSpace() && !customDElement.ErrorMessage.IsNullOrWhiteSpace())
+                {
+                    if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
+                    {
+                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", customDElement.ErrorMessage);
+                    }
                 }
             }
 
@@ -203,6 +228,11 @@ namespace FoxIDs.Logic
             {
                 claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
             }
+            var CustomDElament = elements.Where(e => e is CustomDElement).FirstOrDefault() as CustomDElement;
+            if (!string.IsNullOrWhiteSpace(CustomDElament?.ClaimOut) && !string.IsNullOrWhiteSpace(CustomDElament?.DField1))
+            {
+                claims.AddClaim(CustomDElament.ClaimOut, CustomDElament.DField1);
+            }
             return (claims, userIdentifierClaimTypes);
         }
 
@@ -225,6 +255,11 @@ namespace FoxIDs.Logic
                         return claims.Where(c => c.Type == JwtClaimTypes.GivenName).FirstOrDefault();
                     case DynamicElementTypes.FamilyName:
                         return claims.Where(c => c.Type == JwtClaimTypes.FamilyName).FirstOrDefault();
+                    case DynamicElementTypes.Custom:
+                        return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
+                    case DynamicElementTypes.Text:
+                    case DynamicElementTypes.Html:
+                        return null;
                     default:
                         throw new NotSupportedException();
                 }

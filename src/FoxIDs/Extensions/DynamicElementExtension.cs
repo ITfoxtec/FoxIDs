@@ -52,16 +52,47 @@ namespace FoxIDs
             return html.GetControl("text", name, html.GetLocalizerValue("Family name"), value, maxLength, autocomplete: "family-name", isRequired: isRequired);
         }
 
+        public static IHtmlContent GetCustomControl(this IHtmlHelper html, string name, string value, string displayName, int maxLength, string regEx, string errorMessage, bool isRequired)
+        {
+            var validation = regEx.IsNullOrWhiteSpace() || errorMessage.IsNullOrWhiteSpace() ? null : $"data-val-regex=\"{html.GetLocalizerValue(errorMessage)}\" data-val-regex-pattern=\"{regEx}\"";
+            return html.GetControl("text", name, html.GetLocalizerValue(displayName), value, maxLength, validation: validation, isRequired: isRequired);
+        }
+
+        public static IHtmlContent GetTextControl(this IHtmlHelper html, string content)
+        {
+            return html.GetContentControl(content, false);
+        }
+        public static IHtmlContent GetHtmlControl(this IHtmlHelper html, string content)
+        {
+            return html.GetContentControl(content, true);
+        }
+
         private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxLength, string validation = null, string autocomplete = null, bool isRequired = false)
         {
             (var hasError, var errorMessage) = GetError(html, name);
 
             var id = name.Replace('.', '_').Replace('[', '_').Replace(']', '_');
-            var content = new HtmlContentBuilder();
-            content.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control{(hasError ? " input-validation-error" : string.Empty)}\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxLength)}\" data-val-maxLength-max=\"{maxLength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxLength=\"{maxLength}\" name=\"{name}\" value=\"{value}\">");
-            content.AppendHtml($"<label class=\"label-control\" for=\"{name}\">{displayName}</label>");
-            content.AppendHtml($"<span class=\"{(hasError ? "field-validation-error" : "field-validation-valid")}\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\">{errorMessage}</span>");
-            return content;
+            var contentBuilder = new HtmlContentBuilder();
+            contentBuilder.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control{(hasError ? " input-validation-error" : string.Empty)}\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxLength)}\" data-val-maxLength-max=\"{maxLength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxLength=\"{maxLength}\" name=\"{name}\" value=\"{value}\">");
+            contentBuilder.AppendHtml($"<label class=\"label-control\" for=\"{name}\">{displayName}</label>");
+            contentBuilder.AppendHtml($"<span class=\"{(hasError ? "field-validation-error" : "field-validation-valid")}\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\">{errorMessage}</span>");
+            return contentBuilder;
+        }
+
+        private static IHtmlContent GetContentControl(this IHtmlHelper html, string content, bool isHtml)
+        {
+            var contentBuilder = new HtmlContentBuilder();
+            contentBuilder.AppendHtml($"<div>");
+            if (isHtml)
+            {
+                contentBuilder.AppendHtml(content);
+            }
+            else
+            {
+                contentBuilder.Append(content);
+            }
+            contentBuilder.AppendHtml($"</div>");
+            return contentBuilder;
         }
 
         private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)

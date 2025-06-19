@@ -8,7 +8,7 @@
 
         public virtual string DField2 { get; set; }
 
-        public virtual bool Required => false;
+        public virtual bool Required { get; set; }
 
         public virtual bool IsUserIdentifier { get; set; }
     }

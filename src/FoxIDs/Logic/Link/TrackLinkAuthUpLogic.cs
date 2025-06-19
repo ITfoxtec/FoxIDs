@@ -144,6 +144,8 @@ namespace FoxIDs.Logic
                     claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
                     logger.ScopeTrace(() => $"AuthMethod, Environment Link transformed JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
+                    //TODO handle extended UI 
+
                     (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, claims,
                         (externalUserUpSequenceData) =>
                         {

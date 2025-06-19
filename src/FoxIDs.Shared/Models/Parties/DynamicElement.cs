@@ -32,6 +32,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "content")]
         public string Content { get; set; }
 
+        [MaxLength(Constants.Models.DynamicElements.DisplayNameLength)]
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
+
         [JsonProperty(PropertyName = "max_length")]
         public int MaxLength { get; set; }
 
@@ -72,6 +76,11 @@ namespace FoxIDs.Models
 
             if (Type == DynamicElementTypes.Custom)
             {
+                if (DisplayName.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field {nameof(DisplayName)} is required for dynamic element type '{Type}'.", [nameof(DisplayName)]));
+                }
+
                 if (MaxLength > Constants.Models.Claim.LimitedValueLength)
                 {
                     results.Add(new ValidationResult($"The field {nameof(MaxLength)} must not exceed '{Constants.Models.Claim.LimitedValueLength}'.", [nameof(MaxLength)]));

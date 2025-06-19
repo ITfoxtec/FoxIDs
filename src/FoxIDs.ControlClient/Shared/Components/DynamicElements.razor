@@ -108,8 +108,10 @@
                     {
                         <div class="row">
                             <div class="col-11">
+                                <FInputText @bind-Value="element.DisplayName" For="@(() => element.DisplayName)" />
                                 <FInputNumber @bind-Value="element.MaxLength" For="@(() => element.MaxLength)" />
                                 <FInputText @bind-Value="element.RegEx" For="@(() => element.RegEx)" />
+                                <div class="info-text">In order to support multiple languages, an English error text is created and translations are added for the text under Settings and Texts.</div>
                                 <FInputText @bind-Value="element.ErrorMessage" For="@(() => element.ErrorMessage)" />
                                 <FInputText @bind-Value="element.ClaimOut" For="@(() => element.ClaimOut)" />
                             </div>
@@ -119,6 +121,7 @@
                     {
                         <div class="row">
                             <div class="col-11">
+                                <div class="info-text">In order to support multiple languages, an English text @(element.Type == DynamicElementTypes.Html ? "(including HTML tags)" : string.Empty) is created and translations are added for the text under Settings and Texts.</div>
                                 <FInputTextArea @bind-Value="element.Content" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text content" : "HTML content")" />
                             </div>
                         </div>

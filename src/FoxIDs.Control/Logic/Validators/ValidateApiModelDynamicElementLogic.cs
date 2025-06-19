@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System;
 using ITfoxtec.Identity;
 using FoxIDs.Util;
+using System.Text.RegularExpressions;
 
 namespace FoxIDs.Logic
 {
@@ -28,7 +29,7 @@ namespace FoxIDs.Logic
                 if (createUserElements?.Count() > 0)
                 {
                     AddDefaultNames(createUserElements);
-
+                    ValidateRegEx(createUserElements);
                     ValidateDuplicatedOrderNumber(createUserElements);
                     ValidateDuplicatedElementType(createUserElements);
 
@@ -108,7 +109,7 @@ namespace FoxIDs.Logic
                 if (linkExternalUserElements?.Count() > 0)
                 {
                     AddDefaultNames(linkExternalUserElements);
-
+                    ValidateRegEx(linkExternalUserElements);
                     ValidateDuplicatedOrderNumber(linkExternalUserElements);
                     ValidateDuplicatedElementType(linkExternalUserElements);
 
@@ -139,7 +140,7 @@ namespace FoxIDs.Logic
                 if (extendedUiElements?.Count() > 0)
                 {
                     AddDefaultNames(extendedUiElements);
-
+                    ValidateRegEx(extendedUiElements);
                     ValidateDuplicatedOrderNumber(extendedUiElements);
                     ValidateDuplicatedElementType(extendedUiElements);
 
@@ -186,24 +187,40 @@ namespace FoxIDs.Logic
             return name;
         }
 
-        private static void ValidateDuplicatedOrderNumber(List<Api.DynamicElement> LinkExternalUserElements)
+        private static void ValidateDuplicatedOrderNumber(List<Api.DynamicElement> dynamicElement)
         {
-            var duplicatedOrderNumber = LinkExternalUserElements.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+            var duplicatedOrderNumber = dynamicElement.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedOrderNumber >= 0)
             {
                 throw new ValidationException($"Duplicated create user dynamic element order number '{duplicatedOrderNumber}'");
             }
         }
 
-        private static void ValidateDuplicatedElementType(List<Api.DynamicElement> LinkExternalUserElements)
+        private static void ValidateDuplicatedElementType(List<Api.DynamicElement> dynamicElement)
         {
-            var duplicatedElementType = LinkExternalUserElements.GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+            var duplicatedElementType = dynamicElement.GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedElementType > 0)
             {
                 throw new ValidationException($"Duplicated create user dynamic element type '{duplicatedElementType}'");
             }
         }
 
-
+        private static void ValidateRegEx(List<Api.DynamicElement> dynamicElement)
+        {
+            foreach (var element in dynamicElement)
+            {
+                if (!element.RegEx.IsNullOrWhiteSpace())
+                {
+                    try
+                    {
+                        Regex.Match("", element.RegEx);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ValidationException($"Invalid regex pattern in dynamic element '{element.Name}'.", ex);
+                    }
+                }
+            }
+        }
     }
 }

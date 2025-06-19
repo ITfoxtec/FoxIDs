@@ -341,6 +341,8 @@ namespace FoxIDs.Logic
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
+                //TODO handle extended UI 
+
                 (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, jwtValidClaims,
                     (externalUserUpSequenceData) =>
                     {

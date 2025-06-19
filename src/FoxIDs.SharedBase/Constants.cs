@@ -587,6 +587,7 @@ namespace FoxIDs
                 public const int NameLength = 20;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
                 public const int ContentLength = 500;
+                public const int DisplayNameLength = 50;
                 public const int RegExLength = 500;
                 public const int ErrorMessageLength = 200;
             }

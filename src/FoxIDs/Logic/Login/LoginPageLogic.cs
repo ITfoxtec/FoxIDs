@@ -302,13 +302,13 @@ namespace FoxIDs.Logic
 
                 //TODO handle extended UI 
 
-                (claims, var exitActionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
-                if (actionResult != null)
-                {
-                    return exitActionResult;
-                }
-
                 await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
+            }
+
+            (claims, var exitActionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (exitActionResult != null)
+            {
+                return exitActionResult;
             }
 
             return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, claims);

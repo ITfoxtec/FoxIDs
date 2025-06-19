@@ -69,8 +69,6 @@ namespace FoxIDs.Logic
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-                //TODO handle extended UI 
-
                 (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(extLoginUpParty, sequenceData, claims,
                     (externalUserUpSequenceData) => { },
                     (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
@@ -101,7 +99,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthResponsePostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        public async Task<IActionResult> AuthResponsePostCreateExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
             var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(externalUserSequenceData.UpPartyId);

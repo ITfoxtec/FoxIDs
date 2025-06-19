@@ -122,13 +122,13 @@ namespace FoxIDs.Controllers
                 switch (sequenceData.UpPartyType)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostCreateExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostCreateExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostCreateExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.ExternalLogin:
-                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostCreateExternalUserAsync(sequenceData, externalAccountClaims);
                     default:
                         throw new NotSupportedException();
                 }

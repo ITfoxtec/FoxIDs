@@ -364,7 +364,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        public async Task<IActionResult> AuthenticationRequestPostCreateExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);

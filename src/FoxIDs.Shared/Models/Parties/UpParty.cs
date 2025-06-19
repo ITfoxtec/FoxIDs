@@ -68,6 +68,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "party_binding_pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        [JsonProperty(PropertyName = "extended_uis")]
+        public List<ExtendedUi> ExtendedUis { get; set; }
+
         /// <summary>
         /// Claim transforms executed before exit / response from up-party and after the optional extended UI and the optional external users.
         /// </summary>

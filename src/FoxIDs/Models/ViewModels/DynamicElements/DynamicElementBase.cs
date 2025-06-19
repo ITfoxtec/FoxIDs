@@ -2,6 +2,8 @@
 {
     public class DynamicElementBase
     {
+        public virtual string Name { get; set; }
+
         public virtual string DField1 { get; set; }
 
         public virtual string DField2 { get; set; }

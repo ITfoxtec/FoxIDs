@@ -54,6 +54,16 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
+            <li class="nav-item">
+                @if (loginUpParty.ShowExtendedUiTab)
+                {
+                    <a class="nav-link active">Extended UI</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ExtendedUi))">Extended UI</button>
+                }
+            </li>
             @if (loginUpParty.Form.Model.EnableCreateUser) {
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
@@ -86,11 +96,11 @@
             <li class="nav-item">
                 @if (loginUpParty.ShowHrdTab)
                 {
-                    <a class="nav-link active">Home Realm Discovery</a>
+                    <a class="nav-link active">HRD</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Hrd))">Home Realm Discovery</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Hrd))">HRD</button>
                 }
             </li>
         </ul>
@@ -189,6 +199,13 @@
                 <div class="alert alert-info" role="alert">
                     If you create a new claim in the claim transforms the claim is forwarded to the application registration where you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
+            }
+            else if (loginUpParty.ShowExtendedUiTab)
+            {
+                @if (loginUpParty.Form.Model.ExtendedUis != null)
+                {
+                    <ExtendedUi Model="loginUpParty.Form.Model.ExtendedUis" />
+                }
             }
             else if (loginUpParty.ShowCreateUserTab)
             {

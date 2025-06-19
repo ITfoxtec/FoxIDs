@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
                 switch (element.Type)
                 {
                     case DynamicElementTypes.Email:
-                        yield return element.Required ? new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new EmailDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new EmailRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new EmailDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Phone:
                         var phoneDField1 = valueElement?.DField1;
@@ -53,26 +53,26 @@ namespace FoxIDs.Logic
                         {
                             phoneDField1 = countryCode;
                         }
-                        yield return element.Required ? new PhoneRequiredDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier } : new PhoneDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new PhoneRequiredDElement { Name = element.Name, DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier } : new PhoneDElement { Name = element.Name, DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Username:
-                        yield return element.Required ? new UsernameRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new UsernameDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new UsernameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new UsernameDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.EmailAndPassword:
-                        yield return new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = true };
-                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
+                        yield return new EmailRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = true };
+                        yield return new PasswordDElement { Name = element.Name, DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Password:
-                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
+                        yield return new PasswordDElement { Name = element.Name, DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Name:
-                        yield return element.Required ? new NameRequiredDElement { DField1 = valueElement?.DField1 } : new NameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new NameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new NameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
                     case DynamicElementTypes.GivenName:
-                        yield return element.Required ? new GivenNameRequiredDElement { DField1 = valueElement?.DField1 } : new GivenNameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new GivenNameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new GivenNameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
                     case DynamicElementTypes.FamilyName:
-                        yield return element.Required ? new FamilyNameRequiredDElement { DField1 = valueElement?.DField1 } : new FamilyNameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new FamilyNameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new FamilyNameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
                     default:
                         throw new NotImplementedException();

@@ -1,0 +1,75 @@
+﻿@using FoxIDs.Util
+<div class="info-text">
+    Create on or more extended UIs which can be shown for the user in the login flow.
+    <div class="pb-2"></div>
+    You select an extended UI in the login flow by adding the claim type <code>@Constants.Models.ExtendedUi.OpenExtendedUiClaimType</code> with the extended UI name in the first-level claim transforms. 
+    Subsequently extended UIs can be selected in the extended UI claim transformations.
+</div>
+
+<div class="form-group active-group active">
+    <Label LabelText="Extended UIs" class="label-control" />
+    @if (Model.Count() <= 0)
+    {
+        <div class="card">
+            <div class="card-body">
+            </div>
+        </div>
+    }
+    <ul class="list-group">
+        @foreach (var extendedUi in Model)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="extendedUi.Name" For="@(() => extendedUi.Name)" />
+
+                        <DynamicElements Model="extendedUi" />
+
+                        <div class="pt-2">
+                            <div class="active-group active">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="info-text">
+                                            Optionally call an API on submit to validate input and return claims or an error.
+                                        </div>
+                                        <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
+                                        <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
+                                        <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
+                                    </div>
+                                </div>
+                                <label class="label-control">API validation</label>
+                            </div>
+                        </div>
+
+                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI by adding the claim type <code>@Constants.Models.ExtendedUi.OpenExtendedUiClaimType</code> with the extended UI name.</div>
+                        <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveExtendedUi(e, extendedUi))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model)" />
+    <button type="button" class="btn btn-link btn-xs" @onclick="AddExtendedUi"><span class="oi oi-plus" aria-hidden="true"></span> Add extended UI</button>
+</div>
+
+@code {
+    [Parameter]
+    public List<ExtendedUiViewModel> Model { get; set; }
+
+    private void AddExtendedUi(MouseEventArgs e)
+    {
+        var extendedUi = new ExtendedUiViewModel
+            {
+                Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name))
+            };
+        Model.Add(extendedUi);
+    }
+
+    private void RemoveExtendedUi(MouseEventArgs e, ExtendedUiViewModel removeExtendedUi)
+    {
+        Model.Remove(removeExtendedUi);
+    }
+}

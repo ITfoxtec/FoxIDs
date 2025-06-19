@@ -1,4 +1,5 @@
-﻿<div class="form-group active-group active pt-0">
+﻿@using FoxIDs.Util
+<div class="form-group active-group active pt-0">
     <div class="info-text">Dynamic elements shown in order (use the move up and down arrows to change the order)</div>
     <ul class="list-group">
         @if (Model.Elements.Count() > 0) 
@@ -39,6 +40,25 @@
                                     <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</div>
                                     break;
 
+                                case DynamicElementTypes.Custom:
+                                    if (element.ClaimOut.IsNullOrWhiteSpace()) 
+                                    {
+                                        <div class="p-0 alert alert-light font-weight-bold small" role="alert">Custom field</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="p-0 alert alert-light font-weight-bold small" role="alert">Custom field (claim: <code>@element.ClaimOut</code>)</div>
+                                    }
+                                    break;
+
+                                case DynamicElementTypes.Text:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">Text element</div>
+                                    break;
+
+                                case DynamicElementTypes.Html:
+                                    <div class="p-0 alert alert-light font-weight-bold small" role="alert">HTML element</div>
+                                    break;
+
                                 default:
                                     throw new NotSupportedException($"Dynamic element type '{element.Type}' not supported.");
                             }
@@ -67,6 +87,12 @@
                     </div>
                     <div class="row">
                         <div class="col-11">
+                            <div class="info-text">The technical name is added in HTML as a CSS tag prefixed with <code>name-</code>.</div>
+                            <FInputText @bind-Value="element.Name" For="@(() => element.Name)" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-11">
                             <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
                         </div>
                     </div>
@@ -75,6 +101,25 @@
                         <div class="row">
                             <div class="col-11">
                                 <FInputToggle @bind-Value="element.IsUserIdentifier" For="@(() => element.IsUserIdentifier)" TextType="y.n" />
+                            </div>
+                        </div>
+                    }
+                    @if (element.Type == DynamicElementTypes.Custom)
+                    {
+                        <div class="row">
+                            <div class="col-11">
+                                <FInputNumber @bind-Value="element.MaxLength" For="@(() => element.MaxLength)" />
+                                <FInputText @bind-Value="element.RegEx" For="@(() => element.RegEx)" />
+                                <FInputText @bind-Value="element.ErrorMessage" For="@(() => element.ErrorMessage)" />
+                                <FInputText @bind-Value="element.ClaimOut" For="@(() => element.ClaimOut)" />
+                            </div>
+                        </div>
+                    }
+                    @if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
+                    {
+                        <div class="row">
+                            <div class="col-11">
+                                <FInputTextArea @bind-Value="element.Content" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text content" : "HTML content")" />
                             </div>
                         </div>
                     }
@@ -122,6 +167,11 @@
                 {
                     <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (claim: <code>@JwtClaimTypes.FamilyName</code>)</button>
                 }
+                <div class="dropdown-divider"></div>
+                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Custom))">Custom field (configurable claim)</button>
+                <div class="dropdown-divider"></div>
+                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Text))">Text element</button>
+                <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Html))">HTML element</button>
             </div>
         </div>
     }
@@ -136,57 +186,73 @@
 
     private void AddElement(DynamicElementTypes dynamicElementTypes, bool isUserIdentifier = false)
     {
+        var element = GetDynamicElement(dynamicElementTypes, isUserIdentifier);
+        element.Name = RandomName.GenerateDefaultName(Model.Elements.Select(p => p.Name));
+        Model.Elements.Add(element);
+    }
+
+    private DynamicElementViewModel GetDynamicElement(DynamicElementTypes dynamicElementTypes, bool isUserIdentifier)
+    {
         switch (dynamicElementTypes)
         {
             case DynamicElementTypes.Email:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Email,
                         Required = InternalUsers,
                         IsUserIdentifier = isUserIdentifier
-                    });
-                break;
+                    };
             case DynamicElementTypes.Phone:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Phone,
                         Required = InternalUsers,
                         IsUserIdentifier = isUserIdentifier
-                    });
-                break;
+                    };
             case DynamicElementTypes.Username:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Username,
                         Required = InternalUsers,
                         IsUserIdentifier = isUserIdentifier
-                    });
-                break;
+                    };
             case DynamicElementTypes.Password:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Password,
                         Required = true
-                    });
-                break;
+                    };
             case DynamicElementTypes.Name:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.Name
-                    });
-                break;
+                    };
             case DynamicElementTypes.GivenName:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.GivenName
-                    });
-                break;
+                    };
             case DynamicElementTypes.FamilyName:
-                Model.Elements.Add(new DynamicElementViewModel
+                return new DynamicElementViewModel
                     {
                         Type = DynamicElementTypes.FamilyName
-                    });
-                break;
+                    };
+            case DynamicElementTypes.Custom:
+                return new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Custom,
+                        MaxLength = 100
+                    };
+            case DynamicElementTypes.Text:
+                return new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Text
+                    };
+            case DynamicElementTypes.Html:
+                return new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Html
+                    };
 
             default:
                 throw new NotSupportedException("Dynamic element type not supported.");

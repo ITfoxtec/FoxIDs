@@ -6,6 +6,8 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System;
+using ITfoxtec.Identity;
+using FoxIDs.Util;
 
 namespace FoxIDs.Logic
 {
@@ -25,6 +27,8 @@ namespace FoxIDs.Logic
             {
                 if (createUserElements?.Count() > 0)
                 {
+                    AddDefaultNames(createUserElements);
+
                     ValidateDuplicatedOrderNumber(createUserElements);
                     ValidateDuplicatedElementType(createUserElements);
 
@@ -103,6 +107,8 @@ namespace FoxIDs.Logic
             {
                 if (linkExternalUserElements?.Count() > 0)
                 {
+                    AddDefaultNames(linkExternalUserElements);
+
                     ValidateDuplicatedOrderNumber(linkExternalUserElements);
                     ValidateDuplicatedElementType(linkExternalUserElements);
 
@@ -125,6 +131,61 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
+        public bool ValidateApiModelExtendedUiElements(ModelStateDictionary modelState, List<Api.DynamicElement> extendedUiElements)
+        {
+            var isValid = true;
+            try
+            {
+                if (extendedUiElements?.Count() > 0)
+                {
+                    AddDefaultNames(extendedUiElements);
+
+                    ValidateDuplicatedOrderNumber(extendedUiElements);
+                    ValidateDuplicatedElementType(extendedUiElements);
+
+                    if (extendedUiElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() == 1)
+                    {
+                        throw new ValidationException($"Dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} is not supported.");
+                    }
+                    if (extendedUiElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() == 1)
+                    {
+                        throw new ValidationException($"Dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is not supported.");
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError(nameof(Api.ExtendedUi.Elements).ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
+        private void AddDefaultNames(List<Api.DynamicElement> elements)
+        {
+            foreach (var element in elements)
+            {
+                if (element.Name.IsNullOrWhiteSpace())
+                {
+                    element.Name = GenerateName(elements);
+                }
+            }
+        }
+        private string GenerateName(List<Api.DynamicElement> elements, int count = 0)
+        {
+            var name = RandomName.GenerateDefaultName();
+            if (count < Constants.Models.DefaultNameMaxAttempts)
+            {
+                if (elements.Where(e => e.Name == name).Any()) 
+                {
+                    count++;
+                    return GenerateName(elements, count: count);
+                }
+            }
+            return name;
+        }
+
         private static void ValidateDuplicatedOrderNumber(List<Api.DynamicElement> LinkExternalUserElements)
         {
             var duplicatedOrderNumber = LinkExternalUserElements.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
@@ -142,5 +203,7 @@ namespace FoxIDs.Logic
                 throw new ValidationException($"Duplicated create user dynamic element type '{duplicatedElementType}'");
             }
         }
+
+
     }
 }

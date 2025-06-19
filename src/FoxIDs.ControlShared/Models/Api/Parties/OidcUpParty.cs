@@ -90,6 +90,12 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
+        /// Extended UIs.
+        /// </summary>
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        public List<ExtendedUi> ExtendedUis { get; set; }
+
+        /// <summary>
         /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
         /// </summary>
         [Obsolete("Delete after 2026-07-01.")]

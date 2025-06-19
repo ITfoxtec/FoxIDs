@@ -583,6 +583,12 @@ namespace FoxIDs
                 public const int ElementsMax = 20;
                 public const int ElementsOrderMin = 0;
                 public const int ElementsOrderMax = 100;
+
+                public const int NameLength = 20;
+                public const string NameRegExPattern = @"^\w[\w\-]*$";
+                public const int ContentLength = 500;
+                public const int RegExLength = 500;
+                public const int ErrorMessageLength = 200;
             }
 
             public static class Claim
@@ -881,6 +887,22 @@ namespace FoxIDs
                     public const int SingleLogoutUrlLength = 500;
                     public const int LoggedOutUrlLength = 500;
                 }
+            }
+
+            public static class ExtendedUi
+            {
+                public const string OpenExtendedUiClaimType = "_local:open_extended_ui";
+
+                public const int ElementsMin = 1;
+
+                public const int NameLength = 20;
+                public const string NameRegExPattern = @"^\w[\w\-]*$";
+
+                public const int UisMin = 0;
+                public const int UisMax = 5;
+
+                public const int ExternalClaimsInMin = 0;
+                public const int ExternalClaimsInMax = 1000;
             }
 
             public static class ExternalApi

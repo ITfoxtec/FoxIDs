@@ -59,6 +59,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
+        /// Extended UIs.
+        /// </summary>
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        public List<ExtendedUiViewModel> ExtendedUis { get; set; } = new List<ExtendedUiViewModel>();
+
+        /// <summary>
         /// Claim transforms executed after the external users claims has been loaded.
         /// </summary>
         [ValidateComplexType]

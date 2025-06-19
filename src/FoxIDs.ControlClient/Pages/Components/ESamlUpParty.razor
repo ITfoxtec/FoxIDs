@@ -101,23 +101,33 @@
             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
             {
                 <li class="nav-item">
-                    @if (samlUpParty.ShowLinkExternalUserTab)
+                    @if (samlUpParty.ShowExtendedUiTab)
                     {
-                        <a class="nav-link active">Create External Users</a>
+                        <a class="nav-link active">Extended UI</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Create External Users</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ExtendedUi))">Extended UI</button>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (samlUpParty.ShowLinkExternalUserTab)
+                    {
+                        <a class="nav-link active">Create Users</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.LinkExternalUser))">Create Users</button>
                     }
                 </li>
                 <li class="nav-item">
                     @if (samlUpParty.ShowHrdTab)
                     {
-                        <a class="nav-link active">Home Realm Discovery</a>
+                        <a class="nav-link active">HRD</a>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">HRD</button>
                     }
                 </li>
                 @if (UpParty.ShowAdvanced)
@@ -401,6 +411,13 @@
                     If you create a new claim in the claim transforms the claim is local in this authentication method unless you add the claim or '*' (default) to the 'Forward claims' list.
                     In the application registration you need to add the claim or '*' to the 'Issue claims' list or alternative for OpenID Connect add the claim to a scopes 'Voluntary claims' list.
                 </div>
+            }
+            else if (samlUpParty.ShowExtendedUiTab)
+            {
+                @if (samlUpParty.Form.Model.ExtendedUis != null)
+                {
+                    <ExtendedUi Model="samlUpParty.Form.Model.ExtendedUis" />
+                }
             }
             else if (samlUpParty.ShowLinkExternalUserTab)
             {

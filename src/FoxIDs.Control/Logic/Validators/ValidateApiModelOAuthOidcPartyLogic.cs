@@ -62,7 +62,12 @@ namespace FoxIDs.Logic
                 party.Client.UseIdTokenClaims = false;
             }
 
-            if (!validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.OidcUpParty.ExternalUserLoadedClaimTransforms)))
+            if (!validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExitClaimTransforms, errorFieldName: nameof(Api.OidcUpParty.ExitClaimTransforms)))
+            {
+                isValid = false;
+            }
+
+            if (!validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis))
             {
                 isValid = false;
             }

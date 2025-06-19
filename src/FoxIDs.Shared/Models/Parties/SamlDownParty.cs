@@ -122,12 +122,12 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (!(AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.Count() > 0))
             {
-                results.Add(new ValidationResult($"At least one (with user authentication trust) in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+                results.Add(new ValidationResult($"At least one (with user authentication trust) in the field {nameof(AllowUpParties)} is required.", [nameof(AllowUpParties)]));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one allow all wild card (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
             }
             return results;
         }

@@ -13,7 +13,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "link_external_user")]
         public LinkExternalUser LinkExternalUser { get; set; }
 
-        [Obsolete("Delete after 2027-07-01, one year later then delete in API.")]
+        [Obsolete("Delete after 2027-07-01 - one year later then delete in API.")]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "ext_user_claim_transforms")]
         public List<OAuthClaimTransform> ExternalUserLoadedClaimTransforms

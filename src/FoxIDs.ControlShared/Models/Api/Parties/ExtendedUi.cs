@@ -10,8 +10,17 @@ namespace FoxIDs.Models.Api
         [Required]
         [MaxLength(Constants.Models.ExtendedUi.NameLength)]
         [RegularExpression(Constants.Models.ExtendedUi.NameRegExPattern)]
-        [Display(Name = "Technical name")]
+        [Display(Name = "Technical UI name")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
+        [Display(Name = "Page title")]
+        public string Title { get; set; }
+
+        [MaxLength(Constants.Models.ExtendedUi.SubmitButtonTextLength)]
+        [Display(Name = "Submit button text (default Log in)")]
+        public string SubmitButtonText { get; set; }
 
         /// <summary>
         /// UI elements.

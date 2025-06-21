@@ -82,7 +82,6 @@ namespace FoxIDs
         private static IHtmlContent GetContentControl(this IHtmlHelper html, string content, bool isHtml)
         {
             var contentBuilder = new HtmlContentBuilder();
-            contentBuilder.AppendHtml($"<div>");
             if (isHtml)
             {
                 contentBuilder.AppendHtml(content);
@@ -91,7 +90,6 @@ namespace FoxIDs
             {
                 contentBuilder.Append(content);
             }
-            contentBuilder.AppendHtml($"</div>");
             return contentBuilder;
         }
 

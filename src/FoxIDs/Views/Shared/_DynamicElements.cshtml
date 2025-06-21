@@ -4,61 +4,67 @@
 
 @if (Model != null)
 {
-    @for (var i = 0; i < Model.Count(); i++)
+    var i = -1;
+    @foreach(var item in Model)
     {
-        var cssName = Model[i].Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{Model[i].Name}";
-        if (Model[i] is EmailDElement)
+        if (!(item is ContentDElement))
+        {
+            i++;
+        }
+
+        var cssName = item.Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{item.Name}";
+        if (item is EmailDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetEmailControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetEmailControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is PhoneDElement)
+        else if (item is PhoneDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetPhoneControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetPhoneControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is UsernameDElement)
+        else if (item is UsernameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetUsernameControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetUsernameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is PasswordDElement)
+        else if (item is PasswordDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetPasswordControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetPasswordControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
             <div class="form-group active-group @cssName">
-                @Html.GetConfirmPasswordControl($"Elements[{i}].DField2", Model[i].DField2, $"Elements[{i}].DField1", isRequired: Model[i].Required)
+                @Html.GetConfirmPasswordControl($"Elements[{i}].DField2", item.DField2, $"Elements[{i}].DField1", isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is NameDElement)
+        else if (item is NameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetNameControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is GivenNameDElement)
+        else if (item is GivenNameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetGivenNameControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetGivenNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is FamilyNameDElement)
+        else if (item is FamilyNameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model[i].DField1, isRequired: Model[i].Required)
+                @Html.GetFamilyNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
-        else if (Model[i] is CustomDElement customDElement)
+        else if (item is CustomDElement customDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetCustomControl($"Elements[{i}].DField1", Model[i].DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, Model[i].Required)
+                @Html.GetCustomControl($"Elements[{i}].DField1", item.DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, item.Required)
             </div>
         }
-        else if (Model[i] is ContentDElement contentDElement)
+        else if (item is ContentDElement contentDElement)
         {
             <div class="form-group active-group @cssName">
                 @if (contentDElement.IsHtml) 
@@ -73,7 +79,7 @@
         }
         else
         {
-            throw new NotSupportedException($"Dynamic element type '{Model[i].GetTypeName()}' not supported.");
+            throw new NotSupportedException($"Dynamic element type '{item.GetTypeName()}' not supported.");
         }
     }
 }

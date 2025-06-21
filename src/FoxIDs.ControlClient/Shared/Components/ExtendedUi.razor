@@ -4,6 +4,8 @@
     <div class="pb-2"></div>
     You select an extended UI in the login flow by adding the claim type <code>@Constants.Models.ExtendedUi.OpenExtendedUiClaimType</code> with the extended UI name in the first-level claim transforms. 
     Subsequently extended UIs can be selected in the extended UI claim transformations.
+    <div class="pb-2"></div>
+    In order to support multiple languages, the different texts are written as English texts and translations are added under Settings and Texts.
 </div>
 
 <div class="form-group active-group active">
@@ -22,6 +24,8 @@
                 <div class="row">
                     <div class="col-11">
                         <FInputText @bind-Value="extendedUi.Name" For="@(() => extendedUi.Name)" />
+                        <FInputText @bind-Value="extendedUi.Title" For="@(() => extendedUi.Title)" />
+                        <FInputText @bind-Value="extendedUi.SubmitButtonText" For="@(() => extendedUi.SubmitButtonText)" />
 
                         <DynamicElements Model="extendedUi" />
 

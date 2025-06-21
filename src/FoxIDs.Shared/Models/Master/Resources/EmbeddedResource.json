@@ -775,6 +775,22 @@
     {
       "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
       "id": 188
+    },
+    {
+      "name": "My test page",
+      "id": 189
+    },
+    {
+      "name": "Next login",
+      "id": 190
+    },
+    {
+      "name": "Næste nye side",
+      "id": 191
+    },
+    {
+      "name": "Mit CPR felt",
+      "id": 192
     }
   ],
   "resources": [
@@ -26020,6 +26036,46 @@
           "culture": "uk",
           "value": "<a href=\"{0}\" class=\"{1}\">Використовуйте одноразовий пароль через SMS.</a>",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 189,
+      "items": [
+        {
+          "culture": "en",
+          "value": "My test page",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 190,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Next login",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Næste nye side",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 192,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Mit CPR felt",
+          "edit_level": 100
         }
       ]
     }

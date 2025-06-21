@@ -1,9 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model CreateExternalUserViewModel
+@model ExtendedUiViewModel
 
 @{
-    ViewData["Title"] = Localizer["Create user"];
+    ViewData["Title"] = Localizer[Model.PageTitle];
 }
 
 <h1 class="heading">@ViewData["Title"]</h1>
@@ -11,13 +11,14 @@
 <div class="row page-container name-create-user">
     <div class="col-md page-content">
         <form method="post">
+            <input type="hidden" asp-for="State" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
             @{
                 await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
             }
             <div class="form-group button-group">
                 <div>
-                    <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
+                    <input type="submit" value="@Localizer[Model.SubmitButtonText ?? "Log in"]" class="btn btn-primary" />
                 </div>
             </div>
         </form>

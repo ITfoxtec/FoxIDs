@@ -31,18 +31,16 @@ namespace FoxIDs.Logic
 
             var countryCode = elements.Where(e => e.Type == DynamicElementTypes.Phone).Any() ? countryCodesLogic.GetCountryCodeStringByCulture() : null;
 
-            var i = 0;
+            var i = -1;
             foreach (var element in elements)
             {
-                var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
-                if (valueElement == null) 
+                DynamicElementBase valueElement = null;
+                if (element.Type != DynamicElementTypes.Text && element.Type != DynamicElementTypes.Html)
                 {
-                    var valueClaim = FilterElementClaim(element, initClaims);
-                    if (valueClaim != null)
-                    {
-                        valueElement = new DynamicElementBase { DField1 = valueClaim.Value };
-                    }
+                    i++;
+                    valueElement = GetValueElement(element, valueElements, initClaims, i);
                 }
+
                 switch (element.Type)
                 {
                     case DynamicElementTypes.Email:
@@ -88,8 +86,22 @@ namespace FoxIDs.Logic
                     default:
                         throw new NotImplementedException();
                 }
-                i++;
             }
+        }
+
+        private DynamicElementBase GetValueElement(DynamicElement element, List<DynamicElementBase> valueElements, List<Claim> initClaims, int i)
+        {
+            var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
+            if (valueElement == null)
+            {
+                var valueClaim = FilterElementClaim(element, initClaims);
+                if (valueClaim != null)
+                {
+                    valueElement = new DynamicElementBase { DField1 = valueClaim.Value };
+                }
+            }
+
+            return valueElement;
         }
 
         public async Task<(UserIdentifier userIdentifier, string password, int passwordIndex)> ValidateCreateUserViewModelElementsAsync(ModelStateDictionary modelState, List<DynamicElementBase> elements)

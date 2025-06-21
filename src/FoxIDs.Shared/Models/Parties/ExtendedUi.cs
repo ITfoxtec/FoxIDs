@@ -14,6 +14,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [Required]
+        [MaxLength(Constants.Models.ExtendedUi.TitleLength)]
+        [JsonProperty(PropertyName = "title")]
+        public string Title { get; set; }
+
+        [MaxLength(Constants.Models.ExtendedUi.SubmitButtonTextLength)]
+        [JsonProperty(PropertyName = "submit_button")]
+        public string SubmitButtonText { get; set; }
+
         /// <summary>
         /// UI elements.
         /// </summary>

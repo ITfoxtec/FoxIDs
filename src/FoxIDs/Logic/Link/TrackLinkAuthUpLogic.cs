@@ -183,7 +183,7 @@ namespace FoxIDs.Logic
             return await AuthResponseDownAsync(sequenceData, claims, keySequenceData.Error, keySequenceData.ErrorDescription);
         }
 
-        public async Task<IActionResult> AuthResponsePostCreateExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        public async Task<IActionResult> AuthResponsePostExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TrackLinkUpParty>(externalUserSequenceData.UpPartyId);
@@ -205,7 +205,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim>, IActionResult actionResult)> AuthResponsePostAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData, List<Claim> claims, IEnumerable<Claim> externalUserClaims, string externalSessionId)
+        private async Task<(List<Claim>, IActionResult actionResult)> AuthResponsePostAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims, string externalSessionId)
         {
             claims = externalUserLogic.AddExternalUserClaims(party, claims, externalUserClaims);
 

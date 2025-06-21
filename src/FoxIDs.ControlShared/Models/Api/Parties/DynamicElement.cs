@@ -9,7 +9,7 @@ namespace FoxIDs.Models.Api
     {
         [MaxLength(Constants.Models.DynamicElements.NameLength)]
         [RegularExpression(Constants.Models.DynamicElements.NameRegExPattern)]
-        [Display(Name = "Technical name")]
+        [Display(Name = "Technical element name")]
         public string Name { get; set; }
 
         [Required]

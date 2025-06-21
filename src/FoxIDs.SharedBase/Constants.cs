@@ -38,6 +38,7 @@ namespace FoxIDs
             public const string ExtLoginController = "extlogin";
             public const string ActionController = "action";
             public const string MfaController = "mfa";
+            public const string UiController = "ui";
             public const string ExtController = "ext";
 
             public const string OAuthController = "oauth";
@@ -55,6 +56,8 @@ namespace FoxIDs
 
             public const string SequenceStringKey = Sequence.String;
             public const string KeySequenceKey = "ks";
+
+            public const string ExtendedUiStepKey = "step";
 
             public const string PreApikey = "!";
             public const string MasterApiName = "@master";
@@ -89,6 +92,7 @@ namespace FoxIDs
             public const string AppTwoFactor = "apptwofactor";
             public const string SmsTwoFactor = "smstwofactor";
             public const string EmailTwoFactor = "emailtwofactor";
+            public const string ExtendedUi = "ext";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
@@ -892,12 +896,14 @@ namespace FoxIDs
 
             public static class ExtendedUi
             {
-                public const string OpenExtendedUiClaimType = "_local:open_extended_ui";
+                public const string OpenExtendedUiClaimType = "foxids:open_extended_ui";
 
                 public const int ElementsMin = 1;
 
                 public const int NameLength = 20;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
+                public const int TitleLength = 100;
+                public const int SubmitButtonTextLength = 50;
 
                 public const int UisMin = 0;
                 public const int UisMax = 5;

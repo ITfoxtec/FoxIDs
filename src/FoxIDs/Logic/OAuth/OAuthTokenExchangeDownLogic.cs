@@ -68,8 +68,8 @@ namespace FoxIDs.Logic
                     throw new NotSupportedException($"Subject token type not supported. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}', '{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
                 }
 
-                (var claims, bool sameTrack) = await ValidateSubjectTokenAsync(party, tokenExchangeRequest.SubjectToken, tokenExchangeRequest.SubjectTokenType);               
-                if (!(claims?.Count() > 0))
+                (var validateClaims, bool sameTrack) = await ValidateSubjectTokenAsync(party, tokenExchangeRequest.SubjectToken, tokenExchangeRequest.SubjectTokenType);               
+                if (!(validateClaims?.Count() > 0))
                 {
                     throw new OAuthRequestException($"Subject token not valid. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
                 }
@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
 
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
 
-                claims = claims.Where(c => c.Type != JwtClaimTypes.ClientId && c.Type != JwtClaimTypes.Actor && 
+                var claims = validateClaims.Where(c => c.Type != JwtClaimTypes.ClientId && c.Type != JwtClaimTypes.Actor && 
                     (!sameTrack || c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthProfileMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType)).ToList();
                 logger.ScopeTrace(() => $"AppReg, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 if (!party.Client.DisableClientAsTokenExchangeActor)
@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        private async Task<(List<Claim> claims, bool sameTrack)> ValidateSubjectTokenAsync(TParty party, string subjectToken, string subjectTokenType)
+        private async Task<(IEnumerable<Claim> claims, bool sameTrack)> ValidateSubjectTokenAsync(TParty party, string subjectToken, string subjectTokenType)
         {
             var trackIssuer = trackIssuerLogic.GetIssuer(party.UsePartyIssuer ? RouteBinding.RouteUrl : null);
             (string subjectTokenIssuer, IEnumerable<string> subjectTokenAudiences) = ReadSubjectTokenIssuerAndAudiences(subjectToken, subjectTokenType);
@@ -155,7 +155,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateSubjectTokenByUpPartyAsync(TParty party, string trackIssuer, string subjectToken, string subjectTokenType, string subjectTokenIssuer, IEnumerable<string> subjectTokenAudiences)
+        private async Task<IEnumerable<Claim>> ValidateSubjectTokenByUpPartyAsync(TParty party, string trackIssuer, string subjectToken, string subjectTokenType, string subjectTokenIssuer, IEnumerable<string> subjectTokenAudiences)
         {
             var tokenExchangeUpParties = party.AllowUpParties?.Where(up => (up.Type == PartyTypes.OAuth2 || up.Type == PartyTypes.Oidc || up.Type == PartyTypes.Saml2) && !up.DisableTokenExchangeTrust);
             if (!(tokenExchangeUpParties?.Count() > 0))

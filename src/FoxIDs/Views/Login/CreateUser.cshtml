@@ -10,13 +10,10 @@
 
 <div class="row page-container name-create-user">
     <div class="col-md page-content">
-        <editForm model>
-
-        </editForm>
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
             @{
-                await Html.RenderPartialAsync("_DynamicElements");
+                await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
             }
             <div class="form-group button-group">
                 <div>

@@ -87,15 +87,18 @@
                     </div>
                     <div class="row">
                         <div class="col-11">
-                            <div class="info-text">The technical name is added in HTML as a CSS tag prefixed with <code>name-</code>.</div>
+                            <div class="info-text">The technical name is added in HTML as a CSS tag prefixed with <code>name-@element.Name</code>.</div>
                             <FInputText @bind-Value="element.Name" For="@(() => element.Name)" />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-11">
-                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
+                    @if (element.Type != DynamicElementTypes.Text && element.Type != DynamicElementTypes.Html)
+                    {
+                        <div class="row">
+                            <div class="col-11">
+                                <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
+                            </div>
                         </div>
-                    </div>
+                    }
                     @if (InternalUsers && (element.Type == DynamicElementTypes.Email || element.Type == DynamicElementTypes.Phone || element.Type == DynamicElementTypes.Username))
                     {
                         <div class="row">
@@ -111,7 +114,6 @@
                                 <FInputText @bind-Value="element.DisplayName" For="@(() => element.DisplayName)" />
                                 <FInputNumber @bind-Value="element.MaxLength" For="@(() => element.MaxLength)" />
                                 <FInputText @bind-Value="element.RegEx" For="@(() => element.RegEx)" />
-                                <div class="info-text">In order to support multiple languages, an English error text is created and translations are added for the text under Settings and Texts.</div>
                                 <FInputText @bind-Value="element.ErrorMessage" For="@(() => element.ErrorMessage)" />
                                 <div class="info-text">Add an output claim to include the field value as a claim.</div>
                                 <FInputText @bind-Value="element.ClaimOut" For="@(() => element.ClaimOut)" />
@@ -122,8 +124,7 @@
                     {
                         <div class="row">
                             <div class="col-11">
-                                <div class="info-text">In order to support multiple languages, an English text @(element.Type == DynamicElementTypes.Html ? "(including HTML tags)" : string.Empty) is created and translations are added for the text under Settings and Texts.</div>
-                                <FInputTextArea @bind-Value="element.Content" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text content" : "HTML content")" />
+                                <FInputTextArea @bind-Value="element.Content" For="@(() => element.Content)" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text" : "HTML")" />
                             </div>
                         </div>
                     }

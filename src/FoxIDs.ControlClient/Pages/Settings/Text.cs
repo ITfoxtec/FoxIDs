@@ -133,19 +133,10 @@ namespace FoxIDs.Client.Pages.Settings
             try
             {
                 var resourceItem = await TrackService.GetTrackResourceAsync(resource.Id);
-                if (resourceItem == null)
+                await resource.Form.InitAsync(resourceItem.Map<ResourceItemViewModel>(), afterInit: afterInit =>
                 {
-                    resource.CreateMode = true;
-                    await resource.Form.InitAsync(new ResourceItemViewModel { Name = resource.Name, Id = resource.Id });
-                }
-                else
-                {
-                    resource.CreateMode = false;
-                    await resource.Form.InitAsync(resourceItem.Map<ResourceItemViewModel>(), afterInit: afterInit =>
-                    {
-                        afterInit.Name = resource.Name;
-                    });
-                }
+                    afterInit.Name = resource.Name;
+                });
             }
             catch (TokenUnavailableException)
             {
@@ -154,24 +145,6 @@ namespace FoxIDs.Client.Pages.Settings
             catch (HttpRequestException ex)
             {
                 resource.Error = ex.Message;
-            }
-        }
-
-        private void AddResourceItem(MouseEventArgs e, List<ResourceCultureItem> items)
-        {
-            items.Add(new ResourceCultureItem());
-        }
-
-        private void RemoveResourceItem(MouseEventArgs e, List<ResourceCultureItem> items, ResourceCultureItem removeItem)
-        {
-            if(items.Count > 1)
-            {
-                items.Remove(removeItem);
-            }
-            else
-            {
-                removeItem.Culture = null;
-                removeItem.Value = null;
             }
         }
 
@@ -184,9 +157,10 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>());
-                resource.CreateMode = false;
-                resource.Edit = false;
+                var resourceItem = await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>());
+                var resourceItemViewModel = resourceItem.Map<ResourceItemViewModel>();
+                resourceItemViewModel.Name = resource.Name;
+                resource.Form.UpdateModel(resourceItemViewModel);
                 toastService.ShowSuccess("Test updated.");
             }
             catch (FoxIDsApiException ex)
@@ -202,25 +176,12 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
-        private async Task DeleteResourceAsync(GeneralResourceViewModel resource)
+        private void ShowNewText()
         {
-            try
-            {
-                await TrackService.DeleteTrackResourceAsync(resource.Id);
-                resource.CreateMode = true;
-                resource.Edit = false;
-                resource.Form.Model.Name = null;
-                toastService.ShowSuccess("Text deleted.");
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                resource.Form.SetError(ex.Message);
-            }
+            
         }
+
+
 
         private async Task ShowUpdateTextSettingsModalAsync()
         {

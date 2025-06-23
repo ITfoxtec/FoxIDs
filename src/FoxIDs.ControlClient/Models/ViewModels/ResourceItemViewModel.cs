@@ -12,7 +12,7 @@ namespace FoxIDs.Client.Models.ViewModels
         }
 
         [Required]
-        [Display(Name = "Default text (en)")]
+        [Display(Name = "Text look up key (en)")]
         public string Name { get; set; }
     }
 }

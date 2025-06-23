@@ -35,10 +35,21 @@
     <div class="info-text mr-auto">
         The texts are used in the FoxIDs login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
     </div>
-    <div class="py-2">
-        <button type="button" class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
-            Text settings
-        </button>
+    <div class="pb-2 d-block">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn btn-primary" @onclick="ShowNewText">
+                    <span class="oi oi-plus" aria-hidden="true"></span> New text
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 pt-2">
+                <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+                    Text debugging
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -67,84 +78,32 @@
                         {
                             <FFieldText @bind-Value="resource.Form.Model.Name" For="@(() => resource.Form.Model.Name)" />
                             <div class="form-group active-group active">
-                                <Label For="@(() => resource.Form.Model.Items)" class="label-control" />
+                                <label class="label-control">Translations</label>
                                 <div class="card">
                                     <div class="card-body">
                                         @foreach (var item in resource.Form.Model.Items)
                                         {
-                                            var includeLabel = resource.Form.Model.Items.IndexOf(item) <= 0;
-                                            <div class="row">
-                                                <div class="col-3 col-lg-2">
-                                                    @if (includeLabel)
-                                                    {
-                                                        <div class="active-group active pb-0 mb-0">
-                                                            <input type="text" @bind="@item.Culture" class="form-control input-control" />
-                                                            <Label For="@(() => item.Culture)" class="label-control" />
+
+                                            <div class="pt-2">
+                                                <div class="active-group active pb-0">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <FInputText Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
                                                         </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="text" @bind="@item.Culture" class="form-control input-control" />
-                                                    }
-                                                    <ValidationMessage For="@(() => item.Culture)" />
-                                                </div>
-                                                <div class="col-8 col-lg-9">
-                                                    @if (includeLabel)
-                                                    {
-                                                        <div class="active-group active pb-0 mb-0">
-                                                            <input type="text" @bind="@item.Value" class="form-control input-control" />
-                                                            <Label For="@(() => item.Value)" class="label-control" />
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="text" @bind="@item.Value" class="form-control input-control" />
-                                                    }
-                                                    <ValidationMessage For="@(() => item.Value)" />
-                                                </div>
-                                                <div class="col-1 p-0">
-                                                    @if (includeLabel)
-                                                    {
-                                                        <div class="active-group active pb-0 mb-0">
-                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceItem(e, resource.Form.Model.Items, item))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceItem(e, resource.Form.Model.Items, item))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                    }
+                                                    </div>
+                                                    <label class="label-control">@($"({item.Culture}) {item.DefaultValue}")</label>
                                                 </div>
                                             </div>
                                         }
                                     </div>
                                 </div>
                                 <ValidationMessage For="@(() => resource.Form.Model.Items)" />
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddResourceItem(e, resource.Form.Model.Items))"><span class="oi oi-plus" aria-hidden="true"></span> Add text</button>
                             </div>
 
                         }
                     </div>
-                    @if (!resource.CreateMode && resource.DeleteAcknowledge)
-                    {
-                        <div class="modal-footer">
-                            <div class="alert alert-danger" role="alert">
-                                <div>
-                                    You are about to delete texts for "@resource.Name", are you sure?
-                                </div>
-
-                                <div class="mt-3">
-                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteResourceAsync(resource))">Yes delete texts</button>
-                                    <button type="button" class="btn btn-secondary" @onclick="@(() => resource.DeleteAcknowledge = false)">No</button>
-                                </div>
-                            </div>
-                        </div>
-                    }
                     <div class="modal-footer">
-                        @if (!resource.CreateMode)
-                        {
-                            <button type="button" class="btn btn-link" @onclick="@(() => resource.DeleteAcknowledge = true)">Delete</button>
-                        }
-                        <button type="submit" class="btn btn-primary">@(resource.CreateMode ? "Create" : "Update")</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                         <button type="button" class="btn btn-secondary" @onclick="@(() => ResourceCancel(resource))">Cancel</button>
                     </div>
                 </PageEditForm>
@@ -160,9 +119,9 @@
     }
 </ul>
 
-<Modal @ref="textSettingsModal" Title="Text Settings">
+<Modal @ref="textSettingsModal" Title="Text debugging">
     <div class="info-text">
-        Each text element in FoxIDs has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text, making it possible to search the text elements by ID.
+        Texts in FoxIDs have unique IDs. It is possible to display the IDs together with the text, which makes it possible to search for text elements using the ID.
     </div>
 
     @if (!generalTextSettings.Error.IsNullOrWhiteSpace())

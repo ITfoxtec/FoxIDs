@@ -27,11 +27,6 @@ namespace FoxIDs.Logic
 
                 routeBinding = routeBinding ?? RouteBinding;
                 var supportedCultures = resourceEnvelope.SupportedCultures;
-                if (routeBinding.Resources?.Count > 0)
-                {
-                    var trackSupportedCultures = routeBinding.Resources.SelectMany(r => r.Items.GroupBy(ig => ig.Culture)).Select(rk => rk.Key);
-                    supportedCultures = supportedCultures.ConcatOnce(trackSupportedCultures);
-                }
 
                 foreach (var culture in cultures.Take(maximumCultureNamesToTry))
                 {

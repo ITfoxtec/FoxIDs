@@ -53,6 +53,7 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
                 logger.ScopeTrace(() => "Show extended UI dialog.");
                 return View(nameof(Ext), new ExtendedUiViewModel
@@ -87,6 +88,7 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
                 extendedUiViewModel.Elements = dynamicElementLogic.ToElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.Elements).ToList();
 

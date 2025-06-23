@@ -23,19 +23,23 @@ namespace FoxIDs.Logic
         private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
+        private readonly ExtendedUiLogic extendedUiLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
+            this.extendedUiLogic = extendedUiLogic;
             this.planCacheLogic = planCacheLogic;
         }
 
@@ -300,18 +304,28 @@ namespace FoxIDs.Logic
                     return actionResult;
                 }
 
-                //TODO handle extended UI 
-
                 await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
-            (claims, var exitActionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
-            if (exitActionResult != null)
+            var extendedUiActionResult = await HandleExtendedUiAsync(loginUpParty, sequenceData, claims);
+            if (extendedUiActionResult != null)
             {
-                return exitActionResult;
+                return extendedUiActionResult;
             }
 
-            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, claims);
+            return await LoginResponsePostAsync(loginUpParty, sequenceData, claims);
+        }
+
+        private async Task<IActionResult> LoginResponsePostAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                return actionResult;
+            }
+
+            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, transformedClaims);
         }
 
         private LoginUserIdentifier GetLoginUserIdentifier(User user, string userIdentifier)
@@ -324,6 +338,31 @@ namespace FoxIDs.Logic
                 Username = user.Username,
                 UserIdentifier = userIdentifier
             };
+        }
+
+        private async Task<IActionResult> HandleExtendedUiAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(loginUpParty, sequenceData, claims,
+                (extendedUiUpSequenceData) => { });
+
+            return extendedUiActionResult;
+        }
+
+        public async Task<IActionResult> AuthResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(partyName: extendedUiSequenceData.UpPartyId.PartyIdToName(), remove: true);
+            var party = await tenantDataRepository.GetAsync<LoginUpParty>(extendedUiSequenceData.UpPartyId);
+
+            try
+            {
+                return await LoginResponsePostAsync(party, sequenceData, claims);
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
         }
 
         public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)

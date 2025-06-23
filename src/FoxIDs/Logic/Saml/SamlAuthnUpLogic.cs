@@ -343,13 +343,13 @@ namespace FoxIDs.Logic
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
-                var extendedUiActionResult = await HandleExtendedUiAsync(party, sequenceData, jwtValidClaims, externalSessionId, saml2AuthnResponse.Status);
+                var extendedUiActionResult = await HandleExtendedUiAsync(party, sequenceData, jwtValidClaims, externalSessionId);
                 if (extendedUiActionResult != null)
                 {
                     return extendedUiActionResult;
                 }
 
-                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, jwtValidClaims, externalSessionId, saml2AuthnResponse.Status);
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, jwtValidClaims, externalSessionId);
                 if (externalUserActionResult != null)
                 {
                     return externalUserActionResult;
@@ -359,7 +359,7 @@ namespace FoxIDs.Logic
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
                 }
-                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, saml2AuthnResponse.Status, externalSessionId, idPInitiatedLink: idPInitiatedLink);
+                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, externalSessionId, idPInitiatedLink: idPInitiatedLink);
             }
             catch (StopSequenceException)
             {
@@ -385,25 +385,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> HandleExtendedUiAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, string externalSessionId, Saml2StatusCodes status)
+        private async Task<IActionResult> HandleExtendedUiAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, string externalSessionId)
         {
             var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(party, sequenceData, jwtValidClaims,
                 (extendedUiUpSequenceData) =>
                 {
                     extendedUiUpSequenceData.ExternalSessionId = externalSessionId;
-                    extendedUiUpSequenceData.Saml2Status = status;
                 });
 
             return extendedUiActionResult;
         }
 
-        private async Task<(IEnumerable<Claim>, IActionResult)> HandleExternalUserAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, string externalSessionId, Saml2StatusCodes status)
+        private async Task<(IEnumerable<Claim>, IActionResult)> HandleExternalUserAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, string externalSessionId)
         {
             (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, jwtValidClaims,
                 (externalUserUpSequenceData) =>
                 {
                     externalUserUpSequenceData.ExternalSessionId = externalSessionId;
-                    externalUserUpSequenceData.Saml2Status = status;
                 },
                 (errorMessage) => throw new SamlRequestException(errorMessage) { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder });
 
@@ -501,18 +499,14 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, jwtValidClaims, extendedUiSequenceData.ExternalSessionId, extendedUiSequenceData.Saml2Status);
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, jwtValidClaims, extendedUiSequenceData.ExternalSessionId);
                 if (externalUserActionResult != null)
                 {
                     return externalUserActionResult;
                 }
 
-                if (sequenceData != null)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
-                }
-
-                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, extendedUiSequenceData.Saml2Status, extendedUiSequenceData.ExternalSessionId);
+                await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: party.Name);
+                return await AuthnResponsePostAsync(party, sequenceData, jwtValidClaims, externalUserClaims, extendedUiSequenceData.ExternalSessionId);
             }
             catch (StopSequenceException)
             {
@@ -537,7 +531,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                return await AuthnResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.Saml2Status, externalUserSequenceData.ExternalSessionId);
+                return await AuthnResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims, externalUserSequenceData.ExternalSessionId);
             }
             catch (StopSequenceException)
             {
@@ -555,7 +549,7 @@ namespace FoxIDs.Logic
             }        
         }
 
-        private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, Saml2StatusCodes status, string externalSessionId, IdPInitiatedDownPartyLink idPInitiatedLink = null)
+        private async Task<IActionResult> AuthnResponsePostAsync(SamlUpParty party, SamlUpSequenceData sequenceData, IEnumerable<Claim> jwtValidClaims, IEnumerable<Claim> externalUserClaims, string externalSessionId, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             jwtValidClaims = externalUserLogic.AddExternalUserClaims(party, jwtValidClaims, externalUserClaims);
 
@@ -581,7 +575,7 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{transformedJwtClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return await AuthnResponseDownAsync(sequenceData, status, transformedJwtClaims, idPInitiatedLink: idPInitiatedLink);
+            return await AuthnResponseDownAsync(sequenceData, jwtClaims: transformedJwtClaims, idPInitiatedLink: idPInitiatedLink);
         }
 
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
@@ -658,7 +652,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, List<Claim> jwtClaims = null, IdPInitiatedDownPartyLink idPInitiatedLink = null)
+        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success, List<Claim> jwtClaims = null, IdPInitiatedDownPartyLink idPInitiatedLink = null)
         {
             try
             {

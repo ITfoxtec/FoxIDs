@@ -153,16 +153,16 @@ namespace FoxIDs.Controllers
                 await sequenceLogic.RemoveSequenceDataAsync<ExtendedUiUpSequenceData>();
                 switch (sequenceData.UpPartyType)
                 {
-                    //case PartyTypes.Login:
-                    //    return await serviceProvider.GetService<LoginPageLogic>().AuthenticationRequestPostExtendedUiAsync(sequenceData, transformedClaims);
-                    //case PartyTypes.Oidc:
-                    //    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostExtendedUiAsync(sequenceData, transformedClaims);
+                    case PartyTypes.Login:
+                        return await serviceProvider.GetService<LoginPageLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostExtendedUiAsync(sequenceData, transformedClaims);
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostExtendedUiAsync(sequenceData, transformedClaims);
-                    //case PartyTypes.TrackLink:
-                    //    return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
-                    //case PartyTypes.ExternalLogin:
-                    //    return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
+                    case PartyTypes.ExternalLogin:
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
                     default:
                         throw new NotSupportedException();
                 }

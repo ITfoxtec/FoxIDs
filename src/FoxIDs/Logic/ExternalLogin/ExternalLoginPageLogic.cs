@@ -79,8 +79,6 @@ namespace FoxIDs.Logic
                     return actionResult;
                 }
 
-                //TODO handle extended UI 
-
                 await sessionLogic.CreateSessionAsync(extLoginUpParty, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
 

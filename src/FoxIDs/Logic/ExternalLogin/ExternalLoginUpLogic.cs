@@ -22,17 +22,19 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ExtendedUiLogic extendedUiLogic;
         private readonly ExternalUserLogic externalUserLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly HrdLogic hrdLogic;
 
-        public ExternalLoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ExternalUserLogic externalUserLogic, ClaimTransformLogic claimTransformLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalLoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimTransformLogic claimTransformLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
+            this.extendedUiLogic = extendedUiLogic;
             this.externalUserLogic = externalUserLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.planUsageLogic = planUsageLogic;
@@ -69,27 +71,68 @@ namespace FoxIDs.Logic
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(extLoginUpParty, sequenceData, claims,
-                    (externalUserUpSequenceData) => { },
-                    (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
+                var extendedUiActionResult = await HandleExtendedUiAsync(extLoginUpParty, sequenceData, claims);
+                if (extendedUiActionResult != null)
+                {
+                    return extendedUiActionResult;
+                }
+
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(extLoginUpParty, sequenceData, claims);
                 if (externalUserActionResult != null)
                 {
-                    if (deleteSequenceData)
-                    {
-                        await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
-                    }
                     return externalUserActionResult;
                 }
 
-                (claims, var authResponseActionResult) = await AuthResponsePostAsync(extLoginUpParty, sequenceData, claims, externalUserClaims);
-                if (authResponseActionResult != null)
+                await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
+                return await AuthResponsePostAsync(extLoginUpParty, sequenceData, claims, externalUserClaims);
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
+        }
+
+        private async Task<IActionResult> HandleExtendedUiAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(extLoginUpParty, sequenceData, claims,
+                (extendedUiUpSequenceData) => { });
+
+            return extendedUiActionResult;
+        }
+
+        private async Task<(IEnumerable<Claim>, IActionResult)> HandleExternalUserAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(extLoginUpParty, sequenceData, claims,
+                (externalUserUpSequenceData) => { },
+                (errorMessage) => throw new EndpointException(errorMessage) { RouteBinding = RouteBinding });
+            if (externalUserActionResult != null)
+            {
+                if (deleteSequenceData)
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
-                    return authResponseActionResult;
+                }
+            }
+
+            return (externalUserClaims, externalUserActionResult);
+        }
+
+        public async Task<IActionResult> AuthResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(partyName: extendedUiSequenceData.UpPartyId.PartyIdToName(), remove: false);
+            var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(extendedUiSequenceData.UpPartyId);
+
+            try
+            {
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, claims);
+                if (externalUserActionResult != null)
+                {
+                    return externalUserActionResult;
                 }
 
-                await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
-                return await LoginResponseDownAsync(sequenceData, claims);
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                return await AuthResponsePostAsync(party, sequenceData, claims, externalUserClaims);
             }
             catch (OAuthRequestException orex)
             {
@@ -106,12 +149,7 @@ namespace FoxIDs.Logic
             
             try
             {
-                (var claims, var actionResult) = await AuthResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims);
-                if (actionResult != null)
-                {
-                    return actionResult;
-                }
-                return await LoginResponseDownAsync(sequenceData, claims);
+                return await AuthResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims);
             }
             catch (OAuthRequestException orex)
             {
@@ -121,20 +159,21 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim>, IActionResult actionResult)> AuthResponsePostAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims)
+        private async Task<IActionResult> AuthResponsePostAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims)
         {
             claims = externalUserLogic.AddExternalUserClaims(extLoginUpParty, claims, externalUserClaims);
 
             (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(extLoginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)
             {
-                return (null, actionResult);
+                await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
+                return actionResult;
             }
 
             await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.ExternalLogin);
 
             logger.ScopeTrace(() => $"AuthMethod, External Login, output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (transformedClaims, null);
+            return await LoginResponseDownAsync(sequenceData, transformedClaims);
         }
 
         public async Task<IActionResult> LoginResponseDownAsync(ExternalLoginUpSequenceData sequenceData, List<Claim> claims)

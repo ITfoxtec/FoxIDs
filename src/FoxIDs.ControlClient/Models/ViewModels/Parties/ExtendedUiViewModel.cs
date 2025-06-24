@@ -7,12 +7,14 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class ExtendedUiViewModel : ExtendedUi, IDynamicElementsViewModel
     {
+        [ValidateComplexType]
         [ListLength(Constants.Models.ExtendedUi.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public new List<DynamicElementViewModel> Elements { get; set; } = new List<DynamicElementViewModel>();
 
-        [Display(Name = "Select which claims should be included in the API request (user * to select all claims)")]
+        [ValidateComplexType]
         [ListLength(Constants.Models.ExtendedUi.ExternalClaimsInMin, Constants.Models.ExtendedUi.ExternalClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
-        public new List<string> ExternalClaimsIn { get; set; } = new List<string>();
+        [Display(Name = "Select which claims should be included in the API request (user * to select all claims)")]
+        public new List<string> ExternalClaimsIn { get; set; } = ["*"];
 
         /// <summary>
         /// Run after successful completion of external UI.

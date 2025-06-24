@@ -29,13 +29,12 @@
 
                         <DynamicElements Model="extendedUi" />
 
+                        <div class="info-text">The claims from the dynamic elements are added, unless you call an API, in which case the claims returned from the API are added instead.</div>
                         <div class="pt-2">
                             <div class="active-group active">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="info-text">
-                                            Optionally call an API on submit to validate input and return claims or an error.
-                                        </div>
+                                        <div class="info-text">Optionally call an API on submit to validate input and return claims or an error.</div>
                                         <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
                                         <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
                                         <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />

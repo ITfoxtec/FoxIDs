@@ -102,6 +102,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Extended UIs.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
         public List<ExtendedUiViewModel> ExtendedUis { get; set; } = new List<ExtendedUiViewModel>();
 

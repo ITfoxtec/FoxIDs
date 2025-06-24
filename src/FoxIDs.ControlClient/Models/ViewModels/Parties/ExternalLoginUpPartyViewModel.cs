@@ -82,6 +82,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; } = new List<string>(["*"]);
 
+        [ValidateComplexType]
         [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
         [Display(Name = "Additional parameters")]
         public List<OAuthAdditionalParameter> AdditionalParameters { get; set; } = new List<OAuthAdditionalParameter>();
@@ -96,6 +97,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Extended UIs.
         /// </summary>
+        [ValidateComplexType]
         [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
         public List<ExtendedUiViewModel> ExtendedUis { get; set; } = new List<ExtendedUiViewModel>();
          

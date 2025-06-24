@@ -488,7 +488,6 @@ namespace FoxIDs
                 public const int KeyExternalCacheLifetimeMax = 86400;
 
                 public const int ResourcesMin = 0;
-                public const int ResourcesMax = 250;
                 public const int SequenceLifetimeMin = 30;
                 public const int SequenceLifetimeMax = 18000;
 

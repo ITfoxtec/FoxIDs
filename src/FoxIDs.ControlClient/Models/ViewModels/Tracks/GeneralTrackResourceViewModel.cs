@@ -3,12 +3,9 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralResourceViewModel
+    public class GeneralTrackResourceViewModel
     {
-        public GeneralResourceViewModel()
-        {}
-
-        public GeneralResourceViewModel(ResourceName resourceName)
+        public GeneralTrackResourceViewModel(TrackResourceName resourceName)
         {
             Id = resourceName.Id;
             Name = resourceName.Name;

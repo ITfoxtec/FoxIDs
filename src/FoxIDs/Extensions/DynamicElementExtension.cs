@@ -58,13 +58,13 @@ namespace FoxIDs
             return html.GetControl("text", name, html.GetLocalizerValue(displayName), value, maxLength, validation: validation, isRequired: isRequired);
         }
 
-        public static IHtmlContent GetTextControl(this IHtmlHelper html, string content)
+        public static IHtmlContent GetTextControl(this IHtmlHelper html, string content, IStringLocalizer stringLocalizer)
         {
-            return html.GetContentControl(content, false);
+            return html.GetContentControl(content, stringLocalizer, false);
         }
-        public static IHtmlContent GetHtmlControl(this IHtmlHelper html, string content)
+        public static IHtmlContent GetHtmlControl(this IHtmlHelper html, string content, IStringLocalizer stringLocalizer)
         {
-            return html.GetContentControl(content, true);
+            return html.GetContentControl(content, stringLocalizer, true);
         }
 
         private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxLength, string validation = null, string autocomplete = null, bool isRequired = false)
@@ -79,16 +79,16 @@ namespace FoxIDs
             return contentBuilder;
         }
 
-        private static IHtmlContent GetContentControl(this IHtmlHelper html, string content, bool isHtml)
+        private static IHtmlContent GetContentControl(this IHtmlHelper html, string content, IStringLocalizer stringLocalizer, bool isHtml)
         {
             var contentBuilder = new HtmlContentBuilder();
             if (isHtml)
             {
-                contentBuilder.AppendHtml(content);
+                contentBuilder.AppendHtml(stringLocalizer.GetString(content));
             }
             else
             {
-                contentBuilder.Append(content);
+                contentBuilder.Append(stringLocalizer.GetString(content));
             }
             return contentBuilder;
         }

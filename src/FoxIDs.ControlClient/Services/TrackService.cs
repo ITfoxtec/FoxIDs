@@ -15,9 +15,16 @@ namespace FoxIDs.Client.Services
         private const string keyContainedApiUri = "api/{tenant}/{track}/!trackkeycontained";
         private const string keyContainedSwapApiUri = "api/{tenant}/{track}/!trackkeycontainedswap";
         private const string keyTypeApiUri = "api/{tenant}/{track}/!trackkeytype";
-        private const string listResourceNamesApiUri = "api/{tenant}/master/!resourcenames";
+
+        private const string listMasterResourceCulturesApiUri = "api/{tenant}/master/!resourcecultures";
+        private const string listMasterResourceNamesApiUri = "api/{tenant}/master/!resourcenames";
+
+        private const string listTrackOnlyResourceNamesApiUri = "api/{tenant}/{track}/!trackonlyresourcenames";
+        private const string trackOnlyResourceNameApiUri = "api/{tenant}/{track}/!trackonlyresourcename";
+        private const string trackOnlyResourceApiUri = "api/{tenant}/{track}/!trackonlyresource";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
         private const string resourceSettingApiUri = "api/{tenant}/{track}/!trackresourcesetting";
+
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
         private const string logUsageApiUri = "api/{tenant}/{track}/!tracklogusage";
@@ -44,7 +51,16 @@ namespace FoxIDs.Client.Services
         public async Task<TrackKey> GetTrackKeyTypeAsync() => await GetAsync<TrackKey>(keyTypeApiUri);
         public async Task UpdateTrackKeyTypeAsync(TrackKey trackKeyRequest) => await PutAsync(keyTypeApiUri, trackKeyRequest);
 
-        public async Task<PaginationResponse<ResourceName>> GetResourceNamesAsync(string filterName, string paginationToken = null) => await GetListAsync<ResourceName>(listResourceNamesApiUri, filterName, paginationToken: paginationToken);
+        public async Task<PaginationResponse<ResourceCulture>> GetMasterResourceCulturesAsync(string paginationToken = null) => await GetListAsync<ResourceCulture>(listMasterResourceCulturesApiUri, paginationToken: paginationToken);
+        public async Task<PaginationResponse<ResourceName>> GetMasterResourceNamesAsync(string filterName, string paginationToken = null) => await GetListAsync<ResourceName>(listMasterResourceNamesApiUri, filterName, paginationToken: paginationToken);
+        
+        public async Task<PaginationResponse<ResourceName>> GetTrackOnlyResourceNamesAsync(string filterName, string paginationToken = null) => await GetListAsync<ResourceName>(listTrackOnlyResourceNamesApiUri, filterName, paginationToken: paginationToken);
+        public async Task<ResourceName> UpdateTrackOnlyResourceNameAsync(TrackResourceName trackResourceName) => await PutResponseAsync<TrackResourceName, ResourceName>(trackOnlyResourceNameApiUri, trackResourceName);
+        public async Task DeleteTrackOnlyResourceNameAsync(string name) => await DeleteAsync(trackOnlyResourceNameApiUri, name);
+
+        public async Task<ResourceItem> GetTrackOnlyResourceAsync(int resourceId) => await GetAsync<ResourceItem>(trackOnlyResourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
+        public async Task<ResourceItem> UpdateTrackOnlyResourceAsync(TrackResourceItem trackResourceItem) => await PutResponseAsync<ResourceItem, ResourceItem>(trackOnlyResourceApiUri, trackResourceItem);
+        public async Task DeleteTrackOnlyResourceAsync(int resourceId) => await DeleteAsync(trackOnlyResourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
 
         public async Task<ResourceItem> GetTrackResourceAsync(int resourceId) => await GetAsync<ResourceItem>(resourceApiUri, Convert.ToString(resourceId), parmName1: nameof(resourceId));
         public async Task<ResourceItem> UpdateTrackResourceAsync(TrackResourceItem trackResourceItem) => await PutResponseAsync<ResourceItem, ResourceItem>(resourceApiUri, trackResourceItem);

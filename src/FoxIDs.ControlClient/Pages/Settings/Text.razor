@@ -35,21 +35,10 @@
     <div class="info-text mr-auto">
         The texts are used in the FoxIDs login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
     </div>
-    <div class="pb-2 d-block">
-        <div class="row">
-            <div class="col-12">
-                <button type="button" class="btn btn-primary" @onclick="ShowNewText">
-                    <span class="oi oi-plus" aria-hidden="true"></span> New text
-                </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 pt-2">
-                <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
-                    Text debugging
-                </button>
-            </div>
-        </div>
+    <div class="pt-2 d-block">
+        <button type="button" class="btn btn-sm btn-outline-dark" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+            Text debugging
+        </button>
     </div>
 </div>
 
@@ -57,86 +46,189 @@
     <FInputTextFilter @bind-Value="resourceFilterForm.Model.FilterName" For="@(() => resourceFilterForm.Model.FilterName)" />
 </PageEditForm>
 
-<ul class="list-group">
-    @foreach (var resource in resources)
-    {
-        <li class="list-group-item @(resource.Edit ? "active" : string.Empty)">
-            @if (!resource.Error.IsNullOrWhiteSpace())
-            {
-                <div class="alert alert-danger" role="alert">
-                    @resource.Error
-                </div>
-            }
-            @if (resource.Edit)
-            {
-                <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
-                    <div class="modal-header">
-                        Resource @(!resource.Form.Model.Name.IsNullOrEmpty() ? $"(ID: {resource.Form.Model.Id})" : "")
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body py-3">
+                <div class="d-flex pt-2">
+                    <div class="info-text mr-auto pb-4">
+                        Define text and translations for elements in this environment.
                     </div>
-                    <div class="modal-body">
-                        @if (!resource.Form.Model.Name.IsNullOrEmpty())
-                        {
-                            <FFieldText @bind-Value="resource.Form.Model.Name" For="@(() => resource.Form.Model.Name)" />
-                            <div class="form-group active-group active">
-                                <label class="label-control">Translations</label>
-                                <div class="card">
-                                    <div class="card-body">
-                                        @foreach (var item in resource.Form.Model.Items)
-                                        {
-
-                                            <div class="pt-2">
-                                                <div class="active-group active pb-0">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <FInputText Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
+                    <div class="d-block">
+                        <button type="button" class="btn btn-primary" @onclick="ShowCreateTrackResource">
+                            <span class="oi oi-plus" aria-hidden="true"></span> New text
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    @foreach (var trackOnlyResource in trackOnlyResources)
+                    {
+                        <li class="list-group-item overflow-hidden @(trackOnlyResource.Edit ? "active" : string.Empty)">
+                            @if (!trackOnlyResource.Error.IsNullOrWhiteSpace())
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @trackOnlyResource.Error
+                                </div>
+                            }
+                            @if (trackOnlyResource.Edit)
+                            {
+                                <PageEditForm @ref="trackOnlyResource.Form" TModel="ResourceItemViewModel" OnAfterInit="@(m => TrackOnlyResourceAfterInit(trackOnlyResource, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackOnlyResourceValidSubmitAsync(trackOnlyResource, editContext))">
+                                    <div class="modal-header">
+                                        Resource @(trackOnlyResource.Form.Model.Id > 0 ? $"(ID: T{trackOnlyResource.Form.Model.Id})" : "")
+                                    </div>
+                                    <div class="modal-body">
+                                        <FInputText @bind-Value="trackOnlyResource.Form.Model.Name" For="@(() => trackOnlyResource.Form.Model.Name)" Focus="trackOnlyResource.CreateMode" />
+                                        <div class="form-group active-group active">
+                                            <label class="label-control">Translations</label>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    @foreach (var item in trackOnlyResource.Form.Model.Items)
+                                                    {
+                                                        <div class="pt-2">
+                                                            <div class="active-group active pb-0">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <FInputText Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
+                                                                    </div>
+                                                                </div>
+                                                                <label class="label-control">@($"({item.Culture}) {item.DefaultValue}")</label>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <label class="label-control">@($"({item.Culture}) {item.DefaultValue}")</label>
+                                                    }
                                                 </div>
                                             </div>
-                                        }
+                                            <ValidationMessage For="@(() => trackOnlyResource.Form.Model.Items)" />
+                                        </div>
                                     </div>
-                                </div>
-                                <ValidationMessage For="@(() => resource.Form.Model.Items)" />
-                            </div>
+                                    @if (!trackOnlyResource.CreateMode && trackOnlyResource.DeleteAcknowledge)
+                                    {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-danger" role="alert">
+                                                <div>
+                                                    You are about to delete the text "@trackOnlyResource.Name" and related translations defined in this environment, are you sure?
+                                                </div>
 
-                        }
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => ResourceCancel(resource))">Cancel</button>
-                    </div>
-                </PageEditForm>
-            }
-            else
-            {
-                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
-                    @resource.Name
-                </button><br />
-                <span>ID: @resource.Id</span>
-            }
-        </li>
-    }
-</ul>
+                                                <div class="mt-3">
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteTrackOnlyResourceAsync(trackOnlyResource))">Yes delete text</button>
+                                                    <button type="button" class="btn btn-secondary" @onclick="@(() => trackOnlyResource.DeleteAcknowledge = false)">No</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="modal-footer">
+                                        @if (!trackOnlyResource.CreateMode)
+                                        {
+                                            <button type="button" class="btn btn-link" @onclick="@(() => trackOnlyResource.DeleteAcknowledge = true)">Delete</button>
+                                        }
+                                        <button type="submit" class="btn btn-primary">@(trackOnlyResource.CreateMode ? "Create" : "Update")</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => TrackOnlyResourceCancel(trackOnlyResource))">Cancel</button>
+                                    </div>
+                                </PageEditForm>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateTrackOnlyResourceAsync(trackOnlyResource))">
+                                    @trackOnlyResource.Name
+                                </button>
+                                <br />
+                                <span>@($"(ID: T{trackOnlyResource.Id})")</span>
+                            }
+                        </li>
+                    }
+                    @if (trackOnlyResources.Count() <= 0)
+                    {
+                        <li class="list-group-item">
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <label class="label-control">Texts defined in this environment</label>
+    </div>
+</div>
+
+<div class="pt-2">
+    <div class="active-group active">
+        <div class="card">
+            <div class="card-body py-3">
+                <ul class="list-group">
+                    @foreach (var resource in resources)
+                    {
+                        <li class="list-group-item overflow-hidden @(resource.Edit ? "active" : string.Empty)">
+                            @if (!resource.Error.IsNullOrWhiteSpace())
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @resource.Error
+                                </div>
+                            }
+                            @if (resource.Edit)
+                            {
+                                <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
+                                    <div class="modal-header">
+                                        Resource ID: @resource.Form.Model.Id
+                                    </div>
+                                    <div class="modal-body">
+                                        <FFieldText @bind-Value="resource.Form.Model.Name" For="@(() => resource.Form.Model.Name)" />
+                                        <div class="form-group active-group active">
+                                            <label class="label-control">Translations</label>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    @foreach (var item in resource.Form.Model.Items)
+                                                    {
+                                                        <div class="pt-2">
+                                                            <div class="active-group active pb-0">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <FInputText Class="pb-0" @bind-Value="item.Value" For="@(() => item.Value)" LabelText="Custom translation" />
+                                                                    </div>
+                                                                </div>
+                                                                <label class="label-control">@($"({item.Culture}) {item.DefaultValue}")</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <ValidationMessage For="@(() => resource.Form.Model.Items)" />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="@(() => ResourceCancel(resource))">Cancel</button>
+                                    </div>
+                                </PageEditForm>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
+                                    @resource.Name
+                                </button>
+                                <br />
+                                <span>ID: @resource.Id</span>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <label class="label-control">Global texts</label>
+    </div>
+</div>
 
 <Modal @ref="textSettingsModal" Title="Text debugging">
-    <div class="info-text">
-        Texts in FoxIDs have unique IDs. It is possible to display the IDs together with the text, which makes it possible to search for text elements using the ID.
-    </div>
-
-    @if (!generalTextSettings.Error.IsNullOrWhiteSpace())
-    {
-        <div class="alert alert-danger" role="alert">
-            @generalTextSettings.Error
-        </div>
-    }
     <PageEditForm @ref="generalTextSettings.Form" TModel="Api.ResourceSettings" OnValidSubmit="OnUpdateTextSettingsValidSubmitAsync">
         @if (generalTextSettings.Form?.Model != null)
         {
-            <div class="modal-header">
-                Text settings
-            </div>
             <div class="modal-body">
+                <div class="info-text pb-2">
+                    Texts in FoxIDs have unique IDs. It is possible to display the IDs together with the text, which makes it possible to search for text elements using the ID.
+                </div>
+
+                @if (!generalTextSettings.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @generalTextSettings.Error
+                    </div>
+                }
                 <FInputToggle @bind-Value="generalTextSettings.Form.Model.ShowResourceId" For="@(() => generalTextSettings.Form.Model.ShowResourceId)" TextType="e.d" />
             </div>
             <div class="modal-footer">

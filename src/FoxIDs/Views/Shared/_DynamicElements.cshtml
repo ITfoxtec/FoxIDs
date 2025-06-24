@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer StringLocalizer
 @model List<DynamicElementBase>
 
 @if (Model != null)
@@ -69,11 +70,11 @@
             <div class="form-group active-group @cssName">
                 @if (contentDElement.IsHtml) 
                 {
-                    @Html.GetHtmlControl(contentDElement.DContent)
+                    @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
                 }
                 else
                 {
-                    @Html.GetTextControl(contentDElement.DContent)
+                    @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
                 }
             </div>
         }

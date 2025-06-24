@@ -17,7 +17,7 @@ using ITfoxtec.Identity;
 namespace FoxIDs.Controllers
 {
     [TenantScopeAuthorize]
-    public class TTrackResourceController : ApiController
+    public class TTrackOnlyResourceController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -25,7 +25,7 @@ namespace FoxIDs.Controllers
         private readonly EmbeddedResourceLogic embeddedResourceLogic;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackResourceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, EmbeddedResourceLogic embeddedResourceLogic, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackOnlyResourceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, EmbeddedResourceLogic embeddedResourceLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -35,41 +35,41 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get environment resource.
+        /// Get environment only resource.
         /// </summary>
         /// <param name="resourceId">Resource id.</param>
         /// <returns>Resource item.</returns>
         [ProducesResponseType(typeof(Api.ResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.ResourceItem>> GetTrackResource(int resourceId)
+        public async Task<ActionResult<Api.ResourceItem>> GetTrackOnlyResource(int resourceId)
         {
             try
             {
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                var mResourceItem = mTrack.Resources?.SingleOrDefault(r => r.Id == resourceId);
+                var mResourceItem = mTrack.ResourceEnvelope?.Resources?.FirstOrDefault(r => r.Id == resourceId);
 
-                return Ok(AddDefaultValues(resourceId, mapper.Map<Api.ResourceItem>(mResourceItem ?? new ResourceItem { Id = resourceId, Items = new List<ResourceCultureItem>() })));
+                return Ok(AddDefaultCultures(mapper.Map<Api.ResourceItem>(mResourceItem ?? new ResourceItem { Id = resourceId, Items = new List<ResourceCultureItem>() })));
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
-                    return NotFound("Track.Resource", Convert.ToString(resourceId));
+                    logger.Warning(ex, $"NotFound, Get environment only Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
+                    return NotFound("Track.ResourceEnvelope.Resources", Convert.ToString(resourceId));
                 }
                 throw;
             }
         }
 
         /// <summary>
-        /// Update environment resource.
+        /// Update environment only resource.
         /// </summary>
         /// <param name="trackResourceItem">Resource item.</param>
         /// <returns>Resource item.</returns>
         [ProducesResponseType(typeof(Api.TrackResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.TrackResourceItem>> PutTrackResource([FromBody] Api.TrackResourceItem trackResourceItem)
+        public async Task<ActionResult<Api.TrackResourceItem>> PutTrackOnlyResource([FromBody] Api.TrackResourceItem trackResourceItem)
         {
             try
             {
@@ -92,62 +92,72 @@ namespace FoxIDs.Controllers
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
 
-                if (mTrack.Resources == null)
-                {
-                    mTrack.Resources = new List<ResourceItem>();
-                }
-
                 var mResourceItem = mapper.Map<ResourceItem>(trackResourceItem);
                 mResourceItem.Items = mResourceItem.Items.Where(i => !i.Value.IsNullOrWhiteSpace()).ToList();
 
-                var itemIndex = mTrack.Resources.FindIndex(r => r.Id == trackResourceItem.Id);
-                if (mResourceItem.Items.Count() > 0)
+                if (mTrack.ResourceEnvelope == null)
                 {
-                    if (itemIndex > -1)
-                    {
-                        mTrack.Resources[itemIndex] = mResourceItem;
-                    }
-                    else
-                    {
-                        mTrack.Resources.Add(mResourceItem);
-                    }
+                    mTrack.ResourceEnvelope = new TrackResourceEnvelope();
                 }
-                else if (itemIndex > -1)
+                if (mTrack.ResourceEnvelope.Resources == null)
                 {
-                    mTrack.Resources.RemoveAt(itemIndex);
+                    mTrack.ResourceEnvelope.Resources = new List<ResourceItem>();
                 }
-                await tenantDataRepository.UpdateAsync(mTrack);
 
+                UpdateResource(trackResourceItem.Id, mTrack.ResourceEnvelope.Resources, mResourceItem);
+
+                await tenantDataRepository.UpdateAsync(mTrack);
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
-                return Ok(AddDefaultValues(trackResourceItem.Id, mapper.Map<Api.TrackResourceItem>(mResourceItem)));
+                return Ok(AddDefaultCultures(mapper.Map<Api.TrackResourceItem>(mResourceItem)));
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
-                    return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id), nameof(trackResourceItem.Id));
+                    logger.Warning(ex, $"NotFound, Update environment only Resource by environment name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
+                    return NotFound("Track.ResourceEnvelope.Resources", Convert.ToString(trackResourceItem.Id), nameof(trackResourceItem.Id));
                 }
                 throw;
             }
         }
 
+        private void UpdateResource(int resourceId, List<ResourceItem> mResourceItems, ResourceItem mNewResourceItem)
+        {
+            var itemIndex = mResourceItems.FindIndex(r => r.Id == resourceId);
+            if (mNewResourceItem.Items.Count() > 0)
+            {
+                if (itemIndex > -1)
+                {
+                    mResourceItems[itemIndex] = mNewResourceItem;
+                }
+                else
+                {
+                    mResourceItems.Add(mNewResourceItem);
+                }
+            }
+            else if (itemIndex > -1)
+            {
+                mResourceItems.RemoveAt(itemIndex);
+            }
+        }
+
         /// <summary>
-        /// Delete environment resource.
+        /// Delete environment only resource.
         /// </summary>
         /// <param name="resourceId">Resource id.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTrackResource(int resourceId)
+        public async Task<IActionResult> DeleteTrackOnlyResource(int resourceId)
         {
             try
             {
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
-                if(mTrack.Resources?.Count > 0)
+                
+                if (mTrack.ResourceEnvelope?.Resources?.Count > 0)
                 {
-                    var removed = mTrack.Resources.RemoveAll(r => r.Id == resourceId);
+                    var removed = mTrack.ResourceEnvelope.Resources.RemoveAll(r => r.Id == resourceId);
                     if (removed > 0)
                     {
                         await tenantDataRepository.UpdateAsync(mTrack);
@@ -161,31 +171,25 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
-                    return NotFound("Track.Resource", Convert.ToString(resourceId));
+                    logger.Warning(ex, $"NotFound, Delete environment only Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
+                    return NotFound("Track.ResourceEnvelope.Resources", Convert.ToString(resourceId));
                 }
                 throw;
             }
         }
 
-        private Api.ResourceItem AddDefaultValues(int resourceId, Api.ResourceItem resourceItem)
+        private Api.ResourceItem AddDefaultCultures(Api.ResourceItem resourceItem)
         {
             var embeddedResourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-            var embeddedResourceItem = embeddedResourceEnvelope.Resources.SingleOrDefault(r => r.Id == resourceId);
-            if (embeddedResourceItem == null)
-            {
-                throw new FoxIDsDataException("Embedded resource do not exist.");
-            }
 
-            foreach (var embeddedItem in embeddedResourceItem.Items)
+            foreach (var embeddedCulture in embeddedResourceEnvelope.SupportedCultures)
             {
-                var item = resourceItem.Items.SingleOrDefault(i => i.Culture == embeddedItem.Culture);
+                var item = resourceItem.Items.SingleOrDefault(i => i.Culture == embeddedCulture);
                 if (item == null)
                 {
-                    item = new Api.ResourceCultureItem { Culture = embeddedItem.Culture };
+                    item = new Api.ResourceCultureItem { Culture = embeddedCulture };
                     resourceItem.Items.Add(item);
                 }
-                item.DefaultValue = embeddedItem.Value;
             }
 
             resourceItem.Items = resourceItem.Items.OrderBy(i => i.Culture).ToList();

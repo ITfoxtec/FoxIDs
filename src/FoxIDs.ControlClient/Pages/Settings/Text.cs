@@ -6,7 +6,6 @@ using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Models.Config;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages.Settings
 {
@@ -27,7 +27,9 @@ namespace FoxIDs.Client.Pages.Settings
         private string smsPricesHref;
         private string riskPasswordsHref;
 
+        private List<string> supportedCultures;
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
+        private List<GeneralResourceViewModel> trackOnlyResources = new List<GeneralResourceViewModel>();
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
 
         private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
@@ -83,7 +85,11 @@ namespace FoxIDs.Client.Pages.Settings
             resourceFilterForm?.ClearError();
             try
             {
-                SetGeneralResources(await TrackService.GetResourceNamesAsync(null));
+                var culturesResponse = await TrackService.GetMasterResourceCulturesAsync();
+                supportedCultures = culturesResponse?.Data?.Select(c => c.Culture)?.ToList();
+
+                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(null));
+                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -99,7 +105,8 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-                SetGeneralResources(await TrackService.GetResourceNamesAsync(resourceFilterForm.Model.FilterName));
+                SetTrackOnlyResources(await TrackService.GetTrackOnlyResourceNamesAsync(resourceFilterForm.Model.FilterName));
+                SetGeneralResources(await TrackService.GetMasterResourceNamesAsync(resourceFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -114,10 +121,152 @@ namespace FoxIDs.Client.Pages.Settings
             }
         }
 
+        #region TrackOnlyResources
+        private void SetTrackOnlyResources(PaginationResponse<ResourceName> trackResourceNames)
+        {
+            trackOnlyResources.Clear();
+            if (trackResourceNames.Data?.Count() > 0)
+            {
+                foreach (var resourceName in trackResourceNames.Data)
+                {
+                    trackOnlyResources.Add(new GeneralResourceViewModel(resourceName));
+                }
+            }
+        }
+
+        private void ShowCreateTrackResource()
+        {
+            if (!string.IsNullOrWhiteSpace(resourceFilterForm?.Model?.FilterName))
+            {
+                resourceFilterForm.Model.FilterName = null;
+            }            
+
+            var trackOnlyResource = new GeneralResourceViewModel();
+            trackOnlyResource.CreateMode = true;
+            trackOnlyResource.Edit = true;
+            trackOnlyResources.Add(trackOnlyResource);
+        }
+
+        private async Task ShowUpdateTrackOnlyResourceAsync(GeneralResourceViewModel trackOnlyResource)
+        {
+            trackOnlyResource.DeleteAcknowledge = false;
+            trackOnlyResource.ShowAdvanced = false;
+            trackOnlyResource.Error = null;
+            trackOnlyResource.Edit = true;
+
+            try
+            {
+                var resourceItem = await TrackService.GetTrackOnlyResourceAsync(trackOnlyResource.Id);
+                if (resourceItem == null)
+                {
+                    trackOnlyResource.CreateMode = true;
+                    await trackOnlyResource.Form.InitAsync(new ResourceItemViewModel { Name = trackOnlyResource.Name, Id = trackOnlyResource.Id });
+                }
+                else
+                {
+                    trackOnlyResource.CreateMode = false;
+                    await trackOnlyResource.Form.InitAsync(resourceItem.Map<ResourceItemViewModel>(), afterInit: afterInit =>
+                    {
+                        afterInit.Name = trackOnlyResource.Name;
+                    });
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                trackOnlyResource.Error = ex.Message;
+            }
+        }
+
+        private void TrackOnlyResourceCancel(GeneralResourceViewModel trackOnlyResource)
+        {
+            trackOnlyResource.Edit = false;
+            if (trackOnlyResource.CreateMode)
+            {
+                trackOnlyResources.Remove(trackOnlyResource);
+            }
+        }
+
+        private void TrackOnlyResourceAfterInit(GeneralResourceViewModel trackOnlyResource, ResourceItemViewModel resourceItem)
+        {
+            if (trackOnlyResource.CreateMode)
+            {
+                resourceItem.Items = supportedCultures?.Select(c => new ResourceCultureItem { Culture = c })?.ToList();
+            }
+        }
+
+        private async Task OnEditTrackOnlyResourceValidSubmitAsync(GeneralResourceViewModel trackOnlyResource, EditContext editContext)
+        {
+            try
+            {
+                var resourceName = await TrackService.UpdateTrackOnlyResourceNameAsync(new TrackResourceName { Id = trackOnlyResource.CreateMode ? 0 : trackOnlyResource.Id, Name = trackOnlyResource.Form.Model.Name });
+                if (trackOnlyResource.CreateMode)
+                {
+                    trackOnlyResource.Id = resourceName.Id;
+                    trackOnlyResource.Form.Model.Id = resourceName.Id;
+                    var enText = trackOnlyResource.Form.Model.Items.Where(r => r.Culture == "en").FirstOrDefault();
+                    if (string.IsNullOrWhiteSpace(enText?.Value))
+                    {
+                        enText.Value = resourceName.Name;
+                    }
+                }
+                trackOnlyResource.Name = resourceName.Name;
+                trackOnlyResource.Form.Model.Name = resourceName.Name;
+
+                var resourceItem = await TrackService.UpdateTrackOnlyResourceAsync(trackOnlyResource.Form.Model.Map<TrackResourceItem>());
+                var resourceItemViewModel = resourceItem.Map<ResourceItemViewModel>();
+                resourceItemViewModel.Name = trackOnlyResource.Name;
+                trackOnlyResource.Form.UpdateModel(resourceItemViewModel);
+                if (trackOnlyResource.CreateMode)
+                {
+                    trackOnlyResource.CreateMode = false;
+                    toastService.ShowSuccess("New text created.");
+                }
+                else
+                {
+                    toastService.ShowSuccess("Text updated.");
+                }
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    trackOnlyResource.Form.SetFieldError(nameof(trackOnlyResource.Form.Model.Items), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteTrackOnlyResourceAsync(GeneralResourceViewModel trackOnlyResource)
+        {
+            try
+            {
+                await TrackService.DeleteTrackOnlyResourceNameAsync(trackOnlyResource.Name);
+                trackOnlyResources.Remove(trackOnlyResource);
+                toastService.ShowSuccess("Text deleted.");
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                trackOnlyResource.Form.SetError(ex.Message);
+            }
+        }
+        #endregion
+
+        #region Resources
         private void SetGeneralResources(PaginationResponse<ResourceName> resourceNames)
         {
             resources.Clear();
-            foreach(var resourceName in resourceNames.Data)
+            foreach (var resourceName in resourceNames.Data)
             {
                 resources.Add(new GeneralResourceViewModel(resourceName));
             }
@@ -161,7 +310,7 @@ namespace FoxIDs.Client.Pages.Settings
                 var resourceItemViewModel = resourceItem.Map<ResourceItemViewModel>();
                 resourceItemViewModel.Name = resource.Name;
                 resource.Form.UpdateModel(resourceItemViewModel);
-                toastService.ShowSuccess("Test updated.");
+                toastService.ShowSuccess("Text updated.");
             }
             catch (FoxIDsApiException ex)
             {
@@ -175,13 +324,7 @@ namespace FoxIDs.Client.Pages.Settings
                 }
             }
         }
-
-        private void ShowNewText()
-        {
-            
-        }
-
-
+        #endregion
 
         private async Task ShowUpdateTextSettingsModalAsync()
         {

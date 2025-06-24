@@ -128,17 +128,20 @@ namespace FoxIDs.Logic
         public bool ValidateExtendedUi(ModelStateDictionary modelState, List<Api.ExtendedUi> extendedUis)
         {
             var isValid = true;
-            foreach (var extendedUi in extendedUis)
+            if (extendedUis?.Count() > 0)
             {
-                if (!validateApiModelDynamicElementLogic.ValidateApiModelExtendedUiElements(modelState, extendedUi.Elements))
+                foreach (var extendedUi in extendedUis)
                 {
-                    isValid = false;
-                }
+                    if (!validateApiModelDynamicElementLogic.ValidateApiModelExtendedUiElements(modelState, extendedUi.Elements))
+                    {
+                        isValid = false;
+                    }
 
-                if (!ValidateApiModelClaimTransforms(modelState, extendedUi.ClaimTransforms))
-                {
-                    isValid = false;
-                }
+                    if (!ValidateApiModelClaimTransforms(modelState, extendedUi.ClaimTransforms))
+                    {
+                        isValid = false;
+                    }
+                } 
             }
 
             return isValid;

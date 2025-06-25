@@ -41,6 +41,16 @@ namespace FoxIDs.Client
         {
             foreach (var extendedUi in extendedUis)
             {
+                if (extendedUi.ApiUrl.IsNullOrWhiteSpace())
+                {
+                    extendedUi.ExternalConnectType = null;
+                    extendedUi.Secret = null;
+                    extendedUi.ErrorMessage = null;
+                }
+                else
+                {
+                    extendedUi.ExternalConnectType = ExternalConnectTypes.Api;
+                }
                 extendedUi.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
             }
             return extendedUis;
@@ -53,13 +63,8 @@ namespace FoxIDs.Client
             {
                 extendedUi.Elements.MapDynamicElementsAfterMap();
                 extendedUi.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                if (extendedUi.ApiUrl.IsNullOrEmpty())
+                if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
                 {
-                    extendedUi.ExternalConnectType = null;
-                }
-                else
-                {
-                    extendedUi.ExternalConnectType = ExternalConnectTypes.Api;
                     if (extendedUi.Secret == extendedUi.SecretLoaded)
                     {
                         extendedUi.Secret = null;

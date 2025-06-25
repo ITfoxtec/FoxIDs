@@ -139,13 +139,10 @@ namespace FoxIDs.Controllers
 
                         if (iex.UiErrorMessages.Any())
                         {
-                            var localizedUiErrorMessages = new List<string>();
                             foreach(var uiErrorMessage in iex.UiErrorMessages)
                             {
-                                localizedUiErrorMessages.Add(localizer[uiErrorMessage].Value.TrimEnd('.'));                                
+                                ModelState.AddModelError(string.Empty, localizer[uiErrorMessage]);
                             }
-
-                            ModelState.AddModelError(string.Empty, $"{string.Join(". ", localizedUiErrorMessages)}.");
                         }
 
                         return viewError();

@@ -42,6 +42,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "API secret")]
         public string Secret { get; set; }
 
+        public string SecretLoaded { get; set; }
+
         [MaxLength(Constants.Models.DynamicElements.ErrorMessageLength)]
         [Display(Name = "Generic error message")]
         public string ErrorMessage { get; set; }
@@ -62,11 +64,6 @@ namespace FoxIDs.Models.Api
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {
                     results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(ApiUrl), nameof(ExternalConnectType)]));
-                }
-
-                if (Secret.IsNullOrWhiteSpace())
-                {
-                    results.Add(new ValidationResult($"The field '{nameof(Secret)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(Secret), nameof(ExternalConnectType)]));
                 }
 
                 if (ErrorMessage.IsNullOrWhiteSpace())

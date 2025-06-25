@@ -54,6 +54,8 @@ namespace FoxIDs.Client.Pages.Components
 
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
         {
+            samlUpParty.ExtendedUis.MapExtendedUis();
+
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
                 afterMap.InitName = afterMap.Name;
@@ -111,16 +113,9 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapSamlClaimTransforms();
                 }
-                if (afterMap.ExtendedUis?.Count > 0)
-                {
-                    foreach (var extendedUi in afterMap.ExtendedUis)
-                    {
-                        if (extendedUi.ClaimTransforms?.Count > 0)
-                        {
-                            extendedUi.ClaimTransforms = extendedUi.ClaimTransforms.MapOAuthClaimTransforms();
-                        }
-                    }
-                }
+
+                afterMap.ExtendedUis.MapExtendedUis();
+
                 if (afterMap.ExitClaimTransforms?.Count > 0)
                 {
                     afterMap.ExitClaimTransforms = afterMap.ExitClaimTransforms.MapOAuthClaimTransforms();

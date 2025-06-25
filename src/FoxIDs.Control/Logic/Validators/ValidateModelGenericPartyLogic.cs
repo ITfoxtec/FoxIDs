@@ -92,31 +92,37 @@ namespace FoxIDs.Logic
             if (mParty is LoginUpParty loginUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms, position: ClaimTransformationPosition.CreateUser);
             }
             else if (mParty is ExternalLoginUpParty externalLoginUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is OAuthUpParty oauthUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is OidcUpParty oidchUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is SamlUpParty samlUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is TrackLinkUpParty trackLinkUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
                        await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
             }
             else if (mParty is OAuthDownParty oauthDownParty)
@@ -141,7 +147,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms, ClaimTransformationPosition position = ClaimTransformationPosition.party) where MParty : Party where MClaimTransform : ClaimTransform
+        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms, ClaimTransformationPosition position = ClaimTransformationPosition.Party) where MParty : Party where MClaimTransform : ClaimTransform
         {
             if (claimTransforms != null)
             {
@@ -269,13 +275,17 @@ namespace FoxIDs.Logic
             if (mParty is LoginUpParty)
             {
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(loginUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(loginUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(loginUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.CreateUser)
                 {
-                    SetSecret(loginUpParty.CreateUser?.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(loginUpParty.CreateUser?.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -285,13 +295,17 @@ namespace FoxIDs.Logic
             else if (mParty is ExternalLoginUpParty)
             {
                 var externalLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(externalLoginUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(externalLoginUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(externalLoginUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.LinkExternalUser)
                 {
-                    SetSecret(externalLoginUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(externalLoginUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -301,13 +315,17 @@ namespace FoxIDs.Logic
             else if (mParty is OAuthUpParty)
             {
                 var oauthUpParty = await tenantDataRepository.GetAsync<OAuthUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(oauthUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(oauthUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(oauthUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.LinkExternalUser)
                 {
-                    SetSecret(oauthUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(oauthUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -317,13 +335,17 @@ namespace FoxIDs.Logic
             else if (mParty is OidcUpParty)
             {
                 var oidcUpParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(oidcUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(oidcUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(oidcUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.LinkExternalUser)
                 {
-                    SetSecret(oidcUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(oidcUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -333,13 +355,17 @@ namespace FoxIDs.Logic
             else if (mParty is SamlUpParty)
             {
                 var samlUpParty = await tenantDataRepository.GetAsync<SamlUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(samlUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(samlUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(samlUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.LinkExternalUser)
                 {
-                    SetSecret(samlUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(samlUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -349,13 +375,17 @@ namespace FoxIDs.Logic
             else if (mParty is TrackLinkUpParty)
             {
                 var trackLinkUpParty = await tenantDataRepository.GetAsync<TrackLinkUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.party)
+                if (position == ClaimTransformationPosition.Party)
                 {
-                    SetSecret(trackLinkUpParty.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(trackLinkUpParty.ClaimTransforms, claimTransform);
+                }
+                else if (position == ClaimTransformationPosition.ExitParty)
+                {
+                    SetClaimTransformSecret(trackLinkUpParty.ExitClaimTransforms, claimTransform);
                 }
                 else if (position == ClaimTransformationPosition.LinkExternalUser)
                 {
-                    SetSecret(trackLinkUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
+                    SetClaimTransformSecret(trackLinkUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
                 }
                 else
                 {
@@ -365,22 +395,22 @@ namespace FoxIDs.Logic
             else if (mParty is OAuthDownParty)
             {
                 var oauthDownParty = await tenantDataRepository.GetAsync<OAuthDownParty>(mParty.Id);
-                SetSecret(oauthDownParty.ClaimTransforms, claimTransform);
+                SetClaimTransformSecret(oauthDownParty.ClaimTransforms, claimTransform);
             }
             else if (mParty is OidcDownParty)
             {
                 var oidcDownParty = await tenantDataRepository.GetAsync<OidcDownParty>(mParty.Id);
-                SetSecret(oidcDownParty.ClaimTransforms, claimTransform);
+                SetClaimTransformSecret(oidcDownParty.ClaimTransforms, claimTransform);
             }
             else if (mParty is SamlDownParty)
             {
                 var samlDownParty = await tenantDataRepository.GetAsync<SamlDownParty>(mParty.Id);
-                SetSecret(samlDownParty.ClaimTransforms, claimTransform);
+                SetClaimTransformSecret(samlDownParty.ClaimTransforms, claimTransform);
             }
             else if (mParty is TrackLinkDownParty)
             {
                 var trackLinkDownParty = await tenantDataRepository.GetAsync<TrackLinkDownParty>(mParty.Id);
-                SetSecret(trackLinkDownParty.ClaimTransforms, claimTransform);
+                SetClaimTransformSecret(trackLinkDownParty.ClaimTransforms, claimTransform);
             }
             else
             {
@@ -388,9 +418,59 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void SetSecret<MClaimTransformDatabase, MClaimTransform>(List<MClaimTransformDatabase> claimTransformsDatabase, MClaimTransform claimTransform) where MClaimTransformDatabase : ClaimTransform where MClaimTransform : ClaimTransform
+        private void SetClaimTransformSecret<MClaimTransformDatabase, MClaimTransform>(List<MClaimTransformDatabase> claimTransformsDatabase, MClaimTransform claimTransform) where MClaimTransformDatabase : ClaimTransform where MClaimTransform : ClaimTransform
         {
             claimTransform.Secret = claimTransformsDatabase.Where(c => c.Name == claimTransform.Name).Select(c => c.Secret).FirstOrDefault();
+        }
+
+        public async Task<bool> ValidateModelExtendedUiAsync(ModelStateDictionary modelState, UpParty mParty, bool isUpdate)
+        {
+            if (isUpdate && mParty.ExtendedUis?.Count() > 0)
+            {
+                foreach (var mExtendedUi in mParty.ExtendedUis)
+                {
+                    if (mExtendedUi.Secret.IsNullOrWhiteSpace())
+                    {
+                        if (mParty is LoginUpParty)
+                        {
+                            var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(mParty.Id);
+                            SetExtendedUiSecret(loginUpParty.ExtendedUis, mExtendedUi);
+                        }
+                        else if (mParty is ExternalLoginUpParty)
+                        {
+                            var externalLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
+                            SetExtendedUiSecret(externalLoginUpParty.ExtendedUis, mExtendedUi);
+                        }
+                        else if (mParty is OAuthUpParty)
+                        {
+                            var oauthUpParty = await tenantDataRepository.GetAsync<OAuthUpParty>(mParty.Id);
+                            SetExtendedUiSecret(oauthUpParty.ExtendedUis, mExtendedUi);
+                        }
+                        else if (mParty is OidcUpParty)
+                        {
+                            var oidcUpParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
+                            SetExtendedUiSecret(oidcUpParty.ExtendedUis, mExtendedUi);
+                        }
+                        else if (mParty is SamlUpParty)
+                        {
+                            var samlUpParty = await tenantDataRepository.GetAsync<SamlUpParty>(mParty.Id);
+                            SetExtendedUiSecret(samlUpParty.ExtendedUis, mExtendedUi);
+                        }
+                        else if (mParty is TrackLinkUpParty)
+                        {
+                            var trackLinkUpParty = await tenantDataRepository.GetAsync<TrackLinkUpParty>(mParty.Id);
+                            SetExtendedUiSecret(trackLinkUpParty.ExtendedUis, mExtendedUi);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private void SetExtendedUiSecret(List<ExtendedUi> extendedUiDatabase, ExtendedUi extendedUi)
+        {
+            extendedUi.Secret = extendedUiDatabase.Where(c => c.Name == extendedUi.Name).Select(c => c.Secret).FirstOrDefault();
         }
 
         public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, IEnumerable<UpPartyProfile> profiles)
@@ -418,7 +498,8 @@ namespace FoxIDs.Logic
 
         enum ClaimTransformationPosition
         {
-            party,
+            Party,
+            ExitParty,
             CreateUser,
             LinkExternalUser,
         }

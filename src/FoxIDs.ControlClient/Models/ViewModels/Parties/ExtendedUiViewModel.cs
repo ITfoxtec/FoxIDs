@@ -28,21 +28,16 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (ExternalConnectType == ExternalConnectTypes.Api)
+            if (!ApiUrl.IsNullOrWhiteSpace())
             {
-                if (ApiUrl.IsNullOrWhiteSpace())
-                {
-                    results.Add(new ValidationResult($"The field '{nameof(ApiUrl)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(ApiUrl), nameof(ExternalConnectType)]));
-                }
-
                 if (Secret.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{nameof(Secret)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(Secret), nameof(ExternalConnectType)]));
+                    results.Add(new ValidationResult($"The secret is required for API validation.", [nameof(Secret)]));
                 }
 
                 if (ErrorMessage.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{nameof(ErrorMessage)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(ErrorMessage), nameof(ExternalConnectType)]));
+                    results.Add(new ValidationResult($"The generic error message is required for API validation.", [nameof(ErrorMessage)]));
                 }
             }
 

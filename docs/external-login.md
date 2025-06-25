@@ -95,19 +95,19 @@ For example, the user's sub (unique ID / username), name, email and maybe even a
 ```
 
 **Error**  
-The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `errorDescription`.
+The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
     "error": "invalid_api_id_secret",
-    "errorDescription": "Invalid API ID or secret"
+    "ErrorMessage": "Invalid API ID or secret"
 }
 ```
 
-The API must return HTTP code 400, 401 or 403 and an `error` (required) if the username and password combination is rejected. Optionally add an error description in `errorDescription`.
+The API must return HTTP code 400, 401 or 403 and an `error` (required) if the username and password combination is rejected. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
     "error": "invalid_username_password",
-    "errorDescription": "Invalid username or password."
+    "ErrorMessage": "Invalid username or password."
 }
 ```
 

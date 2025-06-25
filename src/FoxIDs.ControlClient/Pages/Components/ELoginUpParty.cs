@@ -130,6 +130,8 @@ namespace FoxIDs.Client.Pages.Components
                             afterMap.CreateUser.Elements.MapDynamicElementsAfterMap();
                             afterMap.CreateUser.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
                         }
+                        afterMap.ExtendedUis.MapExtendedUisAfterMap();
+                        afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
                     toastService.ShowSuccess("Login application updated.");

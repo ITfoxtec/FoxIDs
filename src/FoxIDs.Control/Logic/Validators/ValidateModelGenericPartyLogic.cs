@@ -420,7 +420,7 @@ namespace FoxIDs.Logic
 
         private void SetClaimTransformSecret<MClaimTransformDatabase, MClaimTransform>(List<MClaimTransformDatabase> claimTransformsDatabase, MClaimTransform claimTransform) where MClaimTransformDatabase : ClaimTransform where MClaimTransform : ClaimTransform
         {
-            claimTransform.Secret = claimTransformsDatabase.Where(c => c.Name == claimTransform.Name).Select(c => c.Secret).FirstOrDefault();
+            claimTransform.Secret = claimTransformsDatabase?.Where(c => c.Name == claimTransform.Name).Select(c => c.Secret).FirstOrDefault();
         }
 
         public async Task<bool> ValidateModelExtendedUiAsync(ModelStateDictionary modelState, UpParty mParty, bool isUpdate)
@@ -429,7 +429,7 @@ namespace FoxIDs.Logic
             {
                 foreach (var mExtendedUi in mParty.ExtendedUis)
                 {
-                    if (mExtendedUi.Secret.IsNullOrWhiteSpace())
+                    if (mExtendedUi.ExternalConnectType == ExternalConnectTypes.Api && mExtendedUi.Secret.IsNullOrWhiteSpace())
                     {
                         if (mParty is LoginUpParty)
                         {
@@ -470,7 +470,7 @@ namespace FoxIDs.Logic
 
         private void SetExtendedUiSecret(List<ExtendedUi> extendedUiDatabase, ExtendedUi extendedUi)
         {
-            extendedUi.Secret = extendedUiDatabase.Where(c => c.Name == extendedUi.Name).Select(c => c.Secret).FirstOrDefault();
+            extendedUi.Secret = extendedUiDatabase?.Where(c => c.Name == extendedUi.Name).Select(c => c.Secret).FirstOrDefault();
         }
 
         public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, IEnumerable<UpPartyProfile> profiles)

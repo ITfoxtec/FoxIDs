@@ -1,5 +1,7 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -49,6 +51,32 @@ namespace FoxIDs.Logic
                         domains = AddUrlToDomains(domains, urlMatch.Value);
                     }
                     HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] = domains;
+                }
+            }
+        }
+
+        public void AddImgSrcFromDynamicElements(List<DynamicElement> elements)
+        {
+            if (elements == null)
+            {
+                return;
+            }
+
+            var htmlElements = elements.Where(e => e.Type == DynamicElementTypes.Html);
+            if (htmlElements.Count() > 0)
+            {
+                var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.ImgSrcDomains) ? HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] as List<string> : new List<string>();
+                if (domains.Count() <= domainsMaxCount)
+                {
+                    foreach (var element in htmlElements)
+                    {
+                        var urlMatchs = urlsInTextRegex.Matches(element.Content);
+                        foreach (Match urlMatch in urlMatchs)
+                        {
+                            domains = AddUrlToDomains(domains, urlMatch.Value);
+                        }
+                        HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] = domains;
+                    }
                 }
             }
         }

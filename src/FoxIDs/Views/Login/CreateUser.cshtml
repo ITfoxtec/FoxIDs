@@ -10,62 +10,10 @@
 
 <div class="row page-container name-create-user">
     <div class="col-md page-content">
-        <editForm model>
-
-        </editForm>
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-            @for(var i = 0; i < Model.Elements.Count(); i++)
-            {
-                if (Model.Elements[i] is EmailDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is PhoneDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetPhoneControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is UsernameDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetUsernameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is PasswordDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetPasswordControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                    <div class="form-group active-group">
-                        @Html.GetConfirmPasswordControl($"Elements[{i}].DField2", Model.Elements[i].DField2, $"Elements[{i}].DField1", isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is NameDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is GivenNameDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else if (Model.Elements[i] is FamilyNameDElement)
-                {
-                    <div class="form-group active-group">
-                        @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
-                    </div>
-                }
-                else
-                {
-                    throw new NotSupportedException($"Dynamic element type '{Model.Elements[i].GetTypeName()}' not supported.");
-                }
+            @{
+                await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
             }
             <div class="form-group button-group">
                 <div>

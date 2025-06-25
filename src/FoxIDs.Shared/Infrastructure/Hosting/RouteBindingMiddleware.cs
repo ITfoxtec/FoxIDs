@@ -109,6 +109,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
+                ResourceEnvelope = track.ResourceEnvelope,
                 ShowResourceId = track.ShowResourceId,
                 PlanLogLifetime = plan?.LogLifetime
             };

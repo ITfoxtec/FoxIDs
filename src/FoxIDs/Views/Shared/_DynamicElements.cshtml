@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer StringLocalizer
+@model List<DynamicElementBase>
+
+@if (Model != null)
+{
+    var i = -1;
+    @foreach(var item in Model)
+    {
+        if (!(item is ContentDElement))
+        {
+            i++;
+        }
+
+        var cssName = item.Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{item.Name}";
+        if (item is EmailDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetEmailControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is PhoneDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetPhoneControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is UsernameDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetUsernameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is PasswordDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetPasswordControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+            <div class="form-group active-group @cssName">
+                @Html.GetConfirmPasswordControl($"Elements[{i}].DField2", item.DField2, $"Elements[{i}].DField1", isRequired: item.Required)
+            </div>
+        }
+        else if (item is NameDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is GivenNameDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetGivenNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is FamilyNameDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetFamilyNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+            </div>
+        }
+        else if (item is CustomDElement customDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @Html.GetCustomControl($"Elements[{i}].DField1", item.DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, item.Required)
+            </div>
+        }
+        else if (item is ContentDElement contentDElement)
+        {
+            <div class="form-group active-group @cssName">
+                @if (contentDElement.IsHtml) 
+                {
+                    @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+                }
+                else
+                {
+                    @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+                }
+            </div>
+        }
+        else
+        {
+            throw new NotSupportedException($"Dynamic element type '{item.GetTypeName()}' not supported.");
+        }
+    }
+}

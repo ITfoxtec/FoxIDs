@@ -3,6 +3,7 @@ using FoxIDs.Models.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -107,11 +108,18 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<ClaimTransformViewModel> ClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
+        /// Extended UIs.
+        /// </summary>
+        [ValidateComplexType]
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        public List<ExtendedUiViewModel> ExtendedUis { get; set; } = new List<ExtendedUiViewModel>();
+
+        /// <summary>
         /// Claim transforms executed after the external users claims has been loaded.
         /// </summary>
         [ValidateComplexType]
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<ClaimTransformViewModel> ExternalUserLoadedClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
+        public List<ClaimTransformViewModel> ExitClaimTransforms { get; set; } = new List<ClaimTransformViewModel>();
 
         /// <summary>
         /// Default if required.
@@ -229,6 +237,11 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.Add(new ValidationResult($"Either two-factor (2FA) with authenticator app, SMS or email should be supported if two-factor is require.",
                     [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
+            }
+
+            if (ClaimTransforms?.Count() + ExitClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
 
             return results;

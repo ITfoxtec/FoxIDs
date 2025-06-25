@@ -4,6 +4,7 @@
     {
         Saml,
         ClaimsTransform,
+        ExtendedUi,
         LinkExternalUser,
         Hrd,
         Profile,

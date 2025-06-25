@@ -116,5 +116,10 @@ namespace FoxIDs.Models.Config
         /// Add domain to ignore if received in the proxy header. Used for the default domain if the domain is not attaches to a tenant but is used as the generic domain.
         /// </summary>
         public string IgnoreProxyHeaderDomain { get; set; }
+
+        /// <summary>
+        /// Add new resources to the embedded resource file 'EmbeddedResource.json'. Only possible in DEBUG. 
+        /// </summary>
+        public bool SaveNewResourceAsEmbeddedResource { get; set; }
     }
 }

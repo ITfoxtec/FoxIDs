@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             };
 
             claims = claims ?? new List<Claim>();           
-            logger.ScopeTrace(() => $"AuthMethod, External login, received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, External login, received claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
             {
                 claims.AddClaim(JwtClaimTypes.Subject, username);
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
 
         private async Task<List<Claim>> ValidateUserApiAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpPartyProfile profile, string username, string password)
         {
-            var authenticationApiUrl = UrlCombine.Combine(extLoginUpParty.ApiUrl, Constants.ExternalLogin.Api.Authentication);
+            var authenticationApiUrl = UrlCombine.Combine(extLoginUpParty.ApiUrl, Constants.ExternalConnect.ExternalLogin.Api.Authentication);
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request, URL '{authenticationApiUrl}'.", traceType: TraceTypes.Message);
 
             var authRequest = new Ext.AuthenticationRequest
@@ -60,6 +60,7 @@ namespace FoxIDs.Logic
                 Username = username,
                 Password = password
             };
+            await authRequest.ValidateObjectAsync();
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API request '{new { authRequest.UsernameType, authRequest.Username }.ToJson()}'.", traceType: TraceTypes.Message);
             var requestDictionary = authRequest.ToDictionary();
 
@@ -101,7 +102,7 @@ namespace FoxIDs.Logic
 
             var httpClient = httpClientFactory.CreateClient();
             logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalConnect.ExternalLogin.Api.ApiId.OAuthUrlDencode()}:{extLoginUpParty.Secret.OAuthUrlDencode()}".Base64Encode());
 
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
 
@@ -113,6 +114,7 @@ namespace FoxIDs.Logic
                     case HttpStatusCode.OK:
                         var result = await response.Content.ReadAsStringAsync();
                         var authenticationResponse = result.ToObject<Ext.AuthenticationResponse>();
+                        await authenticationResponse.ValidateObjectAsync();
                         logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API response '{authenticationResponse.ToJson()}'.", traceType: TraceTypes.Message);
 
                         await failingLoginLogic.ResetFailingLoginCountAsync(username, FailingLoginTypes.ExternalLogin);
@@ -125,22 +127,24 @@ namespace FoxIDs.Logic
                     case HttpStatusCode.Forbidden:
                         var resultError = await response.Content.ReadAsStringAsync();
                         var errorResponse = resultError.ToObject<Ext.ErrorResponse>();
+                        await errorResponse.ValidateObjectAsync();
                         var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(username, FailingLoginTypes.ExternalLogin);
                         logger.ScopeTrace(() => $"Failing login count increased for external user '{username}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                         logger.ScopeTrace(() => $"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.", traceType: TraceTypes.Message);
 
-                        if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidApiIdOrSecret)
+                        if (errorResponse.Error == Constants.ExternalConnect.Api.ErrorCodes.InvalidApiIdOrSecret)
                         {
-                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalLogin.Api.ApiId}' or secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{authenticationApiUrl}'. Status code={response.StatusCode}.");
+                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalConnect.ExternalLogin.Api.ApiId}' or secret '{(extLoginUpParty.Secret?.Length > 10 ? $"{extLoginUpParty.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{authenticationApiUrl}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
                         }
-                        else if (errorResponse.Error == Constants.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
+                        else if (errorResponse.Error == Constants.ExternalConnect.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
                         {
-                            throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}', API URL '{authenticationApiUrl}'.");
+                            throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}', API URL '{authenticationApiUrl}'.{errorResponse.GetErrorMessage()}");
                         }
-                        throw new Exception($"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.");
+                        throw new Exception($"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
 
                     default:
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
+                        resultUnexpectedStatus.ValidateMaxLength(Constants.ExternalConnect.ErrorMessageLength, nameof(resultUnexpectedStatus), nameof(ExternalLoginConnectLogic));
                         var increasedfailingLoginCountDefault = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(username, FailingLoginTypes.ExternalLogin);
                         logger.ScopeTrace(() => $"Failing login count increased for external user '{username}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCountDefault), triggerEvent: true);
                         throw new Exception($"AuthMethod, External login, Authentication API error '{resultUnexpectedStatus}'. Status code={response.StatusCode}.");

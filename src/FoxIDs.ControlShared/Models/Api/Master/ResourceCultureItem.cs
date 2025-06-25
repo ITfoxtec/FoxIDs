@@ -9,7 +9,9 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Resource.CultureLength)]
         public string Culture { get; set; }
 
-        [Required]
+        [MaxLength(Constants.Models.Resource.ValueLength)]
+        public string DefaultValue { get; set; }
+
         [MaxLength(Constants.Models.Resource.ValueLength)]
         public string Value { get; set; }
     }

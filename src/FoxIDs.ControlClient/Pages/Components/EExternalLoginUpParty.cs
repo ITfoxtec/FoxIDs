@@ -47,6 +47,8 @@ namespace FoxIDs.Client.Pages.Components
 
         private ExternalLoginUpPartyViewModel ToViewModel(ExternalLoginUpParty extLoginUpParty)
         {
+            extLoginUpParty.ExtendedUis.MapExtendedUis();
+
             return extLoginUpParty.Map<ExternalLoginUpPartyViewModel>(afterMap: afterMap =>
             {
                 afterMap.InitName = afterMap.Name;
@@ -72,9 +74,12 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
-                if (afterMap.ExternalUserLoadedClaimTransforms?.Count > 0)
+
+                afterMap.ExtendedUis.MapExtendedUis();
+
+                if (afterMap.ExitClaimTransforms?.Count > 0)
                 {
-                    afterMap.ExternalUserLoadedClaimTransforms = afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransforms();
+                    afterMap.ExitClaimTransforms = afterMap.ExitClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
@@ -110,7 +115,8 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalExtLoginUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
-                generalExtLoginUpParty.Form.Model.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalExtLoginUpParty.Form.Model.ExtendedUis.MapExtendedUisBeforeMap();
+                generalExtLoginUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalExtLoginUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 if(generalExtLoginUpParty.Form.Model.UsernameType == ExternalLoginUsernameTypes.Text)
@@ -121,7 +127,8 @@ namespace FoxIDs.Client.Pages.Components
                 var extLoginUpParty = generalExtLoginUpParty.Form.Model.Map<ExternalLoginUpParty>(afterMap: afterMap =>
                 {
                     afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                    afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsAfterMap();
+                    afterMap.ExtendedUis.MapExtendedUisAfterMap();
+                    afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
                 });
 

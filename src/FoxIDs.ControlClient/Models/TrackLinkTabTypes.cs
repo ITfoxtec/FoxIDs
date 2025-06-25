@@ -4,6 +4,7 @@
     {
         TrackLink,
         ClaimsTransform,
+        ExtendedUi,
         LinkExternalUser,
         Hrd,
         Profile,

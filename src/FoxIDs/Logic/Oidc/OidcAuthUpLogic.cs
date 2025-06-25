@@ -37,11 +37,12 @@ namespace FoxIDs.Logic
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly StateUpPartyLogic stateUpPartyLogic;
+        private readonly ExtendedUiLogic extendedUiLogic;
         private readonly ExternalUserLogic externalUserLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, StateUpPartyLogic stateUpPartyLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, StateUpPartyLogic stateUpPartyLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -55,6 +56,7 @@ namespace FoxIDs.Logic
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.stateUpPartyLogic = stateUpPartyLogic;
+            this.extendedUiLogic = extendedUiLogic;
             this.externalUserLogic = externalUserLogic;
             this.claimValidationLogic = claimValidationLogic;
             this.httpClientFactory = httpClientFactory;
@@ -320,19 +322,15 @@ namespace FoxIDs.Logic
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, OIDC transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, validClaims,
-                    (externalUserUpSequenceData) =>
-                    {
-                        externalUserUpSequenceData.ExternalSessionId = externalSessionId;
-                        externalUserUpSequenceData.IdToken = idToken;
-                    },
-                    (errorMessage) => throw new OAuthRequestException(errorMessage) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest });
+                var extendedUiActionResult = await HandleExtendedUiAsync(party, sequenceData, claims, externalSessionId, idToken);
+                if (extendedUiActionResult != null)
+                {
+                    return extendedUiActionResult;
+                }
+
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, validClaims, externalSessionId, idToken);
                 if (externalUserActionResult != null)
                 {
-                    if (deleteSequenceData)
-                    {
-                        await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
-                    }
                     return externalUserActionResult;
                 }
 
@@ -362,7 +360,79 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthenticationRequestPostAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        private async Task<IActionResult> HandleExtendedUiAsync(TParty party, OidcUpSequenceData sequenceData, IEnumerable<Claim> claims, string externalSessionId, string idToken)
+        {
+            var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(party, sequenceData, claims,
+                (extendedUiUpSequenceData) =>
+                {
+                    extendedUiUpSequenceData.ExternalSessionId = externalSessionId;
+                    extendedUiUpSequenceData.IdToken = idToken;
+                });
+
+            return extendedUiActionResult;
+        }
+
+
+        private async Task<(IEnumerable<Claim>, IActionResult)> HandleExternalUserAsync(TParty party, OidcUpSequenceData sequenceData, IEnumerable<Claim> claims, string externalSessionId, string idToken)
+        {
+            (var externalUserClaims, var externalUserActionResult, var deleteSequenceData) = await externalUserLogic.HandleUserAsync(party, sequenceData, claims,
+                (externalUserUpSequenceData) =>
+                {
+                    externalUserUpSequenceData.ExternalSessionId = externalSessionId;
+                    externalUserUpSequenceData.IdToken = idToken;
+                },
+                (errorMessage) => throw new OAuthRequestException(errorMessage) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest });
+            if (externalUserActionResult != null)
+            {
+                if (deleteSequenceData)
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                }
+            }
+
+            return (externalUserClaims, externalUserActionResult);
+        }
+
+        public async Task<IActionResult> AuthenticationRequestPostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: extendedUiSequenceData.UpPartyId.PartyIdToName(), remove: false);
+            var party = await tenantDataRepository.GetAsync<TParty>(extendedUiSequenceData.UpPartyId);
+
+            try
+            {
+                (var externalUserClaims, var externalUserActionResult) = await HandleExternalUserAsync(party, sequenceData, claims, extendedUiSequenceData.ExternalSessionId, extendedUiSequenceData.IdToken);
+                if (externalUserActionResult != null)
+                {
+                    return externalUserActionResult;
+                }
+
+                await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
+                return await AuthenticationRequestPostAsync(party, sequenceData, claims, externalUserClaims, extendedUiSequenceData.ExternalSessionId, extendedUiSequenceData.IdToken);
+            }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
+            catch (ResponseErrorException rex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, rex.Error);
+                logger.Error(rex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: rex.Error, errorDescription: $"{party.Name}|{rex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return await AuthenticationResponseDownAsync(sequenceData, error: IdentityConstants.ResponseErrors.InvalidRequest);
+            }
+        }
+
+        public async Task<IActionResult> AuthenticationRequestPostExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(partyName: externalUserSequenceData.UpPartyId.PartyIdToName(), remove: true);
             var party = await tenantDataRepository.GetAsync<TParty>(externalUserSequenceData.UpPartyId);
@@ -394,11 +464,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthenticationRequestPostAsync(TParty party, OidcUpSequenceData sequenceData, List<Claim> validClaims, IEnumerable<Claim> externalUserClaims, string idToken, string externalSessionId)
+        private async Task<IActionResult> AuthenticationRequestPostAsync(TParty party, OidcUpSequenceData sequenceData, IEnumerable<Claim> validClaims, IEnumerable<Claim> externalUserClaims, string idToken, string externalSessionId)
         {
             validClaims = externalUserLogic.AddExternalUserClaims(party, validClaims, externalUserClaims);
 
-            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExternalUserLoadedClaimTransforms?.ConvertAll(t => (ClaimTransform)t), validClaims, sequenceData);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(party.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), validClaims, sequenceData);
             if (actionResult != null)
             {
                 return actionResult;

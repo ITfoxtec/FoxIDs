@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -48,10 +47,36 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
-        /// Claim transforms executed after the external users claims has been loaded.
+        /// Extended UIs.
+        /// </summary>
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        public List<ExtendedUi> ExtendedUis { get; set; }
+
+        /// <summary>
+        /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
+        /// </summary>
+        [Obsolete("Delete after 2026-07-01.")]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ExternalUserLoadedClaimTransforms
+        {
+            get
+            {
+                return ExitClaimTransforms;
+            }
+            set
+            {
+                if (value?.Count > 0)
+                {
+                    ExitClaimTransforms = ExternalUserLoadedClaimTransforms;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransform> ExternalUserLoadedClaimTransforms { get; set; }
+        public List<OAuthClaimTransform> ExitClaimTransforms { get; set; }
 
         /// <summary>
         /// Default 10 hours.
@@ -150,9 +175,9 @@ namespace FoxIDs.Models.Api
                 }
             }
 
-            if (ClaimTransforms?.Count() + ExternalUserLoadedClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            if (ClaimTransforms?.Count() + ExitClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
             {
-                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExternalUserLoadedClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExternalUserLoadedClaimTransforms)]));
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
             return results;
         }

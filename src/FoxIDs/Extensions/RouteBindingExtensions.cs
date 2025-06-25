@@ -15,7 +15,7 @@ namespace FoxIDs
             return httpContext.Items[Constants.Routes.SequenceStringKey] as string;
         }
 
-        public static string GetUpPartyUrl(this HttpContext httpContext, string upPartyName, string controller, string action = null, bool includeSequence = false, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
+        public static string GetUpPartyUrl(this HttpContext httpContext, string upPartyName, string controller, string action = null, bool includeSequence = false, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets, Dictionary<string, string> query = null)
         {
             var elements = new List<string> { upPartyName.ToUpPartyBinding(partyBindingPattern), controller };
             if (!action.IsNullOrEmpty())
@@ -26,7 +26,12 @@ namespace FoxIDs
             {
                 elements.Add($"_{httpContext.GetSequenceString()}");
             }
-            return UrlCombine.Combine(httpContext.GetHostWithTenantAndTrack(), elements.ToArray());
+            var url = UrlCombine.Combine(httpContext.GetHostWithTenantAndTrack(), elements.ToArray());
+            if (query != null)
+            {
+                url = QueryHelpers.AddQueryString(url, query);
+            }
+            return url;
         }
 
         public static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)

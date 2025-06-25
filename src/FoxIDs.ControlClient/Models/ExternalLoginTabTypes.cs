@@ -4,6 +4,7 @@
     {
         ExternalLogin,
         ClaimsTransform,
+        ExtendedUi,
         LinkExternalUser,
         Hrd,
         Profile,

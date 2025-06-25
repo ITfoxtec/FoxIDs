@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Logic
 {
@@ -12,10 +16,12 @@ namespace FoxIDs.Logic
     {
         // The maximum number of culture names to attempt to test.
         private const int maximumCultureNamesToTry = 3;
+        private readonly FoxIDsSettings settings;
         private readonly EmbeddedResourceLogic embeddedResourceLogic;
 
-        public LocalizationLogic(IHttpContextAccessor httpContextAccessor, EmbeddedResourceLogic embeddedResourceLogic) : base(httpContextAccessor)
+        public LocalizationLogic(FoxIDsSettings settings, IHttpContextAccessor httpContextAccessor, EmbeddedResourceLogic embeddedResourceLogic) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.embeddedResourceLogic = embeddedResourceLogic;
         }
 
@@ -27,11 +33,6 @@ namespace FoxIDs.Logic
 
                 routeBinding = routeBinding ?? RouteBinding;
                 var supportedCultures = resourceEnvelope.SupportedCultures;
-                if (routeBinding.Resources?.Count > 0)
-                {
-                    var trackSupportedCultures = routeBinding.Resources.SelectMany(r => r.Items.GroupBy(ig => ig.Culture)).Select(rk => rk.Key);
-                    supportedCultures = supportedCultures.ConcatOnce(trackSupportedCultures);
-                }
 
                 foreach (var culture in cultures.Take(maximumCultureNamesToTry))
                 {
@@ -50,7 +51,7 @@ namespace FoxIDs.Logic
             var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
 
             var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
-            if(id > 0)
+            if (id > 0)
             {
                 var value = GetValue(resourceEnvelope, id, culture);
                 if (!value.IsNullOrEmpty())
@@ -59,6 +60,12 @@ namespace FoxIDs.Logic
                 }
 
                 return AddResourceId(id, GetValue(resourceEnvelope, id, Constants.Models.Resource.DefaultLanguage));
+            }
+
+            (var trackValue, var trackId) = GetTrackResourceEnvelopeValue(name, culture);
+            if (!trackValue.IsNullOrEmpty())
+            {
+                return AddResourceId(trackId, trackValue, isTrackId: true);
             }
 
             return null;
@@ -78,11 +85,40 @@ namespace FoxIDs.Logic
             return GetValue(resourceEnvelope.Resources, id, culture);
         }
 
-        private string AddResourceId(int id, string value)
+        private (string, int) GetTrackResourceEnvelopeValue(string name, string culture)
+        {
+            if (RouteBinding?.ResourceEnvelope?.Names?.Count > 0)
+            {
+                var trackId = RouteBinding.ResourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
+                if (trackId > 0)
+                {
+                    if (RouteBinding.ResourceEnvelope.Resources.Count > 0)
+                    {
+                        var value = GetValue(RouteBinding.ResourceEnvelope.Resources, trackId, culture);
+                        if (!value.IsNullOrEmpty())
+                        {
+                            return (value, trackId);
+                        }
+
+                        value = GetValue(RouteBinding.ResourceEnvelope.Resources, trackId, Constants.Models.Resource.DefaultLanguage);
+                        if (!value.IsNullOrEmpty())
+                        {
+                            return (value, trackId);
+                        }
+                    }
+
+                    return (name, trackId);
+                }
+            }
+
+            return (null, 0);
+        }
+
+        private string AddResourceId(int id, string value, bool isTrackId = false)
         {
             if (RouteBinding?.ShowResourceId == true)
             {
-                return $"[{id}]{value}";
+                return $"[{(isTrackId ? "T" : string.Empty)}{id}]{value}";
             }
             else
             {
@@ -100,11 +136,66 @@ namespace FoxIDs.Logic
             return null;
         }
 
-#if DEBUG
         public void SaveResource(string name)
         {
-            embeddedResourceLogic.SaveResource(name);
-        }
+#if DEBUG
+            if (settings.SaveNewResourceAsEmbeddedResource)
+            {
+                embeddedResourceLogic.SaveResource(name);
+                return;
+            }
 #endif
+
+            try
+            {
+                if (RouteBinding != null)
+                {
+                    var tenantDataRepository = HttpContext.RequestServices.GetService<ITenantDataRepository>();
+                    var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                    var mTrack = tenantDataRepository.GetTrackByNameAsync(trackIdKey).GetAwaiter().GetResult();
+
+                    if (mTrack.ResourceEnvelope?.Names?.Any(n => n.Name == name) == true)
+                    {
+                        return;
+                    }
+
+                    if (mTrack.ResourceEnvelope == null)
+                    {
+                        mTrack.ResourceEnvelope = new TrackResourceEnvelope();
+                    }
+                    if (mTrack.ResourceEnvelope.Names == null)
+                    {
+                        mTrack.ResourceEnvelope.Names = new List<ResourceName>();
+                    }
+                    if (mTrack.ResourceEnvelope.Resources == null)
+                    {
+                        mTrack.ResourceEnvelope.Resources = new List<ResourceItem>();
+                    }
+
+                    var currentNumbers = mTrack.ResourceEnvelope.Names.Select(r => r.Id);
+                    if (currentNumbers.Count() <= 0)
+                    {
+                        currentNumbers = [0];
+                    }
+                    var nextNumber = Enumerable.Range(1, currentNumbers.Max())
+                             .Except(currentNumbers)
+                             .DefaultIfEmpty(currentNumbers.Max() + 1)
+                             .Min();
+
+                    var resourceName = new ResourceName { Id = nextNumber, Name = name };
+                    mTrack.ResourceEnvelope.Names.Add(resourceName);
+                    // Do not create default ResourceItem because the text is not necessary English.
+
+                    tenantDataRepository.UpdateAsync(mTrack).GetAwaiter().GetResult();
+                    var trackCacheLogic = HttpContext.RequestServices.GetService<TrackCacheLogic>();
+                    trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey).GetAwaiter().GetResult();
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                logger.Error(ex, "Add new resource name to environment error.");
+            }
+        }
     }
 }

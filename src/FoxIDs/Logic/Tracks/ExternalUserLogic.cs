@@ -200,7 +200,7 @@ namespace FoxIDs.Logic
 
         private string GetLinkClaim(string linkClaimType, IEnumerable<Claim> claims) => claims.Where(c => c.Type.Equals(linkClaimType, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
 
-        public List<Claim> AddExternalUserClaims<TProfile>(UpPartyWithExternalUser<TProfile> party, List<Claim> claims, IEnumerable<Claim> externalUserClaims) where TProfile : UpPartyProfile
+        public IEnumerable<Claim> AddExternalUserClaims<TProfile>(UpPartyWithExternalUser<TProfile> party, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims) where TProfile : UpPartyProfile
         {
             if (externalUserClaims?.Count() > 0)
             {

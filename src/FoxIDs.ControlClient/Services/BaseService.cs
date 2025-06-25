@@ -56,7 +56,7 @@ namespace FoxIDs.Client.Services
             return url;
         }
 
-        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
+        protected async Task<PaginationResponse<T>> GetListAsync<T>(string url, string parmValue1 = null, string parmValue2 = null, string parmValue3 = null, string parmValue4 = null, string parmName1 = "filterName", string parmName2 = null, string parmName3 = null, string parmName4 = null, string paginationToken = null)
         {
             var parms = new List<string>();
             if (!parmValue1.IsNullOrWhiteSpace())

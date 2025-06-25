@@ -156,11 +156,11 @@ For example, the user's sub (user ID / username), customer ID and roles:
 ```
 
 #### Response - Error 
-The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `errorDescription`.
+The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
     "error": "invalid_api_id_secret",
-    "errorDescription": "Invalid API ID or secret"
+    "ErrorMessage": "Invalid API ID or secret"
 }
 ```
 

@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<List<Claim>> FromSamlToJwtClaimsAsync(IEnumerable<Claim> samlClaims)
+        public async Task<IEnumerable<Claim>> FromSamlToJwtClaimsAsync(IEnumerable<Claim> samlClaims)
         {
             try
             {
@@ -193,7 +193,6 @@ namespace FoxIDs.Logic
                 await SaveNewMappingsAsync(newMappings);
 
                 return TruncateJwtClaimValues(jwtClaims);
-
             }
             catch (Exception ex)
             {

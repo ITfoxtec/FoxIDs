@@ -53,23 +53,33 @@
                 }
             </li>
             <li class="nav-item">
-                @if (trackLinkUpParty.ShowLinkExternalUserTab)
+                @if (trackLinkUpParty.ShowExtendedUiTab)
                 {
-                    <a class="nav-link active">Create External Users</a>
+                    <a class="nav-link active">Extended UI</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.LinkExternalUser))">Create External Users</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ExtendedUi))">Extended UI</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowLinkExternalUserTab)
+                {
+                    <a class="nav-link active">Create Users</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.LinkExternalUser))">Create Users</button>
                 }
             </li>
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowHrdTab)
                 {
-                    <a class="nav-link active">Home Realm Discovery</a>
+                    <a class="nav-link active">HRD</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Hrd))">Home Realm Discovery</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Hrd))">HRD</button>
                 }
             </li>
             @if (trackLinkUpParty.ShowAdvanced)
@@ -129,7 +139,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="info-text" role="alert">
-                                The first-level claim transforms is executed after the user has logged in and before an optionally external user is created or loaded.
+                                The first-level claim transforms is executed after the user has logged in and before the optional extended UI and the optional external users is created or loaded.
                             </div>
                             <OAuthClaimTransforms ClaimTransforms="trackLinkUpParty.Form.Model.ClaimTransforms" />
                         </div>
@@ -140,9 +150,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="info-text" role="alert">
-                                The second-level claim transforms is executed after the optionally external users is loaded and the external users claims has been included in the claim collection.
+                                The second-level claim transforms is executed after the optional extended UI and the optional external users claims have been included in the claim collection.
                             </div>
-                            <OAuthClaimTransforms ClaimTransforms="trackLinkUpParty.Form.Model.ExternalUserLoadedClaimTransforms" />
+                            <OAuthClaimTransforms ClaimTransforms="trackLinkUpParty.Form.Model.ExitClaimTransforms" />
                         </div>
                     </div>
                     <label class="label-control">Second-level claim transforms</label>
@@ -151,6 +161,13 @@
                     If you create a new claim in the claim transforms the claim is local in this authentication method unless you add the claim or '*' (default) to the 'Forward claims' list.
                     In the application registration you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
+            }
+            else if (trackLinkUpParty.ShowExtendedUiTab)
+            {
+                @if (trackLinkUpParty.Form.Model.ExtendedUis != null)
+                {
+                    <ExtendedUi Model="trackLinkUpParty.Form.Model.ExtendedUis" />
+                }
             }
             else if (trackLinkUpParty.ShowLinkExternalUserTab)
             {

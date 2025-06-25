@@ -89,7 +89,7 @@ namespace FoxIDs.Models.Api
 
                 if (!RegEx.IsNullOrWhiteSpace() && ErrorMessage.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required in connection with the field {nameof(RegEx)}.", [nameof(RegEx), nameof(ErrorMessage)]));
+                    results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required in connection with the field {nameof(RegEx)}.", [nameof(ErrorMessage)]));
                 }
             }
 

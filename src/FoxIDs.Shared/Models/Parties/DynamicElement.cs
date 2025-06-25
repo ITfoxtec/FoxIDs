@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "display_name")]
         public string DisplayName { get; set; }
 
+        [Max(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "max_length")]
         public int MaxLength { get; set; }
 
@@ -92,7 +94,7 @@ namespace FoxIDs.Models
 
                 if (!RegEx.IsNullOrWhiteSpace() && ErrorMessage.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required in connection with the field {nameof(RegEx)}.", [nameof(RegEx), nameof(ErrorMessage)]));
+                    results.Add(new ValidationResult($"The field {nameof(ErrorMessage)} is required in connection with the field {nameof(RegEx)}.", [nameof(ErrorMessage)]));
                 }
             }
 

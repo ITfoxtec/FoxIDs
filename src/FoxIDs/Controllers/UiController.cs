@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,10 +25,11 @@ namespace FoxIDs.Controllers
         private readonly SequenceLogic sequenceLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ExtendedUiLogic extendedUiLogic;
+        private readonly ExtendedUiConnectLogic extendedUiConnectLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public UiController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExtendedUiConnectLogic extendedUiConnectLogic, SecurityHeaderLogic securityHeaderLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,6 +38,7 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.extendedUiLogic = extendedUiLogic;
+            this.extendedUiConnectLogic = extendedUiConnectLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.dynamicElementLogic = dynamicElementLogic;
         }
@@ -111,12 +114,50 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Extended UI post.");
-
                 var claims = step.Claims.ToClaimList();
-                (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(extendedUiViewModel.Elements);
-                if (dynamicElementClaims.Count() > 0)
+                if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
                 {
-                    claims.AddRange(dynamicElementClaims);
+                    try
+                    {
+                        var externalClaims = await extendedUiConnectLogic.ValidateElementsAsync(extendedUi, claims, extendedUiViewModel.Elements);
+                        if (externalClaims.Count() > 0)
+                        {
+                            claims.AddRange(externalClaims);
+                        }
+                    }
+                    catch (InvalidElementsException iex)
+                    {
+                        logger.ScopeTrace(() => iex.Message, triggerEvent: true);
+
+                        if (iex.Elements.Count() > 0)
+                        {
+                            foreach (var errorElement in iex.Elements)
+                            {
+                                dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.Elements, errorElement.Name, errorElement.UiErrorMessage);
+                            }
+                        }
+
+                        if (iex.UiErrorMessages.Any())
+                        {
+                            var localizedUiErrorMessages = new List<string>();
+                            foreach(var uiErrorMessage in iex.UiErrorMessages)
+                            {
+                                localizedUiErrorMessages.Add(localizer[uiErrorMessage].Value.TrimEnd('.'));                                
+                            }
+
+                            ModelState.AddModelError(string.Empty, $"{string.Join(". ", localizedUiErrorMessages)}.");
+                        }
+
+                        return viewError();
+                    }
+                }
+                else
+                {
+                    (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(extendedUiViewModel.Elements);
+                    if (dynamicElementClaims.Count() > 0)
+                    {
+                        claims.AddRange(dynamicElementClaims);
+                    }
                 }
 
                 (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(extendedUi.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);

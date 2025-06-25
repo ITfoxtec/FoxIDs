@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models.External
 {
     public class ExtendedUiRequest
     {
-        [Required]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         public IEnumerable<ElementValue> Elements { get; set; }
 
-        [Required]
+        [ListLength(Constants.ExternalConnect.ClaimsMin, Constants.ExternalConnect.ClaimsMax)]
         public IEnumerable<ClaimValue> Claims { get; set; }
     }
 }

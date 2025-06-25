@@ -38,6 +38,8 @@
                                         <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
                                         <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
                                         <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
+                                        <div class="info-text">The generic error message is displayed if the API returns a generic error.</div>
+                                        <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
                                     </div>
                                 </div>
                                 <label class="label-control">API validation</label>

@@ -589,10 +589,10 @@ namespace FoxIDs
 
                 public const int NameLength = 20;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
-                public const int ContentLength = 500;
+                public const int ContentLength = Resource.ValueLength;
                 public const int DisplayNameLength = 50;
-                public const int RegExLength = 500;
-                public const int ErrorMessageLength = 200;
+                public const int RegExLength = 300;
+                public const int ErrorMessageLength = Resource.ValueLength;
             }
 
             public static class Claim
@@ -971,31 +971,62 @@ namespace FoxIDs
             }
         }
 
-        public static class ExternalClaims
+        public static class ExternalConnect
         {
+            public const int ErrorLength = 100;
+            public const int ErrorMessageLength = 4000;
+            public const int UiErrorMessageLength = Models.Resource.ValueLength;
+
+            public const int ClaimsMin = 0;
+            public const int ClaimsMax = 1000;
+
+            public const int ElementTypeLength = 100;
+
             public static class Api
             {
-                public const string Claims = "claims";
-                public const string ApiId = "external_claims";
-
                 public static class ErrorCodes
                 {
                     public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
                 }
             }
-        }
 
-        public static class ExternalLogin
-        {
-            public static class Api
+            public static class ExternalClaims
             {
-                public const string Authentication = "authentication";
-                public const string ApiId = "external_login";
-
-                public static class ErrorCodes
+                public static class Api
                 {
-                    public const string InvalidApiIdOrSecret = "invalid_api_id_secret";
-                    public const string InvalidUsernameOrPassword = "invalid_username_password";
+                    public const string Claims = "claims";
+                    public const string ApiId = "external_claims";
+
+                    public static class ErrorCodes
+                    { }
+                }
+            }
+
+            public static class ExtendedUi
+            {
+                public static class Api
+                {
+                    public const string Validate = "validate";
+                    public const string ApiId = "external_extended_ui";
+
+                    public static class ErrorCodes
+                    {
+                        public const string Invalid = "invalid";
+                    }
+                }
+            }
+
+            public static class ExternalLogin
+            {
+                public static class Api
+                {
+                    public const string Authentication = "authentication";
+                    public const string ApiId = "external_login";
+
+                    public static class ErrorCodes
+                    {
+                        public const string InvalidUsernameOrPassword = "invalid_username_password";
+                    }
                 }
             }
         }

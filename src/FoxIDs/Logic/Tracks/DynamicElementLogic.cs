@@ -4,6 +4,7 @@ using FoxIDs.Models.ViewModels;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,12 @@ namespace FoxIDs.Logic
     public class DynamicElementLogic : LogicBase
     {
         private readonly CountryCodesLogic countryCodesLogic;
+        private readonly IStringLocalizer localizer;
 
-        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.countryCodesLogic = countryCodesLogic;
+            this.localizer = localizer;
         }
 
         public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
@@ -172,25 +175,44 @@ namespace FoxIDs.Logic
                 {
                     foreach (var result in elementValidation.results)
                     {
-                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", result.ErrorMessage);
+                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
                     }
                 }
-            }
 
-            if (element is CustomDElement customDElement)
-            {
-                if (!customDElement.RegEx.IsNullOrWhiteSpace() && !customDElement.ErrorMessage.IsNullOrWhiteSpace())
+                if (element is CustomDElement customDElement)
                 {
-                    if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
+                    if (!element.DField1.IsNullOrWhiteSpace() && !customDElement.RegEx.IsNullOrWhiteSpace() && !customDElement.ErrorMessage.IsNullOrWhiteSpace())
                     {
-                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", customDElement.ErrorMessage);
+                        if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
+                        {
+                            modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
+                        }
                     }
                 }
+
+                index++;
             }
 
             if (element is PhoneDElement)
             {
                 element.DField1 = phoneTempValue;
+            }
+        }
+
+        public void SetModelElementError(ModelStateDictionary modelState, List<DynamicElementBase> elements, string name, string errorMessage)
+        {
+            var index = 0;
+            foreach (var element in elements)
+            {
+                if (!(element is ContentDElement))
+                {
+                    if (element.Name == name)
+                    {
+                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
+                    }
+
+                    index++;
+                }
             }
         }
 

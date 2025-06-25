@@ -45,6 +45,10 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "secret")]
         public string Secret { get; set; }
+
+        [MaxLength(Constants.Models.DynamicElements.ErrorMessageLength)]
+        [JsonProperty(PropertyName = "error_message")]
+        public string ErrorMessage { get; set; }
         #endregion
 
         /// <summary>
@@ -68,6 +72,11 @@ namespace FoxIDs.Models
                 if (Secret.IsNullOrWhiteSpace())
                 {
                     results.Add(new ValidationResult($"The field '{nameof(Secret)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(Secret), nameof(ExternalConnectType)]));
+                }
+
+                if (ErrorMessage.IsNullOrWhiteSpace())
+                {
+                    results.Add(new ValidationResult($"The field '{nameof(ErrorMessage)}' is required if the {nameof(ExternalConnectType)} is '{ExternalConnectType}'.", [nameof(ErrorMessage), nameof(ExternalConnectType)]));
                 }
             }
 

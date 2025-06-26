@@ -14028,8 +14028,8 @@
         },
         {
           "culture": "da",
-          "value": "Af sikkerhedsmæssige årsager kan du ikke gå tilbage i browseren på dette tidspunkt. Prøv venligst igen.",
-          "edit_level": 40
+          "value": "Af sikkerhedsmæssige årsager kan du ikke gå tilbage i browseren på dette sted. Prøv venligst igen.",
+          "edit_level": 100
         },
         {
           "culture": "de",

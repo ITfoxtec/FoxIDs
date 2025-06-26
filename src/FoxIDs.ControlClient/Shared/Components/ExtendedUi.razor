@@ -2,7 +2,16 @@
 <div class="info-text">
     Create on or more extended UIs which can be shown for the user in the login flow.
     <div class="pb-2"></div>
-    You select an extended UI in the login flow by adding the claim type <code>@Constants.Models.ExtendedUi.OpenExtendedUiClaimType</code> with the extended UI name in the first-level claim transforms. 
+    You select an extended UI in the login flow by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> with the extended UI name in the first-level claim transforms.
+    @if (IsSaml)
+    {
+        <div class="small">
+            Optionally link with corresponding SAML 2.0 claim in first-level claim transforms:<br />
+            <ul>
+                <li><code>@Constants.JwtClaimTypes.OpenExtendedUi</code> equals to <code>@Constants.SamlClaimTypes.OpenExtendedUi</code></li>
+            </ul>
+        </div>
+    }
     Subsequently extended UIs can be selected in the extended UI claim transformations.
     <div class="pb-2"></div>
     In order to support multiple languages, the different texts are written as English texts and translations are added under Settings and Texts.
@@ -46,7 +55,7 @@
                             </div>
                         </div>
 
-                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI by adding the claim type <code>@Constants.Models.ExtendedUi.OpenExtendedUiClaimType</code> with the extended UI name.</div>
+                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the extended UI name.</div>
                         <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
                     </div>
                     <div class="col-1 text-right">
@@ -77,4 +86,7 @@
     {
         Model.Remove(removeExtendedUi);
     }
+
+    [Parameter]
+    public bool IsSaml { get; set; }
 }

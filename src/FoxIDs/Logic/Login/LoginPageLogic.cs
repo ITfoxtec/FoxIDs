@@ -350,7 +350,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(partyName: extendedUiSequenceData.UpPartyId.PartyIdToName(), remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
             var party = await tenantDataRepository.GetAsync<LoginUpParty>(extendedUiSequenceData.UpPartyId);
 
             try

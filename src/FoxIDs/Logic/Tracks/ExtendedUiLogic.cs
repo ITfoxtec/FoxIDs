@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
                 UpPartyId = party.Id,
                 UpPartyType = party.Type
             };
-            sequenceData.Steps.Add(new ExtendedUiStep { Name = extendedUi.Name, Claims = claims.Where(c => c.Type != Constants.Models.ExtendedUi.OpenExtendedUiClaimType).ToClaimAndValues() });
+            sequenceData.Steps.Add(new ExtendedUiStep { Name = extendedUi.Name, Claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.OpenExtendedUi).ToClaimAndValues() });
             populateSequenceDataAction(sequenceData);
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             var query = new Dictionary<string, string> { { Constants.Routes.ExtendedUiStepKey, Convert.ToString(0) } };
@@ -62,7 +62,7 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"Redirect to next extended UI, Route '{RouteBinding?.Route}'.");
-            sequenceData.Steps.Add(new ExtendedUiStep { Name = nextExtendedUi.Name, Claims = claims.Where(c => c.Type != Constants.Models.ExtendedUi.OpenExtendedUiClaimType).ToClaimAndValues() });
+            sequenceData.Steps.Add(new ExtendedUiStep { Name = nextExtendedUi.Name, Claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.OpenExtendedUi).ToClaimAndValues() });
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             var query = new Dictionary<string, string> { { Constants.Routes.ExtendedUiStepKey, Convert.ToString(sequenceData.Steps.Count() - 1) } };
             return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.UiController, Constants.Endpoints.ExtendedUi, includeSequence: true, query: query).ToRedirectResult();
@@ -71,16 +71,16 @@ namespace FoxIDs.Logic
         private ExtendedUi GetExtendedUi(List<ExtendedUi> extendedUis, IEnumerable<Claim> claims, string currentExtendedUiName = null)
         {
             var loadNext = !currentExtendedUiName.IsNullOrEmpty();
-            var extendedUiClaim = claims.Where(c => c.Type == Constants.Models.ExtendedUi.OpenExtendedUiClaimType && (currentExtendedUiName.IsNullOrEmpty() || c.Value != currentExtendedUiName)).FirstOrDefault();
+            var extendedUiClaim = claims.Where(c => c.Type == Constants.JwtClaimTypes.OpenExtendedUi && (currentExtendedUiName.IsNullOrEmpty() || c.Value != currentExtendedUiName)).FirstOrDefault();
             if (extendedUiClaim != null)
             {
                 var extendedUi = extendedUis.Where(e => e.Name == extendedUiClaim.Value).FirstOrDefault();
-                logger.ScopeTrace(() => $"{(loadNext ? "Next extended" : "Extended")} UI '{extendedUiClaim.Value}' selected by claim '{Constants.Models.ExtendedUi.OpenExtendedUiClaimType}'{(extendedUi == null ? " do not exist" : string.Empty)}{(loadNext ? string.Empty : $", Route '{RouteBinding?.Route}'")}.");
+                logger.ScopeTrace(() => $"{(loadNext ? "Next extended" : "Extended")} UI '{extendedUiClaim.Value}' selected by claim '{Constants.JwtClaimTypes.OpenExtendedUi}'{(extendedUi == null ? " do not exist" : string.Empty)}{(loadNext ? string.Empty : $", Route '{RouteBinding?.Route}'")}.");
                 return extendedUi;
             }
             if (!loadNext)
             {
-                logger.ScopeTrace(() => $"Extended UI not selected by claim '{Constants.Models.ExtendedUi.OpenExtendedUiClaimType}', Route '{RouteBinding?.Route}'.");
+                logger.ScopeTrace(() => $"Extended UI not selected by claim '{Constants.JwtClaimTypes.OpenExtendedUi}', Route '{RouteBinding?.Route}'.");
             }
             return null;
         }

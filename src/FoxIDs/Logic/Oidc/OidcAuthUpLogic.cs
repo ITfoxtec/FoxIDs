@@ -322,7 +322,7 @@ namespace FoxIDs.Logic
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
                 logger.ScopeTrace(() => $"AuthMethod, OIDC transformed JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                var extendedUiActionResult = await HandleExtendedUiAsync(party, sequenceData, claims, externalSessionId, idToken);
+                var extendedUiActionResult = await HandleExtendedUiAsync(party, sequenceData, validClaims, externalSessionId, idToken);
                 if (extendedUiActionResult != null)
                 {
                     return extendedUiActionResult;

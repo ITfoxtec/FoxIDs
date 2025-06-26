@@ -133,7 +133,7 @@
       "id": 27
     },
     {
-      "name": "The sequence must be completed within {0} minutes. Please try again.",
+      "name": "For security reasons, the sequence must be completed within {0} minutes. Please try again.",
       "id": 28
     },
     {
@@ -421,7 +421,7 @@
       "id": 99
     },
     {
-      "name": "It is not possible to go back in the browser at this point. Please try again.",
+      "name": "For security reasons, you can't go back in the browser at this stage. Please try again.",
       "id": 100
     },
     {
@@ -4293,132 +4293,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Последователността трябва да бъде завършена в рамките на {0} минути. Моля, опитайте отново.",
+          "value": "От съображения за сигурност последователността трябва да бъде завършена в рамките на {0} минути. Моля, опитайте отново.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "La seqüència s&#39;ha de completar en {0} minuts. Siusplau torna-ho a provar.",
+          "value": "Per motius de seguretat, la seqüència s&#39;ha de completar en un termini de {0} minuts. Si us plau, torneu-ho a intentar.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Sekvence musí být dokončena do {0} minut. Zkuste to prosím znovu.",
+          "value": "Z bezpečnostních důvodů musí být sekvence dokončena do {0} minut. Zkuste to prosím znovu.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Sekvensen skal gennemføres indenfor {0} minutter. Prøv venligst igen.",
-          "edit_level": 100
+          "value": "Af sikkerhedsmæssige årsager skal sekvensen være afsluttet inden for {0} minutter. Prøv venligst igen.",
+          "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Die Sequenz muss innerhalb von {0} Minuten abgeschlossen sein. Bitte versuchen Sie es erneut.",
+          "value": "Aus Sicherheitsgründen muss die Sequenz innerhalb von {0} Minuten abgeschlossen sein. Bitte versuchen Sie es erneut.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Η ακολουθία πρέπει να ολοκληρωθεί εντός {0} λεπτών. Προσπαθήστε ξανά.",
+          "value": "Για λόγους ασφαλείας, η ακολουθία πρέπει να ολοκληρωθεί εντός {0} λεπτών. Παρακαλώ προσπαθήστε ξανά.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "The sequence must be completed within {0} minutes. Please try again.",
+          "value": "For security reasons, the sequence must be completed within {0} minutes. Please try again.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "La secuencia debe completarse en {0} minutos. Por favor, inténtelo de nuevo.",
+          "value": "Por razones de seguridad, la secuencia debe completarse en {0} minutos. Por favor, inténtelo de nuevo.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Jada peab olema lõpetatud {0} minuti jooksul. Palun proovige uuesti.",
+          "value": "Turvalisuse huvides peab jada olema lõpetatud {0} minuti jooksul. Palun proovige uuesti.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Sarjan on oltava valmis {0} minuutin kuluessa. Yritä uudelleen.",
+          "value": "Turvallisuussyistä sarja on saatettava loppuun {0} minuutin kuluessa. Yritä uudelleen.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "La séquence doit être terminée en {0} minutes. Veuillez réessayer.",
+          "value": "Pour des raisons de sécurité, la séquence doit être terminée dans les {0} minutes. Veuillez réessayer.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Niz mora biti dovršen u roku od {0} minuta. Molim te pokušaj ponovno.",
+          "value": "Iz sigurnosnih razloga, slijed mora biti dovršen unutar {0} minuta. Pokušajte ponovno.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Röðinni verður að ljúka innan {0} mínútna. Vinsamlegast reyndu aftur.",
+          "value": "Af öryggisástæðum verður að ljúka raðgreiningunni innan {0} mínútna. Vinsamlegast reynið aftur.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "La sequenza deve essere completata entro {0} minuti. Riprovare.",
+          "value": "Per motivi di sicurezza, la sequenza deve essere completata entro {0} minuti. Riprovare.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Ši seka turi būti baigta per {0} minučių. Bandykite dar kartą.",
+          "value": "Saugumo sumetimais seka turi būti baigta per {0} minučių. Bandykite dar kartą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Sekvence jāpabeidz {0} minūšu laikā. Lūdzu, mēģiniet vēlreiz.",
+          "value": "Drošības apsvērumu dēļ secība jāpabeidz {0} minūšu laikā. Lūdzu, mēģiniet vēlreiz.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Sekvensen må fullføres innen {0} minutter. Vennligst prøv igjen.",
+          "value": "Av sikkerhetsgrunner må sekvensen fullføres innen {0} minutter. Vennligst prøv igjen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "De reeks moet binnen {0} minuten voltooid zijn. Probeer het opnieuw.",
+          "value": "Om veiligheidsredenen moet de reeks binnen {0} minuten voltooid zijn. Probeer het opnieuw.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Sekwencja musi zostać ukończona w ciągu {0} minut. Spróbuj ponownie.",
+          "value": "Ze względów bezpieczeństwa sekwencja musi zostać ukończona w ciągu {0} minut. Spróbuj ponownie.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "A sequência deve ser concluída em {0} minutos. Por favor, tente novamente.",
+          "value": "Por motivos de segurança, a sequência deve ser concluída em {0} minutos. Por favor, tente novamente.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Secvența trebuie să fie finalizată în {0} minute. Vă rugăm să încercați din nou.",
+          "value": "Din motive de securitate, secvența trebuie să fie finalizată în {0} minute. Vă rugăm să încercați din nou.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Sekvencia musí byť dokončená do {0} minút. Skúste to prosím znova.",
+          "value": "Z bezpečnostných dôvodov sa sekvencia musí dokončiť do {0} minút. Skúste to prosím znova.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Zaporedje mora biti končano v {0} minutah. Poskusite znova.",
+          "value": "Iz varnostnih razlogov mora biti zaporedje končano v {0} minutah. Poskusite znova.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Sekvensen måste slutföras inom {0} minuter. Vänligen försök igen.",
+          "value": "Av säkerhetsskäl måste sekvensen slutföras inom {0} minuter. Vänligen försök igen.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Sekans {0} dakika içinde tamamlanmalıdır. Lütfen tekrar deneyin.",
+          "value": "Güvenlik nedeniyle, dizinin {0} dakika içinde tamamlanması gerekmektedir. Lütfen tekrar deneyin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Послідовність має бути завершена протягом {0} хвилин. Спробуйте ще раз.",
+          "value": "З міркувань безпеки послідовність має бути завершена протягом {0} хвилин. Спробуйте ще раз.",
           "edit_level": 40
         }
       ]
@@ -14013,132 +14013,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "В този момент не е възможно да се върнете обратно в браузъра. Моля, опитайте отново.",
+          "value": "От съображения за сигурност на този етап не можете да се върнете обратно в браузъра. Моля, опитайте отново.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "En aquest moment no és possible tornar al navegador. Siusplau torna-ho a provar.",
+          "value": "Per motius de seguretat, no podeu tornar enrere al navegador en aquesta fase. Torneu-ho a intentar.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "V tomto okamžiku není možné se v prohlížeči vrátit zpět. Zkuste to prosím znovu.",
+          "value": "Z bezpečnostních důvodů se v této fázi nemůžete vrátit zpět do prohlížeče. Zkuste to prosím znovu.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Det er ikke muligt at gå tilbage i browseren på dette sted. Prøv venligst igen.",
-          "edit_level": 100
+          "value": "Af sikkerhedsmæssige årsager kan du ikke gå tilbage i browseren på dette tidspunkt. Prøv venligst igen.",
+          "edit_level": 40
         },
         {
           "culture": "de",
-          "value": "Zu diesem Zeitpunkt ist es nicht möglich, im Browser zurückzugehen. Bitte versuchen Sie es erneut.",
+          "value": "Aus Sicherheitsgründen können Sie zu diesem Zeitpunkt im Browser nicht zurückgehen. Bitte versuchen Sie es erneut.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Δεν είναι δυνατή η επιστροφή στο πρόγραμμα περιήγησης σε αυτό το σημείο. Παρακαλώ δοκιμάστε ξανά.",
+          "value": "Για λόγους ασφαλείας, δεν μπορείτε να επιστρέψετε στο πρόγραμμα περιήγησης σε αυτό το στάδιο. Παρακαλώ δοκιμάστε ξανά.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "It is not possible to go back in the browser at this point. Please try again.",
+          "value": "For security reasons, you can't go back in the browser at this stage. Please try again.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "En este momento no es posible volver atrás en el navegador. Por favor, inténtelo de nuevo.",
+          "value": "Por razones de seguridad, no puedes volver atrás en el navegador en este momento. Por favor, inténtelo de nuevo.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Brauseris ei ole sel hetkel võimalik tagasi minna. Palun proovige uuesti.",
+          "value": "Turvalisuse huvides ei saa sel ajal brauseris tagasi minna. Palun proovige uuesti.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Selaimessa ei ole mahdollista palata takaisin tässä vaiheessa. Yritä uudelleen.",
+          "value": "Turvallisuussyistä et voi palata selaimeen tässä vaiheessa. Yritä uudelleen.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Il n'est pas possible de revenir en arrière dans le navigateur à ce stade. Veuillez réessayer.",
+          "value": "Pour des raisons de sécurité, vous ne pouvez pas revenir en arrière dans le navigateur à ce stade. Veuillez réessayer.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "U ovom trenutku nije moguće vratiti se u preglednik. Molim te pokušaj ponovno.",
+          "value": "Iz sigurnosnih razloga, u ovoj fazi se ne možete vratiti u preglednik. Pokušajte ponovno.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Það er ekki hægt að fara aftur í vafranum á þessum tímapunkti. Vinsamlegast reyndu aftur.",
+          "value": "Af öryggisástæðum er ekki hægt að fara aftur í vafranum á þessu stigi. Reyndu aftur.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "A questo punto non è possibile tornare indietro nel browser. Si prega di riprovare.",
+          "value": "Per motivi di sicurezza, in questa fase non è possibile tornare indietro nel browser. Si prega di riprovare.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Šiuo metu naršyklėje grįžti atgal neįmanoma. Bandykite dar kartą.",
+          "value": "Saugumo sumetimais šiame etape negalite grįžti atgal į naršyklę. Bandykite dar kartą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Šajā brīdī pārlūkprogrammā nav iespējams atgriezties atpakaļ. Lūdzu, mēģiniet vēlreiz.",
+          "value": "Drošības apsvērumu dēļ šajā posmā pārlūkā nav iespējams atgriezties atpakaļ. Lūdzu, mēģiniet vēlreiz.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Det er ikke mulig å gå tilbake i nettleseren på dette tidspunktet. Vennligst prøv igjen.",
+          "value": "Av sikkerhetsgrunner kan du ikke gå tilbake i nettleseren på dette stadiet. Vennligst prøv igjen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Het is nu niet mogelijk om terug te gaan in de browser. Probeer het opnieuw.",
+          "value": "Om veiligheidsredenen kun je op dit moment niet terug in de browser. Probeer het opnieuw.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "W tym momencie nie ma możliwości powrotu do przeglądarki. Spróbuj ponownie.",
+          "value": "Ze względów bezpieczeństwa na tym etapie nie można wrócić do przeglądarki. Spróbuj ponownie.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Nesta altura, não é possível voltar atrás no browser. Por favor, tente novamente.",
+          "value": "Por motivos de segurança, não é possível voltar atrás no browser nesta fase. Por favor, tente novamente.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "În acest moment, nu este posibil să vă întoarceți în browser. Vă rugăm să încercați din nou.",
+          "value": "Din motive de securitate, nu vă puteți întoarce în browser în această etapă. Vă rugăm să încercați din nou.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "V tomto okamihu nie je možné vrátiť sa späť do prehliadača. Skúste to prosím znova.",
+          "value": "Z bezpečnostných dôvodov sa v tejto fáze nemôžete vrátiť späť do prehliadača. Skúste to prosím znova.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Na tej točki se v brskalniku ni mogoče vrniti nazaj. Poskusite znova.",
+          "value": "Zaradi varnostnih razlogov se v tej fazi ne morete vrniti v brskalnik. Poskusite znova.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Det är inte möjligt att gå tillbaka i webbläsaren just nu. Vänligen försök igen.",
+          "value": "Av säkerhetsskäl kan du inte gå tillbaka i webbläsaren i det här skedet. Vänligen försök igen.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Bu noktada tarayıcıda geri dönmek mümkün değildir. Lütfen tekrar deneyin.",
+          "value": "Güvenlik nedeniyle, bu aşamada tarayıcıya geri dönemezsiniz. Lütfen tekrar deneyin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Наразі неможливо повернутися до браузера. Будь ласка, спробуйте ще раз.",
+          "value": "З міркувань безпеки ви не можете повернутися до браузера на цьому етапі. Будь ласка, спробуйте ще раз.",
           "edit_level": 40
         }
       ]

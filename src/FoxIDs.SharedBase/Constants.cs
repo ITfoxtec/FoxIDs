@@ -895,8 +895,6 @@ namespace FoxIDs
 
             public static class ExtendedUi
             {
-                public const string OpenExtendedUiClaimType = "foxids:open_extended_ui";
-
                 public const int ElementsMin = 1;
 
                 public const int NameLength = 20;
@@ -1117,7 +1115,7 @@ namespace FoxIDs
             {
                 FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, 
                 JwtClaimTypes.AuthMethod, JwtClaimTypes.AuthProfileMethod, JwtClaimTypes.AuthMethodType, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, 
-                JwtClaimTypes.AuthMethodIssuer, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr 
+                JwtClaimTypes.AuthMethodIssuer, JwtClaimTypes.OpenExtendedUi, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr 
             };
 
             /// <summary>
@@ -1138,7 +1136,7 @@ namespace FoxIDs
                 ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, 
                 ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, 
                 SamlClaimTypes.AuthMethod, SamlClaimTypes.AuthProfileMethod, SamlClaimTypes.AuthMethodType, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType, 
-                SamlClaimTypes.AuthMethodIssuer, SamlClaimTypes.LocalNameIdentifier
+                SamlClaimTypes.AuthMethodIssuer, SamlClaimTypes.LocalNameIdentifier, SamlClaimTypes.OpenExtendedUi
             };
         }
 
@@ -1166,6 +1164,7 @@ namespace FoxIDs
             public const string AccessToken = "access_token";
             public const string LocalSub = "local_sub";
             public const string Upn = "upn";
+            public const string OpenExtendedUi = "open_extended_ui";
         }
 
         public static class SamlClaimTypes
@@ -1184,6 +1183,7 @@ namespace FoxIDs
             public const string EmailVerified = "http://schemas.foxids.com/ws/identity/claims/emailverified";
             public const string PreferredUsername = "http://schemas.foxids.com/ws/identity/claims/preferredusername";
             public const string ClientId = "http://schemas.foxids.com/ws/identity/claims/clientid";
+            public const string OpenExtendedUi = "http://schemas.foxids.com/ws/identity/claims/openextendedui";
         }
 
         public static class SamlAutoMapClaimTypes
@@ -1214,7 +1214,9 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AuthMethodIssuer, SamlClaim = SamlClaimTypes.AuthMethodIssuer },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken },
-                new ClaimMap { JwtClaim = JwtClaimTypes.LocalSub, SamlClaim = SamlClaimTypes.LocalNameIdentifier }
+                new ClaimMap { JwtClaim = JwtClaimTypes.LocalSub, SamlClaim = SamlClaimTypes.LocalNameIdentifier },
+                new ClaimMap { JwtClaim = JwtClaimTypes.OpenExtendedUi, SamlClaim = SamlClaimTypes.OpenExtendedUi },
+                new ClaimMap { JwtClaim = JwtClaimTypes.OpenExtendedUi, SamlClaim = JwtClaimTypes.OpenExtendedUi } // also accept JWT claim in SAML claims
             };
 
             /// <summary>

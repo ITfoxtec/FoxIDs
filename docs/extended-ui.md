@@ -8,6 +8,11 @@ The dynamic elements consist of fixed fields a customisable field and both text 
 
 > Extended UIs can be added to the following authentication methods in the **Extended UI** tab; login, external login, OpenID Connect, SAML 2.0 and environment link. 
 
+**Select extended UI page**  
+You select an extended UI page in the login flow by adding the claim type `open_extended_ui` with the extended UI page name in the first-level claim transforms.
+In a SAML 2.0 authentication method optionally select with the corresponding SAML 2.0 claim `http://schemas.foxids.com/ws/identity/claims/openextendedui` in the first-level claim transforms.  
+Subsequently extended UI pages can be selected in the extended UI claim transforms by adding the claim type `open_extended_ui` (JWT claim only) with the next extended UI page name.
+
 **Example**  
 This example page asks the user to enter their social security number (shown in two languages). 
 The example extended UI adds the input value to the claims collection as the claim type `social_security_number`. In a real-world scenario, you would probably call an API to validate the social security number.  
@@ -21,7 +26,7 @@ The example page is configured in a SAML 2.0 authentication method with three el
 
 ![Configure Extended UI with Social security number input field](images/configure-extended-ui-ssn.png)
 
-> The extended UI can be customised with CSS in the default or connected login authentication method. There's quite a lot of flexibility in how the dialogs can be designed.
+> The extended UI can be customised with CSS in the login authentication method called **Default login**, unless you create another login method and use that instead. There's quite a lot of flexibility in how the dialogs can be designed.
 
 ## Translations
 The texts (and error messages) used in dynamic elements is automatically translated if they are defined as global text with translations. Otherwise, there is automatically created a text element in the environments on winch you can add translations. 

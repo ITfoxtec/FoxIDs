@@ -507,13 +507,13 @@ namespace FoxIDs.Logic
 
         private T GetLoginViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier) where T : LoginBaseViewModel, new()
         {
-            return new T
+            var viewModel = new T
             {
                 SequenceString = SequenceString,
                 Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                 IconUrl = loginUpParty.IconUrl,
                 Css = loginUpParty.Css,
-                ShowCancelLogin = loginUpParty.EnableCancelLogin,
+                ShowCancelLogin = loginUpParty.EnableCancelLogin,                
                 ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
                 ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
                 ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
@@ -521,6 +521,13 @@ namespace FoxIDs.Logic
                 ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
                 EnableChangeUserIdentifier = supportChangeUserIdentifier && !sequenceData.DoSessionUserRequireLogin,
             };
+
+            if (viewModel is SetPasswordBaseViewModel setPasswordBaseViewModel)
+            {
+                setPasswordBaseViewModel.CanUseExistingPassword = sequenceData.CanUseExistingPassword;
+            }
+
+            return viewModel;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
         /// Get resource names and IDs.
         /// </summary>
         /// <param name="filterName">Filter resource name or ID.</param>
-        /// <returns>Resource name.</returns>
+        /// <returns>Resource names.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Api.PaginationResponse<Api.ResourceName>> GetResourceNames(string filterName, string paginationToken = null)

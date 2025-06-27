@@ -266,6 +266,10 @@ namespace FoxIDs.Repository
         private string GetDataType<T>() where T : IDataDocument
         {
             var type = typeof(T);
+            if (type.IsGenericType)
+            {
+                type = type.GetGenericTypeDefinition();
+            }
             if (type == typeof(Tenant))
             {
                 return Constants.Models.DataType.Tenant;
@@ -278,7 +282,7 @@ namespace FoxIDs.Repository
             {
                 return Constants.Models.DataType.Party;
             }
-            else if (type == typeof(UpParty))
+            else if (type == typeof(UpParty) || type == typeof(UpPartyWithProfile<>))
             {
                 return Constants.Models.DataType.UpParty;
             }

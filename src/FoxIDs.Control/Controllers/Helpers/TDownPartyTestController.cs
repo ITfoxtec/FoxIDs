@@ -351,7 +351,7 @@ namespace FoxIDs.Controllers
 
         private IDataProtector CreateProtector(string partyName)
         {
-            return dataProtection.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName, partyName });
+            return dataProtection.CreateProtector([RouteBinding.TenantName, RouteBinding.TrackName, partyName]);
         }
     }
 }

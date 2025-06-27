@@ -13,7 +13,7 @@ namespace FoxIDs.Client
 
             if (linkExternalUser != null)
             {
-                linkExternalUser.Elements.MapLinkExternalUserAfterMap();
+                linkExternalUser.Elements.MapDynamicElementsAfterMap();
                 linkExternalUser.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
             }
 

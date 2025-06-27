@@ -291,6 +291,7 @@ namespace FoxIDs.Client.Pages.Users
             {
                 await UserService.DeleteUserAsync(generalUser.Email, generalUser.Phone, generalUser.Username);
                 users.Remove(generalUser);
+                toastService.ShowSuccess("User deleted.");
             }
             catch (TokenUnavailableException)
             {

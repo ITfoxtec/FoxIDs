@@ -4,6 +4,7 @@
     {
         Login,
         ClaimsTransform,
+        ExtendedUi,
         CreateUser,
         Session,
         Hrd

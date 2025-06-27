@@ -30,12 +30,11 @@ namespace FoxIDs.Infrastructure.Localization
             var cultureName = httpContextAccessor.HttpContext.GetCultureParentName();
 
             var value = localizationLogic.GetValue(name, cultureName);
-#if DEBUG
-            if(value.IsNullOrEmpty())
+            if (value.IsNullOrEmpty())
             {
                 localizationLogic.SaveResource(name);
             }
-#endif
+
             value = value ?? name;
 
             if (arguments?.Length > 0)

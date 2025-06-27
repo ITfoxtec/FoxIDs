@@ -54,21 +54,19 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowOAuthTab(IGeneralOAuthDownPartyTabViewModel downParty, OAuthTabTypes oauthTabTypes)
         {
+            downParty.ShowClientTab = false;
+            downParty.ShowResourceTab = false;
+            downParty.ShowClaimTransformTab = false;
+
             switch (oauthTabTypes)
             {
                 case OAuthTabTypes.Client:
                     downParty.ShowClientTab = true;
-                    downParty.ShowResourceTab = false;
-                    downParty.ShowClaimTransformTab = false;
                     break;
                 case OAuthTabTypes.Resource:
-                    downParty.ShowClientTab = false;
                     downParty.ShowResourceTab = true;
-                    downParty.ShowClaimTransformTab = false;
                     break;
                 case OAuthTabTypes.ClaimsTransform:
-                    downParty.ShowClientTab = false;
-                    downParty.ShowResourceTab = false;
                     downParty.ShowClaimTransformTab = true;
                     break;
                 default:
@@ -78,14 +76,15 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowSamlTab(GeneralSamlDownPartyViewModel downParty, SamlTabTypes samlTabTypes)
         {
+            downParty.ShowSamlTab = false;
+            downParty.ShowClaimTransformTab = false;
+
             switch (samlTabTypes)
             {
                 case SamlTabTypes.Saml:
                     downParty.ShowSamlTab = true;
-                    downParty.ShowClaimTransformTab = false;
                     break;
                 case SamlTabTypes.ClaimsTransform:
-                    downParty.ShowSamlTab = false;
                     downParty.ShowClaimTransformTab = true;
                     break;
                 default:
@@ -95,14 +94,15 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowTrackLinkTab(GeneralTrackLinkDownPartyViewModel downParty, TrackLinkTabTypes trackLinkTabTypes)
         {
+            downParty.ShowTrackLinkTab = false;
+            downParty.ShowClaimTransformTab = false;
+
             switch (trackLinkTabTypes)
             {
                 case TrackLinkTabTypes.TrackLink:
                     downParty.ShowTrackLinkTab = true;
-                    downParty.ShowClaimTransformTab = false;
                     break;
                 case TrackLinkTabTypes.ClaimsTransform:
-                    downParty.ShowTrackLinkTab = false;
                     downParty.ShowClaimTransformTab = true;
                     break;
                 default:

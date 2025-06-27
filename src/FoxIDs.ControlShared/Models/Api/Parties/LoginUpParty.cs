@@ -1,8 +1,10 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -91,6 +93,18 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        /// <summary>
+        /// Extended UIs.
+        /// </summary>
+        [ListLength(Constants.Models.ExtendedUi.UisMin, Constants.Models.ExtendedUi.UisMax)]
+        public List<ExtendedUi> ExtendedUis { get; set; }
+
+        /// <summary>
+        /// Claim transforms executed before exit / response from up-party and after the external users claims has been loaded.
+        /// </summary>
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ExitClaimTransforms { get; set; }
 
         /// <summary>
         /// Browser title.
@@ -220,6 +234,11 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Either the field {nameof(DisableTwoFactorApp)} or the field {nameof(DisableTwoFactorSms)} or the field {nameof(DisableTwoFactorEmail)} should be False if the field {nameof(RequireTwoFactor)} is True.",
                     [nameof(DisableTwoFactorApp), nameof(DisableTwoFactorSms), nameof(DisableTwoFactorEmail), nameof(RequireTwoFactor)]));
+            }
+
+            if (ClaimTransforms?.Count() + ExitClaimTransforms?.Count() > Constants.Models.Claim.TransformsMax)
+            {
+                results.Add(new ValidationResult($"The number of claims transforms in '{nameof(ClaimTransforms)}' and '{nameof(ExitClaimTransforms)}' can be a  of {Constants.Models.Claim.TransformsMax} combined.", [nameof(ClaimTransforms), nameof(ExitClaimTransforms)]));
             }
 
             return results;

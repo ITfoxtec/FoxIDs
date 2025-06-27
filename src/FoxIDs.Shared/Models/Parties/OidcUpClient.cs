@@ -14,7 +14,7 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>(base.Validate(validationContext));
             if (UseUserInfoClaims && UseIdTokenClaims)
             {
-                results.Add(new ValidationResult($"The field {nameof(UseUserInfoClaims)} and the field {nameof(UseIdTokenClaims)} can not be enabled (true) at the same time.", new[] { nameof(UseUserInfoClaims), nameof(UseIdTokenClaims) }));
+                results.Add(new ValidationResult($"The field {nameof(UseUserInfoClaims)} and the field {nameof(UseIdTokenClaims)} can not be enabled (true) at the same time.", [nameof(UseUserInfoClaims), nameof(UseIdTokenClaims)]));
             }
             return results;
         }

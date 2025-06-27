@@ -20,7 +20,8 @@ namespace FoxIDs.Logic
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.ExternalLoginUpParty party)
         {
-            return validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.ExternalUserLoadedClaimTransforms)) && 
+            return validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.ExitClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.ExitClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis) &&
                 validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements) &&
                 validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, party.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.ExternalLoginUpParty.LinkExternalUser.ClaimTransforms)) &&
                 validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, party.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.ExternalLoginUpParty.HrdIPAddressesAndRanges)) &&

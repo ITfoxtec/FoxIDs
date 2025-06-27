@@ -51,7 +51,10 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                     Console.WriteLine($" - done.");
                     Console.WriteLine(string.Empty);
 
-                    await resourceLogic.SaveResourcesAsync();
+                    if (resourceLanguageCodes.Count() > 0)
+                    {
+                        await resourceLogic.SaveResourcesAsync();
+                    }
                 }
                 catch (Exception ex)
                 {

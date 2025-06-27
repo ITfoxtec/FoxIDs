@@ -78,6 +78,10 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<ExtendedUi, Api.ExtendedUi>()
+                .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret != null && s.Secret.Length > 20 ? s.Secret.Substring(0, 3) : s.Secret))
+                .ReverseMap();
+
             CreateMap<DownParty, Api.DownParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))

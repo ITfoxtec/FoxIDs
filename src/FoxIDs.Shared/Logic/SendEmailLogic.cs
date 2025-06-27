@@ -124,7 +124,7 @@ namespace FoxIDs.Logic
                 return string.Empty;
             }
 
-            var infoWithLinks = string.Format(info, "https://www.foxids.com/", "https://www.itfoxtec.com/");
+            var infoWithLinks = string.Format(info, "https://www.foxids.com/");
 
             var infoHtml = string.Format(
 @"                  <tr>

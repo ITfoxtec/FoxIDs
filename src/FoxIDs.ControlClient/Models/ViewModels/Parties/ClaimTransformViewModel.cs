@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Action")]
-        public ClaimTransformActions Action { get; set; } = ClaimTransformActions.Add;
+        public ClaimTransformActions Action { get; set; } = ClaimTransformActions.Replace;
 
         [Display(Name = "Transformation")]
         public virtual string Transformation { get; set; }

@@ -8,17 +8,20 @@ namespace FoxIDs.Logic
     public class ValidateApiModelTrackLinkPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelTrackLinkPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelTrackLinkPartyLogic(TelemetryScopedLogger logger, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.validateApiModelGenericPartyLogic = validateApiModelGenericPartyLogic;
             this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.TrackLinkUpParty party)
         {
-            return validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements);
+            return validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis) &&
+                validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, party.LinkExternalUser?.Elements);
         }
     }
 }

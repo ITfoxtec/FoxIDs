@@ -5,6 +5,9 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class GeneralResourceViewModel
     {
+        public GeneralResourceViewModel()
+        {}
+
         public GeneralResourceViewModel(ResourceName resourceName)
         {
             Id = resourceName.Id;
@@ -17,9 +20,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool Edit { get; set; }
 
-        public bool ShowAdvanced { get; set; }
-
         public bool CreateMode { get; set; }
+
+        public bool ShowAdvanced { get; set; }
 
         public bool DeleteAcknowledge { get; set; }
 

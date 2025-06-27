@@ -112,6 +112,7 @@ namespace FoxIDs.Controllers
 
                 var mUpPartyProfiles = GetMUpPartyProfils(mParty);
 
+                if (!(mParty is UpParty upParty ? await validateModelGenericPartyLogic.ValidateModelExtendedUiAsync(ModelState, upParty, false) : true)) return BadRequest(ModelState);
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
@@ -176,6 +177,7 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                if (!(mParty is UpParty upParty ? await validateModelGenericPartyLogic.ValidateModelExtendedUiAsync(ModelState, upParty, true) : true)) return BadRequest(ModelState);
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);

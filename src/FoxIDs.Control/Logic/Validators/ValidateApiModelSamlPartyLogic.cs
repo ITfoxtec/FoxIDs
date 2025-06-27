@@ -29,7 +29,8 @@ namespace FoxIDs.Logic
             return ValidateSignatureAlgorithmAndSigningKeys(modelState, samlUpParty) && 
                 ValidateLogout(modelState, samlUpParty) &&
                 ValidateMetadataNameIdFormats(modelState, samlUpParty) &&
-                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.ExternalUserLoadedClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.ExternalUserLoadedClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.ExitClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.ExitClaimTransforms)) &&
+                validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, samlUpParty.ExtendedUis) &&
                 validateApiModelDynamicElementLogic.ValidateApiModelLinkExternalUserElements(modelState, samlUpParty.LinkExternalUser?.Elements) &&
                 validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(modelState, samlUpParty.LinkExternalUser?.ClaimTransforms, errorFieldName: nameof(Api.SamlUpParty.LinkExternalUser.ClaimTransforms)) &&
                 validateApiModelGenericPartyLogic.ValidateApiModelHrdIPAddressesAndRanges(modelState, samlUpParty.HrdIPAddressesAndRanges, errorFieldName: nameof(Api.SamlUpParty.HrdIPAddressesAndRanges)) && 

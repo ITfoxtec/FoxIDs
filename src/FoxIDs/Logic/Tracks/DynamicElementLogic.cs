@@ -4,10 +4,12 @@ using FoxIDs.Models.ViewModels;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -15,10 +17,12 @@ namespace FoxIDs.Logic
     public class DynamicElementLogic : LogicBase
     {
         private readonly CountryCodesLogic countryCodesLogic;
+        private readonly IStringLocalizer localizer;
 
-        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.countryCodesLogic = countryCodesLogic;
+            this.localizer = localizer;
         }
 
         public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
@@ -30,22 +34,20 @@ namespace FoxIDs.Logic
 
             var countryCode = elements.Where(e => e.Type == DynamicElementTypes.Phone).Any() ? countryCodesLogic.GetCountryCodeStringByCulture() : null;
 
-            var i = 0;
+            var i = -1;
             foreach (var element in elements)
             {
-                var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
-                if (valueElement == null) 
+                DynamicElementBase valueElement = null;
+                if (element.Type != DynamicElementTypes.Text && element.Type != DynamicElementTypes.Html)
                 {
-                    var valueClaim = FilterElementClaim(element, initClaims);
-                    if (valueClaim != null)
-                    {
-                        valueElement = new DynamicElementBase { DField1 = valueClaim.Value };
-                    }
+                    i++;
+                    valueElement = GetValueElement(element, valueElements, initClaims, i);
                 }
+
                 switch (element.Type)
                 {
                     case DynamicElementTypes.Email:
-                        yield return element.Required ? new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new EmailDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new EmailRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new EmailDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Phone:
                         var phoneDField1 = valueElement?.DField1;
@@ -53,32 +55,56 @@ namespace FoxIDs.Logic
                         {
                             phoneDField1 = countryCode;
                         }
-                        yield return element.Required ? new PhoneRequiredDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier } : new PhoneDElement { DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new PhoneRequiredDElement { Name = element.Name, DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier } : new PhoneDElement { Name = element.Name, DField1 = phoneDField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.Username:
-                        yield return element.Required ? new UsernameRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new UsernameDElement { DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
+                        yield return element.Required ? new UsernameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier } : new UsernameDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = element.IsUserIdentifier };
                         break;
                     case DynamicElementTypes.EmailAndPassword:
-                        yield return new EmailRequiredDElement { DField1 = valueElement?.DField1, IsUserIdentifier = true };
-                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
+                        yield return new EmailRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1, IsUserIdentifier = true };
+                        yield return new PasswordDElement { Name = element.Name, DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Password:
-                        yield return new PasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
+                        yield return new PasswordDElement { Name = element.Name, DField1 = valueElement?.DField1, DField2 = valueElement?.DField2 };
                         break;
                     case DynamicElementTypes.Name:
-                        yield return element.Required ? new NameRequiredDElement { DField1 = valueElement?.DField1 } : new NameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new NameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new NameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
                     case DynamicElementTypes.GivenName:
-                        yield return element.Required ? new GivenNameRequiredDElement { DField1 = valueElement?.DField1 } : new GivenNameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new GivenNameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new GivenNameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
                     case DynamicElementTypes.FamilyName:
-                        yield return element.Required ? new FamilyNameRequiredDElement { DField1 = valueElement?.DField1 } : new FamilyNameDElement { DField1 = valueElement?.DField1 };
+                        yield return element.Required ? new FamilyNameRequiredDElement { Name = element.Name, DField1 = valueElement?.DField1 } : new FamilyNameDElement { Name = element.Name, DField1 = valueElement?.DField1 };
                         break;
+                    case DynamicElementTypes.Custom:
+                        yield return new CustomDElement { Name = element.Name, DField1 = valueElement?.DField1, Required = element.Required, DisplayName = element.DisplayName, MaxLength = element.MaxLength, RegEx = element.RegEx, ErrorMessage = element.ErrorMessage, ClaimOut = element.ClaimOut };
+                        break;
+                    case DynamicElementTypes.Text:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content };
+                        break;
+                    case DynamicElementTypes.Html:
+                        yield return new ContentDElement { Name = element.Name, DContent = element.Content, IsHtml = true };
+                        break;
+
                     default:
                         throw new NotImplementedException();
                 }
-                i++;
             }
+        }
+
+        private DynamicElementBase GetValueElement(DynamicElement element, List<DynamicElementBase> valueElements, List<Claim> initClaims, int i)
+        {
+            var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
+            if (valueElement == null)
+            {
+                var valueClaim = FilterElementClaim(element, initClaims);
+                if (valueClaim != null)
+                {
+                    valueElement = new DynamicElementBase { DField1 = valueClaim.Value };
+                }
+            }
+
+            return valueElement;
         }
 
         public async Task<(UserIdentifier userIdentifier, string password, int passwordIndex)> ValidateCreateUserViewModelElementsAsync(ModelStateDictionary modelState, List<DynamicElementBase> elements)
@@ -142,18 +168,51 @@ namespace FoxIDs.Logic
                 element.DField1 = element.DField2 = countryCodesLogic.ReturnFullPhoneOnly(element.DField1);
             }
 
-            var elementValidation = await element.ValidateObjectResultsAsync();
-            if (!elementValidation.isValid)
+            if (!(element is ContentDElement))
             {
-                foreach (var result in elementValidation.results)
+                var elementValidation = await element.ValidateObjectResultsAsync();
+                if (!elementValidation.isValid)
                 {
-                    modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", result.ErrorMessage);
+                    foreach (var result in elementValidation.results)
+                    {
+                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
+                    }
                 }
+
+                if (element is CustomDElement customDElement)
+                {
+                    if (!element.DField1.IsNullOrWhiteSpace() && !customDElement.RegEx.IsNullOrWhiteSpace() && !customDElement.ErrorMessage.IsNullOrWhiteSpace())
+                    {
+                        if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
+                        {
+                            modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
+                        }
+                    }
+                }
+
+                index++;
             }
 
             if (element is PhoneDElement)
             {
                 element.DField1 = phoneTempValue;
+            }
+        }
+
+        public void SetModelElementError(ModelStateDictionary modelState, List<DynamicElementBase> elements, string name, string errorMessage)
+        {
+            var index = 0;
+            foreach (var element in elements)
+            {
+                if (!(element is ContentDElement))
+                {
+                    if (element.Name == name)
+                    {
+                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
+                    }
+
+                    index++;
+                }
             }
         }
 
@@ -203,6 +262,11 @@ namespace FoxIDs.Logic
             {
                 claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
             }
+            var CustomDElament = elements.Where(e => e is CustomDElement).FirstOrDefault() as CustomDElement;
+            if (!string.IsNullOrWhiteSpace(CustomDElament?.ClaimOut) && !string.IsNullOrWhiteSpace(CustomDElament?.DField1))
+            {
+                claims.AddClaim(CustomDElament.ClaimOut, CustomDElament.DField1);
+            }
             return (claims, userIdentifierClaimTypes);
         }
 
@@ -225,6 +289,11 @@ namespace FoxIDs.Logic
                         return claims.Where(c => c.Type == JwtClaimTypes.GivenName).FirstOrDefault();
                     case DynamicElementTypes.FamilyName:
                         return claims.Where(c => c.Type == JwtClaimTypes.FamilyName).FirstOrDefault();
+                    case DynamicElementTypes.Custom:
+                        return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
+                    case DynamicElementTypes.Text:
+                    case DynamicElementTypes.Html:
+                        return null;
                     default:
                         throw new NotSupportedException();
                 }

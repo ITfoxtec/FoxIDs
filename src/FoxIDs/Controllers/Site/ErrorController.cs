@@ -275,13 +275,13 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    errorViewModel.Error = string.Format(localizer["The sequence must be completed within {0} minutes. Please try again."], timeout.TotalMinutes);
+                    errorViewModel.Error = string.Format(localizer["For security reasons, the sequence must be completed within {0} minutes. Please try again."], timeout.TotalMinutes);
                 }
                 return View(errorViewModel);
             }
             else if (sequenceException is SequenceBrowserBackException)
             {
-                errorViewModel.Error = string.Format(localizer["It is not possible to go back in the browser at this point. Please try again."]);
+                errorViewModel.Error = string.Format(localizer["For security reasons, you can't go back in the browser at this stage. Please try again."]);
                 return View(errorViewModel);
             }
 

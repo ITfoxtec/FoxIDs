@@ -54,42 +54,32 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowLoginTab(GeneralLoginUpPartyViewModel upParty, LoginTabTypes loginTabTypes)
         {
+            upParty.ShowLoginTab = false;
+            upParty.ShowClaimTransformTab = false;
+            upParty.ShowExtendedUiTab = false;
+            upParty.ShowCreateUserTab = false;
+            upParty.ShowSessionTab = false;
+            upParty.ShowHrdTab = false;
+
             switch (loginTabTypes)
             {
                 case LoginTabTypes.Login:
                     upParty.ShowLoginTab = true;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowCreateUserTab = false;
-                    upParty.ShowSessionTab = false;
-                    upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.ClaimsTransform:
-                    upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = true;
-                    upParty.ShowCreateUserTab = false;
-                    upParty.ShowSessionTab = false;
-                    upParty.ShowHrdTab = false;
+                    break;
+                case LoginTabTypes.ExtendedUi:
+                    upParty.ShowExtendedUiTab = true;
                     break;
                 case LoginTabTypes.CreateUser:
                     InitCreateUser(upParty);
-                    upParty.ShowLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
                     upParty.ShowCreateUserTab = true;
-                    upParty.ShowSessionTab = false;
-                    upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Session:
-                    upParty.ShowLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = true;
-                    upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Hrd:
-                    upParty.ShowLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowCreateUserTab = false;
-                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;
                     break;
                 default:
@@ -157,54 +147,35 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowOAuthTab(IGeneralOAuthUpPartyTabViewModel upParty, OAuthTabTypes oauthTabTypes)
         {
+            upParty.ShowClientTab = false;
+            upParty.ShowClaimTransformTab = false;
+            upParty.ShowExtendedUiTab = false;
+            upParty.ShowLinkExternalUserTab = false;
+            upParty.ShowHrdTab = false;
+            upParty.ShowProfileTab = false;
+            upParty.ShowSessionTab = false;
+
             switch (oauthTabTypes)
             {
                 case OAuthTabTypes.Client:
                     upParty.ShowClientTab = true;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case OAuthTabTypes.ClaimsTransform:
-                    upParty.ShowClientTab = false;
                     upParty.ShowClaimTransformTab = true;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
+                    break;
+                case OAuthTabTypes.ExtendedUi:
+                    upParty.ShowExtendedUiTab= true;
                     break;
                 case OAuthTabTypes.LinkExternalUser:
-                    upParty.ShowClientTab = false;
-                    upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = true;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case OAuthTabTypes.Hrd:
-                    upParty.ShowClientTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
                     upParty.ShowHrdTab = true;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case OAuthTabTypes.Profile:
-                    upParty.ShowClientTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
                     upParty.ShowProfileTab = true;
-                    upParty.ShowSessionTab = false;
                     break;
                 case OAuthTabTypes.Session:
-                    upParty.ShowClientTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
                     upParty.ShowSessionTab = true;
                     break;
                 default:
@@ -214,54 +185,35 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowSamlTab(GeneralSamlUpPartyViewModel upParty, SamlTabTypes samlTabTypes)
         {
+            upParty.ShowSamlTab = false;
+            upParty.ShowClaimTransformTab = false;
+            upParty.ShowExtendedUiTab = false;
+            upParty.ShowLinkExternalUserTab = false;
+            upParty.ShowHrdTab = false;
+            upParty.ShowProfileTab = false;
+            upParty.ShowSessionTab = false;
+
             switch (samlTabTypes)
             {
                 case SamlTabTypes.Saml:
                     upParty.ShowSamlTab = true;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case SamlTabTypes.ClaimsTransform:
-                    upParty.ShowSamlTab = false;
                     upParty.ShowClaimTransformTab = true;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
+                    break;
+                case SamlTabTypes.ExtendedUi:
+                    upParty.ShowExtendedUiTab = true;
                     break;
                 case SamlTabTypes.LinkExternalUser:
-                    upParty.ShowSamlTab = false;
-                    upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = true;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case SamlTabTypes.Hrd:
-                    upParty.ShowSamlTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
                     upParty.ShowHrdTab = true;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case SamlTabTypes.Profile:
-                    upParty.ShowSamlTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
                     upParty.ShowProfileTab = true;
-                    upParty.ShowSessionTab = false;
                     break;
                 case SamlTabTypes.Session:
-                    upParty.ShowSamlTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
                     upParty.ShowSessionTab = true;
                     break;
                 default:
@@ -271,54 +223,35 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowTrackLinkTab(GeneralTrackLinkUpPartyViewModel upParty, TrackLinkTabTypes trackLinkTabTypes)
         {
+            upParty.ShowTrackLinkTab = false;
+            upParty.ShowClaimTransformTab = false;
+            upParty.ShowExtendedUiTab = false;
+            upParty.ShowLinkExternalUserTab = false;
+            upParty.ShowHrdTab = false;
+            upParty.ShowProfileTab = false;
+            upParty.ShowSessionTab = false;
+
             switch (trackLinkTabTypes)
             {
                 case TrackLinkTabTypes.TrackLink:
                     upParty.ShowTrackLinkTab = true;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case TrackLinkTabTypes.ClaimsTransform:
-                    upParty.ShowTrackLinkTab = false;
                     upParty.ShowClaimTransformTab = true;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
+                    break;
+                case TrackLinkTabTypes.ExtendedUi:
+                    upParty.ShowExtendedUiTab = true;
                     break;
                 case TrackLinkTabTypes.LinkExternalUser:
-                    upParty.ShowTrackLinkTab = false;
-                    upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = true;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case TrackLinkTabTypes.Hrd:
-                    upParty.ShowTrackLinkTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
                     upParty.ShowHrdTab = true;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case TrackLinkTabTypes.Profile:
-                    upParty.ShowTrackLinkTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
                     upParty.ShowProfileTab = true;
-                    upParty.ShowSessionTab = false;
                     break;
                 case TrackLinkTabTypes.Session:
-                    upParty.ShowTrackLinkTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
                     upParty.ShowSessionTab = true;
                     break;
                 default:
@@ -328,54 +261,35 @@ namespace FoxIDs.Client.Pages.Components
 
         public void ShowExternalLoginTab(GeneralExternalLoginUpPartyViewModel upParty, ExternalLoginTabTypes externalLoginTabTypes)
         {
+            upParty.ShowExternalLoginTab = false;
+            upParty.ShowClaimTransformTab = false;
+            upParty.ShowExtendedUiTab = false;
+            upParty.ShowLinkExternalUserTab = false;
+            upParty.ShowHrdTab = false;
+            upParty.ShowProfileTab = false;
+            upParty.ShowSessionTab = false;
+
             switch (externalLoginTabTypes)
             {
                 case ExternalLoginTabTypes.ExternalLogin:
                     upParty.ShowExternalLoginTab = true;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.ClaimsTransform:
-                    upParty.ShowExternalLoginTab = false;
                     upParty.ShowClaimTransformTab = true;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
+                    break;
+                case ExternalLoginTabTypes.ExtendedUi:
+                    upParty.ShowExtendedUiTab = true;
                     break;
                 case ExternalLoginTabTypes.LinkExternalUser:
-                    upParty.ShowExternalLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
                     upParty.ShowLinkExternalUserTab = true;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.Hrd:
-                    upParty.ShowExternalLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
                     upParty.ShowHrdTab = true;
-                    upParty.ShowProfileTab = false;
-                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.Profile:
-                    upParty.ShowExternalLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
                     upParty.ShowProfileTab = true;
-                    upParty.ShowSessionTab = false;
                     break;
                 case ExternalLoginTabTypes.Session:
-                    upParty.ShowExternalLoginTab = false;
-                    upParty.ShowClaimTransformTab = false;
-                    upParty.ShowLinkExternalUserTab = false;
-                    upParty.ShowHrdTab = false;
-                    upParty.ShowProfileTab = false;
                     upParty.ShowSessionTab = true;
                     break;
                 default:

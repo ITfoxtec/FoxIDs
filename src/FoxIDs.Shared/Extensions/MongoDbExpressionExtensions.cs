@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace FoxIDs
 {
-    public static class ExpressionExtensions
+    public static class MongoDbExpressionExtensions
     {
         public static Expression<Func<T, bool>> AndAlso<T>(this Expression<Func<T, bool>> leftExpression,
             Expression<Func<T, bool>> rightExpression) =>
@@ -13,7 +13,7 @@ namespace FoxIDs
             Expression<Func<T, bool>> rightExpression) =>
             Combine(leftExpression, rightExpression, Expression.Or);
 
-        public static Expression<Func<T, bool>> Combine<T>(Expression<Func<T, bool>> leftExpression, Expression<Func<T, bool>> rightExpression, Func<Expression, Expression, BinaryExpression> combineOperator)
+        private static Expression<Func<T, bool>> Combine<T>(Expression<Func<T, bool>> leftExpression, Expression<Func<T, bool>> rightExpression, Func<Expression, Expression, BinaryExpression> combineOperator)
         {
             var leftParameter = leftExpression.Parameters[0];
             var rightParameter = rightExpression.Parameters[0];

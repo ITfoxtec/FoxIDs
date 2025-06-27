@@ -54,6 +54,8 @@ namespace FoxIDs.Client.Pages.Components
 
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
         {
+            samlUpParty.ExtendedUis.MapExtendedUis();
+
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
                 afterMap.InitName = afterMap.Name;
@@ -111,9 +113,12 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapSamlClaimTransforms();
                 }
-                if (afterMap.ExternalUserLoadedClaimTransforms?.Count > 0)
+
+                afterMap.ExtendedUis.MapExtendedUis();
+
+                if (afterMap.ExitClaimTransforms?.Count > 0)
                 {
-                    afterMap.ExternalUserLoadedClaimTransforms = afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransforms();
+                    afterMap.ExitClaimTransforms = afterMap.ExitClaimTransforms.MapOAuthClaimTransforms();
                 }
                 if (afterMap.LinkExternalUser?.ClaimTransforms?.Count > 0)
                 {
@@ -296,7 +301,8 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalSamlUpParty.Form.Model.ClaimTransforms.MapSamlClaimTransformsBeforeMap();
-                generalSamlUpParty.Form.Model.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsBeforeMap();
+                generalSamlUpParty.Form.Model.ExtendedUis.MapExtendedUisBeforeMap();
+                generalSamlUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalSamlUpParty.Form.Model.LinkExternalUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
 
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
@@ -317,7 +323,8 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     afterMap.ClaimTransforms.MapSamlClaimTransformsAfterMap();
-                    afterMap.ExternalUserLoadedClaimTransforms.MapOAuthClaimTransformsAfterMap();
+                    afterMap.ExtendedUis.MapExtendedUisAfterMap();
+                    afterMap.ExitClaimTransforms.MapOAuthClaimTransformsAfterMap();
                     afterMap.LinkExternalUser = afterMap.LinkExternalUser.MapLinkExternalUserAfterMap();
 
                     if (!afterMap.EnableIdPInitiated || !(afterMap.IdPInitiatedGrantLifetime > 0))

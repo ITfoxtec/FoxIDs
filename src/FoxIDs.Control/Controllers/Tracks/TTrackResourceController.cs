@@ -6,13 +6,13 @@ using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -22,13 +22,15 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
+        private readonly EmbeddedResourceLogic embeddedResourceLogic;
         private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackResourceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, TrackCacheLogic trackCacheLogic) : base(logger)
+        public TTrackResourceController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, EmbeddedResourceLogic embeddedResourceLogic, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
+            this.embeddedResourceLogic = embeddedResourceLogic;
             this.trackCacheLogic = trackCacheLogic;
         }
 
@@ -45,8 +47,9 @@ namespace FoxIDs.Controllers
             {
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                var resourceItem = mTrack.Resources?.SingleOrDefault(r => r.Id == resourceId);
-                return Ok(mapper.Map<Api.ResourceItem>(resourceItem));
+                var mResourceItem = mTrack.Resources?.SingleOrDefault(r => r.Id == resourceId);
+
+                return Ok(AddDefaultValues(resourceId, mapper.Map<Api.ResourceItem>(mResourceItem ?? new ResourceItem { Id = resourceId, Items = new List<ResourceCultureItem>() })));
             }
             catch (FoxIDsDataException ex)
             {
@@ -95,20 +98,29 @@ namespace FoxIDs.Controllers
                 }
 
                 var mResourceItem = mapper.Map<ResourceItem>(trackResourceItem);
+                mResourceItem.Items = mResourceItem.Items.Where(i => !i.Value.IsNullOrWhiteSpace()).ToList();
+
                 var itemIndex = mTrack.Resources.FindIndex(r => r.Id == trackResourceItem.Id);
-                if (itemIndex > -1)
+                if (mResourceItem.Items.Count() > 0)
                 {
-                    mTrack.Resources[itemIndex] = mResourceItem;
+                    if (itemIndex > -1)
+                    {
+                        mTrack.Resources[itemIndex] = mResourceItem;
+                    }
+                    else
+                    {
+                        mTrack.Resources.Add(mResourceItem);
+                    }
                 }
-                else
+                else if (itemIndex > -1)
                 {
-                    mTrack.Resources.Add(mResourceItem);
+                    mTrack.Resources.RemoveAt(itemIndex);
                 }
                 await tenantDataRepository.UpdateAsync(mTrack);
 
                 await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
-                return Ok(mapper.Map<Api.TrackResourceItem>(mResourceItem));
+                return Ok(AddDefaultValues(trackResourceItem.Id, mapper.Map<Api.TrackResourceItem>(mResourceItem)));
             }
             catch (FoxIDsDataException ex)
             {
@@ -135,12 +147,10 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(trackIdKey);
                 if(mTrack.Resources?.Count > 0)
                 {
-                    var itemIndex = mTrack.Resources.FindIndex(r => r.Id == resourceId);
-                    if (itemIndex > -1)
+                    var removed = mTrack.Resources.RemoveAll(r => r.Id == resourceId);
+                    if (removed > 0)
                     {
-                        mTrack.Resources.RemoveAt(itemIndex);
                         await tenantDataRepository.UpdateAsync(mTrack);
-
                         await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                     }
                 }
@@ -156,6 +166,30 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private Api.ResourceItem AddDefaultValues(int resourceId, Api.ResourceItem resourceItem)
+        {
+            var embeddedResourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
+            var embeddedResourceItem = embeddedResourceEnvelope.Resources.SingleOrDefault(r => r.Id == resourceId);
+            if (embeddedResourceItem == null)
+            {
+                throw new FoxIDsDataException("Embedded resource do not exist.");
+            }
+
+            foreach (var embeddedItem in embeddedResourceItem.Items)
+            {
+                var item = resourceItem.Items.SingleOrDefault(i => i.Culture == embeddedItem.Culture);
+                if (item == null)
+                {
+                    item = new Api.ResourceCultureItem { Culture = embeddedItem.Culture };
+                    resourceItem.Items.Add(item);
+                }
+                item.DefaultValue = embeddedItem.Value;
+            }
+
+            resourceItem.Items = resourceItem.Items.OrderBy(i => i.Culture).ToList();
+            return resourceItem;
         }
     }
 }

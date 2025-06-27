@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FoxIDs.Logic
 {    
@@ -8,5 +9,7 @@ namespace FoxIDs.Logic
         public AccountException() { }
         public AccountException(string message) : base(message) { }
         public AccountException(string message, Exception inner) : base(message, inner) { }
+
+        public List<string> UiErrorMessages { get; set; }
     }
 }

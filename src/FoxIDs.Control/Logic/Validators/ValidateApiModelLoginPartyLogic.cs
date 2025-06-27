@@ -80,6 +80,12 @@ namespace FoxIDs.Logic
                     {
                         isValid = false;
                     }
+
+                    if (!validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis))
+                    {
+                        isValid = false;
+                    }
+
                 }
             }
 

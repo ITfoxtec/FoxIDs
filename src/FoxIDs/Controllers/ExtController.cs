@@ -55,6 +55,7 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
                 logger.ScopeTrace(() => "Show create external user dialog.");
                 return View(nameof(CreateUser), new CreateExternalUserViewModel
@@ -89,6 +90,7 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
                 createExternalUser.Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.Elements).ToList();
 
@@ -115,6 +117,23 @@ namespace FoxIDs.Controllers
                 if (actionResult != null)
                 {
                     await sequenceLogic.RemoveSequenceDataAsync<ExternalUserUpSequenceData>();
+                    switch (sequenceData.UpPartyType)
+                    {
+                        case PartyTypes.Oidc:
+                            await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: sequenceData.UpPartyId.PartyIdToName());
+                            break;
+                        case PartyTypes.Saml2:
+                            await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>(partyName: sequenceData.UpPartyId.PartyIdToName());
+                            break;
+                        case PartyTypes.TrackLink:
+                            await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>(partyName: sequenceData.UpPartyId.PartyIdToName());
+                            break;
+                        case PartyTypes.ExternalLogin:
+                            await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>(partyName: sequenceData.UpPartyId.PartyIdToName());
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
                     return actionResult;
                 }
 
@@ -122,13 +141,13 @@ namespace FoxIDs.Controllers
                 switch (sequenceData.UpPartyType)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.ExternalLogin:
-                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
                     default:
                         throw new NotSupportedException();
                 }

@@ -12,7 +12,8 @@ namespace FoxIDs.Client.Models.ViewModels
         }
 
         [Required]
-        [Display(Name = "Default text (en)")]
+        [MaxLength(Constants.Models.Resource.NameLength)]
+        [Display(Name = "Text look up key (en)")]
         public string Name { get; set; }
     }
 }

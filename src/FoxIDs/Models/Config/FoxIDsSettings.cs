@@ -46,9 +46,9 @@ namespace FoxIDs.Models.Config
         public int SequenceGracePeriod { get; set; } = 7200;
 
         /// <summary>
-        /// Should the sequences be deleted after they have been used, default not deleted.
+        /// Should the sequences be deleted after they have been used, default deleted.
         /// </summary>
-        public bool DeleteUsedSequences { get; set; }
+        public bool DeleteUsedSequences { get; set; } = true;
 
         /// <summary>
         /// Max number of times to send a code with SMS or email. The number is added to RouteBinding.MaxFailingLogins.
@@ -116,5 +116,10 @@ namespace FoxIDs.Models.Config
         /// Add domain to ignore if received in the proxy header. Used for the default domain if the domain is not attaches to a tenant but is used as the generic domain.
         /// </summary>
         public string IgnoreProxyHeaderDomain { get; set; }
+
+        /// <summary>
+        /// Add new resources to the embedded resource file 'EmbeddedResource.json'. Only possible in DEBUG. 
+        /// </summary>
+        public bool SaveNewResourceAsEmbeddedResource { get; set; }
     }
 }

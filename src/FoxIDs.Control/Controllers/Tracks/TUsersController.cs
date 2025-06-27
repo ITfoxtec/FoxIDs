@@ -53,24 +53,14 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-                Expression<Func<User, bool>> whereQuery = u => u.DataType.Equals(dataType);
-                var filterWhereQuerys = GetFilterWhereQuery(filterEmail, filterPhone, filterUsername, filterUserId);
-                if (filterWhereQuerys?.Count() > 0)
-                {
-                    Expression<Func<User, bool>> filterWhereQuery = null; 
-                    foreach (var fwq in filterWhereQuerys)
-                    {
-                        if (filterWhereQuery == null)
-                        {
-                            filterWhereQuery = fwq;
-                        }
-                        else
-                        {
-                            filterWhereQuery = filterWhereQuery.Or(fwq);
-                        }
-                    }
-                    whereQuery = whereQuery.AndAlso(filterWhereQuery);
-                }
+                var queryFilters = !filterEmail.IsNullOrWhiteSpace() || !filterPhone.IsNullOrWhiteSpace() || !filterUsername.IsNullOrWhiteSpace() || !filterUserId.IsNullOrWhiteSpace();
+                Expression<Func<User, bool>> whereQuery = u => !queryFilters ? u.DataType.Equals(dataType) :
+                    u.DataType.Equals(dataType) && (
+                        (!filterEmail.IsNullOrWhiteSpace() && u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase)) ||
+                        (!filterPhone.IsNullOrWhiteSpace() && u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase)) ||
+                        (!filterUsername.IsNullOrWhiteSpace() && u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase)) ||
+                        (!filterUserId.IsNullOrWhiteSpace() && u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase)) 
+                    );
 
                 (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
@@ -93,26 +83,6 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.User).Name, new { filterEmail, filterPhone, filterUsername, filterUserId }.ToJson());
                 }
                 throw;
-            }
-        }
-
-        private IEnumerable<Expression<Func<User, bool>>> GetFilterWhereQuery(string filterEmail, string filterPhone, string filterUsername, string filterUserId)
-        {
-            if (!filterEmail.IsNullOrWhiteSpace())
-            {
-                yield return u => u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase);
-            }
-            if (!filterPhone.IsNullOrWhiteSpace())
-            {
-                yield return u => u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase);
-            }
-            if (!filterUsername.IsNullOrWhiteSpace())
-            {
-                yield return u => u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase);
-            }
-            if (!filterUserId.IsNullOrWhiteSpace())
-            {
-                yield return u => u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase);
             }
         }
 

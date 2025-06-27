@@ -11,6 +11,11 @@
 
         Name = 20,
         GivenName = 21,
-        FamilyName = 22
+        FamilyName = 22,
+
+        Text = 200,
+        Html = 210,
+
+        Custom = 1000
     }
 }

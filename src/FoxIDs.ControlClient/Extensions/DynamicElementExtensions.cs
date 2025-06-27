@@ -6,7 +6,7 @@ namespace FoxIDs.Client
 {
     public static class DynamicElementExtensions
     {
-        public static List<DynamicElement> MapLinkExternalUserAfterMap(this List<DynamicElement> elements)
+        public static List<DynamicElement> MapDynamicElementsAfterMap(this List<DynamicElement> elements)
         {
             if (elements?.Count() > 0)
             {

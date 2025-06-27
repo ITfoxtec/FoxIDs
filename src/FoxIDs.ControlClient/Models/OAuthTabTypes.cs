@@ -5,6 +5,7 @@
         Client,
         Resource,
         ClaimsTransform,
+        ExtendedUi,
         LinkExternalUser,
         Hrd,
         Profile,

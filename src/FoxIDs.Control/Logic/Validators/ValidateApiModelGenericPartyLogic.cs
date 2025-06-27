@@ -16,10 +16,12 @@ namespace FoxIDs.Logic
     public class ValidateApiModelGenericPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelGenericPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelGenericPartyLogic(TelemetryScopedLogger logger, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
 
         public bool ValidateApiModelClaimTransforms<T>(ModelStateDictionary modelState, List<T> claimTransforms, string errorFieldName = nameof(Api.OAuthDownParty.ClaimTransforms)) where T : Api.ClaimTransform
@@ -120,6 +122,28 @@ namespace FoxIDs.Logic
                 logger.Warning(vex);
                 modelState.TryAddModelError(errorFieldName.ToCamelCase(), vex.Message);
             }
+            return isValid;
+        }
+
+        public bool ValidateExtendedUi(ModelStateDictionary modelState, List<Api.ExtendedUi> extendedUis)
+        {
+            var isValid = true;
+            if (extendedUis?.Count() > 0)
+            {
+                foreach (var extendedUi in extendedUis)
+                {
+                    if (!validateApiModelDynamicElementLogic.ValidateApiModelExtendedUiElements(modelState, extendedUi.Elements))
+                    {
+                        isValid = false;
+                    }
+
+                    if (!ValidateApiModelClaimTransforms(modelState, extendedUi.ClaimTransforms))
+                    {
+                        isValid = false;
+                    }
+                } 
+            }
+
             return isValid;
         }
     }

@@ -21,6 +21,14 @@ namespace FoxIDs.Models
         [EnumMember(Value = "given_name")]
         GivenName = 21,
         [EnumMember(Value = "family_name")]
-        FamilyName = 22
+        FamilyName = 22,
+
+        [EnumMember(Value = "text")]
+        Text = 200,
+        [EnumMember(Value = "html")]
+        Html = 210,
+
+        [EnumMember(Value = "custom")]
+        Custom = 1000
     }
 }

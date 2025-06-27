@@ -40,6 +40,7 @@ namespace FoxIDs.Models
 
         public bool AutoMapSamlClaims { get; set; }
 
+        public TrackResourceEnvelope ResourceEnvelope { get; set; }
         public List<ResourceItem> Resources { get; set; }
 
         public bool ShowResourceId { get; set; }

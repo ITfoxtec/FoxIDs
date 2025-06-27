@@ -89,7 +89,7 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
             return results;
         }
@@ -102,31 +102,31 @@ namespace FoxIDs.Models
             {
                 if (ResponseMode.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{ResponseMode}' is required.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}" }));
+                    results.Add(new ValidationResult($"The field '{ResponseMode}' is required.", [$"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}"]));
                 }
                 if (ResponseType.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"The field '{ResponseType}' is required.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                    results.Add(new ValidationResult($"The field '{ResponseType}' is required.", [$"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}"]));
                 }
 
                 if (EnablePkce && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) != true)
                 {
-                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] {  $"{nameof(OAuthUpParty.Client)}.{nameof(EnablePkce)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", [$"{nameof(OAuthUpParty.Client)}.{nameof(EnablePkce)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}"]));
                 }
                 if (ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
                 {
                     if (TokenUrl.IsNullOrEmpty())
                     {
-                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", [$"{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}"]));
                     }
                     if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
                     {
-                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OAuthUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OAuthUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", [$"{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}"]));
                     }
                 }
                 if (!(ResponseMode.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode.Equals(IdentityConstants.ResponseModes.FormPost) == true))
                 {
-                    results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}" }));
+                    results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", [$"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}"]));
                 }
             }
             return results;

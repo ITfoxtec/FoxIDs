@@ -66,7 +66,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "auto_map_saml_claims")]
         public bool AutoMapSamlClaims { get; set; }
 
-        [ListLength(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "resource_envelope")]
+        public TrackResourceEnvelope ResourceEnvelope { get; set; }
+
+        [ListLength(Constants.Models.Track.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
 

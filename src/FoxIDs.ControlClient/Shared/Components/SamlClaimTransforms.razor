@@ -161,26 +161,26 @@
                             else if (claimTransform.Task != ClaimTransformTasks.QueryInternalUser && claimTransform.Task != ClaimTransformTasks.QueryExternalUser && (claimTransform.Type == ClaimTransformTypes.MatchClaim || claimTransform.Type == ClaimTransformTypes.Match || claimTransform.Type == ClaimTransformTypes.RegexMatch))
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
-                                    <option value="@ClaimTransformActions.Add">Add claim</option>
-                                    <option value="@ClaimTransformActions.AddIfNot">Add claim, if not match</option>
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
                                     <option value="@ClaimTransformActions.ReplaceIfNot">Replace claim, if not match</option>
+                                    <option value="@ClaimTransformActions.Add">Add claim</option>
+                                    <option value="@ClaimTransformActions.AddIfNot">Add claim, if not match</option>
                                     <option value="@ClaimTransformActions.Remove">Remove claim</option>
                                 </FInputSelect>
                             }
                             else if (claimTransform.Type == ClaimTransformTypes.Map || claimTransform.Type == ClaimTransformTypes.RegexMap)
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
-                                    <option value="@ClaimTransformActions.Add">Add claim</option>
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
+                                    <option value="@ClaimTransformActions.Add">Add claim</option>
                                     <option value="@ClaimTransformActions.AddIfNotOut">Add claim, if new claim do not exist</option>
                                 </FInputSelect>
                             }
                             else
                             {
                                 <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
-                                    <option value="@ClaimTransformActions.Add">Add claim</option>
                                     <option value="@ClaimTransformActions.Replace">Replace claim</option>
+                                    <option value="@ClaimTransformActions.Add">Add claim</option>
                                 </FInputSelect>
                             }
                         </div>

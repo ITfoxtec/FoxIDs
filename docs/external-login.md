@@ -25,7 +25,7 @@ The external login UI can be [customised](customisation.md).
 You need to implement a simple API that FoxIDs calls on every authentication request.  
 Please have a look at the [sample code](#api-sample).
 
-The API has a base URL and the functionality is divided into folders. Currently, only the `authentication` folder (functionality) for validating the username and password is support.  
+The API has a base URL, and the functionality is divided into folders. Currently, only the `authentication` folder (functionality) for validating the username and password is support.  
 *Other folders for changing passwords and creating new users will be added later.*
 
 If the base URL for the API is `https://somewhere.org/mystore` the URL for the `authentication` folder will be `https://somewhere.org/mystore/authentication`.
@@ -112,14 +112,14 @@ The API must return HTTP code 400, 401 or 403 and an `error` (required) if the u
 ```
 
 If other errors occur, the API should return HTTP code 500 or another appropriate error code. 
-It is recommended to add a technical error message in to the return body. The error message can then later be found in the FoxIDs logs.  
+It is recommended to add a technical error message in `ErrorMessage`. The error message can then later be found in the FoxIDs logs.  
 
-> Error messages returned from the API is NOT displayed for the user only logged.
+> Error messages returned from the API in `ErrorMessage` is NOT displayed for the user only logged.
 
 ## API Sample
-The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample) show how to implement the API in ASP.NET Core 8.
+The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample) show how to implement the API in ASP.NET Core.
 
-You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample/external-login-api.postman_collection.json) to call and test the sample with [Postman](https://www.postman.com/downloads/).
+You can user this [Postman collection](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample/external-login-api.postman_collection.json) to call and test your API with [Postman](https://www.postman.com/downloads/).
 
 ## Configure 
 Configure an external login authentication method to call your API in [FoxIDs Control Client](control.md#foxids-control-client).

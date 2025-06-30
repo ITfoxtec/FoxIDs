@@ -143,19 +143,15 @@ namespace FoxIDs.Logic
                 {
                     if (scopedLogger.LogInfoTrace)
                     {
-                        rating += 0.4;
+                        rating += 0.03;
                     }
                     if (scopedLogger.LogClaimTrace)
                     {
-                        rating += 0.8;
+                        rating += 0.07;
                     }
                     if (scopedLogger.LogMessageTrace)
                     {
-                        rating += 1.0;
-                    }
-                    if (scopedLogger.LogMetric)
-                    {
-                        rating += 0.2;
+                        rating += 0.1;
                     }
                 }
 
@@ -164,23 +160,19 @@ namespace FoxIDs.Logic
                 {
                     foreach (var scopedStreamLogger in scopedStreamLoggers)
                     {
-                        rating += 0.2;
+                        rating += 0.01;
 
                         if (scopedStreamLogger.LogInfoTrace)
                         {
-                            rating += 0.02;
+                            rating += 0.001;
                         }
                         if (scopedStreamLogger.LogClaimTrace)
                         {
-                            rating += 0.06;
+                            rating += 0.002;
                         }
                         if (scopedStreamLogger.LogMessageTrace)
                         {
-                            rating += 0.08;
-                        }
-                        if (scopedStreamLogger.LogMetric)
-                        {
-                            rating += 0.01;
+                            rating += 0.004;
                         }
                     }
                 }

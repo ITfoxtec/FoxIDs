@@ -2,17 +2,17 @@
 <div class="info-text">
     Create on or more extended UIs which can be shown for the user in the login flow.
     <div class="pb-2"></div>
-    You select an extended UI in the login flow by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> with the extended UI name in the first-level claim transforms.
+    You select an extended UI page in the login flow by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> with the extended UI page name in the first-level claim transforms.
     @if (IsSaml)
     {
         <div class="small">
-            Optionally link with corresponding SAML 2.0 claim in first-level claim transforms:<br />
+            Optionally select with the corresponding SAML 2.0 claim in first-level claim transforms:<br />
             <ul>
                 <li><code>@Constants.JwtClaimTypes.OpenExtendedUi</code> equals to <code>@Constants.SamlClaimTypes.OpenExtendedUi</code></li>
             </ul>
         </div>
     }
-    Subsequently extended UIs can be selected in the extended UI claim transformations.
+    Subsequently extended UI pages can be selected in the extended UI claim transforms.
     <div class="pb-2"></div>
     In order to support multiple languages, the different texts are written as English texts and translations are added under Settings and Texts.
 </div>
@@ -47,7 +47,7 @@
                                         <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
                                         <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
                                         <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
-                                        <div class="info-text">The generic error message is displayed if the API returns a generic error.</div>
+                                        <div class="info-text">The generic error message is displayed for the user if the API returns a generic error.</div>
                                         <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
 
-                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the extended UI name.</div>
+                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI page by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the next extended UI page name.</div>
                         <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
                     </div>
                     <div class="col-1 text-right">

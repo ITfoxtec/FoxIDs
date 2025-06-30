@@ -46,9 +46,9 @@ namespace FoxIDs.Models.Config
         public int SequenceGracePeriod { get; set; } = 7200;
 
         /// <summary>
-        /// Should the sequences be deleted after they have been used, default not deleted.
+        /// Should the sequences be deleted after they have been used, default deleted.
         /// </summary>
-        public bool DeleteUsedSequences { get; set; }
+        public bool DeleteUsedSequences { get; set; } = true;
 
         /// <summary>
         /// Max number of times to send a code with SMS or email. The number is added to RouteBinding.MaxFailingLogins.

@@ -198,7 +198,8 @@ namespace FoxIDs.Logic
 
         private static void ValidateDuplicatedElementType(List<Api.DynamicElement> dynamicElement)
         {
-            var duplicatedElementType = dynamicElement.GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+            var duplicatedElementType = dynamicElement.Where(ct => ct.Type != Api.DynamicElementTypes.Custom && ct.Type != Api.DynamicElementTypes.Text && ct.Type != Api.DynamicElementTypes.Html)
+                .GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedElementType > 0)
             {
                 throw new ValidationException($"Duplicated create user dynamic element type '{duplicatedElementType}'");

@@ -100,7 +100,8 @@
     {
         var extendedUi = new ExtendedUiViewModel
             {
-                Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name))
+                Name = RandomName.GenerateDefaultName(Model.Select(p => p.Name)),
+                ShowDetails = true
             };
         Model.Add(extendedUi);
     }

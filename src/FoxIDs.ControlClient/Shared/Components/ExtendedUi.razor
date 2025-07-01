@@ -35,31 +35,54 @@
                         <FInputText @bind-Value="extendedUi.Name" For="@(() => extendedUi.Name)" />
                         <FInputText @bind-Value="extendedUi.Title" For="@(() => extendedUi.Title)" />
                         <FInputText @bind-Value="extendedUi.SubmitButtonText" For="@(() => extendedUi.SubmitButtonText)" />
-
-                        <DynamicElements Model="extendedUi" />
-
-                        <div class="info-text">The claims from the dynamic elements are added, unless you call an API, in which case the claims returned from the API are added instead.</div>
-                        <div class="pt-2">
-                            <div class="active-group active">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="info-text">Optionally call an API on submit to validate input and return claims or an error.</div>
-                                        <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
-                                        <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
-                                        <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
-                                        <div class="info-text">The generic error message is displayed for the user if the API returns a generic error.</div>
-                                        <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
-                                    </div>
-                                </div>
-                                <label class="label-control">API validation</label>
-                            </div>
-                        </div>
-
-                        <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI page by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the next extended UI page name.</div>
-                        <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
                     </div>
                     <div class="col-1 text-right">
                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveExtendedUi(e, extendedUi))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        @if (extendedUi.ShowDetails)
+                        {
+                            <DynamicElements Model="extendedUi" />
+
+                            <div class="info-text">The claims from the dynamic elements are added, unless you call an API, in which case the claims returned from the API are added instead.</div>
+                            <div class="pt-2">
+                                <div class="active-group active">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="info-text">Optionally call an API on submit to validate input and return claims or an error.</div>
+                                            <FInputTextList @bind-ValueList="extendedUi.ExternalClaimsIn" For="@(() => extendedUi.ExternalClaimsIn)" DynamicFirstRow="true" />
+                                            <FInputText @bind-Value="extendedUi.ApiUrl" For="@(() => extendedUi.ApiUrl)" />
+                                            <FInputText @bind-Value="extendedUi.Secret" For="@(() => extendedUi.Secret)" />
+                                            <div class="info-text">The generic error message is displayed for the user if the API returns a generic error.</div>
+                                            <FInputText @bind-Value="extendedUi.ErrorMessage" For="@(() => extendedUi.ErrorMessage)" />
+                                        </div>
+                                    </div>
+                                    <label class="label-control">API validation</label>
+                                </div>
+                            </div>
+
+                            <div class="info-text">The claim transforms run after successful completion of this external UI. You can optionally select the next external UI page by adding the claim type <code>@Constants.JwtClaimTypes.OpenExtendedUi</code> @(IsSaml ? "(JWT claim only)" : string.Empty) with the next extended UI page name.</div>
+                            <OAuthClaimTransforms ClaimTransforms="extendedUi.ClaimTransforms" />
+                        }
+                        else
+                        {
+                            <div class="card">
+                                <div class="card-body">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-1 text-right">
+                        @if (extendedUi.ShowDetails)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => extendedUi.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => extendedUi.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                        }
                     </div>
                 </div>
             </li>

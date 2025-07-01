@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
                 }
 
                 await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
-                return await AuthResponsePostAsync(extLoginUpParty, sequenceData, claims, externalUserClaims);
+                return await LoginResponsePostAsync(extLoginUpParty, sequenceData, claims, externalUserClaims);
             }
             catch (OAuthRequestException orex)
             {
@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
             return (externalUserClaims, externalUserActionResult);
         }
 
-        public async Task<IActionResult> AuthResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
+        public async Task<IActionResult> LoginResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
             var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(extendedUiSequenceData.UpPartyId);
@@ -132,7 +132,7 @@ namespace FoxIDs.Logic
                 }
 
                 await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>(partyName: party.Name);
-                return await AuthResponsePostAsync(party, sequenceData, claims, externalUserClaims);
+                return await LoginResponsePostAsync(party, sequenceData, claims, externalUserClaims);
             }
             catch (OAuthRequestException orex)
             {
@@ -142,14 +142,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> AuthResponsePostExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
+        public async Task<IActionResult> LoginResponsePostExternalUserAsync(ExternalUserUpSequenceData externalUserSequenceData, IEnumerable<Claim> externalUserClaims)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: true);
             var party = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(externalUserSequenceData.UpPartyId);
             
             try
             {
-                return await AuthResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims);
+                return await LoginResponsePostAsync(party, sequenceData, externalUserSequenceData.Claims?.ToClaimList(), externalUserClaims);
             }
             catch (OAuthRequestException orex)
             {
@@ -159,7 +159,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthResponsePostAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims)
+        private async Task<IActionResult> LoginResponsePostAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims, IEnumerable<Claim> externalUserClaims)
         {
             claims = externalUserLogic.AddExternalUserClaims(extLoginUpParty, claims, externalUserClaims);
 
@@ -176,7 +176,7 @@ namespace FoxIDs.Logic
             return await LoginResponseDownAsync(sequenceData, transformedClaims);
         }
 
-        public async Task<IActionResult> LoginResponseDownAsync(ExternalLoginUpSequenceData sequenceData, List<Claim> claims)
+        private async Task<IActionResult> LoginResponseDownAsync(ExternalLoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => $"AuthMethod, External Login, Application type {sequenceData.DownPartyLink.Type}.");
             switch (sequenceData.DownPartyLink.Type)

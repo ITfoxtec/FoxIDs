@@ -193,7 +193,7 @@ namespace FoxIDs.Controllers
                 switch (sequenceData.UpPartyType)
                 {
                     case PartyTypes.Login:
-                        return await serviceProvider.GetService<LoginPageLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
+                        return await serviceProvider.GetService<LoginUpLogic>().LoginResponsePostExtendedUiAsync(sequenceData, transformedClaims);
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestPostExtendedUiAsync(sequenceData, transformedClaims);
                     case PartyTypes.Saml2:
@@ -201,7 +201,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
                     case PartyTypes.ExternalLogin:
-                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostExtendedUiAsync(sequenceData, transformedClaims);
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponsePostExtendedUiAsync(sequenceData, transformedClaims);
                     default:
                         throw new NotSupportedException();
                 }

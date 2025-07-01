@@ -27,10 +27,10 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
-        private readonly ExtendedUiLogic extendedUiLogic;
+        private readonly ClaimValidationLogic claimValidationLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
-            this.extendedUiLogic = extendedUiLogic;
+            this.claimValidationLogic = claimValidationLogic;
             this.planCacheLogic = planCacheLogic;
         }
 
@@ -297,35 +297,18 @@ namespace FoxIDs.Logic
             else
             {
                 var sessionId = await sessionLogic.GetSessionIdAsync(loginUpParty);
-                (claims, var actionResult) = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId);
-                if (actionResult != null)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-                    return actionResult;
-                }
-
+                claims = await GetClaimsAsync(loginUpParty, sequenceData, newDownPartyLink, user, authTime, sessionId);
                 await sessionLogic.CreateSessionAsync(loginUpParty, authTime, GetLoginUserIdentifier(user, sequenceData.UserIdentifier), claims);
             }
 
-            var extendedUiActionResult = await HandleExtendedUiAsync(loginUpParty, sequenceData, claims);
-            if (extendedUiActionResult != null)
-            {
-                return extendedUiActionResult;
-            }
-
-            return await LoginResponsePostAsync(loginUpParty, sequenceData, claims);
-        }
-
-        private async Task<IActionResult> LoginResponsePostAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
-        {
-            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            (var transformedClaims, var actionResult) = await TransformClaimsAsync(loginUpParty, sequenceData, claims);
             if (actionResult != null)
             {
                 await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                 return actionResult;
             }
 
-            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, transformedClaims);
+            return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(loginUpParty, sequenceData, transformedClaims);
         }
 
         private LoginUserIdentifier GetLoginUserIdentifier(User user, string userIdentifier)
@@ -338,31 +321,6 @@ namespace FoxIDs.Logic
                 Username = user.Username,
                 UserIdentifier = userIdentifier
             };
-        }
-
-        private async Task<IActionResult> HandleExtendedUiAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
-        {
-            var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(loginUpParty, sequenceData, claims,
-                (extendedUiUpSequenceData) => { });
-
-            return extendedUiActionResult;
-        }
-
-        public async Task<IActionResult> AuthResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
-        {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
-            var party = await tenantDataRepository.GetAsync<LoginUpParty>(extendedUiSequenceData.UpPartyId);
-
-            try
-            {
-                return await LoginResponsePostAsync(party, sequenceData, claims);
-            }
-            catch (OAuthRequestException orex)
-            {
-                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
-                logger.Error(orex);
-                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
-            }
         }
 
         public bool ValidSessionUpAgainstSequence(ILoginUpSequenceDataBase sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
@@ -395,7 +353,12 @@ namespace FoxIDs.Logic
             if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
             {
                 await sessionLogic.AddOrUpdateSessionTrackAsync(loginUpParty, sequenceData.DownPartyLink);
-                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(sequenceData, session.Claims.ToClaimList());
+                (var transformedClaims, var actionResult) = await TransformClaimsAsync(loginUpParty, sequenceData, session.Claims.ToClaimList());
+                if (actionResult != null)
+                {
+                    return actionResult;
+                }
+                return await serviceProvider.GetService<LoginUpLogic>().LoginResponseAsync(loginUpParty, sequenceData, transformedClaims);
             }
             else
             {
@@ -403,7 +366,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, User user, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var claims = new List<Claim>();
             claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
@@ -440,17 +403,24 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
-            logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             await sessionLogic.CreateOrUpdateMarkerSessionAsync(loginUpParty, newDownPartyLink);
 
+            logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return claims;
+        }
+
+        private async Task<(List<Claim> claims, IActionResult actionResult)> TransformClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
             (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)
             {
                 return (null, actionResult);
             }
-            logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (transformedClaims, null);
+
+            var validClaims = claimValidationLogic.ValidateUpPartyClaims(["*"], transformedClaims);
+            logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (validClaims, null);
         }
 
         public async Task<(List<Claim> claims, IActionResult actionResult)> GetCreateUserTransformedClaimsAsync(LoginUpParty party, LoginUpSequenceData sequenceData, List<Claim> claims)
@@ -461,8 +431,10 @@ namespace FoxIDs.Logic
             {
                 return (null, actionResult);
             }
-            logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (transformedClaims, null);
+
+            var validClaims = claimValidationLogic.ValidateUpPartyClaims(["*"], transformedClaims);
+            logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (validClaims, null);
         }
 
         internal T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier = false) where T : LoginBaseViewModel, new()

@@ -72,17 +72,17 @@ namespace FoxIDs.Logic
             {
                 var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 var sessionId = await sessionLogic.GetSessionIdAsync(extLoginUpParty);
-                (claims, var actionResult) = await GetClaimsAsync(extLoginUpParty, sequenceData, newDownPartyLink, userClaims, authTime, sessionId, acrClaims);
-                if (actionResult != null)
-                {
-                    await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
-                    return actionResult;
-                }
-
+                claims = await GetClaimsAsync(extLoginUpParty, sequenceData, newDownPartyLink, userClaims, authTime, sessionId, acrClaims);
                 await sessionLogic.CreateSessionAsync(extLoginUpParty, authTime, GetLoginUserIdentifier(userIdentifier), claims);
             }
 
-            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, sequenceData, claims);
+            (var transformedClaims, var actionResult) = await TransformClaimsAsync(extLoginUpParty, sequenceData, claims);
+            if (actionResult != null)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<ExternalLoginUpSequenceData>();
+                return actionResult;
+            }
+            return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, sequenceData, transformedClaims);
         }
 
         private static LoginUserIdentifier GetLoginUserIdentifier(string userIdentifier)
@@ -97,7 +97,12 @@ namespace FoxIDs.Logic
             if (session != null && await sessionLogic.UpdateSessionAsync(extLoginUpParty, session))
             {
                 await sessionLogic.AddOrUpdateSessionTrackAsync(extLoginUpParty, sequenceData.DownPartyLink);
-                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, sequenceData, session.Claims.ToClaimList());
+                (var transformedClaims, var actionResult) = await TransformClaimsAsync(extLoginUpParty, sequenceData, session.Claims.ToClaimList());
+                if (actionResult != null)
+                {
+                    return actionResult;
+                }
+                return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponseAsync(extLoginUpParty, sequenceData, transformedClaims);
             }
             else
             {
@@ -105,7 +110,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim> claims, IActionResult actionResult)> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
+        private async Task<List<Claim>> GetClaimsAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, DownPartySessionLink newDownPartyLink, IEnumerable<Claim> userClaims, long authTime, string sessionId, IEnumerable<Claim> acrClaims = null)
         {
             var subject = userClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
 
@@ -129,10 +134,15 @@ namespace FoxIDs.Logic
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, extLoginUpParty.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, extLoginUpParty.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, extLoginUpParty.Type.GetPartyTypeValue());
-            logger.ScopeTrace(() => $"AuthMethod, External login, with added JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             await sessionLogic.CreateOrUpdateMarkerSessionAsync(extLoginUpParty, newDownPartyLink);
 
+            logger.ScopeTrace(() => $"AuthMethod, External login, with added JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return claims;
+        }
+
+        private async Task<(List<Claim> claims, IActionResult actionResult)> TransformClaimsAsync(ExternalLoginUpParty extLoginUpParty, ExternalLoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
             (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((extLoginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)
             {

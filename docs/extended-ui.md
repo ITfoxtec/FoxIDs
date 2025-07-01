@@ -4,7 +4,7 @@ You can extend the login user interface (UI) flow with custom login pages build 
 It is possible to create multiple custom UIs with different dynamic elements.  
 Each extended UI page can optionally [call an API](#implement-api). If an API is called the returned claims is added to the claims collection otherwise the input values is added as the output claim type defined on the dynamic elements.
 
-The dynamic elements consist of fixed fields a customisable field and both text and HTML content elements. With this you can easily ask for the user's name, one or more self defined fields and show a logo and a link on a extended UI page.
+The dynamic elements consist of fixed fields a customisable field and both text and HTML content elements. With this you can easily ask for the user's name, use one or more self defined fields and show a logo and a link on a extended UI page.
 
 > Extended UIs can be added to the following authentication methods in the **Extended UI** tab; login, external login, OpenID Connect, SAML 2.0 and environment link. 
 
@@ -17,10 +17,10 @@ Subsequently extended UI pages can be selected in the extended UI claim transfor
 This example page asks the user to enter their social security number (shown in two languages). 
 The example extended UI adds the input value to the claims collection as the claim type `social_security_number`. In a real-world scenario, you would probably call an API to validate the social security number.  
 In English:  
-![Extended UI with Social security number in English](images/extended-ui-sample1-en.png)
+![Extended UI with Social security number field in English](images/extended-ui-sample1-en.png)
 
 In Danish:  
-![Extended UI with Social security number in Danish](images/extended-ui-sample1-dk.png)
+![Extended UI with Social security number field in Danish](images/extended-ui-sample1-dk.png)
 
 The example page is configured in a SAML 2.0 authentication method with three elements.
 

@@ -58,14 +58,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Emails per month")]
         public PlanItem Emails { get; set; }
 
-        [Required]
-        [Display(Name = "Control API gets per month")]
-        public PlanItem ControlApiGetRequests { get; set; }
-
-        [Required]
-        [Display(Name = "Control API updates per month")]
-        public PlanItem ControlApiUpdateRequests { get; set; }
-
         [Display(Name = "Log lifetime")]
         public LogLifetimeOptionsVievModel? LogLifetime { get; set; }
     }

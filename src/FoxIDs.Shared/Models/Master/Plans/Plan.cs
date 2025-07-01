@@ -88,14 +88,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "emails")]
         public PlanItem Emails { get; set; } = new PlanItem();
 
-        [Required]
-        [JsonProperty(PropertyName = "control_api_get_req")]
-        public PlanItem ControlApiGetRequests { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "control_api_upd_req")]
-        public PlanItem ControlApiUpdateRequests { get; set; }
-
         [JsonProperty(PropertyName = "log_lifetime")]
         public LogLifetimeOptions? LogLifetime { get; set; }
 

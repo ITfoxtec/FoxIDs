@@ -27,10 +27,9 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
-        private readonly ClaimValidationLogic claimValidationLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -39,7 +38,6 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
-            this.claimValidationLogic = claimValidationLogic;
             this.planCacheLogic = planCacheLogic;
         }
 
@@ -418,9 +416,8 @@ namespace FoxIDs.Logic
                 return (null, actionResult);
             }
 
-            var validClaims = claimValidationLogic.ValidateUpPartyClaims(["*"], transformedClaims);
-            logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (validClaims, null);
+            logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (transformedClaims, null);
         }
 
         public async Task<(List<Claim> claims, IActionResult actionResult)> GetCreateUserTransformedClaimsAsync(LoginUpParty party, LoginUpSequenceData sequenceData, List<Claim> claims)
@@ -432,9 +429,8 @@ namespace FoxIDs.Logic
                 return (null, actionResult);
             }
 
-            var validClaims = claimValidationLogic.ValidateUpPartyClaims(["*"], transformedClaims);
-            logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return (validClaims, null);
+            logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return (transformedClaims, null);
         }
 
         internal T GetLoginWithUserIdentifierViewModel<T>(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, bool supportChangeUserIdentifier = false) where T : LoginBaseViewModel, new()

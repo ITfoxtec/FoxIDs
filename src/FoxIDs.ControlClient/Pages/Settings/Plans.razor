@@ -126,22 +126,6 @@
                                 <FInputNumberLN @bind-Value="plan.Form.Model.Emails.FirstLevelThreshold" For="@(() => plan.Form.Model.Emails.FirstLevelThreshold)" />
                                 <FInputNumberDN @bind-Value="plan.Form.Model.Emails.SecondLevelCost" For="@(() => plan.Form.Model.Emails.SecondLevelCost)" />
                             </li>
-                            <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.ControlApiGetRequests)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiGetRequests.Included" For="@(() => plan.Form.Model.ControlApiGetRequests.Included)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequests.LimitedThreshold" For="@(() => plan.Form.Model.ControlApiGetRequests.LimitedThreshold)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiGetRequests.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiGetRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequests.SecondLevelCost)" />
-                            </li>
-                            <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.ControlApiUpdateRequests)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiUpdateRequests.Included" For="@(() => plan.Form.Model.ControlApiUpdateRequests.Included)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.LimitedThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequests.LimitedThreshold)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequests.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost)" />
-                            </li>
                         </ul>
 
                         <FInputSelect @bind-Value="plan.Form.Model.LogLifetime" For="@(() => plan.Form.Model.LogLifetime)">

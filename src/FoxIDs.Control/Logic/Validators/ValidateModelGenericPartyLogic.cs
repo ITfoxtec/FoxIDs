@@ -313,25 +313,25 @@ namespace FoxIDs.Logic
             var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiCreateUserClaimTransforms = aUpParty.CreateUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiCreateUserClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true || apiExitClaimTransforms?.Any() == true || apiCreateUserClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiExitClaimTransforms.Any())
+                if (apiExitClaimTransforms?.Any() == true)
                 {
                     foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiCreateUserClaimTransforms.Any())
+                if (apiCreateUserClaimTransforms?.Any() == true)
                 {
                     foreach (var mCreateUserClaimTransforms in mUpParty.CreateUser.ClaimTransforms.Where(c => apiCreateUserClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -348,25 +348,25 @@ namespace FoxIDs.Logic
             var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiLinkExternalUserClaimTransforms = aUpParty.LinkExternalUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiLinkExternalUserClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true || apiExitClaimTransforms?.Any() == true || apiLinkExternalUserClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiExitClaimTransforms.Any())
+                if (apiExitClaimTransforms?.Any() == true)
                 {
                     foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiLinkExternalUserClaimTransforms.Any())
+                if (apiLinkExternalUserClaimTransforms?.Any() == true)
                 {
                     foreach (var mLinkExternalUserClaimTransforms in mUpParty.LinkExternalUser.ClaimTransforms.Where(c => apiLinkExternalUserClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -381,11 +381,11 @@ namespace FoxIDs.Logic
             where MUpParty : UpParty, IOAuthClaimTransformsRef, ILinkExternalUserRef
         {
             var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -402,25 +402,25 @@ namespace FoxIDs.Logic
             var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
             var apiLinkExternalUserClaimTransforms = aUpParty.LinkExternalUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiLinkExternalUserClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true || apiExitClaimTransforms?.Any() == true || apiLinkExternalUserClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiExitClaimTransforms.Any())
+                if (apiExitClaimTransforms?.Any() == true)
                 {
                     foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
                         mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
-                if (apiLinkExternalUserClaimTransforms.Any())
+                if (apiLinkExternalUserClaimTransforms?.Any() == true)
                 {
                     foreach (var mLinkExternalUserClaimTransforms in mUpParty.LinkExternalUser.ClaimTransforms.Where(c => apiLinkExternalUserClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -435,11 +435,11 @@ namespace FoxIDs.Logic
             where MDownParty : DownParty, IOAuthClaimTransformsRef
         {
             var apiClaimTransforms = aDownParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MDownParty>(mDownParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mDownParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -454,11 +454,11 @@ namespace FoxIDs.Logic
             where MDownParty : DownParty, ISamlClaimTransformsRef
         {
             var apiClaimTransforms = aDownParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
-            if (apiClaimTransforms.Any())
+            if (apiClaimTransforms?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MDownParty>(mDownParty.Id);
 
-                if (apiClaimTransforms.Any())
+                if (apiClaimTransforms?.Any() == true)
                 {
                     foreach (var mClaimTransforms in mDownParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
@@ -501,7 +501,7 @@ namespace FoxIDs.Logic
             where MUpParty : UpParty
         {
             var apiPartyExtendedUis = aUpParty.ExtendedUis.Where(u => u.ExternalConnectType == Api.ExternalConnectTypes.Api && u.Secret == u.SecretLoaded);
-            if (apiPartyExtendedUis.Any())
+            if (apiPartyExtendedUis?.Any() == true)
             {
                 var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mParty.Id);
                 foreach (var mExtendedUi in mParty.ExtendedUis.Where(u => apiPartyExtendedUis.Any(au => au.Name == u.Name)))

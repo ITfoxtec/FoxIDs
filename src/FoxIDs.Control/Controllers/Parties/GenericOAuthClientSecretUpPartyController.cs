@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
                 {
                     return Ok(new Api.OAuthClientSecretSingleResponse
                     {
-                        Info = oauthUpParty.Client.ClientSecret.Length > 20 ? oauthUpParty.Client.ClientSecret.Substring(0, 3) : oauthUpParty.Client.ClientSecret,
+                        Info = oauthUpParty.Client.ClientSecret.GetShortSecret(false),
                     });
                 }
                 else

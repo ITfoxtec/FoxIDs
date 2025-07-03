@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using Api = FoxIDs.Models.Api;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
@@ -92,38 +93,38 @@ namespace FoxIDs.Logic
             if (mParty is LoginUpParty loginUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms, position: ClaimTransformationPosition.CreateUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, loginUpParty.CreateUser?.ClaimTransforms);
             }
             else if (mParty is ExternalLoginUpParty externalLoginUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, externalLoginUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OAuthUpParty oauthUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oauthUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OidcUpParty oidchUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, oidchUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is SamlUpParty samlUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, samlUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is TrackLinkUpParty trackLinkUpParty)
             {
                 return await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ClaimTransforms) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ExitClaimTransforms, position: ClaimTransformationPosition.ExitParty) &&
-                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms, position: ClaimTransformationPosition.LinkExternalUser);
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.ExitClaimTransforms) &&
+                       await ValidateModelClaimTransformsAsync(modelState, mParty, trackLinkUpParty.LinkExternalUser?.ClaimTransforms);
             }
             else if (mParty is OAuthDownParty oauthDownParty)
             {
@@ -147,7 +148,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms, ClaimTransformationPosition position = ClaimTransformationPosition.Party) where MParty : Party where MClaimTransform : ClaimTransform
+        private async Task<bool> ValidateModelClaimTransformsAsync<MParty, MClaimTransform>(ModelStateDictionary modelState, MParty mParty, List<MClaimTransform> claimTransforms) where MParty : Party where MClaimTransform : ClaimTransform
         {
             if (claimTransforms != null)
             {
@@ -190,7 +191,6 @@ namespace FoxIDs.Logic
                                 claimTransform.ClaimOut = null;
                                 claimTransform.Transformation = null;
                                 claimTransform.TransformationExtension = null;
-                                await HandleClaimTransformationSecretAsync(mParty, claimTransform, position);
                                 break;
 
                             default:
@@ -256,161 +256,49 @@ namespace FoxIDs.Logic
             return true;
         }
 
-        private async Task HandleClaimTransformationSecretAsync<MParty, MClaimTransform>(MParty mParty, MClaimTransform claimTransform, ClaimTransformationPosition position) where MParty : Party where MClaimTransform : ClaimTransform
+        public async Task HandleClaimTransformationSecretAsync<AParty, AClaimTransform, MParty>(AParty party, MParty mParty) 
+            where AParty : Api.INewNameValue, Api.IClaimTransformRef<AClaimTransform> where AClaimTransform : Api.ClaimTransform 
+            where MParty : Party
         {
-            if(!(claimTransform.Type == ClaimTransformTypes.ExternalClaims && claimTransform.ExternalConnectType == ExternalConnectTypes.Api))
+            if (mParty is LoginUpParty mLoginUpParty)
             {
-                throw new Exception("Claim transform type and external connect type not supported.");
+                await HandleClaimTransformationSecretLoginUpPartyAsync(party as Api.LoginUpParty, mLoginUpParty);
             }
-            if (claimTransform.ApiUrl.IsNullOrWhiteSpace())
+            else if (mParty is ExternalLoginUpParty mExternalLoginUpParty)
             {
-                throw new Exception("Claim transform API URL is empty.");
+                await HandleClaimTransformationSecretUpPartyAsync(party as Api.ExternalLoginUpParty, mExternalLoginUpParty);
             }
-
-            if (!claimTransform.Secret.IsNullOrWhiteSpace())
+            else if (mParty is OAuthUpParty oauthUpParty)
             {
-                return;
+                await HandleClaimTransformationSecretUpPartyOnlyOAuthAsync(party as Api.OAuthUpParty, oauthUpParty);
             }
-
-            if (mParty is LoginUpParty)
+            else if (mParty is OidcUpParty oidchUpParty)
             {
-                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(loginUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(loginUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.CreateUser)
-                {
-                    SetClaimTransformSecret(loginUpParty.CreateUser?.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretUpPartyAsync(party as Api.OidcUpParty, oidchUpParty);
             }
-            else if (mParty is ExternalLoginUpParty)
+            else if (mParty is SamlUpParty samlUpParty)
             {
-                var externalLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(externalLoginUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(externalLoginUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.LinkExternalUser)
-                {
-                    SetClaimTransformSecret(externalLoginUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretSamlUpPartyAsync(party as Api.SamlUpParty, samlUpParty);
             }
-            else if (mParty is OAuthUpParty)
+            else if (mParty is TrackLinkUpParty trackLinkUpParty)
             {
-                var oauthUpParty = await tenantDataRepository.GetAsync<OAuthUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(oauthUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(oauthUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.LinkExternalUser)
-                {
-                    SetClaimTransformSecret(oauthUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretUpPartyAsync(party as Api.TrackLinkUpParty, trackLinkUpParty);
             }
-            else if (mParty is OidcUpParty)
+            else if (mParty is OAuthDownParty oauthDownParty)
             {
-                var oidcUpParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(oidcUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(oidcUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.LinkExternalUser)
-                {
-                    SetClaimTransformSecret(oidcUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretDownPartyAsync(party as Api.OAuthDownParty, oauthDownParty);
             }
-            else if (mParty is SamlUpParty)
+            else if (mParty is OidcDownParty oidcDownParty)
             {
-                var samlUpParty = await tenantDataRepository.GetAsync<SamlUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(samlUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(samlUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.LinkExternalUser)
-                {
-                    SetClaimTransformSecret(samlUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretDownPartyAsync(party as Api.OidcDownParty, oidcDownParty);
             }
-            else if (mParty is TrackLinkUpParty)
+            else if (mParty is SamlDownParty samlDownParty)
             {
-                var trackLinkUpParty = await tenantDataRepository.GetAsync<TrackLinkUpParty>(mParty.Id);
-                if (position == ClaimTransformationPosition.Party)
-                {
-                    SetClaimTransformSecret(trackLinkUpParty.ClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.ExitParty)
-                {
-                    SetClaimTransformSecret(trackLinkUpParty.ExitClaimTransforms, claimTransform);
-                }
-                else if (position == ClaimTransformationPosition.LinkExternalUser)
-                {
-                    SetClaimTransformSecret(trackLinkUpParty.LinkExternalUser.ClaimTransforms, claimTransform);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                await HandleClaimTransformationSecretSamlDownPartyAsync(party as Api.SamlDownParty, samlDownParty);
             }
-            else if (mParty is OAuthDownParty)
+            else if (mParty is TrackLinkDownParty trackLinkDownParty)
             {
-                var oauthDownParty = await tenantDataRepository.GetAsync<OAuthDownParty>(mParty.Id);
-                SetClaimTransformSecret(oauthDownParty.ClaimTransforms, claimTransform);
-            }
-            else if (mParty is OidcDownParty)
-            {
-                var oidcDownParty = await tenantDataRepository.GetAsync<OidcDownParty>(mParty.Id);
-                SetClaimTransformSecret(oidcDownParty.ClaimTransforms, claimTransform);
-            }
-            else if (mParty is SamlDownParty)
-            {
-                var samlDownParty = await tenantDataRepository.GetAsync<SamlDownParty>(mParty.Id);
-                SetClaimTransformSecret(samlDownParty.ClaimTransforms, claimTransform);
-            }
-            else if (mParty is TrackLinkDownParty)
-            {
-                var trackLinkDownParty = await tenantDataRepository.GetAsync<TrackLinkDownParty>(mParty.Id);
-                SetClaimTransformSecret(trackLinkDownParty.ClaimTransforms, claimTransform);
+                await HandleClaimTransformationSecretDownPartyAsync(party as Api.TrackLinkDownParty, trackLinkDownParty);
             }
             else
             {
@@ -418,59 +306,209 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void SetClaimTransformSecret<MClaimTransformDatabase, MClaimTransform>(List<MClaimTransformDatabase> claimTransformsDatabase, MClaimTransform claimTransform) where MClaimTransformDatabase : ClaimTransform where MClaimTransform : ClaimTransform
+        private async Task HandleClaimTransformationSecretLoginUpPartyAsync<AUpParty, MUpParty>(AUpParty aUpParty, MUpParty mUpParty) 
+            where AUpParty : Api.INameValue, Api.IClaimTransformRef<Api.OAuthClaimTransform>, Api.ICreateUserRef, Api.IExitClaimTransformsRef<Api.OAuthClaimTransform>
+            where MUpParty : UpParty, IOAuthClaimTransformsRef, ICreateUserRef
         {
-            claimTransform.Secret = claimTransformsDatabase?.Where(c => c.Name == claimTransform.Name).Select(c => c.Secret).FirstOrDefault();
-        }
-
-        public async Task<bool> ValidateModelExtendedUiAsync(ModelStateDictionary modelState, UpParty mParty, bool isUpdate)
-        {
-            if (isUpdate && mParty.ExtendedUis?.Count() > 0)
+            var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiCreateUserClaimTransforms = aUpParty.CreateUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiCreateUserClaimTransforms.Any())
             {
-                foreach (var mExtendedUi in mParty.ExtendedUis)
+                var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
+
+                if (apiClaimTransforms.Any())
                 {
-                    if (mExtendedUi.ExternalConnectType == ExternalConnectTypes.Api && mExtendedUi.Secret.IsNullOrWhiteSpace())
+                    foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
                     {
-                        if (mParty is LoginUpParty)
-                        {
-                            var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(mParty.Id);
-                            SetExtendedUiSecret(loginUpParty.ExtendedUis, mExtendedUi);
-                        }
-                        else if (mParty is ExternalLoginUpParty)
-                        {
-                            var externalLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(mParty.Id);
-                            SetExtendedUiSecret(externalLoginUpParty.ExtendedUis, mExtendedUi);
-                        }
-                        else if (mParty is OAuthUpParty)
-                        {
-                            var oauthUpParty = await tenantDataRepository.GetAsync<OAuthUpParty>(mParty.Id);
-                            SetExtendedUiSecret(oauthUpParty.ExtendedUis, mExtendedUi);
-                        }
-                        else if (mParty is OidcUpParty)
-                        {
-                            var oidcUpParty = await tenantDataRepository.GetAsync<OidcUpParty>(mParty.Id);
-                            SetExtendedUiSecret(oidcUpParty.ExtendedUis, mExtendedUi);
-                        }
-                        else if (mParty is SamlUpParty)
-                        {
-                            var samlUpParty = await tenantDataRepository.GetAsync<SamlUpParty>(mParty.Id);
-                            SetExtendedUiSecret(samlUpParty.ExtendedUis, mExtendedUi);
-                        }
-                        else if (mParty is TrackLinkUpParty)
-                        {
-                            var trackLinkUpParty = await tenantDataRepository.GetAsync<TrackLinkUpParty>(mParty.Id);
-                            SetExtendedUiSecret(trackLinkUpParty.ExtendedUis, mExtendedUi);
-                        }
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiExitClaimTransforms.Any())
+                {
+                    foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiCreateUserClaimTransforms.Any())
+                {
+                    foreach (var mCreateUserClaimTransforms in mUpParty.CreateUser.ClaimTransforms.Where(c => apiCreateUserClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mCreateUserClaimTransforms.Secret = dbUpParty.CreateUser?.ClaimTransforms?.Where(u => u.Name == mCreateUserClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
                     }
                 }
             }
-
-            return true;
         }
 
-        private void SetExtendedUiSecret(List<ExtendedUi> extendedUiDatabase, ExtendedUi extendedUi)
+        private async Task HandleClaimTransformationSecretUpPartyAsync<AUpParty, MUpParty>(AUpParty aUpParty, MUpParty mUpParty) 
+            where AUpParty : Api.INameValue, Api.IClaimTransformRef<Api.OAuthClaimTransform>, Api.ILinkExternalUserRef, Api.IExitClaimTransformsRef<Api.OAuthClaimTransform>
+            where MUpParty : UpParty, IOAuthClaimTransformsRef, ILinkExternalUserRef
         {
-            extendedUi.Secret = extendedUiDatabase?.Where(c => c.Name == extendedUi.Name).Select(c => c.Secret).FirstOrDefault();
+            var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiLinkExternalUserClaimTransforms = aUpParty.LinkExternalUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiLinkExternalUserClaimTransforms.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
+
+                if (apiClaimTransforms.Any())
+                {
+                    foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiExitClaimTransforms.Any())
+                {
+                    foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiLinkExternalUserClaimTransforms.Any())
+                {
+                    foreach (var mLinkExternalUserClaimTransforms in mUpParty.LinkExternalUser.ClaimTransforms.Where(c => apiLinkExternalUserClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mLinkExternalUserClaimTransforms.Secret = dbUpParty.LinkExternalUser?.ClaimTransforms?.Where(u => u.Name == mLinkExternalUserClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+            }
+        }
+
+        private async Task HandleClaimTransformationSecretUpPartyOnlyOAuthAsync<AUpParty, MUpParty>(AUpParty aUpParty, MUpParty mUpParty)
+            where AUpParty : Api.INameValue, Api.IClaimTransformRef<Api.OAuthClaimTransform>
+            where MUpParty : UpParty, IOAuthClaimTransformsRef, ILinkExternalUserRef
+        {
+            var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
+
+                if (apiClaimTransforms.Any())
+                {
+                    foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+            }
+        }
+
+        private async Task HandleClaimTransformationSecretSamlUpPartyAsync<AUpParty, MUpParty>(AUpParty aUpParty, MUpParty mUpParty)
+          where AUpParty : Api.INameValue, Api.IClaimTransformRef<Api.SamlClaimTransform>, Api.ILinkExternalUserRef, Api.IExitClaimTransformsRef<Api.OAuthClaimTransform>
+          where MUpParty : UpParty, ISamlClaimTransformsRef, ILinkExternalUserRef
+        {
+            var apiClaimTransforms = aUpParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiExitClaimTransforms = aUpParty.ExitClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            var apiLinkExternalUserClaimTransforms = aUpParty.LinkExternalUser?.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any() || apiExitClaimTransforms.Any() || apiLinkExternalUserClaimTransforms.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mUpParty.Id);
+
+                if (apiClaimTransforms.Any())
+                {
+                    foreach (var mClaimTransforms in mUpParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiExitClaimTransforms.Any())
+                {
+                    foreach (var mExitClaimTransforms in mUpParty.ExitClaimTransforms.Where(c => apiExitClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mExitClaimTransforms.Secret = dbUpParty.ExitClaimTransforms?.Where(u => u.Name == mExitClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+                if (apiLinkExternalUserClaimTransforms.Any())
+                {
+                    foreach (var mLinkExternalUserClaimTransforms in mUpParty.LinkExternalUser.ClaimTransforms.Where(c => apiLinkExternalUserClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mLinkExternalUserClaimTransforms.Secret = dbUpParty.LinkExternalUser?.ClaimTransforms?.Where(u => u.Name == mLinkExternalUserClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+            }
+        }
+
+        private async Task HandleClaimTransformationSecretDownPartyAsync<ADownParty, MDownParty>(ADownParty aDownParty, MDownParty mDownParty)
+            where ADownParty : Api.INameValue, Api.IClaimTransformRef<Api.OAuthClaimTransform>
+            where MDownParty : DownParty, IOAuthClaimTransformsRef
+        {
+            var apiClaimTransforms = aDownParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MDownParty>(mDownParty.Id);
+
+                if (apiClaimTransforms.Any())
+                {
+                    foreach (var mClaimTransforms in mDownParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+            }
+        }
+
+        private async Task HandleClaimTransformationSecretSamlDownPartyAsync<ADownParty, MDownParty>(ADownParty aDownParty, MDownParty mDownParty)
+            where ADownParty : Api.INameValue, Api.IClaimTransformRef<Api.SamlClaimTransform>
+            where MDownParty : DownParty, ISamlClaimTransformsRef
+        {
+            var apiClaimTransforms = aDownParty.ClaimTransforms?.Where(c => c.ExternalConnectType == Api.ExternalConnectTypes.Api && c.Secret == c.SecretLoaded);
+            if (apiClaimTransforms.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MDownParty>(mDownParty.Id);
+
+                if (apiClaimTransforms.Any())
+                {
+                    foreach (var mClaimTransforms in mDownParty.ClaimTransforms.Where(c => apiClaimTransforms.Any(ac => ac.Name == c.Name)))
+                    {
+                        mClaimTransforms.Secret = dbUpParty.ClaimTransforms?.Where(u => u.Name == mClaimTransforms.Name).Select(c => c.Secret).FirstOrDefault();
+                    }
+                }
+            }
+        }
+
+        public async Task HandleModelExtendedUiSecretAsync<AParty, AClaimTransform>(AParty aParty, UpParty mParty) 
+            where AParty : Api.INewNameValue, Api.IClaimTransformRef<AClaimTransform> where AClaimTransform : Api.ClaimTransform
+        {
+            if (mParty.ExtendedUis?.Where(u => u.ExternalConnectType == ExternalConnectTypes.Api)?.Count() > 0)
+            {
+                if (mParty is LoginUpParty)
+                {
+                    await SetExtendedUiSecretAsync(aParty as Api.LoginUpParty, mParty);
+                }
+                else if (mParty is ExternalLoginUpParty)
+                {
+                    await SetExtendedUiSecretAsync(aParty as Api.ExternalLoginUpParty, mParty);
+                }
+                else if (mParty is OidcUpParty)
+                {
+                    await SetExtendedUiSecretAsync(aParty as Api.OidcUpParty, mParty);
+                }
+                else if (mParty is SamlUpParty)
+                {
+                    await SetExtendedUiSecretAsync(aParty as Api.SamlUpParty, mParty);
+                }
+                else if (mParty is TrackLinkUpParty)
+                {
+                    await SetExtendedUiSecretAsync(aParty as Api.TrackLinkUpParty, mParty);
+                }
+            }
+        }
+
+        private async Task SetExtendedUiSecretAsync<AUpParty, MUpParty>(AUpParty aUpParty, MUpParty mParty)
+            where AUpParty : Api.IExtendedUisRef
+            where MUpParty : UpParty
+        {
+            var apiPartyExtendedUis = aUpParty.ExtendedUis.Where(u => u.ExternalConnectType == Api.ExternalConnectTypes.Api && u.Secret == u.SecretLoaded);
+            if (apiPartyExtendedUis.Any())
+            {
+                var dbUpParty = await tenantDataRepository.GetAsync<MUpParty>(mParty.Id);
+                foreach (var mExtendedUi in mParty.ExtendedUis.Where(u => apiPartyExtendedUis.Any(au => au.Name == u.Name)))
+                {
+                    mExtendedUi.Secret = dbUpParty.ExtendedUis?.Where(u => u.Name == mExtendedUi.Name).Select(c => c.Secret).FirstOrDefault();
+                }
+            }
         }
 
         public bool ValidateModelUpPartyProfiles(ModelStateDictionary modelState, IEnumerable<UpPartyProfile> profiles)
@@ -494,14 +532,6 @@ namespace FoxIDs.Logic
                 modelState.TryAddModelError($"{nameof(OidcUpParty.Profiles)}.{nameof(UpPartyProfile.Name)}".ToCamelCase(), vex.Message);
             }
             return isValid;
-        }
-
-        enum ClaimTransformationPosition
-        {
-            Party,
-            ExitParty,
-            CreateUser,
-            LinkExternalUser,
         }
     }
 }

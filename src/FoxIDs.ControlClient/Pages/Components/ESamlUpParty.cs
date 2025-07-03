@@ -54,8 +54,6 @@ namespace FoxIDs.Client.Pages.Components
 
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
         {
-            samlUpParty.ExtendedUis.MapExtendedUis();
-
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
                 afterMap.InitName = afterMap.Name;

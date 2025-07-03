@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Api = FoxIDs.Models.Api;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
-    public class CreateUser : IOAuthClaimTransforms
+    public class CreateUser : IOAuthClaimTransformsRef
     {
         [JsonProperty(PropertyName = "confirm_account")]
         public bool ConfirmAccount { get; set; }

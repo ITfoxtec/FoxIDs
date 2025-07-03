@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
+    public class OidcDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransformRef<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

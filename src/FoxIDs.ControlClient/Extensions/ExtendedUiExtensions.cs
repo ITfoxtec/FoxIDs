@@ -7,21 +7,6 @@ namespace FoxIDs.Client
 {
     public static class ExtendedUiExtensions
     {
-        public static List<ExtendedUi> MapExtendedUis(this List<ExtendedUi> extendedUis)
-        {
-            if (extendedUis?.Count > 0)
-            {
-                foreach (var extendedUi in extendedUis)
-                {
-                    if (extendedUi.Secret != null)
-                    {
-                        extendedUi.Secret = extendedUi.SecretLoaded = extendedUi.Secret.Length == 3 ? $"{extendedUi.Secret}..." : extendedUi.Secret;
-                    }
-                }
-            }
-            return extendedUis;
-        }
-
         public static List<ExtendedUiViewModel> MapExtendedUis(this List<ExtendedUiViewModel> extendedUis)
         {
             if (extendedUis?.Count > 0)
@@ -63,13 +48,6 @@ namespace FoxIDs.Client
             {
                 extendedUi.Elements.MapDynamicElementsAfterMap();
                 extendedUi.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                if (extendedUi.ExternalConnectType == ExternalConnectTypes.Api)
-                {
-                    if (extendedUi.Secret == extendedUi.SecretLoaded)
-                    {
-                        extendedUi.Secret = null;
-                    }
-                }
             }
             return extendedUis;
         }

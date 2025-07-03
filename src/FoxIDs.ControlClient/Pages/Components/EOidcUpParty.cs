@@ -61,8 +61,6 @@ namespace FoxIDs.Client.Pages.Components
 
         private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty, OAuthClientKeyResponse clientKeyResponse)
         {
-            oidcUpParty.ExtendedUis.MapExtendedUis();
-
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
                 afterMap.InitName = afterMap.Name;

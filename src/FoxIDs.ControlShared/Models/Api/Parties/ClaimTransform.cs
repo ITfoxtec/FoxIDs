@@ -44,6 +44,12 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "API secret")]
         public string Secret { get; set; }
+
+        /// <summary>
+        /// API secret loaded. Used to compare loaded and updated value.
+        /// </summary>
+        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        public string SecretLoaded { get; set; }
         #endregion
 
         #region Task

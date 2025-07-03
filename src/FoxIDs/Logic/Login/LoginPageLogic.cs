@@ -410,7 +410,7 @@ namespace FoxIDs.Logic
 
         private async Task<(List<Claim> claims, IActionResult actionResult)> TransformClaimsAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
         {
-            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransforms)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync((loginUpParty as IOAuthClaimTransformsRef)?.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
             if (actionResult != null)
             {
                 return (null, actionResult);

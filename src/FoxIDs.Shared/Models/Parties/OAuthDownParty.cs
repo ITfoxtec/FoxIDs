@@ -12,7 +12,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// OAuth 2.0 application registration.
     /// </summary>
-    public class OAuthDownParty<TClient, TScope, TClaim> : DownParty, IOAuthClaimTransforms, IValidatableObject where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthDownParty<TClient, TScope, TClaim> : DownParty, IOAuthClaimTransformsRef, IValidatableObject where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         public OAuthDownParty()
         {

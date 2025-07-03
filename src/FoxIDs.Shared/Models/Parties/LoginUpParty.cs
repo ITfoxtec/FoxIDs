@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models
 {
-    public class LoginUpParty : UpParty, IOAuthClaimTransforms, IUiLoginUpParty
+    public class LoginUpParty : UpParty, IOAuthClaimTransformsRef, ICreateUserRef, IUiLoginUpParty
     {
         public LoginUpParty()
         {

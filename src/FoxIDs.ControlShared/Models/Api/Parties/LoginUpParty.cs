@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
-    public class LoginUpParty : INameValue, INewNameValue, IValidatableObject, IClaimTransform<OAuthClaimTransform>
+    public class LoginUpParty : INameValue, INewNameValue, IClaimTransformRef<OAuthClaimTransform>, IExtendedUisRef, ICreateUserRef, IExitClaimTransformsRef<OAuthClaimTransform>, IValidatableObject
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

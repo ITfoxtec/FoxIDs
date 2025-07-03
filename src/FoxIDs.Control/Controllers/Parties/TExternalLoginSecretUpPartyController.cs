@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
                 {
                     return Ok(new Api.ExternalLoginSecretResponse
                     {
-                        Info = extLoginUpParty.Secret.Length > 20 ? extLoginUpParty.Secret.Substring(0, 3) : extLoginUpParty.Secret,
+                        Info = extLoginUpParty.Secret.GetShortSecret(false),
                     });
                 }
                 else

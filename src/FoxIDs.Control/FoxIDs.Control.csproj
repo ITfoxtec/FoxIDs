@@ -31,6 +31,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.24" />
 		<PackageReference Include="Mollie.Api" Version="4.4.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.1" />

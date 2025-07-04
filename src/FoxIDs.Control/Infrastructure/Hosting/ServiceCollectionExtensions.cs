@@ -197,12 +197,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 c.SwaggerDoc(Constants.ControlApi.Version, new OpenApiInfo { Title = "FoxIDs Control API", Version = Constants.ControlApi.Version });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description = "JWT Authorization header. \r\n\r\n Enter the access token in the Value input below.",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
+                    Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
-                    BearerFormat = "JWT"              
+                    BearerFormat = "JWT",
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {

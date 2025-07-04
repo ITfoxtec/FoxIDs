@@ -20,18 +20,19 @@ namespace FoxIDs.Infrastructure.Hosting
             });
             builder.UseSwagger(c =>
             {
+                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
                 c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
                 {
                     openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = UrlCombine.Combine(httpRequest.HttpContext.GetHost(addTrailingSlash: false), Constants.Routes.ApiPath) } };
                 });
                 c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });
-#if DEBUG
+
             builder.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint($"/api/swagger/{Constants.ControlApi.Version}/swagger.json", "FoxIDs Control API");
+                c.RoutePrefix = "api/swagger";
             });
-#endif
         }
 
         public static IApplicationBuilder UseProxyMiddleware(this IApplicationBuilder app)

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -10,6 +13,32 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         public static void UseApiSwagger(this IApplicationBuilder builder)
         {
+            // Support Swagger V1
+            builder.Use(async (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api/swagger/v1/swagger.json", StringComparison.OrdinalIgnoreCase))
+                {
+                    var httpClientFactory = context.RequestServices.GetService<IHttpClientFactory>();
+                    var httpClient = httpClientFactory.CreateClient();
+
+                    var response = await httpClient.GetAsync($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/api/swagger/{Constants.ControlApi.Version}/swagger.json");
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    // Replace to support Swagger V1
+                    result = result.Replace("\"version\": \"v2\"", "\"version\": \"v1\"");
+                    result = result.Replace("{tenant_name}/{track_name}", "[tenant_name]/[track_name]");
+
+                    context.Response.StatusCode = (int)response.StatusCode;
+                    context.Response.ContentType = response.Content.Headers.ContentType?.ToString() ?? "text/html";
+
+                    await context.Response.WriteAsync(result);
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
             builder.Use((context, next) =>
             {
                 if (context.Request.Path.StartsWithSegments("/api/swagger", StringComparison.OrdinalIgnoreCase))

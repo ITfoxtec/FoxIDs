@@ -922,7 +922,7 @@ namespace FoxIDs
 
         public static class ControlApi
         {
-            public const string Version = "v1";
+            public const string Version = "v2";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 
             public const string ResourceName = "foxids_control_api";

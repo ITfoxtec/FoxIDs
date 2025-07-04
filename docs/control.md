@@ -60,11 +60,12 @@ The environment properties can be configured by clicking the top right setting i
 ![Configure environment settings](images/configure-environment-setting.png)
 
 ## FoxIDs Control API
-Control API is a REST API and has a [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v1/swagger.json) interface description.
+Control API is a REST API and has a [Swagger (OpenApi)](https://control.foxids.com/api/swagger/v2/swagger.json) interface description.
 
-If you host FoxIDs your self the Swagger (OpenApi) interface document is exposed in FoxIDs Control on `.../api/swagger/v1/swagger.json`.  
+If you host FoxIDs your self the Swagger (OpenApi) interface document is exposed in FoxIDs Control on `.../api/swagger/v2/swagger.json`.  
 
-> FoxIDs Cloud Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
+> FoxIDs Cloud Swagger UI [https://control.foxids.com/api/swagger](https://control.foxids.com/api/swagger)
+> FoxIDs Cloud Swagger (OpenApi) [https://control.foxids.com/api/swagger/v2/swagger.json](https://control.foxids.com/api/swagger/v2/swagger.json)
 
 The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[environment_name]/...`. 
 To call your API you replace the `[tenant_name]` element with your tenant name and the `[environment_name]` element with the environment name of the environment you want to call.

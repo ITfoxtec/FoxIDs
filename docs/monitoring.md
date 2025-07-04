@@ -11,5 +11,5 @@ A dashboard can show availability as a result of health checks to:
 - `https://--foxids-domain--/master/master/foxids_control_client(*)/.well-known/openid-configuration`
 - `https://--foxids-control-domain--/master`
 - `https://--foxids-control-domain--/api/health`
-- `https://--foxids-control-domain--/api/swagger/v1/swagger.json`
+- `https://--foxids-control-domain--/api/swagger/v2/swagger.json`
 

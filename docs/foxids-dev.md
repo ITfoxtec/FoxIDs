@@ -11,7 +11,7 @@ Solution description:
 - **FoxIDs.Control** is the FoxIDs Control ASP.NET Core API and host of the FoxIDs Control Client Blazor WebAssembly  
   Local endpoint `https://localhost:44331`  
   Local API endpoint `https://localhost:44331/api/`  
-  API Swagger (OpenApi) endpoint `https://localhost:44331/api/swagger/v1/swagger.json`
+  API Swagger (OpenApi) endpoint `https://localhost:44331/api/swagger/v2/swagger.json`
 - **FoxIDs.ControlClient** is the FoxIDs Control Client Blazor WebAssembly  
 - **FoxIDs.ControlShared** is a library shared between the FoxIDs Control API backend and FoxIDs Control Client Blazor WebAssembly frontend
 - **FoxIDs.Shared** is a library shared between the FoxIDs ASP.NET Core application and FoxIDs Control ASP.NET Core API

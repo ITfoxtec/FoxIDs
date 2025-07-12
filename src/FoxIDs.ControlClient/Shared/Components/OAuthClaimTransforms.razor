@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="col-9">
 
-                            @if (claimTransform.Task != null)
+                            @if (claimTransform.Task != ClaimTransformTasks.None)
                             {
                                 switch (claimTransform.Task)
                                 {
@@ -141,7 +141,7 @@
                             <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                         </div>
                     </div>
-                    @if (claimTransform.Task == null && claimTransform.Type != ClaimTransformTypes.ExternalClaims)
+                    @if (claimTransform.Task == ClaimTransformTasks.None && claimTransform.Type != ClaimTransformTypes.ExternalClaims)
                     {
                         <div class="row">
                             <div class="col-11">
@@ -196,7 +196,7 @@
                         <div class="col-11">
                             @if (claimTransform.ShowDetails)
                             {
-                                if (claimTransform.Task != null)
+                                if (claimTransform.Task != ClaimTransformTasks.None)
                                 {
                                     switch (claimTransform.Task)
                                     {

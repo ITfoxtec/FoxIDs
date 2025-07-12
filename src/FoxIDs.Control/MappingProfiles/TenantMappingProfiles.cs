@@ -79,9 +79,11 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<ExtendedUi, Api.ExtendedUi>()
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType.HasValue ? (int)s.ExternalConnectType.Value : (int)Api.ExternalConnectTypes.None))
                 .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
                 .ForMember(d => d.SecretLoaded, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType == Api.ExternalConnectTypes.None ? null : (int?)s.ExternalConnectType));
 
             CreateMap<DownParty, Api.DownParty>()
                 .ReverseMap()
@@ -120,15 +122,27 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<OAuthClaimTransform, Api.OAuthClaimTransform>()
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType.HasValue ? (int)s.ExternalConnectType.Value : (int)Api.ExternalConnectTypes.None))
+                .ForMember(d => d.Task, opt => opt.MapFrom(s => s.Task.HasValue ? (int)s.Task.Value : (int)Api.ClaimTransformTasks.None))
+                .ForMember(d => d.UpPartyType, opt => opt.MapFrom(s => s.UpPartyType.HasValue ? (int)s.UpPartyType.Value : (int)Api.PartyTypes.None))
                 .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
                 .ForMember(d => d.SecretLoaded, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType == Api.ExternalConnectTypes.None ? null : (int?)s.ExternalConnectType))
+                .ForMember(d => d.Task, opt => opt.MapFrom(s => s.Task == Api.ClaimTransformTasks.None ? null : (int?)s.Task))
+                .ForMember(d => d.UpPartyType, opt => opt.MapFrom(s => s.UpPartyType == Api.PartyTypes.None ? null : (int?)s.UpPartyType));
 
             CreateMap<SamlClaimTransform, Api.SamlClaimTransform>()
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType.HasValue ? (int)s.ExternalConnectType.Value : (int)Api.ExternalConnectTypes.None))
+                .ForMember(d => d.Task, opt => opt.MapFrom(s => s.Task.HasValue ? (int)s.Task.Value : (int)Api.ClaimTransformTasks.None))
+                .ForMember(d => d.UpPartyType, opt => opt.MapFrom(s => s.UpPartyType.HasValue ? (int)s.UpPartyType.Value : (int)Api.PartyTypes.None))
                 .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
                 .ForMember(d => d.SecretLoaded, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.ExternalConnectType, opt => opt.MapFrom(s => s.ExternalConnectType == Api.ExternalConnectTypes.None ? null : (int?)s.ExternalConnectType))
+                .ForMember(d => d.Task, opt => opt.MapFrom(s => s.Task == Api.ClaimTransformTasks.None ? null : (int?)s.Task))
+                .ForMember(d => d.UpPartyType, opt => opt.MapFrom(s => s.UpPartyType == Api.PartyTypes.None ? null : (int?)s.UpPartyType));
 
             CreateMap<DynamicElement, Api.DynamicElement>()
                 .ReverseMap();

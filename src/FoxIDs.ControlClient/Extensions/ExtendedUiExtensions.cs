@@ -28,7 +28,7 @@ namespace FoxIDs.Client
             {
                 if (extendedUi.ApiUrl.IsNullOrWhiteSpace())
                 {
-                    extendedUi.ExternalConnectType = null;
+                    extendedUi.ExternalConnectType = ExternalConnectTypes.None;
                     extendedUi.Secret = null;
                     extendedUi.ErrorMessage = null;
                 }

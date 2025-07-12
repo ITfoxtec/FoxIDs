@@ -6,7 +6,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public interface IUpPartySelection
     {
         [Display(Name = "Authentication type")]
-        PartyTypes UpPartyType { get; set; }
+        PartyTypes? UpPartyType { get; set; }
 
         string UpPartyTypeText { get; set; }
 

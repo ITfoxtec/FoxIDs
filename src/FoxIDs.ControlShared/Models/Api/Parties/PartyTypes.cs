@@ -2,7 +2,6 @@
 {
     public enum PartyTypes
     {
-        None = 0,
         Login = 10,
         OAuth2 = 20,
         Oidc = 30,

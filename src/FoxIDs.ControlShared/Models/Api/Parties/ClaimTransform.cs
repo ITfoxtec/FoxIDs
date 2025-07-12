@@ -35,7 +35,7 @@ namespace FoxIDs.Models.Api
 
         #region ExternalClaims
         [Display(Name = "External connect type")]
-        public ExternalConnectTypes ExternalConnectType { get; set; }
+        public ExternalConnectTypes? ExternalConnectType { get; set; }
 
         [MaxLength(Constants.Models.ExternalApi.ApiUrlLength)]
         [Display(Name = "API URL")]
@@ -54,7 +54,7 @@ namespace FoxIDs.Models.Api
 
         #region Task
         [Display(Name = "Task")]
-        public ClaimTransformTasks Task { get; set; }
+        public ClaimTransformTasks? Task { get; set; }
 
         [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [Display(Name = "Error")]
@@ -65,7 +65,7 @@ namespace FoxIDs.Models.Api
         public string ErrorMessage { get; set; }
 
         [Display(Name = "Authentication type")]
-        public PartyTypes UpPartyType { get; set; }
+        public PartyTypes? UpPartyType { get; set; }
 
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
@@ -82,12 +82,12 @@ namespace FoxIDs.Models.Api
         {
             var results = new List<ValidationResult>();
 
-            if (Task == ClaimTransformTasks.None && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
+            if (Task == null && Type != ClaimTransformTypes.ExternalClaims && ClaimOut.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(ClaimOut)} is required for claim transformation type '{Type}'.", [nameof(ClaimOut)]));
             }
 
-            if (Task != ClaimTransformTasks.None)
+            if (Task != null)
             {
                 if (Action == ClaimTransformActions.If || Action == ClaimTransformActions.IfNot)
                 {
@@ -115,7 +115,7 @@ namespace FoxIDs.Models.Api
                             }
                             break;
                         case ClaimTransformTasks.UpPartyAction:
-                            if (UpPartyType == PartyTypes.None || UpPartyName.IsNullOrWhiteSpace())
+                            if (UpPartyType == null || UpPartyName.IsNullOrWhiteSpace())
                             {
                                 results.Add(new ValidationResult($"The fields {nameof(UpPartyType)} and {nameof(UpPartyName)} is required for claim transformation task '{Task}'.", [nameof(UpPartyType), nameof(UpPartyName)]));
                             }

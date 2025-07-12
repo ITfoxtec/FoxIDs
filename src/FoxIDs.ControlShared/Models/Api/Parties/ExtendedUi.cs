@@ -29,7 +29,7 @@ namespace FoxIDs.Models.Api
         public List<DynamicElement> Elements { get; set; }
 
         #region ExternalApi
-        public ExternalConnectTypes ExternalConnectType { get; set; }
+        public ExternalConnectTypes? ExternalConnectType { get; set; }
 
         [ListLength(Constants.Models.ExtendedUi.ExternalClaimsInMin, Constants.Models.ExtendedUi.ExternalClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         public List<string> ExternalClaimsIn { get; set; }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Azure.Identity;
+using FoxIDs.Infrastructure.ApiDescription;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Logs;
@@ -218,6 +219,8 @@ namespace FoxIDs.Infrastructure.Hosting
                             new string[] {}
                     }
                 });
+
+                c.SchemaFilter<NullableEnumSchemaFilter>();
 
                 c.TagActionsBy(s =>
                 [

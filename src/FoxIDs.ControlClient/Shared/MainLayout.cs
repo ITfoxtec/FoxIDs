@@ -153,16 +153,23 @@ namespace FoxIDs.Client.Shared
 
         private async Task ShowCreateTenantModalAsync()
         {
-            if (ClientSettings.EnablePayment && planInfoList == null)
+            try
             {
-                planInfoList = await HelpersService.GetPlanInfoAsync();
-            }
+                if (ClientSettings.EnablePayment && planInfoList == null)
+                {
+                    planInfoList = await HelpersService.GetPlanInfoAsync();
+                }
 
-            createTenantWorking = false;
-            createTenantDone = false;
-            createTenantReceipt = new List<string>();
-            createTenantForm.Init(); 
-            createTenantModal.Show();
+                createTenantWorking = false;
+                createTenantDone = false;
+                createTenantReceipt = new List<string>();
+                createTenantForm.Init();
+                createTenantModal.Show();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
         }
 
         private async Task OnCreateTenantValidSubmitAsync(EditContext editContext)

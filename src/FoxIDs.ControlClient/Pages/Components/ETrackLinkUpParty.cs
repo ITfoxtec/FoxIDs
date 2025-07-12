@@ -55,8 +55,6 @@ namespace FoxIDs.Client.Pages.Components
 
         private TrackLinkUpPartyViewModel ToViewModel(TrackLinkUpParty trackLinkUpParty)
         {
-            trackLinkUpParty.ExtendedUis.MapExtendedUis();
-
             return trackLinkUpParty.Map<TrackLinkUpPartyViewModel>(afterMap =>
             {
                 if (afterMap.Profiles != null)

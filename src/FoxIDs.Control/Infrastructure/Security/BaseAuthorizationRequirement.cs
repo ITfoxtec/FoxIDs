@@ -18,7 +18,7 @@ namespace FoxIDs.Infrastructure.Security
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, Tar requirement)
         {
-            if (context.User != null && context.Resource is HttpContext httpContext)
+            if (context.User?.Identity?.IsAuthenticated == true && context.Resource is HttpContext httpContext)
             {
                 var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
                 try

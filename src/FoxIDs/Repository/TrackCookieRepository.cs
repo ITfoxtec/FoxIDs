@@ -45,8 +45,6 @@ namespace FoxIDs.Repository
             if (RouteBindingDoNotExists(routeBinding)) return null;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Get environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
-
             if (TryGetCacheCookie(out TMessage cacheCookie))
             {
                 return cacheCookie;
@@ -83,7 +81,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding(routeBinding);
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Update environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             SetCacheCookie(message);
 

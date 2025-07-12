@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
             }
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
-            var formDictionary = HttpContext.Request.Form.ToDictionary();
+            var formDictionary = GetFormDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             if (tokenRequest.GrantType != IdentityConstants.GrantTypes.TokenExchange)
             {
@@ -86,6 +86,18 @@ namespace FoxIDs.Logic
             catch (ArgumentException ex)
             {
                 throw new OAuthRequestException($"{ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+            }
+        }
+
+        private Dictionary<string, string> GetFormDictionary()
+        {
+            try
+            {
+                return HttpContext.Request.Form.ToDictionary();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Token request do not contain a form request.", ex);
             }
         }
 

@@ -10,7 +10,7 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlUpParty : INameValue, INewNameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
+    public class SamlUpParty : INameValue, INewNameValue, IClaimTransformRef<SamlClaimTransform>, IExtendedUisRef, ILinkExternalUserRef, IExitClaimTransformsRef<OAuthClaimTransform>, IValidatableObject
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
+    public class OidcDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransformRef<OAuthClaimTransform>
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
@@ -93,9 +93,9 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
-            if (Client != null && AllowUpPartyNames?.Count <= 0)
+            if (Client != null && !(AllowUpPartyNames?.Count > 0 || AllowUpParties?.Count > 0))
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the Client is defined.", [nameof(Client), nameof(AllowUpPartyNames)]));
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} or {nameof(AllowUpPartyNames)} is required if the Client is defined.", [nameof(Client), nameof(AllowUpParties), nameof(AllowUpPartyNames)]));
             }
             if (Client == null && Resource == null)
             {

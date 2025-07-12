@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
+    public class OAuthDownParty : IValidatableObject, IDownParty, INameValue, INewNameValue, IClaimTransformRef<OAuthClaimTransform>
     {
         /// <summary>
         /// Application name.

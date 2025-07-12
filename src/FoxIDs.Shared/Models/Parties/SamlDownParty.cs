@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Models
 {
-    public class SamlDownParty : DownParty, ISamlClaimTransforms, IValidatableObject
+    public class SamlDownParty : DownParty, ISamlClaimTransformsRef, IValidatableObject
     {
         public SamlDownParty()
         {
@@ -127,7 +127,7 @@ namespace FoxIDs.Models
 
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one allow all wild card (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one allow all wild card (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
             return results;
         }

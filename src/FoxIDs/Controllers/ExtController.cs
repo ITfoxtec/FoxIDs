@@ -147,7 +147,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.TrackLink:
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
                     case PartyTypes.ExternalLogin:
-                        return await serviceProvider.GetService<ExternalLoginUpLogic>().AuthResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
+                        return await serviceProvider.GetService<ExternalLoginUpLogic>().LoginResponsePostExternalUserAsync(sequenceData, externalAccountClaims);
                     default:
                         throw new NotSupportedException();
                 }

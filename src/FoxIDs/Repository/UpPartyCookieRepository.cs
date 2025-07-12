@@ -45,8 +45,6 @@ namespace FoxIDs.Repository
             if (tryGet && RouteBindingDoNotExists(routeBinding)) return null;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Get authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}', delete '{delete}'.");
-
             if (TryGetCacheCookie(out TMessage cacheCookie))
             {
                 return cacheCookie;
@@ -90,7 +88,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding(routeBinding);
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Update authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             SetCacheCookie(message);
 

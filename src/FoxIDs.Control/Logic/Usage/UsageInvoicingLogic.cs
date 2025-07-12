@@ -379,8 +379,6 @@ namespace FoxIDs.Logic.Usage
                     invoice.Price += AddInvoiceUsageLine(invoice.Lines, "SMS country price", used.SmsPrice, used.Sms, exchangeRate);
                 }
                 invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional emails ({plan.Emails.Included} included)", $"Additional emails (more then {plan.Emails.FirstLevelThreshold})", used.Emails, plan.Emails, exchangeRate);
-                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API reads ({plan.ControlApiGetRequests.Included} included)", $"Additional Control API reads (more then {plan.ControlApiGetRequests.FirstLevelThreshold})", used.ControlApiGets, plan.ControlApiGetRequests, exchangeRate);
-                invoice.Price += AddInvoiceUsageLine(invoice.Lines, $"Additional Control API updates ({plan.ControlApiUpdateRequests.Included} included)", $"Additional Control API updates (more then {plan.ControlApiUpdateRequests.FirstLevelThreshold})", used.ControlApiUpdates, plan.ControlApiUpdateRequests, exchangeRate);
             }
 
             if (used.Items?.Count() > 0)

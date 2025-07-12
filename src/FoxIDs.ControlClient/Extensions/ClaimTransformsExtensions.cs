@@ -33,9 +33,7 @@ namespace FoxIDs.Client
                         newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInViewModel>());
                         break;
                     case ClaimTransformTypes.ExternalClaims:
-                        var oauthClaimTransformClaimsIn = claimTransform.Map<OAuthClaimTransformClaimsInViewModel>();
-                        oauthClaimTransformClaimsIn.Secret = oauthClaimTransformClaimsIn.SecretLoaded = claimTransform.Secret.Length == 3 ? $"{claimTransform.Secret}..." : claimTransform.Secret;
-                        newClaimTransforms.Add(oauthClaimTransformClaimsIn);
+                        newClaimTransforms.Add(claimTransform.Map<OAuthClaimTransformClaimsInViewModel>());
                         break;
                     default:
                         throw new NotSupportedException("claim transform type not supported.");
@@ -69,9 +67,7 @@ namespace FoxIDs.Client
                         newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInViewModel>());
                         break;
                     case ClaimTransformTypes.ExternalClaims:
-                        var samlClaimTransformClaimsIn = claimTransform.Map<SamlClaimTransformClaimsInViewModel>();
-                        samlClaimTransformClaimsIn.Secret = samlClaimTransformClaimsIn.SecretLoaded = claimTransform.Secret.Length == 3 ? $"{claimTransform.Secret}..." : claimTransform.Secret;
-                        newClaimTransforms.Add(samlClaimTransformClaimsIn);
+                        newClaimTransforms.Add(claimTransform.Map<SamlClaimTransformClaimsInViewModel>());
                         break;
                     default:
                         throw new NotSupportedException("claim transform type not supported.");
@@ -91,11 +87,6 @@ namespace FoxIDs.Client
                     {
                         claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
                     }
-
-                    if (claimTransform.Type == ClaimTransformTypes.ExternalClaims && claimTransform.ExternalConnectType == ExternalConnectTypes.Api && claimTransform.Secret == claimTransform.SecretLoaded)
-                    {
-                        claimTransform.Secret = null;
-                    }
                 }
             }
 
@@ -111,11 +102,6 @@ namespace FoxIDs.Client
                     if (claimTransform is SamlClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
                     {
                         claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
-                    }
-
-                    if (claimTransform.Type == ClaimTransformTypes.ExternalClaims && claimTransform.ExternalConnectType == ExternalConnectTypes.Api && claimTransform.Secret == claimTransform.SecretLoaded)
-                    {
-                        claimTransform.Secret = null;
                     }
                 }
             }

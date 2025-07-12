@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public interface IOAuthClaimTransforms
+    public interface IOAuthClaimTransformsRef
     {
         List<OAuthClaimTransform> ClaimTransforms { get; set; }
     }

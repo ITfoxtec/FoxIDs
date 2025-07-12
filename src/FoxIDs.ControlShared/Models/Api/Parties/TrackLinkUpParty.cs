@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackLinkUpParty : IValidatableObject, INameValue, INewNameValue, IClaimTransform<OAuthClaimTransform>
+    public class TrackLinkUpParty : INameValue, INewNameValue, IClaimTransformRef<OAuthClaimTransform>, IExtendedUisRef, ILinkExternalUserRef, IExitClaimTransformsRef<OAuthClaimTransform>, IValidatableObject
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

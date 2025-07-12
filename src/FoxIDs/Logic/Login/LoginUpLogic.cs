@@ -16,6 +16,7 @@ using FoxIDs.Logic.Tracks;
 using System.Text.RegularExpressions;
 using NetTools;
 using System.Net;
+using FoxIDs.Repository;
 
 namespace FoxIDs.Logic
 {
@@ -23,15 +24,21 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformLogic claimTransformLogic;
+        private readonly ExtendedUiLogic extendedUiLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly HrdLogic hrdLogic;
 
-        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
+            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
+            this.claimTransformLogic = claimTransformLogic;
+            this.extendedUiLogic = extendedUiLogic;
             this.planUsageLogic = planUsageLogic;
             this.hrdLogic = hrdLogic;
         }
@@ -233,7 +240,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> LoginResponseAsync(LoginUpSequenceData sequenceData, List<Claim> claims)
+        public async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => "AuthMethod, Login response.");
 
@@ -241,31 +248,81 @@ namespace FoxIDs.Logic
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
-
-                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
-
-                switch (sequenceData.DownPartyLink.Type)
+                var extendedUiActionResult = await HandleExtendedUiAsync(loginUpParty, sequenceData, claims);
+                if (extendedUiActionResult != null)
                 {
-                    case PartyTypes.OAuth2:
-                        throw new NotImplementedException();
-                    case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
-                    case PartyTypes.Saml2:
-                        claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
-                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
-                    case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
-
-                    default:
-                        throw new NotSupportedException();
+                    return extendedUiActionResult;
                 }
+
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                return await LoginResponsePostAsync(loginUpParty, sequenceData, claims);
+            }
+            catch (OAuthRequestException orex)
+            {
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
+                logger.Error(orex);
+                return await LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
+        }
+
+        private async Task<IActionResult> HandleExtendedUiAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            var extendedUiActionResult = await extendedUiLogic.HandleUiAsync(loginUpParty, sequenceData, claims,
+                (extendedUiUpSequenceData) => { });
+
+            return extendedUiActionResult;
+        }
+
+        public async Task<IActionResult> LoginResponsePostExtendedUiAsync(ExtendedUiUpSequenceData extendedUiSequenceData, IEnumerable<Claim> claims)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
+            var party = await tenantDataRepository.GetAsync<LoginUpParty>(extendedUiSequenceData.UpPartyId);
+
+            try
+            {
+                return await LoginResponsePostAsync(party, sequenceData, claims);
             }
             catch (OAuthRequestException orex)
             {
                 logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
                 logger.Error(orex);
                 return await serviceProvider.GetService<LoginUpLogic>().LoginResponseErrorAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
+            }
+        }
+
+        private async Task<IActionResult> LoginResponsePostAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, IEnumerable<Claim> claims)
+        {
+            (var transformedClaims, var actionResult) = await claimTransformLogic.TransformAsync(loginUpParty.ExitClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, sequenceData);
+            if (actionResult != null)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                return actionResult;
+            }
+
+            await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), sequenceData.UpPartyProfileName, PartyTypes.Login);
+
+            logger.ScopeTrace(() => $"AuthMethod, output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return await LoginResponseDownAsync(sequenceData, transformedClaims);
+        }
+
+        private async Task<IActionResult> LoginResponseDownAsync(LoginUpSequenceData sequenceData, List<Claim> claims)
+        {
+            logger.ScopeTrace(() => $"AuthMethod, Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+            switch (sequenceData.DownPartyLink.Type)
+            {
+                case PartyTypes.OAuth2:
+                    throw new NotImplementedException();
+                case PartyTypes.Oidc:
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
+                case PartyTypes.Saml2:
+                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
+
+                default:
+                    throw new NotSupportedException();
             }
         }
 

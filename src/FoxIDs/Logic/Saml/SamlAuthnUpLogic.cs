@@ -253,7 +253,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                if (samlConfig.SecondaryDecryptionCertificate != null && samlHttpRequest.Binding is Saml2PostBinding && ex.Source.Contains("cryptography", StringComparison.OrdinalIgnoreCase))
+                if (samlConfig.SecondaryDecryptionCertificate != null && samlHttpRequest.Binding is Saml2PostBinding && ex.Message.Contains("decrypt", StringComparison.OrdinalIgnoreCase))
                 {
                     samlConfig.DecryptionCertificates = new List<X509Certificate2> { samlConfig.SecondaryDecryptionCertificate };
                     saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);

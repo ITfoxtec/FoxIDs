@@ -46,15 +46,7 @@ namespace FoxIDs.Logic.Caches.Providers
 
             var collection = mongoDbRepositoryClient.GetCacheCollection<CacheData>();
             Expression<Func<CacheData, bool>> filter = f => f.PartitionId.Equals(cachItem.PartitionId) && f.Id.Equals(cachItem.Id);
-            var data = await collection.Find(filter).FirstOrDefaultAsync();
-            if (data == null)
-            {
-                await collection.InsertOneAsync(cachItem);
-            }
-            else
-            {
-                _ = await collection.ReplaceOneAsync(filter, cachItem);
-            }
+            await collection.ReplaceOneAsync(filter, cachItem, options: new ReplaceOptions { IsUpsert = true });
         }
 
         public async ValueTask SetFlagAsync(string key, int lifetime)

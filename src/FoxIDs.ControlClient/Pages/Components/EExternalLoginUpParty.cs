@@ -47,8 +47,6 @@ namespace FoxIDs.Client.Pages.Components
 
         private ExternalLoginUpPartyViewModel ToViewModel(ExternalLoginUpParty extLoginUpParty)
         {
-            extLoginUpParty.ExtendedUis.MapExtendedUis();
-
             return extLoginUpParty.Map<ExternalLoginUpPartyViewModel>(afterMap: afterMap =>
             {
                 afterMap.InitName = afterMap.Name;

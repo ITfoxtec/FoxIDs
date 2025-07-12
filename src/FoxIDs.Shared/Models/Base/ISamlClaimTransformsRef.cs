@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public interface ISamlClaimTransforms
+    public interface ISamlClaimTransformsRef
     {
         List<SamlClaimTransform> ClaimTransforms { get; set; }
     }

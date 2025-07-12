@@ -108,14 +108,13 @@ namespace FoxIDs.Infrastructure.ApiDescription
 
         private string GetTemplate(string controllerName)
         {
-            //controllerName = controllerName.ToLower();
             if (controllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey, StringComparison.OrdinalIgnoreCase))
             {
                 return $"{Constants.Routes.MasterApiName}/{Constants.Routes.PreApikey}{controllerName.Substring(1)}";
             }
             else if (controllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey, StringComparison.OrdinalIgnoreCase))
             {
-                return $"[tenant_name]/[track_name]/{Constants.Routes.PreApikey}{controllerName.Substring(1)}";
+                return $"{{tenant_name}}/{{track_name}}/{Constants.Routes.PreApikey}{controllerName.Substring(1)}";
             }
             else
             {

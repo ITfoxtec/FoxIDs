@@ -10,7 +10,7 @@ using System;
 
 namespace FoxIDs.Models
 {
-    public class SamlUpParty : UpPartyWithExternalUser<SamlUpPartyProfile>, ISamlClaimTransforms, IValidatableObject
+    public class SamlUpParty : UpPartyWithExternalUser<SamlUpPartyProfile>, ISamlClaimTransformsRef, IValidatableObject
     {
         public SamlUpParty()
         {

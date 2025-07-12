@@ -138,7 +138,14 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnUpdateTenantViewModelAfterInitAsync(MasterTenantViewModel model)
         {
-            planInfoList = await HelpersService.GetPlanInfoAsync();
+            try
+            {
+                planInfoList = await HelpersService.GetPlanInfoAsync();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
         }
 
         private async Task OnUpdateTenantValidSubmitAsync(EditContext editContext)

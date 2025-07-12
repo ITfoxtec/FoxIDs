@@ -20,7 +20,7 @@ namespace FoxIDs.Controllers
     /// Abstract connection API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
-    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INewNameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
+    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INewNameValue, Api.IClaimTransformRef<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
@@ -112,7 +112,6 @@ namespace FoxIDs.Controllers
 
                 var mUpPartyProfiles = GetMUpPartyProfils(mParty);
 
-                if (!(mParty is UpParty upParty ? await validateModelGenericPartyLogic.ValidateModelExtendedUiAsync(ModelState, upParty, false) : true)) return BadRequest(ModelState);
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);
@@ -177,7 +176,12 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                if (!(mParty is UpParty upParty ? await validateModelGenericPartyLogic.ValidateModelExtendedUiAsync(ModelState, upParty, true) : true)) return BadRequest(ModelState);
+                if(mParty is UpParty upParty)
+                {
+                    await validateModelGenericPartyLogic.HandleModelExtendedUiSecretAsync<AParty, AClaimTransform>(party, upParty);
+                }
+                await validateModelGenericPartyLogic.HandleClaimTransformationSecretAsync<AParty, AClaimTransform, MParty>(party, mParty);
+
                 if (!(mParty is UpParty ? validateModelGenericPartyLogic.ValidateModelUpPartyProfiles(ModelState, mUpPartyProfiles) : true)) return BadRequest(ModelState);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpParties), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!await validateModelGenericPartyLogic.ValidateModelClaimTransformsAsync(ModelState, mParty)) return BadRequest(ModelState);

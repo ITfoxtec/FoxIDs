@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class ExtendedUi : IOAuthClaimTransforms, IValidatableObject
+    public class ExtendedUi : IOAuthClaimTransformsRef, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.ExtendedUi.NameLength)]

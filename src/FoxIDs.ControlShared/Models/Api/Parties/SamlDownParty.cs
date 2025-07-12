@@ -146,27 +146,27 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", [nameof(Name), nameof(DisplayName)]));
             }
-            if (AllowUpPartyNames?.Count <= 0)
+            if (!(AllowUpPartyNames?.Count > 0 || AllowUpParties?.Count > 0))
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} or {nameof(AllowUpPartyNames)} is required.", [nameof(AllowUpParties), nameof(AllowUpPartyNames)]));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
-                results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+                results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", [nameof(Claims)]));
             }
 
             if (!LoggedOutUrl.IsNullOrWhiteSpace())
             {
                 if (LogoutRequestBinding == null)
                 {
-                    results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", new[] { nameof(LogoutRequestBinding) }));
+                    results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", [nameof(LogoutRequestBinding)]));
                 }
                 if (LogoutResponseBinding == null)
                 {
-                    results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", new[] { nameof(LogoutResponseBinding) }));
+                    results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", [nameof(LogoutResponseBinding)]));
                 }
             }
 

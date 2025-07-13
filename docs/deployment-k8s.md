@@ -364,7 +364,7 @@ kubectl apply -f xxx.yaml --namespace=test
 All logs from FoxIDs including errors, trace and events is written to `stdout`. Consider how to handle [application logs](https://kubernetes.io/docs/concepts/cluster-administration/logging/) and collect logs from the containers.
 
 **Rate Limiting**
-Configure limits on connections and transmission rates in `k8s-foxids-ingress-deployment.yaml`, docs: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting.
+Configure [limits on connections and transmission rates](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting) in `k8s-foxids-ingress-deployment.yaml`.
 
 **MongoDB Operator**  
 Consider MongoDB Operator if you need multiple instances of MongoDB.

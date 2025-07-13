@@ -343,6 +343,14 @@ img.logo {
         }
 }
 
+.collapse:not(.show) {
+    display: block !important;
+}
+
+.collapse:not(.show) .nav-item:not(.active) {
+    display: none !important;
+}
+
 .navbar-expand-env .navbar-nav {
     max-width: 180px;
 }

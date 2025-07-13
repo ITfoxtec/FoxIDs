@@ -92,13 +92,19 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
-                var track = await TrackService.GetTrackAsync(model.ToDownTrackName);
-                model.ToDownTrackDisplayName = track.DisplayName;
+                if (!model.ToDownTrackName.IsNullOrWhiteSpace())
+                {
+                    var track = await TrackService.GetTrackAsync(model.ToDownTrackName);
+                    model.ToDownTrackDisplayName = track.DisplayName;
 
-                var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName);
-                model.ToDownPartyDisplayName = downParty.DisplayName;
+                    var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName);
+                    model.ToDownPartyDisplayName = downParty.DisplayName;
+                }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                toastService.ShowError($"Error loading the environment links relation data. {ex.Message}");
+            }
         }
 
         private void AddProfile(MouseEventArgs e, List<TrackLinkUpPartyProfileViewModel> profiles)

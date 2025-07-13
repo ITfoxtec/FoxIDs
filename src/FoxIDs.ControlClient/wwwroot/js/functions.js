@@ -108,3 +108,10 @@ function unloadMollie() {
 async function submitMollie() {
     return await mollie.createToken();
 }
+
+function closeCollapsedMenu() {
+    var navbarToggler = $(".navbar-toggler");
+    navbarToggler.addClass("collapsed");
+    var navbarSupportedContent = $("#navbarSupportedContent");
+    navbarSupportedContent.removeClass("show");
+}

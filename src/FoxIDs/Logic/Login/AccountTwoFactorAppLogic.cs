@@ -28,12 +28,12 @@ namespace FoxIDs.Logic
             this.failingLoginLogic = failingLoginLogic;
         }
 
-        public async Task<TwoFactorSetupInfo> GenerateSetupCodeAsync(string twoFactorAppName, string email)
+        public async Task<TwoFactorSetupInfo> GenerateSetupCodeAsync(string twoFactorAppName, string userIdentifier)
         {
-            email = email?.ToLower();
+            userIdentifier = userIdentifier?.ToLower();
             var twoFactor = new TwoFactorAuthenticator();
             var secret = RandomGenerator.Generate(secretAndRecoveryCodeLength);
-            var setupInfo = await Task.FromResult(twoFactor.GenerateSetupCode(twoFactorAppName, email, secret, false, 3));
+            var setupInfo = await Task.FromResult(twoFactor.GenerateSetupCode(twoFactorAppName, userIdentifier, secret, false, 3));
 
             return new TwoFactorSetupInfo
             {

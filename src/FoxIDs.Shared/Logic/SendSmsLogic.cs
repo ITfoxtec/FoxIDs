@@ -9,6 +9,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -46,6 +47,10 @@ namespace FoxIDs.Logic
                         await SendSmsWithSmstoolsApiAsync(smsSettings, phone, smsContent);
                         break;
 
+                    case SendSmsTypes.TeliaSmsGateway:
+                        await SendSmsWithTeliaSmsGatewayAsync(smsSettings, phone, smsContent);
+                        break;
+
                     default:
                         //TODO add support for other SMS providers
                         throw new NotSupportedException("SMS provider not supported.");
@@ -68,7 +73,7 @@ namespace FoxIDs.Logic
                     Message = smsContent.Sms,
                     Sender = smsSettings.FromName
                 };
-                logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', SMS API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', SMS Gateway API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
 
                 var httpClient = httpClientFactory.CreateClient();
@@ -113,7 +118,7 @@ namespace FoxIDs.Logic
                     Message = smsContent.Sms,
                     Sender = smsSettings.FromName
                 };
-                logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', SMS API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', SMS Tools API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
 
                 var httpClient = httpClientFactory.CreateClient();
@@ -146,6 +151,75 @@ namespace FoxIDs.Logic
             }
         }
 
+        private async Task SendSmsWithTeliaSmsGatewayAsync(SendSms smsSettings, string phone, SmsContent smsContent)
+        {
+            try
+            {
+                var smsApiRequest = new TeliaSmsGatewayRequest
+                {
+                    OutboundMessageRequest = new TeliaSmsGatewayMessageRequest
+                    {
+                        Address = ["tel:" + phone],
+                        SenderAddress = smsSettings.ClientId,
+                        SenderName = smsSettings.FromName,
+                        OutboundSmsTextMessage = new TeliaSmsGatewayTextMessage
+                        {
+                            Message = smsContent.Sms
+                        }
+                    }
+                };
+                logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', Telia SMS API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
+
+                var certificate = smsSettings.Key.ToX509Certificate(includePrivateKey: true);
+                var rsa = smsSettings.Key.ToRsa(includePrivateParameters: true);
+
+                var httpClientHandler = new HttpClientHandler
+                {
+                    ClientCertificateOptions = ClientCertificateOption.Manual,
+                    SslProtocols = SslProtocols.Tls12,
+                    // ServerCertificateCustomValidationCallback = ValidateServerCertificate,
+                    ClientCertificates = { certificate }
+                };
+
+                using var httpClient = new HttpClient(httpClientHandler, disposeHandler: true);
+                httpClient.SetAuthorizationHeaderBearer(smsSettings.ClientSecret);
+                try
+                {
+                    using var response = await httpClient.PostAsPlainJsonAsync(smsSettings.ApiUrl, smsApiRequest);
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.OK:
+                        case HttpStatusCode.Created:
+                        case HttpStatusCode.Accepted:
+                            var result = await response.Content.ReadAsStringAsync();
+                            logger.Event($"SMS send to '{phone}'.");
+                            logger.ScopeTrace(() => $"SMS send to '{phone}', API response '{result}'.", traceType: TraceTypes.Message);
+                            return;
+
+                        default:
+                            var resultError = await response.Content.ReadAsStringAsync();
+                            logger.ScopeTrace(() => $"Send SMS to '{phone}', Telia API error '{resultError}'. Status code={response.StatusCode}.", traceType: TraceTypes.Message);
+                            throw new Exception($"Telia SMS gateway API error '{resultError}'. Status code={response.StatusCode}.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Unable to call Telia SMS gateway API URL '{smsSettings.ApiUrl}'.", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Sending SMS to '{phone}' failed.", ex);
+            }
+        }
+        
+        // private static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors errors)
+        // {
+        //     // Perform custom server certificate validation if required
+        //     // Return true if the certificate is trusted, false otherwise
+        //     return true;
+        // }
+
         private SendSms GetSettings()
         {
             if (RouteBinding.SendSms != null)
@@ -155,14 +229,23 @@ namespace FoxIDs.Logic
 
             if (settings.Sms != null)
             {
-                return new SendSms
+                switch (settings.Sms.Type)
                 {
-                    Type = settings.Sms.Type,
-                    FromName = settings.Sms.FromName,
-                    ApiUrl = settings.Sms.ApiUrl,
-                    ClientId = settings.Sms.ClientId,
-                    ClientSecret = settings.Sms.ClientSecret,
-                };
+                    case SendSmsTypes.GatewayApi:
+                    case SendSmsTypes.Smstools:
+                        return new SendSms
+                        {
+                            Type = settings.Sms.Type,
+                            FromName = settings.Sms.FromName,
+                            ApiUrl = settings.Sms.ApiUrl,
+                            ClientId = settings.Sms.ClientId,
+                            ClientSecret = settings.Sms.ClientSecret,
+                        };
+
+                    case SendSmsTypes.TeliaSmsGateway:
+                    default:
+                        throw new NotSupportedException($"SMS type '{settings.Sms.Type}' is not supported in settings.");
+                }
             }
 
             throw new EmailConfigurationException("SMS settings is not configured.");

@@ -55,6 +55,9 @@ namespace FoxIDs.Models.Config
                         results.Add(new ValidationResult($"The field {nameof(ClientSecret)} is required.", [nameof(ClientSecret)]));
                     }
                     break;
+                case SendSmsTypes.TeliaSmsGateway:
+                    results.Add(new ValidationResult($"The field {nameof(Type)} with {Type} is not supported in settings.", [nameof(Type)]));
+                    break;
                 default:
                     //TODO add support for other email providers
                     throw new NotSupportedException();

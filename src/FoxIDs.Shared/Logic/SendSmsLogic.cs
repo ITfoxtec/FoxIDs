@@ -170,15 +170,11 @@ namespace FoxIDs.Logic
                 };
                 logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', Telia SMS API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
-                var certificate = smsSettings.Key.ToX509Certificate(includePrivateKey: true);
-                var rsa = smsSettings.Key.ToRsa(includePrivateParameters: true);
-
                 var httpClientHandler = new HttpClientHandler
                 {
                     ClientCertificateOptions = ClientCertificateOption.Manual,
                     SslProtocols = SslProtocols.Tls12,
-                    // ServerCertificateCustomValidationCallback = ValidateServerCertificate,
-                    ClientCertificates = { certificate }
+                    ClientCertificates = { smsSettings.Key.ToX509Certificate(includePrivateKey: true) }
                 };
 
                 using var httpClient = new HttpClient(httpClientHandler, disposeHandler: true);
@@ -212,13 +208,6 @@ namespace FoxIDs.Logic
                 throw new Exception($"Sending SMS to '{phone}' failed.", ex);
             }
         }
-        
-        // private static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors errors)
-        // {
-        //     // Perform custom server certificate validation if required
-        //     // Return true if the certificate is trusted, false otherwise
-        //     return true;
-        // }
 
         private SendSms GetSettings()
         {

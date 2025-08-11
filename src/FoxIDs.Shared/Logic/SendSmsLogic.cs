@@ -4,12 +4,14 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.External.Sms;
 using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Saml2;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -232,6 +234,17 @@ namespace FoxIDs.Logic
                         };
 
                     case SendSmsTypes.TeliaSmsGateway:
+                        var clientCertificate = X509Certificate2.CreateFromPem(settings.Sms.CertificatePemCrt, settings.Sms.CertificatePemKey);
+                        return new SendSms
+                        {
+                            Type = settings.Sms.Type,
+                            FromName = settings.Sms.FromName,
+                            ApiUrl = settings.Sms.ApiUrl,
+                            ClientId = settings.Sms.ClientId,
+                            ClientSecret = settings.Sms.ClientSecret,
+                            Key = clientCertificate.ToFTJsonWebKey(includePrivateKey: true)
+                        };
+
                     default:
                         throw new NotSupportedException($"SMS type '{settings.Sms.Type}' is not supported in settings.");
                 }

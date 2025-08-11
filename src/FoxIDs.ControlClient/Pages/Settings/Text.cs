@@ -26,6 +26,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string plansHref;
         private string smsPricesHref;
         private string riskPasswordsHref;
+        private string smsSettingsHref;
 
         private List<string> supportedCultures;
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
@@ -56,6 +57,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
+            smsSettingsHref = $"{TenantName}/smssettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             plansHref = $"{TenantName}/plans";
             smsPricesHref = $"{TenantName}/smsprices";

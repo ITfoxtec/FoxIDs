@@ -1,0 +1,95 @@
+@page "/{tenantName}/smssettings"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">SMS</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTenant)
+    {
+        if (ClientSettings.EnablePayment)
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="@smsPricesHref">SMS Prices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@plansHref">Plans</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="pt-3">
+    <div class="info-text">
+        Configure the SMS provider in the environment.
+    </div>
+</div>
+
+<div class="tab-content">
+    <PageEditForm @ref="smsSettingsForm" TModel="SmsSettingsViewModel" OnValidSubmit="OnUpdateSmsValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected)
+        {
+            <div class="modal-body px-0">
+                @if (!deleteSmsError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @deleteSmsError
+                    </div>
+                }
+
+                <FInputSelect @bind-Value="smsSettingsForm.Model.Type" For="@(() => smsSettingsForm.Model.Type)">
+                    <option value="@SendSmsTypes.GatewayApi">Gateway API</option>
+                    <option value="@SendSmsTypes.Smstools">Smstools</option>
+                    <option value="@SendSmsTypes.TeliaSmsGateway">Telia SMS Gateway</option>
+                </FInputSelect>
+
+                <FInputText @bind-Value="smsSettingsForm.Model.FromName" For="@(() => smsSettingsForm.Model.FromName)" />
+
+                <FInputText @bind-Value="smsSettingsForm.Model.ApiUrl" For="@(() => smsSettingsForm.Model.ApiUrl)" />
+                <FInputText @bind-Value="smsSettingsForm.Model.ClientSecret" For="@(() => smsSettingsForm.Model.ClientSecret)" />
+                @if (smsSettingsForm.Model.Type == SendSmsTypes.Smstools)
+                {
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" />
+                }
+                else if (smsSettingsForm.Model.Type == SendSmsTypes.TeliaSmsGateway)
+                {
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" />
+                    <FInputTextArea @bind-Value="smsSettingsForm.Model.KeyJson" For="@(() => smsSettingsForm.Model.KeyJson)" />
+                }
+
+                @if (deleteSmsAcknowledge)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <div>
+                            You are about to remove the SMS settings, are you sure?
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteSmsAsync">Yes remove SMS settings</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => deleteSmsAcknowledge = false)">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer px-0">
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteSmsAcknowledge = true)">Remove SMS settings</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        }
+    </PageEditForm>
+</div>

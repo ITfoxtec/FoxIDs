@@ -8,19 +8,24 @@ namespace FoxIDs.Models.Api
     public class SendSms : IValidatableObject
     {
         [Required]
+        [Display(Name = "SMS gateway")]
         public SendSmsTypes Type { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Track.SendSms.FromNameLength)]
+        [Display(Name = "From name")]
         public string FromName { get; set; }
 
         [MaxLength(Constants.Models.Track.SendSms.ApiUrlLength)]
+        [Display(Name = "API URL")]
         public string ApiUrl { get; set; }
 
         [MaxLength(Constants.Models.Track.SendSms.ClientIdLength)]
+        [Display(Name = "Client ID")]
         public string ClientId { get; set; }
 
         [MaxLength(Constants.Models.Track.SendSms.ClientSecretLength)]
+        [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
 
         public JsonWebKey Key { get; set; }

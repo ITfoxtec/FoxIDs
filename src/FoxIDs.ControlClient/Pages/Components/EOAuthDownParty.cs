@@ -351,6 +351,10 @@ namespace FoxIDs.Client.Pages.Components
                         });
                         generalOAuthDownParty.Form.Model.Client.ClientKeys.Add(jwkWithCertificateInfo);
                     }
+                    catch (TokenUnavailableException)
+                    {
+                        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    }
                     catch (Exception ex)
                     {
                         generalOAuthDownParty.Form.SetFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys), ex.Message);

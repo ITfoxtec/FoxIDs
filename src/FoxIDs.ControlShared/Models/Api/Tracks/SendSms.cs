@@ -1,5 +1,4 @@
 ﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +12,7 @@ namespace FoxIDs.Models.Api
 
         [Required]
         [MaxLength(Constants.Models.Track.SendSms.FromNameLength)]
-        [Display(Name = "From name")]
+        [Display(Name = "SMS send from name")]
         public string FromName { get; set; }
 
         [MaxLength(Constants.Models.Track.SendSms.ApiUrlLength)]
@@ -28,11 +27,11 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
 
-        public JsonWebKey Key { get; set; }
+        public JwkWithCertificateInfo Key { get; set; }
 
         //TODO add support for other SMS providers
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
 

@@ -61,15 +61,56 @@
                 <FInputText @bind-Value="smsSettingsForm.Model.FromName" For="@(() => smsSettingsForm.Model.FromName)" />
 
                 <FInputText @bind-Value="smsSettingsForm.Model.ApiUrl" For="@(() => smsSettingsForm.Model.ApiUrl)" />
-                <FInputText @bind-Value="smsSettingsForm.Model.ClientSecret" For="@(() => smsSettingsForm.Model.ClientSecret)" />
                 @if (smsSettingsForm.Model.Type == SendSmsTypes.Smstools)
                 {
                     <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" />
                 }
                 else if (smsSettingsForm.Model.Type == SendSmsTypes.TeliaSmsGateway)
                 {
-                    <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" />
-                    <FInputTextArea @bind-Value="smsSettingsForm.Model.KeyJson" For="@(() => smsSettingsForm.Model.KeyJson)" />
+
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" LabelText="Sender address (ID)" />
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientSecret" For="@(() => smsSettingsForm.Model.ClientSecret)" LabelText="API key" />
+
+                    @if (smsSettingsForm.Model.Key == null){
+                        <div class="form-group active-group active">
+                            <div class="d-flex">
+                                <button type="button" class="btn btn-outline-dark mb-2" @onclick="OpenCertificateModal">Select mTLS certificate</button>
+                            </div>
+                            <ValidationMessage For="@(() => smsSettingsForm.Model.Key)" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="pt-2">
+                            <div class="form-group active-group active">
+                                 <div class="card">
+                                    <div class="card-body">
+                                        <ul class="list-group mt-2">
+                                            @if (smsSettingsForm.Model.Key != null && smsSettingsForm.Model.Key.CertificateInfo != null)
+                                            {
+                                                <li class="list-group-item p-0">
+                                                    <div class="d-flex">
+                                                        <div class="mr-auto p-2">
+                                                            <strong>@smsSettingsForm.Model.Key.CertificateInfo.Subject</strong><br />
+                                                            <span class="@(smsSettingsForm.Model.Key.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @smsSettingsForm.Model.Key.CertificateInfo.ValidFrom.ToShortDateString() to @smsSettingsForm.Model.Key.CertificateInfo.ValidTo.ToShortDateString()</span><br />
+                                                            Thumbprint: @smsSettingsForm.Model.Key.CertificateInfo.Thumbprint
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                        <div class="form-group active-group active">
+                                            <div class="d-flex">
+                                                <button type="button" class="btn btn-outline-dark mr-2" @onclick="OpenCertificateModal">Change certificate</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                            
+                                <Label For="@(() => smsSettingsForm.Model.Key)" LabelText="mTLS certificate" class="label-control" />
+                                <ValidationMessage For="@(() => smsSettingsForm.Model.Key)" />
+                            </div>
+                        </div>
+                    }
                 }
 
                 @if (deleteSmsAcknowledge)
@@ -91,5 +132,77 @@
                 <button type="submit" class="btn btn-primary">Update</button>
             </div>
         }
+
+        <Modal @ref="certificateModal" Title="Select mTLS certificate">
+            <div class="modal-body">
+                <div class="form-group active-group active">
+                    <label class="label-control">Certificate source</label>
+                    <select class="form-control" @bind="certificateSource">
+                        <option value="pfx">PFX (.pfx)</option>
+                        <option value="pem">PEM (.crt + .key)</option>
+                    </select>
+                </div>
+
+                @if (!certificateError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @certificateError
+                    </div>
+                }
+
+                @if (certificateSource == "pfx")
+                {
+                    <FInputPassword @bind-Value="pfxPassword" For="@(() => pfxPassword)" LabelText="PFX password (optional)" />
+
+                    <div class="form-group active-group active">
+                        <div class="drag-drop-zone input-control">
+                            <InputFile OnChange="@(async e => await OnPfxSelectedAsync(e))" />
+                            @pfxFileStatus
+                        </div>
+                        <label class="label-control">PFX certificate</label>
+                        <button type="button" class="btn btn-outline-dark @(pfxBytes == null ? "disabled" : "") mt-3" @onclick="ConvertPfxToJwkAsync">Read certificate</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group active-group active">
+                        <div class="drag-drop-zone input-control">
+                            <InputFile OnChange="@(async e => await OnPemCrtSelectedAsync(e))" />
+                            @pemCrtFileStatus
+                        </div>
+                        <label class="label-control">PEM certificate (.crt)</label>
+                    </div>
+                    <div class="form-group active-group active">
+                        <div class="drag-drop-zone input-control">
+                            <InputFile OnChange="@(async e => await OnPemKeySelectedAsync(e))" />
+                            @pemKeyFileStatus
+                        </div>
+                        <label class="label-control">PEM private key (.key)</label>
+                        <button type="button" class="btn btn-outline-dark  @(pemCrt == null || pemKey == null ? "disabled" : "") mt-3" @onclick="ConvertPemToJwkAsync">Read certificate</button>
+                    </div>
+                }
+
+                <ul class="list-group">
+                    @if (stagedKey != null && stagedKey.CertificateInfo != null)
+                    {
+                        <li class="list-group-item p-0">
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    <strong>@stagedKey.CertificateInfo.Subject</strong><br />
+                                    <span class="@(stagedKey.CertificateInfo.IsValid() ? "" : "text-danger")">Valid from @stagedKey.CertificateInfo.ValidFrom.ToShortDateString() to @stagedKey.CertificateInfo.ValidTo.ToShortDateString()</span><br />
+                                    Thumbprint: @stagedKey.CertificateInfo.Thumbprint
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <div class="d-flex modal-footer px-0 pb-0">
+                    <button type="button" class="btn btn-primary @(stagedKey == null ? "disabled" : "")" @onclick="ConfirmCertificateSelection">Select</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CancelCertificateSelection">Cancel</button>
+                </div>
+            </div>
+        </Modal>
     </PageEditForm>
 </div>
+
+

@@ -13,13 +13,14 @@ using FoxIDs.Client.Logic;
 using ITfoxtec.Identity;
 using Blazored.Toast.Services;
 using FoxIDs.Client.Models.Config;
-using ITfoxtec.Identity.Models;
-using System.Text.Json;
+using Microsoft.AspNetCore.WebUtilities;
+using System.IO;
 
 namespace FoxIDs.Client.Pages.Settings
 {
     public partial class SmsSettings : PageBase
     {
+        const string DefaultFileStatus = "Drop certificate file here or click to select";
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
@@ -28,8 +29,20 @@ namespace FoxIDs.Client.Pages.Settings
         private string smsPricesHref;
         private string riskPasswordsHref;
         private PageEditForm<SmsSettingsViewModel> smsSettingsForm;
+        private Modal certificateModal; // @ref from SmsSettings.razor
+        private string certificateError;
+        private JwkWithCertificateInfo stagedKey; // staged certificate selection in modal
         private string deleteSmsError;
         private bool deleteSmsAcknowledge = false;
+        private string certificateSource = "pfx"; // pfx or pem
+        private string pfxPassword = DefaultFileStatus;
+        private byte[] pfxBytes;
+        private string pfxFileStatus;
+        private string pemCrt;
+        private string pemKey;
+        private string pemCrtFileStatus = DefaultFileStatus;
+        private string pemKeyFileStatus = DefaultFileStatus;
+
 
         [Inject]
         public ClientSettings ClientSettings { get; set; }
@@ -42,6 +55,9 @@ namespace FoxIDs.Client.Pages.Settings
 
         [Inject]
         public TrackService TrackService { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -94,7 +110,7 @@ namespace FoxIDs.Client.Pages.Settings
                     ApiUrl = smsSettings.ApiUrl,
                     ClientId = smsSettings.ClientId,
                     ClientSecret = smsSettings.ClientSecret,
-                    KeyJson = smsSettings.Key != null ? JsonSerializer.Serialize(smsSettings.Key, new JsonSerializerOptions { WriteIndented = true }) : null
+                    Key = smsSettings.Key,
                 });
             }
             catch (TokenUnavailableException)
@@ -111,35 +127,23 @@ namespace FoxIDs.Client.Pages.Settings
         {
             try
             {
-        JsonWebKey jwk = null;
-                if (smsSettingsForm.Model.Type == SendSmsTypes.TeliaSmsGateway)
+
+                switch (smsSettingsForm.Model.Type)
                 {
-                    if (smsSettingsForm.Model.KeyJson.IsNullOrWhiteSpace())
-                    {
-                        smsSettingsForm.SetFieldError(nameof(smsSettingsForm.Model.KeyJson), "mTLS certificate JWK is required.");
-                        return;
-                    }
-                    try
-                    {
-            jwk = JsonSerializer.Deserialize<JsonWebKey>(smsSettingsForm.Model.KeyJson);
-                    }
-                    catch (Exception)
-                    {
-                        smsSettingsForm.SetFieldError(nameof(smsSettingsForm.Model.KeyJson), "Invalid JWK JSON.");
-                        return;
-                    }
+                    case SendSmsTypes.GatewayApi:
+                        smsSettingsForm.Model.ClientId = null;
+                        smsSettingsForm.Model.Key = null;
+                        break;
+                    case SendSmsTypes.Smstools:
+                        smsSettingsForm.Model.Key = null;
+                        break;
+                    case SendSmsTypes.TeliaSmsGateway:
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
 
-                var payload = new SendSms
-                {
-                    Type = smsSettingsForm.Model.Type,
-                    FromName = smsSettingsForm.Model.FromName,
-                    ApiUrl = smsSettingsForm.Model.ApiUrl,
-                    ClientId = smsSettingsForm.Model.ClientId,
-                    ClientSecret = smsSettingsForm.Model.ClientSecret,
-                    Key = jwk
-                };
-                await TrackService.UpdateTrackSendSmsAsync(payload);
+                await TrackService.UpdateTrackSendSmsAsync(smsSettingsForm.Model.Map<SendSms>());
                 toastService.ShowSuccess("SMS settings updated.");
             }
             catch (Exception ex)
@@ -164,6 +168,124 @@ namespace FoxIDs.Client.Pages.Settings
             {
                 deleteSmsError = ex.Message;
             }
+        }
+
+        private async Task OnPfxSelectedAsync(InputFileChangeEventArgs e)
+        {
+            certificateError = null;
+            pfxFileStatus = DefaultFileStatus;
+            pfxBytes = null;
+            var file = e.File;
+            if (file == null) return;
+            using var ms = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(ms);
+            pfxBytes = ms.ToArray();
+            pfxFileStatus = file.Name;
+        }
+
+        private async Task ConvertPfxToJwkAsync()
+        {
+            certificateError = null;
+            try
+            {
+                smsSettingsForm?.ClearFieldError(nameof(smsSettingsForm.Model.Key));
+                if (pfxBytes == null)
+                {
+                    smsSettingsForm.SetFieldError(nameof(smsSettingsForm.Model.Key), "Select a PFX file first.");
+                    return;
+                }
+                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(pfxBytes);
+                stagedKey = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = pfxPassword });
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                certificateError = ex.Message;
+            }
+        }
+
+        private async Task OnPemCrtSelectedAsync(InputFileChangeEventArgs e)
+        {
+            certificateError = null;
+            pemCrtFileStatus = DefaultFileStatus;
+            pemCrt = null;
+            var file = e.File;
+            if (file == null) return;
+            using var reader = new StreamReader(file.OpenReadStream());
+            pemCrt = await reader.ReadToEndAsync();
+            pemCrtFileStatus = file.Name;
+        }
+
+        private async Task OnPemKeySelectedAsync(InputFileChangeEventArgs e)
+        {
+            certificateError = null;
+            pemKeyFileStatus = DefaultFileStatus;
+            pemKey = null;
+            var file = e.File;
+            if (file == null) return;
+            using var reader = new StreamReader(file.OpenReadStream());
+            pemKey = await reader.ReadToEndAsync();
+            pemKeyFileStatus = file.Name;
+        }
+
+        private async Task ConvertPemToJwkAsync()
+        {
+            certificateError = null;
+            try
+            {
+                smsSettingsForm?.ClearFieldError(nameof(smsSettingsForm.Model.Key));
+                if (pemCrt.IsNullOrWhiteSpace() || pemKey.IsNullOrWhiteSpace())
+                {
+                    smsSettingsForm.SetFieldError(nameof(smsSettingsForm.Model.Key), "Select both .crt and .key files.");
+                    return;
+                }
+                stagedKey = await HelpersService.ReadCertificateFromPemAsync(new CertificateCrtAndKey { CertificatePemCrt = pemCrt, CertificatePemKey = pemKey });
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                certificateError = ex.Message;
+            }
+        }
+
+        private void OpenCertificateModal()
+        {
+            certificateError = null;
+            stagedKey = null;
+            // Reset file inputs/status
+            certificateSource = "pfx";
+            pfxPassword = null;
+            pfxBytes = null;
+            pfxFileStatus = DefaultFileStatus;
+            pemCrt = null;
+            pemKey = null;
+            pemCrtFileStatus = DefaultFileStatus;
+            pemKeyFileStatus = DefaultFileStatus;
+            certificateModal?.Show();
+        }
+
+        private void ConfirmCertificateSelection()
+        {
+            smsSettingsForm?.ClearFieldError(nameof(smsSettingsForm.Model.Key));
+            if (stagedKey != null)
+            {
+                smsSettingsForm.Model.Key = stagedKey;
+            }
+            certificateModal?.Hide();
+        }
+
+        private void CancelCertificateSelection()
+        {
+            // Discard staged changes
+            stagedKey = null;
+            // And close modal
+            certificateModal?.Hide();
         }
     }
 }

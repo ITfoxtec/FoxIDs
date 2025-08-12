@@ -1,0 +1,52 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch FoxIDs",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build FoxIDs",
+            "program": "${workspaceFolder}/src/FoxIDs/bin/Debug/net9.0/FoxIDs.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FoxIDs",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Launch FoxIDs.Control",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build FoxIDs.Control",
+            "program": "${workspaceFolder}/src/FoxIDs.Control/bin/Debug/net9.0/FoxIDs.Control.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FoxIDs.Control",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ],
+    "compounds": [
+    {
+      "name": "Launch FoxIDs & FoxIDs.Control",
+      "configurations": [
+        "Launch FoxIDs",
+        "Launch FoxIDs.Control"
+      ],
+      "stopAll": true
+    }
+  ]
+}

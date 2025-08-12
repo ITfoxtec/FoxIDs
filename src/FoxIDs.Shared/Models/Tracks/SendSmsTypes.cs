@@ -4,5 +4,6 @@
     {
         GatewayApi = 100,
         Smstools = 200,
+        TeliaSmsGateway = 300,
     }
 }

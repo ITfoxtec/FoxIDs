@@ -23,6 +23,9 @@ namespace FoxIDs.Models.Config
         [MaxLength(Constants.Models.Track.SendSms.ClientSecretLength)]
         public string ClientSecret { get; set; }
 
+        public string CertificatePemCrt { get; set; }
+        public string CertificatePemKey { get; set; }
+
         //TODO add support for other SMS providers
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -53,6 +56,28 @@ namespace FoxIDs.Models.Config
                     if (ClientSecret.IsNullOrWhiteSpace())
                     {
                         results.Add(new ValidationResult($"The field {nameof(ClientSecret)} is required.", [nameof(ClientSecret)]));
+                    }
+                    break;
+                case SendSmsTypes.TeliaSmsGateway:
+                    if (ApiUrl.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ApiUrl)} is required.", [nameof(ApiUrl)]));
+                    }
+                    if (ClientId.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ClientId)} is required.", [nameof(ClientId)]));
+                    }
+                    if (ClientSecret.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ClientSecret)} is required.", [nameof(ClientSecret)]));
+                    }
+                    if (CertificatePemCrt.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(CertificatePemCrt)} is required.", [nameof(CertificatePemCrt)]));
+                    }
+                    if (CertificatePemKey.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(CertificatePemKey)} is required.", [nameof(CertificatePemKey)]));
                     }
                     break;
                 default:

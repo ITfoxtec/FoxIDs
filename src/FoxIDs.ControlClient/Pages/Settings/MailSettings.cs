@@ -23,6 +23,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string plansHref;
         private string smsPricesHref;
         private string riskPasswordsHref;
+        private string smsSettingsHref;
         private PageEditForm<MailSettingsViewModel> mailSettingsForm;
         private string deleteMailError;
         private bool deleteMailAcknowledge = false;
@@ -52,6 +53,7 @@ namespace FoxIDs.Client.Pages.Settings
             plansHref = $"{TenantName}/plans";
             smsPricesHref = $"{TenantName}/smsprices";
             riskPasswordsHref = $"{TenantName}/riskpasswords";
+            smsSettingsHref = $"{TenantName}/smssettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

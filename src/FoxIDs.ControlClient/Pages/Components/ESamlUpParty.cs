@@ -261,6 +261,10 @@ namespace FoxIDs.Client.Pages.Components
                         });
                         generalSamlUpParty.Form.Model.Keys.Add(jwkWithCertificateInfo);
                     }
+                    catch (TokenUnavailableException)
+                    {
+                        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    }
                     catch (Exception ex)
                     {
                         generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), ex.Message);

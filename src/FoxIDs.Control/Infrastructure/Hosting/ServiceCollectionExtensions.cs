@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Mollie.Api;
 using Mollie.Api.Framework;
@@ -255,6 +256,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton(serviceProvider =>
             {
                 var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+                var loggerFactory = serviceProvider.GetService<ILoggerFactory>();                 
                 var mappingConfig = new MapperConfiguration(mc =>
                 {
                     mc.AllowNullCollections = true;
@@ -262,7 +264,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     mc.AddProfile(new MasterMappingProfile());
                     mc.AddProfile(new TenantMappingProfiles(httpContextAccessor));
                     mc.AddProfile(new ExternalMappingProfile());
-                });
+                }, loggerFactory);
 
                 return mappingConfig.CreateMapper();
             });

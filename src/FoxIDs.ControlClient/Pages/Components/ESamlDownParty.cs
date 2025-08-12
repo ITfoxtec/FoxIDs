@@ -129,6 +129,10 @@ namespace FoxIDs.Client.Pages.Components
                         };
                         generalSamlDownParty.Form.Model.EncryptionKey = jwkWithCertificateInfo;
                     }
+                    catch (TokenUnavailableException)
+                    {
+                        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    }
                     catch (Exception ex)
                     {
                         generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), ex.Message);
@@ -189,6 +193,10 @@ namespace FoxIDs.Client.Pages.Components
                             Key = jwkWithCertificateInfo
                         });
                         generalSamlDownParty.Form.Model.Keys.Add(jwkWithCertificateInfo);
+                    }
+                    catch (TokenUnavailableException)
+                    {
+                        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                     }
                     catch (Exception ex)
                     {

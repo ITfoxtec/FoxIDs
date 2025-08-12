@@ -20,6 +20,7 @@ namespace FoxIDs.Client.Pages.Settings
     {
         private string trackSettingsHref;
         private string mailSettingsHref;
+        private string smsSettingsHref;
         private string claimMappingsHref;
         private string textsHref;
         private string plansHref;
@@ -46,6 +47,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
+            smsSettingsHref = $"{TenantName}/smssettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";
             plansHref = $"{TenantName}/plans";

@@ -65,6 +65,8 @@ In this example the user is asked to do two-factor authentication with an authen
 
 ![2FA example](images/configure-login-2fa-example.png)
 
+A phone number and email can either be configured as a user identifier or as a claim with the `phone_number` and `email` claim types.
+
 The two-factor authentication type is selected as shown in this table.
 
 <table>

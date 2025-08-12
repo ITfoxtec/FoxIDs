@@ -1,11 +1,11 @@
-# Upload users
+# Upload many users
 
 Provisioning your users in an environment, with or without a password:
 
 - You can upload the users with there password, if you know the users' passwords. 
 - Otherwise, you can upload the users without a password and the users are then requested to set a password with an email or SMS conformation code. Require the users to have either an email or phone number.
 
-The users are bulk uploaded to an environment with 1,000 users at the time and supporting upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+The users are bulk uploaded to an environment with 1,000 users at the time and supporting multiple upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
 
 ## Upload with seed tool
 

@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string plansHref;
         private string smsPricesHref;
         private string riskPasswordsHref;
+        private string smsSettingsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
 
@@ -48,6 +49,7 @@ namespace FoxIDs.Client.Pages.Settings
         {
             trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
+            smsSettingsHref = $"{TenantName}/smssettings";
             textsHref = $"{TenantName}/texts";
             plansHref = $"{TenantName}/plans";
             smsPricesHref = $"{TenantName}/smsprices";

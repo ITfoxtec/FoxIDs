@@ -44,7 +44,7 @@ Optionally both requiring (`secret1`) and sending (`secret2`) in a `X-FoxIDs-Sec
     </globalRules>
 
 ## Read HTTP headers
-The FoxIDs site support reading the client IP address in the following HTTP headers in order of priority:
+The FoxIDs site support reading the forwarded client IP address in the following HTTP headers in order of priority:
 
  1. `CF-Connecting-IP`
  2. `X-Azure-ClientIP`

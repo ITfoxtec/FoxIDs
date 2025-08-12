@@ -51,34 +51,34 @@ namespace FoxIDs.Logic
         }
 
         #region PasswordlessCode
-        public async Task SendPhonePasswordlessCodeSmsAsync(string phone)
+        public async Task SendPhonePasswordlessCodeSmsAsync(string userIdentifier)
         {
-            phone = phone?.Trim();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.InternalLogin, sendingCode: true);
-            (_, var user) = await SendCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, phone, GetSmsSendPasswordlessCodeAction(), true, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
-            await planUsageLogic.LogPasswordlessSmsEventAsync(user?.Phone ?? phone);
+            userIdentifier = userIdentifier?.Trim();
+            await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin, sendingCode: true);
+            (_, var user) = await SendCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, userIdentifier, GetSmsSendPasswordlessCodeAction(), true, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
+            await planUsageLogic.LogPasswordlessSmsEventAsync(user?.Phone ?? userIdentifier);
             return;
         }
 
-        public Task<User> VerifyPhonePasswordlessCodeSmsAsync(string phone, string code)
+        public Task<User> VerifyPhonePasswordlessCodeSmsAsync(string userIdentifier, string code)
         {
-            phone = phone?.Trim();
-            return VerifyCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, phone, code, GetSmsSendPasswordlessCodeAction(), null, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
+            userIdentifier = userIdentifier?.Trim();
+            return VerifyCodeAsync(SendType.PasswordlessSms, SmsPasswordlessCodeKeyElement, userIdentifier, code, GetSmsSendPasswordlessCodeAction(), null, GetConfirmationCodeSmsAction(), SmsPasswordlessCodeLogText);
         }
 
-        public async Task SendEmailPasswordlessCodeAsync(string email)
+        public async Task SendEmailPasswordlessCodeAsync(string userIdentifier)
         {
-            email = email?.Trim()?.ToLower();
-            await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.InternalLogin, sendingCode: true);
-            _ = await SendCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, email, GetEmailSendPasswordlessCodeAction(), true, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
+            userIdentifier = userIdentifier?.Trim()?.ToLower();
+            await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, FailingLoginTypes.InternalLogin, sendingCode: true);
+            _ = await SendCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, userIdentifier, GetEmailSendPasswordlessCodeAction(), true, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
             planUsageLogic.LogPasswordlessEmailEvent();
             return;
         }
 
-        public Task<User> VerifyEmailPasswordlessCodeAsync(string email, string code)
+        public Task<User> VerifyEmailPasswordlessCodeAsync(string userIdentifier, string code)
         {
-            email = email?.ToLower();
-            return VerifyCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, email, code, GetEmailSendPasswordlessCodeAction(), null, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
+            userIdentifier = userIdentifier?.ToLower();
+            return VerifyCodeAsync(SendType.PasswordlessEmail, EmailPasswordlessCodeKeyElement, userIdentifier, code, GetEmailSendPasswordlessCodeAction(), null, GetConfirmationCodeEmailAction(), EmailPasswordlessCodeLogText);
         }
 
         private string SmsPasswordlessCodeLogText => "Passwordless one-time password via SMS";
@@ -106,14 +106,14 @@ namespace FoxIDs.Logic
             };
         }
 
-        private Func<User, string, Task> GetSmsSendPasswordlessCodeAction()
+        private Func<User, string, string, Task> GetSmsSendPasswordlessCodeAction()
         {
-            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhonePasswordlessCodeSms(code));
+            return (user, phone, code) => sendSmsLogic.SendSmsAsync(phone, GetPhonePasswordlessCodeSms(code));
         }
 
-        private Func<User, string, Task> GetEmailSendPasswordlessCodeAction()
+        private Func<User, string, string, Task> GetEmailSendPasswordlessCodeAction()
         {
-            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailPasswordlessCodeEmailContent(code)));
+            return async (user, email, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), email), await AddAddressAndInfoAsync(GetEmailPasswordlessCodeEmailContent(code)));
         }
         #endregion
 
@@ -179,14 +179,14 @@ namespace FoxIDs.Logic
             };
         }
 
-        private Func<User, string, Task> GetSmsSendConfirmationCodeAction()
+        private Func<User, string, string, Task> GetSmsSendConfirmationCodeAction()
         {
-            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneConfirmationCodeSms(code));
+            return (user, phone, code) => sendSmsLogic.SendSmsAsync(phone, GetPhoneConfirmationCodeSms(code));
         }
 
-        private Func<User, string, Task> GetEmailSendConfirmationCodeAction()
+        private Func<User, string, string, Task> GetEmailSendConfirmationCodeAction()
         {
-            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailConfirmationCodeEmailContent(code)));
+            return async (user, email, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), email), await AddAddressAndInfoAsync(GetEmailConfirmationCodeEmailContent(code)));
         }
         #endregion
 
@@ -264,46 +264,46 @@ namespace FoxIDs.Logic
             };
         }
 
-        private Func<User, string, Task> GetSmsSendSetPasswordAction()
+        private Func<User, string, string, Task> GetSmsSendSetPasswordAction()
         {
-            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneSetPasswordCodeSms(code));
+            return (user, phone, code) => sendSmsLogic.SendSmsAsync(phone, GetPhoneSetPasswordCodeSms(code));
         }
 
-        private Func<User, string, Task> GetEmailSendSetPasswordAction()
+        private Func<User, string, string, Task> GetEmailSendSetPasswordAction()
         {
-            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailSetPasswordCodeEmailContent(code)));
+            return async (user, email, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), email), await AddAddressAndInfoAsync(GetEmailSetPasswordCodeEmailContent(code)));
         }
         #endregion
 
         #region TwoFactorCode
-        public async Task SendPhoneTwoFactorCodeSmsAsync(string phone)
+        public async Task SendPhoneTwoFactorCodeSmsAsync(string userIdentifier, string phone)
         {
             phone = phone?.Trim();
             await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.TwoFactorSmsCode);
-            (_, var user) = await SendCodeAsync(SendType.TwoFactorSms, SmsTwoFactorCodeKeyElement, phone, GetSmsSendTwoFactorCodeAction(), true, GetTwoFactorConfirmationCodeSmsAction(), SmsTwoFactorCodeLogText);
-            await planUsageLogic.LogMfaSmsEventAsync(user?.Phone ?? phone);
+            (_, var user) = await SendCodeAsync(SendType.TwoFactorSms, SmsTwoFactorCodeKeyElement, userIdentifier, GetSmsSendTwoFactorCodeAction(), true, GetTwoFactorConfirmationCodeSmsAction(), SmsTwoFactorCodeLogText, sendIdentifier: phone);
+            await planUsageLogic.LogMfaSmsEventAsync(phone);
             return;
         }
 
-        public Task<User> VerifyPhoneTwoFactorCodeSmsAsync(string phone, string code)
+        public Task<User> VerifyPhoneTwoFactorCodeSmsAsync(string userIdentifier, string phone, string code)
         {
             phone = phone?.Trim();
-            return VerifyCodeAsync(SendType.TwoFactorSms, SmsTwoFactorCodeKeyElement, phone, code, GetSmsSendTwoFactorCodeAction(), null, GetTwoFactorConfirmationCodeSmsAction(), SmsTwoFactorCodeLogText);
+            return VerifyCodeAsync(SendType.TwoFactorSms, SmsTwoFactorCodeKeyElement, userIdentifier, code, GetSmsSendTwoFactorCodeAction(), null, GetTwoFactorConfirmationCodeSmsAction(), SmsTwoFactorCodeLogText, sendIdentifier: phone);
         }
 
-        public async Task SendEmailTwoFactorCodeAsync(string email)
+        public async Task SendEmailTwoFactorCodeAsync(string userIdentifier, string email)
         {
             email = email?.Trim()?.ToLower();
             await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.TwoFactorEmailCode);
-            _ = await SendCodeAsync(SendType.TwoFactorEmail, EmailTwoFactorCodeKeyElement, email, GetEmailSendTwoFactorCodeAction(), true, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText);
+            _ = await SendCodeAsync(SendType.TwoFactorEmail, EmailTwoFactorCodeKeyElement, userIdentifier, GetEmailSendTwoFactorCodeAction(), true, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText, sendIdentifier: email);
             planUsageLogic.LogMfaEmailEvent();
             return;
         }
 
-        public Task<User> VerifyEmailTwoFactorCodeAsync(string email, string code)
+        public Task<User> VerifyEmailTwoFactorCodeAsync(string userIdentifier, string email, string code)
         {
             email = email?.ToLower();
-            return VerifyCodeAsync(SendType.TwoFactorEmail, EmailTwoFactorCodeKeyElement, email, code, GetEmailSendTwoFactorCodeAction(), null, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText);
+            return VerifyCodeAsync(SendType.TwoFactorEmail, EmailTwoFactorCodeKeyElement, userIdentifier, code, GetEmailSendTwoFactorCodeAction(), null, GetTwoFactorConfirmationCodeEmailAction(), EmailTwoFactorCodeLogText, sendIdentifier: email);
         }
 
         private string SmsTwoFactorCodeLogText => "Phone (SMS) two-factor code";
@@ -331,14 +331,14 @@ namespace FoxIDs.Logic
             };
         }
 
-        private Func<User, string, Task> GetSmsSendTwoFactorCodeAction()
+        private Func<User, string, string, Task> GetSmsSendTwoFactorCodeAction()
         {
-            return (user, code) => sendSmsLogic.SendSmsAsync(user.Phone, GetPhoneTwoFactorCodeSms(code));
+            return (user, phone, code) => sendSmsLogic.SendSmsAsync(phone, GetPhoneTwoFactorCodeSms(code));
         }
 
-        private Func<User, string, Task> GetEmailSendTwoFactorCodeAction()
+        private Func<User, string, string, Task> GetEmailSendTwoFactorCodeAction()
         {
-            return async (user, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), user.Email), await AddAddressAndInfoAsync(GetEmailTwoFactorCodeEmailContent(code)));
+            return async (user, email, code) => await sendEmailLogic.SendEmailAsync(new MailboxAddress(GetDisplayName(user), email), await AddAddressAndInfoAsync(GetEmailTwoFactorCodeEmailContent(code)));
         }
         #endregion
 
@@ -387,7 +387,7 @@ namespace FoxIDs.Logic
             return codeHtml;
         }
 
-        private async Task<(ConfirmationCodeSendStatus, User)> SendCodeAsync(SendType sendType, string keyElement, string userIdentifier, Func<User, string, Task> sendActionAsync, bool forceNewCode, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
+        private async Task<(ConfirmationCodeSendStatus, User)> SendCodeAsync(SendType sendType, string keyElement, string userIdentifier, Func<User, string, string, Task> sendActionAsync, bool forceNewCode, Func<string, Task<string>> confirmationCodeActionAsync, string logText, string sendIdentifier = null)
         {
             var cacheKey = CodeCacheKey(keyElement, userIdentifier);
             if (!forceNewCode && await cacheProvider.ExistsAsync(cacheKey))
@@ -396,12 +396,12 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var user = await SaveAndSendCodeAsync(sendType, cacheKey, userIdentifier, sendActionAsync, confirmationCodeActionAsync, logText);
+                var user = await SaveAndSendCodeAsync(sendType, cacheKey, userIdentifier, sendIdentifier, sendActionAsync, confirmationCodeActionAsync, logText);
                 return (forceNewCode ? ConfirmationCodeSendStatus.ForceNewCode : ConfirmationCodeSendStatus.NewCode, user);
             }
         }
 
-        private async Task<User> SaveAndSendCodeAsync(SendType sendType, string cacheKey, string userIdentifier, Func<User, string, Task> sendActionAsync, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
+        private async Task<User> SaveAndSendCodeAsync(SendType sendType, string cacheKey, string userIdentifier, string sendIdentifier, Func<User, string, string, Task> sendActionAsync, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
         {
             var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginOrSendingCountAsync(userIdentifier, GetFailingLoginType(sendType));
 
@@ -418,24 +418,46 @@ namespace FoxIDs.Logic
                     case SendType.PasswordlessSms:
                     case SendType.Sms:
                     case SendType.TwoFactorSms:
-                        if (user.Phone.IsNullOrWhiteSpace())
+                        if (user.Phone.IsNullOrWhiteSpace() && sendIdentifier.IsNullOrWhiteSpace())
                         {
-                            throw new UserNotExistsException($"User '{userIdentifier}' do not have a phone number, trying to send {logText}.");
+                            if (user.Phone.IsNullOrWhiteSpace())
+                            {
+                                throw new UserNotExistsException($"User '{userIdentifier}' do not have a phone number, trying to send {logText}.");
+                            }
+                            else
+                            {
+                                throw new UserNotExistsException($"User '{userIdentifier}' do not have a phone number identifier or claim, trying to send {logText}.");
+                            }
+                        }
+                        if (sendIdentifier.IsNullOrWhiteSpace())
+                        {
+                            sendIdentifier = user.Phone;
                         }
                         break;
                     case SendType.PasswordlessEmail:
                     case SendType.Email:
                     case SendType.TwoFactorEmail:
-                        if (user.Email.IsNullOrWhiteSpace())
+                        if (user.Email.IsNullOrWhiteSpace() && sendIdentifier.IsNullOrWhiteSpace())
                         {
-                            throw new UserNotExistsException($"User '{userIdentifier}' do not have a emali, trying to send {logText}.");
+                            if (user.Email.IsNullOrWhiteSpace())
+                            {
+                                throw new UserNotExistsException($"User '{userIdentifier}' do not have a email, trying to send {logText}.");
+                            }
+                            else
+                            {
+                                throw new UserNotExistsException($"User '{userIdentifier}' do not have a email identifier or claim, trying to send {logText}.");
+                            }
+                        }
+                        if (sendIdentifier.IsNullOrWhiteSpace())
+                        {
+                            sendIdentifier = user.Email;
                         }
                         break;
                     default:
                         throw new NotImplementedException();
                 }
 
-                await sendActionAsync(user, await confirmationCodeActionAsync(cacheKey));
+                await sendActionAsync(user, sendIdentifier, await confirmationCodeActionAsync(cacheKey));
                 logger.ScopeTrace(() => $"{logText} send to '{userIdentifier}' for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                 return user;
             }
@@ -512,7 +534,7 @@ namespace FoxIDs.Logic
             return emailContent;
         }
 
-        private async Task<User> VerifyCodeAsync(SendType sendType, string keyElement, string userIdentifier, string code, Func<User, string, Task> sendActionAsync, Func<User, Task> onSuccess, Func<string, Task<string>> confirmationCodeActionAsync, string logText)
+        private async Task<User> VerifyCodeAsync(SendType sendType, string keyElement, string userIdentifier, string code, Func<User, string, string, Task> sendActionAsync, Func<User, Task> onSuccess, Func<string, Task<string>> confirmationCodeActionAsync, string logText, string sendIdentifier = null)
         {
             var failingLoginType = GetFailingLoginType(sendType);
             var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(userIdentifier, failingLoginType, sendingCode: failingLoginType == FailingLoginTypes.InternalLogin);
@@ -537,19 +559,27 @@ namespace FoxIDs.Logic
                         case SendType.PasswordlessSms:
                         case SendType.Sms:
                         case SendType.TwoFactorSms:
-                            if (!user.PhoneVerified)
+                            if (!user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
                             {
                                 user.PhoneVerified = true;
                                 await tenantDataRepository.SaveAsync(user);
+                            }
+                            if (sendIdentifier.IsNullOrWhiteSpace())
+                            {
+                                sendIdentifier = user.Phone;
                             }
                             break;
                         case SendType.PasswordlessEmail:
                         case SendType.Email:
                         case SendType.TwoFactorEmail:
-                            if (!user.EmailVerified)
+                            if (!user.Email.IsNullOrEmpty() && !user.EmailVerified)
                             {
                                 user.EmailVerified = true;
                                 await tenantDataRepository.SaveAsync(user);
+                            }
+                            if (sendIdentifier.IsNullOrWhiteSpace())
+                            {
+                                sendIdentifier = user.Email;
                             }
                             break;
                         default:
@@ -575,7 +605,7 @@ namespace FoxIDs.Logic
             else
             {
                 logger.ScopeTrace(() => $"There is not a {logText} to compare with, user '{userIdentifier}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
-                await SaveAndSendCodeAsync(sendType, cacheKey, userIdentifier, sendActionAsync, confirmationCodeActionAsync, logText);
+                await SaveAndSendCodeAsync(sendType, cacheKey, userIdentifier, sendIdentifier, sendActionAsync, confirmationCodeActionAsync, logText);
                 throw new CodeNotExistsException($"{logText} not found.");
             }
         }

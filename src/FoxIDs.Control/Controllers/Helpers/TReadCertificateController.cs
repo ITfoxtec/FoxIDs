@@ -23,13 +23,12 @@ namespace FoxIDs.Controllers
             this.mapper = mapper;
         }
 
-        /// <summary>
-        /// Read JWK with certificate information.
-        /// </summary>
-        /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
-        /// <returns>User.</returns>
-        [ProducesResponseType(typeof(Api.JwkWithCertificateInfo), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Api.JwkWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
+    /// <summary>
+    /// Read JWK with certificate information from PFX.
+    /// </summary>
+    /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
+    [ProducesResponseType(typeof(Api.JwkWithCertificateInfo), StatusCodes.Status200OK)]
+    public async Task<ActionResult<Api.JwkWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
         {
             if (!await ModelState.TryValidateObjectAsync(certificateAndPassword)) return BadRequest(ModelState);
 

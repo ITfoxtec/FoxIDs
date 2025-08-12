@@ -87,11 +87,9 @@ namespace FoxIDs.Logic
 
         private bool SupportTwoFactorApp(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp ? true : false;
 
-        private bool SupportRegisterTwoFactorApp(User user, LoginUpParty loginUpParty) => user.Phone.IsNullOrEmpty() && !user.Email.IsNullOrEmpty();
+        private bool SupportTwoFactorSms(LoginUpSequenceData sequenceData, User user, LoginUpParty loginUpParty) => !sequenceData.Phone.IsNullOrWhiteSpace() && !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
 
-        private bool SupportTwoFactorSms(User user, LoginUpParty loginUpParty) => !user.Phone.IsNullOrEmpty() && !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
-
-        private bool SupportTwoFactorEmail(User user, LoginUpParty loginUpParty) => !user.Email.IsNullOrEmpty() && !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
+        private bool SupportTwoFactorEmail(LoginUpSequenceData sequenceData, User user, LoginUpParty loginUpParty) => !sequenceData.Email.IsNullOrWhiteSpace() && !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
@@ -100,11 +98,22 @@ namespace FoxIDs.Logic
             try
             {
                 var session = await ValidateSessionAndRequestedUserAsync(sequenceData, loginUpParty, user.UserId);
-
+                if (sequenceData.UserIdentifier.IsNullOrWhiteSpace())
+                {
+                    sequenceData.UserIdentifier = user.Email ?? user.Phone ?? user.Username;
+                }
                 sequenceData.Email = user.Email;
-                sequenceData.EmailVerified = user.EmailVerified;
+                sequenceData.EmailVerified = !string.IsNullOrWhiteSpace(sequenceData.Email) ? user.EmailVerified : false;
+                if (string.IsNullOrWhiteSpace(sequenceData.Email))
+                {
+                    sequenceData.Email = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Email);
+                }
                 sequenceData.Phone = user.Phone;
-                sequenceData.PhoneVerified = user.PhoneVerified;
+                sequenceData.PhoneVerified = !string.IsNullOrWhiteSpace(sequenceData.Phone) ? user.PhoneVerified : false;
+                if (string.IsNullOrWhiteSpace(sequenceData.Phone))
+                {
+                    sequenceData.Phone = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.PhoneNumber);
+                }
                 sequenceData.AuthMethods = authMethods ?? [IdentityConstants.AuthenticationMethodReferenceValues.Pwd];
 
                 if (step <= LoginResponseSequenceSteps.PhoneVerificationStep && user.ConfirmAccount && !user.Phone.IsNullOrEmpty() && !user.PhoneVerified && await PlanEnabledSmsAsync())
@@ -121,8 +130,8 @@ namespace FoxIDs.Logic
                 {
                     sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
                     sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
-                    sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(user, loginUpParty);
-                    sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(user, loginUpParty);
+                    sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(sequenceData, user, loginUpParty);
+                    sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(sequenceData, user, loginUpParty);
 
                     if (step == LoginResponseSequenceSteps.MfaSmsStep)
                     {
@@ -162,7 +171,7 @@ namespace FoxIDs.Logic
                             return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
                         }
 
-                        if (sequenceData.SupportTwoFactorApp && SupportRegisterTwoFactorApp(user, loginUpParty))
+                        if (sequenceData.SupportTwoFactorApp)
                         {
                             return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
                         }

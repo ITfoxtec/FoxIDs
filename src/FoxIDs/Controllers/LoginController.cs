@@ -582,7 +582,7 @@ namespace FoxIDs.Controllers
             {
                 await accountLogic.SendPhonePasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
             }
-            catch (UserObservationPeriodException uoex)
+            catch (UserObservationPeriodException)
             {
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
@@ -606,7 +606,7 @@ namespace FoxIDs.Controllers
             {
                 await accountLogic.SendEmailPasswordlessCodeSmsAsync(sequenceData.UserIdentifier);
             }
-            catch (UserObservationPeriodException uoex)
+            catch (UserObservationPeriodException)
             {
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
@@ -707,7 +707,7 @@ namespace FoxIDs.Controllers
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
-            catch (UserObservationPeriodException uoex)
+            catch (UserObservationPeriodException)
             {
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
@@ -758,7 +758,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => pcex.Message);
                 ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
             }
-            catch (UserObservationPeriodException uoex)
+            catch (UserObservationPeriodException)
             {
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
@@ -802,7 +802,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => pcex.Message);
                 ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
             }
-            catch (UserObservationPeriodException uoex)
+            catch (UserObservationPeriodException)
             {
                 ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
             }
@@ -1410,7 +1410,7 @@ namespace FoxIDs.Controllers
                     }
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }

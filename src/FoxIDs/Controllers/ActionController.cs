@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                 {
                     codeSendStatus = await accountActionLogic.SendPhoneConfirmationCodeSmsAsync(sequenceData.Phone, newCode);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -128,7 +128,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer["Invalid phone confirmation code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -157,7 +157,7 @@ namespace FoxIDs.Controllers
                 {
                     codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -218,7 +218,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Invalid email confirmation code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -298,7 +298,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => unex.Message, triggerEvent: true);
                     // Do not inform about non existing user in error message.
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -374,7 +374,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -452,7 +452,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => unex.Message, triggerEvent: true);
                     // Do not inform about non existing user in error message.
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -519,7 +519,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }

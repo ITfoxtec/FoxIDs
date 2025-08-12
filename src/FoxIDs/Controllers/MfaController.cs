@@ -151,7 +151,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => acex.Message, triggerEvent: true);
                     ModelState.AddModelError(nameof(RegisterTwoFactorAppViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -224,7 +224,7 @@ namespace FoxIDs.Controllers
                 {
                     await failingLoginLogic.VerifyFailingLoginCountAsync(sequenceData.UserIdentifier, FailingLoginTypes.TwoFactorAuthenticator);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -303,7 +303,7 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(() => rcex.Message, triggerEvent: true);
                         ModelState.AddModelError(string.Empty, localizer["Invalid recovery code, please try one more time."]);
                     }
-                    catch (UserObservationPeriodException uoex)
+                    catch (UserObservationPeriodException)
                     {
                         ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                     }
@@ -325,7 +325,7 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(() => acex.Message, triggerEvent: true);
                         ModelState.AddModelError(nameof(TwoFactorAppViewModel.AppCode), localizer["Invalid code, please try one more time."]);
                     }
-                    catch (UserObservationPeriodException uoex)
+                    catch (UserObservationPeriodException)
                     {
                         ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                     }
@@ -356,9 +356,9 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.Phone);
+                    await accountActionLogic.SendPhoneTwoFactorCodeSmsAsync(sequenceData.UserIdentifier, sequenceData.Phone);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -425,7 +425,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyPhoneTwoFactorCodeSmsAsync(sequenceData.Phone, registerTwoFactor.Code);
+                    var user = await accountActionLogic.VerifyPhoneTwoFactorCodeSmsAsync(sequenceData.UserIdentifier, sequenceData.Phone, registerTwoFactor.Code);
                     var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Sms, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: registerTwoFactor.RegisterTwoFactorApp ? LoginResponseSequenceSteps.MfaRegisterAuthAppStep : LoginResponseSequenceSteps.LoginResponseStep);
                 }
@@ -439,7 +439,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -469,9 +469,9 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.Email);
+                    await accountActionLogic.SendEmailTwoFactorCodeAsync(sequenceData.UserIdentifier, sequenceData.Email);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
@@ -538,7 +538,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    var user = await accountActionLogic.VerifyEmailTwoFactorCodeAsync(sequenceData.Email, registerTwoFactor.Code);
+                    var user = await accountActionLogic.VerifyEmailTwoFactorCodeAsync(sequenceData.UserIdentifier, sequenceData.Email, registerTwoFactor.Code);
                     var authMethods = sequenceData.AuthMethods.ConcatOnce([IdentityConstants.AuthenticationMethodReferenceValues.Email, IdentityConstants.AuthenticationMethodReferenceValues.Mfa]);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, step: registerTwoFactor.RegisterTwoFactorApp ? LoginResponseSequenceSteps.MfaRegisterAuthAppStep : LoginResponseSequenceSteps.LoginResponseStep);
                 }
@@ -552,7 +552,7 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }

@@ -26,6 +26,11 @@
 
         try
         {
+            if (For == null || For.Body == null)
+            {
+                return string.Empty;
+            }
+
             var expression = For.Body as MemberExpression;
             if(expression == null)
             {
@@ -36,13 +41,18 @@
                 }
             }
 
+            if (expression?.Member == null)
+            {
+                return For?.Name ?? string.Empty;
+            }
+
             var all = expression.Member.GetCustomAttributes();
             var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
             return value?.Name ?? expression.Member.Name ?? "";
         }
         catch
         {
-            return For.Name;
+            return For?.Name ?? string.Empty;
         }
     }
 }

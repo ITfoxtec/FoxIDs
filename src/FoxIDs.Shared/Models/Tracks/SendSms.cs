@@ -1,4 +1,5 @@
 ﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +17,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "from_name")]
         public string FromName { get; set; }
 
-        [MaxLength(Constants.Models.Track.SendSms.ClientIdLength)]
+        [MaxLength(Constants.Models.Track.SendSms.ApiUrlLength)]
         [JsonProperty(PropertyName = "api_url")]
         public string ApiUrl { get; set; }
 
@@ -27,6 +28,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.Track.SendSms.ClientSecretLength)]
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
+
+        [JsonProperty(PropertyName = "key")]
+        public JsonWebKey Key { get; set; }
 
         //TODO add support for other SMS providers
 
@@ -58,6 +62,24 @@ namespace FoxIDs.Models
                     if (ClientSecret.IsNullOrWhiteSpace())
                     {
                         results.Add(new ValidationResult($"The field {nameof(ClientSecret)} is required.", [nameof(ClientSecret)]));
+                    }
+                    break;
+                case SendSmsTypes.TeliaSmsGateway:
+                    if (ApiUrl.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ApiUrl)} is required.", [nameof(ApiUrl)]));
+                    }
+                    if (ClientId.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ClientId)} (sender address) is required.", [nameof(ClientId)]));
+                    }
+                    if (ClientSecret.IsNullOrWhiteSpace())
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(ClientSecret)} (API key) is required.", [nameof(ClientSecret)]));
+                    }
+                    if (Key == null)
+                    {
+                        results.Add(new ValidationResult($"The field {nameof(Key)} (mTLS certificate) is required.", [nameof(Key)]));
                     }
                     break;
 

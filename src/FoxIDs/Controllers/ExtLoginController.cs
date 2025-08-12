@@ -195,7 +195,7 @@ namespace FoxIDs.Controllers
                     var claims = await externalLoginConnectLogic.ValidateUserAsync(extLoginUpParty, profile, userIdentifier, extLogin.Password);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, extLoginUpParty, userIdentifier, claims);
                 }
-                catch (UserObservationPeriodException uoex)
+                catch (UserObservationPeriodException)
                 {
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }

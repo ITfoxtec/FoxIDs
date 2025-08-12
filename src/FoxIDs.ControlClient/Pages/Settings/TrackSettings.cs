@@ -22,6 +22,7 @@ namespace FoxIDs.Client.Pages.Settings
         private string plansHref;
         private string smsPricesHref;
         private string riskPasswordsHref;
+        private string smsSettingsHref;
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
@@ -50,6 +51,7 @@ namespace FoxIDs.Client.Pages.Settings
         protected override async Task OnInitializedAsync()
         {
             mailSettingsHref = $"{TenantName}/mailsettings";
+            smsSettingsHref = $"{TenantName}/smssettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             textsHref = $"{TenantName}/texts";
             plansHref = $"{TenantName}/plans";

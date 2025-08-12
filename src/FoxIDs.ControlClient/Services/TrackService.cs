@@ -26,6 +26,7 @@ namespace FoxIDs.Client.Services
         private const string resourceSettingApiUri = "api/{tenant}/{track}/!trackresourcesetting";
 
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
+        private const string sendSmsApiUri = "api/{tenant}/{track}/!tracksendsms";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
         private const string logUsageApiUri = "api/{tenant}/{track}/!tracklogusage";
         private const string logApiUri = "api/{tenant}/{track}/!tracklog";
@@ -72,6 +73,10 @@ namespace FoxIDs.Client.Services
         public async Task<SendEmail> GetTrackSendEmailAsync() => await GetAsync<SendEmail>(sendEmailApiUri);
         public async Task UpdateTrackSendEmailAsync(SendEmail sendEmail) => await PutAsync(sendEmailApiUri, sendEmail);
         public async Task DeleteTrackSendEmailAsync() => await DeleteAsync(sendEmailApiUri);
+
+        public async Task<SendSms> GetTrackSendSmsAsync() => await GetAsync<SendSms>(sendSmsApiUri);
+        public async Task UpdateTrackSendSmsAsync(SendSms sendSms) => await PutAsync(sendSmsApiUri, sendSms);
+        public async Task DeleteTrackSendSmsAsync() => await DeleteAsync(sendSmsApiUri);
 
         public async Task<List<ClaimMap>> GetTrackClaimMappingAsync() => await GetAsync<List<ClaimMap>>(claimMappingApiUri);
         public async Task SaveTrackClaimMappingAsync(List<ClaimMap> claimMappings) => await PostAsync(claimMappingApiUri, claimMappings);

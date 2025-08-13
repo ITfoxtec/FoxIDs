@@ -13,12 +13,14 @@ namespace FoxIDs.Logic
     public class AccountLogic : BaseAccountLogic
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly ExternalPasswordConnectLogic externalPasswordConnectLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, ExternalPasswordConnectLogic externalPasswordConnectLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
         {
             this.serviceProvider = serviceProvider;
+            this.externalPasswordConnectLogic = externalPasswordConnectLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
         }
@@ -109,7 +111,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+                await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
@@ -121,6 +123,21 @@ namespace FoxIDs.Logic
             else
             {
                 throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
+            }
+        }
+
+        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password)
+        {
+            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password);
+
+            if (RouteBinding?.ExternalPassword?.EnabledValidation == true)
+            {
+                await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password);
+            }
+
+            if (RouteBinding?.ExternalPassword?.EnabledNotification == true)
+            {
+                await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password);
             }
         }
 

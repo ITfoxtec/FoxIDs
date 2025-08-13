@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
                         }
                         else if (errorResponse.Error == Constants.ExternalConnect.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
                         {
-                            throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}', API URL '{authenticationApiUrl}'.{errorResponse.GetErrorMessage()}");
+                            throw new InvalidUsernameOrPasswordException($"Invalid username or password, user '{username}', API URL '{authenticationApiUrl}'.{errorResponse.GetErrorMessage()}");
                         }
                         throw new Exception($"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
 

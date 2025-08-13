@@ -40,7 +40,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<Track> GetTrackAsync(string name) => await GetAsync<Track>(apiUri, name);
         public async Task<Track> CreateTrackAsync(Track track) => await PostResponseAsync<Track, Track>(apiUri, track);
-        public async Task UpdateTrackAsync(Track track) => await PutAsync(apiUri, track);
+        public async Task<Track> UpdateTrackAsync(Track track) => await PutResponseAsync<Track, Track>(apiUri, track);
         public async Task DeleteTrackAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<TrackKeyItemsContained> GetTrackKeyContainedAsync() => await GetAsync<TrackKeyItemsContained>(keyContainedApiUri);

@@ -84,7 +84,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Check password risk based on global password breaches")]
-        public bool? CheckPasswordRisk { get; set; } 
+        public bool? CheckPasswordRisk { get; set; }
+
+        [ValidateComplexType]
+        public ExternalPasswordViewModel ExternalPassword { get; set; } = new ExternalPasswordViewModel();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]

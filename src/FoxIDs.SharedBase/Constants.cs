@@ -1029,6 +1029,21 @@ namespace FoxIDs
                     }
                 }
             }
+
+            public static class ExternalPassword
+            {
+                public static class Api
+                {
+                    public const string Validate = "validate";
+                    public const string Notify = "notify";
+                    public const string ApiId = "external_password";
+
+                    public static class ErrorCodes
+                    {
+                        public const string PasswordNotAccepted = "password_not_accepted";
+                    }
+                }
+            }
         }
 
         public static class OAuth

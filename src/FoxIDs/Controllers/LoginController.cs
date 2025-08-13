@@ -1198,6 +1198,21 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password could not be accepted. Please try a different one."]);
+                    }
+                }
                 catch (OAuthRequestException orex)
                 {
                     logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
@@ -1418,7 +1433,7 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => ipex.Message, triggerEvent: true);
                     ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
-                }                    
+                }
                 catch (NewPasswordEqualsCurrentException npeex)
                 {
                     logger.ScopeTrace(() => npeex.Message);
@@ -1460,6 +1475,21 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password could not be accepted. Please try a different one."]);
+                    }
                 }
 
                 return viewError();

@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
 
                 if (!createUserObj.Password.IsNullOrWhiteSpace())
                 {
-                    await ValidatePasswordPolicyAsync(createUserObj.UserIdentifier, createUserObj.Password);
+                    await ValidatePasswordPolicyAndNotifyAsync(createUserObj.UserIdentifier, createUserObj.Password);
                 }
             }
 
@@ -160,7 +160,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier.ToJson()}'.");
                 }
 
-                await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
+                await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
@@ -185,7 +185,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{userIdentifier.ToJson()}' is disabled, trying to set password.");
             }
 
-            await ValidatePasswordPolicyAsync(userIdentifier, newPassword);
+            await ValidatePasswordPolicyAndNotifyAsync(userIdentifier, newPassword);
 
             await secretHashLogic.AddSecretHashAsync(user, newPassword);
             user.ChangePassword = false;
@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
         }
 
-        protected async Task ValidatePasswordPolicyAsync(UserIdentifier userIdentifier, string password)
+        protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password)
         {
             CheckPasswordLength(password);
 

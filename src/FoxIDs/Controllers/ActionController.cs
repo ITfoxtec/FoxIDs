@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
@@ -415,6 +416,21 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password could not be accepted. Please try a different one."]);
+                    }
+                }
 
                 return viewResponse();
             }
@@ -559,6 +575,21 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password could not be accepted. Please try a different one."]);
+                    }
                 }
 
                 return viewResponse();

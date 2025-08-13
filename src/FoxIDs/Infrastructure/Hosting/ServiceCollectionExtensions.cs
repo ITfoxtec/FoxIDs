@@ -44,6 +44,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ExternalLogoutUpLogic>();
             services.AddTransient<ExtendedUiLogic>();
             services.AddTransient<ExtendedUiConnectLogic>();
+            services.AddTransient<ExternalPasswordConnectLogic>();
             services.AddTransient<ExternalUserLogic>();
             services.AddTransient<HrdLogic>();
             services.AddTransient<SessionLoginUpPartyLogic>();

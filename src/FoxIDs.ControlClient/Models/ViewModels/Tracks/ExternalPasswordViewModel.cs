@@ -7,10 +7,10 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class ExternalPasswordViewModel : IValidatableObject
     {
-        [Display(Name = "Enabled validation")]
+        [Display(Name = "Use validation API")]
         public bool EnabledValidation { get; set; }
 
-        [Display(Name = "Enabled notification")]
+        [Display(Name = "Use notification API")]
         public bool EnabledNotification { get; set; }
 
         public ExternalConnectTypes ExternalConnectType { get; set; } = ExternalConnectTypes.Api;

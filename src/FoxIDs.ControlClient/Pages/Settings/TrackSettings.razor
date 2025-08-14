@@ -94,7 +94,7 @@
                     <div class="form-group active-group active">
                         <div class="card">
                             <div class="card-body mt-2">
-                                <div class="info-text mr-auto">
+                                <div class="info-text mr-auto pt-0">
                                     Users are locked for an observation period after @trackSettingsForm.Model.MaxFailingLogins failed logins within @(trackSettingsForm.Model.FailingLoginCountLifetime / 3600) hours. Users are locked for @(trackSettingsForm.Model.FailingLoginObservationPeriod / 60) minutes and automatically unlocked after the observation period.
                                 </div>
                                 <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
@@ -113,6 +113,15 @@
                     <div class="form-group active-group active">
                         <div class="card">
                             <div class="card-body mt-2">
+                                <div class="info-text mr-auto pt-0">
+                                    External password validation and notifications:
+                                    <ul>
+                                        <li>Use the validation API to validate a password.</li>
+                                        <li>Use the notification API to receive notifications about password changes.</li>
+                                        <li>If you need both validation and notification, use the validation API - if the password is valid, trigger a notification about the change.</li>
+                                        <li>Important: You usually don't need to use both APIs together. Only call both APIs if you must call different systems.</li>
+                                    </ul>
+                                </div>                                
                                 <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidation" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidation)" />
                                 <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotification" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotification)" />
                                 <FInputText @bind-Value="trackSettingsForm.Model.ExternalPassword.ApiUrl" For="@(() => trackSettingsForm.Model.ExternalPassword.ApiUrl)" />

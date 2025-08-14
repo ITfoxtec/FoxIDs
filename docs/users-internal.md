@@ -9,7 +9,7 @@ For an overview of user concepts (internal users, external users and external us
 Internal users support three user identifiers: email, phone number and username. These identifiers form the credential (username part) when a user signs in with username and password.  
 You can choose to enable one, two, or all three.
 
-Only phone number as user identifier.  
+Only phone number as a user identifier.  
 ![Phone number as user identifier](images/user-phone-user-identifier.png)
 
 Email, phone number and username as user identifiers.  
@@ -30,7 +30,7 @@ The password policy is configured in the environment settings in the [FoxIDs Con
    ![Failing login lockout](images/configure-password-policy.png)
 7. Click **Update**
 
-If the built‑in password policy rejects the password, the external password API is not called. The external password APIs notification method is only call if the password have passed all configured policy checks.
+If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks.
 
 ## Password or one-time password
 The [login](login.md) authentication method is by default configured for username (user identifier) + password.  
@@ -59,7 +59,7 @@ This is the configuration in the [login](login.md) method. In addition, the clai
 ![Login configuration - create an account online](images/user-create-new-account-config.png)
 
 ## Provisioning
-Internal users can be created, updated and deleted in the [Control Client](control.md#foxids-control-client) or provisioned via the [Control API](control.md#foxids-control-api).  
+Internal users can be created, updated, and deleted in the [Control Client](control.md#foxids-control-client) or provisioned via the [Control API](control.md#foxids-control-api).  
 ![Configure Login](images/configure-user.png)
 
 ## Multi-factor authentication (MFA)
@@ -74,7 +74,7 @@ Only a password hash is stored.
 
 The hashing subsystem supports evolution: hash metadata (algorithm + parameters) is stored with each hash, allowing validation of old hashes while new hashes use newer algorithms / parameters.
 
-Current supported hash algorithm `P2HS512:10` (definition):
+Currently supported hash algorithm `P2HS512:10` (definition):
 - HMAC (`RFC 2104`) with SHA‑512 (`FIPS 180-4`)
 - 10 iterations
 - Salt length: 64 bytes

@@ -9,7 +9,7 @@
         <a class="nav-link" href="@externalUsersHref">External Users</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active">Failing Login Locks</a>
+        <a class="nav-link active">Failing Login Lockout</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@refreshTokenGrantsHref">Refresh Token Grants</a>
@@ -18,7 +18,7 @@
 
 <div class="d-flex pt-2">
     <div class="info-text mr-auto">
-        Users are locked for an observation period after @MaxFailingLogins failed logins within @FailingLoginCountLifetimeHours hours. Users are locked for @FailingLoginObservationPeriodMinuts minutes and automatically unlocked after the observation period.
+        Users are locked for an period of time after exceeding @MaxFailingLogins failed login attempts within a @FailingLoginCountLifetimeHours hour timeframe. During this observation period, users remain locked for @FailingLoginObservationPeriodMinuts minutes and are automatically unlocked once the period ends.
     </div>
 </div>
 

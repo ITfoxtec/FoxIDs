@@ -95,14 +95,14 @@
                         <div class="card">
                             <div class="card-body mt-2">
                                 <div class="info-text mr-auto pt-0">
-                                    Users are locked for an observation period after @trackSettingsForm.Model.MaxFailingLogins failed logins within @(trackSettingsForm.Model.FailingLoginCountLifetime / 3600) hours. Users are locked for @(trackSettingsForm.Model.FailingLoginObservationPeriod / 60) minutes and automatically unlocked after the observation period.
+                                    Users are locked for an period of time after exceeding @trackSettingsForm.Model.MaxFailingLogins failed login attempts within a @(trackSettingsForm.Model.FailingLoginCountLifetime / 3600) hour timeframe. During this observation period, users remain locked for @(trackSettingsForm.Model.FailingLoginObservationPeriod / 60) minutes and are automatically unlocked once the period ends.
                                 </div>
                                 <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
                                 <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginCountLifetime" For="@(() => trackSettingsForm.Model.FailingLoginCountLifetime)" />
                                 <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginObservationPeriod" For="@(() => trackSettingsForm.Model.FailingLoginObservationPeriod)" />
                             </div>
                         </div>
-                        <Label For="@(() => trackSettingsForm.Model.MaxFailingLogins)" LabelText="Failing login locks" class="label-control" />
+                        <Label For="@(() => trackSettingsForm.Model.MaxFailingLogins)" LabelText="Failing login lockout" class="label-control" />
                     </div>
                 </div>
                 <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordLength" For="@(() => trackSettingsForm.Model.PasswordLength)" />

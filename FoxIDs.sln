@@ -138,6 +138,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-external-claims-config.png = docs\images\configure-external-claims-config.png
 		docs\images\configure-external-login-config.png = docs\images\configure-external-login-config.png
 		docs\images\configure-external-login-ui.png = docs\images\configure-external-login-ui.png
+		docs\images\configure-failing-login-lockout.png = docs\images\configure-failing-login-lockout.png
 		docs\images\configure-foxids_control_api.png = docs\images\configure-foxids_control_api.png
 		docs\images\configure-implicit-code-flow.png = docs\images\configure-implicit-code-flow.png
 		docs\images\configure-jwt-saml-mappings.png = docs\images\configure-jwt-saml-mappings.png

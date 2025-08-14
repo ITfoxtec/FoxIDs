@@ -1,6 +1,6 @@
 # Upload many users
 
-Provisioning your users in an environment, with or without a password:
+Provisioning your users in an environment as [internal users](users-internal.md), with or without a password:
 
 - You can upload the users with there password, if you know the users' passwords. 
 - Otherwise, you can upload the users without a password and the users are then requested to set a password with an email or SMS conformation code. Require the users to have either an email or phone number.

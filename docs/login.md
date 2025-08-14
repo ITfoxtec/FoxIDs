@@ -1,9 +1,9 @@
 # Login, Home Realm Discovery and MFA
 FoxIDs handle user login in the login authentication method. There can be configured a number of login authentication methods per environment with different configurations and [look and feel](customisation.md).
 
-A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users.md#internal-users) with the same user repository.
+A environment contains one user repository and all login authentication methods configured in a environment authenticate [users](users-internal.md) with the same user repository.
 
-When a [user](users.md#internal-users) authenticates, the user's session is associated with the login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
+When a [user](users-internal.md) authenticates, the user's session is associated with the login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
 A user session is not established in the login authentication method if the session lifetime is set to 0 seconds.
 
 A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login authentication method.
@@ -143,7 +143,7 @@ A default login authentication method is created in each environment.
 The [title, icon and CSS](title-icon-css.md) configured on the default login authentication method is use in the case where no login authentication method is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login authentication method.
 
 ### Configure login options
-It can be configured whether users should be allowed to set there password, whether users are allowed to create a [new user online](users.md#internal-users), which user identifiers to use and if the user should login with a password or one-time password (OTP) via email or SMS.
+It can be configured whether users should be allowed to set there password, whether users are allowed to create a [new user online](users-internal.md), which user identifiers to use and if the user should login with a password or one-time password (OTP) via email or SMS.
 The [UI can be customised](title-icon-css.md) and much more.  
 New users can be created by the administrator through the [Control Client](control.md#foxids-control-client) or be provisioned through the [Control API](control.md#foxids-control-api).
 

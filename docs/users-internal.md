@@ -15,6 +15,23 @@ Only phone number as user identifier.
 Email, phone number and username as user identifiers.  
 ![Email, phone number and username as user identifier](images/user-email-phone-username-user-identifier.png)
 
+## Password check
+
+Internal users can be authenticated with a password. The password is checked against the built‑in password policy and optionally an [external password API](external-password-api.md). 
+
+The password policy is configured in the environment settings in the [FoxIDs Control Client](control.md#foxids-control-client).
+
+1. Select the **Settings** tab
+2. And subsequently select the **Environment** tab
+3. Set the **Password min length** to the minimum required password length, e.g. `6` for 6 characters
+4. Select **Check password complexity** to enforce a mix of character classes (upper / lower / digit / symbol) and not containing parts of the URL or user identifier (email, phone, username). Exact rules can evolve.
+5. Select **Check password risk based on global password breaches** to reject passwords found in the global risk password lists. Exact list will evolve. (self-hosted see [risk Passwords](risk-passwords.md)).  
+6. Configure [external password API](external-password-api.md)   
+   ![Failing login lockout](images/configure-password-policy.png)
+7. Click **Update**
+
+If the built‑in password policy rejects the password, the external password API is not called. The external password APIs notification method is only call if the password have passed all configured policy checks.
+
 ## Password or one-time password
 The [login](login.md) authentication method is by default configured for username (user identifier) + password.  
 You can additionally enable one-time password (OTP) via email and/or SMS, and you can create multiple [login](login.md) authentication methods with different combinations.

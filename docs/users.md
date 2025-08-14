@@ -23,5 +23,3 @@ The lockout is configured in the environment settings in the [FoxIDs Control Cli
 6. Set the **Count time period** in seconds, e.g. `3600` for 60 minute
    ![Failing login lockout](images/configure-failing-login-lockout.png)
 7. Click **Update**
-
-

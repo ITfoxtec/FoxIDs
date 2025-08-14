@@ -104,23 +104,17 @@ If the base URL for the API is `https://somewhere.org/myclaimsstore` the URL for
   *The outgoing IP address can be changed and more can be added over time.*
 
 #### Request
-The API call is secured with [HTTP Basic authentication scheme](https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1) where FoxIDs sends the ID `external_claims` as the username and the configured secret as the password.
+Secured with [HTTP Basic auth](https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1): username `external_claims`, password = configured secret.
 
 The API is called with HTTP POST and a JSON body.
 
 This is a request JSON body with two input claims:
 ```JSON
 {
- "claims": [
-        {
-            "type": "sub",
-            "value": "1b1ac05e-5937-4939-a49c-0e84a89662df"
-        },
-        {
-            "type": "email",
-            "value": "some@test.org"
-        }
-    ]
+  "claims": [
+    { "type": "sub", "value": "1b1ac05e-5937-4939-a49c-0e84a89662df" },
+    { "type": "email", "value": "some@test.org" }
+  ]
 }
 ```
 
@@ -131,32 +125,17 @@ For example, the user's sub (user ID / username), customer ID and roles:
 ```JSON
 {
     "claims": [
-        {
-            "type": "sub",
-            "value": "somewhere/external-some@test.org"
-        },
-        {
-            "type": "customer_id",
-            "value": "1234abcd"
-        },
-        {
-            "type": "role",
-            "value": "admin_access"
-        },
-        {
-            "type": "role",
-            "value": "read_access"
-        },
-        {
-            "type": "role",
-            "value": "write_access"
-        }
+        { "type": "sub", "value": "somewhere/external-some@test.org" },
+        { "type": "customer_id", "value": "1234abcd" },
+        { "type": "role", "value": "admin_access" },
+        { "type": "role", "value": "read_access" },
+        { "type": "role", "value": "write_access" }
     ]
 }
 ```
 
 #### Response - Error 
-The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic authentication is rejected. Optionally add an error description in `ErrorMessage`.
+The API must return HTTP code 401 (Unauthorized) and an `error` (required) if the Basic auth is rejected. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
     "error": "invalid_api_id_secret",
@@ -164,8 +143,8 @@ The API must return HTTP code 401 (Unauthorized) and an `error` (required) if th
 }
 ```
 
-If other errors occur, the API should return HTTP code 500 or another appropriate error code. 
-It is recommended to add a technical error message in `ErrorMessage`. The error message can then later be found in the FoxIDs logs.  
+If other errors occur, the API should return HTTP code 500 or another appropriate error code.  
+It is recommended to add a technical error message `ErrorMessage` for diagnostics (it is only logged; never shown to the end user).
 
 > Error messages returned from the API in `ErrorMessage` is NOT displayed for the user only logged.
 

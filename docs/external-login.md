@@ -63,7 +63,6 @@ Username type codes:
 ### Response
 **Success**  
 On success the API should return HTTP code 200 and optionally a list of `claims` for the authenticated user.
-Success (HTTP 200) optionally returns user `claims`.
 
 For example, the user's sub (unique ID / username), name, email and maybe e.g. a role:
 ```JSON
@@ -95,7 +94,8 @@ The API must return HTTP code 400, 401 or 403 and an `error` (required) if the u
 }
 ```
 
-If other errors occur, the API should return HTTP code 500 or another appropriate error code. Include a technical error message `ErrorMessage` for diagnostics (it is only logged; never shown to the end user).
+If other errors occur, the API should return HTTP code 500 or another appropriate error code.  
+It is recommended to add a technical error message `ErrorMessage` for diagnostics (it is only logged; never shown to the end user).
 
 ## API Sample
 The sample [ExternalLoginApiSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalLoginApiSample) show how to implement the API in ASP.NET Core.

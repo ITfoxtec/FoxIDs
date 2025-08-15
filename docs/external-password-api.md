@@ -67,7 +67,7 @@ The API must return HTTP status code 401 (Unauthorized) and an `error` (required
 ```
 
 **Error - only for the validation method**  
-The API must return HTTP status code 400, 401, or 403 and an `error` (required) if the password is not accepted. Optionally add an error description in `ErrorMessage`.
+The API must return HTTP status code 400, or 403 and an `error` (required) if the password is not accepted. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
   "error": "password_not_accepted",

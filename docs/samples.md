@@ -56,6 +56,7 @@ You can alternatively configure the samples in [your one FoxIDs environment](#co
   
     -  [ExternalLoginApiSample](#externalloginapisample) ([online](https://externalloginsample.itfoxtec.com))
     -  [ExternalClaimsApiSample](#externalclaimsapisample)
+    -  [ExternalExtendedUiApiSample](#externalextendeduiapisample)
     -  [ExternalPasswordApiSample](#externalpasswordapisample)
 
 - Console app - FoxIDs Control API
@@ -220,11 +221,17 @@ Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/Ext
 
 Local development domain and port: `https://localhost:44353`
 
+### ExternalExtendedUiApiSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalExtendedUiApiSample)) application implementing an external extended UI API which can be configured and called to validate dynamic UI elements and optionally return additional claims.
+
+Local development domain and port: `https://localhost:44354`
+
 ### ExternalPasswordApiSample
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/main/src/ExternalPasswordApiSample)) application implementing an external password API which is connected as an external password API in a FoxIDs environment.
 
-Local development domain and port: `https://localhost:44354`
+Local development domain and port: `https://localhost:44355`
 
 ### FoxIDsControlApiSample
 

@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task ValidatePasswordAsync(UserIdentifier userIdentifier, string password)
+        public async Task ValidatePasswordAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
             if (Config?.EnabledValidation != true) return;
 
@@ -37,7 +37,8 @@ namespace FoxIDs.Logic
                 Email = userIdentifier.Email,
                 Phone = userIdentifier.Phone,
                 Username = userIdentifier.Username,
-                Password = password
+                Password = password,
+                State = ToExtPasswordState(state)
             };
             await request.ValidateObjectAsync();
             logger.ScopeTrace(() => $"External password, Validation API request '{new { request.Email, request.Phone, request.Username, password = "hidden" }.ToJson()}'.", traceType: TraceTypes.Message);
@@ -97,7 +98,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task PasswordNotificationAsync(UserIdentifier userIdentifier, string password)
+        public async Task PasswordNotificationAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
             if (Config?.EnabledNotification != true) return;
 
@@ -109,7 +110,8 @@ namespace FoxIDs.Logic
                 Email = userIdentifier.Email,
                 Phone = userIdentifier.Phone,
                 Username = userIdentifier.Username,
-                Password = password
+                Password = password,
+                State = ToExtPasswordState(state)
             };
             await request.ValidateObjectAsync();
             logger.ScopeTrace(() => $"External password, Notification API request '{new { request.Email, request.Phone, request.Username, password = "hidden" }.ToJson()}'.", traceType: TraceTypes.Message);
@@ -159,5 +161,19 @@ namespace FoxIDs.Logic
         }
 
         private ExternalPassword Config => RouteBinding.ExternalPassword;
+
+        private ExtPwd.PasswordState ToExtPasswordState(PasswordState state)
+        {
+            switch (state)
+            {
+                case PasswordState.Current:
+                    return ExtPwd.PasswordState.Current;
+                case PasswordState.New:
+                    return ExtPwd.PasswordState.New;
+                default:
+                    throw new NotImplementedException($"Password state '{state}' is not implemented in {nameof(ExternalPasswordConnectLogic)}.");
+            }
+        }
+
     }
 }

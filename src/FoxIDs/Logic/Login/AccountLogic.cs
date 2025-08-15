@@ -62,15 +62,7 @@ namespace FoxIDs.Logic
                 else
                 {
                     logger.ScopeTrace(() => $"User '{userIdentifier}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                    try
-                    {
-                        await ValidatePasswordRiskAsync(password);
-                    }
-                    catch
-                    {
-                        logger.ScopeTrace(() => $"User '{userIdentifier}' password is in risk based on global password breaches, user have to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                        throw;
-                    }
+                    await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, password, PasswordState.Current);
                     return user;
                 }
             }
@@ -126,18 +118,18 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password)
+        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state = PasswordState.New)
         {
-            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password);
+            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password, state);
 
             if (RouteBinding?.ExternalPassword?.EnabledValidation == true)
             {
-                await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password);
+                await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password, state);
             }
 
             if (RouteBinding?.ExternalPassword?.EnabledNotification == true)
             {
-                await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password);
+                await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password, state);
             }
         }
 

@@ -700,10 +700,70 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
                 return StartChangePassword();
             }
+            catch (PasswordLengthException plex)
+            {
+                logger.ScopeTrace(() => plex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = RouteBinding.CheckPasswordComplexity ?
+                    $"Please use {RouteBinding.PasswordLength} characters or more with a mix of letters, numbers and symbols." :
+                    $"Please use {RouteBinding.PasswordLength} characters or more.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordComplexityException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "Please use a mix of letters, numbers and symbols";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordEmailTextComplexityException pecex)
+            {
+                logger.ScopeTrace(() => pecex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "Please do not use the email or parts of it.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordPhoneTextComplexityException ppcex)
+            {
+                logger.ScopeTrace(() => ppcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "Please do not use the phone number.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordUsernameTextComplexityException pucex)
+            {
+                logger.ScopeTrace(() => pucex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "Please do not use the username or parts of it.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordUrlTextComplexityException puurlcex)
+            {
+                logger.ScopeTrace(() => puurlcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "Please do not use parts of the URL.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
             catch (PasswordRiskException prex)
             {
                 logger.ScopeTrace(() => prex.Message, triggerEvent: true);
-                sequenceData.ShowPasswordRiskError = true;
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = "The password has previously appeared in a data breach. Please choose a more secure alternative.";
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordNotAcceptedExternalException pnaex)
+            {
+                logger.ScopeTrace(() => pnaex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                // Take first UI message if present, else default.
+                sequenceData.ShowPasswordErrorUIMessage = pnaex.UiErrorMessages?.FirstOrDefault() ?? "The password could not be accepted. Please try a different one.";
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
@@ -1338,10 +1398,10 @@ namespace FoxIDs.Controllers
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 };
 
-                if (sequenceData.ShowPasswordRiskError)
+                if (sequenceData.ShowPasswordError)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
-                    sequenceData.ShowPasswordRiskError = false;
+                    ModelState.AddModelError(string.Empty, localizer[sequenceData.ShowPasswordErrorUIMessage]);
+                    sequenceData.ShowPasswordError = false;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 }
 

@@ -22,6 +22,9 @@ namespace FoxIDs.Models.External.Password
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         public string Password { get; set; }
 
+        [Required]
+        public PasswordState State { get; set; } 
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

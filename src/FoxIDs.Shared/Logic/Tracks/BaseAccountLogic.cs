@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"User '{userIdentifier.ToJson()}', password set.", triggerEvent: true);
         }
 
-        protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password)
+        protected virtual async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state = PasswordState.New)
         {
             CheckPasswordLength(password);
 
@@ -205,14 +205,6 @@ namespace FoxIDs.Logic
                 CheckPasswordComplexity(userIdentifier, password);
             }
 
-            if (RouteBinding.CheckPasswordRisk)
-            {
-                await CheckPasswordRiskAsync(password);
-            }
-        }
-
-        protected async Task ValidatePasswordRiskAsync(string password)
-        {
             if (RouteBinding.CheckPasswordRisk)
             {
                 await CheckPasswordRiskAsync(password);

@@ -10,7 +10,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Ext = FoxIDs.Models.External;
-using ExtPwd = FoxIDs.Models.External.Password;
 
 namespace FoxIDs.Logic
 {
@@ -29,10 +28,10 @@ namespace FoxIDs.Logic
         {
             if (Config?.EnabledValidation != true) return;
 
-            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Validate);
+            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Validation);
             logger.ScopeTrace(() => $"External password, Validation API request, URL '{url}'.", traceType: TraceTypes.Message);
 
-            var request = new ExtPwd.PasswordRequest
+            var request = new Ext.PasswordRequest
             {
                 Email = userIdentifier.Email,
                 Phone = userIdentifier.Phone,
@@ -102,10 +101,10 @@ namespace FoxIDs.Logic
         {
             if (Config?.EnabledNotification != true) return;
 
-            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Notify);
+            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Notification);
             logger.ScopeTrace(() => $"External password, Notification API request, URL '{url}'.", traceType: TraceTypes.Message);
 
-            var request = new ExtPwd.PasswordRequest
+            var request = new Ext.PasswordRequest
             {
                 Email = userIdentifier.Email,
                 Phone = userIdentifier.Phone,
@@ -162,14 +161,14 @@ namespace FoxIDs.Logic
 
         private ExternalPassword Config => RouteBinding.ExternalPassword;
 
-        private ExtPwd.PasswordState ToExtPasswordState(PasswordState state)
+        private Ext.PasswordState ToExtPasswordState(PasswordState state)
         {
             switch (state)
             {
                 case PasswordState.Current:
-                    return ExtPwd.PasswordState.Current;
+                    return Ext.PasswordState.Current;
                 case PasswordState.New:
-                    return ExtPwd.PasswordState.New;
+                    return Ext.PasswordState.New;
                 default:
                     throw new NotImplementedException($"Password state '{state}' is not implemented in {nameof(ExternalPasswordConnectLogic)}.");
             }

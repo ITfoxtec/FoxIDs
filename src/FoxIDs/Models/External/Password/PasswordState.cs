@@ -1,8 +1,8 @@
-namespace FoxIDs.Models.External.Password
+namespace FoxIDs.Models.External
 {
     public enum PasswordState
     {
-        Current = 100, 
+        Current = 100,
         New = 200
     }
 }

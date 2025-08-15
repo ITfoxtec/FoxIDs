@@ -2,7 +2,7 @@ using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.External.Password
+namespace FoxIDs.Models.External
 {
     public class PasswordRequest : IValidatableObject
     {

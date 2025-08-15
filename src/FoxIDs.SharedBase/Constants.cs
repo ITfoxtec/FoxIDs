@@ -1034,8 +1034,8 @@ namespace FoxIDs
             {
                 public static class Api
                 {
-                    public const string Validate = "validate";
-                    public const string Notify = "notify";
+                    public const string Validation = "validation";
+                    public const string Notification = "notification";
                     public const string ApiId = "external_password";
 
                     public static class ErrorCodes

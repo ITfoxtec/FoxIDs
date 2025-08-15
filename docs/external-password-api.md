@@ -33,25 +33,39 @@ Secured with [HTTP Basic authentication](https://datatracker.ietf.org/doc/html/r
 
 The call is HTTP POST with a JSON body.
 
-This is a request JSON body with only the email as a user identifier:
+Fields:
+- email / phone / username (optional – at least one must be present)
+- password (required)
+- state (required) – string enum: `current` or `new` (see [Password state](#password-state))
+
+This is a request JSON body with only the email as a user identifier (validating an existing password during login):
 ```json
 {
   "email": "user1@somewhere.org",
-  "password": "testpass1"
+  "password": "testpass1",
+  "state": "current"
 }
 ```
 
-This is a request JSON body with all three user identifiers:
+This is a request JSON body with all three user identifiers (validating a new password being set or changed):
 ```json
 {
   "email": "user1@somewhere.org",
   "phone": "+4011223344",
   "username": "user1",
-  "password": "testpass1"
+  "password": "testpass1",
+  "state": "new"
 }
 ```
 
-The user identifiers are optional, but at least one must be present. The password is required.
+The user identifiers are optional, but at least one must be present. The password and state are required.
+
+#### Password state
+The password state makes it possible to apply different logic depending on context.
+
+Values:
+- `current` – Sent when a user enters an existing password during login.
+- `new` – Sent when a user sets or changes to a new password (user creation, password change or reset).
 
 ### Response
 **Success**  
@@ -67,7 +81,7 @@ The API must return HTTP status code 401 (Unauthorized) and an `error` (required
 ```
 
 **Error - only for the validation method**  
-The API must return HTTP status code 400, or 403 and an `error` (required) if the password is not accepted. Optionally add an error description in `ErrorMessage`.
+The API must return HTTP status code 400, or 403 and an `error` (required) if the password (considering its state) is not accepted. Optionally add an error description in `ErrorMessage`.
 ```JSON
 {
   "error": "password_not_accepted",

@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -122,16 +122,16 @@ namespace FoxIDs.Controllers
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your phone."]);
+                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer[ErrorMessages.ConfirmationPhoneUseNew]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer["Invalid phone confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(phoneConfirmation.ConfirmationCode), localizer[ErrorMessages.ConfirmationPhoneInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 return viewResponse();
@@ -160,7 +160,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -212,16 +212,16 @@ namespace FoxIDs.Controllers
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your email."]);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer[ErrorMessages.ConfirmationEmailUseNew]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Invalid email confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer[ErrorMessages.ConfirmationEmailInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 return viewResponse();
@@ -301,7 +301,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var phoneSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneSetPasswordViewModel>(sequenceData, loginUpParty);
@@ -363,58 +363,58 @@ namespace FoxIDs.Controllers
                 catch (UserNotExistsException unex)
                 {
                     logger.ScopeTrace(() => unex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationInvalid]);
                 }
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Please use the new confirmation code that has just been sent to your phone."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationPhoneUseNewAlt]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(setPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
-                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
-                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
+                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
+                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordComplexity]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordEmailComplexity]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordPhoneComplexity]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordUsernameComplexity]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordUrlComplexity]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordRisk]);
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {
@@ -428,7 +428,7 @@ namespace FoxIDs.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password could not be accepted. Please try a different one."]);
+                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordNotAccepted]);
                     }
                 }
 
@@ -470,7 +470,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var emailSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailSetPasswordViewModel>(sequenceData, loginUpParty);
@@ -523,58 +523,58 @@ namespace FoxIDs.Controllers
                 catch (UserNotExistsException unex)
                 {
                     logger.ScopeTrace(() => unex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationInvalid]);
                 }
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Please use the new confirmation code that has just been sent to your email."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationEmailUseNewAlt]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(setPassword.ConfirmationCode), localizer[ErrorMessages.ConfirmationInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(setPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
-                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
-                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
+                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
+                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordComplexity]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordEmailComplexity]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordPhoneComplexity]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordUsernameComplexity]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordUrlComplexity]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordRisk]);
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {
@@ -588,7 +588,7 @@ namespace FoxIDs.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer["The password could not be accepted. Please try a different one."]);
+                        ModelState.AddModelError(nameof(setPassword.NewPassword), localizer[ErrorMessages.PasswordNotAccepted]);
                     }
                 }
 

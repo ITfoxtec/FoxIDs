@@ -91,6 +91,10 @@ namespace FoxIDs.Logic
             {
                 throw;
             }
+            catch (PasswordNotAcceptedExternalException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new Exception($"Unable to call external password validation API URL '{url}'.", ex);
@@ -150,6 +154,10 @@ namespace FoxIDs.Logic
                 }
             }
             catch (InvalidAppIdOrSecretException)
+            {
+                throw;
+            }
+            catch (PasswordNotAcceptedExternalException)
             {
                 throw;
             }

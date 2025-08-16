@@ -10,13 +10,15 @@ namespace FoxIDs.Models.ViewModels
         public const string PasswordUsernameComplexity = "Please do not use the username or parts of it.";
         public const string PasswordUrlComplexity = "Please do not use parts of the URL.";
         public const string PasswordRisk = "The password has previously appeared in a data breach. Please choose a more secure alternative.";
-        public const string PasswordNotAccepted = "The password could not be accepted. Please try a different one.";
+        public const string PasswordNotAccepted = "Please use a password that complies with the password policy.";
         public const string AccountLocked = "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again.";
         public const string WrongPassword = "Wrong password";
         public const string NewPasswordRequired = "Please use a new password.";
         public const string OtpUseNewPhone = "Please use the new one-time password just sent to your phone.";
         public const string OtpUseNewEmail = "Please use the new one-time password just sent to your email.";
         public const string OtpInvalid = "Invalid one-time password, please try one more time.";
+
+        public const string ChangePassword = "For security reasons, please change your password.";
 
         public const string ConfirmationPhoneUseNew = "Please use the new confirmation code just sent to your phone.";
         public const string ConfirmationPhoneUseNewAlt = "Please use the new confirmation code that has just been sent to your phone.";

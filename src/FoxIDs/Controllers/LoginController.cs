@@ -1399,6 +1399,7 @@ namespace FoxIDs.Controllers
 
                 if (sequenceData.ShowPasswordError)
                 {
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.ChangePassword]);
                     ModelState.AddModelError(string.Empty, localizer[sequenceData.ShowPasswordErrorUIMessage]);
                     sequenceData.ShowPasswordError = false;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);

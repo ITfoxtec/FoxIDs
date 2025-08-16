@@ -775,6 +775,14 @@
     {
       "name": "<a href=\"{0}\" class=\"{1}\">Use one-time password via SMS.</a>",
       "id": 188
+    },
+    {
+      "name": "For security reasons, please change your password.",
+      "id": 189
+    },
+    {
+      "name": "Please use a password that complies with the password policy.",
+      "id": 190
     }
   ],
   "resources": [
@@ -26020,6 +26028,26 @@
           "culture": "uk",
           "value": "<a href=\"{0}\" class=\"{1}\">Використовуйте одноразовий пароль через SMS.</a>",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 189,
+      "items": [
+        {
+          "culture": "en",
+          "value": "For security reasons, please change your password.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 190,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use a password that complies with the password policy.",
+          "edit_level": 100
         }
       ]
     }

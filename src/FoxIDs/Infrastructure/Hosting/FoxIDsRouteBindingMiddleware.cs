@@ -151,6 +151,7 @@ namespace FoxIDs.Infrastructure.Hosting
             routeBinding.PasswordLength = track.PasswordLength;
             routeBinding.CheckPasswordComplexity = track.CheckPasswordComplexity.Value;
             routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
+            routeBinding.ExternalPassword = track.ExternalPassword;
             routeBinding.AllowIframeOnDomains = track.AllowIframeOnDomains;
             routeBinding.SendEmail = track.SendEmail;
             routeBinding.SendSms = track.SendSms;

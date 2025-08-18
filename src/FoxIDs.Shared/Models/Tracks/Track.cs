@@ -105,6 +105,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "check_password_risk")]
         public bool? CheckPasswordRisk { get; set; } = true;
 
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "external_password")]
+        public ExternalPassword ExternalPassword { get; set; }
+
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }

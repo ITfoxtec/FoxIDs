@@ -37,6 +37,8 @@ namespace FoxIDs.Client.Pages.Users
         [Parameter]
         public string TenantName { get; set; }
 
+        private int MaxFailingLogins => TrackSelectedLogic.IsTrackSelected ? TrackSelectedLogic.CurrentTrack.MaxFailingLogins : Constants.TrackDefaults.DefaultMaxFailingLogins;
+        private int FailingLoginCountLifetimeHours => (TrackSelectedLogic.IsTrackSelected ? TrackSelectedLogic.CurrentTrack.FailingLoginCountLifetime : Constants.TrackDefaults.DefaultFailingLoginCountLifetime) / 3600;
         private int FailingLoginObservationPeriodMinuts => (TrackSelectedLogic.IsTrackSelected ? TrackSelectedLogic.CurrentTrack.FailingLoginObservationPeriod : Constants.TrackDefaults.DefaultFailingLoginObservationPeriod) / 60;
 
         protected override async Task OnInitializedAsync()

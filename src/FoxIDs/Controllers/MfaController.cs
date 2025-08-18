@@ -149,11 +149,11 @@ namespace FoxIDs.Controllers
                 catch (InvalidAppCodeException acex)
                 {
                     logger.ScopeTrace(() => acex.Message, triggerEvent: true);
-                    ModelState.AddModelError(nameof(RegisterTwoFactorAppViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
+                    ModelState.AddModelError(nameof(RegisterTwoFactorAppViewModel.AppCode), localizer[ErrorMessages.TwoFactorRegisterInvalidCode]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 return viewError();               
@@ -226,7 +226,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -301,11 +301,11 @@ namespace FoxIDs.Controllers
                     catch (InvalidRecoveryCodeException rcex)
                     {
                         logger.ScopeTrace(() => rcex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer["Invalid recovery code, please try one more time."]);
+                        ModelState.AddModelError(string.Empty, localizer[ErrorMessages.TwoFactorRecoveryInvalid]);
                     }
                     catch (UserObservationPeriodException)
                     {
-                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                        ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                     }
 
                     return viewError();
@@ -323,11 +323,11 @@ namespace FoxIDs.Controllers
                     catch (InvalidAppCodeException acex)
                     {
                         logger.ScopeTrace(() => acex.Message, triggerEvent: true);
-                        ModelState.AddModelError(nameof(TwoFactorAppViewModel.AppCode), localizer["Invalid code, please try one more time."]);
+                        ModelState.AddModelError(nameof(TwoFactorAppViewModel.AppCode), localizer[ErrorMessages.TwoFactorInvalidCode]);
                     }
                     catch (UserObservationPeriodException)
                     {
-                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                        ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                     }
 
                     return viewError();
@@ -360,7 +360,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -432,16 +432,16 @@ namespace FoxIDs.Controllers
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Please use the new two-factor code just sent to your phone."]);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer[ErrorMessages.TwoFactorSmsUseNew]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer[ErrorMessages.TwoFactorSmsInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 return viewError();
@@ -473,7 +473,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -545,16 +545,16 @@ namespace FoxIDs.Controllers
                 catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Please use the new two-factor code just sent to your email."]);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer[ErrorMessages.TwoFactorEmailUseNew]);
                 }
                 catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer["Invalid two-factor code, please try one more time."]);
+                    ModelState.AddModelError(nameof(registerTwoFactor.Code), localizer[ErrorMessages.TwoFactorEmailInvalid]);
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
 
                 return viewError();

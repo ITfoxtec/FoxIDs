@@ -27,23 +27,23 @@ Click `New application` to configure your OpenID Connect application and select 
 
 ![New app registration](images/get-started-new-app-reg.png)
 
-I'll select Web Application, and then fill in the `Name` and base URL as the `Redirect URI`
+I'll select Web Application, then fill in the `Name` and the base URL as the `Redirect URI`
 
 ![New app registration configuration](images/get-started-new-app-reg-conf.png)
 
-Click `Register` to save the application configuration. Copy the `Authority`, `Client ID` and `Client secret` and optionally the `scopes`.
+Click `Register` to save the application configuration. Copy the `Authority`, `Client ID`, and `Client secret`, and optionally the `scopes`.
 
 ![New app registration done](images/get-started-new-app-reg-done.png)
 
-Configure your application with the `Authority`, `Client ID` and `Client secret`.  
-You are presented with a detailed configuration view then you close the pop-up. If needed you can find the OpenID Connect (OIDC) Discovery endpoint and do configuration changes.
+Configure your application with the `Authority`, `Client ID`, and `Client secret`.  
+You are presented with a detailed configuration view when you close the pop-up. If needed, you can find the OpenID Connect (OIDC) Discovery endpoint and make configuration changes.
 
-Open you application and start the login flow. You are then redirected to the FoxIDs login prompt where you can select to create a new test user.
+Open your application and start the login flow. You are then redirected to the FoxIDs login prompt where you can choose to create a new test user.
 
-> Each environment has a separate user store. You cannot log in with your administrator user, which only exists in the master environment. Therefore, you need to create a new or the same user in the test environment.
+> Each environment has a separate user store. You cannot log in with your administrator user, which only exists in the master environment. Therefore, you need to create a new user (or the same user) in the test environment.
 
 ![Create test user](images/get-started-test-user.png)
 
-And log in
+Then log in
 
 ![Login](images/get-started-login.png)

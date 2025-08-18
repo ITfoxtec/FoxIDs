@@ -1,0 +1,4 @@
+Email;Phone;Username;EmailVerified;PhoneVerified;SetPasswordEmail;SetPasswordSms
+u1@somedomain.test;;u1;true;true;true;false
+;+4422222222;u2;true;true;false;true
+u3@somedomain.test;+4433333333;u3;true;true;true;false

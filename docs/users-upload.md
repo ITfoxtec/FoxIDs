@@ -1,15 +1,30 @@
 # Upload many users
 
-Provisioning your users in an environment, with or without a password:
+Provisioning your users in an environment as [internal users](users-internal.md), with or without a password:
 
 - You can upload the users with there password, if you know the users' passwords. 
 - Otherwise, you can upload the users without a password and the users are then requested to set a password with an email or SMS conformation code. Require the users to have either an email or phone number.
 
-The users are bulk uploaded to an environment with 1,000 users at the time and supporting multiple upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+The users are bulk uploaded to an environment with up to 1,000 users per request when the users are created without passwords, and up to 100 users per request when passwords are included. This supports multiple uploads, allowing millions of users to be imported. You can either use the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+
+### Example upload time for 50,000 users
+
+| Scenario                                  | Users  | Batch size | Approx. total time |
+|-------------------------------------------|--------|-----------:|--------------------|
+| Without passwords                         | 50,000 |      1,000 | ~2 minutes         |
+| With passwords                            | 50,000 |        100 | ~2 hours           |
+| Password hashes pre-calculated on client  | 50,000 |      1,000 | ~5 minutes         |
+
+*Times are approximate and depend on client machine, network and infrastructure.*
+
+Uploading users with passwords takes longer because a [password hash](users-internal.md#password-hash) must be computed for each user, and this operation is intentionally time-consuming for security.  
+Upload time can be improved by calculating the password hashes on the client before uploading the users.
 
 ## Upload with seed tool
 
 The seed tool reads users from a `CSV` file and upload the users to the configured environment.
+
+> By default, the seed tool pre-calculates [password hashes](users-internal.md#password-hash) on the client during upload to reduce server processing time.
 
 ### CSV file
 

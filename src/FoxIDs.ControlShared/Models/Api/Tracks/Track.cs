@@ -75,6 +75,9 @@ namespace FoxIDs.Models.Api
         [Required]
         public bool? CheckPasswordRisk { get; set; } = true;
 
+        [ValidateComplexType]
+        public ExternalPassword ExternalPassword { get; set; }
+
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         public List<string> AllowIframeOnDomains { get; set; }
 

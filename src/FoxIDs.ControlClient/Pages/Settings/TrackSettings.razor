@@ -90,12 +90,47 @@
                 <div class="mr-auto">
                     <h4 class="pt-5 pb-3">User & login settings</h4>
                 </div>
-                <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
-                <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginCountLifetime" For="@(() => trackSettingsForm.Model.FailingLoginCountLifetime)" />
-                <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginObservationPeriod" For="@(() => trackSettingsForm.Model.FailingLoginObservationPeriod)" />
+                <div class="pt-1">
+                    <div class="form-group active-group active">
+                        <div class="card">
+                            <div class="card-body mt-2">
+                                <div class="info-text mr-auto pt-0">
+                                    Users are locked for an period of time after exceeding @trackSettingsForm.Model.MaxFailingLogins failed login attempts within a @(trackSettingsForm.Model.FailingLoginCountLifetime / 3600) hour timeframe. During this observation period, users remain locked for @(trackSettingsForm.Model.FailingLoginObservationPeriod / 60) minutes and are automatically unlocked once the period ends.
+                                </div>
+                                <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
+                                <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginCountLifetime" For="@(() => trackSettingsForm.Model.FailingLoginCountLifetime)" />
+                                <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginObservationPeriod" For="@(() => trackSettingsForm.Model.FailingLoginObservationPeriod)" />
+                            </div>
+                        </div>
+                        <Label For="@(() => trackSettingsForm.Model.MaxFailingLogins)" LabelText="Failing login lockout" class="label-control" />
+                    </div>
+                </div>
                 <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordLength" For="@(() => trackSettingsForm.Model.PasswordLength)" />
                 <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordComplexity" For="@(() => trackSettingsForm.Model.CheckPasswordComplexity)" />
                 <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordRisk" For="@(() => trackSettingsForm.Model.CheckPasswordRisk)" />
+
+                <div class="pt-1">
+                    <div class="form-group active-group active">
+                        <div class="card">
+                            <div class="card-body mt-2">
+                                <div class="info-text mr-auto pt-0">
+                                    External password validation and notifications:
+                                    <ul>
+                                        <li>Use the validation API to validate a password.</li>
+                                        <li>Use the notification API to receive notifications about password changes.</li>
+                                        <li>If you need both validation and notification, use the validation API - if the password is valid, trigger a notification about the change.</li>
+                                        <li>Important: You usually don't need to use both APIs together. Only call both APIs if you must call different systems.</li>
+                                    </ul>
+                                </div>                                
+                                <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidation" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidation)" />
+                                <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotification" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotification)" />
+                                <FInputText @bind-Value="trackSettingsForm.Model.ExternalPassword.ApiUrl" For="@(() => trackSettingsForm.Model.ExternalPassword.ApiUrl)" />
+                                <FInputText @bind-Value="trackSettingsForm.Model.ExternalPassword.Secret" For="@(() => trackSettingsForm.Model.ExternalPassword.Secret)" />
+                            </div>
+                        </div>
+                        <Label For="@(() => trackSettingsForm.Model.ExternalPassword)" LabelText="External password API" class="label-control" />
+                    </div>
+                </div>
 
                 <div class="mr-auto">
                     <h4 class="pt-5 pb-3">Iframe settings</h4>

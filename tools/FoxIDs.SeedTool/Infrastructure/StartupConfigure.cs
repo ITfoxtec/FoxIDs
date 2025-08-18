@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.IO;
 using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Helpers;
+using FoxIDs.Logic;
 
 namespace FoxIDs.SeedTool.Infrastructure
 {
@@ -44,7 +45,9 @@ namespace FoxIDs.SeedTool.Infrastructure
         {
             services.AddHttpClient();
 
-            services.AddTransient<TokenHelper>();
+            services.AddTransient<SecretHashLogic>();
+
+            services.AddTransient<TokenHelper>();  
             services.AddSingleton(serviceProvider =>
             {
                 var settings = serviceProvider.GetService<SeedSettings>();

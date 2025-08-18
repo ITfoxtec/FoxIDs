@@ -13,6 +13,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Util;
+using FoxIDs.Client;
 
 namespace FoxIDs.Controllers
 {
@@ -153,6 +154,19 @@ namespace FoxIDs.Controllers
                 mTrack.PasswordLength = track.PasswordLength;
                 mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
+                if (track.ExternalPassword == null)
+                {
+                    mTrack.ExternalPassword = null;
+                }
+                else
+                {
+                    var currentExternalPassword = mTrack.ExternalPassword;
+                    mTrack.ExternalPassword = track.ExternalPassword.Map<ExternalPassword>();
+                    if (currentExternalPassword != null && track.ExternalPassword.ExternalConnectType == Api.ExternalConnectTypes.Api && track.ExternalPassword.Secret == track.ExternalPassword.SecretLoaded)
+                    {
+                        mTrack.ExternalPassword.Secret = currentExternalPassword.Secret;
+                    }
+                }
                 mTrack.AllowIframeOnDomains = track.AllowIframeOnDomains;
                 await tenantDataRepository.UpdateAsync(mTrack);
 

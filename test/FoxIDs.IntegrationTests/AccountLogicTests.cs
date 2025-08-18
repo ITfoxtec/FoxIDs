@@ -96,7 +96,7 @@ namespace FoxIDs.IntegrationTests
 
             (var pgTenantRepository, var pgMasterRepository) = RepositoriesHelper.GetRepositories(fixture);
 
-            var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
+            var secretHashLogic = new SecretHashLogic();
 
             var accountLogic = new BaseAccountLogic(telemetryScopedLogger, pgTenantRepository, pgMasterRepository, secretHashLogic, mockHttpContextAccessor);
             return accountLogic;

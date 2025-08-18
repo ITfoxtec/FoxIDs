@@ -53,16 +53,9 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-                var queryFilters = !filterEmail.IsNullOrWhiteSpace() || !filterPhone.IsNullOrWhiteSpace() || !filterUsername.IsNullOrWhiteSpace() || !filterUserId.IsNullOrWhiteSpace();
-                Expression<Func<User, bool>> whereQuery = u => !queryFilters ? u.DataType.Equals(dataType) :
-                    u.DataType.Equals(dataType) && (
-                        (!filterEmail.IsNullOrWhiteSpace() && u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterPhone.IsNullOrWhiteSpace() && u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterUsername.IsNullOrWhiteSpace() && u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterUserId.IsNullOrWhiteSpace() && u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase)) 
-                    );
+                var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
 
-                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
                 var response = new Api.PaginationResponse<Api.User>
                 {
@@ -113,7 +106,7 @@ namespace FoxIDs.Controllers
             var mUsers = new List<User>();
             foreach (var user in usersRequest.Users)
             {
-                mUsers.Add(await accountLogic.CreateUserAsync(new CreateUserObj
+                var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
                     UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
                     Password = user.Password,
@@ -129,7 +122,16 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorSms = user.DisableTwoFactorSms,
                     DisableTwoFactorEmail = user.DisableTwoFactorEmail,
                     RequireMultiFactor = user.RequireMultiFactor
-                }, saveUser: false));
+                }, saveUser: false);
+
+                if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
+                {
+                    mUser.HashAlgorithm = user.PasswordHashAlgorithm;
+                    mUser.Hash = user.PasswordHash;
+                    mUser.HashSalt = user.PasswordHashSalt;
+                }
+
+                mUsers.Add(mUser);
             }
 
             await tenantDataRepository.SaveManyAsync(mUsers);

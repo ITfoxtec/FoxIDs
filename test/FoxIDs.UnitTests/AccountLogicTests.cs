@@ -98,7 +98,7 @@ namespace FoxIDs.UnitTests
             var fakeTenantRepository = new FakeTenantRepository();
             var fakeMasterRepository = new FakeMasterRepository();
            
-            var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
+            var secretHashLogic = new SecretHashLogic();
 
             var accountLogic = new BaseAccountLogic(telemetryScopedLogger, fakeTenantRepository, fakeMasterRepository, secretHashLogic, mockHttpContextAccessor);
             return accountLogic;

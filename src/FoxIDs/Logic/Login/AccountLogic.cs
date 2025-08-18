@@ -13,12 +13,14 @@ namespace FoxIDs.Logic
     public class AccountLogic : BaseAccountLogic
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly ExternalPasswordConnectLogic externalPasswordConnectLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, IMasterDataRepository masterDataRepository, SecretHashLogic secretHashLogic, ExternalPasswordConnectLogic externalPasswordConnectLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantDataRepository, masterDataRepository, secretHashLogic, httpContextAccessor)
         {
             this.serviceProvider = serviceProvider;
+            this.externalPasswordConnectLogic = externalPasswordConnectLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
         }
@@ -60,15 +62,7 @@ namespace FoxIDs.Logic
                 else
                 {
                     logger.ScopeTrace(() => $"User '{userIdentifier}' and password valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                    try
-                    {
-                        await ValidatePasswordRiskAsync(password);
-                    }
-                    catch
-                    {
-                        logger.ScopeTrace(() => $"User '{userIdentifier}' password is in risk based on global password breaches, user have to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
-                        throw;
-                    }
+                    await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, password, PasswordState.Current);
                     return user;
                 }
             }
@@ -109,7 +103,7 @@ namespace FoxIDs.Logic
                     throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{userIdentifier}'.");
                 }
 
-                await ValidatePasswordPolicyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
+                await ValidatePasswordPolicyAndNotifyAsync(new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username }, newPassword);
 
                 await secretHashLogic.AddSecretHashAsync(user, newPassword);
                 user.ChangePassword = false;
@@ -121,6 +115,21 @@ namespace FoxIDs.Logic
             else
             {
                 throw new InvalidPasswordException($"Current password invalid, user '{userIdentifier}'.");
+            }
+        }
+
+        protected override async Task ValidatePasswordPolicyAndNotifyAsync(UserIdentifier userIdentifier, string password, PasswordState state = PasswordState.New)
+        {
+            await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password, state);
+
+            if (RouteBinding?.ExternalPassword?.EnabledValidation == true)
+            {
+                await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password, state);
+            }
+
+            if (RouteBinding?.ExternalPassword?.EnabledNotification == true && state == PasswordState.New)
+            {
+                await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password, state);
             }
         }
 

@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
 
             var authRequest = new Ext.AuthenticationRequest
             {
-                UsernameType = extLoginUpParty.UsernameType,
+                UsernameType = ToExtUsernameType(extLoginUpParty.UsernameType),
                 Username = username,
                 Password = password
             };
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
                         }
                         else if (errorResponse.Error == Constants.ExternalConnect.ExternalLogin.Api.ErrorCodes.InvalidUsernameOrPassword)
                         {
-                            throw new InvalidUsernameOrPasswordException($"Username or password invalid, user '{username}', API URL '{authenticationApiUrl}'.{errorResponse.GetErrorMessage()}");
+                            throw new InvalidUsernameOrPasswordException($"Invalid username or password, user '{username}', API URL '{authenticationApiUrl}'.{errorResponse.GetErrorMessage()}");
                         }
                         throw new Exception($"AuthMethod, External login, Authentication API error '{resultError}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
 
@@ -161,6 +161,19 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 throw new Exception($"Unable to call external login authentication API URL '{authenticationApiUrl}'.", ex);
+            }
+        }
+
+        private Ext.ExternalLoginUsernameTypes ToExtUsernameType(ExternalLoginUsernameTypes usernameType)
+        {
+            switch (usernameType)
+            {
+                case ExternalLoginUsernameTypes.Email:
+                    return Ext.ExternalLoginUsernameTypes.Email;
+                case ExternalLoginUsernameTypes.Text:
+                    return Ext.ExternalLoginUsernameTypes.Text;
+                default:
+                    throw new NotImplementedException($"External login username type '{usernameType}' is not implemented.");
             }
         }
     }

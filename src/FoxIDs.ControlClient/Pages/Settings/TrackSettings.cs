@@ -107,7 +107,14 @@ namespace FoxIDs.Client.Pages.Settings
                     return;
                 }
                 trackWorking = true;
-                await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>());
+                var trackSettingsResult = await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>(afterMap: afterMap =>
+                {
+                    if (string.IsNullOrWhiteSpace(afterMap.ExternalPassword?.ApiUrl))
+                    {
+                        afterMap.ExternalPassword = null;
+                    }
+                }));
+                trackSettingsForm.UpdateModel(trackSettingsResult.Map<TrackSettingsViewModel>());
                 toastService.ShowSuccess("Track settings updated.");
                 trackWorking = false;
             }

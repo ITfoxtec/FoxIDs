@@ -1,0 +1,7 @@
+Email;Phone;Username;EmailVerified;PhoneVerified;SetPasswordEmail;SetPasswordSms
+r1@revsgaard.dk;;r1;true;true;true;false
+;+4522222222;r2;true;true;false;true
+r3@revsgaard.dk;+4550595808;r3;true;true;false;false
+u1@somedomain.test;;u1;true;true;true;false
+;+4422222222;u2;true;true;false;true
+u3@somedomain.test;+4433333333;u3;true;true;true;false

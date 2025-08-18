@@ -197,7 +197,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
                 catch (AccountException aex)
                 {
@@ -206,11 +206,11 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(() => aex.Message, triggerEvent: true);
                         var wrongErrorText = extLoginUpParty.UsernameType switch
                         {
-                            ExternalLoginUsernameTypes.Email => "Wrong email or password.",
-                            ExternalLoginUsernameTypes.Text => "Wrong username or password.",
+                            ExternalLoginUsernameTypes.Email => ErrorMessages.ExternalWrongEmailOrPassword,
+                            ExternalLoginUsernameTypes.Text => ErrorMessages.ExternalWrongUsernameOrPassword,
                             _ => throw new NotSupportedException()
                         };
-                        ModelState.AddModelError(string.Empty,  localizer[wrongErrorText]);
+                        ModelState.AddModelError(string.Empty, localizer[wrongErrorText]);
                     }
                     else
                     {

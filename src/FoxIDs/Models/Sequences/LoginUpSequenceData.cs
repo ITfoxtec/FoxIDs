@@ -86,7 +86,10 @@ namespace FoxIDs.Models.Sequences
         public bool SupportTwoFactorEmail { get; set; }
 
         [JsonProperty(PropertyName = "spr")]
-        public bool ShowPasswordRiskError { get; set; }
+        public bool ShowPasswordError { get; set; }
+
+        [JsonProperty(PropertyName = "sprm")]
+        public string ShowPasswordErrorUIMessage { get; set; }
 
         [JsonProperty(PropertyName = "cuep")]
         public bool CanUseExistingPassword { get; set; }

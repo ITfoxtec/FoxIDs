@@ -63,15 +63,15 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool AutoMapSamlClaims { get; set; }
 
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
-        [Display(Name = "Max failing logins")]
+        [Display(Name = "Lockout count")]
         public int MaxFailingLogins { get; set; } = 5;
 
         [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
-        [Display(Name = "Failing login count lifetime")]
+        [Display(Name = "Lockout count timeframe")]
         public int FailingLoginCountLifetime { get; set; } = 36000;
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
-        [Display(Name = "Failing login lock observation period")]
+        [Display(Name = "Lockout period")]
         public int FailingLoginObservationPeriod { get; set; } = 3600;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
@@ -84,7 +84,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Check password risk based on global password breaches")]
-        public bool? CheckPasswordRisk { get; set; } 
+        public bool? CheckPasswordRisk { get; set; }
+
+        [ValidateComplexType]
+        public ExternalPasswordViewModel ExternalPassword { get; set; } = new ExternalPasswordViewModel();
 
         [ValidateComplexType]
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]

@@ -68,6 +68,11 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<ExternalPassword, Api.ExternalPassword>()
+                .ForMember(d => d.Secret, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
+                .ForMember(d => d.SecretLoaded, opt => opt.MapFrom(s => s.Secret.GetShortSecret(true)))
+                .ReverseMap();
+
             CreateMap<UpParty, Api.UpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))

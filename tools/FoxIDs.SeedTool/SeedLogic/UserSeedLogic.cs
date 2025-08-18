@@ -11,22 +11,29 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity.Util;
 using FoxIDs.SeedTool.Models.ApiModels;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Logic;
+using FoxIDs.Models;
+using System.Threading;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
     public class UserSeedLogic
     {
         private const int maxUserToUpload = 0; // 0 is unlimited
-        private const int uploadUserBlockSize = 1000;
+        private const int uploadUsersWithPasswordBlockSize = 100;
+        private const int uploadUsersBlockSize = 1000;
+        private const bool calculatePasswordHash = true; 
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
+        private readonly SecretHashLogic secretHashLogic;
 
-        public UserSeedLogic(SeedSettings settings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic)
+        public UserSeedLogic(SeedSettings settings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic, SecretHashLogic secretHashLogic)
         {
             this.settings = settings;
             this.httpClientFactory = httpClientFactory;
             this.accessLogic = accessLogic;
+            this.secretHashLogic = secretHashLogic;
         }
 
         public string UsersApiEndpoint => UrlCombine.Combine(settings.FoxIDsControlApiEndpoint, "!users");
@@ -74,7 +81,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                             stop = true;
                             break;
                         }
-                        if (users.Count() >= uploadUserBlockSize)
+                        if ((!calculatePasswordHash && users.Where(u => !u.Password.IsNullOrWhiteSpace()).Count() >= uploadUsersWithPassowrdBlockSize) || users.Count() >= uploadUsersBlockSize)
                         {
                             await UploadAsync(users, addCount);
                             users = new List<CreateUserApiModel>();
@@ -126,12 +133,61 @@ namespace FoxIDs.SeedTool.SeedLogic
                 itemValue = itemValue.Replace("\"\"", "\"");
                 yield return itemValue;
             }
+        }   
+
+        private async Task<List<CreateUserApiModel>> PasswordToHashPassword(List<CreateUserApiModel> users)
+        {
+            var semaphore = new SemaphoreSlim(Math.Max(1, Environment.ProcessorCount));
+            var tasks = new List<Task>();
+            int hashedCount = 0; 
+
+            foreach (var user in users)
+            {
+                if (!user.Password.IsNullOrWhiteSpace())
+                {
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        await semaphore.WaitAsync().ConfigureAwait(false);
+                        try
+                        {
+                            var userHash = new UserHash();
+                            await secretHashLogic.AddSecretHashAsync(userHash, user.Password).ConfigureAwait(false);
+                            user.PasswordHashAlgorithm = userHash.HashAlgorithm;
+                            user.PasswordHash = userHash.Hash;
+                            user.PasswordHashSalt = userHash.HashSalt;
+                            user.Password = null; // Clear password after hashing
+
+                            var current = Interlocked.Increment(ref hashedCount);
+                            if (current % 10 == 0) Console.Write('.'); 
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }));
+                }
+            }
+
+            if (tasks.Count > 0)
+            {
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+
+            if (hashedCount >= 10) Console.WriteLine(); 
+            return users;
+        }
+
+        private class UserHash : ISecretHash
+        {
+            public string HashAlgorithm { get; set; }
+            public string Hash { get; set; }
+            public string HashSalt { get; set; }
         }
 
         private async Task UploadAsync(List<CreateUserApiModel> users, int addCount)
         {
             var accessToken = await accessLogic.GetAccessTokenAsync();
-            await SavePasswordsRiskListAsync(accessToken, users);
+            await SavePasswordsRiskListAsync(accessToken, await PasswordToHashPassword(users));
             Console.WriteLine($"Users uploaded: {addCount}");
         }
 

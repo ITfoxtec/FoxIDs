@@ -426,6 +426,12 @@ namespace FoxIDs
 
             public static class SecretHash
             {
+                public const string DefaultPostHashAlgorithm = "P2HS512";
+                public static string DefaultHashAlgorithm = $"{DefaultPostHashAlgorithm}:{DefaultIterations}";
+                public const int DefaultIterations = 10;
+                public const int DefaultDerivedKeyBytes = 80;
+                public const int DefaultSaltBytes = 64;
+
                 public const int IdLength = 40;
                 public const int InfoLength = 3;
                 public const int SecretLength = 300;
@@ -445,10 +451,10 @@ namespace FoxIDs
                 public const string DefaultLanguage = "en";
 
                 public const int SupportedCulturesMin = 0;
-                public const int SupportedCulturesMax = 50;
+                public const int SupportedCulturesMax = 100;
                 public const int SupportedCulturesLength = 5;
                 public const int ResourcesMin = 1;
-                public const int ResourcesMax = 100;
+                public const int ResourcesMax = 1000;
                 public const int CultureLength = 5;
                 public const int NameLength = 500;
                 public const int ValueLength = 500;
@@ -933,6 +939,7 @@ namespace FoxIDs
             public const string AccessToTrackNamesKey = "access_to_track_names";
 
             public const int SaveAndDeleteManyMin = 1;
+            public const int SaveAndDeleteManyWithPasswordMax = 100;
             public const int SaveAndDeleteManyMax = 1000;
 
             public static class ResourceAndScope
@@ -1026,6 +1033,21 @@ namespace FoxIDs
                     public static class ErrorCodes
                     {
                         public const string InvalidUsernameOrPassword = "invalid_username_password";
+                    }
+                }
+            }
+
+            public static class ExternalPassword
+            {
+                public static class Api
+                {
+                    public const string Validation = "validation";
+                    public const string Notification = "notification";
+                    public const string ApiId = "external_password";
+
+                    public static class ErrorCodes
+                    {
+                        public const string PasswordNotAccepted = "password_not_accepted";
                     }
                 }
             }

@@ -584,7 +584,7 @@ namespace FoxIDs.Controllers
             }
             catch (UserObservationPeriodException)
             {
-                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
             }
             catch (UserNotExistsException unex)
             {
@@ -608,7 +608,7 @@ namespace FoxIDs.Controllers
             }
             catch (UserObservationPeriodException)
             {
-                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
             }
             catch (UserNotExistsException unex)
             {
@@ -700,16 +700,75 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
                 return StartChangePassword();
             }
+            catch (PasswordLengthException plex)
+            {
+                logger.ScopeTrace(() => plex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = RouteBinding.CheckPasswordComplexity ?
+                    string.Format(ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength) :
+                    string.Format(ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength);
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordComplexityException pcex)
+            {
+                logger.ScopeTrace(() => pcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordComplexity;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordEmailTextComplexityException pecex)
+            {
+                logger.ScopeTrace(() => pecex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordEmailComplexity;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordPhoneTextComplexityException ppcex)
+            {
+                logger.ScopeTrace(() => ppcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordPhoneComplexity;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordUsernameTextComplexityException pucex)
+            {
+                logger.ScopeTrace(() => pucex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordUsernameComplexity;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordUrlTextComplexityException puurlcex)
+            {
+                logger.ScopeTrace(() => puurlcex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordUrlComplexity;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
             catch (PasswordRiskException prex)
             {
                 logger.ScopeTrace(() => prex.Message, triggerEvent: true);
-                sequenceData.ShowPasswordRiskError = true;
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = ErrorMessages.PasswordRisk;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return StartChangePassword();
+            }
+            catch (PasswordNotAcceptedExternalException pnaex)
+            {
+                logger.ScopeTrace(() => pnaex.Message, triggerEvent: true);
+                sequenceData.ShowPasswordError = true;
+                sequenceData.ShowPasswordErrorUIMessage = pnaex.UiErrorMessages?.FirstOrDefault() ?? ErrorMessages.PasswordNotAccepted;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return StartChangePassword();
             }
             catch (UserObservationPeriodException)
             {
-                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
             }
             catch (AccountException aex)
             {
@@ -751,16 +810,16 @@ namespace FoxIDs.Controllers
             catch (CodeNotExistsException cneex)
             {
                 logger.ScopeTrace(() => cneex.Message);
-                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your phone."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer[ErrorMessages.OtpUseNewPhone]);
             }
             catch (InvalidCodeException pcex)
             {
                 logger.ScopeTrace(() => pcex.Message);
-                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer[ErrorMessages.OtpInvalid]);
             }
             catch (UserObservationPeriodException)
             {
-                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
             }
             catch (UserNotExistsException unex)
             {
@@ -795,16 +854,16 @@ namespace FoxIDs.Controllers
             catch (CodeNotExistsException cneex)
             {
                 logger.ScopeTrace(() => cneex.Message);
-                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Please use the new one-time password just sent to your email."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer[ErrorMessages.OtpUseNewEmail]);
             }
             catch (InvalidCodeException pcex)
             {
                 logger.ScopeTrace(() => pcex.Message);
-                ModelState.AddModelError(nameof(login.OneTimePassword), localizer["Invalid one-time password, please try one more time."]);
+                ModelState.AddModelError(nameof(login.OneTimePassword), localizer[ErrorMessages.OtpInvalid]);
             }
             catch (UserObservationPeriodException)
             {
-                ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
             }
             catch (UserNotExistsException unex)
             {
@@ -1165,38 +1224,53 @@ namespace FoxIDs.Controllers
                 {
                     logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
-                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
-                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
+                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
+                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordComplexity]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordEmailComplexity]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordPhoneComplexity]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUsernameComplexity]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUrlComplexity]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordRisk]);
+                }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordNotAccepted]);
+                    }
                 }
                 catch (OAuthRequestException orex)
                 {
@@ -1323,10 +1397,11 @@ namespace FoxIDs.Controllers
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 };
 
-                if (sequenceData.ShowPasswordRiskError)
+                if (sequenceData.ShowPasswordError)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
-                    sequenceData.ShowPasswordRiskError = false;
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.ChangePassword]);
+                    ModelState.AddModelError(string.Empty, localizer[sequenceData.ShowPasswordErrorUIMessage]);
+                    sequenceData.ShowPasswordError = false;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 }
 
@@ -1412,54 +1487,69 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException)
                 {
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer[ErrorMessages.AccountLocked]);
                 }
                 catch (InvalidPasswordException ipex)
                 {
                     logger.ScopeTrace(() => ipex.Message, triggerEvent: true);
-                    ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
-                }                    
+                    ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer[ErrorMessages.WrongPassword]);
+                }
                 catch (NewPasswordEqualsCurrentException npeex)
                 {
                     logger.ScopeTrace(() => npeex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a new password."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.NewPasswordRequired]);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
-                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
-                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
+                        localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
+                        localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordComplexity]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordEmailComplexity]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the phone number."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordPhoneComplexity]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the username or parts of it."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordUsernameComplexity]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordUrlComplexity]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordRisk]);
+                }
+                catch (PasswordNotAcceptedExternalException piex)
+                {
+                    logger.ScopeTrace(() => piex.Message);
+                    if (piex.UiErrorMessages?.Count() > 0)
+                    {
+                        foreach (var uiErrorMessage in piex.UiErrorMessages)
+                        {
+                            ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[uiErrorMessage]);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[ErrorMessages.PasswordNotAccepted]);
+                    }
                 }
 
                 return viewError();

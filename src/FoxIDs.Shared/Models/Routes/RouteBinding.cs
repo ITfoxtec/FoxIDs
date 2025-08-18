@@ -59,6 +59,8 @@ namespace FoxIDs.Models
 
         public bool CheckPasswordRisk { get; set; }
 
+        public ExternalPassword ExternalPassword { get; set; }
+
         public List<string> AllowIframeOnDomains { get; set; }
 
         public SendEmail SendEmail { get; set; }

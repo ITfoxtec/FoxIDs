@@ -53,7 +53,7 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-                var whereQuery = UserFilterLogic.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
+                var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
 
                 (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       

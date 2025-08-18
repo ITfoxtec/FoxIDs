@@ -2,9 +2,9 @@ using FoxIDs.Models;
 using System;
 using System.Linq.Expressions;
 
-namespace FoxIDs.Logic
+namespace FoxIDs
 {
-    public static class UserFilterLogic
+    public static class LinqFilterExpression
     {
         private const string UserDataType = Constants.Models.DataType.User;
 

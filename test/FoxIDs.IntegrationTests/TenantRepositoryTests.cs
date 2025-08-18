@@ -8,7 +8,6 @@ using System;
 using Xunit.Abstractions;
 using ITfoxtec.Identity;
 using System.Linq;
-using FoxIDs.Logic;
 
 namespace FoxIDs.IntegrationTests
 {
@@ -144,7 +143,7 @@ namespace FoxIDs.IntegrationTests
             var idKey = new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" };
 
             // Use the same expression logic as the controller
-            var whereQuery = UserFilterLogic.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
+            var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
 
             (var items, string paginationToken) = await tenantRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery);
 
@@ -166,7 +165,7 @@ namespace FoxIDs.IntegrationTests
             var idKey = new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" };
 
             // Test the no-filter case (all filters are null/empty)
-            var whereQuery = UserFilterLogic.CreateUserFilterExpression();
+            var whereQuery = LinqFilterExpression.CreateUserFilterExpression();
 
             (var items, string paginationToken) = await tenantRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery);
 
@@ -188,7 +187,7 @@ namespace FoxIDs.IntegrationTests
             var idKey = new Track.IdKey { TenantName = "testtenant", TrackName = "testtrack" };
 
             // Test case insensitive filtering on email and username
-            var whereQuery = UserFilterLogic.CreateUserFilterExpression(filterEmail: filterValue, filterUsername: filterValue);
+            var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail: filterValue, filterUsername: filterValue);
 
             (var items, string paginationToken) = await tenantRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery);
 

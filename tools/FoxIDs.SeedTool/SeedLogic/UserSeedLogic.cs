@@ -20,7 +20,7 @@ namespace FoxIDs.SeedTool.SeedLogic
     public class UserSeedLogic
     {
         private const int maxUserToUpload = 0; // 0 is unlimited
-        private const int uploadUsersWithPassowrdBlockSize = 100;
+        private const int uploadUsersWithPasswordBlockSize = 100;
         private const int uploadUsersBlockSize = 1000;
         private const bool calculatePasswordHash = true; 
         private readonly SeedSettings settings;

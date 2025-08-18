@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
                             var passwordNotAcceptedExternalException = new PasswordNotAcceptedExternalException($"Password not accepted, user '{new { request.Email, request.Phone, request.Username }.ToJson()}', API URL '{url}'.{errorResponse.GetErrorMessage()}");
                             if (!errorResponse.UiErrorMessage.IsNullOrWhiteSpace())
                             {
-                                passwordNotAcceptedExternalException.UiErrorMessages.Add(errorResponse.UiErrorMessage);
+                                passwordNotAcceptedExternalException.UiErrorMessages = [errorResponse.UiErrorMessage];
                             }
                             throw passwordNotAcceptedExternalException;
                         }

@@ -426,6 +426,12 @@ namespace FoxIDs
 
             public static class SecretHash
             {
+                public const string DefaultPostHashAlgorithm = "P2HS512";
+                public static string DefaultHashAlgorithm = $"{DefaultPostHashAlgorithm}:{DefaultIterations}";
+                public const int DefaultIterations = 10;
+                public const int DefaultDerivedKeyBytes = 80;
+                public const int DefaultSaltBytes = 64;
+
                 public const int IdLength = 40;
                 public const int InfoLength = 3;
                 public const int SecretLength = 300;

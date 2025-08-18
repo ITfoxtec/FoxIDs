@@ -113,7 +113,7 @@ namespace FoxIDs.Controllers
             var mUsers = new List<User>();
             foreach (var user in usersRequest.Users)
             {
-                mUsers.Add(await accountLogic.CreateUserAsync(new CreateUserObj
+                var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
                 {
                     UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
                     Password = user.Password,
@@ -129,7 +129,16 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorSms = user.DisableTwoFactorSms,
                     DisableTwoFactorEmail = user.DisableTwoFactorEmail,
                     RequireMultiFactor = user.RequireMultiFactor
-                }, saveUser: false));
+                }, saveUser: false);
+
+                if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
+                {
+                    mUser.HashAlgorithm = user.PasswordHashAlgorithm;
+                    mUser.Hash = user.PasswordHash;
+                    mUser.HashSalt = user.PasswordHashSalt;
+                }
+
+                mUsers.Add(mUser);
             }
 
             await tenantDataRepository.SaveManyAsync(mUsers);

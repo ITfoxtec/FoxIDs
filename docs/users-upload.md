@@ -9,16 +9,22 @@ The users are bulk uploaded to an environment with up to 1,000 users per request
 
 ### Example upload time for 50,000 users
 
-| Scenario            | Users  | Batch size | Approx. total time |
-|---------------------|--------|-----------:|--------------------|
-| Without passwords   | 50,000 |      1,000 | ~2 minuts          |
-| With passwords      | 50,000 |        100 | ~100 minuts        |
+| Scenario                                  | Users  | Batch size | Approx. total time |
+|-------------------------------------------|--------|-----------:|--------------------|
+| Without passwords                         | 50,000 |      1,000 | ~2 minutes         |
+| With passwords                            | 50,000 |        100 | ~2 hours           |
+| Password hashes pre-calculated on client  | 50,000 |      1,000 | ~5 minutes         |
 
-*Times are approximate and depend on network and infrastructure.*
+*Times are approximate and depend on client machine, network and infrastructure.*
+
+Uploading users with passwords takes longer because a [password hash](users-internal.md#password-hash) must be computed for each user, and this operation is intentionally time-consuming for security.  
+Upload time can be improved by calculating the password hashes on the client before uploading the users.
 
 ## Upload with seed tool
 
 The seed tool reads users from a `CSV` file and upload the users to the configured environment.
+
+> By default, the seed tool pre-calculates [password hashes](users-internal.md#password-hash) on the client during upload to reduce server processing time.
 
 ### CSV file
 

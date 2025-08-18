@@ -81,7 +81,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                             stop = true;
                             break;
                         }
-                        if ((!calculatePasswordHash && users.Where(u => !u.Password.IsNullOrWhiteSpace()).Count() >= uploadUsersWithPassowrdBlockSize) || users.Count() >= uploadUsersBlockSize)
+                        if ((!calculatePasswordHash && users.Where(u => !u.Password.IsNullOrWhiteSpace()).Count() >= uploadUsersWithPasswordBlockSize) || users.Count() >= uploadUsersBlockSize)
                         {
                             await UploadAsync(users, addCount);
                             users = new List<CreateUserApiModel>();

@@ -4,9 +4,9 @@ Use an external password API when you need FoxIDs to (a) delegate password valid
 
 You implement the external password API and configure FoxIDs to call it.
 - **Validation API:** validates a password (e.g., during login or before accepting a password change) and can optionally notify you of a password change in the same call.
-- **Notification API:** notifies about a password change after the password has passed all policy checks.
+- **Notification API:** notifies about a password change after the password has passed all policy checks. It is only invoked for new password events (state 200).
 
-If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks.
+If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks and only when the password state is 200 (new password).
 
 If you require both validation and change notification, and both can be handled by the same system, implement only the validation API. 
 When you receive a validation request where the password is accepted, perform your notification logic internally. Implement both endpoints only if you must call two different backend systems.

@@ -127,7 +127,7 @@ namespace FoxIDs.Logic
                 await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password, state);
             }
 
-            if (RouteBinding?.ExternalPassword?.EnabledNotification == true)
+            if (RouteBinding?.ExternalPassword?.EnabledNotification == true && state == PasswordState.New)
             {
                 await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password, state);
             }

@@ -26035,9 +26035,134 @@
       "id": 189,
       "items": [
         {
+          "culture": "bg",
+          "value": "От съображения за сигурност, моля, сменете паролата си.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Per motius de seguretat, si us plau, canvieu la vostra contrasenya.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Z bezpečnostních důvodů si prosím změňte heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Af sikkerhedsmæssige årsager bedes du ændre din adgangskode.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Aus Sicherheitsgründen bitten wir Sie, Ihr Passwort zu ändern.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Για λόγους ασφαλείας, παρακαλούμε αλλάξτε τον κωδικό πρόσβασής σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "For security reasons, please change your password.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Por razones de seguridad, cambie su contraseña.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Turvalisuse huvides palun muutke oma salasõna.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Vaihda salasanasi turvallisuussyistä.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Pour des raisons de sécurité, veuillez modifier votre mot de passe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Iz sigurnosnih razloga, molimo vas da promijenite lozinku.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Af öryggisástæðum, vinsamlegast breyttu lykilorðinu þínu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Per motivi di sicurezza, si prega di modificare la password.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Saugumo sumetimais pakeiskite slaptažodį.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Drošības apsvērumu dēļ nomainiet paroli.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Av sikkerhetsgrunner ber vi deg endre passordet ditt.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Wijzig om veiligheidsredenen je wachtwoord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Ze względów bezpieczeństwa prosimy o zmianę hasła.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Por razões de segurança, altere a sua palavra-passe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Din motive de securitate, vă rugăm să vă schimbați parola.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Z bezpečnostných dôvodov si zmeňte heslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Iz varnostnih razlogov spremenite geslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Av säkerhetsskäl ber vi dig att ändra ditt lösenord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Güvenlik nedeniyle lütfen şifrenizi değiştirin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "З міркувань безпеки, будь ласка, змініть свій пароль.",
+          "edit_level": 40
         }
       ]
     },
@@ -26045,9 +26170,134 @@
       "id": 190,
       "items": [
         {
+          "culture": "bg",
+          "value": "Моля, използвайте парола, която е в съответствие с правилата за пароли.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Si us plau, utilitzeu una contrasenya que compleixi amb la política de contrasenyes.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Použijte heslo, které je v souladu se zásadami pro zadávání hesel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Brug en adgangskode, der er i overensstemmelse med adgangskodepolitikken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Bitte verwenden Sie ein Passwort, das den Passwortrichtlinien entspricht.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Παρακαλούμε χρησιμοποιήστε έναν κωδικό πρόσβασης που συμμορφώνεται με την πολιτική κωδικών πρόσβασης.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Please use a password that complies with the password policy.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Utilice una contraseña que se ajuste a la política de contraseñas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Palun kasutage salasõna, mis vastab paroolipoliitikale.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Käytä salasanaa, joka on salasanakäytännön mukainen.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Veuillez utiliser un mot de passe conforme à la politique en matière de mots de passe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Molimo koristite lozinku koja je u skladu s pravilima o lozinkama.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Vinsamlegast notið lykilorð sem er í samræmi við lykilorðastefnuna.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Si prega di utilizzare una password conforme alla politica sulle password.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Naudokite slaptažodį, atitinkantį slaptažodžių politiką.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lūdzu, izmantojiet paroli, kas atbilst paroles politikai.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Bruk et passord som er i samsvar med retningslinjene for passord.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Gebruik een wachtwoord dat voldoet aan het wachtwoordbeleid.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Prosimy o używanie hasła zgodnego z polityką haseł.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Utilize uma palavra-passe que esteja em conformidade com a política de palavras-passe.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Vă rugăm să folosiți o parolă care respectă politica privind parolele.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Použite heslo, ktoré je v súlade so zásadami používania hesiel.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Uporabite geslo, ki je v skladu s pravilnikom o geslih.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Använd ett lösenord som överensstämmer med lösenordspolicyn.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Lütfen şifre politikasına uygun bir şifre kullanın.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Будь ласка, використовуйте пароль, який відповідає політиці використання паролів.",
+          "edit_level": 40
         }
       ]
     }

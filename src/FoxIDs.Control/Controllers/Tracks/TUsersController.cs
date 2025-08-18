@@ -53,16 +53,9 @@ namespace FoxIDs.Controllers
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
-                var queryFilters = !filterEmail.IsNullOrWhiteSpace() || !filterPhone.IsNullOrWhiteSpace() || !filterUsername.IsNullOrWhiteSpace() || !filterUserId.IsNullOrWhiteSpace();
-                Expression<Func<User, bool>> whereQuery = u => !queryFilters ? u.DataType.Equals(dataType) :
-                    u.DataType.Equals(dataType) && (
-                        (!filterEmail.IsNullOrWhiteSpace() && u.Email.Contains(filterEmail, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterPhone.IsNullOrWhiteSpace() && u.Phone.Contains(filterPhone, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterUsername.IsNullOrWhiteSpace() && u.Username.Contains(filterUsername, StringComparison.CurrentCultureIgnoreCase)) ||
-                        (!filterUserId.IsNullOrWhiteSpace() && u.UserId.Contains(filterUserId, StringComparison.CurrentCultureIgnoreCase)) 
-                    );
+                var whereQuery = UserFilterLogic.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
 
-                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
+                (var mUsers, var nextPaginationToken) = await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: whereQuery, paginationToken: paginationToken);
       
                 var response = new Api.PaginationResponse<Api.User>
                 {

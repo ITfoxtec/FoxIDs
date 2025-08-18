@@ -17,7 +17,8 @@ namespace FoxIDs.SeedTool.SeedLogic
     public class UserSeedLogic
     {
         private const int maxUserToUpload = 0; // 0 is unlimited
-        private const int uploadUserBlockSize = 1000;
+        private const int uploadUsersWithPassowrdBlockSize = 100;
+        private const int uploadUsersBlockSize = 1000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -74,7 +75,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                             stop = true;
                             break;
                         }
-                        if (users.Count() >= uploadUserBlockSize)
+                        if (users.Where(u => !u.Password.IsNullOrWhiteSpace()).Count() >= uploadUsersWithPassowrdBlockSize || users.Count() >= uploadUsersBlockSize)
                         {
                             await UploadAsync(users, addCount);
                             users = new List<CreateUserApiModel>();

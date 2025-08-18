@@ -5,7 +5,16 @@ Provisioning your users in an environment as [internal users](users-internal.md)
 - You can upload the users with there password, if you know the users' passwords. 
 - Otherwise, you can upload the users without a password and the users are then requested to set a password with an email or SMS conformation code. Require the users to have either an email or phone number.
 
-The users are bulk uploaded to an environment with 1,000 users at the time and supporting multiple upload of millions of users. You can either user the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+The users are bulk uploaded to an environment with up to 1,000 users per request when the users are created without passwords, and up to 100 users per request when passwords are included. This supports multiple uploads, allowing millions of users to be imported. You can either use the [FoxIDs Control API](control.md#foxids-control-api) directly or use the [seed tool](#upload-with-seed-tool). 
+
+### Example upload time for 50,000 users
+
+| Scenario            | Users  | Batch size | Approx. total time |
+|---------------------|--------|-----------:|--------------------|
+| Without passwords   | 50,000 |      1,000 | ~2 minuts          |
+| With passwords      | 50,000 |        100 | ~100 minuts        |
+
+*Times are approximate and depend on network and infrastructure.*
 
 ## Upload with seed tool
 

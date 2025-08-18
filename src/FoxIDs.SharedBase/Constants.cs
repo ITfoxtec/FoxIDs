@@ -933,6 +933,7 @@ namespace FoxIDs
             public const string AccessToTrackNamesKey = "access_to_track_names";
 
             public const int SaveAndDeleteManyMin = 1;
+            public const int SaveAndDeleteManyWithPasswordMax = 100;
             public const int SaveAndDeleteManyMax = 1000;
 
             public static class ResourceAndScope

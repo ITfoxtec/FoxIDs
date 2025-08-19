@@ -783,6 +783,18 @@
     {
       "name": "Please use a password that complies with the password policy.",
       "id": 190
+    },
+    {
+      "name": "A phone number or an email address must be registered on your account to use two-factor authentication.",
+      "id": 191
+    },
+    {
+      "name": "A phone number must be registered on your account to use SMS two-factor authentication.",
+      "id": 192
+    },
+    {
+      "name": "An email address must be registered on your account to use email two-factor authentication.",
+      "id": 193
     }
   ],
   "resources": [
@@ -26298,6 +26310,36 @@
           "culture": "uk",
           "value": "Будь ласка, використовуйте пароль, який відповідає політиці використання паролів.",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A phone number or an email address must be registered on your account to use two-factor authentication.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 192,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A phone number must be registered on your account to use SMS two-factor authentication.",
+          "edit_level": 100
+        }
+      ]
+    },
+    {
+      "id": 193,
+      "items": [
+        {
+          "culture": "en",
+          "value": "An email address must be registered on your account to use email two-factor authentication.",
+          "edit_level": 100
         }
       ]
     }

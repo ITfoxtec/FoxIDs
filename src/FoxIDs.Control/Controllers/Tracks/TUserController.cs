@@ -56,9 +56,9 @@ namespace FoxIDs.Controllers
                     ModelState.TryAddModelError(string.Empty, $"The {nameof(email)} or {nameof(phone)} or {nameof(username)} parameter is required.");
                     return BadRequest(ModelState);
                 }
-                email = email?.Trim().ToLower();
-                phone = phone?.Trim();
-                username = username?.Trim()?.ToLower();
+                email = email.IsNullOrWhiteSpace() ? null : email.Trim().ToLower();
+                phone = phone.IsNullOrWhiteSpace() ? null : phone.Trim();
+                username = username.IsNullOrWhiteSpace() ? null : username.Trim().ToLower();
 
                 var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
                 return Ok(mapper.Map<Api.User>(mUser));

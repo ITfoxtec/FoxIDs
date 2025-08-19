@@ -30,6 +30,9 @@ The seed tool reads users from a `CSV` file and upload the users to the configur
 
 The CSV file elements are separated  with `;` and the text can optionally be in quotation marks.
 
+You can find sample CSV files here: [FoxIDs.SeedTool/user_upload_csv_files](https://github.com/ITfoxtec/FoxIDs/tree/main/tools/FoxIDs.SeedTool/user_upload_csv_files)  
+(For example, see UTF-8 characters in claims in the file password-claims-3-test-users.csv demonstrating multi-language / extended character support.)
+
 The first line of the CSV file is the case sensitive headers. You can select to use all headers or a subset of the headers and change the order of the headers.  
 The headers:
 

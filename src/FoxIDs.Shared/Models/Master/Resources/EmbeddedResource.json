@@ -26198,7 +26198,7 @@
         },
         {
           "culture": "da",
-          "value": "Brug en adgangskode, der er i overensstemmelse med adgangskodepolitikken.",
+          "value": "Brug et kodeord, der er i overensstemmelse med kodeordspolitikken.",
           "edit_level": 40
         },
         {
@@ -26317,9 +26317,134 @@
       "id": 191,
       "items": [
         {
+          "culture": "bg",
+          "value": "За да използвате двуфакторно удостоверяване, в профила ви трябва да е регистриран телефонен номер или имейл адрес.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Per utilitzar l&#39;autenticació de dos factors, cal registrar un número de telèfon o una adreça de correu electrònic al vostre compte.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Chcete-li používat dvoufaktorové ověřování, musí být na vašem účtu zaregistrováno telefonní číslo nebo e-mailová adresa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Et telefonnummer eller en e-mailadresse skal være registreret på din konto for at bruge to-faktor godkendelse.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Um die Zwei-Faktor-Authentifizierung nutzen zu können, muss eine Telefonnummer oder eine E-Mail-Adresse in Ihrem Konto registriert sein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Ένας αριθμός τηλεφώνου ή μια διεύθυνση ηλεκτρονικού ταχυδρομείου πρέπει να είναι καταχωρημένα στο λογαριασμό σας για να χρησιμοποιήσετε τον έλεγχο ταυτότητας δύο παραγόντων.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A phone number or an email address must be registered on your account to use two-factor authentication.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Para utilizar la autenticación de dos factores, debe registrar un número de teléfono o una dirección de correo electrónico en su cuenta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktorilise autentimise kasutamiseks peab teie kontol olema registreeritud telefoninumber või e-posti aadress.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tilillesi on rekisteröitävä puhelinnumero tai sähköpostiosoite, jotta voit käyttää kaksitekijätodennusta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un numéro de téléphone ou une adresse électronique doit être enregistré sur votre compte pour utiliser l'authentification à deux facteurs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Za korištenje dvofaktorske autentifikacije na vašem računu mora biti registriran telefonski broj ili adresa e-pošte.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Símanúmer eða netfang verður að vera skráð á reikninginn þinn til að nota tvíþátta auðkenningu.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Per utilizzare l'autenticazione a due fattori è necessario registrare un numero di telefono o un indirizzo e-mail sul proprio account.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Kad galėtumėte naudoti dviejų veiksnių autentifikavimą, paskyroje turi būti užregistruotas telefono numeris arba el. pašto adresas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lai varētu izmantot divu faktoru autentifikāciju, jūsu kontā ir jāreģistrē tālruņa numurs vai e-pasta adrese.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et telefonnummer eller en e-postadresse må være registrert på kontoen din for at du skal kunne bruke tofaktorautentisering.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er moet een telefoonnummer of e-mailadres geregistreerd zijn op je account om verificatie met twee factoren te kunnen gebruiken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Aby korzystać z uwierzytelniania dwuskładnikowego, na koncie musi być zarejestrowany numer telefonu lub adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "É necessário registar um número de telefone ou um endereço de e-mail na sua conta para utilizar a autenticação de dois factores.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un număr de telefon sau o adresă de e-mail trebuie să fie înregistrate în contul dvs. pentru a utiliza autentificarea cu doi factori.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Ak chcete používať dvojfaktorové overovanie, musíte mať na svojom konte zaregistrované telefónne číslo alebo e-mailovú adresu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Če želite uporabljati dvofaktorsko preverjanje pristnosti, mora biti v vašem računu registrirana telefonska številka ali e-poštni naslov.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett telefonnummer eller en e-postadress måste vara registrerad på ditt konto för att du ska kunna använda tvåfaktorsautentisering.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "İki faktörlü kimlik doğrulamayı kullanmak için hesabınızda bir telefon numarası veya e-posta adresi kayıtlı olmalıdır.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Для використання двофакторної автентифікації у вашому обліковому записі має бути зареєстрований номер телефону або адреса електронної пошти.",
+          "edit_level": 40
         }
       ]
     },
@@ -26327,9 +26452,134 @@
       "id": 192,
       "items": [
         {
+          "culture": "bg",
+          "value": "За да използвате двуфакторното удостоверяване чрез SMS, в профила ви трябва да е регистриран телефонен номер.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Cal registrar un número de telèfon al compte per utilitzar l&#39;autenticació de dos factors per SMS.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Chcete-li používat dvoufaktorové ověřování SMS, musíte mít na svém účtu zaregistrované telefonní číslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Der skal være registreret et telefonnummer på din konto for at bruge SMS to-faktor.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Für die SMS-Zwei-Faktor-Authentifizierung muss eine Telefonnummer in Ihrem Konto registriert sein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Για να χρησιμοποιήσετε τον έλεγχο ταυτότητας δύο παραγόντων μέσω SMS, πρέπει να έχετε καταχωρίσει έναν αριθμό τηλεφώνου στο λογαριασμό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "A phone number must be registered on your account to use SMS two-factor authentication.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Debe registrar un número de teléfono en su cuenta para utilizar la autenticación de dos factores por SMS.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktorilise SMS-autentimise kasutamiseks peab teie kontol olema registreeritud telefoninumber.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tilillesi on rekisteröitävä puhelinnumero, jotta voit käyttää tekstiviestillä tapahtuvaa kaksitekijätodennusta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Un numéro de téléphone doit être enregistré sur votre compte pour utiliser l'authentification à deux facteurs par SMS.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Za korištenje dvofaktorske SMS autentifikacije na vašem računu mora biti registriran telefonski broj.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Símanúmer verður að vera skráð á reikninginn þinn til að nota tvíþátta auðkenningu með SMS.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Per utilizzare l'autenticazione a due fattori via SMS è necessario registrare un numero di telefono sul proprio account.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Kad galėtumėte naudoti SMS dviejų veiksnių autentifikavimą, jūsų paskyroje turi būti užregistruotas telefono numeris.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lai izmantotu SMS divfaktoru autentificēšanu, jūsu kontā ir jāreģistrē tālruņa numurs.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Et telefonnummer må være registrert på kontoen din for å kunne bruke SMS-tofaktorautentisering.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er moet een telefoonnummer geregistreerd zijn op je account om sms-factorauthenticatie te gebruiken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Aby korzystać z uwierzytelniania dwuskładnikowego SMS, na koncie musi być zarejestrowany numer telefonu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "É necessário registar um número de telefone na sua conta para utilizar a autenticação de dois factores por SMS.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Un număr de telefon trebuie să fie înregistrat în contul dvs. pentru a utiliza autentificarea cu doi factori prin SMS.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Ak chcete používať dvojfaktorové overovanie SMS, musíte mať na svojom konte zaregistrované telefónne číslo.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Za uporabo dvostopenjske avtentikacije SMS mora biti v vašem računu registrirana telefonska številka.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ett telefonnummer måste vara registrerat på ditt konto för att du ska kunna använda tvåfaktorsautentisering via SMS.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "SMS iki faktörlü kimlik doğrulamasını kullanmak için hesabınızda bir telefon numarası kayıtlı olmalıdır.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Для використання SMS-двофакторної автентифікації у вашому акаунті має бути зареєстрований номер телефону.",
+          "edit_level": 40
         }
       ]
     },
@@ -26337,9 +26587,134 @@
       "id": 193,
       "items": [
         {
+          "culture": "bg",
+          "value": "За да използвате двуфакторното удостоверяване чрез имейл, в профила ви трябва да е регистриран имейл адрес.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Cal registrar una adreça de correu electrònic al vostre compte per utilitzar l&#39;autenticació de dos factors del correu electrònic.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Abyste mohli používat dvoufaktorové ověřování e-mailu, musí být na vašem účtu zaregistrována e-mailová adresa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Der skal være registreret en e-mailadresse på din konto for at bruge email to-faktor.",
+          "edit_level": 40
+        },
+        {
+          "culture": "de",
+          "value": "Um die Zwei-Faktor-Authentifizierung per E-Mail nutzen zu können, muss eine E-Mail-Adresse in Ihrem Konto registriert sein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Για να χρησιμοποιήσετε τον έλεγχο ταυτότητας δύο παραγόντων μέσω email, πρέπει να είναι καταχωρημένη μια διεύθυνση email στο λογαριασμό σας.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "An email address must be registered on your account to use email two-factor authentication.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Debe registrar una dirección de correo electrónico en su cuenta para utilizar la autenticación de dos factores por correo electrónico.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kahefaktorilise e-posti autentimise kasutamiseks peab teie kontol olema registreeritud e-posti aadress.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Tilillesi on rekisteröitävä sähköpostiosoite, jotta voit käyttää sähköpostin kaksitekijätodennusta.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Une adresse e-mail doit être enregistrée sur votre compte pour utiliser l'authentification à deux facteurs par e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Za korištenje dvofaktorske autentifikacije e-pošte na vašem računu mora biti registrirana adresa e-pošte.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Netfang verður að vera skráð á reikninginn þinn til að nota tvíþátta auðkenningu í tölvupósti.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Per utilizzare l'autenticazione a due fattori via e-mail è necessario registrare un indirizzo e-mail sul proprio account.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Kad galėtumėte naudoti el. pašto dviejų veiksnių autentifikavimą, jūsų paskyroje turi būti užregistruotas el. pašto adresas.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Lai izmantotu e-pasta divfaktoru autentifikāciju, jūsu kontā ir jāreģistrē e-pasta adrese.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "En e-postadresse må være registrert på kontoen din for å kunne bruke tofaktorautentisering via e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Er moet een e-mailadres geregistreerd zijn op je account om tweefactorauthenticatie via e-mail te kunnen gebruiken.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Aby korzystać z uwierzytelniania dwuskładnikowego, na koncie musi być zarejestrowany adres e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "É necessário registar um endereço de e-mail na sua conta para utilizar a autenticação de dois factores de e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "O adresă de e-mail trebuie să fie înregistrată în contul dvs. pentru a utiliza autentificarea cu doi factori prin e-mail.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Ak chcete používať dvojfaktorové overovanie e-mailom, musí byť na vašom konte zaregistrovaná e-mailová adresa.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Za uporabo dvostopenjskega preverjanja pristnosti prek e-pošte mora biti v vašem računu registriran e-poštni naslov.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "En e-postadress måste vara registrerad på ditt konto för att du ska kunna använda tvåfaktorsautentisering för e-post.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "E-posta iki faktörlü kimlik doğrulamasını kullanmak için hesabınızda bir e-posta adresi kayıtlı olmalıdır.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Для використання двофакторної автентифікації за допомогою електронної пошти в обліковому записі має бути зареєстрована адреса електронної пошти.",
+          "edit_level": 40
         }
       ]
     }

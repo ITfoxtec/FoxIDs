@@ -137,43 +137,47 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         private async Task<List<CreateUserApiModel>> PasswordToHashPassword(List<CreateUserApiModel> users)
         {
-            var semaphore = new SemaphoreSlim(Math.Max(1, Environment.ProcessorCount));
-            var tasks = new List<Task>();
-            int hashedCount = 0; 
-
-            foreach (var user in users)
+            if (calculatePasswordHash)
             {
-                if (!user.Password.IsNullOrWhiteSpace())
+                var semaphore = new SemaphoreSlim(Math.Max(1, Environment.ProcessorCount));
+                var tasks = new List<Task>();
+                int hashedCount = 0;
+
+                foreach (var user in users)
                 {
-                    tasks.Add(Task.Run(async () =>
+                    if (!user.Password.IsNullOrWhiteSpace())
                     {
-                        await semaphore.WaitAsync().ConfigureAwait(false);
-                        try
+                        tasks.Add(Task.Run(async () =>
                         {
-                            var userHash = new UserHash();
-                            await secretHashLogic.AddSecretHashAsync(userHash, user.Password).ConfigureAwait(false);
-                            user.PasswordHashAlgorithm = userHash.HashAlgorithm;
-                            user.PasswordHash = userHash.Hash;
-                            user.PasswordHashSalt = userHash.HashSalt;
-                            user.Password = null; // Clear password after hashing
+                            await semaphore.WaitAsync().ConfigureAwait(false);
+                            try
+                            {
+                                var userHash = new UserHash();
+                                await secretHashLogic.AddSecretHashAsync(userHash, user.Password).ConfigureAwait(false);
+                                user.PasswordHashAlgorithm = userHash.HashAlgorithm;
+                                user.PasswordHash = userHash.Hash;
+                                user.PasswordHashSalt = userHash.HashSalt;
+                                user.Password = null; // Clear password after hashing
 
-                            var current = Interlocked.Increment(ref hashedCount);
-                            if (current % 10 == 0) Console.Write('.'); 
-                        }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    }));
+                                var current = Interlocked.Increment(ref hashedCount);
+                                if (current % 10 == 0) Console.Write('.');
+                            }
+                            finally
+                            {
+                                semaphore.Release();
+                            }
+                        }));
+                    }
                 }
+
+                if (tasks.Count > 0)
+                {
+                    await Task.WhenAll(tasks).ConfigureAwait(false);
+                }
+
+                if (hashedCount >= 10) Console.WriteLine();
             }
 
-            if (tasks.Count > 0)
-            {
-                await Task.WhenAll(tasks).ConfigureAwait(false);
-            }
-
-            if (hashedCount >= 10) Console.WriteLine(); 
             return users;
         }
 

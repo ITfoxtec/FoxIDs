@@ -23,18 +23,16 @@ namespace FoxIDs.Logic
         private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(Settings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionLogic = sessionLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -87,9 +85,9 @@ namespace FoxIDs.Logic
 
         private bool SupportTwoFactorApp(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorApp && !loginUpParty.DisableTwoFactorApp ? true : false;
 
-        private bool SupportTwoFactorSms(LoginUpSequenceData sequenceData, User user, LoginUpParty loginUpParty) => !sequenceData.Phone.IsNullOrWhiteSpace() && !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
+        private bool TwoFactorSmsEnabled(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorSms && !loginUpParty.DisableTwoFactorSms ? true : false;
 
-        private bool SupportTwoFactorEmail(LoginUpSequenceData sequenceData, User user, LoginUpParty loginUpParty) => !sequenceData.Email.IsNullOrWhiteSpace() && !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
+        private bool TwoFactorEmailEnabled(User user, LoginUpParty loginUpParty) => !user.DisableTwoFactorEmail && !loginUpParty.DisableTwoFactorEmail ? true : false;
 
         public DownPartySessionLink GetDownPartyLink(UpParty upParty, ILoginUpSequenceDataBase sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
@@ -130,24 +128,13 @@ namespace FoxIDs.Logic
                 {
                     sequenceData.SupportTwoFactorApp = SupportTwoFactorApp(user, loginUpParty);
                     sequenceData.TwoFactorAppIsRegistred = TwoFactorAppIsRegistred(user);
-                    sequenceData.SupportTwoFactorSms = SupportTwoFactorSms(sequenceData, user, loginUpParty);
-                    sequenceData.SupportTwoFactorEmail = SupportTwoFactorEmail(sequenceData, user, loginUpParty);
 
-                    if (step == LoginResponseSequenceSteps.MfaSmsStep)
-                    {
-                        if (sequenceData.SupportTwoFactorSms)
-                        {
-                            return await SmsTwoFactorResponseAsync(sequenceData, loginUpParty);
-                        }
-                    }
-                    else if (step == LoginResponseSequenceSteps.MfaEmailStep)
-                    {
-                        if (sequenceData.SupportTwoFactorEmail)
-                        {
-                            return await EmailTwoFactorResponseAsync(sequenceData, loginUpParty);
-                        }
-                    }
-                    else if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
+                    var twoFactorSmsEnabled = TwoFactorSmsEnabled(user, loginUpParty);
+                    var twoFactorEmailEnabled = TwoFactorEmailEnabled(user, loginUpParty);
+                    sequenceData.SupportTwoFactorSms = !sequenceData.Phone.IsNullOrWhiteSpace() && twoFactorSmsEnabled;
+                    sequenceData.SupportTwoFactorEmail = !sequenceData.Email.IsNullOrWhiteSpace() && twoFactorEmailEnabled;
+
+                    if (step == LoginResponseSequenceSteps.MfaRegisterAuthAppStep)
                     {
                         if (sequenceData.SupportTwoFactorApp)
                         {
@@ -174,6 +161,28 @@ namespace FoxIDs.Logic
                         if (sequenceData.SupportTwoFactorApp)
                         {
                             return await AuthAppTwoFactorRegistrationResponseAsync(sequenceData, loginUpParty);
+                        }
+
+                        if (twoFactorSmsEnabled && twoFactorEmailEnabled)
+                        {
+                            throw new MfaException($"Phone number or email required for two-factor (2FA/MFA). {nameof(LoginResponseSequenceSteps)}: '{step}'.")
+                            {
+                                UiErrorMessages = new List<string> { "A phone number or an email address must be registered on your account to use two-factor authentication." }
+                            };
+                        }
+                        else if (twoFactorSmsEnabled)
+                        {
+                            throw new MfaException($"Phone number required for SMS two-factor (2FA/MFA). {nameof(LoginResponseSequenceSteps)}: '{step}'.")
+                            {
+                                UiErrorMessages = new List<string> { "A phone number must be registered on your account to use SMS two-factor authentication." }
+                            };
+                        }
+                        else if (twoFactorEmailEnabled)
+                        {
+                            throw new MfaException($"Email required for email two-factor (2FA/MFA). {nameof(LoginResponseSequenceSteps)}: '{step}'.")
+                            {
+                                UiErrorMessages = new List<string> { "An email address must be registered on your account to use email two-factor authentication." }
+                            };
                         }
                     }
 

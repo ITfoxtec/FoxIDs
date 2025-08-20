@@ -113,6 +113,17 @@ namespace FoxIDs.Controllers
                         return HandlePlanException(errorViewModel, planException);
                     }
 
+                    var accountException = FindException<AccountException>(exception);
+                    if (accountException != null)
+                    {
+                        var handleResult = HandleAccountException(errorViewModel, accountException);
+                        if (handleResult != null)
+                        {
+                            LogExceptionAsWarning(exception);
+                            return handleResult;
+                        }
+                    }
+
                     var routeException = FindException<RouteException>(exception);
                     if (routeException != null && !(routeException.InnerException is EndpointException))
                     {
@@ -148,7 +159,7 @@ namespace FoxIDs.Controllers
 
         private List<string> ExceptionTechnicalErrors(Exception exception)
         {
-            return exception != null ? new List<string>(exception.ToString().Split('\n')) : null;
+            return exception != null ? [.. exception.ToString().Split('\n')] : null;
         }
 
         private void LogExceptionAsWarning(Exception exception)
@@ -308,6 +319,16 @@ namespace FoxIDs.Controllers
             errorViewModel.Error = localizer["The requested functionality is not supported in your current '{0}' plan. Please upgrade your plan.", planException.Plan?.Name];
             errorViewModel.TechnicalErrors = new List<string> { planException.Message };
             return View(errorViewModel);
+        }
+
+        private IActionResult HandleAccountException(ErrorViewModel errorViewModel, AccountException accountException)
+        {
+            if (accountException.UiErrorMessages?.Count > 0)
+            {
+                errorViewModel.Error = localizer[accountException.UiErrorMessages[0]];
+                return View(errorViewModel);
+            }
+            return null;
         }
 
         private IActionResult HandleOAuthTokenException(Exception exception)

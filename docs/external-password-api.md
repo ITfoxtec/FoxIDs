@@ -1,4 +1,4 @@
-# External Password - API
+# External Password API
 
 Use an external password API when you need FoxIDs to (a) delegate password validation to an existing password store or policy engine, (b) notify an external system about password changes performed in FoxIDs, or (c) handle both scenarios.
 
@@ -11,7 +11,7 @@ If the built-in password policy rejects the password, the external password API 
 If you require both validation and change notification, and both can be handled by the same system, implement only the validation API. 
 When you receive a validation request where the password is accepted, perform your notification logic internally. Implement both endpoints only if you must call two different backend systems.
 
-External password APIs are part of the possible password checks for [internal users](users-internal.md).
+External password API can be [configured as password check](users-internal.md#password-check) for [internal users](users-internal.md).
 
 ## Implement API
 

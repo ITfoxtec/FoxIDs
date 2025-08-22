@@ -1,20 +1,19 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Logic.Seed
 {
-    public class SeedHostedService : IHostedService
+    public class SeedLogic : LogicBase
     {
         private readonly TelemetryLogger logger;
         private readonly FoxIDsControlSettings settings;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
         private readonly MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic;
 
-        public SeedHostedService(TelemetryLogger logger, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic)
+        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
@@ -22,8 +21,7 @@ namespace FoxIDs.Logic.Seed
             this.mainTenantDocumentsSeedLogic = mainTenantDocumentsSeedLogic;
         }
 
-        // Synchronous (awaited) seeding before the server starts accepting requests.
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task SeedAsync()
         {
             try
             {
@@ -53,11 +51,16 @@ namespace FoxIDs.Logic.Seed
             }
             catch (Exception ex)
             {
-                logger.CriticalError(ex, "Error seeding master documents on startup.");
-                throw;
+                try
+                {
+                    throw new Exception("Error seeding master documents on startup.", ex);
+                }
+                catch (Exception)
+                {
+                    logger.CriticalError(ex);
+                    throw;
+                }
             }
         }
-
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

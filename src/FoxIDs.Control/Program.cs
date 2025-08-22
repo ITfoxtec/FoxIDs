@@ -7,14 +7,25 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using FoxIDs.Logic.Seed;
+using System.Threading.Tasks;
 
 namespace FoxIDs
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+            var seed = scope.ServiceProvider.GetService<SeedLogic>();
+            if (seed != null)
+            {
+                await seed.SeedAsync();
+            }
+
+            await host.RunAsync();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

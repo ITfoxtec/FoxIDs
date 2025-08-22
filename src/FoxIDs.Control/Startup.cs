@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using System.Text.Json.Serialization;
+using FoxIDs.Logic.Seed;
 
 namespace FoxIDs
 {

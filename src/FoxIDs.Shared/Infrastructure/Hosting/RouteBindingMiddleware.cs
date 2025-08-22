@@ -27,8 +27,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             try
             {
-                await SeedAsync(httpContext.RequestServices);
-
                 var route = httpContext.Request.Path.Value.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
 
                 if (await PreAsync(httpContext, route))
@@ -65,8 +63,6 @@ namespace FoxIDs.Infrastructure.Hosting
         }
 
         protected abstract bool CheckCustomDomainSupport(string[] route);
-
-        protected virtual ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
         protected virtual ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
 

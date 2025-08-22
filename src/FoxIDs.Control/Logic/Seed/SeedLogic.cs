@@ -55,9 +55,9 @@ namespace FoxIDs.Logic.Seed
                 {
                     throw new Exception("Error seeding master documents on startup.", ex);
                 }
-                catch (Exception)
+                catch (Exception exSeed)
                 {
-                    logger.CriticalError(ex);
+                    logger.CriticalError(exSeed);
                     throw;
                 }
             }

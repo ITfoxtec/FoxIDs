@@ -1,6 +1,7 @@
 # External users
-An external user is linked to one authentication method and can only be authenticated with that particular authentication method. External users can be linked to the authentication methods: OpenID Connect, SAML 2.0, External Login and Environment Link.  
-It is optional to use external users; they are not created by default.
+You can use just-in-time (JIT) provisioning to create external users and associate them with an external identity. 
+An external user is associated with one authentication method (OpenID Connect, SAML 2.0, External Login, or Environment Link) and can only be authenticated using that authentication method.   
+Using external users is optional; they are not created by default.
 
 All external users grouped under an authentication method are linked with the same claim type (e.g. the `sub` claim type) and the users are separated by unique claim values.
 

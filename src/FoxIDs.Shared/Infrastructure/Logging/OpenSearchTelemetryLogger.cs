@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using System;
-using ITfoxtec.Identity;
-using OpenSearch.Client;
+﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using OpenSearch.Client;
 using OpenSearch.Net;
-using System.Net;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace FoxIDs.Infrastructure
@@ -26,27 +28,15 @@ namespace FoxIDs.Infrastructure
             this.openSearchClient = openSearchClient;
             this.stdoutTelemetryLogger = stdoutTelemetryLogger;
             this.httpContextAccessor = httpContextAccessor;
-            Init();
         }
 
-        private void Init()
+        public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
-            try
-            {
-                CreateIndexPolicy(LogLifetimeOptions.Max30Days);
-                CreateIndexPolicy(LogLifetimeOptions.Max180Days);
-                AddTemplateAndIndex(LogLifetimeOptions.Max30Days);
-                AddTemplateAndIndex(LogLifetimeOptions.Max180Days);
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    stdoutTelemetryLogger.Error(ex, $"OpenSearch init error'.");
-                }
-                catch
-                { }
-            }
+            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
+            await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
+            await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
+            await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
         }
 
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
@@ -54,15 +44,15 @@ namespace FoxIDs.Infrastructure
         private string RolloverAlias(LogLifetimeOptions logLifetime) => RolloverAlias((int)logLifetime);
         private string RolloverAlias(int lifetime) => $"{settings.OpenSearch.LogName}-r-{lifetime}d";
 
-        private void AddTemplateAndIndex(LogLifetimeOptions logLifetime)
+        private async Task AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
             var lifetime = (int)logLifetime;
+
             var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
-            ;
-            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, templatePath);
-            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            var getTemplateResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, templatePath, cancellationToken);
+            if (getTemplateResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, templatePath, PostData.String(
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, templatePath, cancellationToken, PostData.String(
 @$"{{
   ""index_patterns"": [""{IndexPattern(logLifetime)}""],
   ""template"": {{
@@ -90,7 +80,13 @@ namespace FoxIDs.Infrastructure
   ""priority"": 100
 }}"));
 
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, HttpUtility.UrlEncode($"<{RolloverAlias(logLifetime)}-{{now/d}}-000001>"), PostData.String(
+            }
+
+            var itemPath = HttpUtility.UrlEncode($"<{RolloverAlias(logLifetime)}-{{now/d}}-000001>");
+            var getItemResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, itemPath, cancellationToken);
+            if (getItemResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, itemPath, cancellationToken, PostData.String(
 @$"{{
     ""aliases"": {{
         ""{RolloverAlias(logLifetime)}"": {{
@@ -101,16 +97,16 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
+        private async Task CreateIndexPolicyAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
-            var policyPath = $"_plugins/_ism/policies/{RolloverAlias(logLifetime)}";
             var rolloverAge = 7;
 
-            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
-            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            var policyPath = $"_plugins/_ism/policies/{RolloverAlias(logLifetime)}";
+            var getPolicyResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, policyPath, cancellationToken);
+            if (getPolicyResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
 
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath, PostData.String(
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, policyPath, cancellationToken, PostData.String(
 @$"{{
   ""policy"": {{
     ""description"": ""Rollover index policy with a lifetime of {(int)logLifetime} days."",

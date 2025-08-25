@@ -27,7 +27,7 @@ namespace FoxIDs.Repository
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
                             DefaultTimeToLive = -1
                         });
-                    logger.Trace("One Cosmos DB Document container created.");
+                    logger.Trace("One CosmosDB Document container created.");
                     SetContainers(container, container);
                 }
                 else
@@ -44,11 +44,11 @@ namespace FoxIDs.Repository
                             PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
                             DefaultTimeToLive = -1
                         });
-                    logger.Trace("Two Cosmos DB Document containers created.");
+                    logger.Trace("Two CosmosDB Document containers created.");
                     SetContainers(container, ttlContainer);
                 }
 
-                logger.Trace("Cosmos DB Document container(s) seeded.");
+                logger.Trace("CosmosDB Document container(s) seeded.");
             }
         }
     }

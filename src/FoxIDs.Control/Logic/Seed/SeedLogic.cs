@@ -54,8 +54,10 @@ namespace FoxIDs.Logic.Seed
                 try
                 {
                     var openSearchTelemetryLogger = serviceProvider.GetService<OpenSearchTelemetryLogger>();
-                    await openSearchTelemetryLogger.SeedAsync(cancellationToken);
-                    logger.Trace("OpenSearch log storage seeded on startup.");
+                    if (await openSearchTelemetryLogger.SeedAsync(cancellationToken))
+                    {
+                        logger.Trace("OpenSearch log storage seeded on startup.");
+                    }
                 }
                 catch (Exception oex)
                 {

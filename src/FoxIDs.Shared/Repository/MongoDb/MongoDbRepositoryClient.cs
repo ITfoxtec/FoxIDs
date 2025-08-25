@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;

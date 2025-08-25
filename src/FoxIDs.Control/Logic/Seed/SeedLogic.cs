@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
-using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -67,33 +66,6 @@ namespace FoxIDs.Logic.Seed
 
         private async Task SeedDbAsync()
         {
-            if (settings.Options?.DataStorage == DataStorageOptions.MongoDb)
-            {
-                try
-                {
-                    var mongoDbRepositoryClient = serviceProvider.GetService<MongoDbRepositoryClient>();
-                    await mongoDbRepositoryClient.SeedAsync();
-                    logger.Trace("MongoDB storage seeded on startup.");
-                }
-                catch (Exception mex)
-                {
-                    throw new Exception("Error seeding MongoDB storage on startup.", mex);
-                }
-            }
-            else if (settings.Options?.DataStorage == DataStorageOptions.CosmosDb)
-            {
-                try
-                {
-                    var cosmosDbDataRepositoryClient = serviceProvider.GetService<CosmosDbDataRepositoryClient>();
-                    await cosmosDbDataRepositoryClient.SeedAsync();
-                    logger.Trace("CosmosDB storage seeded on startup.");
-                }
-                catch (Exception mex)
-                {
-                    throw new Exception("Error seeding CosmosDB storage on startup.", mex);
-                }
-            }
-
             try
             {
                 if (settings.MasterSeedEnabled)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using FoxIDs.Logic.Seed;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FoxIDs
 {
@@ -20,10 +21,8 @@ namespace FoxIDs
 
             using var scope = host.Services.CreateScope();
             var seed = scope.ServiceProvider.GetService<SeedLogic>();
-            if (seed != null)
-            {
-                await seed.SeedAsync();
-            }
+            var lifetime = scope.ServiceProvider.GetService<IHostApplicationLifetime>();
+            await seed.SeedAsync(lifetime?.ApplicationStopping ?? CancellationToken.None);
 
             await host.RunAsync();
         }

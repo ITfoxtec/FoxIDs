@@ -4,6 +4,7 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic.Seed
@@ -25,11 +26,11 @@ namespace FoxIDs.Logic.Seed
             this.mainTenantDocumentsSeedLogic = mainTenantDocumentsSeedLogic;
         }
 
-        public async Task SeedAsync()
+        public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                await SeedLogAsync();
+                await SeedLogAsync(cancellationToken);
                 await SeedDbAsync();
             }
             catch (OperationCanceledException)
@@ -47,14 +48,14 @@ namespace FoxIDs.Logic.Seed
             }
         }
 
-        private async Task SeedLogAsync()
+        private async Task SeedLogAsync(CancellationToken cancellationToken)
         {
             if (settings.Options?.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 try
                 {
                     var openSearchTelemetryLogger = serviceProvider.GetService<OpenSearchTelemetryLogger>();
-                    await openSearchTelemetryLogger.SeedAsync();
+                    await openSearchTelemetryLogger.SeedAsync(cancellationToken);
                     logger.Trace("OpenSearch log storage seeded on startup.");
                 }
                 catch (Exception oex)

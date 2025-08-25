@@ -9,11 +9,9 @@ namespace FoxIDs.Repository
     public class CosmosDbDataRepositoryClient : CosmosDbDataRepositoryClientBase, ICosmosDbDataRepositoryClient
     {
         public CosmosDbDataRepositoryClient(Settings settings, TelemetryLogger logger) : base (settings, logger, true, false)
-        {
-            InitAsync().GetAwaiter().GetResult();
-        }
+        { }
 
-        private async Task InitAsync()
+        public async Task SeedAsync()
         {          
             var databaseResponse = await Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
             if (databaseResponse.StatusCode == HttpStatusCode.Created)

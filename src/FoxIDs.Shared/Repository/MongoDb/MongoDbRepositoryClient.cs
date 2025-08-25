@@ -4,6 +4,7 @@ using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using System;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
@@ -18,12 +19,9 @@ namespace FoxIDs.Repository
             this.logger = logger;
             this.settings = settings;
             this.mongoClient = mongoClient;
-            Init();
         }
 
-
-
-        private void Init()
+        public async Task SeedAsync()
         {
             var pack = new ConventionPack
             {
@@ -37,26 +35,26 @@ namespace FoxIDs.Repository
 
             if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
             {
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.MasterCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
+                _ = await InitCollectionAsync<DataDocument>(database, settings.MongoDb.MasterCollectionName);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
 
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
+                _ = await InitCollectionAsync<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
             }
             if (settings.Options.Cache == CacheOptions.MongoDb)
             {
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
             }
         }
 
-        private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument
+        private async Task<IMongoCollection<T>> InitCollectionAsync<T>(IMongoDatabase database, string name) where T : DataDocument
         {
             database.CreateCollection(name);
 
             var collection = database.GetCollection<T>(name);
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds), 
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds), 
                 options: new CreateIndexOptions
                 {
                     Unique = true,
@@ -65,10 +63,10 @@ namespace FoxIDs.Repository
             return collection;
         }
 
-        private void InitTtlCollection<T>(IMongoDatabase database, string name) where T : DataTtlDocument
+        private async Task InitTtlCollectionAsync<T>(IMongoDatabase database, string name) where T : DataTtlDocument
         {
-            var collection = InitCollection<T>(database, name);
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
+            var collection = await InitCollectionAsync<T>(database, name);
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
                 options: new CreateIndexOptions
                 {
                     ExpireAfter = TimeSpan.FromSeconds(0),

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>2.2.2</Version>
+		<Version>2.3.6</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>
@@ -35,7 +35,7 @@
 		<PackageReference Include="Azure.Identity" Version="1.13.1" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.7.0" />
 		<PackageReference Include="GoogleAuthenticator" Version="3.2.0" />
-		<PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.15.3" />
+		<PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.16.1" />
 		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="9.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.7" />

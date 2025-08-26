@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
@@ -9,19 +8,15 @@ namespace FoxIDs.Repository
 {
     public class MongoDbRepositoryClient
     {
-        private readonly TelemetryLogger logger;
         private readonly Settings settings;
         private readonly IMongoClient mongoClient;
 
-        public MongoDbRepositoryClient(TelemetryLogger logger, Settings settings, IMongoClient mongoClient)
+        public MongoDbRepositoryClient(Settings settings, IMongoClient mongoClient)
         {
-            this.logger = logger;
             this.settings = settings;
             this.mongoClient = mongoClient;
             Init();
         }
-
-
 
         private void Init()
         {
@@ -32,7 +27,7 @@ namespace FoxIDs.Repository
                 new MongoDbJsonPropertyConvention()
             };
             ConventionRegistry.Register(nameof(MongoDbRepositoryClient), pack, t => true);
-            
+
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
             if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
@@ -56,7 +51,7 @@ namespace FoxIDs.Repository
             var collection = database.GetCollection<T>(name);
             collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
             collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds), 
+            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds),
                 options: new CreateIndexOptions
                 {
                     Unique = true,

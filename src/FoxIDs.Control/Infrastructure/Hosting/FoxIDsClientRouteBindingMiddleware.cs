@@ -1,8 +1,6 @@
 ﻿using FoxIDs.Logic;
-using FoxIDs.Logic.Seed;
 using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -17,8 +15,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             throw new NotSupportedException("Host in header not supported in Control Client.");
         }
-
-        protected override async ValueTask SeedAsync(IServiceProvider requestServices) => await requestServices.GetService<SeedLogic>().SeedAsync();
 
         protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route)
         {

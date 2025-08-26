@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using System;
-using ITfoxtec.Identity;
-using OpenSearch.Client;
+﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using OpenSearch.Client;
 using OpenSearch.Net;
-using System.Net;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure
 {
@@ -26,27 +27,31 @@ namespace FoxIDs.Infrastructure
             this.openSearchClient = openSearchClient;
             this.stdoutTelemetryLogger = stdoutTelemetryLogger;
             this.httpContextAccessor = httpContextAccessor;
-            Init();
         }
 
-        private void Init()
+        public async Task<bool> SeedAsync(CancellationToken cancellationToken = default)
         {
-            try
+            var isSeeded = false;
+            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
             {
-                CreateIndexPolicy(LogLifetimeOptions.Max30Days);
-                CreateIndexPolicy(LogLifetimeOptions.Max180Days);
-                AddTemplateAndIndex(LogLifetimeOptions.Max30Days);
-                AddTemplateAndIndex(LogLifetimeOptions.Max180Days);
+                isSeeded = true;
             }
-            catch (Exception ex)
+            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
             {
-                try
-                {
-                    stdoutTelemetryLogger.Error(ex, $"OpenSearch init error'.");
-                }
-                catch
-                { }
+                isSeeded = true;
             }
+            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
+            {
+                isSeeded = true;
+            }
+            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+            {
+                isSeeded = true;
+            }
+
+            return isSeeded;
         }
 
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
@@ -54,63 +59,15 @@ namespace FoxIDs.Infrastructure
         private string RolloverAlias(LogLifetimeOptions logLifetime) => RolloverAlias((int)logLifetime);
         private string RolloverAlias(int lifetime) => $"{settings.OpenSearch.LogName}-r-{lifetime}d";
 
-        private void AddTemplateAndIndex(LogLifetimeOptions logLifetime)
+        private async Task<bool> CreateIndexPolicyAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
-            var lifetime = (int)logLifetime;
-            var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
-            ;
-            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, templatePath);
-            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
-            {
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, templatePath, PostData.String(
-@$"{{
-  ""index_patterns"": [""{IndexPattern(logLifetime)}""],
-  ""template"": {{
-   ""settings"": {{
-    ""index.refresh_interval"": ""5s"",
-    ""plugins.index_state_management.rollover_alias"": ""{RolloverAlias(logLifetime)}""
-   }},
-   ""mappings"": {{
-    ""properties"": {{
-     ""tenantName"": {{
-      ""type"": ""keyword"",
-      ""similarity"": ""BM25""
-     }},
-     ""trackName"": {{
-      ""type"": ""keyword"",
-      ""similarity"": ""BM25""
-     }},
-     ""logType"": {{
-      ""type"": ""keyword"",
-      ""similarity"": ""BM25""
-     }}
-    }}
-   }}
-  }},
-  ""priority"": 100
-}}"));
-
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, HttpUtility.UrlEncode($"<{RolloverAlias(logLifetime)}-{{now/d}}-000001>"), PostData.String(
-@$"{{
-    ""aliases"": {{
-        ""{RolloverAlias(logLifetime)}"": {{
-            ""is_write_index"": true
-        }}
-    }}
-}}"));
-            }
-        }
-
-        private void CreateIndexPolicy(LogLifetimeOptions logLifetime)
-        {
-            var policyPath = $"_plugins/_ism/policies/{RolloverAlias(logLifetime)}";
             var rolloverAge = 7;
 
-            var getResponse = openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.GET, policyPath);
-            if (getResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            var policyPath = $"_plugins/_ism/policies/{RolloverAlias(logLifetime)}";
+            var getPolicyResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, policyPath, cancellationToken);
+            if (getPolicyResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
             {
-
-                openSearchClient.LowLevel.DoRequest<StringResponse>(HttpMethod.PUT, policyPath, PostData.String(
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, policyPath, cancellationToken, PostData.String(
 @$"{{
   ""policy"": {{
     ""description"": ""Rollover index policy with a lifetime of {(int)logLifetime} days."",
@@ -151,7 +108,58 @@ namespace FoxIDs.Infrastructure
     }}
   }}
 }}"));
+
+                return true;
             }
+            return false;
+        }
+
+        private async Task<bool> AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        {
+            var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
+            var getTemplateResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, templatePath, cancellationToken);
+            if (getTemplateResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, templatePath, cancellationToken, PostData.String(
+@$"{{
+  ""index_patterns"": [""{IndexPattern(logLifetime)}""],
+  ""template"": {{
+   ""settings"": {{
+    ""index.refresh_interval"": ""5s"",
+    ""plugins.index_state_management.rollover_alias"": ""{RolloverAlias(logLifetime)}""
+   }},
+   ""mappings"": {{
+    ""properties"": {{
+     ""tenantName"": {{
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
+     }},
+     ""trackName"": {{
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
+     }},
+     ""logType"": {{
+      ""type"": ""keyword"",
+      ""similarity"": ""BM25""
+     }}
+    }}
+   }}
+  }},
+  ""priority"": 100
+}}"));
+            
+                var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
+@$"{{
+  ""aliases"": {{
+    ""{RolloverAlias(logLifetime)}"": {{
+      ""is_write_index"": true
+    }}
+  }}
+}}"));
+                return true;
+            }
+            return false;
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)

@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -30,6 +31,7 @@ namespace FoxIDs.Logic.Seed
             try
             {
                 await SeedLogAsync(cancellationToken);
+                DataProtectionCheck();
                 await SeedDbAsync();
             }
             catch (OperationCanceledException)
@@ -62,6 +64,22 @@ namespace FoxIDs.Logic.Seed
                 catch (Exception oex)
                 {
                     throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
+                }
+            }
+        }
+
+        private void DataProtectionCheck()
+        {
+            if (!(settings.Options.DataStorage == DataStorageOptions.CosmosDb && settings.Options.Cache == CacheOptions.Redis))
+            {
+                try
+                {
+                    var dataProtection = serviceProvider.GetService<IDataProtectionProvider>();
+                    _ = dataProtection.CreateProtector("seed check protector").Protect("seed check protect data");
+                }
+                catch (Exception oex)
+                {
+                    throw new Exception("Error checking data protection on startup.", oex);
                 }
             }
         }

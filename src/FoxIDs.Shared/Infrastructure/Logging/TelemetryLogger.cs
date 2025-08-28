@@ -1,4 +1,6 @@
-﻿using FoxIDs.Models.Config;
+﻿using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using ITfoxtec.Identity;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -99,8 +101,10 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Trace(string message, IDictionary<string, string> properties = null)
+        public void Trace(IEnumerable<TraceMessageItem> traceMessages, IDictionary<string, string> properties = null)
         {
+            var message = traceMessages.ToJson();
+
             if (settings.Options.Log == LogOptions.Stdout)
             {
                 GetStdoutTelemetryLogger().Trace(message, properties);
@@ -114,6 +118,11 @@ namespace FoxIDs.Infrastructure
             {
                 GetApplicationInsightsTelemetryLogger().Trace(message, properties);
             }
+        }
+
+        public void Trace(string messages, IDictionary<string, string> properties = null)
+        {
+            Trace([new TraceMessageItem { Message = messages }], properties);
         }
 
         public void Metric(string metricName, double value, IDictionary<string, string> properties = null)

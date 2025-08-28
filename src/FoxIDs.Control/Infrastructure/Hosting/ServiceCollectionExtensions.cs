@@ -40,6 +40,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<SendEventEmailLogic>();
             services.AddTransient<SeedLogic>();
+
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<MainTenantDocumentsSeedLogic>();
 

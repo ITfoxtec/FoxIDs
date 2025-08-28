@@ -252,7 +252,7 @@ namespace FoxIDs.Infrastructure
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
                         if (telemetryLoggertraceMessages.Count() > 0)
                         {
-                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties());
+                            telemetryLogger.Trace(telemetryLoggertraceMessages, ConcatOnceIfProperties());
                         }
                     }
 
@@ -266,7 +266,7 @@ namespace FoxIDs.Infrastructure
                                 (m.TraceType == TraceTypes.Message && scopedStreamLogger.LogMessageTrace));
                             if (scopedStreamLoggertraceMessages.Count() > 0)
                             {
-                                telemetryScopedStreamLogger.Trace(scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.Trace(scopedStreamLogger, scopedStreamLoggertraceMessages, telemetryScopedProperties.Properties);
                             }
                         }
                     }

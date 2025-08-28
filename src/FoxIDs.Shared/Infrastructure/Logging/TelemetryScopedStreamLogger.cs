@@ -91,14 +91,14 @@ namespace FoxIDs.Infrastructure
             { }
         }
 
-        public void Trace(ScopedStreamLogger scopeStreamLogger, string message, IDictionary<string, string> properties = null)
+        public void Trace(ScopedStreamLogger scopeStreamLogger, IEnumerable<TraceMessageItem> traceMessages, IDictionary<string, string> properties = null)
         {
             try
             {
                 switch (scopeStreamLogger.Type)
                 {
                     case ScopedStreamLoggerTypes.ApplicationInsights:
-                        GetTelemetryLogger(scopeStreamLogger).Trace(message, properties: properties);
+                        GetTelemetryLogger(scopeStreamLogger).Trace(traceMessages, properties: properties);
                         break;
                     default:
                         throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");

@@ -126,6 +126,7 @@ namespace FoxIDs.Controllers
 
                 if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
                 {
+                    mUser.ChangePassword = user.ChangePassword;
                     mUser.HashAlgorithm = user.PasswordHashAlgorithm;
                     mUser.Hash = user.PasswordHash;
                     mUser.HashSalt = user.PasswordHashSalt;

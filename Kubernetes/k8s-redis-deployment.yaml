@@ -19,7 +19,9 @@ spec:
         - containerPort: 6379
         volumeMounts:
           - mountPath: /data
-            name: redis-data  
+            name: redis-data
+        securityContext:
+          allowPrivilegeEscalation: false  # Prevent privilege escalation in this container
       volumes:
       - name: redis-data
         persistentVolumeClaim:

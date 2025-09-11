@@ -515,6 +515,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Login hint is required and cannot be empty.");
                 }
                 sequenceData.UserIdentifier = sequenceData.LoginHint;
+                sequenceData.LoginHint = null; // Clear login hint so it is not used again.
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
             }

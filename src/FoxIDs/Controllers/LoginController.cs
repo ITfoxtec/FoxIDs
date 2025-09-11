@@ -85,9 +85,16 @@ namespace FoxIDs.Controllers
                     }
 
                     if (!(sequenceData.DoLoginPasswordAction || sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction))
-                    {                      
-                        sequenceData.DoLoginIdentifierStep = true;
-                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    {                  
+                        if (sequenceData.LoginHint.IsNullOrWhiteSpace())
+                        {
+                            return await StartAuthenticationInternalLoginHintAsync(sequenceData);
+                        }
+                        else 
+                        {
+                            sequenceData.DoLoginIdentifierStep = true;
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        }
                     }
                     else
                     {
@@ -487,10 +494,31 @@ namespace FoxIDs.Controllers
                 LoginAction = sequenceData.LoginAction,
                 UserId = sequenceData.UserId,
                 MaxAge = sequenceData.MaxAge,
-                LoginHint = sequenceData.LoginHint,
+                LoginHint = sequenceData.UserIdentifier,
                 Acr = sequenceData.Acr
             };
-        }       
+        }
+
+        private async Task<IActionResult> StartAuthenticationInternalLoginHintAsync(LoginUpSequenceData sequenceData)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start authentication with login hint.");
+                loginPageLogic.CheckUpParty(sequenceData);
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                sequenceData.DoLoginIdentifierStep = false;
+                sequenceData.UserIdentifier = sequenceData.LoginHint;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Authentication with login hint failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
 
         private async Task<IActionResult> StartAuthenticationInternalAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {

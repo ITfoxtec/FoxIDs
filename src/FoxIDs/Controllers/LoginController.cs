@@ -85,7 +85,7 @@ namespace FoxIDs.Controllers
                     }
 
                     if (!(sequenceData.DoLoginPasswordAction || sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction))
-                    {                  
+                    {
                         if (!sequenceData.LoginHint.IsNullOrWhiteSpace())
                         {
                             return await StartAuthenticationInternalLoginHintAsync(sequenceData);

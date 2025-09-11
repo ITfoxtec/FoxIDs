@@ -113,6 +113,10 @@
                                 </div>
                                 <label class="label-control">Two-factor</label>
                             </div>
+                        } 
+                        else 
+                        {
+                            <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
                         }
                         <div class="form-group active-group active">
                             <Label For="@(() => user.Form.Model.Claims)" class="label-control" />

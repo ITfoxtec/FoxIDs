@@ -5,9 +5,9 @@ metadata:
   annotations:
    # Rate Limiting, docs https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting
    #nginx.ingress.kubernetes.io/limit-whitelist: "x.x.x.x/x"   # Configure the internal network to be excluded from rate-limiting, you can specify a list of IPs or CIDRs to allow
-   #nginx.ingress.kubernetes.io/limit-connections: "20"          # Limit the number of connections per IP address
-   #nginx.ingress.kubernetes.io/limit-rpm: "300"                 # Limit the number of requests per minute per IP address
-   #nginx.ingress.kubernetes.io/limit-rps: "10"                  # Limit the number of requests per second per IP address
+   #nginx.ingress.kubernetes.io/limit-connections: "200"       # Limit the number of connections per IP address
+   #nginx.ingress.kubernetes.io/limit-rpm: "600"               # Limit the number of requests per minute per IP address
+   #nginx.ingress.kubernetes.io/limit-rps: "200"               # Limit the number of requests per second per IP address
    #Buffer
    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
    nginx.ingress.kubernetes.io/proxy-buffer-size: "32k"

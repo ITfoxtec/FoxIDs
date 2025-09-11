@@ -90,7 +90,7 @@ namespace FoxIDs.Controllers
                         {
                             return await StartAuthenticationInternalLoginHintAsync(sequenceData);
                         }
-                        else 
+                        else
                         {
                             sequenceData.DoLoginIdentifierStep = true;
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);

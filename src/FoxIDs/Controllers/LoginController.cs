@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
 
                     if (!(sequenceData.DoLoginPasswordAction || sequenceData.DoLoginPasswordlessEmailAction || sequenceData.DoLoginPasswordlessSmsAction))
                     {                  
-                        if (sequenceData.LoginHint.IsNullOrWhiteSpace())
+                        if (!sequenceData.LoginHint.IsNullOrWhiteSpace())
                         {
                             return await StartAuthenticationInternalLoginHintAsync(sequenceData);
                         }
@@ -510,6 +510,10 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 sequenceData.DoLoginIdentifierStep = false;
+                if (sequenceData.LoginHint.IsNullOrWhiteSpace())
+                {
+                    throw new InvalidOperationException("Login hint is required and cannot be empty.");
+                }
                 sequenceData.UserIdentifier = sequenceData.LoginHint;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return await StartAuthenticationInternalAsync(sequenceData, loginUpParty);

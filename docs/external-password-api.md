@@ -34,9 +34,9 @@ Secured with [HTTP Basic authentication](https://datatracker.ietf.org/doc/html/r
 The call is HTTP POST with a JSON body.
 
 Fields:
-- email / phone / username (optional – at least one must be present)
+- email / phone / username (optional - at least one must be present)
 - password (required)
-- state (required) – see [password state](#password-state)
+- state (required) - see [password state](#password-state)
 
 This is a request JSON body with only the email as a user identifier (validating an existing password during login):
 ```json

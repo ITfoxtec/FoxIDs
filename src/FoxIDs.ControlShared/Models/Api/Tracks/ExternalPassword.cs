@@ -6,11 +6,17 @@ namespace FoxIDs.Models.Api
 {
     public class ExternalPassword : IValidatableObject
     {
-        [Display(Name = "Enabled validation")]
-        public bool EnabledValidation { get; set; }
+        [Display(Name = "Validate on current password")]
+        public bool EnabledValidationCurrent { get; set; }
 
-        [Display(Name = "Enabled notification")]
-        public bool EnabledNotification { get; set; }
+        [Display(Name = "Validate on new password")]
+        public bool EnabledValidationNew { get; set; }
+
+        [Display(Name = "Notify on current password")]
+        public bool EnabledNotificationCurrent { get; set; }
+
+        [Display(Name = "Notify on new password")]
+        public bool EnabledNotificationNew { get; set; }
 
         [Display(Name = "External connect type")]
         public ExternalConnectTypes ExternalConnectType { get; set; }

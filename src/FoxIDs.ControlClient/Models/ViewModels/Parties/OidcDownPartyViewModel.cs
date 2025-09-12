@@ -74,6 +74,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Test URL
         /// </summary>
         [MaxLength(Constants.Models.DownParty.UrlLengthMax)]
+        [Display(Name = "Alternatively, start the test with this test URL")]
         public string TestUrl { get; set; }
 
         /// <summary>

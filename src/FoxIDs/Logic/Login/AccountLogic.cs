@@ -122,14 +122,30 @@ namespace FoxIDs.Logic
         {
             await base.ValidatePasswordPolicyAndNotifyAsync(userIdentifier, password, state);
 
-            if (RouteBinding?.ExternalPassword?.EnabledValidation == true)
+            var externalPassword = RouteBinding.ExternalPassword;
+            if (externalPassword != null)
             {
-                await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password, state);
-            }
+                var doValidate = state switch
+                {
+                    PasswordState.Current => externalPassword.EnabledValidationCurrent,
+                    PasswordState.New => externalPassword.EnabledValidationNew,
+                    _ => false
+                };
+                if (doValidate)
+                {
+                    await externalPasswordConnectLogic.ValidatePasswordAsync(userIdentifier, password, state);
+                }
 
-            if (RouteBinding?.ExternalPassword?.EnabledNotification == true && state == PasswordState.New)
-            {
-                await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password, state);
+                var doNotify = state switch
+                {
+                    PasswordState.Current => externalPassword.EnabledNotificationCurrent,
+                    PasswordState.New => externalPassword.EnabledNotificationNew,
+                    _ => false
+                };
+                if (doNotify)
+                {
+                    await externalPasswordConnectLogic.PasswordNotificationAsync(userIdentifier, password, state);
+                }
             }
         }
 

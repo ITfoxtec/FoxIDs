@@ -21,7 +21,7 @@ namespace FoxIDs.SeedTool
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
                 Console.WriteLine("Select seed action:");
-                Console.WriteLine("U: Upload users to an environment");
+                Console.WriteLine("U: Upload (create or update) users in an environment");
                 Console.WriteLine("D: Delete all users in an environment");
 
                 var key = Console.ReadKey();

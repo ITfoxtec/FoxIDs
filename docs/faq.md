@@ -52,3 +52,10 @@ You can enable matching issuer and authority on OpenID Connect and OAuth 2.0 app
 By using an application specific issuer, the issuer will change if the selected authentication methods in the authority URL change.
 If you use APIs (resources), be aware that the issuer changes depending on the calling application (client).  
 Token exchange is only possible with corresponding authentication methods.
+
+## How can I clear all users in an environment?
+You can delete users in an environment using the [SeedTool](users-upload.md), which allows you to remove users in bulk.  
+Alternatively, deleting the environment also deletes its users.
+
+## How can I delete an environment?
+To delete an environment, go to the **Settings** tab in the environment, then the **Environment** tab. Scroll down and click **Delete environment**.

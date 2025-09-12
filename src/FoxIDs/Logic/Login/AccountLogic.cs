@@ -127,8 +127,8 @@ namespace FoxIDs.Logic
             {
                 var doValidate = state switch
                 {
-                    PasswordState.Current => externalPassword.EnabledValidationCurrent,
-                    PasswordState.New => externalPassword.EnabledValidationNew,
+                    PasswordState.Current => externalPassword.EnabledValidationCurrent ?? false,
+                    PasswordState.New => externalPassword.EnabledValidationNew ?? false,
                     _ => false
                 };
                 if (doValidate)
@@ -138,8 +138,8 @@ namespace FoxIDs.Logic
 
                 var doNotify = state switch
                 {
-                    PasswordState.Current => externalPassword.EnabledNotificationCurrent,
-                    PasswordState.New => externalPassword.EnabledNotificationNew,
+                    PasswordState.Current => externalPassword.EnabledNotificationCurrent ?? false,
+                    PasswordState.New => externalPassword.EnabledNotificationNew ?? false,
                     _ => false
                 };
                 if (doNotify)

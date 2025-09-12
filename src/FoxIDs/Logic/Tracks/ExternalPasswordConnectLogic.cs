@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
         public async Task ValidatePasswordAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
             var externalPassword = RouteBinding.ExternalPassword;
-            if (externalPassword == null || (!externalPassword.EnabledValidationCurrent && !externalPassword.EnabledValidationNew)) return;
+            if (externalPassword == null || (externalPassword.EnabledValidationCurrent != true && externalPassword.EnabledValidationNew != true)) return;
 
             var url = UrlCombine.Combine(externalPassword.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Validation);
             logger.ScopeTrace(() => $"External password, Validation API request, URL '{url}'.", traceType: TraceTypes.Message);
@@ -105,7 +105,7 @@ namespace FoxIDs.Logic
         public async Task PasswordNotificationAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
             var externalPassword = RouteBinding.ExternalPassword;
-            if (externalPassword == null || (!externalPassword.EnabledNotificationCurrent && !externalPassword.EnabledNotificationNew)) return;
+            if (externalPassword == null || (externalPassword.EnabledNotificationCurrent != true && externalPassword.EnabledNotificationNew != true)) return;
 
             var url = UrlCombine.Combine(externalPassword.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Notification);
             logger.ScopeTrace(() => $"External password, Notification API request, URL '{url}'.", traceType: TraceTypes.Message);

@@ -22,7 +22,7 @@ Upload time can be improved by calculating the password hashes on the client bef
 
 ## Upload with seed tool
 
-The seed tool reads users from a `CSV` file and upload the users to the configured environment.
+The seed tool reads users from a `CSV` file and uploads the users to the configured environment. The seed tool also supports bulk user deletion.
 
 > By default, the seed tool pre-calculates [password hashes](users-internal.md#password-hash) on the client during upload to reduce server processing time.
 

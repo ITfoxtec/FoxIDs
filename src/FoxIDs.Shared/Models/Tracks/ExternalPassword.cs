@@ -8,16 +8,16 @@ namespace FoxIDs.Models
     public class ExternalPassword : IValidatableObject
     {
         [JsonProperty(PropertyName = "enabled_validation_current")]
-        public bool EnabledValidationCurrent { get; set; }
+        public bool? EnabledValidationCurrent { get; set; }
 
         [JsonProperty(PropertyName = "enabled_validation_new")]
-        public bool EnabledValidationNew { get; set; }
+        public bool? EnabledValidationNew { get; set; }
 
         [JsonProperty(PropertyName = "enabled_notification_current")]
-        public bool EnabledNotificationCurrent { get; set; }
+        public bool? EnabledNotificationCurrent { get; set; }
 
         [JsonProperty(PropertyName = "enabled_notification_new")]
-        public bool EnabledNotificationNew { get; set; }
+        public bool? EnabledNotificationNew { get; set; }
 
         [Display(Name = "External connect type")]
         public ExternalConnectTypes ExternalConnectType { get; set; }

@@ -26,9 +26,10 @@ namespace FoxIDs.Logic
 
         public async Task ValidatePasswordAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
-            if (Config?.EnabledValidation != true) return;
+            var externalPassword = RouteBinding.ExternalPassword;
+            if (externalPassword == null || (!externalPassword.EnabledValidationCurrent && !externalPassword.EnabledValidationNew)) return;
 
-            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Validation);
+            var url = UrlCombine.Combine(externalPassword.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Validation);
             logger.ScopeTrace(() => $"External password, Validation API request, URL '{url}'.", traceType: TraceTypes.Message);
 
             var request = new Ext.PasswordRequest
@@ -43,8 +44,8 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"External password, Validation API request '{new { request.Email, request.Phone, request.Username, password = "hidden" }.ToJson()}'.", traceType: TraceTypes.Message);
 
             var httpClient = httpClientFactory.CreateClient();
-            logger.ScopeTrace(() => $"External password, Validation API secret '{(Config.Secret?.Length > 10 ? $"{Config.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalConnect.ExternalPassword.Api.ApiId.OAuthUrlDencode()}:{Config.Secret.OAuthUrlDencode()}".Base64Encode());
+            logger.ScopeTrace(() => $"External password, Validation API secret '{(externalPassword.Secret?.Length > 10 ? $"{externalPassword.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalConnect.ExternalPassword.Api.ApiId.OAuthUrlDencode()}:{externalPassword.Secret.OAuthUrlDencode()}".Base64Encode());
 
             try
             {
@@ -66,7 +67,7 @@ namespace FoxIDs.Logic
 
                         if (errorResponse.Error == Constants.ExternalConnect.Api.ErrorCodes.InvalidApiIdOrSecret)
                         {
-                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalConnect.ExternalPassword.Api.ApiId}' or secret '{(Config.Secret?.Length > 10 ? $"{Config.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{url}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
+                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalConnect.ExternalPassword.Api.ApiId}' or secret '{(externalPassword.Secret?.Length > 10 ? $"{externalPassword.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{url}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
                         }
 
                         if (errorResponse.Error == Constants.ExternalConnect.ExternalPassword.Api.ErrorCodes.PasswordNotAccepted)
@@ -103,9 +104,10 @@ namespace FoxIDs.Logic
 
         public async Task PasswordNotificationAsync(UserIdentifier userIdentifier, string password, PasswordState state)
         {
-            if (Config?.EnabledNotification != true) return;
+            var externalPassword = RouteBinding.ExternalPassword;
+            if (externalPassword == null || (!externalPassword.EnabledNotificationCurrent && !externalPassword.EnabledNotificationNew)) return;
 
-            var url = UrlCombine.Combine(Config.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Notification);
+            var url = UrlCombine.Combine(externalPassword.ApiUrl, Constants.ExternalConnect.ExternalPassword.Api.Notification);
             logger.ScopeTrace(() => $"External password, Notification API request, URL '{url}'.", traceType: TraceTypes.Message);
 
             var request = new Ext.PasswordRequest
@@ -120,8 +122,8 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"External password, Notification API request '{new { request.Email, request.Phone, request.Username, password = "hidden" }.ToJson()}'.", traceType: TraceTypes.Message);
 
             var httpClient = httpClientFactory.CreateClient();
-            logger.ScopeTrace(() => $"External password, Notification API secret '{(Config.Secret?.Length > 10 ? $"{Config.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalConnect.ExternalPassword.Api.ApiId.OAuthUrlDencode()}:{Config.Secret.OAuthUrlDencode()}".Base64Encode());
+            logger.ScopeTrace(() => $"External password, Notification API secret '{(externalPassword.Secret?.Length > 10 ? $"{externalPassword.Secret.Substring(0, 3)}..." : "hidden")}'.", traceType: TraceTypes.Message);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.BasicAuthentication.Basic, $"{Constants.ExternalConnect.ExternalPassword.Api.ApiId.OAuthUrlDencode()}:{externalPassword.Secret.OAuthUrlDencode()}".Base64Encode());
 
             try
             {
@@ -143,7 +145,7 @@ namespace FoxIDs.Logic
 
                         if (errorResponse.Error == Constants.ExternalConnect.Api.ErrorCodes.InvalidApiIdOrSecret)
                         {
-                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalConnect.ExternalPassword.Api.ApiId}' or secret '{(Config.Secret?.Length > 10 ? $"{Config.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{url}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
+                            throw new InvalidAppIdOrSecretException($"Invalid app id '{Constants.ExternalConnect.ExternalPassword.Api.ApiId}' or secret '{(externalPassword.Secret?.Length > 10 ? $"{externalPassword.Secret.Substring(0, 3)}..." : "hidden")}', API URL '{url}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
                         }
                         throw new Exception($"External password, Notification API error '{resultError}'. Status code={response.StatusCode}.{errorResponse.GetErrorMessage()}");
 
@@ -166,8 +168,6 @@ namespace FoxIDs.Logic
                 throw new Exception($"Unable to call external password notification API URL '{url}'.", ex);
             }
         }
-
-        private ExternalPassword Config => RouteBinding.ExternalPassword;
 
         private Ext.PasswordState ToExtPasswordState(PasswordState state)
         {

@@ -47,7 +47,7 @@
                 }
                 <FInputText @bind-Value="trackSettingsForm.Model.DisplayName" For="@(() => trackSettingsForm.Model.DisplayName)" />
                 <FFieldText @bind-Value="trackSettingsForm.Model.Name" For="@(() => trackSettingsForm.Model.Name)" />
-                <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" Focus="true" />
+                <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" />
                 <FInputToggle @bind-Value="trackSettingsForm.Model.AutoMapSamlClaims" For="@(() => trackSettingsForm.Model.AutoMapSamlClaims)" TextType="e.d" />
 
                 <div class="info-text">
@@ -117,13 +117,47 @@
                                     External password validation and notifications:
                                     <ul>
                                         <li>Use the validation API to validate a password.</li>
-                                        <li>Use the notification API to receive notifications about password changes.</li>
-                                        <li>If you need both validation and notification, use the validation API - if the password is valid, trigger a notification about the change.</li>
-                                        <li>Important: You usually don't need to use both APIs together. Only call both APIs if you must call different systems.</li>
+                                        <li>Use the notification API to receive notifications about login and password changes.</li>
+                                        <li>If you need both validation and notification, use the validation API. If the password is valid, trigger an internal notification for the specific scenario being validated (login or password change).</li>
                                     </ul>
-                                </div>                                
-                                <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidation" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidation)" />
-                                <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotification" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotification)" />
+                                </div>
+
+                                <div class="pt-1">
+                                    <div class="form-group active-group active">
+                                        <div class="card">
+                                            <div class="card-body mt-2">
+                                                <div class="row pl-4">
+                                                    <div class="col-6">
+                                                        <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidationCurrent" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidationCurrent)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledValidationNew" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledValidationNew)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => trackSettingsForm.Model.ExternalPassword)" LabelText="Call the password validation API" class="label-control" />
+                                    </div>
+                                </div>
+
+                                <div class="pt-1">
+                                    <div class="form-group active-group active">
+                                        <div class="card">
+                                            <div class="card-body mt-2">
+                                                <div class="row pl-4">
+                                                    <div class="col-6">
+                                                        <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotificationCurrent" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotificationCurrent)" />
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <FInputToggle @bind-Value="trackSettingsForm.Model.ExternalPassword.EnabledNotificationNew" For="@(() => trackSettingsForm.Model.ExternalPassword.EnabledNotificationNew)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => trackSettingsForm.Model.ExternalPassword)" LabelText="Call the password notification API" class="label-control" />
+                                    </div>
+                                </div>
+
                                 <FInputText @bind-Value="trackSettingsForm.Model.ExternalPassword.ApiUrl" For="@(() => trackSettingsForm.Model.ExternalPassword.ApiUrl)" />
                                 <FInputText @bind-Value="trackSettingsForm.Model.ExternalPassword.Secret" For="@(() => trackSettingsForm.Model.ExternalPassword.Secret)" />
                             </div>

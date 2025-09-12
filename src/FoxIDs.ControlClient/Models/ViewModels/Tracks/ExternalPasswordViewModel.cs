@@ -7,11 +7,17 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class ExternalPasswordViewModel : IValidatableObject
     {
-        [Display(Name = "Use validation API")]
-        public bool EnabledValidation { get; set; }
+        [Display(Name = "Validate on login")]
+        public bool EnabledValidationCurrent { get; set; }
 
-        [Display(Name = "Use notification API")]
-        public bool EnabledNotification { get; set; }
+        [Display(Name = "Validate on password change")]
+        public bool EnabledValidationNew { get; set; }
+
+        [Display(Name = "Notify on login")]
+        public bool EnabledNotificationCurrent { get; set; }
+
+        [Display(Name = "Notify on password change")]
+        public bool EnabledNotificationNew { get; set; }
 
         public ExternalConnectTypes ExternalConnectType { get; set; } = ExternalConnectTypes.Api;
 
@@ -33,7 +39,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             var results = new List<ValidationResult>();
 
-            if (EnabledValidation || EnabledNotification)
+            if (EnabledValidationCurrent || EnabledValidationNew || EnabledNotificationCurrent || EnabledNotificationNew)
             {
                 if (ApiUrl.IsNullOrWhiteSpace())
                 {

@@ -9,7 +9,7 @@ You implement the external password API and configure FoxIDs to call it.
 If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks and only when the password state is 200 (new password).
 
 If you require both validation and change notification, and both can be handled by the same system, implement only the validation API. 
-When you receive a validation request where the password is accepted, perform your notification logic internally. Implement both endpoints only if you must call two different backend systems.
+When you receive a validation request where the password is accepted, perform your notification logic internally. Implement both endpoints only if needed, e.g. if you have call two different backend systems.
 
 External password API can be [configured as password check](users-internal.md#password-check) for [internal users](users-internal.md).
 
@@ -34,9 +34,9 @@ Secured with [HTTP Basic authentication](https://datatracker.ietf.org/doc/html/r
 The call is HTTP POST with a JSON body.
 
 Fields:
-- email / phone / username (optional – at least one must be present)
+- email / phone / username (optional - at least one must be present)
 - password (required)
-- state (required) – see [password state](#password-state)
+- state (required) - see [password state](#password-state)
 
 This is a request JSON body with only the email as a user identifier (validating an existing password during login):
 ```json
@@ -104,7 +104,7 @@ The external password API is configured in the environment settings in the [FoxI
 1. Select the **Settings** tab
 2. And subsequently select the **Environment** tab
 3. Find the **External password API** section
-4. Select **Use validation API** or **Use notification API**, or in rare cases both.
+4. Select **Validate on password change** to enforce an external password policy before a new password is set for a user.
 5. Add the base API URL without the `validation` and `notification` folders in **API URL**
 6. Add the **API secret**
    ![Configure the external password API](images/configure-external-password-api.png)

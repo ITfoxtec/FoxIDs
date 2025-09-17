@@ -265,9 +265,49 @@ namespace FoxIDs.Logic
             {
                 if (element.Type == Api.DynamicElementTypes.Html)
                 {
-                    // TODO: Validate HTML
+                    if (!element.Content.IsNullOrWhiteSpace())
+                    {
+                        var sanitizedContent = SanitizeHtml(element.Content);
+                        element.Content = sanitizedContent;
+                    }
                 }
             }
+        }
+
+        private static string SanitizeHtml(string html)
+        {
+            if (html.IsNullOrWhiteSpace())
+            {
+                return html;
+            }
+
+            var sanitized = html;
+
+            // Remove HTML comments
+            sanitized = Regex.Replace(sanitized, "<!--.*?-->", string.Empty, RegexOptions.Singleline);
+
+            // Remove disallowed tags entirely (both paired and self-closing)
+            var disallowedTags = new[] { "script", "iframe", "object", "embed", "link", "meta", "form", "input", "button", "style" };
+            foreach (var tag in disallowedTags)
+            {
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*>(.*?)<\\s*/\\s*{tag}\\s*>", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*/?\\s*>", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            }
+
+            // Remove inline event handlers (onload, onclick, ...)
+            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*\"[^\\\"]*\"", string.Empty);
+            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*'[^']*'", string.Empty);
+            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*[^\\s>]+", string.Empty);
+
+            // Neutralise javascript: URI schemes
+            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*\"javascript:[^\\\"]*\"", "href=\"#\"");
+            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*'javascript:[^']*'", "href='#'");
+            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*javascript:[^\\s>]+", "href=\"#\"");
+
+            // Remove remaining javascript: occurrences in other attributes
+            sanitized = Regex.Replace(sanitized, "(?i)javascript:\\s*", string.Empty);
+
+            return sanitized;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
@@ -123,6 +123,11 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         public string Css { get; set; }
+
+        [ValidateComplexType]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [Display(Name = "Login UI elements")]
+        public List<DynamicElement> LoginElements { get; set; } = new List<DynamicElement>();
 
         /// <summary>
         /// Default 10 hours.

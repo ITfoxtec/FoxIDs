@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
 using System;
 using System.Collections.Generic;
@@ -161,6 +161,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "CSS")]
         public string Css { get; set; }
 
+        [ValidateComplexType]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [Display(Name = "Login UI elements")]
+        public List<DynamicElementViewModel> LoginElements { get; set; } = new List<DynamicElementViewModel>();
+
         /// <summary>
         /// Home realm discovery (HRD) IP addresses and IP ranges.
         /// </summary>
@@ -248,3 +253,4 @@ namespace FoxIDs.Client.Models.ViewModels
         }
     }
 }
+

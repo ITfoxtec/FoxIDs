@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
@@ -28,6 +28,12 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "is_user_identifier")]
         public bool IsUserIdentifier { get; set; }
+
+        [JsonProperty(PropertyName = "show_on_identifier")]
+        public bool ShowOnIdentifier { get; set; }
+
+        [JsonProperty(PropertyName = "show_on_password")]
+        public bool ShowOnPassword { get; set; }
 
         [MaxLength(Constants.Models.DynamicElements.ContentLength)]
         [JsonProperty(PropertyName = "content")]

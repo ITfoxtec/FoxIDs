@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
 @inject IViewLocalizer Localizer
+@inject IStringLocalizer StringLocalizer
 @model LoggedInViewModel
 
 @{
@@ -8,11 +10,33 @@
 
 <h1 class="heading">@ViewData["Title"]</h1>
 
-
-<div class="row page-container name-logged-in">
-    <div class="col-md page-content">
-        <div class="info-group">
-            @Localizer["You are still logged in!"]
+@foreach (var element in Model.Elements)
+{
+    if (element is LognInputDElement)
+    {
+        <div class="row page-container name-logged-in">
+            <div class="col-md page-content">
+                <div class="info-group">
+                    @Localizer["You are still logged in!"]
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    }
+    else if (element is ContentDElement contentDElement)
+    {
+        <div class="form-group active-group login-dynamic-element">
+            @if (contentDElement.IsHtml)
+            {
+                @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+            }
+            else
+            {
+                @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+            }
+        </div>
+    }
+    else
+    {
+        throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+    }
+}

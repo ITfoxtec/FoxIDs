@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace FoxIDs.Models
 {
@@ -29,6 +29,15 @@ namespace FoxIDs.Models
         Html = 210,
 
         [EnumMember(Value = "custom")]
-        Custom = 1000
+        Custom = 1000,
+
+        [EnumMember(Value = "login_input")]
+        LoginInput = 2010,
+        [EnumMember(Value = "login_button")]
+        LoginButton = 2020,
+        [EnumMember(Value = "login_link")]
+        LoginLink = 2030,
+        [EnumMember(Value = "login_end")]
+        LoginEnd = 2040
     }
 }

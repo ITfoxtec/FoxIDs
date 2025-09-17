@@ -1,4 +1,4 @@
-﻿using FoxI = ITfoxtec.Identity;
+using FoxI = ITfoxtec.Identity;
 using System.Security.Claims;
 using ITfoxtec.Identity.Saml2.Claims;
 using System.Net.Http;
@@ -601,6 +601,8 @@ namespace FoxIDs
                 public const int DisplayNameLength = 50;
                 public const int RegExLength = 300;
                 public const int ErrorMessageLength = Resource.ValueLength;
+
+                public const string LoginInputElementName = "logininput";
             }
 
             public static class Claim
@@ -1267,3 +1269,4 @@ namespace FoxIDs
         }
     }
 }
+

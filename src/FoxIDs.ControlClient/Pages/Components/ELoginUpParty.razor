@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var loginUpParty = UpParty as GeneralLoginUpPartyViewModel;
@@ -52,6 +52,16 @@
                 else
                 {
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (loginUpParty.ShowLoginUiTab)
+                {
+                    <a class="nav-link active">Login UI</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.LoginUi))">Login UI</button>
                 }
             </li>
             <li class="nav-item">
@@ -199,6 +209,10 @@
                 <div class="alert alert-info" role="alert">
                     If you create a new claim in the claim transforms the claim is forwarded to the application registration where you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
+            }
+            else if (loginUpParty.ShowLoginUiTab)
+            {
+                <LoginDynamicElements Model="loginUpParty.Form.Model.LoginElements" />
             }
             else if (loginUpParty.ShowExtendedUiTab)
             {

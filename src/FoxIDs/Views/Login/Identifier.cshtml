@@ -1,5 +1,10 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Linq
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using FoxIDs.Models
+@using FoxIDs.Models.ViewModels
 @inject IViewLocalizer Localizer
+@inject IStringLocalizer StringLocalizer
 @model IdentifierViewModel
 
 @{
@@ -14,62 +19,37 @@
         {
             <form method="post">
                 <div asp-validation-summary="ModelOnly"></div>
-                @if (Model.EmailIdentifier != null)
+@*                 @if (Model.Elements?.Count > 0)
+                { *@
+                    @foreach (var element in Model.Elements)
+                    {
+                        if (element is LognInputDElement)
+                        {
+                            await Html.RenderPartialAsync("_UserIdentifier", Model);
+                        }
+                        else if (element is ContentDElement contentDElement)
+                        {
+                            <div class="form-group active-group login-dynamic-element">
+                                @if (contentDElement.IsHtml)
+                                {
+                                    @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+                                }
+                                else
+                                {
+                                    @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+                        }
+                    }
+@*                 }
+                else
                 {
-                    <div class="form-group active-group">
-                        <input asp-for="EmailIdentifier.Email" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="EmailIdentifier.Email" class="label-control"></label>
-                        <span asp-validation-for="EmailIdentifier.Email"></span>
-                    </div>
-                }
-                else if (Model.PhoneIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="PhoneIdentifier.Phone" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="PhoneIdentifier.Phone" class="label-control"></label>
-                        <span asp-validation-for="PhoneIdentifier.Phone"></span>
-                    </div>
-                }
-                else if (Model.UsernameIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="UsernameIdentifier.Username" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="UsernameIdentifier.Username" class="label-control"></label>
-                        <span asp-validation-for="UsernameIdentifier.Username"></span>
-                    </div>
-                }
-                else if (Model.UsernameEmailIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="UsernameEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="UsernameEmailIdentifier.UserIdentifier" class="label-control"></label>
-                        <span asp-validation-for="UsernameEmailIdentifier.UserIdentifier"></span>
-                    </div>
-                }
-                else if (Model.UsernamePhoneIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="UsernamePhoneIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="UsernamePhoneIdentifier.UserIdentifier" class="label-control"></label>
-                        <span asp-validation-for="UsernamePhoneIdentifier.UserIdentifier"></span>
-                    </div>
-                }
-                else if (Model.PhoneEmailIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="PhoneEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="PhoneEmailIdentifier.UserIdentifier" class="label-control"></label>
-                        <span asp-validation-for="PhoneEmailIdentifier.UserIdentifier"></span>
-                    </div>
-                }
-                else if (Model.UsernamePhoneEmailIdentifier != null)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="UsernamePhoneEmailIdentifier.UserIdentifier" class="label-control"></label>
-                        <span asp-validation-for="UsernamePhoneEmailIdentifier.UserIdentifier"></span>
-                    </div>
-                }
+                    await Html.RenderPartialAsync("_UserIdentifier", Model);
+                } *@
                 <div class="form-group button-group">
                     <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
                     @if (Model.EnableCancelLogin)
@@ -122,13 +102,13 @@
                         <a up-party-name="@upParty.Name" class="list-item-filter btn btn-light" href="../@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name&profilename=@upParty.ProfileName">
                             @if (!upParty.LogoUrl.IsNullOrEmpty())
                             {
-                                    <img src="@upParty.LogoUrl" class="img-item-filter" alt="@upParty.DisplayName">
+                                <img src="@upParty.LogoUrl" class="img-item-filter" alt="@upParty.DisplayName">
                             }
                             @if (!upParty.DisplayName.IsNullOrEmpty())
                             {
                                 <span class="text-item-filter">@upParty.DisplayName</span>
                             }
-                        </a>                                
+                        </a>
                     }
                 </div>
             </form>

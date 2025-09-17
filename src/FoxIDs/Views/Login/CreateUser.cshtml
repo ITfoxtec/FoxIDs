@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
 @inject IViewLocalizer Localizer
+@inject IStringLocalizer StringLocalizer
 @model CreateUserViewModel
 
 @{
@@ -12,9 +14,32 @@
     <div class="col-md page-content">
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-            @{
-                await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
+
+            @foreach (var element in Model.Elements)
+            {
+                if (element is LognInputDElement)
+                {
+                    await Html.RenderPartialAsync("_DynamicElements", Model.CreateUserElements);
+                }
+                else if (element is ContentDElement contentDElement)
+                {
+                    <div class="form-group active-group login-dynamic-element">
+                        @if (contentDElement.IsHtml)
+                        {
+                            @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+                        }
+                        else
+                        {
+                            @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+                        }
+                    </div>
+                }
+                else
+                {
+                    throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+                }
             }
+
             <div class="form-group button-group">
                 <div>
                     <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />

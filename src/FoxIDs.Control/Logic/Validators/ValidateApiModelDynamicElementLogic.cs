@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -30,6 +30,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(createUserElements);
                     ValidateRegEx(createUserElements);
+                    ValidateHtml(createUserElements);
                     ValidateDuplicatedOrderNumber(createUserElements);
                     ValidateDuplicatedElementType(createUserElements);
 
@@ -110,6 +111,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(linkExternalUserElements);
                     ValidateRegEx(linkExternalUserElements);
+                    ValidateHtml(linkExternalUserElements);
                     ValidateDuplicatedOrderNumber(linkExternalUserElements);
                     ValidateDuplicatedElementType(linkExternalUserElements);
 
@@ -132,6 +134,38 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
+        public bool ValidateApiModelLoginElements(ModelStateDictionary modelState, List<Api.DynamicElement> loginElements)
+        {
+            var isValid = true;
+            try
+            {
+                if (loginElements?.Count() > 0)
+                {
+                    AddDefaultNames(loginElements);
+                    ValidateRegEx(loginElements);
+                    ValidateHtml(loginElements);
+                    ValidateDuplicatedOrderNumber(loginElements);
+
+                    if (loginElements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginEnd))
+                    {
+                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginEnd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
+                    }
+
+                    if (loginElements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login input element.");
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError(nameof(Api.LoginUpParty.LoginElements).ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
         public bool ValidateApiModelExtendedUiElements(ModelStateDictionary modelState, List<Api.DynamicElement> extendedUiElements)
         {
             var isValid = true;
@@ -141,6 +175,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(extendedUiElements);
                     ValidateRegEx(extendedUiElements);
+                    ValidateHtml(extendedUiElements);
                     ValidateDuplicatedOrderNumber(extendedUiElements);
                     ValidateDuplicatedElementType(extendedUiElements);
 
@@ -220,6 +255,17 @@ namespace FoxIDs.Logic
                     {
                         throw new ValidationException($"Invalid regex pattern in dynamic element '{element.Name}'.", ex);
                     }
+                }
+            }
+        }
+
+        private static void ValidateHtml(List<Api.DynamicElement> dynamicElement)
+        {
+            foreach (var element in dynamicElement)
+            {
+                if (element.Type == Api.DynamicElementTypes.Html)
+                {
+                    // TODO: Validate HTML
                 }
             }
         }

@@ -1,0 +1,159 @@
+@using FoxIDs.Client.Models.ViewModels
+@using FoxIDs.Models.Api
+@using FoxIDs.Util
+@using System.Linq
+
+<div class="form-group active-group active pt-0">
+    <div class="info-text">Add optional content elements to the login pages. Elements can be shown on the user identifier page, the password page, or both.</div>
+    <ul class="list-group">
+        @if (Model?.Count > 0)
+        {
+            foreach (var element in Model)
+            {
+                var isPlaceholder = element.Type == DynamicElementTypes.LoginInput || element.Type == DynamicElementTypes.LoginButton || element.Type == DynamicElementTypes.LoginLink || element.Type == DynamicElementTypes.LoginEnd;
+
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-9">
+                            @if (element.Type == DynamicElementTypes.LoginInput)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Login input fields</div>
+                                <div class="info-text pb-0 mb-0">Displays the built-in login input fields.</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.Text)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Text element</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.Html)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">HTML element</div>
+                            }
+                            else
+                            {
+                                <div class="p-0 alert alert-danger font-weight-bold small" role="alert">Unsupported element type</div>
+                            }
+                        </div>
+                        <div class="col-2">
+                            @if (Model.IndexOf(element) > 0)
+                            {
+                                <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(element))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                            }
+                            @if (Model.IndexOf(element) < Model.Count - 1)
+                            {
+                                <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(element))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                            }
+                        </div>
+                        <div class="col-1 text-right">
+                            @if (!isPlaceholder)
+                            {
+                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                            }
+                        </div>
+                    </div>
+                    @if (!isPlaceholder)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="info-text">The technical name is added in HTML as a CSS tag prefixed with <code>name-@element.Name</code>.</div>
+                                <FInputText @bind-Value="element.Name" For="@(() => element.Name)" />
+                            </div>
+                        </div>
+                    }
+                    @if (isPlaceholder)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <FInputToggle @bind-Value="element.ShowOnIdentifier" For="@(() => element.ShowOnIdentifier)" TextType="y.n" LabelText="Show on user identifier page" />
+                                <FInputToggle @bind-Value="element.ShowOnPassword" For="@(() => element.ShowOnPassword)" TextType="y.n" LabelText="Show on password pages" />
+                            </div>
+                        </div>
+                    }
+                    @if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
+                    {
+                        <div class="row">
+                            <div class="col-12">
+                                <FInputTextArea @bind-Value="element.Content" For="@(() => element.Content)" LabelText="@(element.Type == DynamicElementTypes.Text ? "Text" : "HTML")" />
+                            </div>
+                        </div>
+                    }
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item"></li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model)" />
+    <div class="btn-group" role="group">
+        <button id="btnLoginUiElements" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add element
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnLoginUiElements">
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Text))">Text element</button>
+            <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => AddElement(DynamicElementTypes.Html))">HTML element</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<DynamicElementViewModel> Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new List<DynamicElementViewModel>();
+    }
+
+    private void AddElement(DynamicElementTypes type)
+    {
+        var element = new DynamicElementViewModel
+        {
+            Type = type,
+            ShowOnIdentifier = true,
+            ShowOnPassword = true
+        };
+        element.Name = RandomName.GenerateDefaultName(Model.Select(e => e.Name));
+        Model.Add(element);
+        StateHasChanged();
+    }
+
+    private void RemoveElement(DynamicElementViewModel element)
+    {
+        Model.Remove(element);
+        StateHasChanged();
+    }
+
+    private void MoveUp(DynamicElementViewModel element)
+    {
+        var index = Model.IndexOf(element);
+        if (index <= 0)
+        {
+            return;
+        }
+        Model.RemoveAt(index);
+        Model.Insert(index - 1, element);
+        StateHasChanged();
+    }
+
+    private void MoveDown(DynamicElementViewModel element)
+    {
+        var index = Model.IndexOf(element);
+        if (index < 0 || index >= Model.Count - 1)
+        {
+            return;
+        }
+        Model.RemoveAt(index);
+        Model.Insert(index + 1, element);
+        StateHasChanged();
+    }
+}
+

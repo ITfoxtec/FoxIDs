@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models;
+using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.ViewModels;
 using ITfoxtec.Identity;
@@ -90,6 +90,56 @@ namespace FoxIDs.Logic
                         throw new NotImplementedException();
                 }
             }
+        }
+
+        public List<DynamicElement> EnsureLoginElements(List<DynamicElement> elements)
+        {
+            var list = elements ?? new List<DynamicElement>();
+
+            var identifierElements = list.Where(e => e.Type == DynamicElementTypes.LoginInput).ToList();
+            if (identifierElements.Count == 0)
+            {
+                var identifier = new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginInputElementName,
+                    Type = DynamicElementTypes.LoginInput,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = false
+                };
+                list.Insert(0, identifier);
+            }
+
+            return list;
+        }
+
+        public List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements, bool identifierPage)
+        {
+            var result = new List<DynamicElementBase>();
+            if (elements?.Count > 0)
+            {
+                foreach (var element in elements.OrderBy(e => e.Order))
+                {
+                    if (identifierPage && element.Type == DynamicElementTypes.LoginInput)
+                    {
+                        result.Add(new LognInputDElement { Name = element.Name });
+                    }
+                    else if (!identifierPage && element.Type == DynamicElementTypes.Password)
+                    {
+                        result.Add(new LognInputDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
+                    {
+                        result.Add(new ContentDElement
+                        {
+                            Name = element.Name,
+                            DContent = element.Content,
+                            IsHtml = element.Type == DynamicElementTypes.Html,
+                        });
+                    }
+                }
+            }
+
+            return result;
         }
 
         private DynamicElementBase GetValueElement(DynamicElement element, List<DynamicElementBase> valueElements, List<Claim> initClaims, int i)
@@ -293,6 +343,10 @@ namespace FoxIDs.Logic
                         return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
                     case DynamicElementTypes.Text:
                     case DynamicElementTypes.Html:
+                    case DynamicElementTypes.LoginInput:
+                    case DynamicElementTypes.LoginButton:
+                    case DynamicElementTypes.LoginLink:
+                    case DynamicElementTypes.LoginEnd:
                         return null;
                     default:
                         throw new NotSupportedException();

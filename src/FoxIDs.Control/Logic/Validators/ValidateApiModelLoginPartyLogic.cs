@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using Api = FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
@@ -63,6 +63,18 @@ namespace FoxIDs.Logic
                 party.TwoFactorAppName = RouteBinding.TenantName;
             }
 
+            if (party.LoginElements?.Any() == true)
+            {
+                if (!validateApiModelDynamicElementLogic.ValidateApiModelLoginElements(modelState, party.LoginElements))
+                {
+                    isValid = false;
+                }
+            }
+            else
+            {
+                party.LoginElements = null;
+            }
+
             if (party.CreateUser != null)
             {
                 if (!party.EnableCreateUser || party.CreateUser.Elements?.Any() != true)
@@ -80,13 +92,12 @@ namespace FoxIDs.Logic
                     {
                         isValid = false;
                     }
-
-                    if (!validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis))
-                    {
-                        isValid = false;
-                    }
-
                 }
+            }
+
+            if (!validateApiModelGenericPartyLogic.ValidateExtendedUi(modelState, party.ExtendedUis))
+            {
+                isValid = false;
             }
 
             return await Task.FromResult(isValid);

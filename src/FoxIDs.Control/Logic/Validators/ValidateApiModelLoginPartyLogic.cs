@@ -63,16 +63,16 @@ namespace FoxIDs.Logic
                 party.TwoFactorAppName = RouteBinding.TenantName;
             }
 
-            if (party.LoginElements?.Any() == true)
+            if (party.Elements?.Any() == true)
             {
-                if (!validateApiModelDynamicElementLogic.ValidateApiModelLoginElements(modelState, party.LoginElements))
+                if (!validateApiModelDynamicElementLogic.ValidateApiModelLoginElements(modelState, party.Elements))
                 {
                     isValid = false;
                 }
             }
             else
             {
-                party.LoginElements = null;
+                party.Elements = null;
             }
 
             if (party.CreateUser != null)

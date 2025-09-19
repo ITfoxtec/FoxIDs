@@ -127,7 +127,7 @@ namespace FoxIDs.Models.Api
         [ValidateComplexType]
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [Display(Name = "Login UI elements")]
-        public List<DynamicElement> LoginElements { get; set; } = new List<DynamicElement>();
+        public List<DynamicElement> Elements { get; set; } = new List<DynamicElement>();
 
         /// <summary>
         /// Default 10 hours.

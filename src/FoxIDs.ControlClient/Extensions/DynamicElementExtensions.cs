@@ -37,32 +37,24 @@ namespace FoxIDs.Client
                     Name = Constants.Models.DynamicElements.LoginInputElementName,
                     Type = DynamicElementTypes.LoginInput,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new T
                 {
                     Name = Constants.Models.DynamicElements.LoginButtonElementName,
                     Type = DynamicElementTypes.LoginButton,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new T
                 {
                     Name = Constants.Models.DynamicElements.LoginLinkElementName,
                     Type = DynamicElementTypes.LoginLink,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new T
                 {
                     Name = Constants.Models.DynamicElements.LoginHrdElementName,
                     Type = DynamicElementTypes.LoginHrd,
                     Order = order,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = false
                 }
             };
         }

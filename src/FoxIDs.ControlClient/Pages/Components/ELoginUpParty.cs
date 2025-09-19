@@ -57,7 +57,7 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapOAuthClaimTransforms();
                 }
 
-                afterMap.LoginElements = afterMap.LoginElements.EnsureLoginDynamicDefaults().MapDynamicElementsAfterMap();
+                afterMap.Elements = afterMap.Elements.EnsureLoginDynamicDefaults().MapDynamicElementsAfterMap();
                 afterMap.ExtendedUis.MapExtendedUis();
 
                 if (afterMap.ExitClaimTransforms?.Count > 0)
@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 generalLoginUpParty.Form.Model.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
-                generalLoginUpParty.Form.Model.LoginElements = generalLoginUpParty.Form.Model.LoginElements.EnsureLoginDynamicDefaults().MapDynamicElementsAfterMap();
+                generalLoginUpParty.Form.Model.Elements = generalLoginUpParty.Form.Model.Elements.EnsureLoginDynamicDefaults().MapDynamicElementsAfterMap();
                 generalLoginUpParty.Form.Model.ExtendedUis.MapExtendedUisBeforeMap();
                 generalLoginUpParty.Form.Model.ExitClaimTransforms.MapOAuthClaimTransformsBeforeMap();
                 generalLoginUpParty.Form.Model.CreateUser?.ClaimTransforms.MapOAuthClaimTransformsBeforeMap();
@@ -99,7 +99,7 @@ namespace FoxIDs.Client.Pages.Components
                     var loginUpPartyResult = await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
                         afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                        afterMap.LoginElements.MapDynamicElementsAfterMap();
+                        afterMap.Elements.MapDynamicElementsAfterMap();
                         if (afterMap.CreateUser != null)
                         {
                             afterMap.CreateUser.Elements.MapDynamicElementsAfterMap();
@@ -125,7 +125,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
 
                         afterMap.ClaimTransforms.MapOAuthClaimTransformsAfterMap();
-                        afterMap.LoginElements.MapDynamicElementsAfterMap();
+                        afterMap.Elements.MapDynamicElementsAfterMap();
                         if (afterMap.CreateUser != null)
                         {
                             afterMap.CreateUser.Elements.MapDynamicElementsAfterMap();

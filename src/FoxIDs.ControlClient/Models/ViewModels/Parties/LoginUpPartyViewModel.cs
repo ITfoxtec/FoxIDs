@@ -164,7 +164,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [Display(Name = "Login UI elements")]
-        public List<DynamicElementViewModel> LoginElements { get; set; } = new List<DynamicElementViewModel>();
+        public List<DynamicElementViewModel> Elements { get; set; } = new List<DynamicElementViewModel>();
 
         /// <summary>
         /// Home realm discovery (HRD) IP addresses and IP ranges.
@@ -253,4 +253,3 @@ namespace FoxIDs.Client.Models.ViewModels
         }
     }
 }
-

@@ -109,49 +109,35 @@ namespace FoxIDs.Logic
                     Name = Constants.Models.DynamicElements.LoginInputElementName,
                     Type = DynamicElementTypes.LoginInput,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new DynamicElement
                 {
                     Name = Constants.Models.DynamicElements.LoginButtonElementName,
                     Type = DynamicElementTypes.LoginButton,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new DynamicElement
                 {
                     Name = Constants.Models.DynamicElements.LoginLinkElementName,
                     Type = DynamicElementTypes.LoginLink,
                     Order = order++,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = true
                 },
                 new DynamicElement
                 {
                     Name = Constants.Models.DynamicElements.LoginHrdElementName,
                     Type = DynamicElementTypes.LoginHrd,
                     Order = order,
-                    ShowOnIdentifier = true,
-                    ShowOnPassword = false
                 }
             };
         }
 
-        public List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements, bool identifierPage)
+        public List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements)
         {
             var result = new List<DynamicElementBase>();
             if (elements?.Count > 0)
             {
                 foreach (var element in elements.OrderBy(e => e.Order))
                 {
-                    var showElement = identifierPage ? element.ShowOnIdentifier : element.ShowOnPassword;
-                    if (!showElement)
-                    {
-                        continue;
-                    }
-
                     if (element.Type == DynamicElementTypes.LoginInput)
                     {
                         result.Add(new LognInputDElement { Name = element.Name });

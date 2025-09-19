@@ -134,36 +134,36 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        public bool ValidateApiModelLoginElements(ModelStateDictionary modelState, List<Api.DynamicElement> loginElements)
+        public bool ValidateApiModelLoginElements(ModelStateDictionary modelState, List<Api.DynamicElement> elements)
         {
             var isValid = true;
             try
             {
-                if (loginElements?.Count() > 0)
+                if (elements?.Count() > 0)
                 {
-                    AddDefaultNames(loginElements);
-                    ValidateRegEx(loginElements);
-                    ValidateHtml(loginElements);
-                    ValidateDuplicatedOrderNumber(loginElements);
+                    AddDefaultNames(elements);
+                    ValidateRegEx(elements);
+                    ValidateHtml(elements);
+                    ValidateDuplicatedOrderNumber(elements);
 
-                    if (loginElements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginHrd))
+                    if (elements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginHrd))
                     {
                         throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginHrd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
                     }
 
-                    if (loginElements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
+                    if (elements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
                     {
                         throw new ValidationException("Login UI must max contain one login input element.");
                     }
-                    if (loginElements.Count(e => e.Type == Api.DynamicElementTypes.LoginButton) > 1)
+                    if (elements.Count(e => e.Type == Api.DynamicElementTypes.LoginButton) > 1)
                     {
                         throw new ValidationException("Login UI must max contain one login button element.");
                     }
-                    if (loginElements.Count(e => e.Type == Api.DynamicElementTypes.LoginLink) > 1)
+                    if (elements.Count(e => e.Type == Api.DynamicElementTypes.LoginLink) > 1)
                     {
                         throw new ValidationException("Login UI must max contain one login link element.");
                     }
-                    var loginHrdElements = loginElements.Where(e => e.Type == Api.DynamicElementTypes.LoginHrd).ToList();
+                    var loginHrdElements = elements.Where(e => e.Type == Api.DynamicElementTypes.LoginHrd).ToList();
                     if (loginHrdElements.Count > 1)
                     {
                         throw new ValidationException("Login UI must max contain one login HRD element.");
@@ -172,7 +172,7 @@ namespace FoxIDs.Logic
                     if (loginHrdElements.Count == 1)
                     {
                         var loginHrd = loginHrdElements.First();
-                        if (loginElements.Any(e => e.Order > loginHrd.Order && (e.Type == Api.DynamicElementTypes.LoginInput || e.Type == Api.DynamicElementTypes.LoginButton || e.Type == Api.DynamicElementTypes.LoginLink)))
+                        if (elements.Any(e => e.Order > loginHrd.Order && (e.Type == Api.DynamicElementTypes.LoginInput || e.Type == Api.DynamicElementTypes.LoginButton || e.Type == Api.DynamicElementTypes.LoginLink)))
                         {
                             throw new ValidationException("Login HRD element must be the last login placeholder element.");
                         }
@@ -183,7 +183,7 @@ namespace FoxIDs.Logic
             {
                 isValid = false;
                 logger.Warning(vex);
-                modelState.TryAddModelError(nameof(Api.LoginUpParty.LoginElements).ToCamelCase(), vex.Message);
+                modelState.TryAddModelError(nameof(Api.LoginUpParty.Elements).ToCamelCase(), vex.Message);
             }
             return isValid;
         }

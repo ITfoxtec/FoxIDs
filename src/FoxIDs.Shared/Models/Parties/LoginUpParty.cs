@@ -110,7 +110,7 @@ namespace FoxIDs.Models
 
         [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [JsonProperty(PropertyName = "login_elements")]
-        public List<DynamicElement> LoginElements { get; set; } = new List<DynamicElement>();
+        public List<DynamicElement> Elements { get; set; } = new List<DynamicElement>();
 
         [ValidateComplexType]
         [JsonProperty(PropertyName = "create_user")]
@@ -160,6 +160,3 @@ namespace FoxIDs.Models
         }
     }
 }
-
-
-

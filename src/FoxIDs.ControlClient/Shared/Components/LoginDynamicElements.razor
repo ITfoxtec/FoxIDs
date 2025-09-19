@@ -4,7 +4,7 @@
 @using System.Linq
 
 <div class="form-group active-group active pt-0">
-    <div class="info-text">Add optional content elements to the login pages. Elements can be shown on the user identifier page, the password page, or both.</div>
+    <div class="info-text">Add optional content elements to every login page.</div>
     <ul class="list-group">
         @if (Model?.Count > 0)
         {
@@ -33,7 +33,7 @@
                             else if (element.Type == DynamicElementTypes.LoginHrd)
                             {
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Authentication chooser</div>
-                                <div class="info-text pb-0 mb-0">Marks where the list of external login options (HRD) is rendered.</div>
+                                <div class="info-text pb-0 mb-0">Marks where the list of external login options (HRD) is rendered. The element has to be below the 'Login input fields', 'Login buttons' and 'Login link selection' elements.</div>
                             }
                             else if (element.Type == DynamicElementTypes.Text)
                             {
@@ -82,15 +82,7 @@
                             </div>
                         </div>
                     }
-                    @if (isPlaceholder)
-                    {
-                        <div class="row">
-                            <div class="col-12">
-                                <FInputToggle @bind-Value="element.ShowOnIdentifier" For="@(() => element.ShowOnIdentifier)" TextType="y.n" LabelText="Show on user identifier page" />
-                                <FInputToggle @bind-Value="element.ShowOnPassword" For="@(() => element.ShowOnPassword)" TextType="y.n" LabelText="Show on password pages" />
-                            </div>
-                        </div>
-                    }
+
                     @if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
                     {
                         <div class="row">
@@ -132,9 +124,7 @@
     {
         var element = new DynamicElementViewModel
         {
-            Type = type,
-            ShowOnIdentifier = true,
-            ShowOnPassword = true
+            Type = type
         };
         element.Name = RandomName.GenerateDefaultName(Model.Select(e => e.Name));
         Model.Add(element);
@@ -171,4 +161,3 @@
         StateHasChanged();
     }
 }
-

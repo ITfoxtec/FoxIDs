@@ -25,12 +25,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Login user identifier")]
         public bool IsUserIdentifier { get; set; }
 
-        [Display(Name = "Show on user identifier page")]
-        public bool ShowOnIdentifier { get; set; }
-
-        [Display(Name = "Show on password pages")]
-        public bool ShowOnPassword { get; set; }
-
         [MaxLength(Constants.Models.DynamicElements.ContentLength)]
         [Display(Name = "Text or HTML content")]
         public string Content { get; set; }

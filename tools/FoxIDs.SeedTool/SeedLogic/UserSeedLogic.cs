@@ -1,4 +1,4 @@
-﻿using FoxIDs.SeedTool.Logic;
+using FoxIDs.SeedTool.Logic;
 using FoxIDs.SeedTool.Models;
 using ITfoxtec.Identity;
 using System;
@@ -43,23 +43,36 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine("**Upload users**");
             var headers = new List<string>();
             var firstLine = true;
-            var addCount = 0;
             var stop = false;
-            var users = new List<CreateUserApiModel>();            
+            var users = new List<UserSeedItem>();
+            var lineNumber = 0;
+            var totalUsers = 0;
+            var successUsers = 0;
+            var failedUsers = 0;
+
             using (var streamReader = File.OpenText(settings.UsersSvcPath))
             {
                 while (streamReader.Peek() >= 0)
                 {
-                    var items = GetItems(streamReader.ReadLine());
+                    var line = streamReader.ReadLine();
+                    lineNumber++;
+
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    var items = GetItems(line).ToList();
+
                     if (firstLine)
                     {
                         headers.AddRange(items);
-                        if (headers.Count() < 2)
+                        if (headers.Count < 2)
                         {
                             throw new Exception("At least two headers is required.");
                         }
                         var duplicatedHeader = headers.GroupBy(h => h).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                        if (headers.GroupBy(h => h).Where(g => g.Count() > 1).Any())
+                        if (duplicatedHeader != null)
                         {
                             throw new ValidationException($"Duplicated header '{duplicatedHeader}'");
                         }
@@ -67,35 +80,58 @@ namespace FoxIDs.SeedTool.SeedLogic
                     }
                     else
                     {
-                        if (headers.Count() != items.Count())
+                        totalUsers++;
+
+                        if (headers.Count != items.Count)
                         {
-                            throw new Exception("Not the same number of elements in the line as headers.");
+                            failedUsers++;
+                            LogLineIssue(lineNumber, GetIdentifier(headers, items), "Not the same number of elements in the line as headers.");
+                            continue;
                         }
 
-                        users.Add(GetCreateUserApiModel(headers, items));
-                        addCount++;
+                        try
+                        {
+                            var user = GetCreateUserApiModel(headers, items);
+                            var identifier = GetUserIdentifier(user) ?? GetIdentifier(headers, items);
+                            users.Add(new UserSeedItem(user, lineNumber, identifier));
 
-                        if (maxUserToUpload > 0 && users.Count() >= maxUserToUpload)
-                        {
-                            await UploadAsync(users, addCount);
-                            stop = true;
-                            break;
+                            if (maxUserToUpload > 0 && users.Count >= maxUserToUpload)
+                            {
+                                var uploadResult = await UploadAsync(users);
+                                successUsers += uploadResult.SuccessCount;
+                                failedUsers += uploadResult.FailureCount;
+                                Console.WriteLine($"Users uploaded so far: {successUsers} (processed lines: {totalUsers}).");
+                                stop = true;
+                                break;
+                            }
+
+                            if ((!calculatePasswordHash && users.Count(u => !u.User.Password.IsNullOrWhiteSpace()) >= uploadUsersWithPasswordBlockSize) || users.Count >= uploadUsersBlockSize)
+                            {
+                                var uploadResult = await UploadAsync(users);
+                                successUsers += uploadResult.SuccessCount;
+                                failedUsers += uploadResult.FailureCount;
+                                Console.WriteLine($"Users uploaded so far: {successUsers} (processed lines: {totalUsers}).");
+                                users = new List<UserSeedItem>();
+                            }
                         }
-                        if ((!calculatePasswordHash && users.Where(u => !u.Password.IsNullOrWhiteSpace()).Count() >= uploadUsersWithPasswordBlockSize) || users.Count() >= uploadUsersBlockSize)
+                        catch (Exception ex)
                         {
-                            await UploadAsync(users, addCount);
-                            users = new List<CreateUserApiModel>();
+                            failedUsers++;
+                            LogLineIssue(lineNumber, GetIdentifier(headers, items), ex.GetBaseException().Message);
                         }
                     }
                 }
 
-                if (!stop && users.Count() > 0)
+                if (!stop && users.Count > 0)
                 {
-                    await UploadAsync(users, addCount);
+                    var uploadResult = await UploadAsync(users);
+                    successUsers += uploadResult.SuccessCount;
+                    failedUsers += uploadResult.FailureCount;
+                    Console.WriteLine($"Users uploaded so far: {successUsers} (processed lines: {totalUsers}).");
                 }
             }
 
-            Console.WriteLine($"{Environment.NewLine}Total uploaded users: {addCount}.");
+            Console.WriteLine($"{Environment.NewLine}Upload complete. Total users: {totalUsers}. Uploaded: {successUsers}. Not uploaded: {failedUsers}.");
         }
 
         private CreateUserApiModel GetCreateUserApiModel(List<string> headers, IEnumerable<string> items)
@@ -133,7 +169,93 @@ namespace FoxIDs.SeedTool.SeedLogic
                 itemValue = itemValue.Replace("\"\"", "\"");
                 yield return itemValue;
             }
-        }   
+        }
+
+
+        private static string GetUserIdentifier(CreateUserApiModel user)
+        {
+            if (user == null)
+            {
+                return null;
+            }
+
+            var identifiers = new List<string>();
+            if (!user.Email.IsNullOrWhiteSpace())
+            {
+                identifiers.Add($"Email: {user.Email}");
+            }
+            if (!user.Username.IsNullOrWhiteSpace())
+            {
+                identifiers.Add($"Username: {user.Username}");
+            }
+            if (!user.Phone.IsNullOrWhiteSpace())
+            {
+                identifiers.Add($"Phone: {user.Phone}");
+            }
+
+            if (identifiers.Count == 0)
+            {
+                return null;
+            }
+
+            return string.Join(", ", identifiers);
+        }
+
+        private static string GetIdentifier(List<string> headers, List<string> items)
+        {
+            if (headers == null || items == null)
+            {
+                return null;
+            }
+
+            var candidates = new[] { "Email", "Username", "Phone" };
+            foreach (var candidate in candidates)
+            {
+                var index = headers.FindIndex(h => string.Equals(h, candidate, StringComparison.OrdinalIgnoreCase));
+                if (index >= 0 && index < items.Count)
+                {
+                    var value = items[index];
+                    if (!value.IsNullOrWhiteSpace())
+                    {
+                        return $"{candidate}: {value}";
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static int GetCsvDataLineNumber(int lineNumber)
+        {
+            if (lineNumber <= 1)
+            {
+                return 1;
+            }
+
+            return lineNumber - 1;
+        }
+
+
+        private static void LogLineIssue(int lineNumber, string identifier, string message)
+        {
+            var displayLineNumber = GetCsvDataLineNumber(lineNumber);
+            var identifierText = string.IsNullOrWhiteSpace(identifier) ? string.Empty : $" ({identifier})";
+            Console.WriteLine($"Line {displayLineNumber}{identifierText}: {message}");
+        }
+
+        private static void LogBatchFailure(List<UserSeedItem> userItems, Exception exception)
+        {
+            if (userItems == null || userItems.Count == 0)
+            {
+                Console.WriteLine("Batch upload failed. Retrying individually.");
+                return;
+            }
+
+            var firstLine = GetCsvDataLineNumber(userItems.Min(u => u.LineNumber));
+            var lastLine = GetCsvDataLineNumber(userItems.Max(u => u.LineNumber));
+            var rangeText = firstLine == lastLine ? $"line {firstLine}" : $"lines {firstLine}-{lastLine}";
+            Console.WriteLine($"Batch upload failed for {rangeText}. Retrying individually.");
+        }
 
         private async Task<List<CreateUserApiModel>> PasswordToHashPassword(List<CreateUserApiModel> users)
         {
@@ -181,18 +303,103 @@ namespace FoxIDs.SeedTool.SeedLogic
             return users;
         }
 
+        private async Task<UploadResult> UploadAsync(List<UserSeedItem> userItems)
+        {
+            if (userItems == null || userItems.Count == 0)
+            {
+                return new UploadResult(0, 0);
+            }
+
+            var accessToken = await accessLogic.GetAccessTokenAsync();
+            var usersToUpload = userItems.Select(u => u.User).ToList();
+
+            try
+            {
+                var preparedUsers = await PasswordToHashPassword(usersToUpload);
+                await SavePasswordsRiskListAsync(accessToken, preparedUsers);
+                return new UploadResult(userItems.Count, 0);
+            }
+            catch (Exception ex)
+            {
+                LogBatchFailure(userItems, ex);
+                return await UploadUsersOneByOneAsync(accessToken, userItems);
+            }
+        }
+
+        private async Task<UploadResult> UploadUsersOneByOneAsync(string accessToken, List<UserSeedItem> userItems)
+        {
+            var successCount = 0;
+            var failureCount = 0;
+            var dotPrinted = false;
+
+            foreach (var item in userItems)
+            {
+                try
+                {
+                    var singleUser = new List<CreateUserApiModel> { item.User };
+                    var preparedUser = await PasswordToHashPassword(singleUser);
+                    await SavePasswordsRiskListAsync(accessToken, preparedUser);
+                    successCount++;
+                    if (successCount % 100 == 0)
+                    {
+                        Console.Write('.');
+                        dotPrinted = true;
+                        dotPrinted = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failureCount++;
+                    if (dotPrinted)
+                    {
+                        Console.WriteLine();
+                        dotPrinted = false;
+                    }
+                    LogLineIssue(item.LineNumber, item.Identifier, $"Upload failed. {ex.GetBaseException().Message}");
+                }
+            }
+
+            if (dotPrinted)
+            {
+                Console.WriteLine();
+            }
+
+            return new UploadResult(successCount, failureCount);
+        }
+
+        private sealed class UserSeedItem
+        {
+            public UserSeedItem(CreateUserApiModel user, int lineNumber, string identifier)
+            {
+                User = user;
+                LineNumber = lineNumber;
+                Identifier = identifier;
+            }
+
+            public CreateUserApiModel User { get; }
+
+            public int LineNumber { get; }
+
+            public string Identifier { get; }
+        }
+
+        private sealed class UploadResult
+        {
+            public UploadResult(int successCount, int failureCount)
+            {
+                SuccessCount = successCount;
+                FailureCount = failureCount;
+            }
+
+            public int SuccessCount { get; }
+
+            public int FailureCount { get; }
+        }
         private class UserHash : ISecretHash
         {
             public string HashAlgorithm { get; set; }
             public string Hash { get; set; }
             public string HashSalt { get; set; }
-        }
-
-        private async Task UploadAsync(List<CreateUserApiModel> users, int addCount)
-        {
-            var accessToken = await accessLogic.GetAccessTokenAsync();
-            await SavePasswordsRiskListAsync(accessToken, await PasswordToHashPassword(users));
-            Console.WriteLine($"Users uploaded: {addCount}");
         }
 
         public async Task DeleteAllAsync()
@@ -280,3 +487,4 @@ namespace FoxIDs.SeedTool.SeedLogic
         }
     }
 }
+

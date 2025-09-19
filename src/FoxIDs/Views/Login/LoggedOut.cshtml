@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @inject IViewLocalizer Localizer
 @inject IStringLocalizer StringLocalizer
@@ -12,7 +12,7 @@
 
 @foreach (var element in Model.Elements)
 {
-    if (element is LognInputDElement)
+    if (element is LoginInputDElement)
     {
         <div class="row page-container name-logged-out">
             <div class="col-md page-content">

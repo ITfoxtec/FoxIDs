@@ -140,7 +140,7 @@ namespace FoxIDs.Logic
                 {
                     if (element.Type == DynamicElementTypes.LoginInput)
                     {
-                        result.Add(new LognInputDElement { Name = element.Name });
+                        result.Add(new LoginInputDElement { Name = element.Name });
                     }
                     else if (element.Type == DynamicElementTypes.LoginButton)
                     {

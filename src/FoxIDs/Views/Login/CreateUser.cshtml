@@ -13,15 +13,11 @@
 
 <div class="row page-container name-create-user">
     <div class="col-md page-content">
-        @{
-            var dynamicElements = Model.Elements ?? new List<DynamicElementBase>();
-        }
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-
-            @foreach (var element in dynamicElements)
+            @foreach (var element in Model.Elements)
             {
-                if (element is LognInputDElement)
+                if (element is LoginInputDElement)
                 {
                     await Html.RenderPartialAsync("_DynamicElements", Model.CreateUserElements);
                 }

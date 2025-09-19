@@ -28,7 +28,7 @@
                 <div asp-validation-summary="ModelOnly"></div>
                 @foreach (var element in formElements)
                 {
-                    if (element is LognInputDElement)
+                    if (element is LoginInputDElement)
                     {
                         await Html.RenderPartialAsync("_UserIdentifier", Model);
                     }
@@ -134,10 +134,6 @@
                         @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
                     }
                 </div>
-            }
-            else if (element is LoginButtonDElement || element is LoginLinkDElement || element is LoginHrdDElement)
-            {
-                // Ignore placeholder elements rendered after the login form.
             }
             else
             {

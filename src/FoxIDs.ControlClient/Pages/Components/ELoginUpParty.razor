@@ -45,16 +45,6 @@
                 }
             </li>
             <li class="nav-item">
-                @if (loginUpParty.ShowClaimTransformTab)
-                {
-                    <a class="nav-link active">Claim Transform</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
-                }
-            </li>
-            <li class="nav-item">
                 @if (loginUpParty.ShowLoginUiTab)
                 {
                     <a class="nav-link active">Login UI</a>
@@ -64,17 +54,31 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.LoginUi))">Login UI</button>
                 }
             </li>
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <li class="nav-item">
+                    @if (loginUpParty.ShowExtendedUiTab)
+                    {
+                        <a class="nav-link active">Extended UI</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ExtendedUi))">Extended UI</button>
+                    }
+                </li>
+            }
             <li class="nav-item">
-                @if (loginUpParty.ShowExtendedUiTab)
+                @if (loginUpParty.ShowClaimTransformTab)
                 {
-                    <a class="nav-link active">Extended UI</a>
+                    <a class="nav-link active">Claim Transform</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ExtendedUi))">Extended UI</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
-            @if (loginUpParty.Form.Model.EnableCreateUser) {
+            @if (loginUpParty.Form.Model.EnableCreateUser)
+            {
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
                     {
@@ -171,6 +175,9 @@
                     </FInputSelect>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
                 }
+            }
+            else if (loginUpParty.ShowLoginUiTab)
+            {
                 <div class="active-group active">
                     <div class="card">
                         <div class="card-body pt-2 pb-0">
@@ -181,6 +188,17 @@
                     </div>
                     <label class="label-control">Customize login UI</label>
                 </div>
+                @if (loginUpParty.ShowAdvanced)
+                {
+                    <LoginDynamicElements Model="loginUpParty.Form.Model.Elements" />
+                }
+            }
+            else if (loginUpParty.ShowExtendedUiTab)
+            {
+                @if (loginUpParty.Form.Model.ExtendedUis != null)
+                {
+                    <ExtendedUi Model="loginUpParty.Form.Model.ExtendedUis" />
+                }
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {
@@ -209,17 +227,6 @@
                 <div class="alert alert-info" role="alert">
                     If you create a new claim in the claim transforms the claim is forwarded to the application registration where you need to add the claim or '*' to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
-            }
-            else if (loginUpParty.ShowLoginUiTab)
-            {
-                <LoginDynamicElements Model="loginUpParty.Form.Model.Elements" />
-            }
-            else if (loginUpParty.ShowExtendedUiTab)
-            {
-                @if (loginUpParty.Form.Model.ExtendedUis != null)
-                {
-                    <ExtendedUi Model="loginUpParty.Form.Model.ExtendedUis" />
-                }
             }
             else if (loginUpParty.ShowCreateUserTab)
             {

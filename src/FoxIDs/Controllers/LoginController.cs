@@ -1627,6 +1627,10 @@ namespace FoxIDs.Controllers
         private List<DynamicElement> GetLoginElements(LoginUpParty loginUpParty)
         {
             var elements = dynamicElementLogic.EnsureLoginElements(loginUpParty.LoginElements);
+            if (!object.ReferenceEquals(elements, loginUpParty.LoginElements))
+            {
+                loginUpParty.LoginElements = elements;
+            }
             securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
             return elements;
         }

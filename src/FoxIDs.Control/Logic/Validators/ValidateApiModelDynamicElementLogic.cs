@@ -146,14 +146,36 @@ namespace FoxIDs.Logic
                     ValidateHtml(loginElements);
                     ValidateDuplicatedOrderNumber(loginElements);
 
-                    if (loginElements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginEnd))
+                    if (loginElements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginHrd))
                     {
-                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginEnd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
+                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginHrd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
                     }
 
                     if (loginElements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
                     {
                         throw new ValidationException("Login UI must max contain one login input element.");
+                    }
+                    if (loginElements.Count(e => e.Type == Api.DynamicElementTypes.LoginButton) > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login button element.");
+                    }
+                    if (loginElements.Count(e => e.Type == Api.DynamicElementTypes.LoginLink) > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login link element.");
+                    }
+                    var loginHrdElements = loginElements.Where(e => e.Type == Api.DynamicElementTypes.LoginHrd).ToList();
+                    if (loginHrdElements.Count > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login HRD element.");
+                    }
+
+                    if (loginHrdElements.Count == 1)
+                    {
+                        var loginHrd = loginHrdElements.First();
+                        if (loginElements.Any(e => e.Order > loginHrd.Order && (e.Type == Api.DynamicElementTypes.LoginInput || e.Type == Api.DynamicElementTypes.LoginButton || e.Type == Api.DynamicElementTypes.LoginLink)))
+                        {
+                            throw new ValidationException("Login HRD element must be the last login placeholder element.");
+                        }
                     }
                 }
             }

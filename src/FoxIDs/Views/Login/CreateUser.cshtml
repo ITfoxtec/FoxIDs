@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @inject IViewLocalizer Localizer
 @inject IStringLocalizer StringLocalizer
@@ -12,14 +13,31 @@
 
 <div class="row page-container name-create-user">
     <div class="col-md page-content">
+        @{
+            var dynamicElements = Model.Elements ?? new List<DynamicElementBase>();
+        }
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
 
-            @foreach (var element in Model.Elements)
+            @foreach (var element in dynamicElements)
             {
                 if (element is LognInputDElement)
                 {
                     await Html.RenderPartialAsync("_DynamicElements", Model.CreateUserElements);
+                }
+                else if (element is LoginButtonDElement)
+                {
+                    <div class="form-group button-group">
+                        <div>
+                            <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
+                        </div>
+                    </div>
+                }
+                else if (element is LoginLinkDElement)
+                {
+                    <div class="form-group button-group existing-user-group">
+                        <a href="../../_@Model.SequenceString" class="link">@Localizer["Log in with your existing user"]</a>
+                    </div>
                 }
                 else if (element is ContentDElement contentDElement)
                 {
@@ -34,20 +52,11 @@
                         }
                     </div>
                 }
-                else
+                else if (!(element is LoginHrdDElement))
                 {
                     throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
                 }
             }
-
-            <div class="form-group button-group">
-                <div>
-                    <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
-                </div>
-            </div>
-            <div class="form-group button-group existing-user-group">
-                <a href="../../_@Model.SequenceString" class="link">@Localizer["Log in with your existing user"]</a>
-            </div>
         </form>
     </div>
 </div>

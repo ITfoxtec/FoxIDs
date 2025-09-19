@@ -10,7 +10,7 @@
         {
             foreach (var element in Model)
             {
-                var isPlaceholder = element.Type == DynamicElementTypes.LoginInput || element.Type == DynamicElementTypes.LoginButton || element.Type == DynamicElementTypes.LoginLink || element.Type == DynamicElementTypes.LoginEnd;
+                var isPlaceholder = element.Type == DynamicElementTypes.LoginInput || element.Type == DynamicElementTypes.LoginButton || element.Type == DynamicElementTypes.LoginLink || element.Type == DynamicElementTypes.LoginHrd;
 
                 <li class="list-group-item">
                     <div class="row">
@@ -19,6 +19,21 @@
                             {
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Login input fields</div>
                                 <div class="info-text pb-0 mb-0">Displays the built-in login input fields.</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.LoginButton)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Login buttons</div>
+                                <div class="info-text pb-0 mb-0">Controls the primary login actions such as submit and cancel.</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.LoginLink)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Login link section</div>
+                                <div class="info-text pb-0 mb-0">Hosts supplemental links like "create user" or alternative authentication paths.</div>
+                            }
+                            else if (element.Type == DynamicElementTypes.LoginHrd)
+                            {
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Authentication chooser</div>
+                                <div class="info-text pb-0 mb-0">Marks where the list of external login options (HRD) is rendered.</div>
                             }
                             else if (element.Type == DynamicElementTypes.Text)
                             {

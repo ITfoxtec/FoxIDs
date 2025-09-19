@@ -35,6 +35,10 @@
             }
         </div>
     }
+    else if (element is LoginButtonDElement || element is LoginLinkDElement || element is LoginHrdDElement)
+    {
+        // Placeholder elements ignored on logged-in view.
+    }
     else
     {
         throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");

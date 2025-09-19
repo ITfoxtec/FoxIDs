@@ -21,6 +21,6 @@ namespace FoxIDs.Models.Api
         LoginInput = 2010,
         LoginButton = 2020,
         LoginLink = 2030,
-        LoginEnd = 2040
+        LoginHrd = 2040
     }
 }

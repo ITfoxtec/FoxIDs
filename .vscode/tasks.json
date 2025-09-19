@@ -8,10 +8,14 @@
 			"args": [
 				"build",
 				"${workspaceFolder}/src/FoxIDs/FoxIDs.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
 			],
-			"problemMatcher": "$msCompile"
+			"problemMatcher": "$msCompile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		},
 		{
 			"label": "build FoxIDs.Control",
@@ -20,8 +24,8 @@
 			"args": [
 				"build",
 				"${workspaceFolder}/src/FoxIDs.Control/FoxIDs.Control.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
 			],
 			"problemMatcher": "$msCompile"
 		}

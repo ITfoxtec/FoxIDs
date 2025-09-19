@@ -603,6 +603,9 @@ namespace FoxIDs
                 public const int ErrorMessageLength = Resource.ValueLength;
 
                 public const string LoginInputElementName = "logininput";
+                public const string LoginButtonElementName = "loginbutton";
+                public const string LoginLinkElementName = "loginlink";
+                public const string LoginHrdElementName = "loginhrd";
             }
 
             public static class Claim

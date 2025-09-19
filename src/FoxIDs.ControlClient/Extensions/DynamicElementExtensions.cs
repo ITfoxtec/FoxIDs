@@ -24,20 +24,47 @@ namespace FoxIDs.Client
         {
             elements ??= new List<T>();
 
-            var loginInputElements = elements.Where(e => e.Type == DynamicElementTypes.LoginInput).ToList();
-            if (loginInputElements.Count == 0)
+            if (elements.Any(e => e.Type == DynamicElementTypes.LoginInput))
             {
-                var identifier = new T
+                return elements;
+            }
+
+            var order = Constants.Models.DynamicElements.ElementsOrderMin;
+            return new List<T>
+            {
+                new T
                 {
                     Name = Constants.Models.DynamicElements.LoginInputElementName,
                     Type = DynamicElementTypes.LoginInput,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new T
+                {
+                    Name = Constants.Models.DynamicElements.LoginButtonElementName,
+                    Type = DynamicElementTypes.LoginButton,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new T
+                {
+                    Name = Constants.Models.DynamicElements.LoginLinkElementName,
+                    Type = DynamicElementTypes.LoginLink,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new T
+                {
+                    Name = Constants.Models.DynamicElements.LoginHrdElementName,
+                    Type = DynamicElementTypes.LoginHrd,
+                    Order = order,
                     ShowOnIdentifier = true,
                     ShowOnPassword = false
-                };
-                elements.Insert(0, identifier);
-            }
-
-            return elements;
+                }
+            };
         }
     }
 }

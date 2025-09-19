@@ -37,7 +37,7 @@ namespace FoxIDs.Models
         LoginButton = 2020,
         [EnumMember(Value = "login_link")]
         LoginLink = 2030,
-        [EnumMember(Value = "login_end")]
-        LoginEnd = 2040
+        [EnumMember(Value = "login_hrd")]
+        LoginHrd = 2040
     }
 }

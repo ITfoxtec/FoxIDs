@@ -96,20 +96,47 @@ namespace FoxIDs.Logic
         {
             var list = elements ?? new List<DynamicElement>();
 
-            var identifierElements = list.Where(e => e.Type == DynamicElementTypes.LoginInput).ToList();
-            if (identifierElements.Count == 0)
+            if (list.Any(e => e.Type == DynamicElementTypes.LoginInput))
             {
-                var identifier = new DynamicElement
+                return list;
+            }
+
+            var order = Constants.Models.DynamicElements.ElementsOrderMin;
+            return new List<DynamicElement>
+            {
+                new DynamicElement
                 {
                     Name = Constants.Models.DynamicElements.LoginInputElementName,
                     Type = DynamicElementTypes.LoginInput,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginButtonElementName,
+                    Type = DynamicElementTypes.LoginButton,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginLinkElementName,
+                    Type = DynamicElementTypes.LoginLink,
+                    Order = order++,
+                    ShowOnIdentifier = true,
+                    ShowOnPassword = true
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginHrdElementName,
+                    Type = DynamicElementTypes.LoginHrd,
+                    Order = order,
                     ShowOnIdentifier = true,
                     ShowOnPassword = false
-                };
-                list.Insert(0, identifier);
-            }
-
-            return list;
+                }
+            };
         }
 
         public List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements, bool identifierPage)
@@ -119,13 +146,27 @@ namespace FoxIDs.Logic
             {
                 foreach (var element in elements.OrderBy(e => e.Order))
                 {
-                    if (identifierPage && element.Type == DynamicElementTypes.LoginInput)
+                    var showElement = identifierPage ? element.ShowOnIdentifier : element.ShowOnPassword;
+                    if (!showElement)
+                    {
+                        continue;
+                    }
+
+                    if (element.Type == DynamicElementTypes.LoginInput)
                     {
                         result.Add(new LognInputDElement { Name = element.Name });
                     }
-                    else if (!identifierPage && element.Type == DynamicElementTypes.Password)
+                    else if (element.Type == DynamicElementTypes.LoginButton)
                     {
-                        result.Add(new LognInputDElement { Name = element.Name });
+                        result.Add(new LoginButtonDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.LoginLink)
+                    {
+                        result.Add(new LoginLinkDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.LoginHrd)
+                    {
+                        result.Add(new LoginHrdDElement { Name = element.Name });
                     }
                     else if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
                     {
@@ -346,7 +387,7 @@ namespace FoxIDs.Logic
                     case DynamicElementTypes.LoginInput:
                     case DynamicElementTypes.LoginButton:
                     case DynamicElementTypes.LoginLink:
-                    case DynamicElementTypes.LoginEnd:
+                    case DynamicElementTypes.LoginHrd:
                         return null;
                     default:
                         throw new NotSupportedException();

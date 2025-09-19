@@ -15,7 +15,7 @@
             <div class="info-message">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your phone."] : Localizer["A two-factor code has just been sent to your phone."])</div>
             <div asp-validation-summary="ModelOnly"></div>
             @{
-                await Html.RenderPartialAsync("_UserIdentifiers");
+                await Html.RenderPartialAsync("_UserIdentifier");
             }
             <div class="form-group active-group">
                 <input asp-for="Code" autocomplete="off" class="form-control input-control" autofocus />

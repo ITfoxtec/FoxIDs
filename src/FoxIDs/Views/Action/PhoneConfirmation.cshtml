@@ -28,7 +28,7 @@
             </div>
             <div asp-validation-summary="ModelOnly"></div>
             @{
-                await Html.RenderPartialAsync("_UserIdentifiers");
+                await Html.RenderPartialAsync("_UserIdentifier");
             }
             <div class="form-group active-group">
                 <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />

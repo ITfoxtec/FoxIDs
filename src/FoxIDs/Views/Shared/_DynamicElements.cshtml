@@ -67,16 +67,7 @@
         }
         else if (item is ContentDElement contentDElement)
         {
-            <div class="form-group active-group @cssName">
-                @if (contentDElement.IsHtml) 
-                {
-                    @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
-                }
-                else
-                {
-                    @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
-                }
-            </div>
+            await Html.RenderPartialAsync("_DynamicContentElements", item);
         }
         else
         {

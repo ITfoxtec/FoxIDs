@@ -1,7 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.Localization
-@using Microsoft.Extensions.Localization
 @inject IViewLocalizer Localizer
-@inject IStringLocalizer StringLocalizer
 @model LoggedInViewModel
 
 @{
@@ -24,16 +22,7 @@
     }
     else if (element is ContentDElement contentDElement)
     {
-        <div class="form-group active-group login-dynamic-element">
-            @if (contentDElement.IsHtml)
-            {
-                @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
-            }
-            else
-            {
-                @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
-            }
-        </div>
+        await Html.RenderPartialAsync("_DynamicContentElements", element);
     }
     else if (element is LoginButtonDElement || element is LoginLinkDElement || element is LoginHrdDElement)
     {

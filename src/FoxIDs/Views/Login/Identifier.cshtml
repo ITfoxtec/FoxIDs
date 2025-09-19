@@ -18,13 +18,8 @@
     <div class="col-md page-content">
         @{
             var loginHrdIndex = Model.Elements.FindIndex(e => e is LoginHrdDElement);
-            var hasLoginHrd = loginHrdIndex >= 0;
-            var formElements = hasLoginHrd ? Model.Elements.Take(loginHrdIndex).ToList() : Model.Elements.ToList();
-            var postFormElements = hasLoginHrd ? Model.Elements.Skip(loginHrdIndex + 1).ToList() : new List<DynamicElementBase>();
-            var renderedLoginInput = false;
-            var renderedLoginButton = false;
-            var renderedLoginLink = false;
-            var hasLoginLinkElement = formElements.OfType<LoginLinkDElement>().Any();
+            var formElements = Model.Elements.Take(loginHrdIndex).ToList();
+            var postFormElements = Model.Elements.Skip(loginHrdIndex + 1).ToList();
         }
 
         @if (Model.ShowUserIdentifierSelection)
@@ -33,14 +28,12 @@
                 <div asp-validation-summary="ModelOnly"></div>
                 @foreach (var element in formElements)
                 {
-                    if (element is LognInputDElement && !renderedLoginInput)
+                    if (element is LognInputDElement)
                     {
-                        renderedLoginInput = true;
                         await Html.RenderPartialAsync("_UserIdentifier", Model);
                     }
-                    else if (element is LoginButtonDElement && !renderedLoginButton)
+                    else if (element is LoginButtonDElement)
                     {
-                        renderedLoginButton = true;
                         <div class="form-group button-group">
                             <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
                             @if (Model.EnableCancelLogin)
@@ -49,9 +42,8 @@
                             }
                         </div>
                     }
-                    else if (element is LoginLinkDElement && !renderedLoginLink)
+                    else if (element is LoginLinkDElement)
                     {
-                        renderedLoginLink = true;
                         if (Model.EnableCreateUser)
                         {
                             <div class="form-group button-group create-user-group">
@@ -78,36 +70,10 @@
                         throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
                     }
                 }
-
-                @if (!renderedLoginInput)
-                {
-                    renderedLoginInput = true;
-                    await Html.RenderPartialAsync("_UserIdentifier", Model);
-                }
-                @if (!renderedLoginButton)
-                {
-                    renderedLoginButton = true;
-                    <div class="form-group button-group">
-                        <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
-                        @if (Model.EnableCancelLogin)
-                        {
-                            <a href="../@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
-                        }
-                    </div>
-                }
-                @if (!renderedLoginLink && hasLoginLinkElement && Model.EnableCreateUser)
-                {
-                    renderedLoginLink = true;
-                    <div class="form-group button-group create-user-group">
-                        @Localizer["Don't have an account?"]
-                        <a href="../@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="link create-user">@Localizer["Create user"]</a>
-                    </div>
-                }
             </form>
         }
 
-        @{ var renderHrd = Model.UpPatries?.Any() == true && (!Model.ShowUserIdentifierSelection || hasLoginHrd); }
-        @if (renderHrd)
+        @if (Model.UpPatries?.Count() > 0)
         {
             <form id="form-filter">
                 @if (Model.ShowUserIdentifierSelection)

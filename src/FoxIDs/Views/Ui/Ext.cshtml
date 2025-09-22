@@ -14,7 +14,7 @@
             <input type="hidden" asp-for="State" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
             @{
-                await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
+                await Html.RenderPartialAsync("_DynamicElements", Model.ExtendedUiElements);
             }
             <div class="form-group button-group">
                 <div>

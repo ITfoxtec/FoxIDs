@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
             this.localizer = localizer;
         }
 
-        public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
+        public IEnumerable<DynamicElementBase> ToExtendedUiElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
         {
             if(elements == null)
             {
@@ -94,11 +94,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        public List<DynamicElementBase> GetLoginDynamicElements(LoginUpParty loginUpParty)
+        public List<DynamicElementBase> GetLoginElementsViewModel(LoginUpParty loginUpParty)
         {
             var elements = EnsureLoginElements(loginUpParty.Elements);
             securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
-            return ToLoginDynamicElements(elements);
+            return ToLoginElementsViewModel(elements);
         }
 
         private List<DynamicElement> EnsureLoginElements(List<DynamicElement> elements)
@@ -140,7 +140,7 @@ namespace FoxIDs.Logic
             };
         }
 
-        private List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements)
+        private List<DynamicElementBase> ToLoginElementsViewModel(List<DynamicElement> elements)
         {
             var result = new List<DynamicElementBase>();
             if (elements?.Count > 0)

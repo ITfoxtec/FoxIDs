@@ -10,7 +10,7 @@ FoxIDs will then handle the SAML 2.0 connection and you only need to care about 
 If needed you can [connect two FoxIDs environments](#connect-foxids-environments).
 
 > Take a look at the FoxIDs test connections in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!`
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw`
 
 ## How to connect OpenID Provider / Identity Provider
 

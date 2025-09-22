@@ -4,7 +4,7 @@ FoxIDs can be connected to Google with OpenID Connect and authenticate users wit
 
 > You can test the Google login with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Google`.  
 > Take a look at the Google sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication` tab.
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `Production` environment and the `Authentication` tab.
 
 ## Configure Google
 

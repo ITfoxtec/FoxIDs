@@ -64,7 +64,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
+                    ExtElements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
                 });
 
             }
@@ -92,7 +92,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
-                createExternalUser.Elements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.Elements).ToList();
+                createExternalUser.ExtElements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.ExtElements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -104,7 +104,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, createExternalUser.Elements);
+                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, createExternalUser.ExtElements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -112,7 +112,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Create external user post.");
 
-                (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(createExternalUser.Elements);
+                (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(createExternalUser.ExtElements);
                 (var externalAccountClaims, var actionResult) = await externalUserLogic.CreateUserAsync(externalUserUpParty, sequenceData, sequenceData.LinkClaimValue, sequenceData.Claims?.ToClaimList(), dynamicElementClaims);
                 if (actionResult != null)
                 {

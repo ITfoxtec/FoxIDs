@@ -14,7 +14,7 @@ namespace FoxIDs.Models.ViewModels
         [Required]
         public string State { get; set; }
 
-        public List<DynamicElementBase> ExtendedUiElements { get; set; }
+        public List<DynamicElementBase> ExtendedElements { get; set; }
 
         public List<DynamicElementBase> Elements { get; set; }
     }

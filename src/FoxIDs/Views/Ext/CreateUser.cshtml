@@ -13,7 +13,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
             @{
-                await Html.RenderPartialAsync("_DynamicElements", Model.Elements);
+                await Html.RenderPartialAsync("_DynamicElements", Model.ExtElements);
             }
             <div class="form-group button-group">
                 <div>

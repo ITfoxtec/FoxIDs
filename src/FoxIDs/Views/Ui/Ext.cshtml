@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Mvc.Localization
+﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @model ExtendedUiViewModel
 
@@ -13,33 +13,14 @@
         <form method="post">
             <input type="hidden" asp-for="State" autocomplete="off" />
             <div asp-validation-summary="ModelOnly"></div>
-            @foreach (var element in Model.Elements)
-            {
-                if (element is LoginInputDElement)
-                {
-                    await Html.RenderPartialAsync("_DynamicElements", Model.ExtendedUiElements);
-                }
-                else if (element is LoginButtonDElement)
-                {
-                    <div class="form-group button-group">
-                        <div>
-                            <input type="submit" value="@Localizer[Model.SubmitButtonText ?? "Log in"]" class="btn btn-primary" />
-                        </div>
-                    </div>
-                }
-                else if (element is ContentDElement)
-                {
-                    await Html.RenderPartialAsync("_DynamicContentElements", element);
-                }
-                else if (element is LoginLinkDElement || element is LoginHrdDElement)
-                {
-                    // Placeholder elements ignored on logged-in view.
-                }
-                else
-                {
-                    throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
-                }
+            @{
+                await Html.RenderPartialAsync("_DynamicElements", Model.ExtendedElements);
             }
+            <div class="form-group button-group">
+                <div>
+                    <inputype="submit" value="@Localizer[Model.SubmitButtonText ?? "Log in"]" class="btn btn-primary" />
+                </div>
+            </div>
         </form>
     </div>
 </div>

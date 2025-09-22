@@ -264,10 +264,9 @@ namespace FoxIDs.Controllers
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     EnableCreateUser = loginUpParty.EnableCreateUser,
                     ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
+                    Elements = GetLoginDynamicElements(loginUpParty),
                     UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                 };
-
-                identifierViewModel.Elements = GetLoginDynamicElements(loginUpParty);
 
                 var userIdentifier = sequenceData.UserIdentifier.IsNullOrWhiteSpace() ? string.Empty : sequenceData.UserIdentifier;
                 if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
@@ -376,9 +375,9 @@ namespace FoxIDs.Controllers
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableCreateUser = loginUpParty.EnableCreateUser,
                         ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
+                        Elements = GetLoginDynamicElements(loginUpParty),
                         UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                     };
-                    identifier.Elements = GetLoginDynamicElements(loginUpParty);
                     if (login.EmailIdentifier != null)
                     {
                         identifier.EmailIdentifier = new EmailIdentifierViewModel { Email = login.EmailIdentifier.Email };
@@ -719,6 +718,7 @@ namespace FoxIDs.Controllers
             Func<IActionResult> viewError = () =>
             {
                 var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                passwordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
                 return View("Password", passwordViewModel);
             };
 
@@ -831,6 +831,7 @@ namespace FoxIDs.Controllers
             Func<IActionResult> viewError = () =>
             {
                 var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                passwordlessSmsViewModel.Elements = GetLoginDynamicElements(loginUpParty);
                 return View("PasswordlessSms", passwordlessSmsViewModel);
             };
 
@@ -875,6 +876,7 @@ namespace FoxIDs.Controllers
             Func<IActionResult> viewError = () =>
             {
                 var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
+                passwordlessEmailViewModel.Elements = GetLoginDynamicElements(loginUpParty);
                 return View("PasswordlessEmail", passwordlessEmailViewModel);
             };
 
@@ -1111,7 +1113,13 @@ namespace FoxIDs.Controllers
                     else
                     {
                         logger.ScopeTrace(() => "Show logged in dialog.");
-                        return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                        return View("LoggedIn", new LoggedInViewModel
+                        {
+                            Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                            IconUrl = loginUpParty.IconUrl, 
+                            Css = loginUpParty.Css,
+                            Elements = GetLoginDynamicElements(loginUpParty)
+                        });
                     }
                 }
                 else
@@ -1143,7 +1151,13 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 logger.ScopeTrace(() => "Show logged out dialog.");
-                return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                return View("loggedOut", new LoggedOutViewModel 
+                {
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    Elements = GetLoginDynamicElements(loginUpParty)
+                });
             }
         }
 

@@ -34,7 +34,7 @@ namespace FoxIDs.Models.ViewModels
 
         public bool ShowUserIdentifierSelection { get; set; }
 
-        public List<DynamicElementBase> Elements { get; set; } = new List<DynamicElementBase>();
+        public List<DynamicElementBase> Elements { get; set; }
 
         [Display(Name = "Search log in")]
         public string UpPartyFilter { get; set; }

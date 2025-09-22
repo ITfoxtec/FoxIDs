@@ -49,6 +49,6 @@ namespace FoxIDs.Models.ViewModels
         [Compare(nameof(NewPassword), ErrorMessage = "'Confirm new password' and 'New password' do not match.")]
         public string ConfirmNewPassword { get; set; }
 
-        public List<DynamicElementBase> Elements { get; set; } = new List<DynamicElementBase>();
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

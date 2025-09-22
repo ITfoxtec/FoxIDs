@@ -1,4 +1,7 @@
-﻿using FoxIDs.Infrastructure;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
@@ -8,9 +11,6 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -67,7 +67,8 @@ namespace FoxIDs.Controllers
                     SubmitButtonText = extendedUi.SubmitButtonText,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    ExtendedUiElements = dynamicElementLogic.ToExtendedUiElementsViewModel(extendedUi.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
+                    ExtendedUiElements = dynamicElementLogic.ToUiElementsViewModel(extendedUi.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList(),
+                    Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                 });
 
             }
@@ -92,7 +93,8 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
-                extendedUiViewModel.ExtendedUiElements = dynamicElementLogic.ToExtendedUiElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.ExtendedUiElements).ToList();
+                extendedUiViewModel.ExtendedUiElements = dynamicElementLogic.ToUiElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.ExtendedUiElements).ToList();
+                extendedUiViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -211,6 +213,5 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Extended UI failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
     }
 }

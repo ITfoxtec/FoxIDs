@@ -305,9 +305,6 @@ namespace FoxIDs.Logic
 
             var sanitized = html;
 
-            // Remove HTML comments
-            sanitized = Regex.Replace(sanitized, "<!--.*?-->", string.Empty, RegexOptions.Singleline);
-
             // Remove disallowed tags entirely (both paired and self-closing)
             var disallowedTags = new[] { "script", "iframe", "object", "embed", "link", "meta", "form", "input", "button", "style" };
             foreach (var tag in disallowedTags)

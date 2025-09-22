@@ -7,7 +7,6 @@ namespace FoxIDs.Models.ViewModels
     {
         public string SequenceString { get; set; }
 
-        [Required]
         public List<DynamicElementBase> Elements { get; set; }
     }
 }

@@ -1193,7 +1193,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
-                    CreateUserElements = dynamicElementLogic.ToExtendedUiElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
+                    CreateUserElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
                     Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                 });
 
@@ -1221,7 +1221,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }                
                 PopulateCreateUserDefault(loginUpParty);
-                createUser.CreateUserElements = dynamicElementLogic.ToExtendedUiElementsViewModel(loginUpParty.CreateUser.Elements, createUser.CreateUserElements).ToList();
+                createUser.CreateUserElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements, createUser.CreateUserElements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {

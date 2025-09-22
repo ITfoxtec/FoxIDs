@@ -42,6 +42,6 @@ namespace FoxIDs.Models.ViewModels
         [ValidateComplexType]
         public UsernamePhoneEmailPasswordViewModel UsernamePhoneEmailIdentifier { get; set; }
 
-        public List<DynamicElementBase> Elements { get; set; } = new List<DynamicElementBase>();
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

@@ -10,6 +10,6 @@ namespace FoxIDs.Models.ViewModels
         [Required]
         public LogoutChoice LogoutChoice { get; set; }
 
-        public List<DynamicElementBase> Elements { get; set; } = new List<DynamicElementBase>();
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

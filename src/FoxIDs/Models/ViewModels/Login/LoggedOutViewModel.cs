@@ -4,6 +4,6 @@ namespace FoxIDs.Models.ViewModels
 {
     public class LoggedOutViewModel : ViewModel
     {
-        public List<DynamicElementBase> Elements { get; set; } = new List<DynamicElementBase>();
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

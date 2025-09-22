@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
             this.localizer = localizer;
         }
 
-        public IEnumerable<DynamicElementBase> ToExtendedUiElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
+        public IEnumerable<DynamicElementBase> ToUiElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
         {
             if(elements == null)
             {

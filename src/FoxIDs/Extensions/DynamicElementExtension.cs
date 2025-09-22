@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using ITfoxtec.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FoxIDs
 {
@@ -84,13 +85,24 @@ namespace FoxIDs
             var contentBuilder = new HtmlContentBuilder();
             if (isHtml)
             {
-                contentBuilder.AppendHtml(stringLocalizer.GetString(content));
+                contentBuilder.AppendHtml(stringLocalizer.GetString(RemoveComments(content)));
             }
             else
             {
                 contentBuilder.Append(stringLocalizer.GetString(content));
             }
             return contentBuilder;
+        }
+
+        private static string RemoveComments(string html)
+        {
+            if (html.IsNullOrWhiteSpace())
+            {
+                return html;
+            }
+
+            // Remove HTML comments
+            return Regex.Replace(html, "<!--.*?-->", string.Empty, RegexOptions.Singleline);
         }
 
         private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)

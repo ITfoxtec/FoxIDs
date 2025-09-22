@@ -16,7 +16,7 @@ Token exchange is implemented in the following samples:
 
 > You can test token exchange with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and log in with an optional IdP. The click `Call API1 which call API2` or `Token Exchange + Call Api2` to call an API using token exchange.  
 > Take a look at the sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!`  
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw`  
 
 ## Application registration configuration
 

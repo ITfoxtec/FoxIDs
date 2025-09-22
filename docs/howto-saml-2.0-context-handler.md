@@ -23,7 +23,7 @@ Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OC
 
 > You can test Context Handler login with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment (select `FoxIDs - test-corp` on the Context Handler log in page) or `Danish Context Handler` for production.  
 > Take a look at the Context Handler sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `context-handler`, `context-handler-test` or `context-handler-idp-test` environment.  
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `context-handler`, `context-handler-test` or `context-handler-idp-test` environment.  
 > *The sample is configured with a separate environments for the Context Handler SAML 2.0 integration.*
 
 Context Handler documentation:

@@ -8,7 +8,7 @@ If you configure [App roles](#app-roles) they are returned in the `roles` claim.
 
 > You can test the Microsoft Entra ID login with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Microsoft Entra ID`.  
 > Take a look at the Microsoft Entra ID sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication` tab.
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `Production` environment and the `Authentication` tab.
 
 ## Configure single tenant
 

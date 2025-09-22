@@ -9,7 +9,7 @@ The integration between two FoxIDs environments support [OpenID Connect authenti
 
 > You can test OpenID Connect environment connections with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Parallel FoxIDs environment`.  
 > Take a look at the environment connection configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then take a look at the `parallel` and `Production` environments.
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then take a look at the `parallel` and `Production` environments.
 
 The following describes how to configure a OpenID Connect authentication method in your FoxIDs environment and trust a parallel FoxIDs environment where a OpenID Connect application registration is configured. This will make your FoxIDs environment trust the parallel FoxIDs environment to authenticate users.
 

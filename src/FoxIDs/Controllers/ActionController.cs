@@ -73,7 +73,7 @@ namespace FoxIDs.Controllers
 
                 var phoneConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneConfirmationViewModel>(sequenceData, loginUpParty);
                 phoneConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
-                phoneConfirmationViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                phoneConfirmationViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                 return View(phoneConfirmationViewModel);
             }
             catch (Exception ex)
@@ -110,7 +110,7 @@ namespace FoxIDs.Controllers
                 {
                     var phoneConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneConfirmationViewModel>(sequenceData, loginUpParty);
                     phoneConfirmationViewModel.ConfirmationCodeSendStatus = phoneConfirmation.ConfirmationCodeSendStatus;
-                    phoneConfirmationViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                    phoneConfirmationViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                     return View(phoneConfirmationViewModel);
                 };
 
@@ -174,7 +174,7 @@ namespace FoxIDs.Controllers
 
                 var emailConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailConfirmationViewModel>(sequenceData, loginUpParty);
                 emailConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
-                emailConfirmationViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                emailConfirmationViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                 return View(emailConfirmationViewModel);
             }
             catch (Exception ex)
@@ -202,7 +202,7 @@ namespace FoxIDs.Controllers
                 {
                     var emailConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailConfirmationViewModel>(sequenceData, loginUpParty);
                     emailConfirmationViewModel.ConfirmationCodeSendStatus = emailConfirmation.ConfirmationCodeSendStatus;
-                    emailConfirmationViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                    emailConfirmationViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                     return View(emailConfirmationViewModel);
                 };
 
@@ -313,7 +313,7 @@ namespace FoxIDs.Controllers
 
                 var phoneSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneSetPasswordViewModel>(sequenceData, loginUpParty);
                 phoneSetPasswordViewModel.ConfirmationCodeSendStatus = confirmationCodeSendStatus;
-                phoneSetPasswordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                phoneSetPasswordViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                 return View(phoneSetPasswordViewModel);
             }
             catch (Exception ex)
@@ -355,7 +355,7 @@ namespace FoxIDs.Controllers
                 {
                     var phoneSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneSetPasswordViewModel>(sequenceData, loginUpParty);
                     phoneSetPasswordViewModel.ConfirmationCodeSendStatus = setPassword.ConfirmationCodeSendStatus;
-                    phoneSetPasswordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                    phoneSetPasswordViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                     return View(phoneSetPasswordViewModel);
                 };
 
@@ -484,7 +484,7 @@ namespace FoxIDs.Controllers
 
                 var emailSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailSetPasswordViewModel>(sequenceData, loginUpParty);
                 emailSetPasswordViewModel.ConfirmationCodeSendStatus = confirmationCodeSendStatus;
-                emailSetPasswordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                emailSetPasswordViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                 return View(emailSetPasswordViewModel);
             }
             catch (Exception ex)
@@ -517,7 +517,7 @@ namespace FoxIDs.Controllers
                 {
                     var emailSetPasswordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailSetPasswordViewModel>(sequenceData, loginUpParty);
                     emailSetPasswordViewModel.ConfirmationCodeSendStatus = setPassword.ConfirmationCodeSendStatus;
-                    emailSetPasswordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
+                    emailSetPasswordViewModel.Elements = dynamicElementLogic.GetLoginDynamicElements(loginUpParty);
                     return View(emailSetPasswordViewModel);
                 };
 
@@ -609,13 +609,6 @@ namespace FoxIDs.Controllers
             {
                 throw new EndpointException($"Set password with email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
-        }
-
-        private List<DynamicElementBase> GetLoginDynamicElements(LoginUpParty loginUpParty)
-        {
-            var elements = dynamicElementLogic.EnsureLoginElements(loginUpParty.Elements);
-            securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
-            return dynamicElementLogic.ToLoginDynamicElements(elements);
         }
     }
 }

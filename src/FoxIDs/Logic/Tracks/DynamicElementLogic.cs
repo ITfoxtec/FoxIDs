@@ -17,11 +17,13 @@ namespace FoxIDs.Logic
     public class DynamicElementLogic : LogicBase
     {
         private readonly CountryCodesLogic countryCodesLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly IStringLocalizer localizer;
 
-        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, SecurityHeaderLogic securityHeaderLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.countryCodesLogic = countryCodesLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.localizer = localizer;
         }
 
@@ -92,7 +94,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        public List<DynamicElement> EnsureLoginElements(List<DynamicElement> elements)
+        public List<DynamicElementBase> GetLoginDynamicElements(LoginUpParty loginUpParty)
+        {
+            var elements = EnsureLoginElements(loginUpParty.Elements);
+            securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
+            return ToLoginDynamicElements(elements);
+        }
+
+        private List<DynamicElement> EnsureLoginElements(List<DynamicElement> elements)
         {
             var list = elements ?? new List<DynamicElement>();
 
@@ -131,7 +140,7 @@ namespace FoxIDs.Logic
             };
         }
 
-        public List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements)
+        private List<DynamicElementBase> ToLoginDynamicElements(List<DynamicElement> elements)
         {
             var result = new List<DynamicElementBase>();
             if (elements?.Count > 0)

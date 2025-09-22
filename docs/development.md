@@ -3,7 +3,7 @@
 FoxIds cloud is configured with the test tenant `test-corp`. The tenant is configured with the [.NET samples](samples.md) and connected to multiple [OpenID Connect](auth-method-oidc.md) and [SAML 2.0](auth-method-saml-2.0.md) IdPs.
 
 You can take a look at the `test-corp` tenant in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-Get read access with the user `reader@foxids.com` and password `TestAccess!`
+Get read access with the user `reader@foxids.com` and password `gEh#V6kSw`
 
 Online samples:  
   - Open the [OpenID Connect sample](https://aspnetoidcsample.itfoxtec.com) where you can log in directly in FoxIDs or by a connected IdP. The authenticated user's claims are listed after log in and you can call the APIs directly

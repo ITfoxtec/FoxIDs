@@ -267,8 +267,7 @@ namespace FoxIDs.Controllers
                     UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                 };
 
-                var loginElements = GetLoginElements(loginUpParty);
-                identifierViewModel.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+                identifierViewModel.Elements = GetLoginDynamicElements(loginUpParty);
 
                 var userIdentifier = sequenceData.UserIdentifier.IsNullOrWhiteSpace() ? string.Empty : sequenceData.UserIdentifier;
                 if (loginUpParty.EnableEmailIdentifier && loginUpParty.EnablePhoneIdentifier && loginUpParty.EnableUsernameIdentifier)
@@ -379,8 +378,7 @@ namespace FoxIDs.Controllers
                         ShowUserIdentifierSelection = ShowUserIdentifierSelection(loginUpParty.Name, sequenceData),
                         UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                     };
-                    var loginElements = GetLoginElements(loginUpParty);
-                    identifier.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+                    identifier.Elements = GetLoginDynamicElements(loginUpParty);
                     if (login.EmailIdentifier != null)
                     {
                         identifier.EmailIdentifier = new EmailIdentifierViewModel { Email = login.EmailIdentifier.Email };
@@ -605,8 +603,7 @@ namespace FoxIDs.Controllers
             logger.ScopeTrace(() => "Start password authentication.");
 
             var passwordViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
-            var loginElements = GetLoginElements(loginUpParty);
-            passwordViewModel.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+            passwordViewModel.Elements = GetLoginDynamicElements(loginUpParty);
 
             return View("Password", passwordViewModel);
         }
@@ -617,8 +614,7 @@ namespace FoxIDs.Controllers
 
             var passwordlessSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessSmsViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
             passwordlessSmsViewModel.ForceNewCode = newCode;
-            var loginElements = GetLoginElements(loginUpParty);
-            passwordlessSmsViewModel.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+            passwordlessSmsViewModel.Elements = GetLoginDynamicElements(loginUpParty);
 
             try
             {
@@ -643,8 +639,7 @@ namespace FoxIDs.Controllers
 
             var passwordlessEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PasswordlessEmailViewModel>(sequenceData, loginUpParty, supportChangeUserIdentifier: true);
             passwordlessEmailViewModel.ForceNewCode = newCode;
-            var loginElements = GetLoginElements(loginUpParty);
-            passwordlessEmailViewModel.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+            passwordlessEmailViewModel.Elements = GetLoginDynamicElements(loginUpParty);
 
             try
             {
@@ -997,14 +992,13 @@ namespace FoxIDs.Controllers
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsents.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsents.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace(() => "Show logout consent dialog.");
-                    var loginElements = GetLoginElements(loginUpParty);
                     var logoutViewModel = new LogoutViewModel
                     {
                         SequenceString = SequenceString,
                         Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
-                        Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements)
+                        Elements = GetLoginDynamicElements(loginUpParty)
                     };
                     return View(nameof(Logout), logoutViewModel);
                 }
@@ -1039,8 +1033,7 @@ namespace FoxIDs.Controllers
                     logout.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     logout.IconUrl = loginUpParty.IconUrl;
                     logout.Css = loginUpParty.Css;
-                    var loginElements = GetLoginElements(loginUpParty);
-                    logout.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+                    logout.Elements = GetLoginDynamicElements(loginUpParty);
                     return View(nameof(Logout), logout);
                 };
 
@@ -1180,7 +1173,6 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
-                var loginElements = GetLoginElements(loginUpParty);
                 return View(nameof(CreateUser), new CreateUserViewModel 
                 {
                     SequenceString = SequenceString, 
@@ -1188,7 +1180,7 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
                     CreateUserElements = dynamicElementLogic.ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
-                    Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements)
+                    Elements = GetLoginDynamicElements(loginUpParty)
                 });
 
             }
@@ -1223,8 +1215,7 @@ namespace FoxIDs.Controllers
                     createUser.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     createUser.IconUrl = loginUpParty.IconUrl;
                     createUser.Css = loginUpParty.Css;
-                    var loginElements = GetLoginElements(loginUpParty);
-                    createUser.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+                    createUser.Elements = GetLoginDynamicElements(loginUpParty);
                     return View(nameof(CreateUser), createUser);
                 };
 
@@ -1448,7 +1439,6 @@ namespace FoxIDs.Controllers
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 _ = loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
 
-                var loginElements = GetLoginElements(loginUpParty);
                 var changePasswordViewModel = new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
@@ -1456,7 +1446,7 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements)
+                    Elements = GetLoginDynamicElements(loginUpParty)
                 };
 
                 if (sequenceData.ShowPasswordError)
@@ -1528,8 +1518,7 @@ namespace FoxIDs.Controllers
                     changePassword.IconUrl = loginUpParty.IconUrl;
                     changePassword.Css = loginUpParty.Css;
                     changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    var loginElements = GetLoginElements(loginUpParty);
-                    changePassword.Elements = dynamicElementLogic.ToLoginDynamicElements(loginElements);
+                    changePassword.Elements = GetLoginDynamicElements(loginUpParty);
                     return View(nameof(ChangePassword), changePassword);
                 };
 
@@ -1624,7 +1613,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private List<DynamicElement> GetLoginElements(LoginUpParty loginUpParty)
+        private List<DynamicElementBase> GetLoginDynamicElements(LoginUpParty loginUpParty)
         {
             var elements = dynamicElementLogic.EnsureLoginElements(loginUpParty.Elements);
             if (!object.ReferenceEquals(elements, loginUpParty.Elements))
@@ -1632,7 +1621,7 @@ namespace FoxIDs.Controllers
                 loginUpParty.Elements = elements;
             }
             securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
-            return elements;
+            return dynamicElementLogic.ToLoginDynamicElements(elements);
         }
     }
 }

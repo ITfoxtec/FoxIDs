@@ -11,7 +11,7 @@ FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout
 
 > You can test the NemLog-in login with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
 > Take a look at the NemLog-in sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `nemlogin` or `nemlogin-test` environment.  
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `nemlogin` or `nemlogin-test` environment.  
 > *The sample is configured with a separate environment for the NemLog-in SAML 2.0 integration.*
 
 NemLog-in documentation:

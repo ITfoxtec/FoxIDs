@@ -43,6 +43,8 @@ namespace FoxIDs.Logic
                 uiLoginUpParty.Css = cssCommentRegex.Replace(uiLoginUpParty.Css, string.Empty).Trim();
                 AddImgSrcFromCss(uiLoginUpParty.Css);
             }
+
+            AddImgSrcFromDynamicElements(uiLoginUpParty.Elements);
         }
 
         public void AddImgSrc(string url)

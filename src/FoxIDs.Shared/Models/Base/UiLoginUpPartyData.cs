@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
@@ -38,5 +40,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [JsonProperty(PropertyName = "login_elements")]
+        public List<DynamicElement> Elements { get; set; }
     }
 }

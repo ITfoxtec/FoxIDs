@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
 {
@@ -48,5 +49,6 @@ namespace FoxIDs.Models.ViewModels
         [Compare(nameof(NewPassword), ErrorMessage = "'Confirm new password' and 'New password' do not match.")]
         public string ConfirmNewPassword { get; set; }
 
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

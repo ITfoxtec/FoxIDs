@@ -4,7 +4,7 @@ FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticati
 
 > You can test the Signicat Express login with the [online web app sample](https://aspnetoidcsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Signicat TEST`.  
 > Take a look at the Signicat Express sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `Production` environment and the `Authentication` tab.
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `Production` environment and the `Authentication` tab.
 
 You can create a [free account](https://www.signicat.com/sign-up/express-api-onboarding) on [Signicat Express](https://developer.signicat.com/express/docs/) and get access to the [dashbord](https://dashboard-test.signicat.io/dashboard). 
 Her you have access to the test environment.

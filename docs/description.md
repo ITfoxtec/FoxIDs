@@ -11,7 +11,7 @@ The environment is configured as the IdP for applications and APIs with [OAuth 2
 The user's [log in](login.md) experience is configured and optionally [customised](customisation.md).
 
 > Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!`
+> Get read access with the user `reader@foxids.com` and password `gEh#V6kSw`
 
 FoxIDs consists of two services:
 

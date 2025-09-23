@@ -141,7 +141,7 @@
                                 }
                             </ul>
                             <ValidationMessage For="@(() => externalUser.Form.Model.Claims)" />
-                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddClaim(e, externalUser.Form.Model.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddClaim(e, externalUser.Form.Model.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
                         </div>
                     </div>
                     @if (!externalUser.CreateMode && externalUser.DeleteAcknowledge)

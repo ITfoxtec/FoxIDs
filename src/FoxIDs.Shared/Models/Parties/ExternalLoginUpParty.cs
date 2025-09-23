@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// External login.
     /// </summary>
-    public class ExternalLoginUpParty : UpPartyWithExternalUser<ExternalLoginUpPartyProfile>, IOAuthClaimTransformsRef, IValidatableObject
+    public class ExternalLoginUpParty : UpPartyWithExternalUser<ExternalLoginUpPartyProfile>, IOAuthClaimTransformsRef, IValidatableObject, IUiLoginUpParty
     {
         public ExternalLoginUpParty()
         {
@@ -66,6 +66,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [JsonProperty(PropertyName = "disable_set_password")]
+        public bool DisableSetPassword { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

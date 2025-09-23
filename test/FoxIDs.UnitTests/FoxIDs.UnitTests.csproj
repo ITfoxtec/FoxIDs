@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FoxIDs\FoxIDs.csproj" />
+    <ProjectReference Include="..\..\src\FoxIDs.Control\FoxIDs.Control.csproj" />
   </ItemGroup>
 
 </Project>

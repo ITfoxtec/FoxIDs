@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Models.Api
+namespace FoxIDs.Models.Api
 {
     public enum DynamicElementTypes
     {
@@ -16,6 +16,11 @@
         Text = 200,
         Html = 210,
 
-        Custom = 1000
+        Custom = 1000,
+
+        LoginInput = 2010,
+        LoginButton = 2020,
+        LoginLink = 2030,
+        LoginHrd = 2040
     }
 }

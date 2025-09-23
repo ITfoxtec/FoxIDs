@@ -307,7 +307,7 @@
                                 }
                             </ul>
                             <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client.Claims)" />
-                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
                         </div>
                         <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
                         <FInputNumber @bind-Value="oauthDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oauthDownParty.Form.Model.Client.AccessTokenLifetime)" />

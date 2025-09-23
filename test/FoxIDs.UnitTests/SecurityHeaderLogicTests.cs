@@ -29,7 +29,7 @@ namespace FoxIDs.UnitTests
             Assert.Contains("cdn.example", domains);
             Assert.Contains("allowed.example", domains);
             Assert.DoesNotContain("comment.example", domains);
-            Assert.Equal(" .cls { background-image: url('https://allowed.example/img.png'); }", party.Css);
+            Assert.Equal(".cls { background-image: url('https://allowed.example/img.png'); }", party.Css);
         }
     }
 }

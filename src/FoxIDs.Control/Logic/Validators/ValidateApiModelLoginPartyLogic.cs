@@ -14,9 +14,12 @@ namespace FoxIDs.Logic
 {
     public class ValidateApiModelLoginPartyLogic : LogicBase
     {
-        private static readonly Regex CssCommentPattern = new Regex("/\\*.*?\\*/", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-        private static readonly Regex CssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static readonly Regex CssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavio(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex cssCommentPattern = new Regex(@"/\*.*?\*/", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex cssHtmlElementPattern = new Regex("<[^>]+>.*?</[^>]+>", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex cssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex cssHtmlTagPattern = new Regex("<[^>]+>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex cssHtmlCommentPattern = new Regex("<!--.*?-->", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex cssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavior(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
         private readonly TelemetryScopedLogger logger;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
@@ -33,42 +36,18 @@ namespace FoxIDs.Logic
         {
             var isValid = true;
 
-            if (!party.Css.IsNullOrWhiteSpace())
+            if (!TryValidateAndSanitizeCss(modelState, logger, nameof(Api.LoginUpParty.Css), party.Css, out var sanitizedCss))
             {
-                try
-                {
-                    ValidateCss(party.Css);
-                    party.Css = SanitizeCss(party.Css);
-                }
-                catch (ValidationException vex)
-                {
-                    isValid = false;
-                    logger.Warning(vex);
-                    modelState.TryAddModelError(nameof(Api.LoginUpParty.Css).ToCamelCase(), vex.Message);
-                }
+                isValid = false;
+            }
+            else
+            {
+                party.Css = sanitizedCss;
             }
 
-            if (!party.IconUrl.IsNullOrWhiteSpace())
+            if (!TryValidateIconUrl(modelState, logger, nameof(Api.LoginUpParty.IconUrl), party.IconUrl))
             {
-                try
-                {                   
-                    var iconExtension = Path.GetExtension(party.IconUrl.Split('?')[0]);
-                    _ = iconExtension switch
-                    {
-                        ".ico" => "image/x-icon",
-                        ".png" => "image/png",
-                        ".gif" => "image/gif",
-                        ".jpeg" => "image/jpeg",
-                        ".webp" => "image/webp",
-                        _ => throw new ValidationException($"Icon image format '{iconExtension}' not supported.")
-                    };
-                }
-                catch (ValidationException vex)
-                {
-                    isValid = false;
-                    logger.Warning(vex);
-                    modelState.TryAddModelError(nameof(Api.LoginUpParty.IconUrl).ToCamelCase(), vex.Message);
-                }
+                isValid = false;
             }
 
             if (party.TwoFactorAppName.IsNullOrWhiteSpace())
@@ -116,21 +95,64 @@ namespace FoxIDs.Logic
             return await Task.FromResult(isValid);
         }
 
-        private static void ValidateCss(string css)
+        internal static bool TryValidateAndSanitizeCss(ModelStateDictionary modelState, TelemetryScopedLogger logger, string cssFieldName, string css, out string sanitizedCss)
         {
+            sanitizedCss = css;
             if (css.IsNullOrWhiteSpace())
             {
-                return;
+                return true;
             }
 
-            if (!HasBalancedCssBraces(css))
+            try
             {
-                throw new ValidationException("CSS contains unbalanced braces.");
+                if (!HasBalancedCssBraces(css))
+                {
+                    throw new ValidationException("CSS contains unbalanced braces.");
+                }
+
+                if (cssUnsafePattern.IsMatch(css))
+                {
+                    throw new ValidationException("CSS contains unsupported or unsafe content.");
+                }
+
+                sanitizedCss = SanitizeCss(css);
+                return true;
+            }
+            catch (ValidationException vex)
+            {
+                logger.Warning(vex);
+                modelState.TryAddModelError(cssFieldName.ToCamelCase(), vex.Message);
+                return false;
+            }
+        }
+
+        internal static bool TryValidateIconUrl(ModelStateDictionary modelState, TelemetryScopedLogger logger, string iconUrlFieldName, string iconUrl)
+        {
+            if (iconUrl.IsNullOrWhiteSpace())
+            {
+                return true;
             }
 
-            if (CssUnsafePattern.IsMatch(css))
+            try
             {
-                throw new ValidationException("CSS contains unsupported or unsafe content.");
+                var iconExtension = Path.GetExtension(iconUrl.Split('?')[0]);
+                _ = iconExtension switch
+                {
+                    ".ico" => "image/x-icon",
+                    ".png" => "image/png",
+                    ".gif" => "image/gif",
+                    ".jpeg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => throw new ValidationException($"Icon image format '{iconExtension}' not supported.")
+                };
+
+                return true;
+            }
+            catch (ValidationException vex)
+            {
+                logger.Warning(vex);
+                modelState.TryAddModelError(iconUrlFieldName.ToCamelCase(), vex.Message);
+                return false;
             }
         }
 
@@ -143,8 +165,11 @@ namespace FoxIDs.Logic
 
             var sanitized = css;
             sanitized = RemoveUnsafeComments(sanitized);
-            sanitized = CssStyleTagPattern.Replace(sanitized, string.Empty);
-            sanitized = CssUnsafePattern.Replace(sanitized, string.Empty);
+            sanitized = cssHtmlCommentPattern.Replace(sanitized, string.Empty);
+            sanitized = cssHtmlElementPattern.Replace(sanitized, string.Empty);
+            sanitized = cssStyleTagPattern.Replace(sanitized, string.Empty);
+            sanitized = cssHtmlTagPattern.Replace(sanitized, string.Empty);
+            sanitized = cssUnsafePattern.Replace(sanitized, string.Empty);
 
             return sanitized.Trim();
         }
@@ -173,7 +198,7 @@ namespace FoxIDs.Logic
 
         private static string RemoveUnsafeComments(string css)
         {
-            return CssCommentPattern.Replace(css, match => CssUnsafePattern.IsMatch(match.Value) ? string.Empty : match.Value);
+            return cssCommentPattern.Replace(css, match => cssUnsafePattern.IsMatch(match.Value) ? string.Empty : match.Value);
         }
     }
 }

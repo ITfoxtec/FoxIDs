@@ -40,13 +40,8 @@ namespace FoxIDs.Logic
 
             if (!uiLoginUpParty.Css.IsNullOrWhiteSpace())
             {
-                var cssWithoutComments = cssCommentRegex.Replace(uiLoginUpParty.Css, string.Empty);
-                if (!string.Equals(uiLoginUpParty.Css, cssWithoutComments, StringComparison.Ordinal))
-                {
-                    uiLoginUpParty.Css = cssWithoutComments;
-                }
-
-                AddImgSrcFromCss(cssWithoutComments);
+                uiLoginUpParty.Css = cssCommentRegex.Replace(uiLoginUpParty.Css, string.Empty).Trim();
+                AddImgSrcFromCss(uiLoginUpParty.Css);
             }
         }
 

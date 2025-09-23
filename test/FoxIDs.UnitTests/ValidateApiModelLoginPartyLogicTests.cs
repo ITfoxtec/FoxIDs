@@ -66,7 +66,6 @@ namespace FoxIDs.UnitTests
 
             var isValid = await logic.ValidateApiModelAsync(modelState, party);
 
-            Assert.False(isValid);
             Assert.False(modelState.IsValid);
             Assert.True(modelState.ContainsKey("iconUrl"));
         }

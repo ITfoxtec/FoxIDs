@@ -17,13 +17,11 @@ namespace FoxIDs.Logic
     public class DynamicElementLogic : LogicBase
     {
         private readonly CountryCodesLogic countryCodesLogic;
-        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly IStringLocalizer localizer;
 
-        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, SecurityHeaderLogic securityHeaderLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DynamicElementLogic(CountryCodesLogic countryCodesLogic, IStringLocalizer localizer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.countryCodesLogic = countryCodesLogic;
-            this.securityHeaderLogic = securityHeaderLogic;
             this.localizer = localizer;
         }
 
@@ -97,7 +95,6 @@ namespace FoxIDs.Logic
         public List<DynamicElementBase> GetLoginElementsViewModel(LoginUpParty loginUpParty)
         {
             var elements = EnsureLoginElements(loginUpParty.Elements);
-            securityHeaderLogic.AddImgSrcFromDynamicElements(elements);
             return ToLoginElementsViewModel(elements);
         }
 
@@ -241,11 +238,11 @@ namespace FoxIDs.Logic
             var index = 0;
             foreach (var element in elements)
             {
-                await ValidateViewModelElementAsync(modelState, element, index);
+                index = await ValidateViewModelElementAsync(modelState, element, index);
             }
         }
 
-        public async Task ValidateViewModelElementAsync(ModelStateDictionary modelState, DynamicElementBase element, int index)
+        public async Task<int> ValidateViewModelElementAsync(ModelStateDictionary modelState, DynamicElementBase element, int index)
         {
             string phoneTempValue = null;
             if (element is PhoneDElement)
@@ -283,6 +280,8 @@ namespace FoxIDs.Logic
             {
                 element.DField1 = phoneTempValue;
             }
+
+            return index;
         }
 
         public void SetModelElementError(ModelStateDictionary modelState, List<DynamicElementBase> elements, string name, string errorMessage)

@@ -17,7 +17,7 @@
             {
                 if (element is LoginInputDElement)
                 {
-                    await Html.RenderPartialAsync("_DynamicElements", Model.ExtElements);
+                    await Html.RenderPartialAsync("_DynamicElements", Model.InputElements);
                 }
                 else if (element is LoginButtonDElement)
                 {

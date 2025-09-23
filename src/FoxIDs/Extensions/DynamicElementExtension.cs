@@ -103,7 +103,7 @@ namespace FoxIDs
                 return html;
             }
 
-            return removeHtmlCommentsRegex.Replace(html, string.Empty);
+            return removeHtmlCommentsRegex.Replace(html, string.Empty).Trim();
         }
 
         private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)

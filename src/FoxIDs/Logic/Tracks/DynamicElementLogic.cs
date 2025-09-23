@@ -261,7 +261,7 @@ namespace FoxIDs.Logic
                 {
                     foreach (var result in elementValidation.results)
                     {
-                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
+                        modelState.AddModelError($"InputElements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
                     }
                 }
 
@@ -271,7 +271,7 @@ namespace FoxIDs.Logic
                     {
                         if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
                         {
-                            modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
+                            modelState.AddModelError($"InputElements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
                         }
                     }
                 }
@@ -294,7 +294,7 @@ namespace FoxIDs.Logic
                 {
                     if (element.Name == name)
                     {
-                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
+                        modelState.AddModelError($"InputElements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
                     }
 
                     index++;

@@ -1184,7 +1184,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
-                    CreateUserElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
+                    InputElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements).ToList(),
                     Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                 });
 
@@ -1211,7 +1211,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }                
                 PopulateCreateUserDefault(loginUpParty);
-                createUser.CreateUserElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements, createUser.CreateUserElements).ToList();
+                createUser.InputElements = dynamicElementLogic.ToUiElementsViewModel(loginUpParty.CreateUser.Elements, createUser.InputElements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -1224,7 +1224,7 @@ namespace FoxIDs.Controllers
                 };
 
                 ModelState.Clear();
-                (var userIdentifier, var password, var passwordIndex) = await dynamicElementLogic.ValidateCreateUserViewModelElementsAsync(ModelState, createUser.CreateUserElements);
+                (var userIdentifier, var password, var passwordIndex) = await dynamicElementLogic.ValidateCreateUserViewModelElementsAsync(ModelState, createUser.InputElements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -1240,7 +1240,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.CreateUserElements);
+                    (var claims, var userIdentifierClaimTypes) = dynamicElementLogic.GetClaims(createUser.InputElements);
 
                     await sessionLogic.CreateOrUpdateMarkerSessionAsync(loginUpParty, sequenceData.DownPartyLink);
 
@@ -1278,39 +1278,39 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", RouteBinding.CheckPasswordComplexity ?
                         localizer[ErrorMessages.PasswordLengthComplex, RouteBinding.PasswordLength] :
                         localizer[ErrorMessages.PasswordLengthSimple, RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordComplexity]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordEmailComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordEmailComplexity]);
                 }
                 catch (PasswordPhoneTextComplexityException ppcex)
                 {
                     logger.ScopeTrace(() => ppcex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordPhoneComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordPhoneComplexity]);
                 }
                 catch (PasswordUsernameTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUsernameComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUsernameComplexity]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUrlComplexity]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordUrlComplexity]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordRisk]);
+                    ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordRisk]);
                 }
                 catch (PasswordNotAcceptedExternalException piex)
                 {
@@ -1319,12 +1319,12 @@ namespace FoxIDs.Controllers
                     {
                         foreach (var uiErrorMessage in piex.UiErrorMessages)
                         {
-                            ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[uiErrorMessage]);
+                            ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[uiErrorMessage]);
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError($"Elements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordNotAccepted]);
+                        ModelState.AddModelError($"InputElements[{passwordIndex}].{nameof(DynamicElementBase.DField1)}", localizer[ErrorMessages.PasswordNotAccepted]);
                     }
                 }
                 catch (OAuthRequestException orex)

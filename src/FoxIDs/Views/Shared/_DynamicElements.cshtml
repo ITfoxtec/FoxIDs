@@ -17,52 +17,52 @@
         if (item is EmailDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetEmailControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetEmailControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is PhoneDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetPhoneControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetPhoneControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is UsernameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetUsernameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetUsernameControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is PasswordDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetPasswordControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetPasswordControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
             <div class="form-group active-group @cssName">
-                @Html.GetConfirmPasswordControl($"Elements[{i}].DField2", item.DField2, $"Elements[{i}].DField1", isRequired: item.Required)
+                @Html.GetConfirmPasswordControl($"InputElements[{i}].DField2", item.DField2, $"InputElements[{i}].DField1", isRequired: item.Required)
             </div>
         }
         else if (item is NameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetNameControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is GivenNameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetGivenNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetGivenNameControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is FamilyNameDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetFamilyNameControl($"Elements[{i}].DField1", item.DField1, isRequired: item.Required)
+                @Html.GetFamilyNameControl($"InputElements[{i}].DField1", item.DField1, isRequired: item.Required)
             </div>
         }
         else if (item is CustomDElement customDElement)
         {
             <div class="form-group active-group @cssName">
-                @Html.GetCustomControl($"Elements[{i}].DField1", item.DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, item.Required)
+                @Html.GetCustomControl($"InputElements[{i}].DField1", item.DField1, customDElement.DisplayName, customDElement.MaxLength, customDElement.RegEx, customDElement.ErrorMessage, item.Required)
             </div>
         }
         else if (item is ContentDElement contentDElement)

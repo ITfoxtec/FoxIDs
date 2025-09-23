@@ -38,19 +38,19 @@ namespace FoxIDs.Logic
                     {
                         if (disablePasswordAuth)
                         {
-                            throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used when password authentication is disabled.");
+                            throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used when password authentication is disabled.");
                         }
                         else
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username || e.Type == Api.DynamicElementTypes.Password).Count() >= 1)
                             {
-                                throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be combined with dynamic elements of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} or {nameof(Api.DynamicElementTypes.Password)}.");
+                                throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be combined with dynamic elements of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} or {nameof(Api.DynamicElementTypes.Password)}.");
                             }
                         }
 
                         if (enablePasswordlessEmail || enablePasswordlessSms)
                         {
-                            throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used with passwordless with email or passwordless with SMS.");
+                            throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used with passwordless login with email or passwordless login with SMS.");
                         }
                     }
                     else
@@ -59,14 +59,14 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() >= 1)
                             {
-                                throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.Password)} can not be used when password authentication is disabled.");
+                                throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Password)} can not be used when password authentication is disabled.");
                             }
                         }
                         else
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
                             }
                         }
 
@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element set as required of type {nameof(Api.DynamicElementTypes.Email)} is mandatory using passwordless with email.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)}, set as required, is mandatory when using passwordlesss login with email.");
                             }
                         }
 
@@ -82,13 +82,13 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Phone && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element set as required of type {nameof(Api.DynamicElementTypes.Phone)} is mandatory using passwordless with SMS.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Phone)}, set as required, is mandatory when using passwordlesss login withh SMS.");
                             }
                         }
 
                         if (createUserElements.Where(e => (e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username) && e.Required).Count() < 1)
                         {
-                            throw new ValidationException($"At least one dynamic element of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} must be set as required.");
+                            throw new ValidationException($"At least one user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} must be set as required.");
                         }
                     }
                 }

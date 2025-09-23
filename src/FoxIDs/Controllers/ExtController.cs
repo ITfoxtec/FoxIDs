@@ -92,7 +92,6 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
                 createExternalUser.ExtElements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.ExtElements).ToList();
-                createExternalUser.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -100,6 +99,7 @@ namespace FoxIDs.Controllers
                     createExternalUser.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     createExternalUser.IconUrl = loginUpParty.IconUrl;
                     createExternalUser.Css = loginUpParty.Css;
+                    createExternalUser.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                     return View(nameof(CreateUser), createExternalUser);
                 };
 

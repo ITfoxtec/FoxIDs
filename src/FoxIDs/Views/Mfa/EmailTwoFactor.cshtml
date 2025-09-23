@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using FoxIDs.Models
 @inject IViewLocalizer Localizer
 @model TwoFactorEmailViewModel
 
@@ -14,48 +15,64 @@
             <input type="hidden" asp-for="ForceNewCode" autocomplete="off" />
             <div class="info-message">@(Model.ForceNewCode ? Localizer["A new two-factor code has been sent to your email."] : Localizer["A two-factor code has just been sent to your email."])</div>
             <div asp-validation-summary="ModelOnly"></div>
-            @{
-                await Html.RenderPartialAsync("_UserIdentifierPassword");
-            }
-            <div class="form-group active-group">
-                <input asp-for="Code" autocomplete="off" class="form-control input-control" autofocus />
-                <label asp-for="Code" class="label-control"></label>
-                <span asp-validation-for="Code"></span>
-            </div>
-            @if (Model.ShowRegisterTwoFactorApp) 
+            @foreach (var element in Model.Elements)
             {
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input asp-for="RegisterTwoFactorApp" class="custom-control-input">
-                        <label asp-for="RegisterTwoFactorApp" class="custom-control-label"></label>
+                if (element is LoginInputDElement)
+                {
+                    await Html.RenderPartialAsync("_UserIdentifierPassword");
+                    <div class="form-group active-group">
+                        <input asp-for="Code" autocomplete="off" class="form-control input-control" autofocus />
+                        <label asp-for="Code" class="label-control"></label>
+                        <span asp-validation-for="Code"></span>
                     </div>
-                </div>
-            }
-
-            <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
-                <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new two-factor code"]</a>
-            </div>
-
-            @if (Model.ShowTwoFactorAppLink || Model.ShowTwoFactorSmsLink)
-            {
-                <div class="form-group button-group another-two-factor-group">
-                    @Localizer["Try another method?"]
-                    @if (Model.ShowTwoFactorAppLink && Model.ShowTwoFactorSmsLink)
+                    @if (Model.ShowRegisterTwoFactorApp)
                     {
-                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
-                                 $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="RegisterTwoFactorApp" class="custom-control-input">
+                                <label asp-for="RegisterTwoFactorApp" class="custom-control-label"></label>
+                            </div>
+                        </div>
                     }
-                    else @if (Model.ShowTwoFactorAppLink)
+                }
+                else if (element is LoginButtonDElement)
+                {
+                    <div class="form-group button-group">
+                        <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
+                        <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new two-factor code"]</a>
+                    </div>
+                }
+                else if (element is LoginLinkDElement)
+                {
+                    @if (Model.ShowTwoFactorAppLink || Model.ShowTwoFactorSmsLink)
                     {
-                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>", $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor"];
+                        <div class="form-group button-group another-two-factor-group">
+                            @Localizer["Try another method?"]
+                            @if (Model.ShowTwoFactorAppLink && Model.ShowTwoFactorSmsLink)
+                            {
+                                @Localizer["Use <a href=\"{0}\" class=\"{1}\">authenticator app</a> or <a href=\"{2}\" class=\"{3}\">SMS two-factor</a>.",
+                                $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor",
+                                $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
+                            }
+                            else if (Model.ShowTwoFactorAppLink)
+                            {
+                                @Localizer["<a href=\"{0}\" class=\"{1}\">Use authenticator app.</a>", $"../../{Constants.Endpoints.AppTwoFactor}/_{Model.SequenceString}", "link app-two-factor"];
+                            }
+                            else if (Model.ShowTwoFactorSmsLink)
+                            {
+                                @Localizer["<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>", $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
+                            }
+                        </div>
                     }
-                    else @if (Model.ShowTwoFactorSmsLink)
-                    {
-                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>", $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
-                    }
-                </div>
+                }
+                else if (element is ContentDElement)
+                {
+                    await Html.RenderPartialAsync("_DynamicContentElements", element);
+                }
+                else if (!(element is LoginHrdDElement))
+                {
+                    throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+                }
             }
         </form>
     </div>

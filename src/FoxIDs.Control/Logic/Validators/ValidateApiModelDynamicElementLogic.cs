@@ -297,36 +297,44 @@ namespace FoxIDs.Logic
         }
 
         private static string SanitizeHtml(string html)
-        {
+        { 
             if (html.IsNullOrWhiteSpace())
             {
                 return html;
             }
 
             var sanitized = html;
+            var elementOptions = RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant;
+            var attributeOptions = RegexOptions.IgnoreCase | RegexOptions.CultureInvariant;
 
             // Remove disallowed tags entirely (both paired and self-closing)
             var disallowedTags = new[] { "script", "iframe", "object", "embed", "link", "meta", "form", "input", "button", "style" };
             foreach (var tag in disallowedTags)
             {
-                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*>(.*?)<\\s*/\\s*{tag}\\s*>", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*/?\\s*>", string.Empty, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*>.*?<\\s*/\\s*{tag}\\s*>", string.Empty, elementOptions);
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*/?\\s*>", string.Empty, elementOptions);
             }
 
+            const string attributeValuePattern = "(?:\"[^\"]*\"|'[^']*'|[^\\s>]+)";
+
             // Remove inline event handlers (onload, onclick, ...)
-            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*\"[^\\\"]*\"", string.Empty);
-            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*'[^']*'", string.Empty);
-            sanitized = Regex.Replace(sanitized, "(?i)on\\w+\\s*=\\s*[^\\s>]+", string.Empty);
+            sanitized = Regex.Replace(sanitized, $"\\s+on[\\w-]+\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
 
-            // Neutralise javascript: URI schemes
-            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*\"javascript:[^\\\"]*\"", "href=\"#\"");
-            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*'javascript:[^']*'", "href='#'");
-            sanitized = Regex.Replace(sanitized, "(?i)href\\s*=\\s*javascript:[^\\s>]+", "href=\"#\"");
+            // Remove inline styles entirely (CSS will be handled separately)
+            sanitized = Regex.Replace(sanitized, $"\\s+style\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
 
-            // Remove remaining javascript: occurrences in other attributes
-            sanitized = Regex.Replace(sanitized, "(?i)javascript:\\s*", string.Empty);
+            // Remove attributes that can inject HTML content directly
+            sanitized = Regex.Replace(sanitized, $"\\s+srcdoc\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
 
-            return sanitized;
+            var protocolSensitiveAttributes = new[] { "href", "src", "xlink:href", "formaction", "action", "srcset" };
+            foreach (var attribute in protocolSensitiveAttributes)
+            {
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*\"\\s*(?:javascript|vbscript)\\s*:[^\"]*\"", string.Empty, attributeOptions);
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*'\\s*(?:javascript|vbscript)\\s*:[^']*'", string.Empty, attributeOptions);
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*(?:javascript|vbscript)\\s*:[^\\s>]+", string.Empty, attributeOptions);
+            }
+
+            return sanitized.Trim();
         }
     }
 }

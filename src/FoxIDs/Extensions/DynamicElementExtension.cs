@@ -12,6 +12,8 @@ namespace FoxIDs
 {
     public static class DynamicElementExtension
     {
+        private static readonly Regex removeHtmlCommentsRegex = new Regex("<!--.*-->", RegexOptions.Compiled | RegexOptions.Singleline);
+
         public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.EmailLength, bool isRequired = false)
         {
             return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxLength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: "email", isRequired: isRequired);
@@ -85,7 +87,7 @@ namespace FoxIDs
             var contentBuilder = new HtmlContentBuilder();
             if (isHtml)
             {
-                contentBuilder.AppendHtml(stringLocalizer.GetString(RemoveComments(content)));
+                contentBuilder.AppendHtml(stringLocalizer.GetString(RemoveHtmlComments(content)));
             }
             else
             {
@@ -94,15 +96,14 @@ namespace FoxIDs
             return contentBuilder;
         }
 
-        private static string RemoveComments(string html)
+        private static string RemoveHtmlComments(string html)
         {
             if (html.IsNullOrWhiteSpace())
             {
                 return html;
             }
 
-            // Remove HTML comments
-            return Regex.Replace(html, "<!--.*?-->", string.Empty, RegexOptions.Singleline);
+            return removeHtmlCommentsRegex.Replace(html, string.Empty);
         }
 
         private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)

@@ -8,20 +8,23 @@ using System.IO;
 using System.Linq;
 using FoxIDs.Models;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace FoxIDs.Logic
 {
     public class ValidateApiModelLoginPartyLogic : LogicBase
     {
+        private static readonly Regex CssCommentPattern = new Regex("/\\*.*?\\*/", RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex CssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex CssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavio(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Singleline | RegexOptions.CultureInvariant);
+
         private readonly TelemetryScopedLogger logger;
-        private readonly PlanCacheLogic planCacheLogic;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
         private readonly ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic;
 
-        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateApiModelDynamicElementLogic validateApiModelDynamicElementLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.planCacheLogic = planCacheLogic;
             this.validateApiModelGenericPartyLogic = validateApiModelGenericPartyLogic;
             this.validateApiModelDynamicElementLogic = validateApiModelDynamicElementLogic;
         }
@@ -32,7 +35,18 @@ namespace FoxIDs.Logic
 
             if (!party.Css.IsNullOrWhiteSpace())
             {
-                //TODO add validation
+                try
+                {
+                    ValidateCss(party.Css);
+                }
+                catch (ValidationException vex)
+                {
+                    isValid = false;
+                    logger.Warning(vex);
+                    modelState.TryAddModelError(nameof(Api.LoginUpParty.Css).ToCamelCase(), vex.Message);
+                }
+
+                party.Css = SanitizeCss(party.Css);
             }
 
             if (!party.IconUrl.IsNullOrWhiteSpace())
@@ -101,6 +115,61 @@ namespace FoxIDs.Logic
             }
 
             return await Task.FromResult(isValid);
+        }
+
+        private static void ValidateCss(string css)
+        {
+            if (css.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            if (!HasBalancedCssBraces(css))
+            {
+                throw new ValidationException("CSS contains unbalanced braces.");
+            }
+
+            if (CssUnsafePattern.IsMatch(css))
+            {
+                throw new ValidationException("CSS contains unsupported or unsafe content.");
+            }
+        }
+
+        private static string SanitizeCss(string css)
+        {
+            if (css.IsNullOrWhiteSpace())
+            {
+                return css;
+            }
+
+            var sanitized = css;
+            sanitized = CssCommentPattern.Replace(sanitized, string.Empty);
+            sanitized = CssStyleTagPattern.Replace(sanitized, string.Empty);
+            sanitized = CssUnsafePattern.Replace(sanitized, string.Empty);
+
+            return sanitized.Trim();
+        }
+
+        private static bool HasBalancedCssBraces(string css)
+        {
+            var balance = 0;
+            foreach (var ch in css)
+            {
+                if (ch == '{')
+                {
+                    balance++;
+                }
+                else if (ch == '}')
+                {
+                    balance--;
+                    if (balance < 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return balance == 0;
         }
     }
 }

@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)}, set as required, is mandatory when using passwordlesss login with email.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)}, set as required, is mandatory when using passwordless login with email.");
                             }
                         }
 
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Phone && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Phone)}, set as required, is mandatory when using passwordlesss login withh SMS.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Phone)}, set as required, is mandatory when using passwordless login with SMS.");
                             }
                         }
 

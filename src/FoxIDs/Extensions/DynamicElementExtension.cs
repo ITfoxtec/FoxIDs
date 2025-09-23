@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.DependencyInjection;
-using ITfoxtec.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FoxIDs
 {
     public static class DynamicElementExtension
     {
+        private static readonly Regex removeHtmlCommentsRegex = new Regex("<!--.*-->", RegexOptions.Compiled | RegexOptions.Singleline);
+
         public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.EmailLength, bool isRequired = false)
         {
             return html.GetControl("email", name, html.GetLocalizerValue("Email"), value, maxLength, validation: $"data-val-email=\"{html.GetErrorAttributeLocalizerMessage<EmailAddressAttribute>()}\"", autocomplete: "email", isRequired: isRequired);
@@ -84,13 +87,23 @@ namespace FoxIDs
             var contentBuilder = new HtmlContentBuilder();
             if (isHtml)
             {
-                contentBuilder.AppendHtml(stringLocalizer.GetString(content));
+                contentBuilder.AppendHtml(stringLocalizer.GetString(RemoveHtmlComments(content)));
             }
             else
             {
                 contentBuilder.Append(stringLocalizer.GetString(content));
             }
             return contentBuilder;
+        }
+
+        private static string RemoveHtmlComments(string html)
+        {
+            if (html.IsNullOrWhiteSpace())
+            {
+                return html;
+            }
+
+            return removeHtmlCommentsRegex.Replace(html, string.Empty).Trim();
         }
 
         private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)

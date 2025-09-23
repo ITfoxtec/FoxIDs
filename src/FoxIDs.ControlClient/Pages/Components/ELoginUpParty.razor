@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var loginUpParty = UpParty as GeneralLoginUpPartyViewModel;
@@ -45,6 +45,16 @@
                 }
             </li>
             <li class="nav-item">
+                @if (loginUpParty.ShowLoginUiTab)
+                {
+                    <a class="nav-link active">Login UI</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.LoginUi))">Login UI</button>
+                }
+            </li>
+            <li class="nav-item">
                 @if (loginUpParty.ShowClaimTransformTab)
                 {
                     <a class="nav-link active">Claim Transform</a>
@@ -54,17 +64,21 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim Transform</button>
                 }
             </li>
-            <li class="nav-item">
-                @if (loginUpParty.ShowExtendedUiTab)
-                {
-                    <a class="nav-link active">Extended UI</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ExtendedUi))">Extended UI</button>
-                }
-            </li>
-            @if (loginUpParty.Form.Model.EnableCreateUser) {
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <li class="nav-item">
+                    @if (loginUpParty.ShowExtendedUiTab)
+                    {
+                        <a class="nav-link active">Extended UI</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ExtendedUi))">Extended UI</button>
+                    }
+                </li>
+            }
+            @if (loginUpParty.Form.Model.EnableCreateUser)
+            {
                 <li class="nav-item">
                     @if (loginUpParty.ShowCreateUserTab)
                     {
@@ -122,11 +136,11 @@
                 </div>
                 <div class="active-group active">
                     <div class="card">
-                    <div class="card-body pt-3 pb-0">
-                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.DisablePasswordAuth" For="@(() => loginUpParty.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
-                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
-                        <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessSms" For="@(() => loginUpParty.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
-                    </div>
+                        <div class="card-body pt-3 pb-0">
+                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.DisablePasswordAuth" For="@(() => loginUpParty.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
+                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
+                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessSms" For="@(() => loginUpParty.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
+                        </div>
                     </div>
                     <label class="label-control">Authentication</label>
                 </div>
@@ -161,6 +175,9 @@
                     </FInputSelect>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
                 }
+            }
+            else if (loginUpParty.ShowLoginUiTab)
+            {
                 <div class="active-group active">
                     <div class="card">
                         <div class="card-body pt-2 pb-0">
@@ -171,6 +188,10 @@
                     </div>
                     <label class="label-control">Customize login UI</label>
                 </div>
+                @if (loginUpParty.ShowAdvanced)
+                {
+                    <LoginDynamicElements Model="loginUpParty.Form.Model.Elements" />
+                }
             }
             else if (loginUpParty.ShowClaimTransformTab)
             {

@@ -173,7 +173,7 @@ namespace FoxIDs.Client.Pages.Users
         {
             return user.Map<UserViewModel>(afterMap: afterMap =>
             {
-                afterMap.Password = "****";
+                afterMap.Password = user.HasPassword ? "********" : "-passwordless-";
             });
         }
 

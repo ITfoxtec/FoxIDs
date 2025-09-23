@@ -32,9 +32,9 @@ The password policy is configured in the environment settings in the [FoxIDs Con
 
 If the built-in password policy rejects the password, the external password API is not called. The external password API's notification method is only called if the password has passed all configured policy checks.
 
-## Password or one-time password
+## Password or one-time password (passwordless)
 The [login](login.md) authentication method is by default configured for username (user identifier) + password.  
-You can additionally enable one-time password (OTP) via email and/or SMS, and you can create multiple [login](login.md) authentication methods with different combinations.
+You can additionally enable one-time password (OTP) via email and/or SMS for passwordless sign-in, and you can create multiple [login](login.md) authentication methods with different combinations.
 
 If both password and OTP are enabled, all enabled methods are offered. The UI also allows self‑service account creation.  
 ![Login with password or select to login with one-time password via email or SMS](images/user-auth-password.png)

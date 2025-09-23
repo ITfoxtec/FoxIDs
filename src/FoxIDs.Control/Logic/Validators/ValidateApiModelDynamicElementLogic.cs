@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -30,6 +30,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(createUserElements);
                     ValidateRegEx(createUserElements);
+                    ValidateHtml(createUserElements);
                     ValidateDuplicatedOrderNumber(createUserElements);
                     ValidateDuplicatedElementType(createUserElements);
 
@@ -37,19 +38,19 @@ namespace FoxIDs.Logic
                     {
                         if (disablePasswordAuth)
                         {
-                            throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used when password authentication is disabled.");
+                            throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used when password authentication is disabled.");
                         }
                         else
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username || e.Type == Api.DynamicElementTypes.Password).Count() >= 1)
                             {
-                                throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be combined with dynamic elements of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} or {nameof(Api.DynamicElementTypes.Password)}.");
+                                throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be combined with dynamic elements of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} or {nameof(Api.DynamicElementTypes.Password)}.");
                             }
                         }
 
                         if (enablePasswordlessEmail || enablePasswordlessSms)
                         {
-                            throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used with passwordless with email or passwordless with SMS.");
+                            throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.EmailAndPassword)} can not be used with passwordless login with email or passwordless login with SMS.");
                         }
                     }
                     else
@@ -58,14 +59,14 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() >= 1)
                             {
-                                throw new ValidationException($"The dynamic element of type {nameof(Api.DynamicElementTypes.Password)} can not be used when password authentication is disabled.");
+                                throw new ValidationException($"The user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Password)} can not be used when password authentication is disabled.");
                             }
                         }
                         else
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Password).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Password)} is mandatory.");
                             }
                         }
 
@@ -73,7 +74,7 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Email && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element set as required of type {nameof(Api.DynamicElementTypes.Email)} is mandatory using passwordless with email.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)}, set as required, is mandatory when using passwordless login with email.");
                             }
                         }
 
@@ -81,13 +82,13 @@ namespace FoxIDs.Logic
                         {
                             if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.Phone && e.Required).Count() != 1)
                             {
-                                throw new ValidationException($"One dynamic element set as required of type {nameof(Api.DynamicElementTypes.Phone)} is mandatory using passwordless with SMS.");
+                                throw new ValidationException($"A user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Phone)}, set as required, is mandatory when using passwordless login with SMS.");
                             }
                         }
 
                         if (createUserElements.Where(e => (e.Type == Api.DynamicElementTypes.Email || e.Type == Api.DynamicElementTypes.Phone || e.Type == Api.DynamicElementTypes.Username) && e.Required).Count() < 1)
                         {
-                            throw new ValidationException($"At least one dynamic element of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} must be set as required.");
+                            throw new ValidationException($"At least one user-creation dynamic element of type {nameof(Api.DynamicElementTypes.Email)} or {nameof(Api.DynamicElementTypes.Phone)} or {nameof(Api.DynamicElementTypes.Username)} must be set as required.");
                         }
                     }
                 }
@@ -110,6 +111,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(linkExternalUserElements);
                     ValidateRegEx(linkExternalUserElements);
+                    ValidateHtml(linkExternalUserElements);
                     ValidateDuplicatedOrderNumber(linkExternalUserElements);
                     ValidateDuplicatedElementType(linkExternalUserElements);
 
@@ -132,6 +134,60 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
+        public bool ValidateApiModelLoginElements(ModelStateDictionary modelState, List<Api.DynamicElement> elements)
+        {
+            var isValid = true;
+            try
+            {
+                if (elements?.Count() > 0)
+                {
+                    AddDefaultNames(elements);
+                    ValidateRegEx(elements);
+                    ValidateHtml(elements);
+                    ValidateDuplicatedOrderNumber(elements);
+
+                    if (elements.Any(e => e.Type != Api.DynamicElementTypes.Text && e.Type != Api.DynamicElementTypes.Html && e.Type != Api.DynamicElementTypes.LoginInput && e.Type != Api.DynamicElementTypes.LoginButton && e.Type != Api.DynamicElementTypes.LoginLink && e.Type != Api.DynamicElementTypes.LoginHrd))
+                    {
+                        throw new ValidationException($"Only dynamic elements of type '{nameof(Api.DynamicElementTypes.LoginInput)}', '{nameof(Api.DynamicElementTypes.LoginButton)}', '{nameof(Api.DynamicElementTypes.LoginLink)}', '{nameof(Api.DynamicElementTypes.LoginHrd)}', '{nameof(Api.DynamicElementTypes.Text)}' and '{nameof(Api.DynamicElementTypes.Html)}' are supported in the login UI.");
+                    }
+
+                    if (elements.Where(e => e.Type == Api.DynamicElementTypes.LoginInput).Count() > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login input element.");
+                    }
+                    if (elements.Count(e => e.Type == Api.DynamicElementTypes.LoginButton) > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login button element.");
+                    }
+                    if (elements.Count(e => e.Type == Api.DynamicElementTypes.LoginLink) > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login link element.");
+                    }
+                    var loginHrdElements = elements.Where(e => e.Type == Api.DynamicElementTypes.LoginHrd).ToList();
+                    if (loginHrdElements.Count > 1)
+                    {
+                        throw new ValidationException("Login UI must max contain one login HRD element.");
+                    }
+
+                    if (loginHrdElements.Count == 1)
+                    {
+                        var loginHrd = loginHrdElements.First();
+                        if (elements.Any(e => e.Order > loginHrd.Order && (e.Type == Api.DynamicElementTypes.LoginInput || e.Type == Api.DynamicElementTypes.LoginButton || e.Type == Api.DynamicElementTypes.LoginLink)))
+                        {
+                            throw new ValidationException("Login HRD element must be the last login placeholder element.");
+                        }
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError(nameof(Api.LoginUpParty.Elements).ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
         public bool ValidateApiModelExtendedUiElements(ModelStateDictionary modelState, List<Api.DynamicElement> extendedUiElements)
         {
             var isValid = true;
@@ -141,6 +197,7 @@ namespace FoxIDs.Logic
                 {
                     AddDefaultNames(extendedUiElements);
                     ValidateRegEx(extendedUiElements);
+                    ValidateHtml(extendedUiElements);
                     ValidateDuplicatedOrderNumber(extendedUiElements);
                     ValidateDuplicatedElementType(extendedUiElements);
 
@@ -222,6 +279,62 @@ namespace FoxIDs.Logic
                     }
                 }
             }
+        }
+
+        private static void ValidateHtml(List<Api.DynamicElement> dynamicElement)
+        {
+            foreach (var element in dynamicElement)
+            {
+                if (element.Type == Api.DynamicElementTypes.Html)
+                {
+                    if (!element.Content.IsNullOrWhiteSpace())
+                    {
+                        var sanitizedContent = SanitizeHtml(element.Content);
+                        element.Content = sanitizedContent;
+                    }
+                }
+            }
+        }
+
+        private static string SanitizeHtml(string html)
+        { 
+            if (html.IsNullOrWhiteSpace())
+            {
+                return html;
+            }
+
+            var sanitized = html;
+            var elementOptions = RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant;
+            var attributeOptions = RegexOptions.IgnoreCase | RegexOptions.CultureInvariant;
+
+            // Remove disallowed tags entirely (both paired and self-closing)
+            var disallowedTags = new[] { "script", "iframe", "object", "embed", "link", "meta", "form", "input", "button", "style" };
+            foreach (var tag in disallowedTags)
+            {
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*>.*?<\\s*/\\s*{tag}\\s*>", string.Empty, elementOptions);
+                sanitized = Regex.Replace(sanitized, $"<\\s*{tag}\\b[^>]*/?\\s*>", string.Empty, elementOptions);
+            }
+
+            const string attributeValuePattern = "(?:\"[^\"]*\"|'[^']*'|[^\\s>]+)";
+
+            // Remove inline event handlers (onload, onclick, ...)
+            sanitized = Regex.Replace(sanitized, $"\\s+on[\\w-]+\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
+
+            // Remove inline styles entirely (CSS will be handled separately)
+            sanitized = Regex.Replace(sanitized, $"\\s+style\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
+
+            // Remove attributes that can inject HTML content directly
+            sanitized = Regex.Replace(sanitized, $"\\s+srcdoc\\s*=\\s*{attributeValuePattern}", string.Empty, attributeOptions);
+
+            var protocolSensitiveAttributes = new[] { "href", "src", "xlink:href", "formaction", "action", "srcset" };
+            foreach (var attribute in protocolSensitiveAttributes)
+            {
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*\"\\s*(?:javascript|vbscript)\\s*:[^\"]*\"", string.Empty, attributeOptions);
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*'\\s*(?:javascript|vbscript)\\s*:[^']*'", string.Empty, attributeOptions);
+                sanitized = Regex.Replace(sanitized, $"\\s+{attribute}\\s*=\\s*(?:javascript|vbscript)\\s*:[^\\s>]+", string.Empty, attributeOptions);
+            }
+
+            return sanitized.Trim();
         }
     }
 }

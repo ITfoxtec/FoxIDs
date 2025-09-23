@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
@@ -33,6 +33,8 @@ namespace FoxIDs.Models.ViewModels
         public UsernamePhoneEmailIdentifierViewModel UsernamePhoneEmailIdentifier { get; set; }
 
         public bool ShowUserIdentifierSelection { get; set; }
+
+        public List<DynamicElementBase> Elements { get; set; }
 
         [Display(Name = "Search log in")]
         public string UpPartyFilter { get; set; }

@@ -1,4 +1,7 @@
-﻿using FoxIDs.Infrastructure;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
@@ -8,9 +11,6 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -53,8 +53,7 @@ namespace FoxIDs.Controllers
                 (var extendedUi, var stateString) = await extendedUiLogic.GetExtendedUiAndStateStringAsync(sequenceData, extendedUiUpParty.ExtendedUis, step);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
                 logger.ScopeTrace(() => "Show extended UI dialog.");
@@ -67,7 +66,8 @@ namespace FoxIDs.Controllers
                     SubmitButtonText = extendedUi.SubmitButtonText,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToElementsViewModel(extendedUi.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
+                    InputElements = dynamicElementLogic.ToUiElementsViewModel(extendedUi.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList(),
+                    Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                 });
 
             }
@@ -88,11 +88,10 @@ namespace FoxIDs.Controllers
                 (var extendedUi, var step) = await extendedUiLogic.GetExtendedUiAndStepAsync(sequenceData, extendedUiUpParty.ExtendedUis, extendedUiViewModel.State);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
-                extendedUiViewModel.Elements = dynamicElementLogic.ToElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.Elements).ToList();
+                extendedUiViewModel.InputElements = dynamicElementLogic.ToUiElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.InputElements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -102,11 +101,12 @@ namespace FoxIDs.Controllers
                     extendedUiViewModel.SubmitButtonText = extendedUi.SubmitButtonText;
                     extendedUiViewModel.IconUrl = loginUpParty.IconUrl;
                     extendedUiViewModel.Css = loginUpParty.Css;
+                    extendedUiViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                     return View(nameof(Ext), extendedUiViewModel);
                 };
 
                 ModelState.Clear();
-                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, extendedUiViewModel.Elements);
+                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, extendedUiViewModel.InputElements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -118,7 +118,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        var externalClaims = await extendedUiConnectLogic.ValidateElementsAsync(extendedUi, claims, extendedUiViewModel.Elements);
+                        var externalClaims = await extendedUiConnectLogic.ValidateElementsAsync(extendedUi, claims, extendedUiViewModel.InputElements);
                         if (externalClaims.Count() > 0)
                         {
                             claims.AddRange(externalClaims);
@@ -132,7 +132,7 @@ namespace FoxIDs.Controllers
                         {
                             foreach (var errorElement in iex.Elements)
                             {
-                                dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.Elements, errorElement.Name, errorElement.UiErrorMessage);
+                                dynamicElementLogic.SetModelElementError(ModelState, extendedUiViewModel.InputElements, errorElement.Name, errorElement.UiErrorMessage);
                             }
                         }
 
@@ -149,7 +149,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(extendedUiViewModel.Elements);
+                    (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(extendedUiViewModel.InputElements);
                     if (dynamicElementClaims.Count() > 0)
                     {
                         claims.AddRange(dynamicElementClaims);
@@ -211,6 +211,5 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Extended UI failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
     }
 }

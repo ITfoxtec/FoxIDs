@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
 {
@@ -40,5 +41,7 @@ namespace FoxIDs.Models.ViewModels
 
         [ValidateComplexType]
         public UsernamePhoneEmailPasswordViewModel UsernamePhoneEmailIdentifier { get; set; }
+
+        public List<DynamicElementBase> Elements { get; set; }
     }
 }

@@ -344,7 +344,6 @@ namespace FoxIDs.SeedTool.SeedLogic
                     {
                         Console.Write('.');
                         dotPrinted = true;
-                        dotPrinted = true;
                     }
                 }
                 catch (Exception ex)

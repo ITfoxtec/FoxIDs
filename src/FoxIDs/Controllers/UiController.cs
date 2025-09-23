@@ -53,8 +53,7 @@ namespace FoxIDs.Controllers
                 (var extendedUi, var stateString) = await extendedUiLogic.GetExtendedUiAndStateStringAsync(sequenceData, extendedUiUpParty.ExtendedUis, step);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
                 logger.ScopeTrace(() => "Show extended UI dialog.");
@@ -89,8 +88,7 @@ namespace FoxIDs.Controllers
                 (var extendedUi, var step) = await extendedUiLogic.GetExtendedUiAndStepAsync(sequenceData, extendedUiUpParty.ExtendedUis, extendedUiViewModel.State);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(extendedUi.Elements);
 
                 extendedUiViewModel.ExtendedElements = dynamicElementLogic.ToUiElementsViewModel(extendedUi.Elements, valueElements: extendedUiViewModel.ExtendedElements).ToList();

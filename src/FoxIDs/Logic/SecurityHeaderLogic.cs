@@ -11,7 +11,8 @@ namespace FoxIDs.Logic
     public class SecurityHeaderLogic : LogicSequenceBase
     {
         private const int domainsMaxCount = 20;
-        private static Regex urlsInTextRegex = new Regex(@"https?:\/\/[\w\/\-?=%.]+\.[\w\/\-&?=%.]+", RegexOptions.Compiled);
+        private static readonly Regex urlsInTextRegex = new Regex(@"https?:\/\/[\w\/\-?=%.]+\.[\w\/\-&?=%.]+", RegexOptions.Compiled);
+        private static readonly Regex cssCommentRegex = new Regex(@"/\*.*?\*/", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
         public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
@@ -28,6 +29,27 @@ namespace FoxIDs.Logic
             }
         }
 
+        public void AddImgSrc(IUiLoginUpParty uiLoginUpParty)
+        {
+            if (uiLoginUpParty == null)
+            {
+                return;
+            }
+
+            AddImgSrc(uiLoginUpParty.IconUrl);
+
+            if (!uiLoginUpParty.Css.IsNullOrWhiteSpace())
+            {
+                var cssWithoutComments = cssCommentRegex.Replace(uiLoginUpParty.Css, string.Empty);
+                if (!string.Equals(uiLoginUpParty.Css, cssWithoutComments, StringComparison.Ordinal))
+                {
+                    uiLoginUpParty.Css = cssWithoutComments;
+                }
+
+                AddImgSrcFromCss(cssWithoutComments);
+            }
+        }
+
         public void AddImgSrc(string url)
         {
             if(!url.IsNullOrWhiteSpace())
@@ -38,7 +60,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public void AddImgSrcFromCss(string css)
+        private void AddImgSrcFromCss(string css)
         {
             if (!css.IsNullOrWhiteSpace())
             {

@@ -14,9 +14,9 @@ namespace FoxIDs.Logic
 {
     public class ValidateApiModelLoginPartyLogic : LogicBase
     {
-        private static readonly Regex CssCommentPattern = new Regex("/\\*.*?\\*/", RegexOptions.Singleline | RegexOptions.CultureInvariant);
-        private static readonly Regex CssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static readonly Regex CssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavio(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex CssCommentPattern = new Regex("/\\*.*?\\*/", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex CssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex CssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavio(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
         private readonly TelemetryScopedLogger logger;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
@@ -38,6 +38,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     ValidateCss(party.Css);
+                    party.Css = SanitizeCss(party.Css);
                 }
                 catch (ValidationException vex)
                 {
@@ -45,8 +46,6 @@ namespace FoxIDs.Logic
                     logger.Warning(vex);
                     modelState.TryAddModelError(nameof(Api.LoginUpParty.Css).ToCamelCase(), vex.Message);
                 }
-
-                party.Css = SanitizeCss(party.Css);
             }
 
             if (!party.IconUrl.IsNullOrWhiteSpace())
@@ -143,7 +142,7 @@ namespace FoxIDs.Logic
             }
 
             var sanitized = css;
-            sanitized = CssCommentPattern.Replace(sanitized, string.Empty);
+            sanitized = RemoveUnsafeComments(sanitized);
             sanitized = CssStyleTagPattern.Replace(sanitized, string.Empty);
             sanitized = CssUnsafePattern.Replace(sanitized, string.Empty);
 
@@ -170,6 +169,11 @@ namespace FoxIDs.Logic
             }
 
             return balance == 0;
+        }
+
+        private static string RemoveUnsafeComments(string css)
+        {
+            return CssCommentPattern.Replace(css, match => CssUnsafePattern.IsMatch(match.Value) ? string.Empty : match.Value);
         }
     }
 }

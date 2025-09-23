@@ -237,8 +237,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start identifier.");
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 (var validSession, var sessionUserIdentifier, var redirectAction) = await CheckSessionReturnRedirectActionAsync(sequenceData, loginUpParty);
                 if (redirectAction != null)
@@ -361,8 +360,7 @@ namespace FoxIDs.Controllers
             {
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -508,8 +506,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start authentication with login hint.");
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 sequenceData.DoLoginIdentifierStep = false;
                 if (sequenceData.LoginHint.IsNullOrWhiteSpace())
@@ -577,8 +574,7 @@ namespace FoxIDs.Controllers
         {
             loginPageLogic.CheckUpParty(sequenceData);
             var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-            securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-            securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+            securityHeaderLogic.AddImgSrc(loginUpParty);
 
             if (sequenceData.DoLoginPasswordAction)
             {
@@ -684,8 +680,7 @@ namespace FoxIDs.Controllers
                 }
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if (sequenceData.DoLoginPasswordAction)
                 {
@@ -977,8 +972,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
@@ -1026,8 +1020,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -1148,8 +1141,7 @@ namespace FoxIDs.Controllers
             else
             {
                 loginUpParty = loginUpParty ?? await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 logger.ScopeTrace(() => "Show logged out dialog.");
                 return View("loggedOut", new LoggedOutViewModel 
                 {
@@ -1171,8 +1163,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(loginUpParty.CreateUser?.Elements);
                 if (!loginUpParty.EnableCreateUser)
                 {
@@ -1213,8 +1204,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(loginUpParty.CreateUser?.Elements);
                 if (!loginUpParty.EnableCreateUser)
                 {
@@ -1447,8 +1437,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);                
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 _ = loginPageLogic.ValidSessionUpAgainstSequence(sequenceData, session);
@@ -1522,8 +1511,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {

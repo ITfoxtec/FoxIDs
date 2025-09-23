@@ -66,8 +66,7 @@ namespace FoxIDs.Controllers
                 planUsageLogic.LogMfaAuthAppEvent();
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorSetupInfo = await accountTwoFactorAppLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.UserIdentifier);
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
@@ -108,8 +107,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -181,8 +179,7 @@ namespace FoxIDs.Controllers
                 }
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if(sequenceData.TwoFactorAppRecoveryCode.IsNullOrEmpty())
                 {
@@ -230,8 +227,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 return View(new TwoFactorAppViewModel
                 {
@@ -266,8 +262,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
                 }
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -364,8 +359,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorSmsViewModel>(sequenceData, loginUpParty);
                 twoFactorSmsViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
@@ -403,8 +397,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -477,8 +470,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorEmailViewModel>(sequenceData, loginUpParty);
                 twoFactorEmailViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
@@ -516,8 +508,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {

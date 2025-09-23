@@ -1,16 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
-using FoxIDs.Logic.Caches.Providers;
-using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
-using FoxIDs.Models.Config;
-using FoxIDs.Repository;
+using FoxIDs.Models;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Moq;
 using Xunit;
 
 namespace FoxIDs.UnitTests
@@ -33,7 +29,7 @@ namespace FoxIDs.UnitTests
 
             Assert.True(isValid);
             Assert.True(modelState.IsValid);
-            Assert.Equal(".btn { color: red; }", party.Css);
+            Assert.Equal("/* comment */ .btn { color: red; }", party.Css);
             Assert.Equal(routeBinding.TenantName, party.TwoFactorAppName);
             Assert.Null(party.Elements);
         }
@@ -84,17 +80,7 @@ namespace FoxIDs.UnitTests
             var dynamicElementLogic = new ValidateApiModelDynamicElementLogic(telemetryLogger, httpContextAccessor);
             var genericPartyLogic = new ValidateApiModelGenericPartyLogic(telemetryLogger, dynamicElementLogic, httpContextAccessor);
 
-            var settings = new Settings { Cache = new CacheSettings { PlanLifetime = 60 } };
-            var cacheProviderMock = new Mock<IDataCacheProvider>();
-            cacheProviderMock.Setup(p => p.DeleteAsync(It.IsAny<string>())).Returns(ValueTask.CompletedTask);
-            cacheProviderMock.Setup(p => p.GetAsync(It.IsAny<string>())).Returns(new ValueTask<string>((string)null));
-            cacheProviderMock.Setup(p => p.SetAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Returns(ValueTask.CompletedTask);
-
-            var masterRepositoryMock = new Mock<IMasterDataRepository>();
-
-            var planCacheLogic = new PlanCacheLogic(settings, cacheProviderMock.Object, masterRepositoryMock.Object, httpContextAccessor);
-
-            var logic = new ValidateApiModelLoginPartyLogic(telemetryLogger, planCacheLogic, genericPartyLogic, dynamicElementLogic, httpContextAccessor);
+            var logic = new ValidateApiModelLoginPartyLogic(telemetryLogger, genericPartyLogic, dynamicElementLogic, httpContextAccessor);
             var modelState = new ModelStateDictionary();
 
             return (logic, modelState, routeBinding);

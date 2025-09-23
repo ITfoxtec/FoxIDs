@@ -67,8 +67,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var phoneConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<PhoneConfirmationViewModel>(sequenceData, loginUpParty);
                 phoneConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
@@ -102,8 +101,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewResponse = () =>
                 {
@@ -168,8 +166,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var emailConfirmationViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<EmailConfirmationViewModel>(sequenceData, loginUpParty);
                 emailConfirmationViewModel.ConfirmationCodeSendStatus = codeSendStatus;
@@ -194,8 +191,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewResponse = () =>
                 {
@@ -287,8 +283,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if (loginUpParty.DisableSetPassword)
                 {
@@ -342,8 +337,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if (loginUpParty.DisableSetPassword)
                 {
@@ -458,8 +452,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if (loginUpParty.DisableSetPassword)
                 {
@@ -504,8 +497,7 @@ namespace FoxIDs.Controllers
                 loginPageLogic.CheckUpParty(sequenceData);
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if (loginUpParty.DisableSetPassword)
                 {

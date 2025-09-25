@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
@@ -14,7 +14,8 @@ namespace FoxIDs.Models.ViewModels
         [Required]
         public string State { get; set; }
 
-        [Required]
+        public List<DynamicElementBase> InputElements { get; set; }
+
         public List<DynamicElementBase> Elements { get; set; }
     }
 }

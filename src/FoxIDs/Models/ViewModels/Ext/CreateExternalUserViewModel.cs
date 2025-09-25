@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models.ViewModels
 {
@@ -7,7 +6,8 @@ namespace FoxIDs.Models.ViewModels
     {
         public string SequenceString { get; set; }
 
-        [Required]
+        public List<DynamicElementBase> InputElements { get; set; }
+
         public List<DynamicElementBase> Elements { get; set; }
     }
 }

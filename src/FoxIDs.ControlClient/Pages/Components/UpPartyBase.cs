@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models.ViewModels;
@@ -56,6 +56,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             upParty.ShowLoginTab = false;
             upParty.ShowClaimTransformTab = false;
+            upParty.ShowLoginUiTab = false;
             upParty.ShowExtendedUiTab = false;
             upParty.ShowCreateUserTab = false;
             upParty.ShowSessionTab = false;
@@ -68,6 +69,9 @@ namespace FoxIDs.Client.Pages.Components
                     break;
                 case LoginTabTypes.ClaimsTransform:
                     upParty.ShowClaimTransformTab = true;
+                    break;
+                case LoginTabTypes.LoginUi:
+                    upParty.ShowLoginUiTab = true;
                     break;
                 case LoginTabTypes.ExtendedUi:
                     upParty.ShowExtendedUiTab = true;

@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// External login.
     /// </summary>
-    public class ExternalLoginUpParty : UpPartyWithExternalUser<ExternalLoginUpPartyProfile>, IOAuthClaimTransformsRef, IValidatableObject
+    public class ExternalLoginUpParty : UpPartyWithExternalUser<ExternalLoginUpPartyProfile>, IOAuthClaimTransformsRef, IValidatableObject, IUiLoginUpParty
     {
         public ExternalLoginUpParty()
         {
@@ -46,6 +46,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; }
 
+        [JsonProperty(PropertyName = "disable_set_password")]
+        public bool DisableSetPassword { get; set; }
+
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
@@ -66,6 +69,10 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [JsonProperty(PropertyName = "login_elements")]
+        public List<DynamicElement> Elements { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

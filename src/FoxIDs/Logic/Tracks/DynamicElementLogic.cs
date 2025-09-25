@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models;
+using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.ViewModels;
 using ITfoxtec.Identity;
@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.localizer = localizer;
         }
 
-        public IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
+        public IEnumerable<DynamicElementBase> ToUiElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null, List<Claim> initClaims = null)
         {
             if(elements == null)
             {
@@ -92,6 +92,89 @@ namespace FoxIDs.Logic
             }
         }
 
+        public List<DynamicElementBase> GetLoginElementsViewModel(LoginUpParty loginUpParty)
+        {
+            var elements = EnsureLoginElements(loginUpParty.Elements);
+            return ToLoginElementsViewModel(elements);
+        }
+
+        private List<DynamicElement> EnsureLoginElements(List<DynamicElement> elements)
+        {
+            var list = elements ?? new List<DynamicElement>();
+
+            if (list.Any(e => e.Type == DynamicElementTypes.LoginInput))
+            {
+                return list;
+            }
+
+            var order = Constants.Models.DynamicElements.ElementsOrderMin;
+            return new List<DynamicElement>
+            {
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginInputElementName,
+                    Type = DynamicElementTypes.LoginInput,
+                    Order = order++,
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginButtonElementName,
+                    Type = DynamicElementTypes.LoginButton,
+                    Order = order++,
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginLinkElementName,
+                    Type = DynamicElementTypes.LoginLink,
+                    Order = order++,
+                },
+                new DynamicElement
+                {
+                    Name = Constants.Models.DynamicElements.LoginHrdElementName,
+                    Type = DynamicElementTypes.LoginHrd,
+                    Order = order,
+                }
+            };
+        }
+
+        private List<DynamicElementBase> ToLoginElementsViewModel(List<DynamicElement> elements)
+        {
+            var result = new List<DynamicElementBase>();
+            if (elements?.Count > 0)
+            {
+                foreach (var element in elements.OrderBy(e => e.Order))
+                {
+                    if (element.Type == DynamicElementTypes.LoginInput)
+                    {
+                        result.Add(new LoginInputDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.LoginButton)
+                    {
+                        result.Add(new LoginButtonDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.LoginLink)
+                    {
+                        result.Add(new LoginLinkDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.LoginHrd)
+                    {
+                        result.Add(new LoginHrdDElement { Name = element.Name });
+                    }
+                    else if (element.Type == DynamicElementTypes.Text || element.Type == DynamicElementTypes.Html)
+                    {
+                        result.Add(new ContentDElement
+                        {
+                            Name = element.Name,
+                            DContent = element.Content,
+                            IsHtml = element.Type == DynamicElementTypes.Html,
+                        });
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private DynamicElementBase GetValueElement(DynamicElement element, List<DynamicElementBase> valueElements, List<Claim> initClaims, int i)
         {
             var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
@@ -155,11 +238,11 @@ namespace FoxIDs.Logic
             var index = 0;
             foreach (var element in elements)
             {
-                await ValidateViewModelElementAsync(modelState, element, index);
+                index = await ValidateViewModelElementAsync(modelState, element, index);
             }
         }
 
-        public async Task ValidateViewModelElementAsync(ModelStateDictionary modelState, DynamicElementBase element, int index)
+        public async Task<int> ValidateViewModelElementAsync(ModelStateDictionary modelState, DynamicElementBase element, int index)
         {
             string phoneTempValue = null;
             if (element is PhoneDElement)
@@ -175,7 +258,7 @@ namespace FoxIDs.Logic
                 {
                     foreach (var result in elementValidation.results)
                     {
-                        modelState.AddModelError($"Elements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
+                        modelState.AddModelError($"InputElements[{index}].{result.MemberNames.First()}", localizer[result.ErrorMessage, result.MemberNames]);
                     }
                 }
 
@@ -185,7 +268,7 @@ namespace FoxIDs.Logic
                     {
                         if (!Regex.IsMatch(element.DField1, customDElement.RegEx))
                         {
-                            modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
+                            modelState.AddModelError($"InputElements[{index}].{nameof(element.DField1)}", localizer[customDElement.ErrorMessage]);
                         }
                     }
                 }
@@ -197,6 +280,8 @@ namespace FoxIDs.Logic
             {
                 element.DField1 = phoneTempValue;
             }
+
+            return index;
         }
 
         public void SetModelElementError(ModelStateDictionary modelState, List<DynamicElementBase> elements, string name, string errorMessage)
@@ -208,7 +293,7 @@ namespace FoxIDs.Logic
                 {
                     if (element.Name == name)
                     {
-                        modelState.AddModelError($"Elements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
+                        modelState.AddModelError($"InputElements[{index}].{nameof(element.DField1)}", localizer[errorMessage]);
                     }
 
                     index++;
@@ -293,6 +378,10 @@ namespace FoxIDs.Logic
                         return string.IsNullOrWhiteSpace(element.ClaimOut) ? null : claims.Where(c => c.Type == element.ClaimOut).FirstOrDefault();
                     case DynamicElementTypes.Text:
                     case DynamicElementTypes.Html:
+                    case DynamicElementTypes.LoginInput:
+                    case DynamicElementTypes.LoginButton:
+                    case DynamicElementTypes.LoginLink:
+                    case DynamicElementTypes.LoginHrd:
                         return null;
                     default:
                         throw new NotSupportedException();

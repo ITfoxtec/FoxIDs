@@ -195,4 +195,4 @@ Use a `Regex map` claim transformation and select the `Replace claim` action.
 
 Find the ID without the default added post authentication method name with regex `^(nemlogin\|)(?<map>.+)$`
 
-> You can do the same in a SAML 2.0 authentication method using the `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim instead of the `sub` claim.
+> You can do the same in a SAML 2.0 authentication method using the `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim (which contains the SAML 2.0 Authn Response `NameID` value) instead of the `sub` claim.

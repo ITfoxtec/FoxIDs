@@ -1,0 +1,44 @@
+name: sbom_syft
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  sbom:
+    name: Generate SBOM with Syft
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare SBOM directory
+        run: mkdir -p sbom
+
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: sbom/foxids.spdx.json
+          upload-artifact: false
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom/foxids.cdx.json
+          upload-artifact: false
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: foxids-sbom
+          path: sbom
+          if-no-files-found: error

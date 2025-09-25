@@ -9,6 +9,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
 
+        [Display(Name = "The user has a password")]
+        public bool HasPassword { get; set; }
+
         [Display(Name = "Active two-factor authenticator App")]
         public bool ActiveTwoFactorApp { get; set; }
     }

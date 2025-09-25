@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer StringLocalizer
+@model DynamicElementBase
+
+@if (Model != null)
+{
+    if (Model is ContentDElement contentDElement)
+    {
+        var cssName = Model.Name.IsNullOrWhiteSpace() ? string.Empty : $"name-{Model.Name}";
+        <div class="form-group active-group @cssName">
+            @if (contentDElement.IsHtml) 
+            {
+                @Html.GetHtmlControl(contentDElement.DContent, StringLocalizer)
+            }
+            else
+            {
+                @Html.GetTextControl(contentDElement.DContent, StringLocalizer)
+            }
+        </div>
+    }
+}

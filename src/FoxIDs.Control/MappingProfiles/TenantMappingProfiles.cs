@@ -100,6 +100,7 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<User, Api.User>()
                 .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty() || !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
+                .ForMember(d => d.HasPassword, opt => opt.MapFrom(s => !s.Hash.IsNullOrEmpty()))
                 .ReverseMap()
                 .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email != null ? s.Email.ToLower() : s.Email))
                 .ForMember(d => d.Username, opt => opt.MapFrom(s => s.Username != null ? s.Username.ToLower() : s.Username))

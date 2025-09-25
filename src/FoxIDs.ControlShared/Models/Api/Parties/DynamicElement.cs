@@ -1,4 +1,4 @@
-﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

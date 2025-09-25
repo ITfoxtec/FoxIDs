@@ -1,4 +1,4 @@
-﻿using FoxIDs.Client.Shared.Components;
+using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
@@ -15,6 +15,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool ShowLoginTab { get; set; } = true;
         public bool ShowClaimTransformTab { get; set; }
+        public bool ShowLoginUiTab { get; set; }
         public bool ShowExtendedUiTab { get; set; }
         public bool ShowCreateUserTab { get; set; }
         public bool ShowSessionTab { get; set; }

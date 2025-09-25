@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;

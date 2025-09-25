@@ -1,4 +1,6 @@
-﻿namespace FoxIDs.Models
+﻿using System.Collections.Generic;
+
+namespace FoxIDs.Models
 {
     public interface IUiLoginUpParty : IDataDocument
     {
@@ -7,5 +9,7 @@
         public string Title { get; set; }
         public string IconUrl { get; set; }
         string Css { get; set; }
+
+        public List<DynamicElement> Elements { get; set; }
     }
 }

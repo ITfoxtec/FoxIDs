@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using FoxIDs.Models
 @inject IViewLocalizer Localizer
 @model TwoFactorAppViewModel
 
@@ -13,35 +14,54 @@
         <form method="post">
             <div class="info-message">@Localizer["Enter your authenticator app code or recovery code."]</div>
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="form-group active-group">
-                <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />
-                <label asp-for="AppCode" class="label-control"></label>
-                <span asp-validation-for="AppCode"></span>
-            </div>
-
-            <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
-            </div>
-
-            @if (Model.ShowTwoFactorSmsLink || Model.ShowTwoFactorEmailLink)
+            @foreach (var element in Model.Elements)
             {
-                <div class="form-group button-group another-two-factor-group">
-                    @Localizer["Try another method?"]
-                    @if (Model.ShowTwoFactorSmsLink && Model.ShowTwoFactorEmailLink)
+                if (element is LoginInputDElement)
+                {
+                    await Html.RenderPartialAsync("_UserIdentifierPassword");
+                    <div class="form-group active-group">
+                        <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />
+                        <label asp-for="AppCode" class="label-control"></label>
+                        <span asp-validation-for="AppCode"></span>
+                    </div>
+                }
+                else if (element is LoginButtonDElement)
+                {
+                    <div class="form-group button-group">
+                        <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
+                    </div>
+                }
+                else if (element is LoginLinkDElement)
+                {
+                    @if (Model.ShowTwoFactorSmsLink || Model.ShowTwoFactorEmailLink)
                     {
-                        @Localizer["Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
-                                 $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor",
-                                 $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
+                        <div class="form-group button-group another-two-factor-group">
+                            @Localizer["Try another method?"]
+                            @if (Model.ShowTwoFactorSmsLink && Model.ShowTwoFactorEmailLink)
+                            {
+                                @Localizer["Use <a href=\"{0}\" class=\"{1}\">SMS two-factor</a> or <a href=\"{2}\" class=\"{3}\">email two-factor</a>.",
+                                        $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor",
+                                        $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
+                            }
+                            else if (Model.ShowTwoFactorSmsLink)
+                            {
+                                @Localizer["<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>", $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
+                            }
+                            else if (Model.ShowTwoFactorEmailLink)
+                            {
+                                @Localizer["<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>", $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
+                            }
+                        </div>
                     }
-                    else @if (Model.ShowTwoFactorSmsLink)
-                    {
-                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use SMS two-factor.</a>", $"../../{Constants.Endpoints.SmsTwoFactor}/_{Model.SequenceString}", "link sms-two-factor"];
-                    }
-                    else @if (Model.ShowTwoFactorEmailLink)
-                    {
-                        @Localizer["<a href=\"{0}\" class=\"{1}\">Use email two-factor.</a>", $"../../{Constants.Endpoints.EmailTwoFactor}/_{Model.SequenceString}", "link email-two-factor"];
-                    }
-                </div>
+                }
+                else if (element is ContentDElement)
+                {
+                    await Html.RenderPartialAsync("_DynamicContentElements", element);
+                }
+                else if (!(element is LoginHrdDElement))
+                {
+                    throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+                }
             }
         </form>
     </div>

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
@@ -7,7 +7,6 @@ using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,18 +18,16 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly IStringLocalizer localizer;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ExternalUserLogic externalUserLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
 
-        public ExtController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalUserLogic externalUserLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
+        public ExtController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ExternalUserLogic externalUserLogic, DynamicElementLogic dynamicElementLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.localizer = localizer;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -53,8 +50,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
                 logger.ScopeTrace(() => "Show create external user dialog.");
@@ -64,7 +60,8 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList()
+                    InputElements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, initClaims: sequenceData.Claims?.ToClaimList()).ToList(),
+                    Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty)
                 });
 
             }
@@ -88,11 +85,10 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(await sequenceLogic.GetUiUpPartyIdAsync());
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 securityHeaderLogic.AddImgSrcFromDynamicElements(externalUserUpParty.LinkExternalUser?.Elements);
 
-                createExternalUser.Elements = dynamicElementLogic.ToElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.Elements).ToList();
+                createExternalUser.InputElements = dynamicElementLogic.ToUiElementsViewModel(externalUserUpParty.LinkExternalUser.Elements, valueElements: createExternalUser.InputElements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -100,11 +96,12 @@ namespace FoxIDs.Controllers
                     createExternalUser.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     createExternalUser.IconUrl = loginUpParty.IconUrl;
                     createExternalUser.Css = loginUpParty.Css;
+                    createExternalUser.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                     return View(nameof(CreateUser), createExternalUser);
                 };
 
                 ModelState.Clear();
-                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, createExternalUser.Elements);
+                await dynamicElementLogic.ValidateViewModelElementsAsync(ModelState, createExternalUser.InputElements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -112,7 +109,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Create external user post.");
 
-                (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(createExternalUser.Elements);
+                (var dynamicElementClaims, _) = dynamicElementLogic.GetClaims(createExternalUser.InputElements);
                 (var externalAccountClaims, var actionResult) = await externalUserLogic.CreateUserAsync(externalUserUpParty, sequenceData, sequenceData.LinkClaimValue, sequenceData.Claims?.ToClaimList(), dynamicElementClaims);
                 if (actionResult != null)
                 {

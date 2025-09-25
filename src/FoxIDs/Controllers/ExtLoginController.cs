@@ -59,8 +59,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty);
 
                 (var validSession, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, extLoginUpParty);
                 if (redirectAction != null)
@@ -128,8 +127,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty);
 
                 switch (extLoginUpParty.UsernameType)
                 {
@@ -260,8 +258,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty);
 
                 var session = await sessionLogic.GetSessionAsync(extLoginUpParty);
                 if (session == null)
@@ -301,8 +298,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<ExternalLoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData, partyType: PartyTypes.ExternalLogin);
                 var extLoginUpParty = await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(extLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(extLoginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(extLoginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -417,12 +413,10 @@ namespace FoxIDs.Controllers
             else
             {
                 loginUpParty = loginUpParty ?? await tenantDataRepository.GetAsync<ExternalLoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
                 logger.ScopeTrace(() => "Show external logged out dialog.");
                 return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
             }
         }
     }
-
 }

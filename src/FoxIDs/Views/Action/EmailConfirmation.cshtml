@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using FoxIDs.Models
 @inject IViewLocalizer Localizer
 @model EmailConfirmationViewModel
 
@@ -13,7 +14,7 @@
         <form method="post">
             <input type="hidden" asp-for="ConfirmationCodeSendStatus" autocomplete="off" />
             <div class="info-message">
-                @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode) 
+                @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode)
                 {
                     @Localizer["A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."]
                 }
@@ -21,28 +22,47 @@
                 {
                     @Localizer["A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."]
                 }
-                else 
+                else
                 {
                     @Localizer["Please verify your email address with the confirmation code sent to your email."]
                 }
             </div>
             <div asp-validation-summary="ModelOnly"></div>
-            @{
-                await Html.RenderPartialAsync("_UserIdentifiers");
-            }
-            <div class="form-group active-group">
-                <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
-                <label asp-for="ConfirmationCode" class="label-control"></label>
-                <span asp-validation-for="ConfirmationCode"></span>
-            </div>
-            <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Confirm email"]" class="btn btn-primary" />
-                @if (Model.ShowCancelLogin)
+            @foreach (var element in Model.Elements)
+            {
+                if (element is LoginInputDElement)
                 {
-                    <a href="../../../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    await Html.RenderPartialAsync("_UserIdentifierPassword");
+                    <div class="form-group active-group">
+                        <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
+                        <label asp-for="ConfirmationCode" class="label-control"></label>
+                        <span asp-validation-for="ConfirmationCode"></span>
+                    </div>
                 }
-                <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new confirmation code"]</a>
-            </div>
+                else if (element is LoginButtonDElement)
+                {
+                    <div class="form-group button-group">
+                        <input type="submit" value="@Localizer["Confirm email"]" class="btn btn-primary" />
+                        @if (Model.ShowCancelLogin)
+                        {
+                            <a href="../../../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                        }
+                        <a href="../_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new confirmation code"]</a>
+                    </div>
+                }
+                else if (element is ContentDElement)
+                {
+                    await Html.RenderPartialAsync("_DynamicContentElements", element);
+                }
+                else if (element is LoginLinkDElement || element is LoginHrdDElement)
+                {
+                    // Placeholder elements ignored on logged-in view.
+                }
+                else
+                {
+                    throw new NotSupportedException($"Dynamic element type '{element.GetTypeName()}' not supported.");
+                }
+            }
         </form>
     </div>
 </div>

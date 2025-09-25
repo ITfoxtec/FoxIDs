@@ -26,11 +26,12 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorAppLogic accountTwoFactorAppLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly DynamicElementLogic dynamicElementLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorAppLogic accountTwoFactorAppLogic, AccountActionLogic accountActionLogic, DynamicElementLogic dynamicElementLogic, FailingLoginLogic failingLoginLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -41,6 +42,7 @@ namespace FoxIDs.Controllers
             this.accountLogic = accountLogic;
             this.accountTwoFactorAppLogic = accountTwoFactorAppLogic;
             this.accountActionLogic = accountActionLogic;
+            this.dynamicElementLogic = dynamicElementLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.planUsageLogic = planUsageLogic;
             this.planCacheLogic = planCacheLogic;
@@ -66,24 +68,19 @@ namespace FoxIDs.Controllers
                 planUsageLogic.LogMfaAuthAppEvent();
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorSetupInfo = await accountTwoFactorAppLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.UserIdentifier);
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-                return View(new RegisterTwoFactorAppViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl,
-                    ManualSetupKey = twoFactorSetupInfo.ManualSetupKey,
-                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
-                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
-                });
+                var registerTwoFactorViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<RegisterTwoFactorAppViewModel>(sequenceData, loginUpParty);
+                registerTwoFactorViewModel.QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl;
+                registerTwoFactorViewModel.ManualSetupKey = twoFactorSetupInfo.ManualSetupKey;
+                registerTwoFactorViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                registerTwoFactorViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                registerTwoFactorViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                return View(registerTwoFactorViewModel);
             }
             catch (Exception ex)
             {
@@ -108,18 +105,17 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
                 }
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.SequenceString = SequenceString;
-                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
-                    registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
-                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
-                    return View(registerTwoFactor);
+                    var registerTwoFactorViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<RegisterTwoFactorAppViewModel>(sequenceData, loginUpParty);
+                    registerTwoFactorViewModel.QrCodeSetupImageUrl = registerTwoFactor.QrCodeSetupImageUrl;
+                    registerTwoFactorViewModel.ManualSetupKey = registerTwoFactor.ManualSetupKey;
+                    registerTwoFactorViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                    registerTwoFactorViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                    registerTwoFactorViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                    return View(registerTwoFactorViewModel);
                 };
 
                 logger.ScopeTrace(() => "App two-factor registration post.");
@@ -137,14 +133,10 @@ namespace FoxIDs.Controllers
                     sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorAppLogic.CreateRecoveryCode();
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-                    return View(nameof(AppTwoFactorRecCode), new RecoveryCodeTwoFactorAppViewModel
-                    {
-                        SequenceString = SequenceString,
-                        Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                        IconUrl = loginUpParty.IconUrl,
-                        Css = loginUpParty.Css,
-                        RecoveryCode = sequenceData.TwoFactorAppRecoveryCode
-                    });
+                    var recoveryCodeViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<RecoveryCodeTwoFactorAppViewModel>(sequenceData, loginUpParty);
+                    recoveryCodeViewModel.RecoveryCode = sequenceData.TwoFactorAppRecoveryCode;
+                    recoveryCodeViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                    return View(nameof(AppTwoFactorRecCode), recoveryCodeViewModel);
                 }
                 catch (InvalidAppCodeException acex)
                 {
@@ -181,8 +173,7 @@ namespace FoxIDs.Controllers
                 }
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 if(sequenceData.TwoFactorAppRecoveryCode.IsNullOrEmpty())
                 {
@@ -230,18 +221,13 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
-                return View(new TwoFactorAppViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms,
-                    ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail,
-                });
+                var twoFactorAppViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorAppViewModel>(sequenceData, loginUpParty);
+                twoFactorAppViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                twoFactorAppViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                twoFactorAppViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                return View(twoFactorAppViewModel);
             }
             catch (Exception ex)
             {
@@ -266,18 +252,15 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
                 }
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.SequenceString = SequenceString;
-                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
-                    registerTwoFactor.IconUrl = loginUpParty.IconUrl;
-                    registerTwoFactor.Css = loginUpParty.Css;
-                    registerTwoFactor.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
-                    registerTwoFactor.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
-                    return View(registerTwoFactor);
+                    var twoFactorAppViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorAppViewModel>(sequenceData, loginUpParty);
+                    twoFactorAppViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
+                    twoFactorAppViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
+                    twoFactorAppViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
+                    return View(twoFactorAppViewModel);
                 };
 
                 logger.ScopeTrace(() => "App two-factor login post.");
@@ -364,14 +347,14 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorSmsViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorSmsViewModel>(sequenceData, loginUpParty);
                 twoFactorSmsViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
                 twoFactorSmsViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
                 twoFactorSmsViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
                 twoFactorSmsViewModel.ForceNewCode = newCode;
+                twoFactorSmsViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                 return View(twoFactorSmsViewModel);
             }
             catch (Exception ex)
@@ -403,8 +386,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -413,6 +395,7 @@ namespace FoxIDs.Controllers
                     twoFactorSmsViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
                     twoFactorSmsViewModel.ShowTwoFactorEmailLink = sequenceData.SupportTwoFactorEmail;
                     twoFactorSmsViewModel.ForceNewCode = registerTwoFactor.ForceNewCode;
+                    twoFactorSmsViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                     return View(twoFactorSmsViewModel);
                 };
 
@@ -477,14 +460,14 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 var twoFactorEmailViewModel = loginPageLogic.GetLoginWithUserIdentifierViewModel<TwoFactorEmailViewModel>(sequenceData, loginUpParty);
                 twoFactorEmailViewModel.ShowTwoFactorAppLink = sequenceData.ShowTwoFactorAppLink;
                 twoFactorEmailViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
                 twoFactorEmailViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
                 twoFactorEmailViewModel.ForceNewCode = newCode;
+                twoFactorEmailViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                 return View(twoFactorEmailViewModel);
             }
             catch (Exception ex)
@@ -516,8 +499,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+                securityHeaderLogic.AddImgSrc(loginUpParty);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -526,6 +508,7 @@ namespace FoxIDs.Controllers
                     twoFactorEmailViewModel.ShowRegisterTwoFactorApp = sequenceData.ShowRegisterTwoFactorApp;
                     twoFactorEmailViewModel.ShowTwoFactorSmsLink = sequenceData.SupportTwoFactorSms;
                     twoFactorEmailViewModel.ForceNewCode = registerTwoFactor.ForceNewCode;
+                    twoFactorEmailViewModel.Elements = dynamicElementLogic.GetLoginElementsViewModel(loginUpParty);
                     return View(twoFactorEmailViewModel);
                 };
 

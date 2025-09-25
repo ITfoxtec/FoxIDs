@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class TwoFactorAppViewModel : ViewModel
+    public class TwoFactorAppViewModel : LoginBaseViewModel
     {
-        public string SequenceString { get; set; }
-
         public bool ShowTwoFactorSmsLink { get; set; }
 
         public bool ShowTwoFactorEmailLink { get; set; }

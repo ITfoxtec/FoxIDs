@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
 using System;
 using System.Collections.Generic;
@@ -120,7 +120,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Title { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
-        [Display(Name = "Browser Icon URL (https://example.somewhere/favicon.ico)")]
+        [Display(Name = "Browser Icon URL (https://example.somewhere/favicon.ico or data:image/png;base64,...)")]
         public string IconUrl { get; set; }        
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]

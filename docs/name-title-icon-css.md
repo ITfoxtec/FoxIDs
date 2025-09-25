@@ -26,6 +26,7 @@ Find the login authentication method in [FoxIDs Control Client](control.md#foxid
 
 1. Add the **Browser Title** text
 2. Add the **Browser Icon URL** from an external site, supported image formats: ico, png, gif, jpeg and webp
+   You can also paste an inline data URI such as `data:image/png;base64,...` to embed the icon directly.
 3. Add your **CSS**, if necessary drag the field bigger
 4. Click **Update**
 

@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
         private static readonly Regex cssStyleTagPattern = new Regex("<\\s*/?\\s*style[^>]*>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex cssHtmlTagPattern = new Regex("<[^>]+>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         private static readonly Regex cssHtmlCommentPattern = new Regex("<!--.*?-->", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
-        private static readonly Regex cssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavior(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data)\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        private static readonly Regex cssUnsafePattern = new Regex("(?i)(expression\\s*\\(|behavior(u)?r\\s*:|-moz-binding\\s*:|@import\\b|@charset\\b|@namespace\\b|url\\s*\\(\\s*[\'\\\"]?\\s*(?:javascript|vbscript|data(?!\\s*:\\s*image\\/))\\s*:|<\\s*/?\\s*(?:style|script)[^>]*>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
         private readonly TelemetryScopedLogger logger;
         private readonly ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic;
@@ -197,3 +197,4 @@ namespace FoxIDs.Logic
         }
     }
 }
+

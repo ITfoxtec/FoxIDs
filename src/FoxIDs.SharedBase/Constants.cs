@@ -844,8 +844,8 @@ namespace FoxIDs
             {
                 public const int TitleLength = 40;
                 public const string TitleRegExPattern = "^[^<^>]*$";
-                public const int IconUrlLength = 500;
-                public const int CssStyleLength = 20000; 
+                public const int IconUrlLength = 20000;
+                public const int CssStyleLength = 40000; 
                 public const int TwoFactorAppNameLength = 50;
             }
 

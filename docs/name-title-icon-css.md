@@ -71,6 +71,18 @@ It is also possible to use a logo image.
 }
 ```
 
+You can also embed the logo image directly in the CSS with a `data:` URI to avoid external requests.
+
+```CSS
+.brand-content-text {
+    display: none;
+}
+
+.brand-content-icon::before {
+    content:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9FHSMNcAAAAASUVORK5CYII=');
+}
+```
+
 Add a background image from an external site.
 
 ```CSS

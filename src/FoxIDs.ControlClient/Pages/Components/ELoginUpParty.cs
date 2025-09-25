@@ -204,6 +204,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             showCssGenerator = false;
         }
+
         private void ToggleThemeSection()
         {
             themeSectionExpanded = !themeSectionExpanded;
@@ -213,7 +214,6 @@ namespace FoxIDs.Client.Pages.Components
         {
             backgroundSectionExpanded = !backgroundSectionExpanded;
         }
-
 
         private void GenerateThemeCssSnippet()
         {

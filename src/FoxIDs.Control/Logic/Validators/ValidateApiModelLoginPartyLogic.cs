@@ -110,11 +110,6 @@ namespace FoxIDs.Logic
                     throw new ValidationException("CSS contains unbalanced braces.");
                 }
 
-                if (cssUnsafePattern.IsMatch(css))
-                {
-                    throw new ValidationException("CSS contains unsupported or unsafe content.");
-                }
-
                 sanitizedCss = SanitizeCss(css);
                 return true;
             }

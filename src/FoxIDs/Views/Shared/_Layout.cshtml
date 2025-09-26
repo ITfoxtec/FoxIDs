@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="@(Html.ParentCultureName())">
 <head>
     <meta charset="utf-8" />
@@ -17,16 +17,36 @@
 
         if (!generalViewModel.IconUrl.IsNullOrWhiteSpace())
         {
-            var iconExtension = System.IO.Path.GetExtension(generalViewModel.IconUrl.Split('?')[0]);
-            var iconType = iconExtension switch
+            var iconUrl = generalViewModel.IconUrl;
+            string iconType;
+
+            if (iconUrl.StartsWith("data:", System.StringComparison.OrdinalIgnoreCase))
             {
-                ".png" => "image/png",
-                ".gif" => "image/gif",
-                ".jpeg" => "image/jpeg",
-                ".webp" => "image/webp",
-                _ => "image/x-icon",
-            };
-            <link rel="icon" type="@iconType" href="@generalViewModel.IconUrl" />
+                var commaIndex = iconUrl.IndexOf(',');
+                var metadata = commaIndex > 5 ? iconUrl.Substring(5, commaIndex - 5) : string.Empty;
+                var semicolonIndex = metadata.IndexOf(';');
+                iconType = semicolonIndex >= 0 ? metadata.Substring(0, semicolonIndex) : metadata;
+                if (iconType.IsNullOrWhiteSpace())
+                {
+                    iconType = "image/png";
+                }
+            }
+            else
+            {
+                var iconPath = iconUrl.Split(['?', '#'], 2)[0];
+                var iconExtension = System.IO.Path.GetExtension(iconPath)?.ToLowerInvariant();
+                iconType = iconExtension switch
+                {
+                    ".png" => "image/png",
+                    ".gif" => "image/gif",
+                    ".jpeg" => "image/jpeg",
+                    ".jpg" => "image/jpeg",
+                    ".webp" => "image/webp",
+                    _ => "image/x-icon",
+                };
+            }
+
+            <link rel="icon" type="@iconType" href="@iconUrl" />
         }
 
         if (!generalViewModel.Css.IsNullOrWhiteSpace())

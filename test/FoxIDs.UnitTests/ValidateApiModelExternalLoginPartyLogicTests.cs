@@ -35,7 +35,7 @@ namespace FoxIDs.UnitTests
 
             Assert.True(isValid);
             Assert.True(modelState.IsValid);
-            Assert.Equal(".bad { background: ; }", party.Css);
+            Assert.Equal(".bad { background: alert(1)); }", party.Css);
         }
 
         [Fact]

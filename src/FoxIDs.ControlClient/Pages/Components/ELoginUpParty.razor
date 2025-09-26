@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var loginUpParty = UpParty as GeneralLoginUpPartyViewModel;
@@ -183,7 +183,7 @@
                         <div class="card-body pt-2 pb-0">
                             <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                             <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
-                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
+                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" rows="@CssTextAreaRows" />
                             <div class="mb-2">
                                 <button type="button" class="btn btn-link btn-sm pl-0 pt-0" @onclick="OpenCssGenerator">Generate CSS snippets</button>
                             </div>

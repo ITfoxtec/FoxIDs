@@ -41,6 +41,21 @@ namespace FoxIDs.Client.Pages.Components
         private bool HasBackgroundCss => !string.IsNullOrWhiteSpace(backgroundCssSnippet);
         private string ThemeColorHexDisplay => TryParseHexColor(themeColorHex, out _, out _, out _, out var normalizedPrimaryHex) ? normalizedPrimaryHex : (string.IsNullOrWhiteSpace(themeColorHex) ? string.Empty : themeColorHex);
         private string BackgroundColorHexDisplay => TryParseHexColor(backgroundColorHex, out _, out _, out _, out var normalizedBackgroundHex) ? normalizedBackgroundHex : (string.IsNullOrWhiteSpace(backgroundColorHex) ? string.Empty : backgroundColorHex);
+        private int CssTextAreaRows => CalculateCssRows(CurrentLoginUpParty?.Form?.Model?.Css);
+
+        private const int MinCssRows = 6;
+        private const int MaxCssRows = 40;
+        private static int CalculateCssRows(string css)
+        {
+            if (string.IsNullOrWhiteSpace(css))
+            {
+                return MinCssRows;
+            }
+
+            var normalized = css.Replace("\r\n", "\n");
+            var lineCount = normalized.Split('\n').Length;
+            return Math.Clamp(lineCount + 2, MinCssRows, MaxCssRows);
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -471,3 +486,6 @@ label {{
         }
     }
 }
+
+
+

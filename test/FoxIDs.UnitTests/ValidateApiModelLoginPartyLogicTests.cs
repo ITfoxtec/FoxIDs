@@ -48,10 +48,9 @@ namespace FoxIDs.UnitTests
 
             var isValid = await logic.ValidateApiModelAsync(modelState, party);
 
-            Assert.False(isValid);
-            Assert.False(modelState.IsValid);
-            Assert.True(modelState.ContainsKey("css"));
-            Assert.Equal(css, party.Css);
+            Assert.True(isValid);
+            Assert.True(modelState.IsValid);
+            Assert.Equal(".danger { background-image: url(); }", party.Css);
         }
 
         [Fact]

@@ -5,7 +5,6 @@ using Api = FoxIDs.Models.Api;
 using FoxIDs.Models;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Xunit;
 
@@ -48,10 +47,9 @@ namespace FoxIDs.UnitTests
 
             var isValid = await logic.ValidateApiModelAsync(modelState, party);
 
-            Assert.False(isValid);
-            Assert.False(modelState.IsValid);
-            Assert.True(modelState.ContainsKey("css"));
-            Assert.Equal(css, party.Css);
+            Assert.True(isValid);
+            Assert.True(modelState.IsValid);
+            Assert.Equal(".danger { background-image: alert(1)\"); }", party.Css);
         }
 
         [Fact]

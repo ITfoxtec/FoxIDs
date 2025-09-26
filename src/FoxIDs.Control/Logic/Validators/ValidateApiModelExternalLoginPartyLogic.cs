@@ -32,9 +32,13 @@ namespace FoxIDs.Logic
                 party.Css = sanitizedCss;
             }
 
-            if (!ValidateApiModelLoginPartyLogic.TryValidateIconUrl(modelState, logger, nameof(Api.ExternalLoginUpParty.IconUrl), party.IconUrl))
+            if (!ValidateApiModelLoginPartyLogic.TryValidateIconUrl(modelState, logger, nameof(Api.ExternalLoginUpParty.IconUrl), party.IconUrl, out var sanitizedIconUrl))
             {
                 isValid = false;
+            }
+            else
+            {
+                party.IconUrl = sanitizedIconUrl;
             }
 
             if (party.Title.IsNullOrWhiteSpace())

@@ -1,7 +1,7 @@
-﻿@inherits FInputBase<string>
+@inherits FInputBase<string>
 
 <div class="form-group active-group">
-    <textarea  @ref="inputElement" @bind="@CurrentValue" class="form-control input-control" />
+    <textarea @ref="inputElement" @bind="@CurrentValue" class="form-control input-control" @attributes="AdditionalAttributes"></textarea>
     <Label For="@For" LabelText="@LabelText" class="label-control" />
     <ValidationMessage For="@For" />
 </div>

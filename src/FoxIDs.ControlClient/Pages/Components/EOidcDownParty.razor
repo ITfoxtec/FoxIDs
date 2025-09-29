@@ -7,8 +7,8 @@
 <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-            <span class="text-nowrap flex-shrink-1" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">OpenID Connect</span>
-            <span class="ml-2 text-muted flex-fill text-truncate" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">@oidcDownParty.Form.Model.DisplayName</span>
+            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">OpenID Connect</span>
+            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@oidcDownParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -432,6 +432,9 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
+
+
 
 
 

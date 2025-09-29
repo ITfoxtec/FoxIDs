@@ -61,9 +61,11 @@ jobs:
       - name: Determine Docker platforms
         id: docker-platforms
         env:
-          INCLUDE_ARM64: ${{ coalesce(vars.DOCKER_INCLUDE_ARM64, env.DEFAULT_INCLUDE_ARM64) }}
+          INCLUDE_ARM64: ${{ vars.DOCKER_INCLUDE_ARM64 }}
+          DEFAULT_INCLUDE_ARM64: ${{ env.DEFAULT_INCLUDE_ARM64 }}
         run: |
-          include_arm64="$(echo "$INCLUDE_ARM64" | tr '[:upper:]' '[:lower:]')"
+          include_arm64="${INCLUDE_ARM64:-$DEFAULT_INCLUDE_ARM64}"
+          include_arm64="$(echo "$include_arm64" | tr '[:upper:]' '[:lower:]')"
           if [ "$include_arm64" = "false" ] || [ "$include_arm64" = "0" ] || [ "$include_arm64" = "off" ] || [ "$include_arm64" = "no" ]; then
             echo "value=linux/amd64" >> "$GITHUB_OUTPUT"
           else

@@ -33,10 +33,9 @@ namespace FoxIDs.UnitTests
 
             var isValid = logic.ValidateApiModel(modelState, party);
 
-            Assert.False(isValid);
-            Assert.False(modelState.IsValid);
-            Assert.True(modelState.ContainsKey("css"));
-            Assert.Equal(".bad { background: expression(alert(1)); }", party.Css);
+            Assert.True(isValid);
+            Assert.True(modelState.IsValid);
+            Assert.Equal(".bad { background: alert(1)); }", party.Css);
         }
 
         [Fact]

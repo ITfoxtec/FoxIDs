@@ -8,6 +8,9 @@ jobs:
   build:
     name: Build Docker image
     runs-on: ubuntu-latest
+    env:
+      # Toggle to false to build linux/amd64 only or override with vars.DOCKER_INCLUDE_ARM64 repository variable in GitHub.
+      DEFAULT_INCLUDE_ARM64: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,12 +58,26 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.5.0
 
+      - name: Determine Docker platforms
+        id: docker-platforms
+        env:
+          INCLUDE_ARM64: ${{ vars.DOCKER_INCLUDE_ARM64 }}
+          DEFAULT_INCLUDE_ARM64: ${{ env.DEFAULT_INCLUDE_ARM64 }}
+        run: |
+          include_arm64="${INCLUDE_ARM64:-$DEFAULT_INCLUDE_ARM64}"
+          include_arm64="$(echo "$include_arm64" | tr '[:upper:]' '[:lower:]')"
+          if [ "$include_arm64" = "false" ] || [ "$include_arm64" = "0" ] || [ "$include_arm64" = "off" ] || [ "$include_arm64" = "no" ]; then
+            echo "value=linux/amd64" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=linux/amd64,linux/arm64" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push FoxIDs
         uses: docker/build-push-action@v6.5.0
         with:
           context: .
           file: ./src/FoxIDs/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ steps.docker-platforms.outputs.value }}
           push: true
           provenance: false
           tags: ${{ steps.meta-f.outputs.tags }}
@@ -71,7 +88,7 @@ jobs:
         with:
           context: .
           file: ./src/FoxIDs.Control/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ steps.docker-platforms.outputs.value }}
           push: true
           provenance: false
           tags: ${{ steps.meta-fc.outputs.tags }}

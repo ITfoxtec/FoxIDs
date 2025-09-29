@@ -193,6 +193,25 @@ namespace FoxIDs.Logic
                 loginRequest.LoginHint = saml2AuthnRequest.Subject.NameID.ID;
             }
 
+            if (loginRequest.LoginHint.IsNullOrWhiteSpace())
+            {
+                if (HttpContext.Request.Query != null)
+                {
+                    foreach (var key in new[] { "login_hint", "LoginHint" })
+                    {
+                        if (HttpContext.Request.Query.TryGetValue(key, out var values))
+                        {
+                            var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
+                            if (!loginHintCandidate.IsNullOrWhiteSpace())
+                            {
+                                loginRequest.LoginHint = loginHintCandidate;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             if (saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef?.Count() > 0)
             {
                 loginRequest.Acr = saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef;

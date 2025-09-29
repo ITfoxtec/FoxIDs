@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models;
+using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -197,6 +197,16 @@ namespace FoxIDs.Logic
 
         private List<string> AddUrlToDomains(List<string> domains, string url)
         {
+            if (url.IsNullOrWhiteSpace())
+            {
+                return domains;
+            }
+
+            if (url.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            {
+                return domains;
+            }
+
             if (domains.Count <= domainsMaxCount)
             {
                 var domain = url.UrlToDomain();

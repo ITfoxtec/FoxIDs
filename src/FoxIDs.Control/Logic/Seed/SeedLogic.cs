@@ -1,8 +1,9 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,25 +29,9 @@ namespace FoxIDs.Logic.Seed
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await SeedLogAsync(cancellationToken);
-                DataProtectionCheck();
-                await SeedDbAsync();
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                logger.CriticalError(ex);
-                throw;
-            }
+            await SeedLogAsync(cancellationToken);
+            DataProtectionCheck();
+            await SeedDbAsync();
         }
 
         private async Task SeedLogAsync(CancellationToken cancellationToken)
@@ -61,11 +46,38 @@ namespace FoxIDs.Logic.Seed
                         logger.Trace("OpenSearch log storage seeded on startup.");
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception oex)
                 {
-                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
+                    try
+                    {
+                        throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
+                    }
+                    catch (Exception inex)
+                    {
+                        GetConsoleLogger().LogCritical(inex, inex.Message);
+                        throw;
+                    }
                 }
             }
+        }
+
+        private ILogger<OpenSearchTelemetryLogger> GetConsoleLogger()
+        {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                .AddFilter((f) => true)
+                .AddConsole();
+            });
+            return loggerFactory.CreateLogger<OpenSearchTelemetryLogger>();
         }
 
         private void DataProtectionCheck()
@@ -77,9 +89,25 @@ namespace FoxIDs.Logic.Seed
                     var dataProtection = serviceProvider.GetService<IDataProtectionProvider>();
                     _ = dataProtection.CreateProtector("seed check protector").Protect("seed check protect data");
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception oex)
                 {
-                    throw new Exception("Error checking data protection on startup.", oex);
+                    try
+                    {
+                        throw new Exception("Error checking data protection on startup.", oex);
+                    }
+                    catch (Exception inex)
+                    {
+                        logger.CriticalError(inex);
+                        throw;
+                    }   
                 }
             }
         }
@@ -104,9 +132,25 @@ namespace FoxIDs.Logic.Seed
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
+            }
             catch (Exception maex)
             {
-                throw new Exception("Error seeding master documents on startup.", maex);
+                try
+                {
+                    throw new Exception("Error seeding master documents on startup.", maex);
+                }
+                catch (Exception inex)
+                {
+                    logger.CriticalError(inex);
+                    throw;
+                }
             }
         }
     }

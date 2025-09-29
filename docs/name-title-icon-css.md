@@ -24,10 +24,13 @@ If you do not specify a login authentication method as an allowed authentication
 
 Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
-1. Add the **Browser Title** text
-2. Add the **Browser Icon URL** from an external site, supported image formats: ico, png, gif, jpeg and webp
-3. Add your **CSS**, if necessary drag the field bigger
-4. Click **Update**
+1. Select the **Login UI** tab
+2. Add the **Browser Title** text
+3. Add the **Browser Icon URL** from an external site, supported image formats: ico, png, gif, jpeg and webp
+   You can also paste an inline data URI such as `data:image/png;base64,...` to embed the icon directly
+4. Add your **CSS**, if necessary drag the field bigger  
+   Optionally use CSS snippets by clicking the **Generate CSS snippets** link
+5. Click **Update**
 
 After update the title, icon and CSS is instantly active.
 
@@ -68,6 +71,18 @@ It is also possible to use a logo image.
 
 .brand-content-icon::before {
     content:url('https://some-external-site.com/logo.png');
+}
+```
+
+You can also embed the logo image directly in the CSS with a `data:` URI to avoid external requests.
+
+```CSS
+.brand-content-text {
+    display: none;
+}
+
+.brand-content-icon::before {
+    content:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9FHSMNcAAAAASUVORK5CYII=');
 }
 ```
 
@@ -143,5 +158,24 @@ div.page-content::before {
 }
 ```
 
-
 ![Configure login box with CSS](images/configure-login-css-sample-test.png)
+
+## Add HTML to the Login UI
+
+You can change the login page by adding text and HTML elements. There are placeholders for the input fields (username / password etc.), buttons, links and authentication choices (HRD). You can place the text and HTML elements between the placeholders and change the order of the placeholders.
+
+Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
+
+1. Select the **Login UI** tab
+2. Select **Show advanced** 
+3. Click the **Add element**
+4. Then e.g. click **HTML element**
+5. Move the HTML element with the **arrows**
+6. Add e.g. a link to your license 
+5. Click **Update**
+
+![Add HTML to the Login UI](images/configure-login-title-icon-css-html.png)
+
+The login page now include your license link. To customise further you can add a CSS class on the HTML element and add a CSS class in the CSS input field.
+
+![Configure login box with CSS](images/configure-login-css-sample-html-test.png)

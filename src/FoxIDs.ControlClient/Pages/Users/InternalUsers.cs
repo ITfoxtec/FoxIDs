@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -177,23 +177,41 @@ namespace FoxIDs.Client.Pages.Users
             });
         }
 
-        private string GetInfoText(GeneralUserViewModel generalUser)
+        private string GetInfoText(GeneralUserViewModel generalUser, bool includeUserIdentifier = false)
         {
-            var infoText = new List<string>();
+            string infoText = includeUserIdentifier ? GetUserIdentifiersInfoText(generalUser) : string.Empty;
+
+            if (!generalUser.Name.IsNullOrWhiteSpace())
+            {
+                if (includeUserIdentifier)
+                {
+                    infoText += $" ({generalUser.Name})";
+                }
+                else
+                {
+                    infoText += generalUser.Name;
+                }
+            }
+
+            return infoText;
+        }
+
+        private static string GetUserIdentifiersInfoText(GeneralUserViewModel generalUser)
+        {
+            var infoTextList = new List<string>();
             if (!generalUser.Email.IsNullOrWhiteSpace())
             {
-                infoText.Add(generalUser.Email);
+                infoTextList.Add(generalUser.Email);
             }
             if (!generalUser.Phone.IsNullOrWhiteSpace())
             {
-                infoText.Add(generalUser.Phone);
+                infoTextList.Add(generalUser.Phone);
             }
             if (!generalUser.Username.IsNullOrWhiteSpace())
             {
-                infoText.Add(generalUser.Username);
+                infoTextList.Add(generalUser.Username);
             }
-
-            return string.Join(", ", infoText);
+            return string.Join(", ", infoTextList);
         }
 
         private void UserViewModelAfterInit(GeneralUserViewModel generalUser, UserViewModel user)
@@ -239,6 +257,7 @@ namespace FoxIDs.Client.Pages.Users
                     generalUser.Email = userResult.Email;
                     generalUser.Phone = userResult.Phone;
                     generalUser.Username = userResult.Username;
+                    generalUser.LoadName(userResult.Claims);
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     generalUser.CreateMode = false;
                     toastService.ShowSuccess("User created.");
@@ -266,6 +285,7 @@ namespace FoxIDs.Client.Pages.Users
                     generalUser.Email = userResult.Email;
                     generalUser.Phone = userResult.Phone;
                     generalUser.Username = userResult.Username;
+                    generalUser.LoadName(userResult.Claims);
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     toastService.ShowSuccess("User updated.");
                 }

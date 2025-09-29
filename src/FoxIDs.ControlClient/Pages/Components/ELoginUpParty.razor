@@ -183,7 +183,10 @@
                         <div class="card-body pt-2 pb-0">
                             <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                             <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
-                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
+                            <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" rows="@CssTextAreaRows" />
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-link btn-sm pl-0 pt-0" @onclick="OpenCssGenerator">Generate CSS snippets</button>
+                            </div>
                         </div>
                     </div>
                     <label class="label-control">Customize login UI</label>
@@ -296,4 +299,130 @@
         <button type="submit" class="btn btn-primary">@(@loginUpParty.CreateMode ? "Create" : "Update")</button>
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@loginUpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
+
+    @if (showCssGenerator)
+    {
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="cssGeneratorTitle">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cssGeneratorTitle">CSS snippet generator</h5>
+                        <button type="button" class="close" aria-label="Close" @onclick="CloseCssGenerator">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="info-text mb-3">
+                            Quickly build login UI styles. See more examples in <a href="https://www.foxids.com/docs/name-title-icon-css#css-examples" target="_blank" rel="noopener noreferrer">FoxIDs documentation</a>.
+                        </div>
+
+                        <ul class="list-group">
+                            <li class="list-group-item @(themeSectionExpanded ? "active p-0" : "d-flex justify-content-between align-items-center")">
+                                @if (!themeSectionExpanded)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="ToggleThemeSection">
+                                        Input and button color
+                                    </button>
+                                }
+                                else
+                                {
+                                    <div class="modal-header">
+                                        <button type="button" class="btn btn-link" @onclick="ToggleThemeSection">
+                                            Input and button color
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm">Primary color (hex)</label>
+                                                <input type="text" class="form-control" placeholder="#a4c700" @bind="themeColorHex" @bind:event="oninput" />
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm">Border color (hex)</label>
+                                                <input type="text" class="form-control" placeholder="#454545" @bind="themeBorderHex" @bind:event="oninput" />
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm">Active darken %</label>
+                                                <input type="number" class="form-control" min="0" max="100" step="1" @bind="themeActiveDarkenPercent" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm d-block">Preview</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text" class="form-control" value="@ThemeColorHexDisplay" readonly />
+                                                    <span class="color-preview ml-2" style="width: 2rem; height: 2rem; border: 1px solid #ced4da; background-color: @ThemeColorHexDisplay;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-primary btn-sm mr-2" @onclick="GenerateThemeCssSnippet">Generate</button>
+                                            <button type="button" class="btn btn-secondary btn-sm mr-2" disabled="@(!HasThemeCss)" @onclick="AppendThemeCssToModel">Add to CSS field</button>
+                                            <a href="" class="btn btn-link btn-sm px-0 @(HasThemeCss ? string.Empty : "disabled")" @onclick="CopyThemeCssAsync" @onclick:preventDefault>Copy to clipboard</a>
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(themeCssError))
+                                        {
+                                            <div class="text-danger small">@themeCssError</div>
+                                        }
+                                        @if (HasThemeCss)
+                                        {
+                                            <textarea class="form-control" rows="12" readonly>@themeCssSnippet</textarea>
+                                        }
+                                    </div>
+                                }
+                            </li>
+                            <li class="list-group-item @(backgroundSectionExpanded ? "active p-0" : "d-flex justify-content-between align-items-center")">
+                                @if (!backgroundSectionExpanded)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="ToggleBackgroundSection">
+                                        Background color
+                                    </button>
+                                }
+                                else
+                                {
+                                    <div class="modal-header">
+                                        <button type="button" class="btn btn-link" @onclick="ToggleBackgroundSection">
+                                            Background color
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm">Background color (hex)</label>
+                                                <input type="text" class="form-control" placeholder="#ddddc0" @bind="backgroundColorHex" @bind:event="oninput" />
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <label class="col-form-label-sm d-block">Preview</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="text" class="form-control" value="@BackgroundColorHexDisplay" readonly />
+                                                    <span class="color-preview ml-2" style="width: 2rem; height: 2rem; border: 1px solid #ced4da; background-color: @BackgroundColorHexDisplay;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-primary btn-sm mr-2" @onclick="GenerateBackgroundCssSnippet">Generate</button>
+                                            <button type="button" class="btn btn-secondary btn-sm mr-2" disabled="@(!HasBackgroundCss)" @onclick="AppendBackgroundCssToModel">Add to CSS field</button>
+                                            <a href="" class="btn btn-link btn-sm px-0 @(HasBackgroundCss ? string.Empty : "disabled")" @onclick="CopyBackgroundCssAsync" @onclick:preventDefault>Copy to clipboard</a>
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(backgroundCssError))
+                                        {
+                                            <div class="text-danger small">@backgroundCssError</div>
+                                        }
+                                        @if (HasBackgroundCss)
+                                        {
+                                            <textarea class="form-control" rows="4" readonly>@backgroundCssSnippet</textarea>
+                                        }
+                                    </div>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseCssGenerator">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    }
 </PageEditForm>

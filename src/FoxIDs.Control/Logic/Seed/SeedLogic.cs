@@ -3,7 +3,6 @@ using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,22 +61,19 @@ namespace FoxIDs.Logic.Seed
                         logger.Trace("OpenSearch log storage seeded on startup.");
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
                 catch (Exception oex)
                 {
-                    GetLogger().LogCritical(oex, "Error seeding OpenSearch log storage on startup.");
+                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
                 }
             }
-        }
-
-        private ILogger<SeedLogic> GetLogger()
-        {
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                .AddFilter((f) => true)
-                .AddConsole();
-            });
-            return loggerFactory.CreateLogger<SeedLogic>();
         }
 
         private void DataProtectionCheck()
@@ -88,6 +84,14 @@ namespace FoxIDs.Logic.Seed
                 {
                     var dataProtection = serviceProvider.GetService<IDataProtectionProvider>();
                     _ = dataProtection.CreateProtector("seed check protector").Protect("seed check protect data");
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
                 }
                 catch (Exception oex)
                 {
@@ -115,6 +119,14 @@ namespace FoxIDs.Logic.Seed
                         }
                     }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
             }
             catch (Exception maex)
             {

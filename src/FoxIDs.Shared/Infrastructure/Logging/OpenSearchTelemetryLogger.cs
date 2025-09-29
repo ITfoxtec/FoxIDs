@@ -2,6 +2,7 @@
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenSearch.Client;
 using OpenSearch.Net;
@@ -32,26 +33,51 @@ namespace FoxIDs.Infrastructure
         public async Task<bool> SeedAsync(CancellationToken cancellationToken = default)
         {
             var isSeeded = false;
-            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
-            {
-                isSeeded = true;
+                if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
+                {
+                    isSeeded = true;
+                }
+                if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+                {
+                    isSeeded = true;
+                }
+                if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
+                {
+                    isSeeded = true;
+                }
+                if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+                {
+                    isSeeded = true;
+                }
             }
-            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+            catch (OperationCanceledException)
             {
-                isSeeded = true;
+                throw;
             }
-            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
+            catch (ObjectDisposedException)
             {
-                isSeeded = true;
+                throw;
             }
-            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+            catch (Exception ex)
             {
-                isSeeded = true;
+                GetConsoleLogger().LogCritical(ex, "Error seeding OpenSearch log storage.");
             }
-
             return isSeeded;
+        }
+
+        private ILogger<OpenSearchTelemetryLogger> GetConsoleLogger()
+        {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                .AddFilter((f) => true)
+                .AddConsole();
+            });
+            return loggerFactory.CreateLogger<OpenSearchTelemetryLogger>();
         }
 
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";

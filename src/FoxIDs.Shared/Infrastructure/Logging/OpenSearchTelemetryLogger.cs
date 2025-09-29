@@ -51,6 +51,11 @@ namespace FoxIDs.Infrastructure
                 isSeeded = true;
             }
 
+            // wait a bit for index and alias to be created
+            await Task.Delay(5000, cancellationTokenSource.Token);
+
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
             return isSeeded;
         }
 
@@ -147,11 +152,11 @@ namespace FoxIDs.Infrastructure
   }},
   ""priority"": 100
 }}"));
-            
-                var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
-                var getInitialIndexNameResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, initialIndexName, cancellationToken);
-                if (getInitialIndexNameResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+
+                var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+                if (polloverAliasResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
                 {
+                    var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
                     await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
 @$"{{
   ""aliases"": {{
@@ -164,6 +169,15 @@ namespace FoxIDs.Infrastructure
                 }
             }
             return false;
+        }
+
+        private async Task CheckIfRolloverAliasExists(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        {
+            var checkAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+            if (checkAliasResponse.HttpStatusCode != (int)HttpStatusCode.OK)
+            {
+                throw new Exception($"OpenSearch alias '{RolloverAlias(logLifetime)}' not created.");
+            }
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)

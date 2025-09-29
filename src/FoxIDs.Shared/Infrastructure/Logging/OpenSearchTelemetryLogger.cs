@@ -147,11 +147,11 @@ namespace FoxIDs.Infrastructure
   }},
   ""priority"": 100
 }}"));
-            
-                var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
-                var getInitialIndexNameResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, initialIndexName, cancellationToken);
-                if (getInitialIndexNameResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+
+                var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+                if (polloverAliasResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
                 {
+                    var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
                     await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
 @$"{{
   ""aliases"": {{

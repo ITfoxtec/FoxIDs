@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;

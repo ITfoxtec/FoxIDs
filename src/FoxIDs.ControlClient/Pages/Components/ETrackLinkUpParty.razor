@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var trackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkUpPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            Environment Link
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>Environment Link</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@trackLinkUpParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
@@ -245,3 +246,5 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+

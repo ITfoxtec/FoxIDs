@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var oauthUpParty = UpParty as GeneralOAuthUpPartyViewModel;
@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(async m => await OAuthUpPartyViewModelAfterInitAsync(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            OAuth 2.0
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>OAuth 2.0</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@oauthUpParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
@@ -185,3 +186,5 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+

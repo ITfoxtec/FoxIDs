@@ -1,4 +1,4 @@
-﻿@inherits DownPartyBase
+@inherits DownPartyBase
 
 @{
     var oidcDownParty = DownParty as GeneralOidcDownPartyViewModel;
@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            OpenID Connect
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>OpenID Connect</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@oidcDownParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -431,3 +432,5 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
+

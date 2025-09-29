@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            User Login UI
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>User Login UI</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@loginUpParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
@@ -426,3 +427,5 @@
         <div class="modal-backdrop fade show"></div>
     }
 </PageEditForm>
+
+

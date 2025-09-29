@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var samlUpParty = UpParty as GeneralSamlUpPartyViewModel;
@@ -6,12 +6,11 @@
 
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(async m => await SamlUpPartyViewModelAfterInitAsync(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5 d-flex">
-            SAML 2.0
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>SAML 2.0</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@samlUpParty.Form.Model.DisplayName</span>
         </div>
-        <div class="d-flex">
-            <FInputSwitchAdvancedOptions @bind-Value="samlUpParty.ShowAdvanced" />
-        </div>
+        <FInputSwitchAdvancedOptions @bind-Value="samlUpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" Focus="samlUpParty.CreateMode" />
@@ -503,3 +502,5 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+

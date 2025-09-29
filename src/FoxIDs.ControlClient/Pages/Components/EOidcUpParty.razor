@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var oidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(async m => await OidcUpPartyViewModelAfterInitAsync(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            OpenID Connect
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>OpenID Connect</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@oidcUpParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
@@ -510,3 +511,4 @@
         </div>
     </PageEditForm>
 </Modal>
+

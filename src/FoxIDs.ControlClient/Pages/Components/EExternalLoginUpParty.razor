@@ -1,4 +1,4 @@
-﻿@inherits UpPartyBase
+@inherits UpPartyBase
 
 @{
     var extLoginUpParty = UpParty as GeneralExternalLoginUpPartyViewModel;
@@ -6,8 +6,9 @@
 
 <PageEditForm @ref="extLoginUpParty.Form" TModel="ExternalLoginUpPartyViewModel" OnAfterInit="@(async m => await ExternalLoginUpPartyViewModelAfterInitAsync(extLoginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalLoginUpPartyValidSubmitAsync(extLoginUpParty, editContext))">
     <div class="modal-header">
-        <div class="h5">
-            External API Login
+        <div class="h5 d-flex align-items-center mb-0">
+            <span>External API Login</span>
+            <span class="ml-2 text-muted flex-fill text-truncate">@extLoginUpParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="extLoginUpParty.ShowAdvanced" />
     </div>
@@ -245,3 +246,5 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@extLoginUpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+

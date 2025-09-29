@@ -47,8 +47,9 @@
             {
                 <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
                     <div class="modal-header">
-                        <div class="h5">
-                            User
+                        <div class="h5 d-flex align-items-center mb-0">
+                            <span>User</span>
+                            <span class="ml-2 text-muted">@GetInfoText(user)</span>
                         </div>
                         <FInputSwitchAdvancedOptions @bind-Value="user.ShowAdvanced" />
                     </div>
@@ -168,7 +169,7 @@
             else
             {
                 <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateUserAsync(user))">
-                    @GetInfoText(user)
+                    @GetInfoText(user, true)
                 </button>
             }
         </li>

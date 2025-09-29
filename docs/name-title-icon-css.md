@@ -162,7 +162,7 @@ div.page-content::before {
 
 ## Add HTML to the Login UI
 
-You can change the login page by adding text and HTML elements. There are placeholder for the input files (username / password etc.), buttons, links and authentication choices (HRD). You can place the test and HTML elements between the placeholders and change the order of the placeholders.
+You can change the login page by adding text and HTML elements. There are placeholders for the input fields (username / password etc.), buttons, links and authentication choices (HRD). You can place the text and HTML elements between the placeholders and change the order of the placeholders.
 
 Find the login authentication method in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 

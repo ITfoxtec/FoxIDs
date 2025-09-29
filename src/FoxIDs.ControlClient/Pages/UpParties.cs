@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
@@ -234,33 +234,41 @@ namespace FoxIDs.Client.Pages
             await InvokeAsync(StateHasChanged);
         }
 
-        private string UpPartyInfoText(UpParty upParty)
+        private string GetUpPartyDisplayName(UpParty upParty)
         {
-            if (upParty.Type == PartyTypes.Login)
+            var displayName = upParty.DisplayName;
+            if (string.IsNullOrWhiteSpace(displayName))
             {
-                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User Login UI)";
+                if (upParty.Type == PartyTypes.Login && upParty.Name == Constants.DefaultLogin.Name)
+                {
+                    displayName = "Default";
+                }
+                else
+                {
+                    displayName = upParty.Name;
+                }
             }
-            else if (upParty.Type == PartyTypes.OAuth2)
+
+            if (string.IsNullOrWhiteSpace(displayName))
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
+                displayName = GetUpPartyTypeLabel(upParty);
             }
-            else if (upParty.Type == PartyTypes.Oidc)
+
+            return displayName;
+        }
+
+        private string GetUpPartyTypeLabel(UpParty upParty)
+        {
+            return upParty.Type switch
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
-            }
-            else if (upParty.Type == PartyTypes.Saml2)
-            {
-                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
-            }
-            else if (upParty.Type == PartyTypes.TrackLink)
-            {
-                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
-            }
-            else if (upParty.Type == PartyTypes.ExternalLogin)
-            {
-                return $"{upParty.DisplayName ?? upParty.Name} (External API Login)";
-            }
-            throw new NotSupportedException($"Type '{upParty.Type}'.");
+                PartyTypes.Login => "User Login UI",
+                PartyTypes.OAuth2 => "OAuth 2.0",
+                PartyTypes.Oidc => "OpenID Connect",
+                PartyTypes.Saml2 => "SAML 2.0",
+                PartyTypes.TrackLink => "Environment Link",
+                PartyTypes.ExternalLogin => "External API Login",
+                _ => upParty.Type.ToString()
+            };
         }
 
         private void ShowNewUpParty()
@@ -421,3 +429,4 @@ namespace FoxIDs.Client.Pages
         }
     }
 }
+

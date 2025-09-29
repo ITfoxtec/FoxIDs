@@ -347,6 +347,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B5E7
 		.github\workflows\ci_release.yaml = .github\workflows\ci_release.yaml
 		.github\workflows\ci_seed_tool_release.yaml = .github\workflows\ci_seed_tool_release.yaml
 		.github\workflows\ci_test_docker.yaml = .github\workflows\ci_test_docker.yaml
+		.github\workflows\sbom_syft.yaml = .github\workflows\sbom_syft.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{7A25628F-DC8E-4DFD-82E1-5DE1A7F2653D}"

@@ -149,7 +149,10 @@ namespace FoxIDs.Infrastructure
 }}"));
             
                 var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
-                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
+                var getInitialIndexNameResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, initialIndexName, cancellationToken);
+                if (getInitialIndexNameResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
 @$"{{
   ""aliases"": {{
     ""{RolloverAlias(logLifetime)}"": {{
@@ -157,7 +160,8 @@ namespace FoxIDs.Infrastructure
     }}
   }}
 }}"));
-                return true;
+                    return true;
+                }
             }
             return false;
         }

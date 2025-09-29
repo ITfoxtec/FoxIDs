@@ -3,6 +3,7 @@ using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,9 +64,20 @@ namespace FoxIDs.Logic.Seed
                 }
                 catch (Exception oex)
                 {
-                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
+                    GetLogger().LogCritical(oex, "Error seeding OpenSearch log storage on startup.");
                 }
             }
+        }
+
+        private ILogger<SeedLogic> GetLogger()
+        {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                .AddFilter((f) => true)
+                .AddConsole();
+            });
+            return loggerFactory.CreateLogger<SeedLogic>();
         }
 
         private void DataProtectionCheck()

@@ -2,7 +2,6 @@
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OpenSearch.Client;
 using OpenSearch.Net;
@@ -33,51 +32,31 @@ namespace FoxIDs.Infrastructure
         public async Task<bool> SeedAsync(CancellationToken cancellationToken = default)
         {
             var isSeeded = false;
-            try
-            {
-                using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-                if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
-                {
-                    isSeeded = true;
-                }
-                if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
-                {
-                    isSeeded = true;
-                }
-                if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
-                {
-                    isSeeded = true;
-                }
-                if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
-                {
-                    isSeeded = true;
-                }
-            }
-            catch (OperationCanceledException)
+            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
             {
-                throw;
+                isSeeded = true;
             }
-            catch (ObjectDisposedException)
+            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
             {
-                throw;
+                isSeeded = true;
             }
-            catch (Exception ex)
+            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
             {
-                GetConsoleLogger().LogCritical(ex, "Error seeding OpenSearch log storage.");
+                isSeeded = true;
             }
+            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
+            {
+                isSeeded = true;
+            }
+
+            // wait a bit for index and alias to be created
+            await Task.Delay(5000, cancellationTokenSource.Token);
+
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
             return isSeeded;
-        }
-
-        private ILogger<OpenSearchTelemetryLogger> GetConsoleLogger()
-        {
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                .AddFilter((f) => true)
-                .AddConsole();
-            });
-            return loggerFactory.CreateLogger<OpenSearchTelemetryLogger>();
         }
 
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
@@ -190,6 +169,15 @@ namespace FoxIDs.Infrastructure
                 }
             }
             return false;
+        }
+
+        private async Task CheckIfRolloverAliasExists(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        {
+            var checkAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+            if (checkAliasResponse.HttpStatusCode != (int)HttpStatusCode.OK)
+            {
+                throw new Exception($"OpenSearch alias '{RolloverAlias(logLifetime)}' not created.");
+            }
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)

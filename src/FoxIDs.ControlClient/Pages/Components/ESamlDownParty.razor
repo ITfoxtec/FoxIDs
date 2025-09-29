@@ -7,9 +7,9 @@
 
 <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
     <div class="modal-header">
-        <div class="h5 d-flex align-items-center mb-0">
-            <span>SAML 2.0</span>
-            <span class="ml-2 text-muted flex-fill text-truncate">@samlDownParty.Form.Model.DisplayName</span>
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
+            <span class="text-nowrap flex-shrink-1" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">SAML 2.0</span>
+            <span class="ml-2 text-muted flex-fill text-truncate" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">@samlDownParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -233,5 +233,10 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
+
+
+
+
 
 

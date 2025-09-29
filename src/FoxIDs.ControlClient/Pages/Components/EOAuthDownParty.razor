@@ -6,9 +6,9 @@
 
 <PageEditForm @ref="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAfterInit="@(m => OAuthDownPartyViewModelAfterInit(oauthDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthDownPartyValidSubmitAsync(oauthDownParty, editContext))">
     <div class="modal-header">
-        <div class="h5 d-flex align-items-center mb-0">
-            <span>OAuth 2.0</span>
-            <span class="ml-2 text-muted flex-fill text-truncate">@oauthDownParty.Form.Model.DisplayName</span>
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
+            <span class="text-nowrap flex-shrink-1" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">OAuth 2.0</span>
+            <span class="ml-2 text-muted flex-fill text-truncate" style="flex: 1 1 auto; min-width: 0; overflow: hidden;">@oauthDownParty.Form.Model.DisplayName</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -361,5 +361,10 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
+
+
+
+
 
 

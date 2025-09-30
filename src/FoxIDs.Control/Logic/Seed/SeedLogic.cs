@@ -29,9 +29,45 @@ namespace FoxIDs.Logic.Seed
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
-            await SeedLogAsync(cancellationToken);
-            DataProtectionCheck();
-            await SeedDbAsync();
+            var consoleLogger = GetConsoleLogger();
+            var retryInterval = TimeSpan.FromSeconds(10);
+            var maxDuration = TimeSpan.FromMinutes(1);
+            var startTime = DateTimeOffset.UtcNow;
+
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                try
+                {
+                    await SeedLogAsync(cancellationToken);
+                    DataProtectionCheck();
+                    await SeedDbAsync();
+                    return;
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    consoleLogger.LogCritical(ex, ex.Message);
+
+                    var elapsed = DateTimeOffset.UtcNow - startTime;
+                    if (elapsed >= maxDuration)
+                    {
+                        var timeoutException = new TimeoutException($"Seeding operations did not succeed within {maxDuration.TotalSeconds} seconds.", ex);
+                        consoleLogger.LogCritical(timeoutException, timeoutException.Message);
+                        throw timeoutException;
+                    }
+
+                    await Task.Delay(retryInterval, cancellationToken);
+                }
+            }
         }
 
         private async Task SeedLogAsync(CancellationToken cancellationToken)
@@ -56,20 +92,12 @@ namespace FoxIDs.Logic.Seed
                 }
                 catch (Exception oex)
                 {
-                    try
-                    {
-                        throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
-                    }
-                    catch (Exception inex)
-                    {
-                        GetConsoleLogger().LogCritical(inex, inex.Message);
-                        throw;
-                    }
+                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
                 }
             }
         }
 
-        private ILogger<OpenSearchTelemetryLogger> GetConsoleLogger()
+        private ILogger<SeedLogic> GetConsoleLogger()
         {
             var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -77,7 +105,7 @@ namespace FoxIDs.Logic.Seed
                 .AddFilter((f) => true)
                 .AddConsole();
             });
-            return loggerFactory.CreateLogger<OpenSearchTelemetryLogger>();
+            return loggerFactory.CreateLogger<SeedLogic>();
         }
 
         private void DataProtectionCheck()
@@ -99,15 +127,7 @@ namespace FoxIDs.Logic.Seed
                 }
                 catch (Exception oex)
                 {
-                    try
-                    {
-                        throw new Exception("Error checking data protection on startup.", oex);
-                    }
-                    catch (Exception inex)
-                    {
-                        logger.CriticalError(inex);
-                        throw;
-                    }   
+                    throw new Exception("Error checking data protection on startup.", oex);
                 }
             }
         }
@@ -142,15 +162,7 @@ namespace FoxIDs.Logic.Seed
             }
             catch (Exception maex)
             {
-                try
-                {
-                    throw new Exception("Error seeding master documents on startup.", maex);
-                }
-                catch (Exception inex)
-                {
-                    logger.CriticalError(inex);
-                    throw;
-                }
+                throw new Exception("Error seeding master documents on startup.", maex);
             }
         }
     }

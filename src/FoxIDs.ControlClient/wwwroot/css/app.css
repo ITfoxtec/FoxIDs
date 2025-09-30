@@ -714,6 +714,13 @@ img.logo {
     color: #a94442;
 }
 
+.modal-header.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: inherit;
+}
+
 .modal-header .header-input-group {
     margin-top: -7px;
     margin-right: auto;

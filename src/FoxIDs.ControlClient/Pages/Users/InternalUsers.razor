@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/internalusers"
+@page "/{tenantName}/internalusers"
 @inherits PageBase
 
 <ul class="nav nav-tabs">
@@ -46,7 +46,7 @@
             @if (user.Edit)
             {
                 <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
-                    <div class="modal-header">
+                    <div class="modal-header sticky-header">
                         <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
                             <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">User</span>
                             <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetInfoText(user)</span>

@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
             Email = user.Email;
             Phone = user.Phone;
             Username = user.Username;
+
             LoadName(user.Claims);
         }
 
@@ -41,6 +42,11 @@ namespace FoxIDs.Client.Models.ViewModels
 
         private string ResolveNameFromClaims(List<ClaimAndValues> claims)
         {
+            if (claims == null)
+            {
+                return null;
+            }
+
             var name = GetClaimValue(claims, JwtClaimTypes.Name);
             if (!string.IsNullOrWhiteSpace(name))
             {

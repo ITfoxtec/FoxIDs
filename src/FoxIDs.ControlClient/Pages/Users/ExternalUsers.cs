@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -333,6 +333,50 @@ namespace FoxIDs.Client.Pages.Users
                     throw;
                 }
             }
+        }
+
+        private string GetInfoText(GeneralExternalUserViewModel externalUser, bool includeIdentifiers = false)
+        {
+            var upParty = externalUser.UpPartyDisplayName;
+            if (upParty.IsNullOrWhiteSpace())
+            {
+                upParty = externalUser.UpPartyName;
+            }
+
+            var identifier = !externalUser.RedemptionClaimValue.IsNullOrWhiteSpace() ?
+                externalUser.RedemptionClaimValue : externalUser.LinkClaimValue;
+
+            if (includeIdentifiers)
+            {
+                if (!identifier.IsNullOrWhiteSpace() && !upParty.IsNullOrWhiteSpace())
+                {
+                    return $"{identifier} ({upParty})";
+                }
+
+                if (!identifier.IsNullOrWhiteSpace())
+                {
+                    return identifier;
+                }
+
+                if (!upParty.IsNullOrWhiteSpace())
+                {
+                    return upParty;
+                }
+            }
+            else
+            {
+                if (!upParty.IsNullOrWhiteSpace())
+                {
+                    return upParty;
+                }
+
+                if (!identifier.IsNullOrWhiteSpace())
+                {
+                    return identifier;
+                }
+            }
+
+            return string.Empty;
         }
 
         private async Task DeleteExternalUserAsync(GeneralExternalUserViewModel generalExternalUser)

@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/externalusers"
+@page "/{tenantName}/externalusers"
 @inherits PageBase
 
 <ul class="nav nav-tabs">
@@ -45,7 +45,10 @@
             {
                 <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(async m => await ExternalUserViewModelAfterInitAsync(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
                     <div class="modal-header">
-                        External User
+                        <div class="h5 d-flex align-items-center mb-0">
+                            <span>External User</span>
+                            <span class="ml-2 text-muted">@GetInfoText(externalUser)</span>
+                        </div>
                     </div>
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
@@ -172,7 +175,7 @@
             else
             {
                 <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @(!externalUser.RedemptionClaimValue.IsNullOrWhiteSpace() ? externalUser.RedemptionClaimValue : externalUser.LinkClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                    @GetInfoText(externalUser, true)
                 </button>
             }
         </li>

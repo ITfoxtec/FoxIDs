@@ -1,4 +1,4 @@
-﻿using Blazored.Toast.Services;
+using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
@@ -136,7 +136,7 @@ namespace FoxIDs.Client.Pages.Components
             await OnStateHasChanged.InvokeAsync(DownParty);
         }
 
-        private string GetDownPartyDisplayName(IDownPartyName downParty)
+        protected string GetDownPartyDisplayName(IDownPartyName downParty)
         {
             var displayName = downParty.DisplayName;
             if (string.IsNullOrWhiteSpace(displayName))

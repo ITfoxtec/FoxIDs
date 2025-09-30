@@ -314,7 +314,7 @@ namespace FoxIDs.Client.Pages.Components
             await OnStateHasChanged.InvokeAsync(UpParty);
         }
 
-        private string GetUpPartyDisplayName(IUpPartyName upParty)
+        protected string GetUpPartyDisplayName(IUpPartyName upParty)
         {
             var displayName = upParty.DisplayName;
             if (string.IsNullOrWhiteSpace(displayName))

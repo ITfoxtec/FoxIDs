@@ -16,16 +16,12 @@ namespace FoxIDs.Logic.Seed
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly Settings settings;
-        private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
-        private readonly MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.settings = settings;
-            this.masterTenantDocumentsSeedLogic = masterTenantDocumentsSeedLogic;
-            this.mainTenantDocumentsSeedLogic = mainTenantDocumentsSeedLogic;
         }
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
@@ -145,6 +141,7 @@ namespace FoxIDs.Logic.Seed
 
                 if (settings.MasterSeedEnabled)
                 {
+                    var masterTenantDocumentsSeedLogic = serviceProvider.GetService<MasterTenantDocumentsSeedLogic>();
                     if (await masterTenantDocumentsSeedLogic.SeedAsync())
                     {
                         logger.Trace("Document container(s) seeded with master tenant on startup.");
@@ -152,6 +149,7 @@ namespace FoxIDs.Logic.Seed
 
                     if (settings.MainTenantSeedEnabled)
                     {
+                        var mainTenantDocumentsSeedLogic = serviceProvider.GetService<MainTenantDocumentsSeedLogic>();
                         if (await mainTenantDocumentsSeedLogic.SeedAsync())
                         {
                             logger.Trace("Document container(s) seeded with main tenant on startup.");

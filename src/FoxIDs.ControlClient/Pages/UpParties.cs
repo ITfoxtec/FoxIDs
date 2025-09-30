@@ -249,11 +249,6 @@ namespace FoxIDs.Client.Pages
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(displayName))
-            {
-                displayName = GetUpPartyTypeLabel(upParty);
-            }
-
             return displayName;
         }
 

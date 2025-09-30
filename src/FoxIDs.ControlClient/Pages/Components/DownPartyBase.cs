@@ -1,4 +1,4 @@
-﻿using Blazored.Toast.Services;
+using Blazored.Toast.Services;
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
@@ -134,6 +134,17 @@ namespace FoxIDs.Client.Pages.Components
         {
             DownParty.Edit = false;
             await OnStateHasChanged.InvokeAsync(DownParty);
+        }
+
+        protected string GetDownPartyDisplayName(IDownPartyName downParty)
+        {
+            var displayName = downParty.DisplayName;
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = downParty.Name;
+            }
+
+            return displayName;
         }
     }
 }

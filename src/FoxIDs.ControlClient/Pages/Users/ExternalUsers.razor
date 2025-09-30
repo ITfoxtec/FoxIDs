@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/externalusers"
+@page "/{tenantName}/externalusers"
 @inherits PageBase
 
 <ul class="nav nav-tabs">
@@ -34,7 +34,7 @@
 <ul class="list-group">
     @foreach (var externalUser in externalUsers)
     {
-        <li class="list-group-item @(externalUser.Edit ? "active" : string.Empty)">
+        <li class="list-group-item @(externalUser.Edit ? "active" : "d-flex justify-content-between align-items-center")">
             @if (!externalUser.Error.IsNullOrWhiteSpace())
             {
                 <div class="alert alert-danger" role="alert">
@@ -44,8 +44,11 @@
             @if (externalUser.Edit)
             {
                 <PageEditForm @ref="externalUser.Form" TModel="ExternalUserViewModel" OnAfterInit="@(async m => await ExternalUserViewModelAfterInitAsync(externalUser, m))" OnValidSubmit="@(async (editContext) => await OnEditExternalUserValidSubmitAsync(externalUser, editContext))">
-                    <div class="modal-header">
-                        External User
+                    <div class="modal-header sticky-header">
+                        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
+                            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">External User</span>
+                            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetInfoText(externalUser)</span>
+                        </div>
                     </div>
                     <div class="modal-body">
                         @if (externalUser.CreateMode)
@@ -171,8 +174,11 @@
             }
             else
             {
-                <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
-                    @(!externalUser.RedemptionClaimValue.IsNullOrWhiteSpace() ? externalUser.RedemptionClaimValue : externalUser.LinkClaimValue) (@(externalUser.UpPartyDisplayName ?? externalUser.UpPartyName))
+                <button type="button" class="btn btn-link text-left" style="min-width: 0; overflow: hidden;" @onclick="@(async () => await ShowUpdateExternalUserAsync(externalUser))">
+                    <span class="d-flex align-items-center flex-nowrap text-truncate overflow-hidden" style="min-width: 0;">
+                        <span class="badge badge-light border mr-2 mt-1 flex-shrink-0 d-inline-flex">@GetInfoTextType(externalUser)</span>
+                        <span class="text-truncate" style="min-width: 0">@GetInfoText(externalUser, includeIdentifiers: true)</span>
+                    </span>
                 </button>
             }
         </li>

@@ -1,5 +1,6 @@
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Config;
+using FoxIDs.Repository;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,7 @@ namespace FoxIDs.Logic.Seed
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
             var consoleLogger = GetConsoleLogger();
-            var retryInterval = TimeSpan.FromSeconds(10);
+            var retryInterval = TimeSpan.FromSeconds(20);
             var maxDuration = TimeSpan.FromMinutes(1);
             var startTime = DateTimeOffset.UtcNow;
 
@@ -55,7 +56,7 @@ namespace FoxIDs.Logic.Seed
                 }
                 catch (Exception ex)
                 {
-                    consoleLogger.LogCritical(ex, ex.Message);
+                    consoleLogger.LogWarning(ex, ex.Message);
 
                     var elapsed = DateTimeOffset.UtcNow - startTime;
                     if (elapsed >= maxDuration)
@@ -136,6 +137,12 @@ namespace FoxIDs.Logic.Seed
         {
             try
             {
+                if (settings.Options.DataStorage == DataStorageOptions.MongoDb || settings.Options.Cache == CacheOptions.MongoDb)
+                {
+                    var mongoDbRepositoryClient = serviceProvider.GetService<MongoDbRepositoryClient>();
+                    await mongoDbRepositoryClient.InitAsync();
+                }
+
                 if (settings.MasterSeedEnabled)
                 {
                     if (await masterTenantDocumentsSeedLogic.SeedAsync())

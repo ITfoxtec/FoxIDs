@@ -22,7 +22,7 @@
 
         @if (!oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
         {
-            <div class="mb-3 alert alert-info" role="alert">
+            <div class="mb-3 alert alert-info overflow-hidden" role="alert">
                 @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                 {
                     (var clientAuthority, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
@@ -117,7 +117,7 @@
                 <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client)" />
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
-                    <div class="mb-3 alert alert-info" role="alert">
+                    <div class="mb-3 alert alert-info overflow-hidden" role="alert">
                         The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
                     <SelectUpParties @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />

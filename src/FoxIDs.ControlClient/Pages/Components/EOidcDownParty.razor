@@ -50,7 +50,7 @@
 
             @if (!oidcDownParty.Form.Model.IsTest && !oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
             {
-                <div class="mb-3 alert alert-info" role="alert">
+                <div class="mb-3 alert alert-info overflow-hidden" role="alert">
                     @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                     {
                         (var clientAuthority, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);

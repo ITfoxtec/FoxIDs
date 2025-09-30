@@ -135,5 +135,16 @@ namespace FoxIDs.Client.Pages.Components
             DownParty.Edit = false;
             await OnStateHasChanged.InvokeAsync(DownParty);
         }
+
+        private string GetDownPartyDisplayName(IDownPartyName downParty)
+        {
+            var displayName = downParty.DisplayName;
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = downParty.Name;
+            }
+
+            return displayName;
+        }
     }
 }

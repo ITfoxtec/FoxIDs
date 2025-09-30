@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Client.Models.ViewModels
 {
-    public interface IDownPartyName
+    public interface IUpPartyName
     {
         string Name { get; set; }
 

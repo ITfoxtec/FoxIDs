@@ -15,11 +15,11 @@ namespace FoxIDs.Logic.Seed
     {
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly FoxIDsControlSettings settings;
+        private readonly Settings settings;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
         private readonly MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, FoxIDsControlSettings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, MainTenantDocumentsSeedLogic mainTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;

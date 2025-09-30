@@ -7,7 +7,7 @@ namespace FoxIDs.IntegrationTests.Helpers
     {
         public DatabaseFixture()
         {
-            PgServer = new PgServer("17.4.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
+            PgServer = new PgServer("17.6.0", clearWorkingDirOnStart: true, clearInstanceDirOnStop: true);
             PgServer.Start();
         }
 

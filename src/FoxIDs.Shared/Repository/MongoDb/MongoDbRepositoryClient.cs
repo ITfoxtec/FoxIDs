@@ -3,6 +3,8 @@ using FoxIDs.Models.Config;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
@@ -15,10 +17,11 @@ namespace FoxIDs.Repository
         {
             this.settings = settings;
             this.mongoClient = mongoClient;
-            Init();
+
+            InitRegistry();
         }
 
-        private void Init()
+        private void InitRegistry()
         {
             var pack = new ConventionPack
             {
@@ -27,48 +30,51 @@ namespace FoxIDs.Repository
                 new MongoDbJsonPropertyConvention()
             };
             ConventionRegistry.Register(nameof(MongoDbRepositoryClient), pack, t => true);
+        }
 
+        public async Task InitAsync(CancellationToken cancellationToken = default)
+        {
             var database = mongoClient.GetDatabase(settings.MongoDb.DatabaseName);
 
             if (settings.Options.DataStorage == DataStorageOptions.MongoDb)
             {
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.MasterCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName);
+                _ = await InitCollectionAsync<DataDocument>(database, settings.MongoDb.MasterCollectionName, cancellationToken);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.MasterTtlCollectionName, cancellationToken);
 
-                _ = InitCollection<DataDocument>(database, settings.MongoDb.TenantsCollectionName);
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName);
+                _ = await InitCollectionAsync<DataDocument>(database, settings.MongoDb.TenantsCollectionName, cancellationToken);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.TenantsTtlCollectionName, cancellationToken);
             }
             if (settings.Options.Cache == CacheOptions.MongoDb)
             {
-                InitTtlCollection<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName);
+                await InitTtlCollectionAsync<DataTtlDocument>(database, settings.MongoDb.CacheCollectionName, cancellationToken);
             }
         }
 
-        private IMongoCollection<T> InitCollection<T>(IMongoDatabase database, string name) where T : DataDocument
+        private async Task<IMongoCollection<T>> InitCollectionAsync<T>(IMongoDatabase database, string name, CancellationToken cancellationToken) where T : DataDocument
         {
-            database.CreateCollection(name);
+            await database.CreateCollectionAsync(name);
 
             var collection = database.GetCollection<T>(name);
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)));
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)));
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds),
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.PartitionId)), cancellationToken: cancellationToken);
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.DataType)), cancellationToken: cancellationToken);
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.AdditionalIds),
                 options: new CreateIndexOptions
                 {
                     Unique = true,
                     Sparse = true,
-                }));
+                }), cancellationToken: cancellationToken);
             return collection;
         }
 
-        private void InitTtlCollection<T>(IMongoDatabase database, string name) where T : DataTtlDocument
+        private async Task InitTtlCollectionAsync<T>(IMongoDatabase database, string name, CancellationToken cancellationToken) where T : DataTtlDocument
         {
-            var collection = InitCollection<T>(database, name);
-            collection.Indexes.CreateOne(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
+            var collection = await InitCollectionAsync<T>(database, name, cancellationToken);
+            await collection.Indexes.CreateOneAsync(new CreateIndexModel<T>(keys: Builders<T>.IndexKeys.Ascending(f => f.ExpireAt),
                 options: new CreateIndexOptions
                 {
                     ExpireAfter = TimeSpan.FromSeconds(0),
                     Name = $"{name}ExpireAtIndex"
-                }));
+                }), cancellationToken: cancellationToken);
         }
 
         public IMongoCollection<T> GetMasterCollection<T>(T item = default)

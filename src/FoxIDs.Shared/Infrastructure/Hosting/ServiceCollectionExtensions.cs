@@ -1,9 +1,11 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Logic.Caches.Providers;
+using FoxIDs.Logic.Seed;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,13 +13,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using MongoDB.Driver;
-using StackExchange.Redis;
-using Microsoft.AspNetCore.DataProtection;
-using System;
-using System.Net.Http;
 using OpenSearch.Client;
-using System.Linq;
 using OpenSearch.Net;
+using StackExchange.Redis;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -26,6 +27,10 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddSharedLogic(this IServiceCollection services, Settings settings)
         {
             services.AddSingleton<EmbeddedResourceLogic>();
+
+            services.AddTransient<MasterTenantDocumentsSeedLogic>();
+            services.AddTransient<MainTenantDocumentsSeedLogic>();
+            services.AddTransient<SeedLogic>();
 
             services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();

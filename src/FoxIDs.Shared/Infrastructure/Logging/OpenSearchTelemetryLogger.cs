@@ -51,6 +51,8 @@ namespace FoxIDs.Infrastructure
                 isSeeded = true;
             }
 
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
+            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
             return isSeeded;
         }
 
@@ -116,6 +118,7 @@ namespace FoxIDs.Infrastructure
 
         private async Task<bool> AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
+            var isSeeded = false;
             var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
             var getTemplateResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, templatePath, cancellationToken);
             if (getTemplateResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -147,19 +150,36 @@ namespace FoxIDs.Infrastructure
   }},
   ""priority"": 100
 }}"));
-            
+
+                isSeeded = true;
+            }
+
+            var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+            if (polloverAliasResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
                 var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
                 await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
 @$"{{
-  ""aliases"": {{
-    ""{RolloverAlias(logLifetime)}"": {{
-      ""is_write_index"": true
-    }}
-  }}
+""aliases"": {{
+""{RolloverAlias(logLifetime)}"": {{
+    ""is_write_index"": true
+}}
+}}
 }}"));
-                return true;
+
+                isSeeded = true;
             }
-            return false;
+
+            return isSeeded;
+        }
+
+        private async Task CheckIfRolloverAliasExists(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        {
+            var checkAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+            if (checkAliasResponse.HttpStatusCode != (int)HttpStatusCode.OK)
+            {
+                throw new Exception($"OpenSearch alias '{RolloverAlias(logLifetime)}' not created.");
+            }
         }
 
         public void Warning(Exception exception, string message, IDictionary<string, string> properties = null)

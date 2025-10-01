@@ -1,20 +1,30 @@
 ﻿using Azure.Identity;
+using FoxIDs.Logic.Seed;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FoxIDs
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+            var seed = scope.ServiceProvider.GetService<SeedLogic>();
+            var lifetime = scope.ServiceProvider.GetService<IHostApplicationLifetime>();
+            await seed.SeedAsync(false, lifetime?.ApplicationStopping ?? CancellationToken.None);
+
+            await host.RunAsync();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

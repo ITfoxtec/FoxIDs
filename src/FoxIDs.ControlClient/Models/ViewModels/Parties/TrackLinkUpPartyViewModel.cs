@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackLinkUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyHrd
+    public class TrackLinkUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyName, IUpPartyHrd
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]

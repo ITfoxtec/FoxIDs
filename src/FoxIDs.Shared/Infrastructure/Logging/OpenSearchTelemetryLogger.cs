@@ -31,29 +31,21 @@ namespace FoxIDs.Infrastructure
 
         public async Task<bool> SeedAsync(CancellationToken cancellationToken = default)
         {
-            var isSeeded = false;
-            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            if (!await RolloverAliasIsReady(LogLifetimeOptions.Max30Days, false, cancellationToken) || !await RolloverAliasIsReady(LogLifetimeOptions.Max180Days, false, cancellationToken))
+            {
+                await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationToken);
+                await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationToken);
+                await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationToken);
+                await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationToken);
+                return true;
+            }
+            return false;
+        }
 
-            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
-            {
-                isSeeded = true;
-            }
-            if (await CreateIndexPolicyAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
-            {
-                isSeeded = true;
-            }
-            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token))
-            {
-                isSeeded = true;
-            }
-            if (await AddTemplateAndIndexAsync(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token))
-            {
-                isSeeded = true;
-            }
-
-            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
-            await CheckIfRolloverAliasExists(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
-            return isSeeded;
+        public async Task RolloverAliasReadyCheck(CancellationToken cancellationToken)
+        {
+            _ = await RolloverAliasIsReady(LogLifetimeOptions.Max30Days, true, cancellationToken);
+            _ = await RolloverAliasIsReady(LogLifetimeOptions.Max180Days, true, cancellationToken);
         }
 
         private string IndexPattern(LogLifetimeOptions logLifetime) => $"{RolloverAlias(logLifetime)}*";
@@ -61,7 +53,7 @@ namespace FoxIDs.Infrastructure
         private string RolloverAlias(LogLifetimeOptions logLifetime) => RolloverAlias((int)logLifetime);
         private string RolloverAlias(int lifetime) => $"{settings.OpenSearch.LogName}-r-{lifetime}d";
 
-        private async Task<bool> CreateIndexPolicyAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        private async Task CreateIndexPolicyAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
             var rolloverAge = 7;
 
@@ -111,14 +103,11 @@ namespace FoxIDs.Infrastructure
   }}
 }}"));
 
-                return true;
             }
-            return false;
         }
 
-        private async Task<bool> AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        private async Task AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
-            var isSeeded = false;
             var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
             var getTemplateResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, templatePath, cancellationToken);
             if (getTemplateResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -150,8 +139,6 @@ namespace FoxIDs.Infrastructure
   }},
   ""priority"": 100
 }}"));
-
-                isSeeded = true;
             }
 
             var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
@@ -166,19 +153,24 @@ namespace FoxIDs.Infrastructure
 }}
 }}
 }}"));
-
-                isSeeded = true;
             }
-
-            return isSeeded;
         }
 
-        private async Task CheckIfRolloverAliasExists(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
+        private async Task<bool> RolloverAliasIsReady(LogLifetimeOptions logLifetime, bool throwIfNot, CancellationToken cancellationToken)
         {
             var checkAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
-            if (checkAliasResponse.HttpStatusCode != (int)HttpStatusCode.OK)
+            if (checkAliasResponse.HttpStatusCode == (int)HttpStatusCode.OK)
             {
-                throw new Exception($"OpenSearch alias '{RolloverAlias(logLifetime)}' not created.");
+                return true;
+            }
+
+            if (throwIfNot)
+            {
+                throw new Exception($"OpenSearch alias '{RolloverAlias(logLifetime)}' not ready.");
+            }
+            else
+            {
+                return false;
             }
         }
 

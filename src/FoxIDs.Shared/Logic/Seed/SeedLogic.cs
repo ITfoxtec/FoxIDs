@@ -12,22 +12,20 @@ namespace FoxIDs.Logic.Seed
 {
     public class SeedLogic : LogicBase
     {
-        private readonly TelemetryLogger logger;
+        private readonly TimeSpan retryInterval = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan maxDuration = TimeSpan.FromSeconds(60);
+
         private readonly IServiceProvider serviceProvider;
         private readonly Settings settings;
 
-        public SeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(IServiceProvider serviceProvider, Settings settings, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.settings = settings;
         }
 
         public async Task SeedAsync(bool canSeedMaster, CancellationToken cancellationToken = default)
         {
-            var consoleLogger = GetConsoleLogger();
-            var retryInterval = TimeSpan.FromSeconds(10);
-            var maxDuration = TimeSpan.FromSeconds(60);
             var startTime = DateTimeOffset.UtcNow;
 
             while (true)
@@ -50,7 +48,7 @@ namespace FoxIDs.Logic.Seed
                 }
                 catch (Exception ex)
                 {
-                    consoleLogger.LogWarning(ex, ex.Message);
+                    GetConsoleLogger().LogWarning(ex, ex.Message);
 
                     var elapsed = DateTimeOffset.UtcNow - startTime;
                     if (elapsed >= maxDuration)
@@ -62,7 +60,6 @@ namespace FoxIDs.Logic.Seed
                 }
             }
         }
-
 
         private ILogger<SeedLogic> GetConsoleLogger()
         {
@@ -81,10 +78,16 @@ namespace FoxIDs.Logic.Seed
             {
                 try
                 {
+                    using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
                     var openSearchTelemetryLogger = serviceProvider.GetService<OpenSearchTelemetryLogger>();
-                    if (await openSearchTelemetryLogger.SeedAsync(cancellationToken))
+                    if (await openSearchTelemetryLogger.SeedAsync(cancellationTokenSource.Token))
                     {
-                        logger.Trace("OpenSearch log storage seeded on startup.");
+                        GetConsoleLogger().LogTrace("OpenSearch log storage seeded on startup.");
+
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await Task.Delay(retryInterval / 2, cancellationToken);
+                        await openSearchTelemetryLogger.RolloverAliasReadyCheck(cancellationTokenSource.Token);
                     }
                 }
                 catch (OperationCanceledException)
@@ -108,8 +111,10 @@ namespace FoxIDs.Logic.Seed
             {
                 if (settings.Options.DataStorage == DataStorageOptions.MongoDb || settings.Options.Cache == CacheOptions.MongoDb)
                 {
+                    using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
                     var mongoDbRepositoryClient = serviceProvider.GetService<MongoDbRepositoryClient>();
-                    await mongoDbRepositoryClient.InitAsync(cancellationToken);
+                    await mongoDbRepositoryClient.InitAsync(cancellationTokenSource.Token);
                 }
 
                 var masterTenantDocumentsSeedLogic = serviceProvider.GetService<MasterTenantDocumentsSeedLogic>();
@@ -117,7 +122,7 @@ namespace FoxIDs.Logic.Seed
                 {
                     if (await masterTenantDocumentsSeedLogic.SeedAsync())
                     {
-                        logger.Trace("Document container(s) seeded with master tenant on startup.");
+                        GetConsoleLogger().LogTrace("Document container(s) seeded with master tenant on startup.");
                     }
 
                     if (settings.MainTenantSeedEnabled)
@@ -125,7 +130,7 @@ namespace FoxIDs.Logic.Seed
                         var mainTenantDocumentsSeedLogic = serviceProvider.GetService<MainTenantDocumentsSeedLogic>();
                         if (await mainTenantDocumentsSeedLogic.SeedAsync())
                         {
-                            logger.Trace("Document container(s) seeded with main tenant on startup.");
+                            GetConsoleLogger().LogTrace("Document container(s) seeded with main tenant on startup.");
                         }
                     }
                 }

@@ -51,9 +51,6 @@ namespace FoxIDs.Infrastructure
                 isSeeded = true;
             }
 
-            // wait a bit for index and alias to be created
-            await Task.Delay(5000, cancellationTokenSource.Token);
-
             await CheckIfRolloverAliasExists(LogLifetimeOptions.Max30Days, cancellationTokenSource.Token);
             await CheckIfRolloverAliasExists(LogLifetimeOptions.Max180Days, cancellationTokenSource.Token);
             return isSeeded;

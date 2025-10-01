@@ -27,8 +27,8 @@ namespace FoxIDs.Logic.Seed
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
             var consoleLogger = GetConsoleLogger();
-            var retryInterval = TimeSpan.FromSeconds(20);
-            var maxDuration = TimeSpan.FromMinutes(1);
+            var retryInterval = TimeSpan.FromSeconds(10);
+            var maxDuration = TimeSpan.FromSeconds(60);
             var startTime = DateTimeOffset.UtcNow;
 
             while (true)

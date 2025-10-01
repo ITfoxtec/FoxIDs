@@ -36,8 +36,8 @@ namespace FoxIDs.Logic.Seed
 
                 try
                 {
-                    await SeedDbAsync(canSeedMaster, cancellationToken);
                     await SeedLogAsync(cancellationToken);
+                    await SeedDbAsync(canSeedMaster, cancellationToken);
                     return;
                 }
                 catch (OperationCanceledException)
@@ -73,6 +73,33 @@ namespace FoxIDs.Logic.Seed
                 .AddConsole();
             });
             return loggerFactory.CreateLogger<SeedLogic>();
+        }
+
+        private async Task SeedLogAsync(CancellationToken cancellationToken)
+        {
+            if (settings.Options?.Log == LogOptions.OpenSearchAndStdoutErrors)
+            {
+                try
+                {
+                    var openSearchTelemetryLogger = serviceProvider.GetService<OpenSearchTelemetryLogger>();
+                    if (await openSearchTelemetryLogger.SeedAsync(cancellationToken))
+                    {
+                        logger.Trace("OpenSearch log storage seeded on startup.");
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
+                catch (Exception oex)
+                {
+                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
+                }
+            }
         }
 
         private async Task SeedDbAsync(bool canSeedMaster, CancellationToken cancellationToken)
@@ -121,33 +148,6 @@ namespace FoxIDs.Logic.Seed
             catch (Exception maex)
             {
                 throw new Exception("Error seeding master documents on startup.", maex);
-            }
-        }
-
-        private async Task SeedLogAsync(CancellationToken cancellationToken)
-        {
-            if (settings.Options?.Log == LogOptions.OpenSearchAndStdoutErrors)
-            {
-                try
-                {
-                    var openSearchTelemetryLogger = serviceProvider.GetService<OpenSearchTelemetryLogger>();
-                    if (await openSearchTelemetryLogger.SeedAsync(cancellationToken))
-                    {
-                        logger.Trace("OpenSearch log storage seeded on startup.");
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
-                catch (ObjectDisposedException)
-                {
-                    throw;
-                }
-                catch (Exception oex)
-                {
-                    throw new Exception("Error seeding OpenSearch log storage on startup.", oex);
-                }
             }
         }
     }

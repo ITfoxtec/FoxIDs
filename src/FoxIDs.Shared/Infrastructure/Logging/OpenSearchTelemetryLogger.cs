@@ -118,6 +118,7 @@ namespace FoxIDs.Infrastructure
 
         private async Task<bool> AddTemplateAndIndexAsync(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)
         {
+            var isSeeded = false;
             var templatePath = $"_index_template/{RolloverAlias(logLifetime)}-template";
             var getTemplateResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, templatePath, cancellationToken);
             if (getTemplateResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
@@ -150,22 +151,26 @@ namespace FoxIDs.Infrastructure
   ""priority"": 100
 }}"));
 
-                var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
-                if (polloverAliasResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
-                    await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
-@$"{{
-  ""aliases"": {{
-    ""{RolloverAlias(logLifetime)}"": {{
-      ""is_write_index"": true
-    }}
-  }}
-}}"));
-                    return true;
-                }
+                isSeeded = true;
             }
-            return false;
+
+            var polloverAliasResponse = await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.GET, $"_alias/{RolloverAlias(logLifetime)}", cancellationToken);
+            if (polloverAliasResponse.HttpStatusCode == (int)HttpStatusCode.NotFound)
+            {
+                var initialIndexName = $"{RolloverAlias(logLifetime)}-000001";
+                await openSearchClient.LowLevel.DoRequestAsync<StringResponse>(HttpMethod.PUT, initialIndexName, cancellationToken, PostData.String(
+@$"{{
+""aliases"": {{
+""{RolloverAlias(logLifetime)}"": {{
+    ""is_write_index"": true
+}}
+}}
+}}"));
+
+                isSeeded = true;
+            }
+
+            return isSeeded;
         }
 
         private async Task CheckIfRolloverAliasExists(LogLifetimeOptions logLifetime, CancellationToken cancellationToken)

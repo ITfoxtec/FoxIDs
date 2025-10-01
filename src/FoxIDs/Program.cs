@@ -22,7 +22,7 @@ namespace FoxIDs
             using var scope = host.Services.CreateScope();
             var seed = scope.ServiceProvider.GetService<SeedLogic>();
             var lifetime = scope.ServiceProvider.GetService<IHostApplicationLifetime>();
-            await seed.SeedAsync(lifetime?.ApplicationStopping ?? CancellationToken.None);
+            await seed.SeedAsync(false, lifetime?.ApplicationStopping ?? CancellationToken.None);
 
             await host.RunAsync();
         }

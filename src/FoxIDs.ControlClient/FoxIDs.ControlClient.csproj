@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>2.6.7</Version>
+		<Version>2.6.8</Version>
 		<RootNamespace>FoxIDs.Client</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>FoxIDs</Company>

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
@@ -236,30 +236,28 @@ namespace FoxIDs.Client.Pages
             await InvokeAsync(StateHasChanged);
         }
 
-        private string DownPartyInfoText(GeneralDownPartyViewModel downParty)
+        private string GetDownPartyDisplayName(GeneralDownPartyViewModel downParty)
         {
-            if (downParty.Type == PartyTypes.Oidc)
+            var displayName = downParty.DisplayName;
+            if (string.IsNullOrWhiteSpace(displayName))
             {
-                return $"{downParty.DisplayName ?? downParty.Name} (OpenID Connect)";
-            }
-            else if (downParty.Type == PartyTypes.OAuth2)
-            {
-                return $"{downParty.DisplayName ?? downParty.Name} (OAuth 2.0)";
-            }
-            else if (downParty.Type == PartyTypes.Saml2)
-            {
-                return $"{downParty.DisplayName ?? downParty.Name} (SAML 2.0)";
-            } 
-            else if (downParty.Type == PartyTypes.TrackLink)
-            {
-                return $"{downParty.DisplayName ?? downParty.Name} (Environment Link)";
-            }
-            else if (downParty.Type == PartyTypes.ExternalLogin)
-            {
-                return $"{downParty.DisplayName ?? downParty.Name} (External API Login)";
+                displayName = downParty.Name;
             }
 
-            throw new NotSupportedException();
+            return displayName;
+        }
+
+        private string GetDownPartyTypeLabel(GeneralDownPartyViewModel downParty)
+        {
+            return downParty.Type switch
+            {
+                PartyTypes.Oidc => "OpenID Connect",
+                PartyTypes.OAuth2 => "OAuth 2.0",
+                PartyTypes.Saml2 => "SAML 2.0",
+                PartyTypes.TrackLink => "Environment Link",
+                PartyTypes.ExternalLogin => "External API Login",
+                _ => downParty.Type.ToString()
+            };
         }
 
         private void ShowNewDownParty()
@@ -551,3 +549,5 @@ namespace FoxIDs.Client.Pages
         }
     }
 }
+
+

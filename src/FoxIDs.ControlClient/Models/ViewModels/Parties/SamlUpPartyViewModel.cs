@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
+    public class SamlUpPartyViewModel : IValidatableObject, IUpPartySessionLifetime, IUpPartyName, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
         public string InitName { get; set; }
 

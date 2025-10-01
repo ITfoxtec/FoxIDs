@@ -1,13 +1,14 @@
-﻿@inherits DownPartyBase
+@inherits DownPartyBase
 
 @{
     var oauthDownParty = DownParty as GeneralOAuthDownPartyViewModel;
 }
 
 <PageEditForm @ref="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAfterInit="@(m => OAuthDownPartyViewModelAfterInit(oauthDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthDownPartyValidSubmitAsync(oauthDownParty, editContext))">
-    <div class="modal-header">
-        <div class="h5">
-            OAuth 2.0
+    <div class="modal-header sticky-header">
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
+            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">OAuth 2.0</span>
+            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetDownPartyDisplayName(oauthDownParty.Form.Model)</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -21,7 +22,7 @@
 
         @if (!oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
         {
-            <div class="mb-3 alert alert-info" role="alert">
+            <div class="mb-3 alert alert-info overflow-hidden" role="alert">
                 @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                 {
                     (var clientAuthority, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
@@ -116,7 +117,7 @@
                 <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client)" />
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
-                    <div class="mb-3 alert alert-info" role="alert">
+                    <div class="mb-3 alert alert-info overflow-hidden" role="alert">
                         The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
                     <SelectUpParties @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />
@@ -360,3 +361,14 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
+
+
+
+
+
+
+
+
+
+

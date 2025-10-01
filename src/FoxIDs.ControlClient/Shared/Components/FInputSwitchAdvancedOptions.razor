@@ -1,8 +1,7 @@
-﻿<div>
+<div class="text-nowrap">
     <input type="checkbox" id="@id" @bind="Value" />
     <label for="@id">Show advanced</label>
 </div>
-
 
 @code {
     private string id = Guid.NewGuid().ToString().Replace("-", "");
@@ -24,4 +23,4 @@
             }
         }
     }
-} 
+}

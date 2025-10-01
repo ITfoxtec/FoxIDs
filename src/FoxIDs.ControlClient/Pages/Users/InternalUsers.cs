@@ -179,17 +179,17 @@ namespace FoxIDs.Client.Pages.Users
 
         private string GetInfoText(GeneralUserViewModel generalUser, bool includeUserIdentifier = false)
         {
-            string infoText = includeUserIdentifier ? GetUserIdentifiersInfoText(generalUser) : string.Empty;
+            var infoText = GetUserIdentifiersInfoText(generalUser);
 
             if (!generalUser.Name.IsNullOrWhiteSpace())
             {
                 if (includeUserIdentifier)
                 {
-                    infoText += $" ({generalUser.Name})";
+                    infoText += $" \u2022 {generalUser.Name}";
                 }
                 else
                 {
-                    infoText += generalUser.Name;
+                    infoText = generalUser.Name;
                 }
             }
 

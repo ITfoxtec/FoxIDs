@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/authentication"
+@page "/{tenantName}/authentication"
 @inherits PageBase
 
 <div class="tab-content">
@@ -62,8 +62,11 @@
                         }
                         else
                         {
-                            <button type="button" class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
-                                @UpPartyInfoText(upParty)
+                            <button type="button" class="btn btn-link text-left" style="min-width: 0; overflow: hidden;" @onclick="@(() => ShowUpdateUpParty(upParty))">
+                                <span class="d-flex align-items-center flex-nowrap text-truncate overflow-hidden" style="min-width: 0;">
+                                    <span class="badge badge-light border mr-2 mt-1 flex-shrink-0 d-inline-flex">@GetUpPartyTypeLabel(upParty)</span>
+                                    <span class="text-truncate" style="min-width: 0">@GetUpPartyDisplayName(upParty)</span>
+                                </span>
                             </button>
                             @if (upParty.Type != PartyTypes.OAuth2)
                             {

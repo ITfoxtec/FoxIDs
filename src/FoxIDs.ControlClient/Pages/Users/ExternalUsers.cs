@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -292,6 +292,7 @@ namespace FoxIDs.Client.Pages.Users
                     generalExternalUser.UserId = externalUserResult.UserId;
                     generalExternalUser.UpPartyName = externalUserResult.UpPartyName;
                     generalExternalUser.UpPartyDisplayName = await GetUpPartyDisplayName(externalUserResult.UpPartyName);
+                    generalExternalUser.LoadName(externalUserResult.Claims);
                     generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap =>
                     {
                         afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
@@ -315,6 +316,7 @@ namespace FoxIDs.Client.Pages.Users
                     toastService.ShowSuccess("External user updated.");
                     generalExternalUser.LinkClaimValue = externalUserResult.LinkClaimValue;
                     generalExternalUser.RedemptionClaimValue = externalUserResult.RedemptionClaimValue;
+                    generalExternalUser.LoadName(externalUserResult.Claims);
                     generalExternalUser.Form.UpdateModel(externalUserResult.Map<ExternalUserViewModel>(afterMap: afterMap =>
                     {
                         afterMap.UpPartyDisplayName = generalExternalUser.UpPartyDisplayName;
@@ -335,6 +337,52 @@ namespace FoxIDs.Client.Pages.Users
             }
         }
 
+        private string GetInfoTextType(GeneralExternalUserViewModel externalUser)
+        {
+            var upParty = externalUser.UpPartyDisplayName;
+            if (upParty.IsNullOrWhiteSpace())
+            {
+                upParty = externalUser.UpPartyName;
+            }
+
+            return upParty;
+        }
+        
+        private string GetInfoText(GeneralExternalUserViewModel externalUser, bool includeIdentifiers = false)
+        {
+            var infoText = GetIdentifiersInfoText(externalUser);
+
+            if (includeIdentifiers)
+            {
+                if (!externalUser.Name.IsNullOrWhiteSpace())
+                {
+                    infoText += $" \u2022 {externalUser.Name}";
+                }
+            }
+            else
+            {
+                if (!externalUser.Name.IsNullOrWhiteSpace())
+                {
+                    infoText = externalUser.Name;
+                }
+            }
+
+            return infoText;
+        }
+
+        private string GetIdentifiersInfoText(GeneralExternalUserViewModel externalUser)
+        {
+            if (!externalUser.RedemptionClaimValue.IsNullOrWhiteSpace())
+            {
+                return externalUser.RedemptionClaimValue;
+            }
+            if (!externalUser.LinkClaimValue.IsNullOrWhiteSpace())
+            {
+                return externalUser.LinkClaimValue;
+            }
+            return externalUser.UserId;
+        }
+
         private async Task DeleteExternalUserAsync(GeneralExternalUserViewModel generalExternalUser)
         {
             try
@@ -353,3 +401,4 @@ namespace FoxIDs.Client.Pages.Users
         }
     }
 }
+

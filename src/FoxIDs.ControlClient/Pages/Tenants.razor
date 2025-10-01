@@ -22,7 +22,7 @@
                     @if (tenant.Edit)
                     {
                         <PageEditForm @ref="tenant.Form" TModel="TenantViewModel" OnValidSubmit="@(async (editContext) => await OnEditTenantValidSubmitAsync(tenant, editContext))">
-                            <div class="modal-header">
+                            <div class="modal-header sticky-header">
                                 Tenant
                             </div>
                             <div class="modal-body">

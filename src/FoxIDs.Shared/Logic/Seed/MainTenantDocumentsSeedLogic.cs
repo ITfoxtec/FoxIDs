@@ -4,6 +4,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -12,16 +13,16 @@ namespace FoxIDs.Logic.Seed
     public class MainTenantDocumentsSeedLogic : LogicBase 
     {
         private readonly TelemetryLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly Settings settings;
         private readonly ITenantDataRepository tenantDataRepository;
-        private readonly MasterTenantLogic masterTenantLogic;
 
-        public MainTenantDocumentsSeedLogic(TelemetryLogger logger, Settings settings, ITenantDataRepository tenantDataRepository, MasterTenantLogic masterTenantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MainTenantDocumentsSeedLogic(TelemetryLogger logger, IServiceProvider serviceProvider, Settings settings, ITenantDataRepository tenantDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.settings = settings;
             this.tenantDataRepository = tenantDataRepository;
-            this.masterTenantLogic = masterTenantLogic;
         }
 
         public async Task<bool> SeedAsync()
@@ -33,6 +34,7 @@ namespace FoxIDs.Logic.Seed
                     return false;
                 }
 
+                var masterTenantLogic = serviceProvider.GetService<MasterTenantLogic>();
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MainTenantName);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MainTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MainTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false, isMasterTenant: true);

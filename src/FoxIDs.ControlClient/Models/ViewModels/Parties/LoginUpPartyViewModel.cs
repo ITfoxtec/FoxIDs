@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel : IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
+    public class LoginUpPartyViewModel : IUpPartySessionLifetime, IUpPartyName, IUpPartyHrd, IValidatableObject
     {
         public string InitName { get; set; }
 

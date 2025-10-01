@@ -25,16 +25,6 @@ namespace FoxIDs.Models.Config
         public ApplicationInsightsSettings ApplicationInsights { get; set; }
 
         /// <summary>
-        /// Enable master seed if true.
-        /// </summary>
-        public bool MasterSeedEnabled { get; set; }
-
-        /// <summary>
-        /// Seed main tenant if true. At the same time as master seed is carried out.
-        /// </summary>
-        public bool MainTenantSeedEnabled { get; set; }
-
-        /// <summary>
         /// Down-party test lifetime in seconds. Default 15 minutes.
         /// </summary>
         [Required]

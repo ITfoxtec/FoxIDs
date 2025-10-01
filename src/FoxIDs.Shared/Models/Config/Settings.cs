@@ -20,6 +20,16 @@ namespace FoxIDs.Models.Config
         /// </summary>
         public bool UseHttp { get; set; }
 
+        /// <summary>
+        /// Enable master seed if true.
+        /// </summary>
+        public bool MasterSeedEnabled { get; set; }
+
+        /// <summary>
+        /// Seed main tenant if true. At the same time as master seed is carried out.
+        /// </summary>
+        public bool MainTenantSeedEnabled { get; set; }
+
         [ValidateComplexType]
         public AddressSettings Address { get; set; }
 

@@ -1,23 +1,29 @@
-﻿@using System.Linq.Expressions
+@using System.Linq.Expressions
 
 <div class="active-group active">
-    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e ?? string.Empty, Index = i }))
     {
         if (item.Index == 0)
         {
-            <div class="card bg-light">
-                <div class="card-body">
-                    @item.Effect
+            <div class="card card-row bg-light d-flex align-items-center">
+                <div class="card-body py-2 mb-0" style="flex: 1 1 auto; min-width: 0;">
+                    <div class="d-flex flex-nowrap align-items-center" style="min-width: 0;">
+                        <span class="text-truncate d-inline-block" style="flex: 1 1 auto; min-width: 0;" title="@item.Effect">@item.Effect</span>
+                    </div>
                 </div>
+                <div class="pr-2"></div>
             </div>
             <Label For="@For" class="label-control" />
         }
         else
         {
-            <div class="card bg-light">
-                <div class="card-body">
-                    @item.Effect
+            <div class="card card-row bg-light d-flex align-items-center">
+                <div class="card-body py-2 mb-0" style="flex: 1 1 auto; min-width: 0;">
+                    <div class="d-flex flex-nowrap align-items-center" style="min-width: 0;">
+                        <span class="text-truncate d-inline-block" style="flex: 1 1 auto; min-width: 0;" title="@item.Effect">@item.Effect</span>
+                    </div>
                 </div>
+                <div class="pr-2"></div>
             </div>
         }
     }

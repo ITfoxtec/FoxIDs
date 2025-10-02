@@ -1,5 +1,5 @@
-﻿<div class="modal fade @(show ? "show" : "")" style="@(show ? "display: block; padding-right: 17px;" : "")" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-md modal-lg modal-dialog-scrollable" role="document">
+<div class="modal fade @(show ? "show" : "")" style="@(show ? "display: block; padding-right: 17px;" : "")" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable @DialogCssClass" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title <small class="font-italic">@SubTitle</small></h5>
@@ -19,6 +19,9 @@
 }
 
 @code {
+    [Parameter]
+    public string DialogCssClass { get; set; } = "modal-md modal-lg";
+
     bool show = false;
 
     public bool IsShown => show;

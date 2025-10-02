@@ -1,11 +1,16 @@
-﻿@inherits FInputBase<string>
+@inherits FInputBase<string>
+
+@{ var displayValue = CurrentValue ?? string.Empty; }
 
 <div class="active-group active @Class">
-    <div class="card bg-light">
-        <div class="card-body">
-            @CurrentValue
+<div class="card card-row bg-light d-flex align-items-center">
+    <div class="card-body py-2 mb-0" style="flex: 1 1 auto; min-width: 0;">
+        <div class="d-flex flex-nowrap align-items-center" style="min-width: 0;">
+            <span class="text-truncate d-inline-block" style="flex: 1 1 auto; min-width: 0;" title="@displayValue">@displayValue</span>
         </div>
     </div>
+    <div class="pr-2"></div>
+</div>
     <Label For="@For" class="label-control" />
 </div>
 

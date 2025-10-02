@@ -1,11 +1,13 @@
 ﻿@inherits FInputBase<string>
 
 <div class="active-group active">
-    <div class="card card-row bg-light">
-        <div class="card-body">
-            @CurrentValue
+    <div class="card card-row bg-light d-flex align-items-center">
+        <div class="card-body py-2 mb-0" style="flex: 1 1 auto; min-width: 0;">
+            <div class="d-flex flex-nowrap align-items-center" style="min-width: 0;">
+                <span class="text-truncate d-inline-block" style="flex: 1 1 auto; min-width: 0;" title="@CurrentValue">@CurrentValue</span>
+            </div>
         </div>
-        <div>
+        <div class="pr-2 d-flex align-items-center">
             <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@CurrentValue))"><i class="bi bi-copy" title="Click to copy"></i></button>
         </div>
     </div>

@@ -3,7 +3,7 @@
 @using System.ComponentModel.DataAnnotations;
 @using System.Linq.Expressions;
 
-<label @attributes="AdditionalAttributes">@label</label>
+<label @attributes="mergedAttributes">@label</label>
 
 @code {
     [Parameter]
@@ -14,6 +14,47 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    private IDictionary<string, object> mergedAttributes;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        mergedAttributes = AdditionalAttributes != null ? new Dictionary<string, object>(AdditionalAttributes) : new Dictionary<string, object>();
+
+        mergedAttributes["class"] = BuildClassAttribute(mergedAttributes.TryGetValue("class", out var existingClass) ? existingClass?.ToString() : null);
+        mergedAttributes["style"] = BuildStyleAttribute(mergedAttributes.TryGetValue("style", out var existingStyle) ? existingStyle?.ToString() : null);
+    }
+
+    private static string BuildClassAttribute(string existingClass)
+    {
+        var classes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (!string.IsNullOrWhiteSpace(existingClass))
+        {
+            foreach (var part in existingClass.Split(' ', System.StringSplitOptions.RemoveEmptyEntries))
+            {
+                classes.Add(part);
+            }
+        }
+
+        classes.Add("text-truncate");
+        classes.Add("d-block");
+
+        return string.Join(' ', classes);
+    }
+
+    private static string BuildStyleAttribute(string existingStyle)
+    {
+        var defaultStyle = "display:block; width:100%; max-width:100%;";
+        if (string.IsNullOrWhiteSpace(existingStyle))
+        {
+            return defaultStyle;
+        }
+
+        existingStyle = existingStyle.Trim().TrimEnd(';');
+        return $"{existingStyle}; {defaultStyle}";
+    }
 
     private string label => GetDisplayName();
 

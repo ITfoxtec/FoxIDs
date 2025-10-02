@@ -1,7 +1,7 @@
 @using System.Linq.Expressions
 
 <div class="active-group active">
-    @foreach (var item in ValueList.Select((e, i) => new { Effect = e ?? string.Empty, Index = i }))
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
     {
         if (item.Index == 0)
         {

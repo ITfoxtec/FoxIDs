@@ -655,6 +655,9 @@ img.logo {
 
     .active-group .label-control {
         display: block;
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
         color: #788489;
         padding-left: 0.8rem;
         top: 1.35rem;
@@ -668,6 +671,9 @@ img.logo {
         transition-property: color,bottom,transform;
         pointer-events: none;
         position: absolute;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .active-group .input-control:focus ~ .label-control {

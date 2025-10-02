@@ -45,9 +45,12 @@ namespace FoxIDs.Models
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; }
+       
+        [JsonProperty(PropertyName = "disable_set_password_sms")]
+        public bool DisableSetPasswordSms { get; set; }
 
-        [JsonProperty(PropertyName = "disable_set_password")]
-        public bool DisableSetPassword { get; set; }
+        [JsonProperty(PropertyName = "disable_set_password_email")]
+        public bool DisableSetPasswordEmail { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]

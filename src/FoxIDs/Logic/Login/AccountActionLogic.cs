@@ -195,7 +195,7 @@ namespace FoxIDs.Logic
         {
             phone = phone?.Trim();
             await failingLoginLogic.VerifyFailingLoginCountAsync(phone, FailingLoginTypes.SmsCode);
-            (var sendStatus, var user) = await SendCodeAsync(SendType.Sms, SmsSetPasswordCodeKeyElement, phone, GetSmsSendSetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
+            (var sendStatus, var user) = await SendCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, phone, GetSmsSendSetPasswordAction(), forceNewCode, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
             if (sendStatus != ConfirmationCodeSendStatus.UseExistingCode)
             {
                 await planUsageLogic.LogSetPasswordSmsEventAsync(user?.Phone ?? phone);
@@ -207,7 +207,7 @@ namespace FoxIDs.Logic
         {
             phone = phone?.Trim();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.Sms, SmsSetPasswordCodeKeyElement, phone, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.SetPasswordSms, SmsSetPasswordCodeKeyElement, phone, code, GetSmsSendSetPasswordAction(), onSuccess, GetConfirmationCodeSmsAction(), SmsSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByPhoneAsync(phone);
@@ -219,7 +219,7 @@ namespace FoxIDs.Logic
         {
             email = email?.Trim()?.ToLower();
             await failingLoginLogic.VerifyFailingLoginCountAsync(email, FailingLoginTypes.EmailCode);
-            (var sendStatus, _) = await SendCodeAsync(SendType.Email, EmailSetPasswordCodeKeyElement, email, GetEmailSendSetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
+            (var sendStatus, _) = await SendCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, email, GetEmailSendSetPasswordAction(), forceNewCode, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
             if (sendStatus != ConfirmationCodeSendStatus.UseExistingCode)
             {
                 planUsageLogic.LogSetPasswordEmailEvent();
@@ -231,7 +231,7 @@ namespace FoxIDs.Logic
         {
             email = email?.Trim()?.ToLower();
             Func<User, Task> onSuccess = (user) => GetAccountLogic().SetPasswordUserAsync(user, newPassword);
-            var user = await VerifyCodeAsync(SendType.Email, EmailSetPasswordCodeKeyElement, email, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
+            var user = await VerifyCodeAsync(SendType.SetPasswordEmail, EmailSetPasswordCodeKeyElement, email, code, GetEmailSendSetPasswordAction(), onSuccess, GetConfirmationCodeEmailAction(), EmailSetPasswordCodeLogText);
             if (deleteRefreshTokenGrants)
             {
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsByEmailAsync(email);
@@ -408,15 +408,28 @@ namespace FoxIDs.Logic
             try
             {
                 var user = await GetAccountLogic().GetUserAsync(userIdentifier);
-                if (user == null || user.DisableAccount)
+                if (user == null)
                 {
-                    throw new UserNotExistsException($"User '{userIdentifier}' do not exist or is disabled, trying to send {logText}.");
+                    throw new UserNotExistsException($"User '{userIdentifier}' do not exist, trying to send {logText}.");
+                }
+                if (user.DisableAccount)
+                {
+                    throw new UserNotExistsException($"User '{userIdentifier}' is disabled, trying to send {logText}.");
+                }
+                if (sendType == SendType.SetPasswordEmail && user.DisableSetPasswordEmail)
+                {
+                    throw new UserNotExistsException($"User '{userIdentifier}' has disabled set password with email, trying to send {logText}.");
+                }
+                if (sendType == SendType.SetPasswordSms && user.DisableSetPasswordSms)
+                {
+                    throw new UserNotExistsException($"User '{userIdentifier}' has disabled set password with SMS, trying to send {logText}.");
                 }
 
                 switch (sendType)
                 {
                     case SendType.PasswordlessSms:
                     case SendType.Sms:
+                    case SendType.SetPasswordSms:
                     case SendType.TwoFactorSms:
                         if (user.Phone.IsNullOrWhiteSpace() && sendIdentifier.IsNullOrWhiteSpace())
                         {
@@ -436,6 +449,7 @@ namespace FoxIDs.Logic
                         break;
                     case SendType.PasswordlessEmail:
                     case SendType.Email:
+                    case SendType.SetPasswordEmail:
                     case SendType.TwoFactorEmail:
                         if (user.Email.IsNullOrWhiteSpace() && sendIdentifier.IsNullOrWhiteSpace())
                         {
@@ -558,6 +572,7 @@ namespace FoxIDs.Logic
                     {
                         case SendType.PasswordlessSms:
                         case SendType.Sms:
+                        case SendType.SetPasswordSms:
                         case SendType.TwoFactorSms:
                             if (!user.Phone.IsNullOrEmpty() && !user.PhoneVerified)
                             {
@@ -571,6 +586,7 @@ namespace FoxIDs.Logic
                             break;
                         case SendType.PasswordlessEmail:
                         case SendType.Email:
+                        case SendType.SetPasswordEmail:
                         case SendType.TwoFactorEmail:
                             if (!user.Email.IsNullOrEmpty() && !user.EmailVerified)
                             {
@@ -618,8 +634,10 @@ namespace FoxIDs.Logic
                 case SendType.PasswordlessEmail:
                     return FailingLoginTypes.InternalLogin;
                 case SendType.Sms:
+                case SendType.SetPasswordSms:
                     return FailingLoginTypes.SmsCode;
                 case SendType.Email:
+                case SendType.SetPasswordEmail:
                     return FailingLoginTypes.EmailCode;
                 case SendType.TwoFactorSms:
                     return FailingLoginTypes.TwoFactorSmsCode;
@@ -693,6 +711,8 @@ namespace FoxIDs.Logic
             PasswordlessEmail,
             Sms,
             Email,
+            SetPasswordSms,
+            SetPasswordEmail,
             TwoFactorSms,
             TwoFactorEmail
         }

@@ -104,7 +104,7 @@
 
 @if (newDownPartyModal != null)
 {
-    <Modal @ref="newDownPartyModal.Modal" Title="New Application Registration">
+    <Modal @ref="newDownPartyModal.Modal" Title="New Application Registration" DialogClass="modal-xl modal-dialog-scrollable">
         <div class="modal-body">
             <div class="d-flex">
                 <div class="mr-auto"><h6>@newDownPartyModal.AppTitle</h6></div>
@@ -177,94 +177,107 @@
             else if (newDownPartyModal.Type == PartyTypes.Oidc)
             {
                 <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnAfterInit="@(async m => await OnNewDownPartyOidcModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
-                    @if (!newDownPartyModal.Created)
-                    {
-                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
-                        {
-                            <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with an backend API (called a Public Client).
-                            </div>
-                        }
-                        else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
-                        {
-                            <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with an backend API (called a Public Client).
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
-                            </div>
-                        }
-
-                        <div>
-                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
-                            @if (newDownPartyModal.ShowAdvanced)
+                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
+                        <div class="new-down-party-layout__form">
+                            @if (!newDownPartyModal.Created)
                             {
-                                <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
-                            }
-                            <div class="info-text">
-                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
                                 {
-                                    <div>Enter your applications URI as Redirect URI, e.g. 'myapp://', 'myapp://callback' or 'https://myapp.com/auth'.</div>
-                                    
+                                    <div class="info-text">
+                                        Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with an backend API (called a Public Client).
+                                    </div>
+                                }
+                                else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                {
+                                    <div class="info-text">
+                                        Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with an backend API (called a Public Client).
+                                    </div>
                                 }
                                 else
                                 {
-                                    <div>Enter your applications base URL as Redirect URI, e.g. 'https://myapp.com/' or 'https://myapp.com/callback' or 'https://myapp.com/theappsite'.</div>
-                                }                                
-                            </div>
-                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.RedirectUri" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUri)" />
-                            @if (newDownPartyModal.ShowAdvanced)
-                            {
-                                <div class="info-text">
-                                    @{
-                                        var uriText = newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative ? "URI" : "URL";
+                                    <div class="info-text">
+                                        Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
+                                    </div>
+                                }
+
+                                <div>
+                                    <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
+                                        <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
                                     }
-                                    Enable Absolute URIs if you know the exact @uriText in your application that the user should be redirected back to when logged in, and enter the absolute @uriText as the Redirect URI.                                
+                                    <div class="info-text">
+                                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                        {
+                                            <div>Enter your applications URI as Redirect URI, e.g. 'myapp://', 'myapp://callback' or 'https://myapp.com/auth'.</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Enter your applications base URL as Redirect URI, e.g. 'https://myapp.com/' or 'https://myapp.com/callback' or 'https://myapp.com/theappsite'.</div>
+                                        }
+                                    </div>
+                                    <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.RedirectUri" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUri)" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">
+                                            @{
+                                                var uriText = newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative ? "URI" : "URL";
+                                            }
+                                            Enable Absolute URIs if you know the exact @uriText in your application that the user should be redirected back to when logged in, and enter the absolute @uriText as the Redirect URI.
+                                        </div>
+                                        <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                                    }
                                 </div>
-                                <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                            }
+                            else
+                            {
+                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
+                                {
+                                    <div class="info-text">
+                                        Your single page application is registered!
+                                    </div>
+                                }
+                                else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                {
+                                    <div class="info-text">
+                                        Your native application is registered!
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="info-text">
+                                        Your web application is registered!
+                                    </div>
+                                }
+
+                                <div class="info-text">
+                                    Remember the following information, you need them to configure your application.
+                                </div>
                             }
                         </div>
-                    }
-                    else
-                    {
-                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
-                        {
-                            <div class="info-text">
-                                Your single page application is registered!
+                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
+                            <p class="new-down-party-summary__intro">
+                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                            </p>
+                            @{
+                                EnsureNewDownPartyOidcSummaryDefaults();
+                            }
+                            <div class="new-down-party-summary__fields">
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                                {
+                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
+                                }
+                                else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                {
+                                    <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
+                                }
+                                <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
                             </div>
-                        }
-                        else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
-                        {
-                            <div class="info-text">
-                                Your native application is registered!
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="info-text">
-                                Your web application is registered!
-                            </div>
-                        }
-
-                        <div class="info-text">
-                            Remember the following information, you need them to configure your application. 
                         </div>
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
-                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
-                        {
-                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
-                        }
-                        else @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
-                        {
-                            <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
-                        }
-                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
-                    }
+                    </div>
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
                         {
@@ -285,34 +298,48 @@
             else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Client)
             {
                 <PageEditForm @ref="newDownPartyModal.OAuthClientForm" TModel="NewDownPartyOAuthClientViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthClientModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthClientModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthClientForm, editContext))">
-                    @if (!newDownPartyModal.Created)
-                    {
-                        <div class="info-text">
-                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that request an access token using Client Credential Grant).
-                        </div>
-
-                        <div>
-                            <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthClientForm.Model.DisplayName)" Focus="true" />
-                            @if (newDownPartyModal.ShowAdvanced)
+                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
+                        <div class="new-down-party-layout__form">
+                            @if (!newDownPartyModal.Created)
                             {
-                                <div class="info-text">Enter the Client ID you want, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                                <div class="info-text">
+                                    Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that request an access token using Client Credential Grant).
+                                </div>
+
+                                <div>
+                                    <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthClientForm.Model.DisplayName)" Focus="true" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">Enter the Client ID you want, otherwise auto generated.</div>
+                                        <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    Your backend application is registered!
+                                </div>
+
+                                <div class="info-text">
+                                    Remember the following information, you need them to configure your application.
+                                </div>
                             }
                         </div>
-                    }
-                    else
-                    {
-                        <div class="info-text">
-                            Your backend application is registered!
+                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
+                            <p class="new-down-party-summary__intro">
+                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                            </p>
+                            @{
+                                EnsureNewDownPartyOAuthClientSummaryDefaults();
+                            }
+                            <div class="new-down-party-summary__fields">
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Secret" For="@(() => newDownPartyModal.OAuthClientForm.Model.Secret)" />
+                            </div>
                         </div>
-
-                        <div class="info-text">
-                            Remember the following information, you need them to configure your application.
-                        </div>
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Secret" For="@(() => newDownPartyModal.OAuthClientForm.Model.Secret)" />
-                    }
+                    </div>
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
                         {
@@ -333,46 +360,66 @@
             else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Resource)
             {
                 <PageEditForm @ref="newDownPartyModal.OAuthResourceForm" TModel="NewDownPartyOAuthResourceViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthResourceModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthResourceModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthResourceForm, editContext))">
-                    @if (!newDownPartyModal.Created)
-                    {
-                        <div class="info-text">
-                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
-                        </div>
-
-                        <div>
-                            <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthResourceForm.Model.DisplayName)" Focus="true" />
-                            @if (newDownPartyModal.ShowAdvanced)
+                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
+                        <div class="new-down-party-layout__form">
+                            @if (!newDownPartyModal.Created)
                             {
-                                <div class="info-text">Enter the Resource name you want, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                                <div class="info-text">
+                                    Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
+                                </div>
+
+                                <div>
+                                    <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthResourceForm.Model.DisplayName)" Focus="true" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">Enter the Resource name you want, otherwise auto generated.</div>
+                                        <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                                    }
+                                </div>
+
+                                <div class="info-text">
+                                    Add Scopes to restrict access from a calling client to the API.
+                                </div>
+                                <FInputTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    Your API is registered!
+                                </div>
+
+                                <div class="info-text">
+                                    Remember the following information, you need them to configure your application.
+                                </div>
                             }
                         </div>
-
-                        <div class="info-text">
-                            Add Scopes to restrict access from a calling client to the API.
+                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
+                            <p class="new-down-party-summary__intro">
+                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                            </p>
+                            @{
+                                EnsureNewDownPartyOAuthResourceSummaryDefaults();
+                            }
+                            <div class="new-down-party-summary__fields">
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                                @if (newDownPartyModal.OAuthResourceForm.Model.ScopesShow?.Count > 0)
+                                {
+                                    <div class="info-text">
+                                        You added the following scopes to the API.
+                                    </div>
+                                    <FFieldTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ScopesShow" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ScopesShow)" />
+                                }
+                                @if (newDownPartyModal.OAuthResourceForm.Model.ClientScopes?.Count > 0)
+                                {
+                                     <div class="info-text">
+                                        A client requests scopes as compound scope names that include the API's resource name.
+                                    </div>
+                                    <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                                }
+                            </div>
                         </div>
-                        <FInputTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
-                    }
-                    else
-                    {
-                        <div class="info-text">
-                            Your API is registered!
-                        </div>
-
-                        <div class="info-text">
-                            Remember the following information, you need them to configure your application.
-                        </div>
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
-                        <div class="info-text">
-                            You added the following scopes to the API.
-                        </div>
-                        <FFieldTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
-                        <div class="info-text">
-                            A client requests scopes as compound scope names that include the API's resource name.                           
-                        </div>
-                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
-                    }
+                    </div>
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
                         {
@@ -393,48 +440,62 @@
             else if (newDownPartyModal.Type == PartyTypes.Saml2)
             {
                 <PageEditForm @ref="newDownPartyModal.SamlForm" TModel="NewDownPartySamlViewModel" OnAfterInit="@(async m => await OnNewDownPartySamlModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartySamlModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.SamlForm, editContext))">
-                    @if (!newDownPartyModal.Created)
-                    {
-                        <div class="info-text">
-                            Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server. 
-                            <br />
-                            SAML 2.0 is an old standard with its shortcomings, it is often better to use <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>.
-                        </div>
-
-                        <div>
-                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
-                            <div class="info-text">Enter the applications issuer, otherwise auto generated.</div>
-                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
-                            @if (newDownPartyModal.ShowAdvanced)
-                            {
-                                <div class="info-text">Enter the Technical name you want for the registration, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
-                            }
-                            <div class="info-text">
-                                <div>Enter your applications base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
-                            </div>
-                            <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
-                            @if (newDownPartyModal.ShowAdvanced)
+                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
+                        <div class="new-down-party-layout__form">
+                            @if (!newDownPartyModal.Created)
                             {
                                 <div class="info-text">
-                                    Enable Absolute URLs if you know the exact URL in your application that the user should be redirected back to when logged in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
+                                    Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server.
+                                    <br />
+                                    SAML 2.0 is an old standard with its shortcomings, it is often better to use <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>.
                                 </div>
-                                <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls" For="@(() => newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
+
+                                <div>
+                                    <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
+                                    <div class="info-text">Enter the applications issuer, otherwise auto generated.</div>
+                                    <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">Enter the Technical name you want for the registration, otherwise auto generated.</div>
+                                        <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
+                                    }
+                                    <div class="info-text">
+                                        <div>Enter your applications base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
+                                    </div>
+                                    <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
+                                    @if (newDownPartyModal.ShowAdvanced)
+                                    {
+                                        <div class="info-text">
+                                            Enable Absolute URLs if you know the exact URL in your application that the user should be redirected back to when logged in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
+                                        </div>
+                                        <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls" For="@(() => newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-text">
+                                    Your web application is registered!
+                                </div>
+
+                                <div class="info-text">
+                                    Remember the following information, you need them to configure your application.
+                                </div>
                             }
                         </div>
-                    }
-                    else
-                    {
-                        <div class="info-text">
-                            Your web application is registered!
+                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
+                            <p class="new-down-party-summary__intro">
+                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                            </p>
+                            @{
+                                EnsureNewDownPartySamlSummaryDefaults();
+                            }
+                            <div class="new-down-party-summary__fields">
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
+                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                            </div>
                         </div>
-
-                        <div class="info-text">
-                            Remember the following information, you need them to configure your application.
-                        </div>
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
-                        <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
-                    }
+                    </div>
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
                         {
@@ -493,4 +554,9 @@
         </div>
     </Modal>
 }
+
+
+
+
+
 

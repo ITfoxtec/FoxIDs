@@ -773,3 +773,67 @@ img.logo {
 .error-page h4 {
     font-weight: 500;
 }
+
+.new-down-party-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.new-down-party-layout__form,
+.new-down-party-layout__summary {
+    width: 100%;
+}
+
+.new-down-party-layout__summary {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    box-shadow: inset 0 0 0 1px #e2e6ea;
+}
+
+.new-down-party-summary__intro {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.new-down-party-summary__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.new-down-party-layout__summary--full {
+    max-width: none;
+    margin-left: 0;
+}
+
+@media (min-width: 992px) {
+    .new-down-party-layout {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .new-down-party-layout__form {
+        flex: 1 1 60%;
+    }
+
+    .new-down-party-layout__summary {
+        flex: 1 1 40%;
+        max-width: 420px;
+        margin-left: 2rem;
+    }
+}
+
+.new-down-party-layout--created {
+    flex-direction: column;
+}
+
+.new-down-party-layout--created .new-down-party-layout__summary {
+    max-width: none;
+    margin-left: 0;
+}
+
+
+
+

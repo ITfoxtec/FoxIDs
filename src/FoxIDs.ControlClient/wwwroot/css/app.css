@@ -590,6 +590,10 @@ img.logo {
 .card-body {
     padding: 0.375rem 0.75rem;
 }
+    .card-body.flex-fill {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 
     .card-body.active, .card-body:active {
         color: inherit;

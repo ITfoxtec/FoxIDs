@@ -177,8 +177,13 @@
             else if (newDownPartyModal.Type == PartyTypes.Oidc)
             {
                 <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnAfterInit="@(async m => await OnNewDownPartyOidcModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
-                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
-                        <div class="new-down-party-layout__form">
+                    @{
+                        EnsureNewDownPartyOidcSummaryDefaults();
+                        var formColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6";
+                        var summaryColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6 mt-4 mt-md-0";
+                    }
+                    <div class="row">
+                        <div class="@formColumnClass">
                             @if (!newDownPartyModal.Created)
                             {
                                 @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
@@ -256,25 +261,36 @@
                                 </div>
                             }
                         </div>
-                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
-                            <p class="new-down-party-summary__intro">
-                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
-                            </p>
-                            @{
-                                EnsureNewDownPartyOidcSummaryDefaults();
-                            }
-                            <div class="new-down-party-summary__fields">
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
-                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
-                                {
-                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
-                                }
-                                else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
-                                {
-                                    <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
-                                }
-                                <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
+                        <div class="@summaryColumnClass">
+                            <div class="card bg-light border">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">
+                                        @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                                    </h6>
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                                        </div>
+                                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                                        {
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
+                                            </div>
+                                        }
+                                        else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                        {
+                                            <div class="mb-3">
+                                                <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
+                                            </div>
+                                        }
+                                        <div>
+                                            <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -298,8 +314,13 @@
             else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Client)
             {
                 <PageEditForm @ref="newDownPartyModal.OAuthClientForm" TModel="NewDownPartyOAuthClientViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthClientModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthClientModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthClientForm, editContext))">
-                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
-                        <div class="new-down-party-layout__form">
+                    @{
+                        EnsureNewDownPartyOAuthClientSummaryDefaults();
+                        var formColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6";
+                        var summaryColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6 mt-4 mt-md-0";
+                    }
+                    <div class="row">
+                        <div class="@formColumnClass">
                             @if (!newDownPartyModal.Created)
                             {
                                 <div class="info-text">
@@ -326,17 +347,24 @@
                                 </div>
                             }
                         </div>
-                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
-                            <p class="new-down-party-summary__intro">
-                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
-                            </p>
-                            @{
-                                EnsureNewDownPartyOAuthClientSummaryDefaults();
-                            }
-                            <div class="new-down-party-summary__fields">
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Secret" For="@(() => newDownPartyModal.OAuthClientForm.Model.Secret)" />
+                        <div class="@summaryColumnClass">
+                            <div class="card bg-light border">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">
+                                        @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                                    </h6>
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                                        </div>
+                                        <div>
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Secret" For="@(() => newDownPartyModal.OAuthClientForm.Model.Secret)" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -360,8 +388,13 @@
             else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Resource)
             {
                 <PageEditForm @ref="newDownPartyModal.OAuthResourceForm" TModel="NewDownPartyOAuthResourceViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthResourceModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthResourceModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthResourceForm, editContext))">
-                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
-                        <div class="new-down-party-layout__form">
+                    @{
+                        EnsureNewDownPartyOAuthResourceSummaryDefaults();
+                        var formColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6";
+                        var summaryColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6 mt-4 mt-md-0";
+                    }
+                    <div class="row">
+                        <div class="@formColumnClass">
                             @if (!newDownPartyModal.Created)
                             {
                                 <div class="info-text">
@@ -393,30 +426,33 @@
                                 </div>
                             }
                         </div>
-                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
-                            <p class="new-down-party-summary__intro">
-                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
-                            </p>
-                            @{
-                                EnsureNewDownPartyOAuthResourceSummaryDefaults();
-                            }
-                            <div class="new-down-party-summary__fields">
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
-                                @if (newDownPartyModal.OAuthResourceForm.Model.ScopesShow?.Count > 0)
-                                {
-                                    <div class="info-text">
-                                        You added the following scopes to the API.
+                        <div class="@summaryColumnClass">
+                            <div class="card bg-light border">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">
+                                        @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                                    </h6>
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="info-text">
+                                                You added the following scopes to the API.
+                                            </div>
+                                            <FInputTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
+                                        </div>
+                                        <div>
+                                            <div class="info-text">
+                                                A client requests scopes as compound scope names that include the API's resource name.
+                                            </div>
+                                            <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                                        </div>
                                     </div>
-                                    <FFieldTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ScopesShow" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ScopesShow)" />
-                                }
-                                @if (newDownPartyModal.OAuthResourceForm.Model.ClientScopes?.Count > 0)
-                                {
-                                     <div class="info-text">
-                                        A client requests scopes as compound scope names that include the API's resource name.
-                                    </div>
-                                    <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -440,8 +476,13 @@
             else if (newDownPartyModal.Type == PartyTypes.Saml2)
             {
                 <PageEditForm @ref="newDownPartyModal.SamlForm" TModel="NewDownPartySamlViewModel" OnAfterInit="@(async m => await OnNewDownPartySamlModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartySamlModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.SamlForm, editContext))">
-                    <div class="new-down-party-layout@(newDownPartyModal.Created ? " new-down-party-layout--created" : string.Empty)">
-                        <div class="new-down-party-layout__form">
+                    @{
+                        EnsureNewDownPartySamlSummaryDefaults();
+                        var formColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6";
+                        var summaryColumnClass = newDownPartyModal.Created ? "col-12" : "col-12 col-md-6 mt-4 mt-md-0";
+                    }
+                    <div class="row">
+                        <div class="@formColumnClass">
                             @if (!newDownPartyModal.Created)
                             {
                                 <div class="info-text">
@@ -483,16 +524,21 @@
                                 </div>
                             }
                         </div>
-                        <div class="new-down-party-layout__summary@(newDownPartyModal.Created ? " new-down-party-layout__summary--full" : string.Empty)">
-                            <p class="new-down-party-summary__intro">
-                                @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
-                            </p>
-                            @{
-                                EnsureNewDownPartySamlSummaryDefaults();
-                            }
-                            <div class="new-down-party-summary__fields">
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
-                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                        <div class="@summaryColumnClass">
+                            <div class="card bg-light border">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">
+                                        @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
+                                    </h6>
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-3">
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
+                                        </div>
+                                        <div>
+                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -554,9 +600,3 @@
         </div>
     </Modal>
 }
-
-
-
-
-
-

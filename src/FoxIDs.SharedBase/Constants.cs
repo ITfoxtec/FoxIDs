@@ -170,6 +170,7 @@ namespace FoxIDs
             public const string Message = "Message";
             public const string Details = "Details";
             public const string Value = "Value";
+            public const string Data = "Data";
             public const string MachineName = "MachineName";
             public const string ClientIP = "ClientIP";
             public const string Domain = "Domain";
@@ -205,8 +206,11 @@ namespace FoxIDs
             public const string UsageSms = "UsageSms";
             public const string UsageSmsPrice = "UsageSmsPrice";
             public const string UsageEmail = "UsageEmail";
+            public const string AuditDataType = "AuditDataType";
             public const string AuditType = "AuditType";
-            public const string AuditAction = "AuditAction";
+            public const string AuditDataAction = "AuditDataAction";
+            public const string DocumentId = "DocumentId";
+            public const string PartitionId = "PartitionId"; 
 
             public static class Results
             {
@@ -237,8 +241,7 @@ namespace FoxIDs
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
                 public const string DocumentId = "DocumentId";
-                public const string PartitionId = "PartitionId"; 
-                public const string Changes = "Changes";
+                public const string PartitionId = "PartitionId";
             }
 
             public static class IndexName

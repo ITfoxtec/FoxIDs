@@ -121,7 +121,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditAction.Create, null, item, item.PartitionId, item.Id);
+                    await auditLogic.LogAsync(AuditDataAction.Create, null, item, item.PartitionId, item.Id);
                 }
             }
             catch (Exception ex)
@@ -158,7 +158,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditAction.Update, existing, item, item.PartitionId, item.Id);
+                    await auditLogic.LogAsync(AuditDataAction.Update, existing, item, item.PartitionId, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -194,7 +194,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditAction.Save, existing, item, item.PartitionId, item.Id);
+                    await auditLogic.LogAsync(AuditDataAction.Save, existing, item, item.PartitionId, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -226,7 +226,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditAction.Delete, item, null, partitionId, item.Id);
+                    await auditLogic.LogAsync(AuditDataAction.Delete, item, null, partitionId, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -281,7 +281,7 @@ namespace FoxIDs.Repository
                         {
                             existing = existingValue;
                         }
-                        await auditLogic.LogAsync(AuditAction.Save, existing, item, partitionId, item.Id);
+                        await auditLogic.LogAsync(AuditDataAction.Save, existing, item, partitionId, item.Id);
                     }
                 }
             }
@@ -310,7 +310,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditAction.Delete, existing, null, partitionId, existing.Id);
+                    await auditLogic.LogAsync(AuditDataAction.Delete, existing, null, partitionId, existing.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -342,7 +342,7 @@ namespace FoxIDs.Repository
 
                     if (shouldAudit && existing != null)
                     {
-                        await auditLogic.LogAsync(AuditAction.Delete, existing, null, partitionId, existing.Id);
+                        await auditLogic.LogAsync(AuditDataAction.Delete, existing, null, partitionId, existing.Id);
                     }
                 }
             }
@@ -370,7 +370,7 @@ namespace FoxIDs.Repository
                 {
                     foreach (var existing in existingItems)
                     {
-                        await auditLogic.LogAsync(AuditAction.Delete, existing, null, partitionId, existing.Id);
+                        await auditLogic.LogAsync(AuditDataAction.Delete, existing, null, partitionId, existing.Id);
                     }
                 }
             }

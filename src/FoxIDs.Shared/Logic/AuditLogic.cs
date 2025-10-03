@@ -15,20 +15,19 @@ namespace FoxIDs.Logic
 {
     public class AuditLogic : LogicBase
     {
-        private const string Mask = "****";
+        private const string sensitiveValueMask = "****";
+        private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = false
+        };
 
         private readonly TelemetryLogger telemetryLogger;
-        private readonly JsonSerializerOptions jsonOptions;
 
         public AuditLogic(TelemetryLogger telemetryLogger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.telemetryLogger = telemetryLogger;
-            jsonOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                WriteIndented = false
-            };
         }
 
         public bool ShouldAudit()
@@ -47,7 +46,7 @@ namespace FoxIDs.Logic
             return httpContext.Items.ContainsKey(Constants.ControlApi.AuditLogEnabledKey);
         }
 
-        public Task LogAsync<T>(AuditAction action, T before, T after, string partitionId, string documentId) where T : MasterDocument
+        public Task LogAsync<T>(AuditDataAction dataAction, T before, T after, string partitionId, string documentId) where T : MasterDocument
         {
             if (!ShouldAudit())
             {
@@ -56,18 +55,18 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties(typeof(T).Name, action, GetDiffNode(before, after), partitionId, documentId);
-                telemetryLogger.Event($"Audit '{action}'", properties);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNode(before, after), partitionId, documentId);
+                telemetryLogger.Event($"Audit '{dataAction}'", properties);
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"Audit '{action}' master document logging failed.");
+                telemetryLogger.Warning(ex, message: $"Audit '{dataAction}' master document logging failed.");
             }
 
             return Task.CompletedTask;
         }
 
-        public Task LogAsync<T>(AuditAction action, T before, T after, string partitionId, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
+        public Task LogAsync<T>(AuditDataAction dataAction, T before, T after, string partitionId, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
         {
             if (!ShouldAudit())
             {
@@ -76,12 +75,12 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties(typeof(T).Name, action, GetDiffNode(before, after), partitionId, documentId);
-                scopedLogger.Event($"Audit '{action}'", properties: properties);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNode(before, after), partitionId, documentId);
+                scopedLogger.Event($"Audit '{dataAction}'", properties: properties);
             }
             catch (Exception ex)
             {
-                scopedLogger.Warning(ex, message: $"Audit '{action}' tenant document logging failed.");
+                scopedLogger.Warning(ex, message: $"Audit '{dataAction}' tenant document logging failed.");
             }
 
             return Task.CompletedTask;
@@ -106,7 +105,7 @@ namespace FoxIDs.Logic
             var afterNode = ConvertToJsonNode(after);
             return GetDiffNode(beforeNode, afterNode);
         }
-        
+
         private JsonObject GetDiffNode(JsonNode beforeNode, JsonNode afterNode)
         {
             if (beforeNode == null && afterNode == null)
@@ -169,23 +168,23 @@ namespace FoxIDs.Logic
             };
         }
 
-        private IDictionary<string, string> BuildProperties(string auditTypeName, AuditAction action, JsonObject diff, string partitionId, string documentId)
+        private IDictionary<string, string> BuildProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string partitionId, string documentId)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { Constants.Logs.AuditType, auditTypeName },
-                { Constants.Logs.AuditAction, action.ToString() }
+                { Constants.Logs.AuditType, auditType.ToString() },
+                { Constants.Logs.AuditDataAction, dataAction.ToString() },
+                { Constants.Logs.AuditDataType, typeof(T).Name }
             };
 
-            var user = HttpContext.User;
-            AddProperty(properties,  Constants.Logs.Results.UserId, user.FindFirstValue(JwtClaimTypes.Subject));
-            AddProperty(properties,  Constants.Logs.Results.Email, user.FindFirstValue(JwtClaimTypes.Email));
+            AddProperty(properties, Constants.Logs.UserId, HttpContext.User.FindFirstValue(JwtClaimTypes.Subject));
+            AddProperty(properties, Constants.Logs.Email, HttpContext.User.FindFirstValue(JwtClaimTypes.Email));
 
-            AddProperty(properties,  Constants.Logs.Results.DocumentId, documentId);
-            AddProperty(properties, Constants.Logs.Results.PartitionId, partitionId);
+            AddProperty(properties, Constants.Logs.DocumentId, documentId);
+            AddProperty(properties, Constants.Logs.PartitionId, partitionId);
             if (diff != null && diff.Count > 0)
             {
-                properties[Constants.Logs.Results.Changes] = diff.ToJsonString(jsonOptions);
+                properties[Constants.Logs.Data] = diff.ToJsonString(jsonOptions);
             }
 
             var routeBinding = RouteBinding;
@@ -220,7 +219,7 @@ namespace FoxIDs.Logic
                     {
                         if (IsSensitiveProperty(property.Key))
                         {
-                            obj[property.Key] = JsonValue.Create(Mask);
+                            obj[property.Key] = JsonValue.Create(sensitiveValueMask);
                         }
                         else
                         {
@@ -243,7 +242,16 @@ namespace FoxIDs.Logic
         }
     }
 
-    public enum AuditAction
+    public enum AuditType
+    {
+        Data,
+        Login,
+        Logout,
+        ChangePassword,
+        CreateUser
+    }
+    
+    public enum AuditDataAction
     {
         Create,
         Update,

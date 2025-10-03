@@ -987,6 +987,7 @@ namespace FoxIDs
                 public const string Basic = ":basic";
                 public const string Usage = ":usage";
                 public const string Log = ":log";
+                public const string Audit = ":audit";
                 public const string User = ":user";
                 public const string Party = ":party";
             }

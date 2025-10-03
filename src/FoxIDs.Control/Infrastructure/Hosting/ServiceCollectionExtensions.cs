@@ -52,16 +52,19 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<LogLogic>();
             services.AddSingleton<UsageLogLogic>();
+            services.AddSingleton<AuditLogLogic>();
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 services.AddSingleton<LogOpenSearchLogic>();
                 services.AddSingleton<UsageLogOpenSearchLogic>();
+                services.AddSingleton<AuditLogOpenSearchLogic>();
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
                 services.AddSingleton<LogAnalyticsWorkspaceProvider>();
                 services.AddSingleton<LogApplicationInsightsLogic>();
                 services.AddSingleton<UsageLogApplicationInsightsLogic>();
+                services.AddSingleton<AuditLogApplicationInsightsLogic>();
             }
 
             services.AddTransient<PartyLogic>();

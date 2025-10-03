@@ -525,5 +525,18 @@ namespace FoxIDs.Repository
                 return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
             }
         }
+
+        private IDictionary<string, string> GetProperties()
+        {
+            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
+            if (routeBinding != null)
+            {
+                return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

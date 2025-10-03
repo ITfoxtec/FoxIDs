@@ -59,18 +59,5 @@ namespace FoxIDs.Repository
         {
             return httpContextAccessor?.HttpContext?.RequestServices?.GetService<TelemetryScopedLogger>();
         }
-
-        protected IDictionary<string, string> GetProperties()
-        {
-            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
-            if (routeBinding != null)
-            {
-                return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };
-            }
-            else
-            {
-                return null;
-            }
-        }
     }
 }

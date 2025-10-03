@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using MongoDB.Driver;
 using System;
@@ -15,7 +16,7 @@ namespace FoxIDs.Repository
     {
         private readonly MongoDbRepositoryClient mongoDbRepositoryClient;
 
-        public MongoDbTenantDataRepository(MongoDbRepositoryClient mongoDbRepositoryClient)
+        public MongoDbTenantDataRepository(MongoDbRepositoryClient mongoDbRepositoryClient, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.mongoDbRepositoryClient = mongoDbRepositoryClient;
         }

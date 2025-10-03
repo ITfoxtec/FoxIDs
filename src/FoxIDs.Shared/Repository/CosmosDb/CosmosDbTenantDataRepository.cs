@@ -6,7 +6,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using FoxIDs.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
@@ -17,12 +16,10 @@ namespace FoxIDs.Repository
 {
     public class CosmosDbTenantDataRepository : TenantDataRepositoryBase
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ICosmosDbDataRepositoryClient dataRepositoryClient;
 
-        public CosmosDbTenantDataRepository(IHttpContextAccessor httpContextAccessor, ICosmosDbDataRepositoryClient dataRepositoryClient)
+        public CosmosDbTenantDataRepository(ICosmosDbDataRepositoryClient dataRepositoryClient, IHttpContextAccessor httpContextAccessor) : base (httpContextAccessor)
         {
-            this.httpContextAccessor = httpContextAccessor;
             this.dataRepositoryClient = dataRepositoryClient;
         }
 
@@ -141,7 +138,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if(scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -167,7 +167,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (pageSize: {pageSize}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if (scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (pageSize: {pageSize}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -211,7 +214,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if (scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -255,7 +261,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if (scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -300,7 +309,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if (scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -357,7 +369,10 @@ namespace FoxIDs.Repository
                 finally
                 {
                     scopedLogger = scopedLogger ?? GetScopedLogger();
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    if (scopedLogger != null)
+                    {
+                        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    }
                 }
             }
             else
@@ -431,7 +446,10 @@ namespace FoxIDs.Repository
             finally
             {
                 scopedLogger = scopedLogger ?? GetScopedLogger();
-                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                if (scopedLogger != null)
+                {
+                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                }
             }
         }
 
@@ -464,7 +482,10 @@ namespace FoxIDs.Repository
                     finally
                     {
                         scopedLogger = scopedLogger ?? GetScopedLogger();
-                        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                        if (scopedLogger != null)
+                        {
+                            scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                        }
                     }
                 }
                 else
@@ -502,25 +523,6 @@ namespace FoxIDs.Repository
             else
             {
                 return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
-            }
-        }
-
-
-        private TelemetryScopedLogger GetScopedLogger()
-        {
-            return httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-        }
-
-        private IDictionary<string, string> GetProperties()
-        {
-            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
-            if (routeBinding != null)
-            {
-                return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };
-            }
-            else
-            {
-                return null;
             }
         }
     }

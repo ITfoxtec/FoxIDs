@@ -1,6 +1,7 @@
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db) : TenantDataRepositoryBase
+    public class PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db, IHttpContextAccessor httpContextAccessor) : TenantDataRepositoryBase(httpContextAccessor)
     {
         public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {

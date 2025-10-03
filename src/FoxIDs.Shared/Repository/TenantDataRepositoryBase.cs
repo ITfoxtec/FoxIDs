@@ -1,5 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -9,6 +11,13 @@ namespace FoxIDs.Repository
 {
     public abstract class TenantDataRepositoryBase : ITenantDataRepository
     {
+        protected readonly IHttpContextAccessor httpContextAccessor;
+
+        protected TenantDataRepositoryBase(IHttpContextAccessor httpContextAccessor)
+        {
+            this.httpContextAccessor = httpContextAccessor;
+        }
+
         public abstract ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         public abstract ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument;
         public abstract ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
@@ -43,6 +52,24 @@ namespace FoxIDs.Repository
             {
                 if (idKey == null) new ArgumentNullException(nameof(idKey));
                 return DataDocument.PartitionIdFormat(idKey);
+            }
+        }
+
+        protected TelemetryScopedLogger GetScopedLogger()
+        {
+            return httpContextAccessor?.HttpContext?.RequestServices?.GetService<TelemetryScopedLogger>();
+        }
+
+        protected IDictionary<string, string> GetProperties()
+        {
+            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
+            if (routeBinding != null)
+            {
+                return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };
+            }
+            else
+            {
+                return null;
             }
         }
     }

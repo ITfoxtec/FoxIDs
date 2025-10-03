@@ -10,6 +10,8 @@ namespace FoxIDs.UnitTests.Mocks
 {
     public class FakeTenantRepository : TenantDataRepositoryBase
     {
+        public FakeTenantRepository() : base(null)
+        { }
 
         public override ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {

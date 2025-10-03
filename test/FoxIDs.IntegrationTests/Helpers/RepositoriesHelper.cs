@@ -24,7 +24,7 @@ namespace FoxIDs.IntegrationTests.Helpers
 
             var pgTenantDb = new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions);
             SeedTenantDb(pgTenantDb);
-            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb);
+            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb, null);
 
             var pgMasterDb = new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions);
             SeedMasterDb(pgMasterDb);

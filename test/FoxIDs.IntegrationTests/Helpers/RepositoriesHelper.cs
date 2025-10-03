@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
 using Npgsql;
 using System;
 using System.Text.Json;
@@ -24,7 +25,8 @@ namespace FoxIDs.IntegrationTests.Helpers
 
             var pgTenantDb = new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions);
             SeedTenantDb(pgTenantDb);
-            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb);
+            var httpContextAccessor = new HttpContextAccessor();
+            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb, httpContextAccessor);
 
             var pgMasterDb = new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions);
             SeedMasterDb(pgMasterDb);

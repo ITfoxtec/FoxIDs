@@ -205,6 +205,8 @@ namespace FoxIDs
             public const string UsageSms = "UsageSms";
             public const string UsageSmsPrice = "UsageSmsPrice";
             public const string UsageEmail = "UsageEmail";
+            public const string AuditType = "AuditType";
+            public const string AuditAction = "AuditAction";
 
             public static class Results
             {
@@ -234,6 +236,9 @@ namespace FoxIDs
                 public const string FailingLoginCount = "FailingLoginCount";
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
+                public const string DocumentId = "DocumentId";
+                public const string PartitionId = "PartitionId"; 
+                public const string Changes = "Changes";
             }
 
             public static class IndexName
@@ -942,6 +947,7 @@ namespace FoxIDs
 
             public const string AccessToAnyTrackKey = "access_to_any_track";
             public const string AccessToTrackNamesKey = "access_to_track_names";
+            public const string AuditLogEnabledKey = "audit_log_enabled";
 
             public const int SaveAndDeleteManyMin = 1;
             public const int SaveAndDeleteManyWithPasswordMax = 100;

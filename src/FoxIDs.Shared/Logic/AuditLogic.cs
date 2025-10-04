@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
 
             var json = JsonSerializer.Serialize(data, jsonOptions);
             var node = JsonNode.Parse(json);
-            return node;
+            return NormalizeNode(node);
         }
 
         private JsonObject GetDiffNodeResult<T>(T before, T after) where T : IDataDocument
@@ -168,6 +168,45 @@ namespace FoxIDs.Logic
                 ["before"] = beforeNode.DeepClone(),
                 ["after"] = afterNode.DeepClone()
             };
+        }
+
+        private static JsonNode NormalizeNode(JsonNode node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            return node switch
+            {
+                JsonObject obj => NormalizeObject(obj),
+                JsonArray array => NormalizeArray(array),
+                _ => node.DeepClone()
+            };
+        }
+
+        private static JsonObject NormalizeObject(JsonObject obj)
+        {
+            var normalized = new JsonObject();
+
+            foreach (var property in obj.OrderBy(p => p.Key, StringComparer.Ordinal))
+            {
+                normalized[property.Key] = NormalizeNode(property.Value);
+            }
+
+            return normalized;
+        }
+
+        private static JsonArray NormalizeArray(JsonArray array)
+        {
+            var normalized = new JsonArray();
+
+            foreach (var item in array)
+            {
+                normalized.Add(NormalizeNode(item));
+            }
+
+            return normalized;
         }
 
         private IDictionary<string, string> BuildProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string partitionId, string documentId)

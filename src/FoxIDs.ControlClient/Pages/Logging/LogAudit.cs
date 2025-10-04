@@ -211,6 +211,13 @@ namespace FoxIDs.Client.Pages.Logging
             var seq = 0;
             builder.OpenElement(seq++, "div");
 
+            if (!documentId.IsNullOrWhiteSpace())
+            {
+                builder.OpenElement(seq++, "div");
+                builder.AddContent(seq++, $"Document ID: {documentId}");
+                builder.CloseElement();
+            }
+
             if (!dataType.IsNullOrWhiteSpace())
             {
                 builder.OpenElement(seq++, "div");
@@ -222,13 +229,6 @@ namespace FoxIDs.Client.Pages.Logging
             {
                 builder.OpenElement(seq++, "div");
                 builder.AddContent(seq++, $"Action: {dataAction}");
-                builder.CloseElement();
-            }
-
-            if (!documentId.IsNullOrWhiteSpace())
-            {
-                builder.OpenElement(seq++, "div");
-                builder.AddContent(seq++, $"DocumentId: {documentId}");
                 builder.CloseElement();
             }
 

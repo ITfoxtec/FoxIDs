@@ -16,6 +16,7 @@ namespace FoxIDs.Logic
     public class AuditLogic : LogicBase
     {
         private const string sensitiveValueMask = "****";
+        private static readonly string[] sensitivePropertyMatches = ["password", "secret", "client_secret", "code_verifier", "nonce", "key", "cert", "certificate"];
         private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -55,7 +56,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNode(before, after), partitionId, documentId);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), partitionId, documentId);
                 telemetryLogger.Event($"Audit '{dataAction}'", properties);
             }
             catch (Exception ex)
@@ -75,7 +76,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNode(before, after), partitionId, documentId);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), partitionId, documentId);
                 scopedLogger.Event($"Audit '{dataAction}'", properties: properties);
             }
             catch (Exception ex)
@@ -95,15 +96,16 @@ namespace FoxIDs.Logic
 
             var json = JsonSerializer.Serialize(data, jsonOptions);
             var node = JsonNode.Parse(json);
-            MaskSensitiveValues(node);
             return node;
         }
 
-        private JsonObject GetDiffNode<T>(T before, T after) where T : IDataDocument
+        private JsonObject GetDiffNodeResult<T>(T before, T after) where T : IDataDocument
         {
             var beforeNode = ConvertToJsonNode(before);
             var afterNode = ConvertToJsonNode(after);
-            return GetDiffNode(beforeNode, afterNode);
+            var diff = GetDiffNode(beforeNode, afterNode);
+            MaskSensitiveValues(diff);
+            return diff;    
         }
 
         private JsonObject GetDiffNode(JsonNode beforeNode, JsonNode afterNode)
@@ -237,7 +239,20 @@ namespace FoxIDs.Logic
 
         private static bool IsSensitiveProperty(string propertyName)
         {
-            return !propertyName.IsNullOrWhiteSpace() && (propertyName.Contains("password", StringComparison.OrdinalIgnoreCase) || propertyName.Contains("secret", StringComparison.OrdinalIgnoreCase));
+            if (propertyName.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
+
+            foreach (var match in sensitivePropertyMatches)
+            {
+                if (propertyName.Contains(match, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -69,8 +69,7 @@ namespace FoxIDs.Logic
             AddValue(values, Constants.Logs.AuditDataType, row.GetString(Constants.Logs.AuditDataType));
             AddValue(values, Constants.Logs.AuditDataAction, row.GetString(Constants.Logs.AuditDataAction));
             AddValue(values, Constants.Logs.DocumentId, row.GetString(Constants.Logs.DocumentId));
-            AddValue(values, Constants.Logs.PartitionId, row.GetString(Constants.Logs.PartitionId));
-            AddValue(values, Constants.Logs.Data, row.GetString(Constants.Logs.Data));
+            AddValue(values, Constants.Logs.Data, row.GetString(Constants.Logs.Data), false);
             AddValue(values, Constants.Logs.UserId, row.GetString(Constants.Logs.UserId));
             AddValue(values, Constants.Logs.Email, row.GetString(Constants.Logs.Email));
             AddValue(values, Constants.Logs.RequestPath, row.GetString(Constants.Logs.RequestPath));
@@ -104,7 +103,6 @@ namespace FoxIDs.Logic
                 $"| extend {Constants.Logs.AuditDataType} = tostring(Properties.f_{Constants.Logs.AuditDataType})",
                 $"| extend {Constants.Logs.AuditDataAction} = tostring(Properties.f_{Constants.Logs.AuditDataAction})",
                 $"| extend {Constants.Logs.DocumentId} = tostring(Properties.f_{Constants.Logs.DocumentId})",
-                $"| extend {Constants.Logs.PartitionId} = tostring(Properties.f_{Constants.Logs.PartitionId})",
                 $"| extend {Constants.Logs.Data} = tostring(Properties.f_{Constants.Logs.Data})"
             };
 
@@ -128,34 +126,9 @@ namespace FoxIDs.Logic
                 clauses.Add($"| where {Constants.Logs.TrackName} == '{EscapeValue(trackName)}'");
             }
 
-            if (!logRequest.AuditType.IsNullOrWhiteSpace())
+            if (logRequest.AuditType.HasValue)
             {
-                clauses.Add($"| where {Constants.Logs.AuditType} == '{EscapeValue(logRequest.AuditType)}'");
-            }
-
-            if (!logRequest.AuditDataType.IsNullOrWhiteSpace())
-            {
-                clauses.Add($"| where {Constants.Logs.AuditDataType} == '{EscapeValue(logRequest.AuditDataType)}'");
-            }
-
-            if (!logRequest.AuditDataAction.IsNullOrWhiteSpace())
-            {
-                clauses.Add($"| where {Constants.Logs.AuditDataAction} == '{EscapeValue(logRequest.AuditDataAction)}'");
-            }
-
-            if (!logRequest.DocumentId.IsNullOrWhiteSpace())
-            {
-                clauses.Add($"| where {Constants.Logs.DocumentId} == '{EscapeValue(logRequest.DocumentId)}'");
-            }
-
-            if (!logRequest.PartitionId.IsNullOrWhiteSpace())
-            {
-                clauses.Add($"| where {Constants.Logs.PartitionId} == '{EscapeValue(logRequest.PartitionId)}'");
-            }
-
-            if (!logRequest.Data.IsNullOrWhiteSpace())
-            {
-                clauses.Add($"| where {Constants.Logs.Data} contains '{EscapeValue(logRequest.Data)}'");
+                clauses.Add($"| where {Constants.Logs.AuditType} == '{EscapeValue(logRequest.AuditType.Value.ToString())}'");
             }
 
             if (!logRequest.Filter.IsNullOrWhiteSpace())
@@ -165,11 +138,9 @@ namespace FoxIDs.Logic
                 {
                     Constants.Logs.Results.Name,
                     Constants.Logs.Message,
-                    Constants.Logs.AuditType,
                     Constants.Logs.AuditDataType,
                     Constants.Logs.AuditDataAction,
                     Constants.Logs.DocumentId,
-                    Constants.Logs.PartitionId,
                     Constants.Logs.UserId,
                     Constants.Logs.Email,
                     Constants.Logs.TenantName,
@@ -187,11 +158,11 @@ namespace FoxIDs.Logic
 
         private string GetLogAnalyticsWorkspaceId() => settings.ApplicationInsights.WorkspaceId;
 
-        private static void AddValue(IDictionary<string, string> values, string key, string value)
+        private static void AddValue(IDictionary<string, string> values, string key, string value, bool truncate = true)
         {
             if (!value.IsNullOrWhiteSpace())
             {
-                value = value.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : value;
+                value = truncate && value.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : value;
                 values[key] = value;
             }
         }

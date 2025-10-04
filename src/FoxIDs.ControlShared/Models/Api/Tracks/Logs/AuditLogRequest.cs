@@ -26,44 +26,9 @@ namespace FoxIDs.Models.Api
         public string Filter { get; set; }
 
         /// <summary>
-        /// Optional tenant filter. Defaults to the route tenant when omitted.
-        /// </summary>
-        public string TenantName { get; set; }
-
-        /// <summary>
-        /// Optional track filter. Defaults to the route track when omitted.
-        /// </summary>
-        public string TrackName { get; set; }
-
-        /// <summary>
         /// Filter by audit type.
         /// </summary>
-        public string AuditType { get; set; }
-
-        /// <summary>
-        /// Filter by audit data type.
-        /// </summary>
-        public string AuditDataType { get; set; }
-
-        /// <summary>
-        /// Filter by audit data action.
-        /// </summary>
-        public string AuditDataAction { get; set; }
-
-        /// <summary>
-        /// Filter by document identifier.
-        /// </summary>
-        public string DocumentId { get; set; }
-
-        /// <summary>
-        /// Filter by partition identifier.
-        /// </summary>
-        public string PartitionId { get; set; }
-
-        /// <summary>
-        /// Filter by audit data payload contents.
-        /// </summary>
-        public string Data { get; set; }
+        public AuditType? AuditType { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -21,40 +21,12 @@ namespace FoxIDs.Logic
             this.serviceProvider = serviceProvider;
         }
 
-        public async Task<Api.LogResponse> GetAuditLogsAsync(Api.AuditLogRequest logRequest, string defaultTenantName, string defaultTrackName)
+        public async Task<Api.LogResponse> GetAuditLogsAsync(Api.AuditLogRequest logRequest, string tenantName, string trackName)
         {
             if (!logRequest.Filter.IsNullOrWhiteSpace())
             {
                 logRequest.Filter = logRequest.Filter.Trim();
             }
-
-            if (!logRequest.AuditType.IsNullOrWhiteSpace())
-            {
-                logRequest.AuditType = logRequest.AuditType.Trim();
-            }
-            if (!logRequest.AuditDataType.IsNullOrWhiteSpace())
-            {
-                logRequest.AuditDataType = logRequest.AuditDataType.Trim();
-            }
-            if (!logRequest.AuditDataAction.IsNullOrWhiteSpace())
-            {
-                logRequest.AuditDataAction = logRequest.AuditDataAction.Trim();
-            }
-            if (!logRequest.DocumentId.IsNullOrWhiteSpace())
-            {
-                logRequest.DocumentId = logRequest.DocumentId.Trim();
-            }
-            if (!logRequest.PartitionId.IsNullOrWhiteSpace())
-            {
-                logRequest.PartitionId = logRequest.PartitionId.Trim();
-            }
-            if (!logRequest.Data.IsNullOrWhiteSpace())
-            {
-                logRequest.Data = logRequest.Data.Trim();
-            }
-
-            var tenantName = logRequest.TenantName.IsNullOrWhiteSpace() ? defaultTenantName : logRequest.TenantName.Trim();
-            var trackName = logRequest.TrackName.IsNullOrWhiteSpace() ? defaultTrackName : logRequest.TrackName.Trim();
 
             var start = DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime);
             var end = DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime);

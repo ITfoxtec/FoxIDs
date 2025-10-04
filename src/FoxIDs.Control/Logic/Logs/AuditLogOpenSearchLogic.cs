@@ -42,8 +42,7 @@ namespace FoxIDs.Logic
             AddValue(values, Constants.Logs.AuditDataType, item.AuditDataType);
             AddValue(values, Constants.Logs.AuditDataAction, item.AuditDataAction);
             AddValue(values, Constants.Logs.DocumentId, item.DocumentId);
-            AddValue(values, Constants.Logs.PartitionId, item.PartitionId);
-            AddValue(values, Constants.Logs.Data, item.Data);
+            AddValue(values, Constants.Logs.Data, item.Data, truncate: false);
             AddValue(values, Constants.Logs.UserId, item.UserId);
             AddValue(values, Constants.Logs.Email, item.Email);
             AddValue(values, Constants.Logs.RequestPath, item.RequestPath);
@@ -75,11 +74,17 @@ namespace FoxIDs.Logic
 
         private IEnumerable<string> GetIndexNames()
         {
-            foreach (var name in GetIndexBaseNames()) { yield return name; }
+            foreach (var name in GetIndexBaseNames())
+            {
+                yield return name;
+            }
 
             if (settings.OpenSearchQuery != null && !string.IsNullOrWhiteSpace(settings.OpenSearchQuery?.CrossClusterSearchClusterName))
             {
-                foreach (var name in GetIndexBaseNames()) { yield return $"{settings.OpenSearchQuery.CrossClusterSearchClusterName}:{name}"; }
+                foreach (var name in GetIndexBaseNames())
+                {
+                    yield return $"{settings.OpenSearchQuery.CrossClusterSearchClusterName}:{name}";
+                }
             }
         }
 
@@ -107,34 +112,9 @@ namespace FoxIDs.Logic
                 boolQuery = boolQuery.Must(m => m.Term(t => t.TrackName, trackName));
             }
 
-            if (!logRequest.AuditType.IsNullOrWhiteSpace())
+            if (logRequest.AuditType.HasValue)
             {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.AuditType, logRequest.AuditType));
-            }
-
-            if (!logRequest.AuditDataType.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.AuditDataType, logRequest.AuditDataType));
-            }
-
-            if (!logRequest.AuditDataAction.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.AuditDataAction, logRequest.AuditDataAction));
-            }
-
-            if (!logRequest.DocumentId.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.DocumentId, logRequest.DocumentId));
-            }
-
-            if (!logRequest.PartitionId.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.PartitionId, logRequest.PartitionId));
-            }
-
-            if (!logRequest.Data.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Match(match => match.Field(f => f.Data).Query(logRequest.Data)));
+                boolQuery = boolQuery.Must(m => m.Term(t => t.AuditType, logRequest.AuditType.Value.ToString()));
             }
 
             if (!logRequest.Filter.IsNullOrWhiteSpace())
@@ -142,11 +122,9 @@ namespace FoxIDs.Logic
                 boolQuery = boolQuery.Must(m => m.MultiMatch(ma => ma
                     .Fields(fs => fs
                         .Field(f => f.Message)
-                        .Field(f => f.AuditType)
                         .Field(f => f.AuditDataType)
                         .Field(f => f.AuditDataAction)
                         .Field(f => f.DocumentId)
-                        .Field(f => f.PartitionId)
                         .Field(f => f.UserId)
                         .Field(f => f.Email)
                         .Field(f => f.RequestPath)
@@ -161,13 +139,18 @@ namespace FoxIDs.Logic
             return boolQuery;
         }
 
-        private void AddValue(IDictionary<string, string> values, string key, string value)
+        private void AddValue(IDictionary<string, string> values, string key, string value, bool truncate = true)
         {
-            if (!value.IsNullOrWhiteSpace())
+            if (value.IsNullOrWhiteSpace())
             {
-                value = value.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : value;
-                values[key] = value;
+                return;
             }
+
+            var finalValue = truncate && value.Length > Constants.Logs.Results.PropertiesValueMaxLength
+                ? $"{value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..."
+                : value;
+
+            values[key] = finalValue;
         }
     }
 }

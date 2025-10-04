@@ -1,4 +1,7 @@
-﻿@page "/{tenantName}/logs"
+@page "/{tenantName}/logaudit"
+@using FoxIDs.Client.Models.ViewModels
+@using FoxIDs.Client.Shared.Components
+@using FoxIDs.Models.Api
 @inherits PageBase
 
 @if (ClientSettings.LogOption != LogOptions.Stdout)
@@ -11,13 +14,13 @@
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active">Logs</a>
+            <a class="nav-link" href="@logsHref">Logs</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="@logUsageHref">Usages</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="@logAuditHref">Audit</a>
+            <a class="nav-link active">Audit</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="@logSettingsHref">Settings</a>
@@ -28,20 +31,20 @@
         @if (ClientSettings.LogOption == LogOptions.ApplicationInsights)
         {
             <div class="alert alert-info" role="alert">
-                The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
+                The audit logs are available after a few minutes because the logs are processed in Application Insights before making them available.
             </div>
         }
 
-        @if (!logLoadError.IsNullOrWhiteSpace())
+        @if (!auditLoadError.IsNullOrWhiteSpace())
         {
             <div class="alert alert-danger" role="alert">
-                @logLoadError
+                @auditLoadError
             </div>
         }
 
-        <PageEditForm @ref="logRequestForm" TModel="LogRequestViewModel" OnAfterInit="LogRequestViewModelAfterInit" OnValidSubmit="OnLogRequestValidSubmitAsync">
-            <FInputText @bind-Value="logRequestForm.Model.FromTime" For="@(() => logRequestForm.Model.FromTime)" />
-            <FInputSelect @bind-Value="logRequestForm.Model.TimeInterval" For="@(() => logRequestForm.Model.TimeInterval)">
+        <PageEditForm @ref="auditLogRequestForm" TModel="AuditLogRequestViewModel" OnValidSubmit="OnAuditLogRequestValidSubmitAsync">
+            <FInputText @bind-Value="auditLogRequestForm.Model.FromTime" For="@(() => auditLogRequestForm.Model.FromTime)" />
+            <FInputSelect @bind-Value="auditLogRequestForm.Model.TimeInterval" For="@(() => auditLogRequestForm.Model.TimeInterval)">
                 <option value="@LogTimeIntervals.ThirtySeconds">30 seconds</option>
                 <option value="@LogTimeIntervals.OneMinute">1 minute</option>
                 <option value="@LogTimeIntervals.FiveMinutes">5 minutes</option>
@@ -52,39 +55,52 @@
                 <option value="@LogTimeIntervals.TwelveHours">12 hours</option>
                 <option value="@LogTimeIntervals.TwentyfourHours">24 hours</option>
             </FInputSelect>
-            <FInputCheckboxSelect Items="queryTypeItems" SelectedItems="logRequestForm.Model.QueryTypes" For="@(() => logRequestForm.Model.QueryTypes)" />
+            <FInputSelect Class="active" @bind-Value="auditLogRequestForm.Model.AuditType" For="@(() => auditLogRequestForm.Model.AuditType)">
+                <option value="">All</option>
+                @foreach (var auditType in auditTypes)
+                {
+                    var text = auditType switch
+                    {
+                        AuditType.ChangePassword => "Change password",
+                        AuditType.CreateUser => "Create user",
+                        _ => auditType.ToString()
+                    };
+
+                    <option value="@auditType">@text</option>
+                }
+            </FInputSelect>
             @if (IsMasterTenant)
             {
-                <FInputText @bind-Value="logRequestForm.Model.TenantName" For="@(() => logRequestForm.Model.TenantName)" />
-                <FInputText @bind-Value="logRequestForm.Model.TrackName" For="@(() => logRequestForm.Model.TrackName)" />
+                <FInputText @bind-Value="auditLogRequestForm.Model.TenantName" For="@(() => auditLogRequestForm.Model.TenantName)" />
+                <FInputText @bind-Value="auditLogRequestForm.Model.TrackName" For="@(() => auditLogRequestForm.Model.TrackName)" />
             }
-            else @if (IsMasterTrack)
+            else if (IsMasterTrack)
             {
-                <FInputText @bind-Value="logRequestForm.Model.TrackName" For="@(() => logRequestForm.Model.TrackName)" />
+                <FInputText @bind-Value="auditLogRequestForm.Model.TrackName" For="@(() => auditLogRequestForm.Model.TrackName)" />
             }
-            <FInputTextFilter @bind-Value="logRequestForm.Model.Filter" For="@(() => logRequestForm.Model.Filter)" />
+            <FInputTextFilter @bind-Value="auditLogRequestForm.Model.Filter" For="@(() => auditLogRequestForm.Model.Filter)" />
         </PageEditForm>
 
-        @if (logResponse != null && logResponse.ResponseTruncated)
+        @if (auditLogResponse != null && auditLogResponse.ResponseTruncated)
         {
             <div class="alert alert-warning" role="alert">
-                The result set is to big and not all logs are shown.
+                The result set is too big and not all audit logs are shown.
             </div>
         }
 
         <ul class="list-group list-group-stripes">
-            @if (logResponse == null)
+            @if (auditLogResponse == null)
             {
                 <li class="list-group-item"><i>Loading...</i></li>
             }
-            else 
+            else
             {
-                if(logResponse.Items.Count() <= 0)
+                if (auditLogResponse.Items.Count() <= 0)
                 {
-                    <li class="list-group-item"><i>No logs found.</i></li>
+                    <li class="list-group-item"><i>No audit logs found.</i></li>
                 }
 
-                @foreach (var item in logResponse.Items)
+                @foreach (var item in auditLogResponse.Items)
                 {
                     <li class="list-group-item">
                         @if (item.Type == LogItemTypes.Sequence)
@@ -92,6 +108,8 @@
                             <div>
                                 <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
                                 <div>Sequence ID: @item.SequenceId</div>
+
+                                @RenderAuditMetadata(item)
 
                                 <ul class="list-group">
                                     @foreach (var sSubItem in item.SubItems)
@@ -103,11 +121,15 @@
                                                     <div><b>@sSubItem.Type.ToString()</b> @sSubItem.Timestamp.TimeToString()</div>
                                                     <div>Operation ID: @sSubItem.OperationId</div>
 
+                                                    @RenderAuditMetadata(sSubItem)
+
                                                     <ul class="list-group">
                                                         @foreach (var oSubItem in sSubItem.SubItems)
                                                         {
                                                             <li class="list-group-item">
                                                                 <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
+                                                                @RenderAuditMetadata(oSubItem)
+                                                                @RenderData(oSubItem)
                                                             </li>
                                                         }
                                                     </ul>
@@ -116,6 +138,8 @@
                                             else
                                             {
                                                 <ELogItem Item="sSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
+                                                @RenderAuditMetadata(sSubItem)
+                                                @RenderData(sSubItem)
                                             }
                                         </li>
                                     }
@@ -128,11 +152,15 @@
                                 <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
                                 <div>Operation ID: @item.OperationId</div>
 
+                                @RenderAuditMetadata(item)
+
                                 <ul class="list-group">
                                     @foreach (var oSubItem in item.SubItems)
                                     {
                                         <li class="list-group-item">
                                             <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
+                                            @RenderAuditMetadata(oSubItem)
+                                            @RenderData(oSubItem)
                                         </li>
                                     }
                                 </ul>
@@ -141,10 +169,20 @@
                         else
                         {
                             <ELogItem Item="item" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
+
+                            @RenderAuditMetadata(item)
                         }
+
+                        @RenderData(item)
                     </li>
                 }
             }
         </ul>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        Audit log search is not supported with Stdout logging.
     </div>
 }

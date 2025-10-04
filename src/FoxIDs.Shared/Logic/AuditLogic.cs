@@ -181,7 +181,6 @@ namespace FoxIDs.Logic
             AddProperty(properties, Constants.Logs.Email, HttpContext.User.FindFirstValue(JwtClaimTypes.Email));
 
             AddProperty(properties, Constants.Logs.DocumentId, documentId);
-            AddProperty(properties, Constants.Logs.PartitionId, partitionId);
             if (diff != null && diff.Count > 0)
             {
                 properties[Constants.Logs.Data] = diff.ToJsonString(jsonOptions);
@@ -240,22 +239,5 @@ namespace FoxIDs.Logic
         {
             return !propertyName.IsNullOrWhiteSpace() && (propertyName.Contains("password", StringComparison.OrdinalIgnoreCase) || propertyName.Contains("secret", StringComparison.OrdinalIgnoreCase));
         }
-    }
-
-    public enum AuditType
-    {
-        Data,
-        Login,
-        Logout,
-        ChangePassword,
-        CreateUser
-    }
-    
-    public enum AuditDataAction
-    {
-        Create,
-        Update,
-        Save,
-        Delete
     }
 }

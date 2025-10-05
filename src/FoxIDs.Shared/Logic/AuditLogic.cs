@@ -245,7 +245,7 @@ namespace FoxIDs.Logic
             {
                 { Constants.Logs.AuditType, auditType.ToString() },
                 { Constants.Logs.AuditDataAction, dataAction.ToString() },
-                { Constants.Logs.AuditDataType, typeof(T).Name }
+                { Constants.Logs.AuditAction, typeof(T).Name }
             };
 
             AddProperty(properties, Constants.Logs.UserId, HttpContext.User.FindFirstValue(JwtClaimTypes.Subject));
@@ -266,7 +266,7 @@ namespace FoxIDs.Logic
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { Constants.Logs.AuditType, auditType.ToString() },
-                { Constants.Logs.AuditDataType, partyType.ToString() },
+                { Constants.Logs.AuditAction, partyType.ToString() },
                 { Constants.Logs.UpPartyId, upPartyId }
             };
 

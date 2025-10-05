@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
             var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             AddValue(values, Constants.Logs.Message, row.GetString(Constants.Logs.Results.Message));
             AddValue(values, Constants.Logs.AuditType, row.GetString(Constants.Logs.AuditType));
-            AddValue(values, Constants.Logs.AuditDataType, row.GetString(Constants.Logs.AuditDataType));
+            AddValue(values, Constants.Logs.AuditAction, row.GetString(Constants.Logs.AuditAction));
             AddValue(values, Constants.Logs.AuditDataAction, row.GetString(Constants.Logs.AuditDataAction));
             AddValue(values, Constants.Logs.DocumentId, row.GetString(Constants.Logs.DocumentId));
             AddValue(values, Constants.Logs.Data, row.GetString(Constants.Logs.Data), false);
@@ -100,7 +100,7 @@ namespace FoxIDs.Logic
                 $"| extend {Constants.Logs.RequestPath} = Properties.{Constants.Logs.RequestPath}",
                 $"| extend {Constants.Logs.RequestMethod} = Properties.{Constants.Logs.RequestMethod}",
                 $"| extend {Constants.Logs.AuditType} = Properties.{Constants.Logs.AuditType}",
-                $"| extend {Constants.Logs.AuditDataType} = Properties.{Constants.Logs.AuditDataType}",
+                $"| extend {Constants.Logs.AuditAction} = Properties.{Constants.Logs.AuditAction}",
                 $"| extend {Constants.Logs.AuditDataAction} = Properties.{Constants.Logs.AuditDataAction}",
                 $"| extend {Constants.Logs.DocumentId} = Properties.{Constants.Logs.DocumentId}",
                 $"| extend {Constants.Logs.Data} = Properties.{Constants.Logs.Data}"
@@ -135,7 +135,7 @@ namespace FoxIDs.Logic
                     Constants.Logs.Results.Name,
                     Constants.Logs.Message,
                     Constants.Logs.AuditType,
-                    Constants.Logs.AuditDataType,
+                    Constants.Logs.AuditAction,
                     Constants.Logs.AuditDataAction,
                     Constants.Logs.DocumentId,
                     Constants.Logs.UserId,

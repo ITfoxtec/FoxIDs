@@ -15,7 +15,7 @@
         public double UsageSmsPrice { get; set; }
         public double UsageEmail { get; set; }
         public int FailingLoginCount { get; set; }
-        public string AuditDataType { get; set; }
+        public string AuditAction { get; set; }
         public string AuditType { get; set; }
         public string AuditDataAction { get; set; }
         public string DocumentId { get; set; }

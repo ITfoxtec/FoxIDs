@@ -206,8 +206,8 @@ namespace FoxIDs
             public const string UsageSms = "UsageSms";
             public const string UsageSmsPrice = "UsageSmsPrice";
             public const string UsageEmail = "UsageEmail";
-            public const string AuditDataType = "AuditDataType";
             public const string AuditType = "AuditType";
+            public const string AuditAction = "AuditAction";
             public const string AuditDataAction = "AuditDataAction";
             public const string DocumentId = "DocumentId";
 

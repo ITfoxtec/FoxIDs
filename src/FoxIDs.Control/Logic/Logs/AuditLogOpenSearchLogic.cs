@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
             AddValue(values, nameof(item.UserId), item.UserId);
             AddValue(values, nameof(item.Email), item.Email);
             AddValue(values, nameof(item.AuditType), item.AuditType);
-            AddValue(values, nameof(item.AuditDataType), item.AuditDataType);
+            AddValue(values, nameof(item.AuditAction), item.AuditAction);
             AddValue(values, nameof(item.AuditDataAction), item.AuditDataAction);
             AddValue(values, nameof(item.DocumentId), item.DocumentId);
             AddValue(values, nameof(item.Data), item.Data, false);
@@ -110,7 +110,7 @@ namespace FoxIDs.Logic
                     .Fields(fs => fs
                         .Field(f => f.Message)
                         .Field(f => f.AuditType)
-                        .Field(f => f.AuditDataType)
+                        .Field(f => f.AuditAction)
                         .Field(f => f.AuditDataAction)
                         .Field(f => f.DocumentId)
                         .Field(f => f.UserId)

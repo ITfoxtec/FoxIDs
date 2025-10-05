@@ -232,18 +232,5 @@ namespace FoxIDs.Client.Pages.Logging
 
             return true;
         }
-
-        private static string NormalizeMetadataValue(string value)
-        {
-            if (value.IsNullOrWhiteSpace())
-            {
-                return null;
-            }
-
-            var trimmed = value.Trim();
-            return trimmed.Length == 0 ? null : trimmed;
-        }
-
-        private sealed record AuditMetadata(string DocumentId, string DataType, string DataAction);
     }
 }

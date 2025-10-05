@@ -200,11 +200,11 @@ namespace FoxIDs.Client.Pages.Logging
             {
                 if (auditType.Equals(AuditTypes.Data.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
-                    return "Data type";
+                    return "DataType";
                 }
             }
 
-            return "Authentication method";
+            return "AuthMethod";
         }
 
         private bool TryGetAuditData(LogItemViewModel item, out string formattedJson)

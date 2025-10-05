@@ -93,17 +93,17 @@
 
                         @if (item.Values.TryGetValue(Constants.Logs.DocumentId, out var documentId))
                         {
-                            <div>Document ID: @documentId</div>
+                            <div>DocumentId: @documentId.GetDisplayLogValue()</div>
                         }
                         @if (item.Values.TryGetValue(Constants.Logs.AuditAction, out var auditAction))
                         {
-                            <div>@AuditActionText(item): @auditAction</div>
+                            <div>@AuditActionText(item): @auditAction.GetDisplayLogKey()</div>
                         }
                         @if (item.Values.TryGetValue(Constants.Logs.AuditDataAction, out var dataAction))
                         {
                             <div>Action: @dataAction</div>
                         }
-                        
+
                         @if (TryGetAuditData(item, out var itemData))
                         {
                             <pre class="mt-2 mb-0" style="max-height:20rem; overflow:auto;"><code>@itemData</code></pre>

@@ -1,5 +1,5 @@
-using Api = FoxIDs.Models.Api;
 using Azure;
+using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Azure.Monitor.Query;
+using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.Logic
 {
@@ -64,18 +64,19 @@ namespace FoxIDs.Logic
             }
 
             var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            AddValue(values, Constants.Logs.Message, row.GetString(Constants.Logs.Results.Message));
+            AddValue(values, Constants.Logs.MachineName, row.GetString(Constants.Logs.MachineName));
+            AddValue(values, Constants.Logs.ClientIP, row.GetString(Constants.Logs.ClientIP));
+            AddValue(values, Constants.Logs.UserAgent, row.GetString(Constants.Logs.UserAgent));
+            AddValue(values, Constants.Logs.UpPartyId, row.GetString(Constants.Logs.UpPartyId));
+            AddValue(values, Constants.Logs.TenantName, row.GetString(Constants.Logs.TenantName));
+            AddValue(values, Constants.Logs.TrackName, row.GetString(Constants.Logs.TrackName));
+            AddValue(values, Constants.Logs.UserId, row.GetString(Constants.Logs.UserId));
+            AddValue(values, Constants.Logs.Email, row.GetString(Constants.Logs.Email));
             AddValue(values, Constants.Logs.AuditType, row.GetString(Constants.Logs.AuditType));
             AddValue(values, Constants.Logs.AuditAction, row.GetString(Constants.Logs.AuditAction));
             AddValue(values, Constants.Logs.AuditDataAction, row.GetString(Constants.Logs.AuditDataAction));
             AddValue(values, Constants.Logs.DocumentId, row.GetString(Constants.Logs.DocumentId));
             AddValue(values, Constants.Logs.Data, row.GetString(Constants.Logs.Data), false);
-            AddValue(values, Constants.Logs.UserId, row.GetString(Constants.Logs.UserId));
-            AddValue(values, Constants.Logs.Email, row.GetString(Constants.Logs.Email));
-            AddValue(values, Constants.Logs.RequestPath, row.GetString(Constants.Logs.RequestPath));
-            AddValue(values, Constants.Logs.RequestMethod, row.GetString(Constants.Logs.RequestMethod));
-            AddValue(values, Constants.Logs.TenantName, row.GetString(Constants.Logs.TenantName));
-            AddValue(values, Constants.Logs.TrackName, row.GetString(Constants.Logs.TrackName));
 
             return new Api.LogItem
             {
@@ -91,14 +92,14 @@ namespace FoxIDs.Logic
         {
             var extends = new List<string>
             {
+                $"| extend {Constants.Logs.MachineName} = Properties.{Constants.Logs.MachineName}",
+                $"| extend {Constants.Logs.ClientIP} = Properties.{Constants.Logs.ClientIP}",
+                $"| extend {Constants.Logs.UserAgent} = Properties.{Constants.Logs.UserAgent}",
+                $"| extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId}",
                 $"| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}",
                 $"| extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}",
-                $"| extend {Constants.Logs.SequenceId} = Properties.{Constants.Logs.SequenceId}",
-                $"| extend {Constants.Logs.Results.OperationId} = tostring(Properties.{Constants.Logs.Results.OperationId})",
                 $"| extend {Constants.Logs.UserId} = Properties.{Constants.Logs.UserId}",
                 $"| extend {Constants.Logs.Email} = Properties.{Constants.Logs.Email}",
-                $"| extend {Constants.Logs.RequestPath} = Properties.{Constants.Logs.RequestPath}",
-                $"| extend {Constants.Logs.RequestMethod} = Properties.{Constants.Logs.RequestMethod}",
                 $"| extend {Constants.Logs.AuditType} = Properties.{Constants.Logs.AuditType}",
                 $"| extend {Constants.Logs.AuditAction} = Properties.{Constants.Logs.AuditAction}",
                 $"| extend {Constants.Logs.AuditDataAction} = Properties.{Constants.Logs.AuditDataAction}",

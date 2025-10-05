@@ -28,7 +28,7 @@ namespace FoxIDs.Client
         {
             if (!name.IsNullOrEmpty())
             {
-                return name.Replace("up-party:", "authentication method");
+                return name.Replace("up-party", "auth. method");
             }
 
             return name;

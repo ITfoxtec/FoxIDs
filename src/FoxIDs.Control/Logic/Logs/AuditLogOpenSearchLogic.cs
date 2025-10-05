@@ -42,6 +42,7 @@ namespace FoxIDs.Logic
             AddValue(values, nameof(item.MachineName), item.MachineName);
             AddValue(values, nameof(item.ClientIP), item.ClientIP);
             AddValue(values, nameof(item.UserAgent), item.UserAgent);
+            AddValue(values, nameof(item.UpPartyId), item.UpPartyId);
             AddValue(values, nameof(item.TenantName), item.TenantName);
             AddValue(values, nameof(item.TrackName), item.TrackName);
             AddValue(values, nameof(item.UserId), item.UserId);

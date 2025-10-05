@@ -10,7 +10,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -19,7 +18,6 @@ namespace FoxIDs.Client.Pages.Logging
 {
     public partial class LogAudit
     {
-        private static readonly IReadOnlyList<AuditType> auditTypes = Enum.GetValues<AuditType>();
         private string auditLoadError;
         private PageEditForm<AuditLogRequestViewModel> auditLogRequestForm;
         private LogResponseViewModel auditLogResponse;
@@ -154,7 +152,6 @@ namespace FoxIDs.Client.Pages.Logging
             {
                 var model = auditLogRequestForm.Model;
                 auditLogRequest.Filter = model.Filter?.Trim();
-                auditLogRequest.AuditType = model.AuditType;
             }
 
             return true;
@@ -197,61 +194,6 @@ namespace FoxIDs.Client.Pages.Logging
             await LoadAuditLogAsync();
         }
 
-        private RenderFragment RenderAuditMetadata(LogItemViewModel item) => builder =>
-        {
-            if (item?.Values == null)
-            {
-                return;
-            }
-
-            item.Values.TryGetValue(Constants.Logs.AuditDataType, out var dataType);
-            item.Values.TryGetValue(Constants.Logs.AuditDataAction, out var dataAction);
-            item.Values.TryGetValue(Constants.Logs.DocumentId, out var documentId);
-
-            var seq = 0;
-            builder.OpenElement(seq++, "div");
-
-            if (!documentId.IsNullOrWhiteSpace())
-            {
-                builder.OpenElement(seq++, "div");
-                builder.AddContent(seq++, $"Document ID: {documentId}");
-                builder.CloseElement();
-            }
-
-            if (!dataType.IsNullOrWhiteSpace())
-            {
-                builder.OpenElement(seq++, "div");
-                builder.AddContent(seq++, $"Data type: {dataType}");
-                builder.CloseElement();
-            }
-
-            if (!dataAction.IsNullOrWhiteSpace())
-            {
-                builder.OpenElement(seq++, "div");
-                builder.AddContent(seq++, $"Action: {dataAction}");
-                builder.CloseElement();
-            }
-
-            builder.CloseElement();
-        };
-
-        private RenderFragment RenderData(LogItemViewModel item) => builder =>
-        {
-            if (!TryGetAuditData(item, out var data))
-            {
-                return;
-            }
-
-            var seq = 0;
-            builder.OpenElement(seq++, "pre");
-            builder.AddAttribute(seq++, "class", "mt-2 mb-0");
-            builder.AddAttribute(seq++, "style", "max-height:20rem; overflow:auto;");
-            builder.OpenElement(seq++, "code");
-            builder.AddContent(seq++, data);
-            builder.CloseElement();
-            builder.CloseElement();
-        };
-
         private bool TryGetAuditData(LogItemViewModel item, out string formattedJson)
         {
             formattedJson = null;
@@ -277,5 +219,18 @@ namespace FoxIDs.Client.Pages.Logging
 
             return true;
         }
+
+        private static string NormalizeMetadataValue(string value)
+        {
+            if (value.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            var trimmed = value.Trim();
+            return trimmed.Length == 0 ? null : trimmed;
+        }
+
+        private sealed record AuditMetadata(string DocumentId, string DataType, string DataAction);
     }
 }

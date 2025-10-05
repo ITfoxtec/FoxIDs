@@ -284,8 +284,8 @@ namespace FoxIDs.Logic
                     m.Term(t => t.TenantName, tenantName) &&
                     m.Term(t => t.TrackName, trackName) &&
                     MustBeLogType(m, logRequest) && 
-                    m.MultiMatch(ma => ma.
-                        Fields(fs => fs
+                    m.MultiMatch(ma => ma
+                        .Fields(fs => fs
                             .Field(f => f.Message)
                             .Field(f => f.OperationId)
                             .Field(f => f.RequestId)

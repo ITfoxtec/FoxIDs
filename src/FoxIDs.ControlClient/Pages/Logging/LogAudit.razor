@@ -55,20 +55,6 @@
                 <option value="@LogTimeIntervals.TwelveHours">12 hours</option>
                 <option value="@LogTimeIntervals.TwentyfourHours">24 hours</option>
             </FInputSelect>
-            <FInputSelect Class="active" @bind-Value="auditLogRequestForm.Model.AuditType" For="@(() => auditLogRequestForm.Model.AuditType)">
-                <option value="">All</option>
-                @foreach (var auditType in auditTypes)
-                {
-                    var text = auditType switch
-                    {
-                        AuditType.ChangePassword => "Change password",
-                        AuditType.CreateUser => "Create user",
-                        _ => auditType.ToString()
-                    };
-
-                    <option value="@auditType">@text</option>
-                }
-            </FInputSelect>
             @if (IsMasterTenant)
             {
                 <FInputText @bind-Value="auditLogRequestForm.Model.TenantName" For="@(() => auditLogRequestForm.Model.TenantName)" />
@@ -103,77 +89,25 @@
                 @foreach (var item in auditLogResponse.Items)
                 {
                     <li class="list-group-item">
-                        @if (item.Type == LogItemTypes.Sequence)
+                        <ELogItem Item="item" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
+
+                        @if (item.Values.TryGetValue(Constants.Logs.DocumentId, out var documentId))
                         {
-                            <div>
-                                <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
-                                <div>Sequence ID: @item.SequenceId</div>
-
-                                @RenderAuditMetadata(item)
-
-                                <ul class="list-group">
-                                    @foreach (var sSubItem in item.SubItems)
-                                    {
-                                        <li class="list-group-item">
-                                            @if (sSubItem.Type == LogItemTypes.Operation)
-                                            {
-                                                <div>
-                                                    <div><b>@sSubItem.Type.ToString()</b> @sSubItem.Timestamp.TimeToString()</div>
-                                                    <div>Operation ID: @sSubItem.OperationId</div>
-
-                                                    @RenderAuditMetadata(sSubItem)
-
-                                                    <ul class="list-group">
-                                                        @foreach (var oSubItem in sSubItem.SubItems)
-                                                        {
-                                                            <li class="list-group-item">
-                                                                <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
-                                                                @RenderAuditMetadata(oSubItem)
-                                                                @RenderData(oSubItem)
-                                                            </li>
-                                                        }
-                                                    </ul>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <ELogItem Item="sSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
-                                                @RenderAuditMetadata(sSubItem)
-                                                @RenderData(sSubItem)
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
+                            <div>Document ID: @documentId</div>
                         }
-                        else if (item.Type == LogItemTypes.Operation)
+                        @if (item.Values.TryGetValue(Constants.Logs.AuditDataType, out var dataType))
                         {
-                            <div>
-                                <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
-                                <div>Operation ID: @item.OperationId</div>
-
-                                @RenderAuditMetadata(item)
-
-                                <ul class="list-group">
-                                    @foreach (var oSubItem in item.SubItems)
-                                    {
-                                        <li class="list-group-item">
-                                            <ELogItem Item="oSubItem" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
-                                            @RenderAuditMetadata(oSubItem)
-                                            @RenderData(oSubItem)
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
+                            <div>Data type: @dataType</div>
                         }
-                        else
+                        @if (item.Values.TryGetValue(Constants.Logs.AuditDataAction, out var dataAction))
                         {
-                            <ELogItem Item="item" IsMasterTenant="IsMasterTenant" IsMasterTrack="IsMasterTrack" />
-
-                            @RenderAuditMetadata(item)
+                            <div>Action: @dataAction</div>
                         }
-
-                        @RenderData(item)
+                        
+                        @if (TryGetAuditData(item, out var itemData))
+                        {
+                            <pre class="mt-2 mb-0" style="max-height:20rem; overflow:auto;"><code>@itemData</code></pre>
+                        }
                     </li>
                 }
             }

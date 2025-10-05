@@ -210,7 +210,6 @@ namespace FoxIDs
             public const string AuditType = "AuditType";
             public const string AuditDataAction = "AuditDataAction";
             public const string DocumentId = "DocumentId";
-            public const string PartitionId = "PartitionId"; 
 
             public static class Results
             {
@@ -241,7 +240,6 @@ namespace FoxIDs
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
                 public const string DocumentId = "DocumentId";
-                public const string PartitionId = "PartitionId";
             }
 
             public static class IndexName

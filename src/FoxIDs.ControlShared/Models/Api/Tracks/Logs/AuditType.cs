@@ -1,11 +1,1 @@
-namespace FoxIDs.Models.Api
-{
-    public enum AuditType
-    {
-        Data,
-        Login,
-        Logout,
-        ChangePassword,
-        CreateUser
-    }
-}
+// AuditType enum has been removed from the public API. This file is intentionally left blank.

@@ -26,9 +26,12 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ApiController(TelemetryScopedLogger logger)
+        private bool auditLogEnabled;
+
+        public ApiController(TelemetryScopedLogger logger, bool auditLogEnabled = true)
         {
             this.logger = logger;
+            this.auditLogEnabled = auditLogEnabled;
         }
 
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
@@ -54,11 +57,14 @@ namespace FoxIDs.Controllers
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var requestMethod = context.HttpContext.Request.Method;
-            var shouldAudit = HttpMethods.IsPost(requestMethod) || HttpMethods.IsPut(requestMethod) || HttpMethods.IsDelete(requestMethod);
-            if (shouldAudit)
+            if (auditLogEnabled)
             {
-                context.HttpContext.Items[Constants.ControlApi.AuditLogEnabledKey] = true;
+                var requestMethod = context.HttpContext.Request.Method;
+                var shouldAudit = HttpMethods.IsPost(requestMethod) || HttpMethods.IsPut(requestMethod) || HttpMethods.IsDelete(requestMethod);
+                if (shouldAudit)
+                {
+                    context.HttpContext.Items[Constants.ControlApi.AuditLogEnabledKey] = true;
+                }
             }
 
             await next();

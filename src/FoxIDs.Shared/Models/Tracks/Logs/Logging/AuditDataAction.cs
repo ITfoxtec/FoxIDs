@@ -2,9 +2,9 @@
 {
     public enum AuditDataAction
     {
-        Create,
-        Update,
-        Save,
-        Delete
+        Create = 100,
+        Update = 200,
+        Save = 300,
+        Delete = 400
     }
 }

@@ -154,7 +154,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditDataAction.Create, default, item, item.PartitionId, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataAsync(AuditDataAction.Create, default, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (Exception ex)
@@ -191,7 +191,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditDataAction.Update, existing, item, item.PartitionId, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataAsync(AuditDataAction.Update, existing, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -227,7 +227,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditDataAction.Save, existing, item, item.PartitionId, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -283,7 +283,7 @@ namespace FoxIDs.Repository
                         {
                             existing = existingValue;
                         }
-                        await auditLogic.LogAsync(AuditDataAction.Save, existing, item, partitionId, item.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id, resolvedScopedLogger);
                     }
                 }
             }
@@ -312,7 +312,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogAsync(AuditDataAction.Delete, existing, default, partitionId, existing.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -350,7 +350,7 @@ namespace FoxIDs.Repository
                     var resolvedScopedLogger = GetScopedLogger(scopedLogger);
                     foreach (var existing in existingItems)
                     {
-                        await auditLogic.LogAsync(AuditDataAction.Delete, existing, default, partitionId, existing.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
                     }
                 }
 
@@ -386,7 +386,7 @@ namespace FoxIDs.Repository
 
                     if (shouldAudit && existing != null)
                     {
-                        await auditLogic.LogAsync(AuditDataAction.Delete, existing, default, partitionId, existing.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
                     }
                 }
             }

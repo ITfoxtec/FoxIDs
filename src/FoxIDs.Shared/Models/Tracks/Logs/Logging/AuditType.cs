@@ -2,10 +2,10 @@
 {
     public enum AuditType
     {
-        Data,
-        Login,
-        Logout,
-        ChangePassword,
-        CreateUser
+        Data = 100,
+        Login = 200,
+        Logout = 300,
+        ChangePassword = 400,
+        CreateUser = 500
     }
 }

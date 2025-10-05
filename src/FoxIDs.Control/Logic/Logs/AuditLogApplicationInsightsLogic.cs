@@ -126,11 +126,6 @@ namespace FoxIDs.Logic
                 clauses.Add($"| where {Constants.Logs.TrackName} == '{EscapeValue(trackName)}'");
             }
 
-            if (logRequest.AuditType.HasValue)
-            {
-                clauses.Add($"| where {Constants.Logs.AuditType} == '{EscapeValue(logRequest.AuditType.Value.ToString())}'");
-            }
-
             if (!logRequest.Filter.IsNullOrWhiteSpace())
             {
                 var filter = EscapeValue(logRequest.Filter);
@@ -138,6 +133,7 @@ namespace FoxIDs.Logic
                 {
                     Constants.Logs.Results.Name,
                     Constants.Logs.Message,
+                    Constants.Logs.AuditType,
                     Constants.Logs.AuditDataType,
                     Constants.Logs.AuditDataAction,
                     Constants.Logs.DocumentId,

@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
             return httpContext.Items.ContainsKey(Constants.ControlApi.AuditLogEnabledKey);
         }
 
-        public Task LogAsync<T>(AuditDataAction dataAction, T before, T after, string partitionId, string documentId) where T : MasterDocument
+    public Task LogDataAsync<T>(AuditDataAction dataAction, T before, T after, string documentId) where T : MasterDocument
         {
             if (!ShouldAudit())
             {
@@ -56,18 +56,18 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), partitionId, documentId);
-                telemetryLogger.Event($"Audit '{dataAction}'", properties);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                telemetryLogger.Event($"System-Level {AuditType.Data}.{dataAction}", properties);
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"Audit '{dataAction}' master document logging failed.");
+                telemetryLogger.Warning(ex, message: $"System-Level {AuditType.Data}.{dataAction} master document logging failed.");
             }
 
             return Task.CompletedTask;
         }
 
-        public Task LogAsync<T>(AuditDataAction dataAction, T before, T after, string partitionId, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
+    public Task LogDataAsync<T>(AuditDataAction dataAction, T before, T after, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
         {
             if (!ShouldAudit())
             {
@@ -76,12 +76,12 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), partitionId, documentId);
-                scopedLogger.Event($"Audit '{dataAction}'", properties: properties);
+                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                scopedLogger.Event($"System-Level {AuditType.Data}.{dataAction}", properties: properties);
             }
             catch (Exception ex)
             {
-                scopedLogger.Warning(ex, message: $"Audit '{dataAction}' tenant document logging failed.");
+                scopedLogger.Warning(ex, message: $"System-Level {AuditType.Data}.{dataAction} tenant document logging failed.");
             }
 
             return Task.CompletedTask;
@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
             return normalized;
         }
 
-        private IDictionary<string, string> BuildProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string partitionId, string documentId)
+        private IDictionary<string, string> BuildProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string documentId)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {

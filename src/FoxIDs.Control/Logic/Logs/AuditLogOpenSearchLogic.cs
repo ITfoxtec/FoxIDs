@@ -37,18 +37,20 @@ namespace FoxIDs.Logic
         private Api.LogItem ToApiLogItem(OpenSearchEventLogItem item)
         {
             var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            AddValue(values, Constants.Logs.Message, item.Message);
-            AddValue(values, Constants.Logs.AuditType, item.AuditType);
-            AddValue(values, Constants.Logs.AuditDataType, item.AuditDataType);
-            AddValue(values, Constants.Logs.AuditDataAction, item.AuditDataAction);
-            AddValue(values, Constants.Logs.DocumentId, item.DocumentId);
-            AddValue(values, Constants.Logs.Data, item.Data, truncate: false);
-            AddValue(values, Constants.Logs.UserId, item.UserId);
-            AddValue(values, Constants.Logs.Email, item.Email);
-            AddValue(values, Constants.Logs.RequestPath, item.RequestPath);
-            AddValue(values, Constants.Logs.RequestMethod, item.RequestMethod);
-            AddValue(values, Constants.Logs.TenantName, item.TenantName);
-            AddValue(values, Constants.Logs.TrackName, item.TrackName);
+            AddValue(values, Constants.Logs.Results.Name, item.Message);
+
+            AddValue(values, nameof(item.MachineName), item.MachineName);
+            AddValue(values, nameof(item.ClientIP), item.ClientIP);
+            AddValue(values, nameof(item.UserAgent), item.UserAgent);
+            AddValue(values, nameof(item.TenantName), item.TenantName);
+            AddValue(values, nameof(item.TrackName), item.TrackName);
+            AddValue(values, nameof(item.UserId), item.UserId);
+            AddValue(values, nameof(item.Email), item.Email);
+            AddValue(values, nameof(item.AuditType), item.AuditType);
+            AddValue(values, nameof(item.AuditDataType), item.AuditDataType);
+            AddValue(values, nameof(item.AuditDataAction), item.AuditDataAction);
+            AddValue(values, nameof(item.DocumentId), item.DocumentId);
+            AddValue(values, nameof(item.Data), item.Data, false);
 
             return new Api.LogItem
             {
@@ -99,45 +101,48 @@ namespace FoxIDs.Logic
                                      .GreaterThanOrEquals(queryTimeRange.start)
                                      .LessThanOrEquals(queryTimeRange.end)));
 
-            boolQuery = boolQuery.Filter(f => f.Exists(e => e.Field(fld => fld.AuditDataAction)));
-            boolQuery = boolQuery.Must(m => m.Term(t => t.LogType, LogTypes.Event.ToString()));
-
-            if (!tenantName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TenantName, tenantName));
-            }
-
-            if (!trackName.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.TrackName, trackName));
-            }
-
-            if (logRequest.AuditType.HasValue)
-            {
-                boolQuery = boolQuery.Must(m => m.Term(t => t.AuditType, logRequest.AuditType.Value.ToString()));
-            }
-
-            if (!logRequest.Filter.IsNullOrWhiteSpace())
-            {
-                boolQuery = boolQuery.Must(m => m.MultiMatch(ma => ma
+            boolQuery = boolQuery.Must(m =>
+                m.Exists(e => e.Field(f => f.AuditType)) && 
+                m.Term(t => t.TenantName, tenantName) &&
+                m.Term(t => t.TrackName, trackName) &&
+                m.Term(t => t.LogType, LogTypes.Event.ToString()) &&
+                m.MultiMatch(ma => ma
                     .Fields(fs => fs
                         .Field(f => f.Message)
+                        .Field(f => f.AuditType)
                         .Field(f => f.AuditDataType)
                         .Field(f => f.AuditDataAction)
                         .Field(f => f.DocumentId)
                         .Field(f => f.UserId)
                         .Field(f => f.Email)
-                        .Field(f => f.RequestPath)
-                        .Field(f => f.RequestMethod)
                         .Field(f => f.TenantName)
                         .Field(f => f.TrackName)
                         .Field(f => f.Data)
                     )
-                    .Query(logRequest.Filter)));
-            }
+                    .Query(MapSearchText(logRequest))));
 
             return boolQuery;
-            return m.Term(t => t.LogType, LogTypes.Event.ToString()) && (logRequest.AuditType.HasValue ? m.Term(t => t.AuditType, "Data" /*logRequest.AuditType.Value.ToString()*/) : m.MatchAll());
+        }
+
+        private static string MapSearchText(Api.AuditLogRequest logRequest)
+        {
+            var filter = logRequest.Filter;
+            if (filter.IsNullOrWhiteSpace())
+            {
+                return filter;
+            }
+
+            if (filter.Contains("Change password", StringComparison.OrdinalIgnoreCase) && !filter.Contains("ChangePassword", StringComparison.Ordinal))
+            {
+                filter = string.Concat(filter, " ChangePassword");
+            }
+
+            if (filter.Contains("Create user", StringComparison.OrdinalIgnoreCase) && !filter.Contains("CreateUser", StringComparison.Ordinal))
+            {
+                filter = string.Concat(filter, " CreateUser");
+            }
+
+            return filter;
         }
 
         private void AddValue(IDictionary<string, string> values, string key, string value, bool truncate = true)

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -17,9 +16,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Select environment by full environment name")]
         public string TrackName { get; set; }
-
-        [Display(Name = "Audit type")]
-        public AuditType? AuditType { get; set; }
 
         [Display(Name = "Search")]
         public string Filter { get; set; }

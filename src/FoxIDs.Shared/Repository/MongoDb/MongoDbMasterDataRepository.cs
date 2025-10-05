@@ -121,7 +121,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    auditLogic.LogDataEvent(AuditDataActions.Create, null, item, item.Id);
+                    auditLogic.LogDataEvent(AuditDataActions.Create, default, item, item.Id);
                 }
             }
             catch (Exception ex)
@@ -226,7 +226,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    auditLogic.LogDataEvent(AuditDataActions.Delete, item, null, item.Id);
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, item, default, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -310,7 +310,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, null, existing.Id);
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -342,7 +342,7 @@ namespace FoxIDs.Repository
 
                     if (shouldAudit && existing != null)
                     {
-                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, null, existing.Id);
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id);
                     }
                 }
             }
@@ -370,7 +370,7 @@ namespace FoxIDs.Repository
                 {
                     foreach (var existing in existingItems)
                     {
-                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, null, existing.Id);
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id);
                     }
                 }
             }

@@ -99,11 +99,11 @@ namespace FoxIDs.Logic
                 $"| extend {Constants.Logs.Email} = Properties.{Constants.Logs.Email}",
                 $"| extend {Constants.Logs.RequestPath} = Properties.{Constants.Logs.RequestPath}",
                 $"| extend {Constants.Logs.RequestMethod} = Properties.{Constants.Logs.RequestMethod}",
-                $"| extend {Constants.Logs.AuditType} = tostring(Properties.f_{Constants.Logs.AuditType})",
-                $"| extend {Constants.Logs.AuditDataType} = tostring(Properties.f_{Constants.Logs.AuditDataType})",
-                $"| extend {Constants.Logs.AuditDataAction} = tostring(Properties.f_{Constants.Logs.AuditDataAction})",
-                $"| extend {Constants.Logs.DocumentId} = tostring(Properties.f_{Constants.Logs.DocumentId})",
-                $"| extend {Constants.Logs.Data} = tostring(Properties.f_{Constants.Logs.Data})"
+                $"| extend {Constants.Logs.AuditType} = Properties.{Constants.Logs.AuditType}",
+                $"| extend {Constants.Logs.AuditDataType} = Properties.{Constants.Logs.AuditDataType}",
+                $"| extend {Constants.Logs.AuditDataAction} = Properties.{Constants.Logs.AuditDataAction}",
+                $"| extend {Constants.Logs.DocumentId} = Properties.{Constants.Logs.DocumentId}",
+                $"| extend {Constants.Logs.Data} = Properties.{Constants.Logs.Data}"
             };
 
             return string.Join(Environment.NewLine, extends);
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
         {
             var clauses = new List<string>
             {
-                "| where isnotempty(Properties.f_AuditDataAction)"
+                $"| where isnotempty({Constants.Logs.AuditType})"
             };
 
             if (!tenantName.IsNullOrWhiteSpace())
@@ -126,9 +126,10 @@ namespace FoxIDs.Logic
                 clauses.Add($"| where {Constants.Logs.TrackName} == '{EscapeValue(trackName)}'");
             }
 
-            if (!logRequest.Filter.IsNullOrWhiteSpace())
+            var mappedFilter = MapSearchText(logRequest);
+            if (!mappedFilter.IsNullOrWhiteSpace())
             {
-                var filter = EscapeValue(logRequest.Filter);
+                var filter = EscapeValue(mappedFilter);
                 var searchTargets = new[]
                 {
                     Constants.Logs.Results.Name,
@@ -150,6 +151,27 @@ namespace FoxIDs.Logic
             }
 
             return string.Join(Environment.NewLine, clauses);
+        }
+
+        private static string MapSearchText(Api.AuditLogRequest logRequest)
+        {
+            var filter = logRequest.Filter;
+            if (filter.IsNullOrWhiteSpace())
+            {
+                return filter;
+            }
+
+            if (filter.Contains("Change password", StringComparison.OrdinalIgnoreCase) && !filter.Contains("ChangePassword", StringComparison.Ordinal))
+            {
+                filter = string.Concat(filter, " ChangePassword");
+            }
+
+            if (filter.Contains("Create user", StringComparison.OrdinalIgnoreCase) && !filter.Contains("CreateUser", StringComparison.Ordinal))
+            {
+                filter = string.Concat(filter, " CreateUser");
+            }
+
+            return filter;
         }
 
         private string GetLogAnalyticsWorkspaceId() => settings.ApplicationInsights.WorkspaceId;

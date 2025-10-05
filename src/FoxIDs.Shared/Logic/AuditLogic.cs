@@ -57,11 +57,11 @@ namespace FoxIDs.Logic
             try
             {
                 var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                telemetryLogger.Event($"System-Level {AuditType.Data}.{dataAction}", properties);
+                telemetryLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties);
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"System-Level {AuditType.Data}.{dataAction} master document logging failed.");
+                telemetryLogger.Warning(ex, message: $"System-Level {AuditType.Data} {dataAction} master document logging failed.");
             }
 
             return Task.CompletedTask;
@@ -77,11 +77,11 @@ namespace FoxIDs.Logic
             try
             {
                 var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                scopedLogger.Event($"System-Level {AuditType.Data}.{dataAction}", properties: properties);
+                scopedLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties: properties);
             }
             catch (Exception ex)
             {
-                scopedLogger.Warning(ex, message: $"System-Level {AuditType.Data}.{dataAction} tenant document logging failed.");
+                scopedLogger.Warning(ex, message: $"System-Level {AuditType.Data} {dataAction} tenant document logging failed.");
             }
 
             return Task.CompletedTask;

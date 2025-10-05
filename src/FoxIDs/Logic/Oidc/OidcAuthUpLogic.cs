@@ -788,7 +788,7 @@ namespace FoxIDs.Logic
 
                 if (error.IsNullOrEmpty() && claims != null)
                 {
-                    auditLogic.LogLoginEvent(PartyTypes.Oidc, claims);
+                    auditLogic.LogLoginEvent(PartyTypes.Oidc, sequenceData.UpPartyId, claims);
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

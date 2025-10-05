@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models
 {
-    public enum AuditType
+    public enum AuditTypes
     {
         Data = 100,
         Login = 200,

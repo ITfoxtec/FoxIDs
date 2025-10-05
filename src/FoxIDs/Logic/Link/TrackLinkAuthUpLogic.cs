@@ -274,7 +274,7 @@ namespace FoxIDs.Logic
         {
             if (error.IsNullOrEmpty() && claims != null)
             {
-                auditLogic.LogLoginEvent(PartyTypes.TrackLink, claims);
+                auditLogic.LogLoginEvent(PartyTypes.TrackLink, sequenceData.UpPartyId, claims);
             }
 
             switch (sequenceData.DownPartyLink.Type)

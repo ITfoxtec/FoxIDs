@@ -182,7 +182,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, External Login, Application type {sequenceData.DownPartyLink.Type}.");
 
-            auditLogic.LogLoginEvent(PartyTypes.ExternalLogin, claims);
+            auditLogic.LogLoginEvent(PartyTypes.ExternalLogin, sequenceData.UpPartyId, claims);
 
             switch (sequenceData.DownPartyLink.Type)
             {

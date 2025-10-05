@@ -10,7 +10,6 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
@@ -64,47 +63,43 @@ namespace FoxIDs.Logic
             return httpContext.Items.ContainsKey(Constants.ControlApi.AuditLogEnabledKey);
         }
 
-        public Task LogDataEventAsync<T>(AuditDataAction dataAction, T before, T after, string documentId) where T : MasterDocument
+        public void LogDataEvent<T>(AuditDataActions dataAction, T before, T after, string documentId) where T : MasterDocument
         {
             if (!ShouldLogAuditData())
             {
-                return Task.CompletedTask;
+                return;
             }
 
             try
             {
-                var properties = BuildDataLogProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                telemetryLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties);
+                var properties = BuildDataLogProperties<T>(AuditTypes.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                telemetryLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties);
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"System-Level {AuditType.Data} {dataAction} master document logging failed.");
+                telemetryLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task LogDataEventAsync<T>(AuditDataAction dataAction, T before, T after, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
+        public void LogDataEvent<T>(AuditDataActions dataAction, T before, T after, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
         {
             if (!ShouldLogAuditData())
             {
-                return Task.CompletedTask;
+                return;
             }
 
             try
             {
-                var properties = BuildDataLogProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                scopedLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties: properties);
+                var properties = BuildDataLogProperties<T>(AuditTypes.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                scopedLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties: properties);
             }
             catch (Exception ex)
             {
-                scopedLogger.Warning(ex, message: $"System-Level {AuditType.Data} {dataAction} tenant document logging failed.");
+                scopedLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} tenant document logging failed.");
             }
-
-            return Task.CompletedTask;
         }
 
-        public void LogLoginEvent(PartyTypes partyType, List<Claim> claims)
+        public void LogLoginEvent(PartyTypes partyType, string upPartyId, List<Claim> claims)
         {
             if (!ShouldLogAudit())
             {
@@ -113,12 +108,12 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildUserActionProperties(AuditType.Login, partyType, claims);
-                telemetryLogger.Event($"{AuditType.Login} action in {partyType} up-party", properties: properties);
+                var properties = BuildUserActionProperties(AuditTypes.Login, upPartyId, partyType, claims);
+                telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"{AuditType.Login} {partyType} event logging failed.");
+                telemetryLogger.Warning(ex, message: $"{AuditTypes.Login} {partyType} event logging failed.");
             }
         }
 
@@ -244,7 +239,7 @@ namespace FoxIDs.Logic
             return normalized;
         }
 
-        private IDictionary<string, string> BuildDataLogProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string documentId)
+        private IDictionary<string, string> BuildDataLogProperties<T>(AuditTypes auditType, AuditDataActions dataAction, JsonObject diff, string documentId)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -266,12 +261,13 @@ namespace FoxIDs.Logic
             return properties;
         }
 
-        private IDictionary<string, string> BuildUserActionProperties(AuditType auditType, PartyTypes partyType, List<Claim> claims)
+        private IDictionary<string, string> BuildUserActionProperties(AuditTypes auditType, string upPartyId, PartyTypes partyType, List<Claim> claims)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { Constants.Logs.AuditType, auditType.ToString() },
-                { Constants.Logs.AuditDataType, partyType.ToString() }
+                { Constants.Logs.AuditDataType, partyType.ToString() },
+                { Constants.Logs.UpPartyId, upPartyId }
             };
 
             AddProperty(properties, Constants.Logs.UserId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject));

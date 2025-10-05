@@ -79,7 +79,7 @@
     }
     else if (Item.Type == LogItemTypes.Event)
     {
-        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name)</div>
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name).GetDisplayName()</div>
 
         var machineName = @Item.Values.GetValue(Constants.Logs.Results.MachineName);
         if (!machineName.IsNullOrWhiteSpace())

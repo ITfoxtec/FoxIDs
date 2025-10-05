@@ -194,19 +194,17 @@ namespace FoxIDs.Client.Pages.Logging
             await LoadAuditLogAsync();
         }
 
-        private static bool AuditTypeIsData(LogItemViewModel item)
+        private static string AuditActionText(LogItemViewModel item)
         {
-            if (item?.Values == null)
+            if (item.Values.TryGetValue(Constants.Logs.AuditType, out var auditType))
             {
-                return false;
+                if (auditType.Equals(AuditTypes.Data.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Data type";
+                }
             }
 
-            if (!item.Values.TryGetValue(Constants.Logs.AuditType, out var auditType) || auditType.IsNullOrWhiteSpace())
-            {
-                return false;
-            }
-
-            return auditType.Equals("Data", StringComparison.OrdinalIgnoreCase);
+            return "Authentication method";
         }
 
         private bool TryGetAuditData(LogItemViewModel item, out string formattedJson)

@@ -311,7 +311,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"AuthMethod, Response, Application type {sequenceData.DownPartyLink.Type}.");
 
-            auditLogic.LogLoginEvent(PartyTypes.Login, claims);
+            auditLogic.LogLoginEvent(PartyTypes.Login, sequenceData.UpPartyId, claims);
 
             switch (sequenceData.DownPartyLink.Type)
             {

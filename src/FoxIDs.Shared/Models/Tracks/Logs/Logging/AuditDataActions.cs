@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models
 {
-    public enum AuditDataAction
+    public enum AuditDataActions
     {
         Create = 100,
         Update = 200,

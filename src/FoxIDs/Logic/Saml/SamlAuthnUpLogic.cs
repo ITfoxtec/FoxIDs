@@ -665,7 +665,7 @@ namespace FoxIDs.Logic
 
                 if (status == Saml2StatusCodes.Success  && jwtClaims != null)
                 {
-                    auditLogic.LogLoginEvent(PartyTypes.Saml2, jwtClaims);
+                    auditLogic.LogLoginEvent(PartyTypes.Saml2, sequenceData.UpPartyId, jwtClaims);
                 }
 
                 switch (downPartyType)

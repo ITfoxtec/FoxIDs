@@ -194,6 +194,21 @@ namespace FoxIDs.Client.Pages.Logging
             await LoadAuditLogAsync();
         }
 
+        private static bool AuditTypeIsData(LogItemViewModel item)
+        {
+            if (item?.Values == null)
+            {
+                return false;
+            }
+
+            if (!item.Values.TryGetValue(Constants.Logs.AuditType, out var auditType) || auditType.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
+
+            return auditType.Equals("Data", StringComparison.OrdinalIgnoreCase);
+        }
+
         private bool TryGetAuditData(LogItemViewModel item, out string formattedJson)
         {
             formattedJson = null;

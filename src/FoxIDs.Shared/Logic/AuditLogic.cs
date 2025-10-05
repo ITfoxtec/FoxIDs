@@ -1,3 +1,8 @@
+using FoxIDs.Infrastructure;
+using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +11,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using FoxIDs.Infrastructure;
-using FoxIDs.Models;
-using ITfoxtec.Identity;
-using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Logic
 {
@@ -23,16 +24,32 @@ namespace FoxIDs.Logic
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             WriteIndented = false
         };
-
+        private readonly Settings settings;
         private readonly TelemetryLogger telemetryLogger;
 
-        public AuditLogic(TelemetryLogger telemetryLogger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AuditLogic(Settings settings, TelemetryLogger telemetryLogger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.telemetryLogger = telemetryLogger;
         }
 
-        public bool ShouldAudit()
+        public bool ShouldLogAudit()
         {
+            if(settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors || settings.Options.Log == LogOptions.ApplicationInsights)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool ShouldLogAuditData()
+        {
+            if (!ShouldLogAudit())
+            {
+                return false;
+            }
+
             var httpContext = HttpContext;
             if (httpContext?.Items == null)
             {
@@ -47,16 +64,16 @@ namespace FoxIDs.Logic
             return httpContext.Items.ContainsKey(Constants.ControlApi.AuditLogEnabledKey);
         }
 
-    public Task LogDataAsync<T>(AuditDataAction dataAction, T before, T after, string documentId) where T : MasterDocument
+        public Task LogDataEventAsync<T>(AuditDataAction dataAction, T before, T after, string documentId) where T : MasterDocument
         {
-            if (!ShouldAudit())
+            if (!ShouldLogAuditData())
             {
                 return Task.CompletedTask;
             }
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                var properties = BuildDataLogProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
                 telemetryLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties);
             }
             catch (Exception ex)
@@ -67,16 +84,16 @@ namespace FoxIDs.Logic
             return Task.CompletedTask;
         }
 
-    public Task LogDataAsync<T>(AuditDataAction dataAction, T before, T after, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
+        public Task LogDataEventAsync<T>(AuditDataAction dataAction, T before, T after, string documentId, TelemetryScopedLogger scopedLogger) where T : IDataDocument
         {
-            if (!ShouldAudit())
+            if (!ShouldLogAuditData())
             {
                 return Task.CompletedTask;
             }
 
             try
             {
-                var properties = BuildProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
+                var properties = BuildDataLogProperties<T>(AuditType.Data, dataAction, GetDiffNodeResult(before, after), documentId);
                 scopedLogger.Event($"System-Level {AuditType.Data} {dataAction}", properties: properties);
             }
             catch (Exception ex)
@@ -85,6 +102,24 @@ namespace FoxIDs.Logic
             }
 
             return Task.CompletedTask;
+        }
+
+        public void LogLoginEvent(PartyTypes partyType, List<Claim> claims)
+        {
+            if (!ShouldLogAudit())
+            {
+                return;
+            }
+
+            try
+            {
+                var properties = BuildUserActionProperties(AuditType.Login, partyType, claims);
+                telemetryLogger.Event($"{AuditType.Login} action in {partyType} up-party", properties: properties);
+            }
+            catch (Exception ex)
+            {
+                telemetryLogger.Warning(ex, message: $"{AuditType.Login} {partyType} event logging failed.");
+            }
         }
 
         private JsonNode ConvertToJsonNode<T>(T data) where T : IDataDocument
@@ -209,7 +244,7 @@ namespace FoxIDs.Logic
             return normalized;
         }
 
-        private IDictionary<string, string> BuildProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string documentId)
+        private IDictionary<string, string> BuildDataLogProperties<T>(AuditType auditType, AuditDataAction dataAction, JsonObject diff, string documentId)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -227,14 +262,33 @@ namespace FoxIDs.Logic
                 properties[Constants.Logs.Data] = diff.ToJsonString(jsonOptions);
             }
 
+            AddTenantTrackProperties(properties);
+            return properties;
+        }
+
+        private IDictionary<string, string> BuildUserActionProperties(AuditType auditType, PartyTypes partyType, List<Claim> claims)
+        {
+            var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { Constants.Logs.AuditType, auditType.ToString() },
+                { Constants.Logs.AuditDataType, partyType.ToString() }
+            };
+
+            AddProperty(properties, Constants.Logs.UserId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject));
+            AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
+
+            AddTenantTrackProperties(properties);
+            return properties;
+        }
+
+        private void AddTenantTrackProperties(Dictionary<string, string> properties)
+        {
             var routeBinding = RouteBinding;
             if (routeBinding != null)
             {
                 AddProperty(properties, Constants.Logs.TenantName, routeBinding.TenantName);
                 AddProperty(properties, Constants.Logs.TrackName, routeBinding.TrackName);
             }
-
-            return properties;
         }
 
         private static void AddProperty(IDictionary<string, string> properties, string key, string value)

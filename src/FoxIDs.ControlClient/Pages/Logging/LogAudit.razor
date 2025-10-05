@@ -97,7 +97,7 @@
                         }
                         @if (item.Values.TryGetValue(Constants.Logs.AuditDataType, out var dataType))
                         {
-                            <div>Data type: @dataType</div>
+                            <div>@(AuditTypeIsData(item) ? "Data type" : "Type"): @dataType</div>
                         }
                         @if (item.Values.TryGetValue(Constants.Logs.AuditDataAction, out var dataAction))
                         {

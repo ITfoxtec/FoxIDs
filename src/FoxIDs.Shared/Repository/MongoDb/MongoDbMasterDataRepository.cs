@@ -113,7 +113,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(item);
@@ -121,7 +121,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Create, null, item, item.Id);
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Create, null, item, item.Id);
                 }
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(item);
@@ -158,7 +158,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Update, existing, item, item.Id);
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Update, existing, item, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -180,7 +180,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(item);
@@ -194,7 +194,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id);
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Save, existing, item, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -213,7 +213,7 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             var partitionId = item.Id.IdToMasterPartitionId();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -226,7 +226,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Delete, item, null, item.Id);
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Delete, item, null, item.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -253,7 +253,7 @@ namespace FoxIDs.Repository
                 await item.ValidateObjectAsync();
             }
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection(firstItem);
@@ -281,7 +281,7 @@ namespace FoxIDs.Repository
                         {
                             existing = existingValue;
                         }
-                        await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Save, existing, item, item.Id);
                     }
                 }
             }
@@ -296,7 +296,7 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToMasterPartitionId();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -310,7 +310,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, null, existing.Id);
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, null, existing.Id);
                 }
             }
             catch (FoxIDsDataException)
@@ -330,7 +330,7 @@ namespace FoxIDs.Repository
             if (firstId.IsNullOrEmpty()) throw new ArgumentNullException($"First id {nameof(firstId)}.", ids.GetType().Name);
 
             var partitionId = firstId.IdToMasterPartitionId();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -342,7 +342,7 @@ namespace FoxIDs.Repository
 
                     if (shouldAudit && existing != null)
                     {
-                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, null, existing.Id);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, null, existing.Id);
                     }
                 }
             }
@@ -355,7 +355,7 @@ namespace FoxIDs.Repository
         public override async ValueTask DeleteManyAsync<T>()
         {
             var partitionId = TypeToMasterPartitionId<T>();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetMasterCollection<T>();
@@ -370,7 +370,7 @@ namespace FoxIDs.Repository
                 {
                     foreach (var existing in existingItems)
                     {
-                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, null, existing.Id);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, null, existing.Id);
                     }
                 }
             }

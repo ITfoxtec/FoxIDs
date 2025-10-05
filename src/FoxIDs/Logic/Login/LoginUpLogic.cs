@@ -29,9 +29,10 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ExtendedUiLogic extendedUiLogic;
         private readonly PlanUsageLogic planUsageLogic;
+        private readonly AuditLogic auditLogic;
         private readonly HrdLogic hrdLogic;
 
-        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, PlanUsageLogic planUsageLogic, AuditLogic auditLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -40,6 +41,7 @@ namespace FoxIDs.Logic
             this.claimTransformLogic = claimTransformLogic;
             this.extendedUiLogic = extendedUiLogic;
             this.planUsageLogic = planUsageLogic;
+            this.auditLogic = auditLogic;
             this.hrdLogic = hrdLogic;
         }
 
@@ -308,6 +310,8 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> LoginResponseDownAsync(LoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => $"AuthMethod, Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+            auditLogic.LogLoginEvent(PartyTypes.Login, claims);
 
             switch (sequenceData.DownPartyLink.Type)
             {

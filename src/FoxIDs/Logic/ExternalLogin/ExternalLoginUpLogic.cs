@@ -26,9 +26,10 @@ namespace FoxIDs.Logic
         private readonly ExternalUserLogic externalUserLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly PlanUsageLogic planUsageLogic;
+        private readonly AuditLogic auditLogic;
         private readonly HrdLogic hrdLogic;
 
-        public ExternalLoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimTransformLogic claimTransformLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalLoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimTransformLogic claimTransformLogic, PlanUsageLogic planUsageLogic, AuditLogic auditLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -38,6 +39,7 @@ namespace FoxIDs.Logic
             this.externalUserLogic = externalUserLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.planUsageLogic = planUsageLogic;
+            this.auditLogic = auditLogic;
             this.hrdLogic = hrdLogic;
         }
 
@@ -179,6 +181,9 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> LoginResponseDownAsync(ExternalLoginUpSequenceData sequenceData, List<Claim> claims)
         {
             logger.ScopeTrace(() => $"AuthMethod, External Login, Application type {sequenceData.DownPartyLink.Type}.");
+
+            auditLogic.LogLoginEvent(PartyTypes.ExternalLogin, claims);
+
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

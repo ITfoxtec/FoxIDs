@@ -23,6 +23,7 @@ namespace FoxIDs.Logic
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly PlanUsageLogic planUsageLogic;
+        private readonly AuditLogic auditLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
@@ -30,13 +31,14 @@ namespace FoxIDs.Logic
         private readonly ExternalUserLogic externalUserLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
 
-        public TrackLinkAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimValidationLogic claimValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
             this.planUsageLogic = planUsageLogic;
+            this.auditLogic = auditLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -270,6 +272,11 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthResponseDownAsync(TrackLinkUpSequenceData sequenceData, List<Claim> claims, string error = null, string errorDescription = null)
         {
+            if (error.IsNullOrEmpty() && claims != null)
+            {
+                auditLogic.LogLoginEvent(PartyTypes.TrackLink, claims);
+            }
+
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

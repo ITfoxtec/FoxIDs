@@ -146,7 +146,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
@@ -154,7 +154,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Create, default, item, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Create, default, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (Exception ex)
@@ -172,7 +172,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
@@ -191,7 +191,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Update, existing, item, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Update, existing, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -213,7 +213,7 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(item);
@@ -227,7 +227,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Save, existing, item, item.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -254,7 +254,7 @@ namespace FoxIDs.Repository
                 await item.ValidateObjectAsync();
             }
 
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var collection = mongoDbRepositoryClient.GetTenantsCollection(firstItem);
@@ -283,7 +283,7 @@ namespace FoxIDs.Repository
                         {
                             existing = existingValue;
                         }
-                        await auditLogic.LogDataAsync(AuditDataAction.Save, existing, item, item.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Save, existing, item, item.Id, resolvedScopedLogger);
                     }
                 }
             }
@@ -298,7 +298,7 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToTenantPartitionId();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -312,7 +312,7 @@ namespace FoxIDs.Repository
 
                 if (shouldAudit)
                 {
-                    await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
+                    await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
                 }
             }
             catch (FoxIDsDataException)
@@ -333,7 +333,7 @@ namespace FoxIDs.Repository
             var partitionId = PartitionIdFormat<T>(idKey);
             Expression<Func<T, bool>> filter = f => f.PartitionId.Equals(partitionId);
             filter = whereQuery == null ? filter : filter.AndAlso(whereQuery);
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -350,7 +350,7 @@ namespace FoxIDs.Repository
                     var resolvedScopedLogger = GetScopedLogger(scopedLogger);
                     foreach (var existing in existingItems)
                     {
-                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
                     }
                 }
 
@@ -369,7 +369,7 @@ namespace FoxIDs.Repository
             if (firstId.IsNullOrEmpty()) throw new ArgumentNullException($"First id {nameof(firstId)}.", ids.GetType().Name);
 
             var partitionId = firstId.IdToTenantPartitionId();
-            var shouldAudit = auditLogic.ShouldAudit();
+            var shouldAudit = auditLogic.ShouldLogAuditData();
 
             try
             {
@@ -386,7 +386,7 @@ namespace FoxIDs.Repository
 
                     if (shouldAudit && existing != null)
                     {
-                        await auditLogic.LogDataAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
+                        await auditLogic.LogDataEventAsync(AuditDataAction.Delete, existing, default, existing.Id, resolvedScopedLogger);
                     }
                 }
             }

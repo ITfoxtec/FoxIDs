@@ -43,8 +43,9 @@ namespace FoxIDs.Logic
         private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly PlanUsageLogic planUsageLogic;
+        private readonly AuditLogic auditLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ExtendedUiLogic extendedUiLogic, ExternalUserLogic externalUserLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -60,6 +61,7 @@ namespace FoxIDs.Logic
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
             this.planUsageLogic = planUsageLogic;
+            this.auditLogic = auditLogic;
         }
 
         public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, ILoginRequest loginRequest, string hrdLoginUpPartyName = null)
@@ -660,6 +662,11 @@ namespace FoxIDs.Logic
                 var downPartyType = sequenceData != null ? sequenceData.DownPartyLink.Type : idPInitiatedLink.DownPartyType;
 
                 logger.ScopeTrace(() => $"Response, Application type {downPartyType}.");
+
+                if (status == Saml2StatusCodes.Success  && jwtClaims != null)
+                {
+                    auditLogic.LogLoginEvent(PartyTypes.Saml2, jwtClaims);
+                }
 
                 switch (downPartyType)
                 {

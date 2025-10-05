@@ -276,8 +276,7 @@ namespace FoxIDs.Logic
 
             if (logRequest.QueryEvents)
             {
-                boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)));
-                boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.AuditDataAction)));
+                boolQuery = boolQuery.MustNot(m => m.Exists(e => e.Field(f => f.UsageType)) || m.Exists(e => e.Field(f => f.AuditDataAction)));
             }
            
             boolQuery = boolQuery.Must(m =>

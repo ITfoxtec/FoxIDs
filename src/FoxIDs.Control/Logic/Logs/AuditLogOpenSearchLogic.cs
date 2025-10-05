@@ -137,6 +137,7 @@ namespace FoxIDs.Logic
             }
 
             return boolQuery;
+            return m.Term(t => t.LogType, LogTypes.Event.ToString()) && (logRequest.AuditType.HasValue ? m.Term(t => t.AuditType, "Data" /*logRequest.AuditType.Value.ToString()*/) : m.MatchAll());
         }
 
         private void AddValue(IDictionary<string, string> values, string key, string value, bool truncate = true)

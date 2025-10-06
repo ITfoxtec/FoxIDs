@@ -16,7 +16,7 @@ namespace FoxIDs.Logic
     public class AuditLogic : LogicBase
     {
         private const string sensitiveValueMask = "****";
-        private static readonly string[] sensitivePropertyMatches = ["password", "secret", "client_secret", "code_verifier", "nonce", "key", "cert", "certificate"];
+        private static readonly string[] sensitivePropertyMatches = ["secret", "client_secret", "hash", "hash_salt", "code_verifier", "nonce", "key"];
         private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -335,7 +335,7 @@ namespace FoxIDs.Logic
 
             foreach (var match in sensitivePropertyMatches)
             {
-                if (propertyName.Contains(match, StringComparison.OrdinalIgnoreCase))
+                if (propertyName.Equals(match, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

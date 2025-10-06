@@ -82,8 +82,6 @@ namespace FoxIDs.Logic
             {
                 Type = Api.LogItemTypes.Event,
                 Timestamp = timestamp.Value.ToUnixTimeSeconds(),
-                SequenceId = row.GetString(Constants.Logs.SequenceId),
-                OperationId = row.GetString(Constants.Logs.Results.OperationId),
                 Values = values
             };
         }

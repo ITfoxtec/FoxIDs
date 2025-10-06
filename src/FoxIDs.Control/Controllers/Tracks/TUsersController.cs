@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using FoxIDs.Models;
@@ -121,6 +121,8 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorApp = user.DisableTwoFactorApp,
                     DisableTwoFactorSms = user.DisableTwoFactorSms,
                     DisableTwoFactorEmail = user.DisableTwoFactorEmail,
+                    DisableSetPasswordSms = user.DisableSetPasswordSms,
+                    DisableSetPasswordEmail = user.DisableSetPasswordEmail,
                     RequireMultiFactor = user.RequireMultiFactor
                 }, saveUser: false);
 

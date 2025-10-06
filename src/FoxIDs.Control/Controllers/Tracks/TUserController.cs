@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using FoxIDs.Models;
@@ -120,6 +120,8 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorApp = createUserRequest.DisableTwoFactorApp,
                     DisableTwoFactorSms = createUserRequest.DisableTwoFactorSms,
                     DisableTwoFactorEmail = createUserRequest.DisableTwoFactorEmail,
+                    DisableSetPasswordSms = createUserRequest.DisableSetPasswordSms,
+                    DisableSetPasswordEmail = createUserRequest.DisableSetPasswordEmail,
                     RequireMultiFactor = createUserRequest.RequireMultiFactor
                 });
                 return Created(mapper.Map<Api.User>(mUser));
@@ -207,6 +209,8 @@ namespace FoxIDs.Controllers
                 mUser.ChangePassword = mUser.Hash.IsNullOrWhiteSpace() ? false : user.ChangePassword;
                 mUser.SetPasswordEmail = user.SetPasswordEmail;
                 mUser.SetPasswordSms = user.SetPasswordSms;
+                mUser.DisableSetPasswordEmail = user.DisableSetPasswordEmail;
+                mUser.DisableSetPasswordSms = user.DisableSetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;

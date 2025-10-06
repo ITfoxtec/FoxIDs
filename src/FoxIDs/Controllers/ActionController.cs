@@ -243,15 +243,16 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
 
+                var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 var user = await accountLogic.GetUserAsync(sequenceData.UserIdentifier);
                 sequenceData.CanUseExistingPassword = !string.IsNullOrEmpty(user?.Hash);
-                if (user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(user?.Phone)))
+                if (!loginUpParty.DisableSetPasswordSms && (user?.SetPasswordSms == true || (user?.SetPasswordEmail != true && !string.IsNullOrWhiteSpace(user?.Phone))))
                 {
                     sequenceData.Phone = user.Phone;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                     return HttpContext.GetUpPartyUrl(sequenceData.UpPartyId.PartyIdToName(), Constants.Routes.ActionController, Constants.Endpoints.PhoneSetPassword, includeSequence: true).ToRedirectResult();
                 }
-                else if (!string.IsNullOrWhiteSpace(user?.Email))
+                else if (!loginUpParty.DisableSetPasswordEmail && !string.IsNullOrWhiteSpace(user?.Email))
                 {
                     sequenceData.Email = user.Email;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -285,9 +286,9 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
 
-                if (loginUpParty.DisableSetPassword)
+                if (loginUpParty.DisableSetPasswordSms)
                 {
-                    throw new InvalidOperationException("Set password not enabled.");
+                    throw new InvalidOperationException("Set password with SMS not enabled.");
                 }
 
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
@@ -339,9 +340,9 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
 
-                if (loginUpParty.DisableSetPassword)
+                if (loginUpParty.DisableSetPasswordSms)
                 {
-                    throw new InvalidOperationException("Set password not enabled.");
+                    throw new InvalidOperationException("Set password with SMS not enabled.");
                 }
 
                 Func<IActionResult> viewResponse = () =>
@@ -454,9 +455,9 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
 
-                if (loginUpParty.DisableSetPassword)
+                if (loginUpParty.DisableSetPasswordEmail)
                 {
-                    throw new InvalidOperationException("Set password not enabled.");
+                    throw new InvalidOperationException("Set password with email not enabled.");
                 }
 
                 var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
@@ -499,9 +500,9 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantDataRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty);
 
-                if (loginUpParty.DisableSetPassword)
+                if (loginUpParty.DisableSetPasswordEmail)
                 {
-                    throw new InvalidOperationException("Set password not enabled.");
+                    throw new InvalidOperationException("Set password with email not enabled.");
                 }
 
                 Func<IActionResult> viewResponse = () =>

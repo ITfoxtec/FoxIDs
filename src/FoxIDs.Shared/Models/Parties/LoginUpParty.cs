@@ -58,8 +58,26 @@ namespace FoxIDs.Models
             }
         }
 
+        [Obsolete("Delete after 2026-10-02.")]
         [JsonProperty(PropertyName = "disable_set_password")]
-        public bool DisableSetPassword { get; set; }
+        public bool? DisableSetPassword
+        {
+            get { return null; }
+            set
+            {
+                if (value == true)
+                {
+                    DisableSetPasswordSms = true;
+                    DisableSetPasswordEmail = true;
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "disable_set_password_sms")]
+        public bool DisableSetPasswordSms { get; set; }
+
+        [JsonProperty(PropertyName = "disable_set_password_email")]
+        public bool DisableSetPasswordEmail { get; set; }
 
         [JsonProperty(PropertyName = "delete_refresh_token_grants_on_change_password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }

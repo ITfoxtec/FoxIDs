@@ -100,33 +100,6 @@ namespace FoxIDs.Logic
             return items;
         }
 
-        private async Task<Expression<Func<Track, bool>>> GetTrackCountWhereQueryAsync(Track.IdKey idKey, bool usePartitionId)
-        {
-            if (usePartitionId)
-            {
-                return null;
-            }
-            else
-            {
-                if (idKey.TenantName.IsNullOrWhiteSpace())
-                {
-                    return p => p.DataType.Equals("track");
-                }
-
-                var id = await Track.IdFormatAsync(idKey);
-                return p => p.Id.Equals(id);
-            }
-        }
-
-        private Expression<Func<User, bool>> GetUserCountWhereQuery(Track.IdKey idKey, bool usePartitionId)
-        {
-            if (!usePartitionId && !idKey.TenantName.IsNullOrWhiteSpace())
-            {
-                return p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
-            }
-
-            return p => p.DataType.Equals("user");
-        }
 
         private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)
         {
@@ -137,7 +110,7 @@ namespace FoxIDs.Logic
         {
             Api.UsageLogTypes logType;
             var typeValue = row.GetString(Constants.Logs.UsageType);
-            if(!Enum.TryParse(typeValue, out logType))
+            if (!Enum.TryParse(typeValue, out logType))
             {
                 throw new Exception($"Value '{typeValue}' cannot be converted to enum type '{nameof(Api.UsageLogTypes)}'.");
             }
@@ -225,16 +198,16 @@ namespace FoxIDs.Logic
         private string GetLogAnalyticsWorkspaceId()
         {
             return settings.ApplicationInsights.WorkspaceId;
-        }
+        } 
 
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
-            if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
+            if (!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApi && !logRequest.IncludeAdditional)
             {
                 logRequest.IncludeLogins = true;
                 logRequest.IncludeTokenRequests = true;
             }
-          
+
             var where = $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"{Constants.Logs.UsageType} == '{i}'"))}";
 
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
@@ -242,8 +215,7 @@ namespace FoxIDs.Logic
 
             var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
-            var table = response.Value.Table;
-            return table.Rows;
+            return response.Value.Table.Rows;
         }
 
         private IEnumerable<string> GetIncludes(Api.UsageLogRequest logRequest)
@@ -285,7 +257,7 @@ namespace FoxIDs.Logic
             return string.Join(" and ", whereDataSlice);
         }
 
-        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMasterTenant)
+    private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMasterTenant)
         {
             return
 @$"{GetFromTypeAndUnion(fromType, isMasterTenant)}

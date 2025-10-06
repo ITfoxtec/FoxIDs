@@ -294,7 +294,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
-                if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential && newDownPartyOidcForm.Model.Secret.IsNullOrWhiteSpace())
                 {
                     newDownPartyOidcForm.Model.Secret = SecretGenerator.GenerateNewSecret();
                 }
@@ -395,7 +395,10 @@ namespace FoxIDs.Client.Pages
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
-                newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+                if (newDownPartyOAuthClientForm.Model.Secret.IsNullOrWhiteSpace())
+                {
+                    newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+                }
 
                 var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
@@ -546,6 +549,120 @@ namespace FoxIDs.Client.Pages
             {
                 newDownPartyViewModel.CreateWorking = false;
             }
+        }
+
+        private void EnsureNewDownPartyOidcSummaryDefaults()
+        {
+            if (newDownPartyModal?.OidcForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OidcForm.Model;
+
+            if (!newDownPartyModal.Created)
+            {
+                if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential && model.Secret.IsNullOrWhiteSpace())
+                {
+                    model.Secret = SecretGenerator.GenerateNewSecret();
+                }
+                else if ((newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative) && string.IsNullOrWhiteSpace(model.Pkce))
+                {
+                    model.Pkce = bool.TrueString;
+                }
+
+                if (model.Scopes == null || !model.Scopes.Any())
+                {
+                    model.Scopes = new List<string>
+                    {
+                        DefaultOidcScopes.OfflineAccess,
+                        DefaultOidcScopes.Profile,
+                        DefaultOidcScopes.Email,
+                        DefaultOidcScopes.Address,
+                        DefaultOidcScopes.Phone
+                    };
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name) || !string.IsNullOrWhiteSpace(model.Authority))
+            {
+                return;
+            }
+
+            (var authority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
+            model.Authority = authority;
+        }
+
+        private void EnsureNewDownPartyOAuthClientSummaryDefaults()
+        {
+            if (newDownPartyModal?.OAuthClientForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OAuthClientForm.Model;
+
+            if (!newDownPartyModal.Created && model.Secret.IsNullOrWhiteSpace())
+            {
+                model.Secret = SecretGenerator.GenerateNewSecret();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name) || !string.IsNullOrWhiteSpace(model.Authority))
+            {
+                return;
+            }
+
+            (var authority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            model.Authority = authority;
+        }
+
+        private void EnsureNewDownPartyOAuthResourceSummaryDefaults()
+        {
+            if (newDownPartyModal?.OAuthResourceForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OAuthResourceForm.Model;
+
+            if (!newDownPartyModal.Created)
+            {
+                if (!string.IsNullOrWhiteSpace(model.Name) && model.Scopes != null)
+                {
+                    model.ScopesShow = model.Scopes.Where(s => !s.IsNullOrWhiteSpace()).Select(s => s).ToList();
+                    model.ClientScopes = model.Scopes.Where(s => !s.IsNullOrWhiteSpace()).Select(s => $"{model.Name}:{s}").ToList();
+                }
+                else
+                {
+                    model.ScopesShow = new List<string>();
+                    model.ClientScopes = new List<string>();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name) || !string.IsNullOrWhiteSpace(model.Authority))
+            {
+                return;
+            }
+
+            (var authority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            model.Authority = authority;
+        }
+
+        private void EnsureNewDownPartySamlSummaryDefaults()
+        {
+            if (newDownPartyModal?.SamlForm?.Model == null || newDownPartyModal.Created)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.SamlForm.Model;
+
+            if (string.IsNullOrWhiteSpace(model.Name) || !string.IsNullOrWhiteSpace(model.Metadata))
+            {
+                return;
+            }
+
+            model.Metadata = MetadataLogic.GetDownSamlMetadata(model.Name);
         }
     }
 }

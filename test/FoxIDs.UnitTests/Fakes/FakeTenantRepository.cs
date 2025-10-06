@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -10,7 +11,7 @@ namespace FoxIDs.UnitTests.Mocks
 {
     public class FakeTenantRepository : TenantDataRepositoryBase
     {
-        public FakeTenantRepository() : base(null)
+        public FakeTenantRepository(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
 
         public override ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)

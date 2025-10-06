@@ -1,26 +1,30 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
 using FoxIDs.Models;
-using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using FoxIDs.Infrastructure;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using OpenSearch.Client;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
     public class CosmosDbTenantDataRepository : TenantDataRepositoryBase
     {
         private readonly ICosmosDbDataRepositoryClient dataRepositoryClient;
+        private readonly AuditLogic auditLogic;
 
-        public CosmosDbTenantDataRepository(ICosmosDbDataRepositoryClient dataRepositoryClient, IHttpContextAccessor httpContextAccessor) : base (httpContextAccessor)
+        public CosmosDbTenantDataRepository(ICosmosDbDataRepositoryClient dataRepositoryClient, IHttpContextAccessor httpContextAccessor, AuditLogic auditLogic) : base(httpContextAccessor)
         {
             this.dataRepositoryClient = dataRepositoryClient;
+            this.auditLogic = auditLogic;
         }
 
         public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
@@ -137,10 +141,10 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if(scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
@@ -166,10 +170,10 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if (scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (pageSize: {pageSize}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (pageSize: {pageSize}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
@@ -184,6 +188,7 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 if (item.AdditionalIds?.Count() > 0)
@@ -202,6 +207,11 @@ namespace FoxIDs.Repository
                 var container = GetContainer(item);
                 var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Create, default, item, item.Id, GetScopedLogger(scopedLogger));
+                }
             }
             catch (FoxIDsDataException)
             {
@@ -213,10 +223,10 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if (scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
@@ -231,6 +241,8 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
             try
             {
                 if (item.AdditionalIds?.Count() > 0)
@@ -247,8 +259,17 @@ namespace FoxIDs.Repository
                 }
 
                 var container = GetContainer(item);
+                if (shouldAudit)
+                {
+                    existing = await ReadItemAsync<T>(item.Id, item.PartitionId, required: false, scopedLogger: scopedLogger);
+                }
                 var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Update, existing, item, item.Id, GetScopedLogger(scopedLogger));
+                }
             }
             catch (FoxIDsDataException)
             {
@@ -260,10 +281,10 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if (scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
@@ -278,6 +299,8 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
             try
             {
                 if (item.AdditionalIds?.Count() > 0)
@@ -295,8 +318,17 @@ namespace FoxIDs.Repository
                 }
 
                 var container = GetContainer(item);
+                if (shouldAudit)
+                {
+                    existing = await ReadItemAsync<T>(item.Id, item.PartitionId, required: false, scopedLogger: scopedLogger);
+                }
                 var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId), new ItemRequestOptions { IndexingDirective = IndexingDirective.Exclude });
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Save, existing, item, item.Id, GetScopedLogger(scopedLogger));
+                }
             }
             catch (FoxIDsDataException)
             {
@@ -308,10 +340,10 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if (scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
@@ -353,14 +385,31 @@ namespace FoxIDs.Repository
 
             var partitionId = id.IdToTenantPartitionId();
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+
             if (!queryAdditionalIds)
             {
                 double totalRU = 0;
+                T existing = default;
                 try
                 {
+                    if (shouldAudit)
+                    {
+                        existing = await ReadItemAsync<T>(id, partitionId, required: false, scopedLogger: scopedLogger);
+                    }
+
                     var container = GetContainer<T>();
                     var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                     totalRU += deleteResponse.RequestCharge;
+
+                    if (shouldAudit && existing != null)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
+                    }
+                }
+                catch (FoxIDsDataException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
@@ -368,16 +417,20 @@ namespace FoxIDs.Repository
                 }
                 finally
                 {
-                    scopedLogger = scopedLogger ?? GetScopedLogger();
-                    if (scopedLogger != null)
+                    var resolvedScopedLoggerInner = GetScopedLogger(scopedLogger);
+                    if (resolvedScopedLoggerInner != null)
                     {
-                        scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                        resolvedScopedLoggerInner.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
                     }
                 }
             }
             else
             {
-                _ = await ReadItemAsync<T>(id, partitionId, true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                var deleted = await ReadItemAsync<T>(id, partitionId, true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                if (shouldAudit && deleted != null)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, deleted, default, deleted.Id, GetScopedLogger(scopedLogger));
+                }
             }
         }
 
@@ -424,6 +477,7 @@ namespace FoxIDs.Repository
             var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var response = await setIterator.ReadNextAsync();
@@ -436,6 +490,11 @@ namespace FoxIDs.Repository
                     var deleteResponse = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
                     count++;
                     totalRU += deleteResponse.RequestCharge;
+
+                    if (shouldAudit)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, item, default, item.Id, GetScopedLogger(scopedLogger));
+                    }
                 }
                 return count;
             }
@@ -445,27 +504,41 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                scopedLogger = scopedLogger ?? GetScopedLogger();
-                if (scopedLogger != null)
+                var resolvedScopedLogger = GetScopedLogger(scopedLogger);
+                if (resolvedScopedLogger != null)
                 {
-                    scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
+                    resolvedScopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
                 }
             }
         }
 
         public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            TelemetryScopedLogger resolvedScopedLogger = null;
             foreach (string id in ids)
             {
                 var partitionId = id.IdToTenantPartitionId();
                 if (!queryAdditionalIds)
                 {
                     double totalRU = 0;
+                    T existing = default;
                     try
                     {
+                        if (shouldAudit)
+                        {
+                            existing = await ReadItemAsync<T>(id, partitionId, required: false, scopedLogger: scopedLogger);
+                        }
+
                         var container = GetContainer<T>();
                         var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                         totalRU += deleteResponse.RequestCharge;
+
+                        if (shouldAudit && existing != null)
+                        {
+                            resolvedScopedLogger ??= GetScopedLogger(scopedLogger);
+                            auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id, resolvedScopedLogger);
+                        }
                     }
                     catch (CosmosException ex)
                     {
@@ -481,16 +554,20 @@ namespace FoxIDs.Repository
                     }
                     finally
                     {
-                        scopedLogger = scopedLogger ?? GetScopedLogger();
-                        if (scopedLogger != null)
+                        var resolvedScopedLoggerInner = GetScopedLogger(scopedLogger);
+                        if (resolvedScopedLoggerInner != null)
                         {
-                            scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
+                            resolvedScopedLoggerInner.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
                         }
                     }
                 }
                 else
                 {
-                    _ = await ReadItemAsync<T>(id, partitionId, false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                    var deleted = await ReadItemAsync<T>(id, partitionId, false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                    if (shouldAudit && deleted != null)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, deleted, default, deleted.Id, GetScopedLogger(scopedLogger));
+                    }
                 }
             }
         }
@@ -525,10 +602,9 @@ namespace FoxIDs.Repository
                 return typeof(T).GetInterface(nameof(IDataTtlDocument)) != null;
             }
         }
-
         private IDictionary<string, string> GetProperties()
         {
-            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
+            var routeBinding = HttpContext?.TryGetRouteBinding();
             if (routeBinding != null)
             {
                 return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };

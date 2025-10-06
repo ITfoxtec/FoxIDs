@@ -11,12 +11,14 @@ namespace FoxIDs.Repository
 {
     public abstract class TenantDataRepositoryBase : ITenantDataRepository
     {
-        protected readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         protected TenantDataRepositoryBase(IHttpContextAccessor httpContextAccessor)
         {
             this.httpContextAccessor = httpContextAccessor;
         }
+
+        protected HttpContext HttpContext => httpContextAccessor?.HttpContext;
 
         public abstract ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         public abstract ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument;
@@ -55,9 +57,9 @@ namespace FoxIDs.Repository
             }
         }
 
-        protected TelemetryScopedLogger GetScopedLogger()
+        protected TelemetryScopedLogger GetScopedLogger(TelemetryScopedLogger scopedLogger = null)
         {
-            return httpContextAccessor?.HttpContext?.RequestServices?.GetService<TelemetryScopedLogger>();
+            return scopedLogger ?? HttpContext?.RequestServices.GetService<TelemetryScopedLogger>();
         }
     }
 }

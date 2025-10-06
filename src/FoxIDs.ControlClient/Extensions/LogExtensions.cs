@@ -24,6 +24,14 @@ namespace FoxIDs.Client
             return logValue;
         }
 
-        
+        public static string GetDisplayName(this string name)
+        {
+            if (!name.IsNullOrEmpty())
+            {
+                return name.Replace("up-party", "auth. method");
+            }
+
+            return name;
+        }
     }
 }

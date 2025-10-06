@@ -139,8 +139,8 @@
                     <div class="card">
                         <div class="card-body pt-3 pb-0">
                             <FInputToggleN @bind-Value="loginUpParty.Form.Model.DisablePasswordAuth" For="@(() => loginUpParty.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
-                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
                             <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessSms" For="@(() => loginUpParty.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
+                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
                         </div>
                     </div>
                     <label class="label-control">Authentication</label>
@@ -149,7 +149,15 @@
                 {
                     @if (!(loginUpParty.Form.Model.DisablePasswordAuth == true))
                     {
-                        <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPassword" For="@(() => loginUpParty.Form.Model.DisableSetPassword)" Negation="true" TextType="e.d" />
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body pt-3 pb-0">
+                                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPasswordSms" For="@(() => loginUpParty.Form.Model.DisableSetPasswordSms)" Negation="true" TextType="e.d" />
+                                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPasswordEmail" For="@(() => loginUpParty.Form.Model.DisableSetPasswordEmail)" Negation="true" TextType="e.d" />
+                                </div>
+                            </div>
+                            <label class="label-control">Set / reset password</label>
+                        </div>
                     }
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
                 }
@@ -427,14 +435,3 @@
         <div class="modal-backdrop fade show"></div>
     }
 </PageEditForm>
-
-
-
-
-
-
-
-
-
-
-

@@ -6,10 +6,12 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
@@ -20,13 +22,16 @@ namespace FoxIDs.Controllers
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public abstract class ApiController : ControllerBase, IRouteBinding
+    public abstract class ApiController : ControllerBase, IRouteBinding, IAsyncActionFilter
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ApiController(TelemetryScopedLogger logger)
+        private bool auditLogEnabled;
+
+        public ApiController(TelemetryScopedLogger logger, bool auditLogEnabled = true)
         {
             this.logger = logger;
+            this.auditLogEnabled = auditLogEnabled;
         }
 
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
@@ -48,6 +53,21 @@ namespace FoxIDs.Controllers
                 Query = string.Join('&', routeValues)
             };
             return new CreatedResult(uriBuilder.Uri, value);
+        }
+
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            if (auditLogEnabled)
+            {
+                var requestMethod = context.HttpContext.Request.Method;
+                var shouldAudit = HttpMethods.IsPost(requestMethod) || HttpMethods.IsPut(requestMethod) || HttpMethods.IsDelete(requestMethod);
+                if (shouldAudit)
+                {
+                    context.HttpContext.Items[Constants.ControlApi.AuditLogEnabledKey] = true;
+                }
+            }
+
+            await next();
         }
 
         public virtual NotFoundObjectResult NotFound(string typeName, string name, string fieldName = null, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)

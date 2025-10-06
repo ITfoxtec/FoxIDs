@@ -1,5 +1,5 @@
 <div class="modal fade @(show ? "show" : "")" style="@(show ? "display: block; padding-right: 17px;" : "")" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-scrollable @DialogCssClass" role="document">
+    <div class="modal-dialog @DialogClassName" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title <small class="font-italic">@SubTitle</small></h5>
@@ -36,11 +36,16 @@
     public string SubTitle { get; set; }
 
     [Parameter]
+    public string DialogClass { get; set; }
+
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    private string DialogClassName => string.IsNullOrWhiteSpace(DialogClass) ? "modal-md modal-lg modal-dialog-scrollable" : DialogClass;
 
     public void Show()
     {
-        if(!show)
+        if (!show)
         {
             show = true;
             StateHasChanged();

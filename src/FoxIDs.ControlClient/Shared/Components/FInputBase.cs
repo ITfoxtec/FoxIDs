@@ -24,11 +24,13 @@ namespace FoxIDs.Client.Shared.Components
 
         protected override bool TryParseValueFromString(string value, out TValue result, out string validationErrorMessage)
         {
+            var nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(TValue));
+
             if (typeof(TValue) == typeof(string))
             {
                 result = (TValue)Convert.ChangeType(value, typeof(TValue));
                 validationErrorMessage = null;
-                OnValueParsedAsync.Invoke(result);
+                OnValueParsedAsync?.Invoke(result);
                 return true;
             }
             else if (typeof(TValue) == typeof(int))
@@ -38,7 +40,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Convert.ChangeType(intResult, typeof(TValue));
                     validationErrorMessage = null;
-                    OnValueParsedAsync.Invoke(result);
+                    OnValueParsedAsync?.Invoke(result);
                     return true;
                 }
                 else
@@ -55,7 +57,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Convert.ChangeType(boolResult, typeof(TValue));
                     validationErrorMessage = null;
-                    OnValueParsedAsync.Invoke(result);
+                    OnValueParsedAsync?.Invoke(result);
                     return true;
                 }
                 else
@@ -71,7 +73,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Enum.Parse(typeof(TValue), value);
                     validationErrorMessage = null;
-                    OnValueParsedAsync.Invoke(result);
+                    OnValueParsedAsync?.Invoke(result);
                     return true;
                 }
                 catch (ArgumentException)
@@ -81,13 +83,20 @@ namespace FoxIDs.Client.Shared.Components
                     return false;
                 }
             }
-            else if (Nullable.GetUnderlyingType(typeof(TValue)).IsEnum)
+            else if (nullableUnderlyingType != null && nullableUnderlyingType.IsEnum)
             {
+                if (string.IsNullOrEmpty(value))
+                {
+                    result = default;
+                    validationErrorMessage = null;
+                    OnValueParsedAsync?.Invoke(result);
+                    return true;
+                }
                 try
                 {
-                    result = (TValue)Enum.Parse(Nullable.GetUnderlyingType(typeof(TValue)), value);
+                    result = (TValue)Enum.Parse(nullableUnderlyingType, value);
                     validationErrorMessage = null;
-                    OnValueParsedAsync.Invoke(result);
+                    OnValueParsedAsync?.Invoke(result);
                     return true;
                 }
                 catch (ArgumentException)

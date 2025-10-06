@@ -1,4 +1,5 @@
 using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
@@ -12,8 +13,17 @@ using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-  public class PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db, IHttpContextAccessor httpContextAccessor) : TenantDataRepositoryBase(httpContextAccessor)
+    public class PgTenantDataRepository : TenantDataRepositoryBase
     {
+        private readonly PgKeyValueDB db;
+        private readonly AuditLogic auditLogic;
+
+        public PgTenantDataRepository([FromKeyedServices(Constants.Models.DataType.Tenant)] PgKeyValueDB db, AuditLogic auditLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        {
+            this.db = db;
+            this.auditLogic = auditLogic;
+        }
+
         public override async ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
@@ -155,9 +165,17 @@ namespace FoxIDs.Repository
                 }
             }
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            TelemetryScopedLogger resolvedScopedLogger = null;
             if (!await db.CreateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+            }
+
+            if (shouldAudit)
+            {
+                resolvedScopedLogger ??= GetScopedLogger(scopedLogger);
+                auditLogic.LogDataEvent(AuditDataActions.Create, default, item, item.Id, resolvedScopedLogger);
             }
         }
 
@@ -181,9 +199,27 @@ namespace FoxIDs.Repository
                 }
             }
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            TelemetryScopedLogger resolvedScopedLogger = null;
+            T existing = default;
+            if (shouldAudit)
+            {
+                existing = await db.GetAsync<T>(item.Id, item.PartitionId);
+                if (existing == null)
+                {
+                    throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+
             if (!await db.UpdateAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null))
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+
+            if (shouldAudit)
+            {
+                resolvedScopedLogger ??= GetScopedLogger(scopedLogger);
+                auditLogic.LogDataEvent(AuditDataActions.Update, existing, item, item.Id, resolvedScopedLogger);
             }
         }
 
@@ -208,7 +244,21 @@ namespace FoxIDs.Repository
                 }
             }
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            TelemetryScopedLogger resolvedScopedLogger = null;
+            T existing = default;
+            if (shouldAudit)
+            {
+                existing = await db.GetAsync<T>(item.Id, item.PartitionId);
+            }
+
             await db.UpsertAsync(item.Id, item, item.PartitionId, expires: item is IDataTtlDocument ttlItem ? ttlItem.ExpireAt : null);
+
+            if (shouldAudit)
+            {
+                resolvedScopedLogger ??= GetScopedLogger(scopedLogger);
+                auditLogic.LogDataEvent(AuditDataActions.Save, existing, item, item.Id, resolvedScopedLogger);
+            }
         }
 
         private async Task<bool> AdditionalIdExistAsync<T>(string idOrAdditionalId, string partitionId, string notId = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
@@ -242,18 +292,35 @@ namespace FoxIDs.Repository
         public override async ValueTask DeleteAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
-            
+
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+
             if(!queryAdditionalIds)
             {
                 var partitionId = id.IdToTenantPartitionId();
+                T existing = default;
+                if (shouldAudit)
+                {
+                    existing = await db.GetAsync<T>(id, partitionId);
+                }
+
                 if (!await db.RemoveAsync(id, partitionId))
                 {
                     throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
                 }
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
+                }
             }
             else
             {
-                _ = await GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                var deleted = await GetAsync<T>(id, required: true, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                if (shouldAudit && deleted != null)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, deleted, default, deleted.Id, GetScopedLogger(scopedLogger));
+                }
             }
         }
 
@@ -268,21 +335,53 @@ namespace FoxIDs.Repository
 
             await idKey.ValidateObjectAsync();
             var partitionId = PartitionIdFormat<T>(idKey);
-            return await db.RemoveAllAsync(partitionId, whereQuery);
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            List<T> existingItems = null;
+            if (shouldAudit)
+            {
+                existingItems = await db.GetListAsync(partitionId, whereQuery, int.MaxValue).ToListAsync();
+            }
+
+            var removedCount = await db.RemoveAllAsync(partitionId, whereQuery);
+
+            if (shouldAudit && existingItems?.Count > 0)
+            {
+                foreach (var existing in existingItems)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
+                }
+            }
+
+            return removedCount;
         }
 
         public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null)
         {
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             foreach (string id in ids)
             {
                 if (!queryAdditionalIds)
                 {
                     var partitionId = id.IdToTenantPartitionId();
-                    _ = await db.RemoveAsync(id, partitionId);
+                    T existing = default;
+                    if (shouldAudit)
+                    {
+                        existing = await db.GetAsync<T>(id, partitionId);
+                    }
+
+                    var removed = await db.RemoveAsync(id, partitionId);
+                    if (shouldAudit && removed && existing != null)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id, GetScopedLogger(scopedLogger));
+                    }
                 }
                 else
                 {
-                    _ = await GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                    var deleted = await GetAsync<T>(id, required: false, delete: true, queryAdditionalIds: queryAdditionalIds, scopedLogger: scopedLogger);
+                    if (shouldAudit && deleted != null)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, deleted, default, deleted.Id, GetScopedLogger(scopedLogger));
+                    }
                 }
             }
         }

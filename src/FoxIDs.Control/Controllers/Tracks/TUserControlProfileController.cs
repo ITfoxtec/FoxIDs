@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
 
-        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger)
+        public TUserControlProfileController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository) : base(logger, auditLogEnabled: false)
         {
             this.logger = logger;
             this.mapper = mapper;

@@ -42,7 +42,7 @@ namespace FoxIDs.Repository
 
         public override async ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true)  
         {
-            var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
+            var partitionId = ResolvePartitionId<T>(idKey, usePartitionId);
             return (int) await db.CountAsync(partitionId, whereQuery);
         }
 
@@ -389,6 +389,38 @@ namespace FoxIDs.Repository
         public async Task RemoveAllExpiredGlobalAsync()
         {
             _ = await db.RemoveAllExpiredGlobalAsync();
+        }
+
+        private string ResolvePartitionId<T>(Track.IdKey idKey, bool usePartitionId) where T : IDataDocument
+        {
+            if (usePartitionId)
+            {
+                return PartitionIdFormat<T>(idKey);
+            }
+
+            if (typeof(T).Equals(typeof(Tenant)))
+            {
+                return Tenant.PartitionIdFormat();
+            }
+
+            if (typeof(T).Equals(typeof(Used)))
+            {
+                return Used.PartitionIdFormat();
+            }
+
+            if (idKey != null)
+            {
+                try
+                {
+                    return PartitionIdFormat<T>(idKey);
+                }
+                catch (ArgumentNullException)
+                {
+                    // ignore and fallback to null
+                }
+            }
+
+            return null;
         }
     }
 }

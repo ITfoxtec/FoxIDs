@@ -69,30 +69,14 @@ namespace FoxIDs.Logic
                 return;
             }
 
-            var scopedLogger = GetScopedLogger();
-
             try
             {
                 var properties = BuildDataLogProperties<T>(AuditTypes.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                if (scopedLogger != null)
-                {
-                    scopedLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties: properties);
-                }
-                else
-                {
-                    telemetryLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties);
-                }
+                telemetryLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties);
             }
             catch (Exception ex)
             {
-                if (scopedLogger != null)
-                {
-                    scopedLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
-                }
-                else
-                {
-                    telemetryLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
-                }
+                telemetryLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
             }
         }
 

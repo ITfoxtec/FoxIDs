@@ -15,7 +15,7 @@ namespace FoxIDs.Repository
 
         protected TenantDataRepositoryBase(IHttpContextAccessor httpContextAccessor)
         {
-            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         protected HttpContext HttpContext => httpContextAccessor?.HttpContext;

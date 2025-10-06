@@ -19,6 +19,9 @@
 }
 
 @code {
+    [Parameter]
+    public string DialogCssClass { get; set; } = "modal-md modal-lg";
+
     bool show = false;
 
     public bool IsShown => show;

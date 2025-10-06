@@ -1543,7 +1543,7 @@ namespace FoxIDs.Controllers
                         await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier, upPartyType: loginUpParty.Type);
                     }
 
-                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }

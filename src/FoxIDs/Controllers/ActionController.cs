@@ -364,7 +364,7 @@ namespace FoxIDs.Controllers
                 {
                     var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
 
-                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
@@ -527,7 +527,7 @@ namespace FoxIDs.Controllers
                 {
                     var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
 
-                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId);
 
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }

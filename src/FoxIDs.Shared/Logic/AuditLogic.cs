@@ -69,14 +69,30 @@ namespace FoxIDs.Logic
                 return;
             }
 
+            var scopedLogger = GetScopedLogger();
+
             try
             {
                 var properties = BuildDataLogProperties<T>(AuditTypes.Data, dataAction, GetDiffNodeResult(before, after), documentId);
-                telemetryLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties);
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties: properties);
+                }
+                else
+                {
+                    telemetryLogger.Event($"System-Level {AuditTypes.Data} {dataAction}", properties);
+                }
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
+                }
+                else
+                {
+                    telemetryLogger.Warning(ex, message: $"System-Level {AuditTypes.Data} {dataAction} master document logging failed.");
+                }
             }
         }
 
@@ -105,6 +121,8 @@ namespace FoxIDs.Logic
                 return;
             }
 
+            var scopedLogger = GetScopedLogger();
+
             try
             {
                 var properties = BuildUserActionProperties(AuditTypes.Login, upPartyId, partyType);
@@ -114,11 +132,25 @@ namespace FoxIDs.Logic
                     AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
                     AddProperty(properties, Constants.Logs.SessionId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId));
                 }
-                telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
+                }
+                else
+                {
+                    telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
+                }
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"{AuditTypes.Login} {partyType} event logging failed.");
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Warning(ex, message: $"{AuditTypes.Login} {partyType} event logging failed.");
+                }
+                else
+                {
+                    telemetryLogger.Warning(ex, message: $"{AuditTypes.Login} {partyType} event logging failed.");
+                }
             }
         }
 
@@ -129,15 +161,31 @@ namespace FoxIDs.Logic
                 return;
             }
 
+            var scopedLogger = GetScopedLogger();
+
             try
             {
                 var properties = BuildUserActionProperties(AuditTypes.Logout, upPartyId, partyType);
                 AddProperty(properties, Constants.Logs.SessionId, sessionId);
-                telemetryLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+                }
+                else
+                {
+                    telemetryLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+                }
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"{AuditTypes.Logout} {partyType} event logging failed.");
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Warning(ex, message: $"{AuditTypes.Logout} {partyType} event logging failed.");
+                }
+                else
+                {
+                    telemetryLogger.Warning(ex, message: $"{AuditTypes.Logout} {partyType} event logging failed.");
+                }
             }
         }
 
@@ -148,15 +196,31 @@ namespace FoxIDs.Logic
                 return;
             }
 
+            var scopedLogger = GetScopedLogger();
+
             try
             {
                 var properties = BuildUserActionProperties(AuditTypes.ChangePassword, upPartyId, partyType);
                 AddProperty(properties, Constants.Logs.UserId, userId);
-                telemetryLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+                }
+                else
+                {
+                    telemetryLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+                }
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"{AuditTypes.ChangePassword} {partyType} event logging failed.");
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Warning(ex, message: $"{AuditTypes.ChangePassword} {partyType} event logging failed.");
+                }
+                else
+                {
+                    telemetryLogger.Warning(ex, message: $"{AuditTypes.ChangePassword} {partyType} event logging failed.");
+                }
             }
         }
 
@@ -167,6 +231,8 @@ namespace FoxIDs.Logic
                 return;
             }
 
+            var scopedLogger = GetScopedLogger();
+
             try
             {
                 var properties = BuildUserActionProperties(AuditTypes.CreateUser, upPartyId, partyType);
@@ -175,11 +241,25 @@ namespace FoxIDs.Logic
                 {
                     AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
                 }
-                telemetryLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+                }
+                else
+                {
+                    telemetryLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+                }
             }
             catch (Exception ex)
             {
-                telemetryLogger.Warning(ex, message: $"{AuditTypes.CreateUser} {partyType} event logging failed.");
+                if (scopedLogger != null)
+                {
+                    scopedLogger.Warning(ex, message: $"{AuditTypes.CreateUser} {partyType} event logging failed.");
+                }
+                else
+                {
+                    telemetryLogger.Warning(ex, message: $"{AuditTypes.CreateUser} {partyType} event logging failed.");
+                }
             }
         }
 

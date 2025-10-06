@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                 responseTruncated = true;
             }
 
-            var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems).Select(i => ToApiLogItem(i));
+            var orderedItems = items.OrderByDescending(i => i.Timestamp).Take(maxResponseLogItems).Select(i => ToApiLogItem(i));
 
             var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
             foreach (var item in orderedItems)
@@ -205,7 +205,7 @@ namespace FoxIDs.Logic
                     Timestamp = GetTimestamp(row),
                     SequenceId = GetSequenceId(row),
                     OperationId = GetOperationId(row),
-                    Values = GetValues(row, [Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.ClientIp, Constants.Logs.Results.AppRoleInstance])
+                    Values = GetValues(row, [Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.AppRoleInstance])
                 };
                 if ((includeErrors && (item.Type == Api.LogItemTypes.CriticalError || item.Type == Api.LogItemTypes.Error)) || (includeWarnings && item.Type == Api.LogItemTypes.Warning))
                 {
@@ -234,7 +234,7 @@ namespace FoxIDs.Logic
                     Timestamp = GetTimestamp(row),
                     SequenceId = GetSequenceId(row),
                     OperationId = GetOperationId(row),
-                    Values = GetValues(row, [Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.ClientIp, Constants.Logs.Results.AppRoleInstance])
+                    Values = GetValues(row, [Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.AppRoleInstance])
                 };
                 AddAddTraceMessage(row, item);
                 AddProperties(row, item.Values);
@@ -247,7 +247,7 @@ namespace FoxIDs.Logic
         private async Task<bool> LoadEventsAsync(string tenantName, string trackName, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
-            var where = $"| where isempty(Properties.f_UsageType) and isempty(Properties.f_AuditDataAction){(filter.IsNullOrEmpty() ? string.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
+            var where = $"| where isempty(Properties.UsageType) and isempty(Properties.AuditDataAction){(filter.IsNullOrEmpty() ? string.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
             var eventsQuery = GetQuery(tenantName, trackName, "AppEvents", extend, where);
             Response<LogsQueryResult> response = await logAnalyticsWorkspaceProvider.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
@@ -314,14 +314,33 @@ namespace FoxIDs.Logic
 
         private string GetQuery(string tenantName, string trackName, string fromType, string extend, string where)
         {
+            var extendClause = extend.IsNullOrEmpty() ? string.Empty : $"{Environment.NewLine}{extend}";
+
+            var tenantTrackConditions = new List<string>();
+            if (!tenantName.IsNullOrEmpty())
+            {
+            tenantTrackConditions.Add($"{Constants.Logs.TenantName} == '{tenantName}'");
+            }
+            if (!trackName.IsNullOrEmpty())
+            {
+            tenantTrackConditions.Add($"{Constants.Logs.TrackName} == '{trackName}'");
+            }
+
+            var tenantTrackWhereClause = tenantTrackConditions.Any()
+            ? $"{Environment.NewLine}| where {string.Join(" and ", tenantTrackConditions)}"
+            : string.Empty;
+
+            var additionalWhereClause = where.IsNullOrEmpty()
+            ? string.Empty
+            : $"{Environment.NewLine}{where}";
+
             return
-@$"{fromType}
-| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
-| extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
-| extend {Constants.Logs.SequenceId} = Properties.{Constants.Logs.SequenceId} {(extend.IsNullOrEmpty() ? string.Empty : extend)}
-| where {Constants.Logs.TenantName} == '{tenantName}' and {Constants.Logs.TrackName} == '{trackName}' {(where.IsNullOrEmpty() ? string.Empty : where)}
-| limit {maxQueryLogItems}
-| order by TimeGenerated";
+    @$"{fromType}
+    | extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
+    | extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
+    | extend {Constants.Logs.SequenceId} = Properties.{Constants.Logs.SequenceId}{extendClause}{tenantTrackWhereClause}{additionalWhereClause}
+    | limit {maxQueryLogItems}
+    | order by TimeGenerated desc";
         }
 
         private DateTimeOffset? GetTimestamp(LogsTableRow row)
@@ -396,15 +415,17 @@ namespace FoxIDs.Logic
 
         private void AddProperties(LogsTableRow row, IDictionary<string, string> values)
         {
-            var Properties = row.GetString(Constants.Logs.Results.Properties);
-            if (Properties != null)
+            var properties = row.GetString(Constants.Logs.Results.Properties);
+            if (properties != null)
             {
-                var cdResult = Properties.ToObject<Dictionary<string, string>>();
-                var cdValues = cdResult.Where(r => r.Key.StartsWith("f_", StringComparison.Ordinal) || r.Key == Constants.Logs.Results.RequestId || r.Key == Constants.Logs.Results.RequestPath || r.Key == Constants.Logs.Results.RequestMethod);
-                foreach (var cdValue in cdValues)
+                var cdResult = properties.ToObject<Dictionary<string, string>>();
+                foreach (var cdValue in cdResult)
                 {
-                    var value = cdValue.Value?.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{cdValue.Value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : cdValue.Value;
-                    values.Add(cdValue.Key, value);
+                    if (!values.ContainsKey(cdValue.Key))
+                    {
+                        var value = cdValue.Value?.Length > Constants.Logs.Results.PropertiesValueMaxLength ? $"{cdValue.Value.Substring(0, Constants.Logs.Results.PropertiesValueMaxLength)}..." : cdValue.Value;
+                        values.Add(cdValue.Key, value);
+                    }
                 }
             }
         }

@@ -68,6 +68,7 @@ namespace FoxIDs.Logic
 
             AddValue(values, Constants.Logs.MachineName, row.GetString(Constants.Logs.MachineName));
             AddValue(values, Constants.Logs.ClientIP, row.GetString(Constants.Logs.ClientIP));
+            AddValue(values, Constants.Logs.SessionId, row.GetString(Constants.Logs.SessionId));
             AddValue(values, Constants.Logs.UserAgent, row.GetString(Constants.Logs.UserAgent));
             AddValue(values, Constants.Logs.UpPartyId, row.GetString(Constants.Logs.UpPartyId));
             AddValue(values, Constants.Logs.TenantName, row.GetString(Constants.Logs.TenantName));
@@ -94,6 +95,7 @@ namespace FoxIDs.Logic
             {
                 $"| extend {Constants.Logs.MachineName} = Properties.{Constants.Logs.MachineName}",
                 $"| extend {Constants.Logs.ClientIP} = Properties.{Constants.Logs.ClientIP}",
+                $"| extend {Constants.Logs.SessionId} = Properties.{Constants.Logs.SessionId}",
                 $"| extend {Constants.Logs.UserAgent} = Properties.{Constants.Logs.UserAgent}",
                 $"| extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId}",
                 $"| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}",

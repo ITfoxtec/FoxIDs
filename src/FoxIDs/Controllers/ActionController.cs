@@ -23,6 +23,7 @@ namespace FoxIDs.Controllers
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly LoginPageLogic loginPageLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly AuditLogic auditLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly AccountLogic accountLogic;
@@ -30,13 +31,14 @@ namespace FoxIDs.Controllers
         private readonly PlanUsageLogic planUsageLogic;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, PlanUsageLogic planUsageLogic, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantDataRepository = tenantDataRepository;
             this.loginPageLogic = loginPageLogic;
             this.sequenceLogic = sequenceLogic;
+            this.auditLogic = auditLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountActionLogic = accountActionLogic;
             this.accountLogic = accountLogic;
@@ -361,6 +363,9 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountActionLogic.VerifyPhoneSetPasswordCodeSmsAndSetPasswordAsync(sequenceData.Phone, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
+
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException unex)
@@ -521,6 +526,9 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await accountActionLogic.VerifyEmailSetPasswordCodeAndSetPasswordAsync(sequenceData.Email ?? sequenceData.UserIdentifier, setPassword.ConfirmationCode, setPassword.NewPassword, loginUpParty.DeleteRefreshTokenGrantsOnChangePassword);
+
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserNotExistsException unex)

@@ -7,6 +7,7 @@
         public string RequestMethod { get; set; }
         public string UserId { get; set; }
         public string Email { get; set; }
+        public string SessionId { get; set; }
         public string UsageType { get; set; }
         public string UsageLoginType { get; set; }
         public string UsageTokenType { get; set; }

@@ -186,6 +186,5 @@ namespace FoxIDs.Logic
         }
 
         private AccountActionLogic GetAccountActionLogicLogic() => serviceProvider.GetService<AccountActionLogic>();
-
     }
 }

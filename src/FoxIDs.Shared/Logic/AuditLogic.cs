@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -106,12 +107,79 @@ namespace FoxIDs.Logic
 
             try
             {
-                var properties = BuildUserActionProperties(AuditTypes.Login, upPartyId, partyType, claims);
+                var properties = BuildUserActionProperties(AuditTypes.Login, upPartyId, partyType);
+                if (claims != null)
+                {
+                    AddProperty(properties, Constants.Logs.UserId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject));
+                    AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
+                    AddProperty(properties, Constants.Logs.SessionId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId));
+                }
                 telemetryLogger.Event($"{AuditTypes.Login} action in {partyType} up-party", properties: properties);
             }
             catch (Exception ex)
             {
                 telemetryLogger.Warning(ex, message: $"{AuditTypes.Login} {partyType} event logging failed.");
+            }
+        }
+
+        public void LogLogoutEvent(PartyTypes partyType, string upPartyId, string sessionId)
+        {
+            if (!ShouldLogAudit())
+            {
+                return;
+            }
+
+            try
+            {
+                var properties = BuildUserActionProperties(AuditTypes.Logout, upPartyId, partyType);
+                AddProperty(properties, Constants.Logs.SessionId, sessionId);
+                telemetryLogger.Event($"{AuditTypes.Logout} action in {partyType} up-party", properties: properties);
+            }
+            catch (Exception ex)
+            {
+                telemetryLogger.Warning(ex, message: $"{AuditTypes.Logout} {partyType} event logging failed.");
+            }
+        }
+
+        public void LogChangePasswordEvent(PartyTypes partyType, string upPartyId, string userId)
+        {
+            if (!ShouldLogAudit())
+            {
+                return;
+            }
+
+            try
+            {
+                var properties = BuildUserActionProperties(AuditTypes.ChangePassword, upPartyId, partyType);
+                AddProperty(properties, Constants.Logs.UserId, userId);
+                telemetryLogger.Event($"{AuditTypes.ChangePassword} action in {partyType} up-party", properties: properties);
+            }
+            catch (Exception ex)
+            {
+                telemetryLogger.Warning(ex, message: $"{AuditTypes.ChangePassword} {partyType} event logging failed.");
+            }
+        }
+
+        public void LogCreateUserEvent(PartyTypes partyType, string upPartyId, string userId, List<Claim> claims)
+        {
+            if (!ShouldLogAudit())
+            {
+                return;
+            }
+
+            try
+            {
+                var properties = BuildUserActionProperties(AuditTypes.CreateUser, upPartyId, partyType);
+                AddProperty(properties, Constants.Logs.UserId, userId);
+                if (claims != null)
+                {
+                    AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
+                }
+                telemetryLogger.Event($"{AuditTypes.CreateUser} action in {partyType} up-party", properties: properties);
+            }
+            catch (Exception ex)
+            {
+                telemetryLogger.Warning(ex, message: $"{AuditTypes.CreateUser} {partyType} event logging failed.");
             }
         }
 
@@ -262,7 +330,7 @@ namespace FoxIDs.Logic
             return properties;
         }
 
-        private IDictionary<string, string> BuildUserActionProperties(AuditTypes auditType, string upPartyId, PartyTypes partyType, List<Claim> claims)
+        private IDictionary<string, string> BuildUserActionProperties(AuditTypes auditType, string upPartyId, PartyTypes partyType)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -270,9 +338,6 @@ namespace FoxIDs.Logic
                 { Constants.Logs.AuditAction, partyType.ToString() },
                 { Constants.Logs.UpPartyId, upPartyId }
             };
-
-            AddProperty(properties, Constants.Logs.UserId, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject));
-            AddProperty(properties, Constants.Logs.Email, claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email));
 
             AddTenantTrackProperties(properties);
             return properties;
@@ -344,6 +409,11 @@ namespace FoxIDs.Logic
             }
 
             return false;
+        }
+
+        protected TelemetryScopedLogger GetScopedLogger()
+        {
+            return HttpContext?.RequestServices.GetService<TelemetryScopedLogger>();
         }
     }
 }

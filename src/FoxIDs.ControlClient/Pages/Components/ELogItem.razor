@@ -96,7 +96,11 @@
         {
             <div>@Constants.Logs.Results.UserAgent.GetDisplayLogKey(): @userAgent.GetDisplayLogValue()</div>
         }
-
+        var sessionId = @Item.Values.GetValue(Constants.Logs.Results.SessionId);
+        if (!sessionId.IsNullOrWhiteSpace())
+        {
+            <div>@Constants.Logs.Results.SessionId.GetDisplayLogKey(): @sessionId.GetDisplayLogValue()</div>
+        }
         var downPartyId = @Item.Values.GetValue(Constants.Logs.Results.DownPartyId);
         if (!downPartyId.IsNullOrWhiteSpace())
         {

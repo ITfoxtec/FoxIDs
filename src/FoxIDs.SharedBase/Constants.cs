@@ -231,6 +231,7 @@ namespace FoxIDs
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
                 public const string UserAgent = "UserAgent";
+                public const string SessionId = "SessionId";
                 public const string AppRoleInstance = "AppRoleInstance";
                 public const string UpPartyId = "UpPartyId";
                 public const string DownPartyId = "DownPartyId";

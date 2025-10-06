@@ -30,6 +30,7 @@ namespace FoxIDs.Controllers
         private readonly LoginPageLogic loginPageLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly AuditLogic auditLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic accountLogic;
         private readonly DynamicElementLogic dynamicElementLogic;
@@ -37,7 +38,7 @@ namespace FoxIDs.Controllers
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantDataRepository tenantDataRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AuditLogic auditLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, DynamicElementLogic dynamicElementLogic, CountryCodesLogic countryCodesLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -46,6 +47,7 @@ namespace FoxIDs.Controllers
             this.loginPageLogic = loginPageLogic;
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
+            this.auditLogic = auditLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.accountLogic = accountLogic;
             this.dynamicElementLogic = dynamicElementLogic;
@@ -1267,6 +1269,8 @@ namespace FoxIDs.Controllers
                     });
                     if (user != null)
                     {
+                        auditLogic.LogCreateUserEvent(PartyTypes.Login, sequenceData.UpPartyId, user.UserId, claims);
+
                         return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                     }
                 }
@@ -1538,6 +1542,9 @@ namespace FoxIDs.Controllers
                     {
                         await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.UserIdentifier, upPartyType: loginUpParty.Type);
                     }
+
+                    auditLogic.LogChangePasswordEvent(PartyTypes.Login, sequenceData.UpPartyId, user.Id);
+
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException)

@@ -64,6 +64,8 @@ namespace FoxIDs.Logic
             }
 
             var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            AddValue(values, Constants.Logs.Results.Name, row.GetString(Constants.Logs.Results.Name));
+
             AddValue(values, Constants.Logs.MachineName, row.GetString(Constants.Logs.MachineName));
             AddValue(values, Constants.Logs.ClientIP, row.GetString(Constants.Logs.ClientIP));
             AddValue(values, Constants.Logs.UserAgent, row.GetString(Constants.Logs.UserAgent));
@@ -127,12 +129,11 @@ namespace FoxIDs.Logic
 
             var mappedFilter = MapSearchText(logRequest);
             if (!mappedFilter.IsNullOrWhiteSpace())
-            {
+            {                
                 var filter = EscapeValue(mappedFilter);
                 var searchTargets = new[]
                 {
                     Constants.Logs.Results.Name,
-                    Constants.Logs.Message,
                     Constants.Logs.AuditType,
                     Constants.Logs.AuditAction,
                     Constants.Logs.AuditDataAction,

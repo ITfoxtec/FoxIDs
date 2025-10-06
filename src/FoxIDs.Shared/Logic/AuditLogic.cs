@@ -3,13 +3,12 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 
 namespace FoxIDs.Logic
 {
@@ -17,11 +16,10 @@ namespace FoxIDs.Logic
     {
         private const string sensitiveValueMask = "****";
         private static readonly string[] sensitivePropertyMatches = ["secret", "client_secret", "hash", "hash_salt", "code_verifier", "nonce", "key"];
-        private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        private static JsonSerializerSettings newtonsoftJsonSettings = new JsonSerializerSettings
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            WriteIndented = false
+            NullValueHandling = NullValueHandling.Ignore,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
         private readonly Settings settings;
         private readonly TelemetryLogger telemetryLogger;
@@ -117,19 +115,19 @@ namespace FoxIDs.Logic
             }
         }
 
-        private JsonNode ConvertToJsonNode<T>(T data) where T : IDataDocument
+        private JToken ConvertToJsonNode<T>(T data) where T : IDataDocument
         {
             if (data == null)
             {
                 return null;
             }
 
-            var json = JsonSerializer.Serialize(data, jsonOptions);
-            var node = JsonNode.Parse(json);
-            return NormalizeNode(node);
+            var json = JsonConvert.SerializeObject(data, newtonsoftJsonSettings);
+            var token = JToken.Parse(json);
+            return NormalizeToken(token);
         }
 
-        private JsonObject GetDiffNodeResult<T>(T before, T after) where T : IDataDocument
+        private JObject GetDiffNodeResult<T>(T before, T after) where T : IDataDocument
         {
             var beforeNode = ConvertToJsonNode(before);
             var afterNode = ConvertToJsonNode(after);
@@ -138,7 +136,7 @@ namespace FoxIDs.Logic
             return diff;    
         }
 
-        private JsonObject GetDiffNode(JsonNode beforeNode, JsonNode afterNode)
+        private JObject GetDiffNode(JToken beforeNode, JToken afterNode)
         {
             if (beforeNode == null && afterNode == null)
             {
@@ -147,7 +145,7 @@ namespace FoxIDs.Logic
 
             if (beforeNode == null || afterNode == null)
             {
-                var diff = new JsonObject();
+                var diff = new JObject();
                 if (beforeNode != null)
                 {
                     diff["before"] = beforeNode.DeepClone();
@@ -159,10 +157,13 @@ namespace FoxIDs.Logic
                 return diff;
             }
 
-            if (beforeNode is JsonObject beforeObj && afterNode is JsonObject afterObj)
+            if (beforeNode.Type == JTokenType.Object && afterNode.Type == JTokenType.Object)
             {
-                var diff = new JsonObject();
-                var propertyNames = beforeObj.Select(p => p.Key).Union(afterObj.Select(p => p.Key));
+                var beforeObj = (JObject)beforeNode;
+                var afterObj = (JObject)afterNode;
+                var diff = new JObject();
+                var propertyNames = beforeObj.Properties().Select(p => p.Name)
+                    .Union(afterObj.Properties().Select(p => p.Name));
                 foreach (var name in propertyNames)
                 {
                     var childDiff = GetDiffNode(beforeObj[name], afterObj[name]);
@@ -171,75 +172,75 @@ namespace FoxIDs.Logic
                         diff[name] = childDiff;
                     }
                 }
-                return diff.Count > 0 ? diff : null;
+                return diff.HasValues ? diff : null;
             }
 
-            if (beforeNode is JsonArray beforeArray && afterNode is JsonArray afterArray)
+            if (beforeNode.Type == JTokenType.Array && afterNode.Type == JTokenType.Array)
             {
-                if (JsonNode.DeepEquals(beforeArray, afterArray))
+                if (JToken.DeepEquals(beforeNode, afterNode))
                 {
                     return null;
                 }
 
-                return new JsonObject
+                return new JObject
                 {
-                    ["before"] = beforeArray.DeepClone(),
-                    ["after"] = afterArray.DeepClone()
+                    ["before"] = beforeNode.DeepClone(),
+                    ["after"] = afterNode.DeepClone()
                 };
             }
 
-            if (JsonNode.DeepEquals(beforeNode, afterNode))
+            if (JToken.DeepEquals(beforeNode, afterNode))
             {
                 return null;
             }
 
-            return new JsonObject
+            return new JObject
             {
                 ["before"] = beforeNode.DeepClone(),
                 ["after"] = afterNode.DeepClone()
             };
         }
 
-        private static JsonNode NormalizeNode(JsonNode node)
+        private static JToken NormalizeToken(JToken token)
         {
-            if (node == null)
+            if (token == null)
             {
                 return null;
             }
 
-            return node switch
+            return token.Type switch
             {
-                JsonObject obj => NormalizeObject(obj),
-                JsonArray array => NormalizeArray(array),
-                _ => node.DeepClone()
+                JTokenType.Object => NormalizeObject((JObject)token),
+                JTokenType.Array => NormalizeArray((JArray)token),
+                _ => token.DeepClone()
             };
         }
 
-        private static JsonObject NormalizeObject(JsonObject obj)
+        private static JObject NormalizeObject(JObject obj)
         {
-            var normalized = new JsonObject();
+            var normalized = new JObject();
 
-            foreach (var property in obj.OrderBy(p => p.Key, StringComparer.Ordinal))
+            foreach (var property in obj.Properties().OrderBy(p => p.Name, StringComparer.Ordinal))
             {
-                normalized[property.Key] = NormalizeNode(property.Value);
+                normalized[property.Name] = NormalizeToken(property.Value);
             }
 
             return normalized;
         }
 
-        private static JsonArray NormalizeArray(JsonArray array)
+        private static JArray NormalizeArray(JArray array)
         {
-            var normalized = new JsonArray();
+            var normalized = new JArray();
 
             foreach (var item in array)
             {
-                normalized.Add(NormalizeNode(item));
+                normalized.Add(NormalizeToken(item));
             }
 
             return normalized;
         }
 
-        private IDictionary<string, string> BuildDataLogProperties<T>(AuditTypes auditType, AuditDataActions dataAction, JsonObject diff, string documentId)
+        private IDictionary<string, string> BuildDataLogProperties<T>(AuditTypes auditType, AuditDataActions dataAction, JObject diff, string documentId)
         {
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -252,9 +253,9 @@ namespace FoxIDs.Logic
             AddProperty(properties, Constants.Logs.Email, HttpContext.User.FindFirstValue(JwtClaimTypes.Email));
 
             AddProperty(properties, Constants.Logs.DocumentId, documentId);
-            if (diff != null && diff.Count > 0)
+            if (diff != null && diff.HasValues)
             {
-                properties[Constants.Logs.Data] = diff.ToJsonString(jsonOptions);
+                properties[Constants.Logs.Data] = diff.ToString(Formatting.None);
             }
 
             AddTenantTrackProperties(properties);
@@ -295,21 +296,22 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void MaskSensitiveValues(JsonNode node)
+        private void MaskSensitiveValues(JToken token)
         {
-            if (node == null)
+            if (token == null)
             {
                 return;
             }
 
-            switch (node)
+            switch (token.Type)
             {
-                case JsonObject obj:
-                    foreach (var property in obj.ToList())
+                case JTokenType.Object:
+                    var obj = (JObject)token;
+                    foreach (var property in obj.Properties().ToList())
                     {
-                        if (IsSensitiveProperty(property.Key))
+                        if (IsSensitiveProperty(property.Name))
                         {
-                            obj[property.Key] = JsonValue.Create(sensitiveValueMask);
+                            property.Value = JValue.CreateString(sensitiveValueMask);
                         }
                         else
                         {
@@ -317,10 +319,10 @@ namespace FoxIDs.Logic
                         }
                     }
                     break;
-                case JsonArray array:
-                    for (var i = 0; i < array.Count; i++)
+                case JTokenType.Array:
+                    foreach (var item in token.Children())
                     {
-                        MaskSensitiveValues(array[i]);
+                        MaskSensitiveValues(item);
                     }
                     break;
             }

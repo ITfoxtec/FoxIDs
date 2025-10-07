@@ -35,7 +35,7 @@
         {
             @if (!oidcUpParty.Form.Model.Name.IsNullOrWhiteSpace())
             {
-                <div class="mb-3 alert alert-info overflow-hidden" role="alert">
+                <div class="mb-3 alert bg-light border" role="alert">
                     @{
                         (var redirect, var postLogoutRedirect, var frontChannelLogout) = MetadataLogic.GetUpRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
                     }

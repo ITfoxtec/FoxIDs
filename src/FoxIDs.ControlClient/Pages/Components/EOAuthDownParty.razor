@@ -22,13 +22,12 @@
 
         @if (!oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
         {
-            <div class="mb-3 alert alert-info overflow-hidden" role="alert">
+            <div class="mb-3 alert bg-light border" role="alert">
                 @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                 {
-                    (var clientAuthority, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
+                    (var clientAuthority, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, false);
                     <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
                     <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
-                    <div>Authorize URL: <FTextClipboard Text="@clientAuthorize" /></div>
                     <div>Token URL: <FTextClipboard Text="@clientToken" /></div>
                 }
             
@@ -117,7 +116,7 @@
                 <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client)" />
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
-                    <div class="mb-3 alert alert-info overflow-hidden" role="alert">
+                    <div class="mb-3 alert bg-light border" role="alert">
                         The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
                     <SelectUpParties @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnUpdateUpParties="@((arg) => UpdateAllowUpParties(arg, false))" OnRemoveUpParty="@((arg) => RemoveAllowUpParty(arg, false))" />

@@ -30,5 +30,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Authority")]
         public string Authority { get; set; }
+
+        [Display(Name = "OIDC Discovery")]
+        public string OidcDiscovery { get; set; }
     }
 }

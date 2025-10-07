@@ -26,7 +26,7 @@
 
         @if (!samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
         {
-            <div class="mb-3 alert alert-info overflow-hidden" role="alert">
+            <div class="mb-3 alert bg-light border" role="alert">
                 @{
                     var samlMetadata = @MetadataLogic.GetDownSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern);
                 }

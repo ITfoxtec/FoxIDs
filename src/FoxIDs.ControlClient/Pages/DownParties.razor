@@ -181,62 +181,51 @@
                                 <div class="@summaryColumnClass">
                                     <div class="card bg-light border">
                                         <div class="card-body">
-                                            <h6 class="card-title mb-3">
+                                            <h6 class="card-title mb-4">
                                                 @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
                                             </h6>
-                                            <div class="d-flex flex-column">
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard Class="@(newDownPartyModal.ShowOidcAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
-                                                    @if (!newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOidcAuthorityDetails = true">Show more</button>
-                                                    }
-                                                    @if (newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <div class="mt-2">
-                                                            @if (!newDownPartyModal.OidcForm.Model.OidcDiscovery.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div class="mb-2">
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OidcForm.Model.OidcDiscovery)" />
-                                                                </div>
-                                                            }
-                                                            @if (!newDownPartyModal.OidcForm.Model.AuthorizeUrl.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div class="mb-2">
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.AuthorizeUrl" For="@(() => newDownPartyModal.OidcForm.Model.AuthorizeUrl)" />
-                                                                </div>
-                                                            }
-                                                            @if (!newDownPartyModal.OidcForm.Model.TokenUrl.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div>
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.TokenUrl" For="@(() => newDownPartyModal.OidcForm.Model.TokenUrl)" />
-                                                                </div>
-                                                            }
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard Class="@(newDownPartyModal.ShowOidcAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
+                                                @if (!newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
+                                                {
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOidcAuthorityDetails = true">Show more</button>
+                                                }
+                                                @if (newDownPartyModal.ShowOidcAuthorityDetails && !newDownPartyModal.OidcForm.Model.Name.IsNullOrWhiteSpace())
+                                                {
+                                                    <div class="mt-2">
+                                                        <div class="mb-2">
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OidcForm.Model.OidcDiscovery)" />
                                                         </div>
-                                                    }
-                                                </div>
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
-                                                </div>
-                                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
-                                                {
-                                                    <div class="mb-3">
-                                                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
-                                                    </div>
-                                                }
-                                                else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
-                                                {
-                                                    <div class="mb-3">
-                                                        <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
-                                                    </div>
-                                                }
-                                                @if (oidcScopes.Any())
-                                                {
-                                                    <div>
-                                                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
+                                                        <div class="mb-2">
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.AuthorizeUrl" For="@(() => newDownPartyModal.OidcForm.Model.AuthorizeUrl)" />
+                                                        </div>
+                                                        <div>
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.TokenUrl" For="@(() => newDownPartyModal.OidcForm.Model.TokenUrl)" />
+                                                        </div>
                                                     </div>
                                                 }
                                             </div>
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                                            </div>
+                                            @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                                            {
+                                                <div class="mb-3">
+                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
+                                                </div>
+                                            }
+                                            else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                            {
+                                                <div class="mb-3">
+                                                    <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
+                                                </div>
+                                            }
+                                            @if (oidcScopes.Any())
+                                            {
+                                                <div>
+                                                    <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -297,34 +286,26 @@
                                 <div class="@summaryColumnClass">
                                     <div class="card bg-light border">
                                         <div class="card-body">
-                                            <h6 class="card-title mb-3">
+                                            <h6 class="card-title mb-4">
                                                 @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
                                             </h6>
-                                            <div class="d-flex flex-column">
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard Class="@(newDownPartyModal.ShowOAuthClientAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
-                                                    @if (!newDownPartyModal.ShowOAuthClientAuthorityDetails && !newDownPartyModal.OAuthClientForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOAuthClientAuthorityDetails = true">Show more</button>
-                                                    }
-                                                    @if (newDownPartyModal.ShowOAuthClientAuthorityDetails && !newDownPartyModal.OAuthClientForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <div class="mt-2">
-                                                            @if (!newDownPartyModal.OAuthClientForm.Model.OidcDiscovery.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div class="mb-2">
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OAuthClientForm.Model.OidcDiscovery)" />
-                                                                </div>
-                                                            }
-                                                            @if (!newDownPartyModal.OAuthClientForm.Model.TokenUrl.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div>
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.TokenUrl" For="@(() => newDownPartyModal.OAuthClientForm.Model.TokenUrl)" />
-                                                                </div>
-                                                            }
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard Class="@(newDownPartyModal.ShowOAuthClientAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
+                                                @if (!newDownPartyModal.ShowOAuthClientAuthorityDetails && !newDownPartyModal.OAuthClientForm.Model.Name.IsNullOrWhiteSpace())
+                                                {
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOAuthClientAuthorityDetails = true">Show more</button>
+                                                }
+                                                @if (newDownPartyModal.ShowOAuthClientAuthorityDetails && !newDownPartyModal.OAuthClientForm.Model.Name.IsNullOrWhiteSpace())
+                                                {
+                                                    <div class="mt-2">
+                                                        <div class="mb-2">
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OAuthClientForm.Model.OidcDiscovery)" />
                                                         </div>
-                                                    }
-                                                </div>
+                                                        <div>
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.TokenUrl" For="@(() => newDownPartyModal.OAuthClientForm.Model.TokenUrl)" />
+                                                        </div>
+                                                    </div>
+                                                }
                                                 <div class="mb-3">
                                                     <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
                                                 </div>
@@ -399,44 +380,37 @@
                                 <div class="@summaryColumnClass">
                                     <div class="card bg-light border">
                                         <div class="card-body">
-                                            <h6 class="card-title mb-3">
+                                            <h6 class="card-title mb-4">
                                                 @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
                                             </h6>
-                                            <div class="d-flex flex-column">
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard Class="@(newDownPartyModal.ShowOAuthResourceAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
-                                                    @if (!newDownPartyModal.ShowOAuthResourceAuthorityDetails && !newDownPartyModal.OAuthResourceForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOAuthResourceAuthorityDetails = true">Show more</button>
-                                                    }
-                                                    @if (newDownPartyModal.ShowOAuthResourceAuthorityDetails && !newDownPartyModal.OAuthResourceForm.Model.Name.IsNullOrWhiteSpace())
-                                                    {
-                                                        <div class="mt-2">
-                                                            @if (!newDownPartyModal.OAuthResourceForm.Model.OidcDiscovery.IsNullOrWhiteSpace())
-                                                            {
-                                                                <div>
-                                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OAuthResourceForm.Model.OidcDiscovery)" />
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    }
-                                                </div>
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
-                                                </div>
-                                                @if (resourceScopesShow.Any())
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard Class="@(newDownPartyModal.ShowOAuthResourceAuthorityDetails ? "" : "pb-1")" @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
+                                                @if (!newDownPartyModal.ShowOAuthResourceAuthorityDetails && !newDownPartyModal.OAuthResourceForm.Model.Name.IsNullOrWhiteSpace())
                                                 {
-                                                    <div class="mb-3">
-                                                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ScopesShow" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ScopesShow)" />
-                                                    </div>
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowOAuthResourceAuthorityDetails = true">Show more</button>
                                                 }
-                                                @if (resourceClientScopes.Any())
+                                                @if (newDownPartyModal.ShowOAuthResourceAuthorityDetails && !newDownPartyModal.OAuthResourceForm.Model.Name.IsNullOrWhiteSpace())
                                                 {
-                                                    <div>
-                                                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                                                    <div class="mt-2">
+                                                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.OidcDiscovery" For="@(() => newDownPartyModal.OAuthResourceForm.Model.OidcDiscovery)" />
                                                     </div>
                                                 }
                                             </div>
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                                            </div>
+                                            @if (resourceScopesShow.Any())
+                                            {
+                                                <div class="mb-3">
+                                                    <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ScopesShow" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ScopesShow)" />
+                                                </div>
+                                            }
+                                            @if (resourceClientScopes.Any())
+                                            {
+                                                <div>
+                                                    <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -512,16 +486,37 @@
                                 <div class="@summaryColumnClass">
                                     <div class="card bg-light border">
                                         <div class="card-body">
-                                            <h6 class="card-title mb-3">
+                                            <h6 class="card-title mb-4">
                                                 @(!newDownPartyModal.Created ? "The application will have the following information" : "Application information")
                                             </h6>
-                                            <div class="d-flex flex-column">
-                                                <div class="mb-3">
-                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
-                                                </div>
-                                                <div>
-                                                    <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
-                                                </div>
+                                            @{
+                                                var hasSamlMetadataDetails = !newDownPartyModal.SamlForm.Model.MetadataIssuer.IsNullOrWhiteSpace() ||
+                                                    !newDownPartyModal.SamlForm.Model.MetadataAuthn.IsNullOrWhiteSpace() ||
+                                                    !newDownPartyModal.SamlForm.Model.MetadataLogout.IsNullOrWhiteSpace();
+                                            }
+                                            <div class="mb-3">
+                                                <FFieldTextClipboard Class="@(newDownPartyModal.ShowSamlMetadataDetails ? string.Empty : "pb-1")" @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
+                                                @if (!newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace() && hasSamlMetadataDetails)
+                                                {
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowSamlMetadataDetails = true">Show more</button>
+                                                }
+                                                @if (newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace())
+                                                {
+                                                    <div class="mt-2">
+                                                        <div class="mb-2">
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.MetadataIssuer" For="@(() => newDownPartyModal.SamlForm.Model.MetadataIssuer)" />
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.MetadataAuthn" For="@(() => newDownPartyModal.SamlForm.Model.MetadataAuthn)" />
+                                                        </div>
+                                                        <div>
+                                                            <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.MetadataLogout" For="@(() => newDownPartyModal.SamlForm.Model.MetadataLogout)" />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div>
+                                                <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
                                             </div>
                                         </div>
                                     </div>

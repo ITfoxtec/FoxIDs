@@ -11,12 +11,15 @@
             <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@CurrentValue))"><i class="bi bi-copy" title="Click to copy"></i></button>
         </div>
     </div>
-    <Label For="@For" class="label-control" />
+    <Label For="@For" LabelText="@LabelText" class="label-control" />
 </div>
 
 @code {
     [Parameter]
     public string Class { get; set; }
+
+    [Parameter]
+    public string LabelText { get; set; }
 
     [Inject]
     public ClipboardLogic ClipboardLogic { get; set; }

@@ -65,6 +65,21 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Use matching issuer and authority with application specific issuer")]
         public bool UsePartyIssuer { get; set; }
 
+        [Display(Name = "Authority")]
+        public string Authority { get; set; }
+
+        [Display(Name = "OIDC Discovery")]
+        public string OidcDiscovery { get; set; }
+
+        [Display(Name = "Token URL")]
+        public string TokenUrl { get; set; }
+
+        [Display(Name = "Authority")]
+        public string ResourceAuthority { get; set; }
+
+        [Display(Name = "OIDC Discovery")]
+        public string ResourceOidcDiscovery { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

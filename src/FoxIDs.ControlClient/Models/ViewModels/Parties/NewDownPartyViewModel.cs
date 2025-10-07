@@ -39,6 +39,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool ShowOAuthResourceAuthorityDetails { get; set; }
 
+    public bool ShowSamlMetadataDetails { get; set; }
+
         public void Init()
         {
             IsVisible = false;
@@ -54,6 +56,7 @@ namespace FoxIDs.Client.Models.ViewModels
             ShowOidcAuthorityDetails = false;
             ShowOAuthClientAuthorityDetails = false;
             ShowOAuthResourceAuthorityDetails = false;
+            ShowSamlMetadataDetails = false;
             OidcForm = new PageEditForm<NewDownPartyOidcViewModel>();
             OAuthClientForm = new PageEditForm<NewDownPartyOAuthClientViewModel>();
             OAuthResourceForm = new PageEditForm<NewDownPartyOAuthResourceViewModel>();

@@ -279,6 +279,7 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.ShowOidcAuthorityDetails = false;
             newDownPartyModal.ShowOAuthClientAuthorityDetails = false;
             newDownPartyModal.ShowOAuthResourceAuthorityDetails = false;
+            newDownPartyModal.ShowSamlMetadataDetails = false;
         }
 
         private void CancelNewDownParty()
@@ -402,7 +403,7 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOidcForm.Model.Name = oidcDownPartyResult.Name;
                 newDownPartyOidcForm.Model.DisplayName = oidcDownPartyResult.DisplayName;
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
                 newDownPartyOidcForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOidcDownPartyViewModel(new DownParty { Type = PartyTypes.Oidc, Name = newDownPartyOidcForm.Model.Name, DisplayName = newDownPartyOidcForm.Model.DisplayName });
                 await AddNewDownPartyAsync(generalDownPartyViewModel);
@@ -457,7 +458,7 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
                 newDownPartyOAuthClientForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
                 newDownPartyOAuthClientForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthClientForm.Model.Name, DisplayName = newDownPartyOAuthClientForm.Model.DisplayName });
                 await AddNewDownPartyAsync(generalDownPartyViewModel);
@@ -507,7 +508,7 @@ namespace FoxIDs.Client.Pages
                 newDownPartyOAuthResourceForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
                 newDownPartyOAuthResourceForm.Model.Scopes = oauthDownParty.Resource.Scopes;
                 newDownPartyOAuthResourceForm.Model.ClientScopes = oauthDownParty.Resource.Scopes.Select(s => $"{oauthDownPartyResult.Name}:{s}").ToList();
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
                 newDownPartyOAuthResourceForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthResourceForm.Model.Name, DisplayName = newDownPartyOAuthResourceForm.Model.DisplayName });
                 await AddNewDownPartyAsync(generalDownPartyViewModel);
@@ -554,7 +555,11 @@ namespace FoxIDs.Client.Pages
                 newDownPartySamlForm.Model.Name = samlDownPartyResult.Name;
                 newDownPartySamlForm.Model.Issuer = samlDownPartyResult.Issuer;
                 newDownPartySamlForm.Model.DisplayName = samlDownPartyResult.DisplayName;
-                newDownPartySamlForm.Model.Metadata = MetadataLogic.GetDownSamlMetadata(newDownPartySamlForm.Model.Name);
+                var (metadata, issuer, authn, logout) = MetadataLogic.GetDownSamlMetadata(newDownPartySamlForm.Model.Name);
+                newDownPartySamlForm.Model.Metadata = metadata;
+                newDownPartySamlForm.Model.MetadataIssuer = issuer;
+                newDownPartySamlForm.Model.MetadataAuthn = authn;
+                newDownPartySamlForm.Model.MetadataLogout = logout;
                 var generalDownPartyViewModel = new GeneralSamlDownPartyViewModel(new DownParty { Type = PartyTypes.Saml2, Name = newDownPartySamlForm.Model.Name, DisplayName = newDownPartySamlForm.Model.DisplayName });
                 await AddNewDownPartyAsync(generalDownPartyViewModel);
             }
@@ -614,7 +619,7 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            (var authority, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
+            (var authority, _, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
             if (string.IsNullOrWhiteSpace(model.Authority))
             {
                 model.Authority = authority;
@@ -646,7 +651,7 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            (var authority, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            (var authority, _, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
             if (string.IsNullOrWhiteSpace(model.Authority))
             {
                 model.Authority = authority;
@@ -682,7 +687,7 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            (var authority, var resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            (var authority, _, var resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
             if (string.IsNullOrWhiteSpace(model.Authority))
             {
                 model.Authority = authority;
@@ -700,12 +705,25 @@ namespace FoxIDs.Client.Pages
 
             var model = newDownPartyModal.SamlForm.Model;
 
-            if (string.IsNullOrWhiteSpace(model.Name) || !string.IsNullOrWhiteSpace(model.Metadata))
+            if (string.IsNullOrWhiteSpace(model.Name))
             {
+                model.Metadata = null;
+                model.MetadataIssuer = null;
+                model.MetadataAuthn = null;
+                model.MetadataLogout = null;
                 return;
             }
 
-            model.Metadata = MetadataLogic.GetDownSamlMetadata(model.Name);
+            var (metadata, issuer, authn, logout) = MetadataLogic.GetDownSamlMetadata(model.Name);
+
+            if (string.IsNullOrWhiteSpace(model.Metadata))
+            {
+                model.Metadata = metadata;
+            }
+
+            model.MetadataIssuer = issuer;
+            model.MetadataAuthn = authn;
+            model.MetadataLogout = logout;
         }
     }
 }

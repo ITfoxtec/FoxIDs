@@ -597,7 +597,6 @@ img.logo {
 
     .card-body.active, .card-body:active {
         color: inherit;
-        background-color: #fff;
         border-radius: 0.25rem;
         border-color: #df8935;
         box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
@@ -607,6 +606,10 @@ img.logo {
         border-radius: 0.25rem;
         border-color: #df8935;
         box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+    }
+
+    .card-body hr {
+        border-top-color: #dee2e6;
     }
 
 .info-text {

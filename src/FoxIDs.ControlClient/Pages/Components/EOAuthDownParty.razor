@@ -25,29 +25,22 @@
             EnsureOAuthDownPartySummaryDefaults(oauthDownParty);
             <div class="card bg-light border mb-3">
                 <div class="card-body">
-                    <h6 class="card-title mb-4">Application information</h6>
+                    <h6 class="card-title mt-1 mb-3">Application information</h6>
                     @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                     {
                         @if (!oauthDownParty.Form.Model.Authority.IsNullOrWhiteSpace())
                         {
-                            <div>
-                                <FFieldTextClipboard Class="@(oauthDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oauthDownParty.Form.Model.Authority" For="@(() => oauthDownParty.Form.Model.Authority)" />
-                                @if (!oauthDownParty.ShowAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
-                                {
-                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oauthDownParty.ShowAuthorityDetails = true">Show more</button>
-                                }
-                                @if (oauthDownParty.ShowAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
-                                {
-                                    <div class="mt-2">
-                                        <div class="mb-2">
-                                            <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.OidcDiscovery" For="@(() => oauthDownParty.Form.Model.OidcDiscovery)" />
-                                        </div>
-                                        <div>
-                                            <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.TokenUrl" For="@(() => oauthDownParty.Form.Model.TokenUrl)" />
-                                        </div>
-                                    </div>
-                                }
-                            </div>
+
+                            <FFieldTextClipboard Class="@(oauthDownParty.ShowAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oauthDownParty.Form.Model.Authority" For="@(() => oauthDownParty.Form.Model.Authority)" />
+                            @if (!oauthDownParty.ShowAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            {
+                                <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oauthDownParty.ShowAuthorityDetails = true">Show more</button>
+                            }
+                            @if (oauthDownParty.ShowAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            {
+                                <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.OidcDiscovery" For="@(() => oauthDownParty.Form.Model.OidcDiscovery)" />
+                                <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.TokenUrl" For="@(() => oauthDownParty.Form.Model.TokenUrl)" />
+                            }
                         }
                     }
 
@@ -61,19 +54,15 @@
                     {
                         @if (!oauthDownParty.Form.Model.ResourceAuthority.IsNullOrWhiteSpace())
                         {
-                            <div class="mb-3">
-                                <FFieldTextClipboard Class="@(oauthDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oauthDownParty.Form.Model.ResourceAuthority" For="@(() => oauthDownParty.Form.Model.ResourceAuthority)" />
-                                @if (!oauthDownParty.ShowResourceAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
-                                {
-                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oauthDownParty.ShowResourceAuthorityDetails = true">Show more</button>
-                                }
-                                @if (oauthDownParty.ShowResourceAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
-                                {
-                                    <div class="mt-2">
-                                        <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.ResourceOidcDiscovery" For="@(() => oauthDownParty.Form.Model.ResourceOidcDiscovery)" />
-                                    </div>
-                                }
-                            </div>
+                            <FFieldTextClipboard Class="@(oauthDownParty.ShowResourceAuthorityDetails ? string.Empty : "pb-1")" @bind-Value="oauthDownParty.Form.Model.ResourceAuthority" For="@(() => oauthDownParty.Form.Model.ResourceAuthority)" />
+                            @if (!oauthDownParty.ShowResourceAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            {
+                                <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => oauthDownParty.ShowResourceAuthorityDetails = true">Show more</button>
+                            }
+                            @if (oauthDownParty.ShowResourceAuthorityDetails && !oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            {
+                                <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.ResourceOidcDiscovery" For="@(() => oauthDownParty.Form.Model.ResourceOidcDiscovery)" />
+                            }
                         }
                     }
                 </div>

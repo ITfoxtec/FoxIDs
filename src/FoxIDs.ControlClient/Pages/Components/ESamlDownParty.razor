@@ -29,49 +29,36 @@
             EnsureSamlDownPartySummaryDefaults(samlDownParty);
             <div class="card bg-light border mb-3">
                 <div class="card-body">
-                    <h6 class="card-title mb-4">Application information</h6>
+                    <h6 class="card-title mt-1 mb-3">Application information</h6>
                     @if (!samlDownParty.Form.Model.Metadata.IsNullOrWhiteSpace())
                     {
                         var hasMetadataDetails = !samlDownParty.Form.Model.IdPIssuer.IsNullOrWhiteSpace() ||
                             !samlDownParty.Form.Model.MetadataIssuer.IsNullOrWhiteSpace() ||
                             !samlDownParty.Form.Model.MetadataAuthn.IsNullOrWhiteSpace() ||
                             !samlDownParty.Form.Model.MetadataLogout.IsNullOrWhiteSpace();
-                        <div class="mb-3">
-                            <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
-                            @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
+
+                        <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
+                        @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
+                        {
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => samlDownParty.ShowMetadataDetails = true">Show more</button>
+                        }
+                        @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                        {
+                            @if (!samlDownParty.Form.Model.IdPIssuer.IsNullOrWhiteSpace())
                             {
-                                <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => samlDownParty.ShowMetadataDetails = true">Show more</button>
+                                <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.IdPIssuer" For="@(() => samlDownParty.Form.Model.IdPIssuer)" LabelText="IdP Issuer" />
                             }
-                            @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+                            else
                             {
-                                <div class="mt-2">
-                                    @if (!samlDownParty.Form.Model.IdPIssuer.IsNullOrWhiteSpace())
-                                    {
-                                        <div class="mb-2">
-                                            <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.IdPIssuer" For="@(() => samlDownParty.Form.Model.IdPIssuer)" LabelText="IdP Issuer" />
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="mb-2">
-                                            <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataIssuer" For="@(() => samlDownParty.Form.Model.MetadataIssuer)" />
-                                        </div>
-                                    }
-                                    <div class="mb-2">
-                                        <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataAuthn" For="@(() => samlDownParty.Form.Model.MetadataAuthn)" />
-                                    </div>
-                                    <div>
-                                        <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" />
-                                    </div>
-                                    @if (samlDownParty.Form.Model.MetadataAddLogoutResponseLocation)
-                                    {
-                                        <div>
-                                            <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
-                                        </div>
-                                    }
-                                </div>
+                                <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataIssuer" For="@(() => samlDownParty.Form.Model.MetadataIssuer)" />
                             }
-                        </div>
+                            <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataAuthn" For="@(() => samlDownParty.Form.Model.MetadataAuthn)" />
+                            <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" />
+                            @if (samlDownParty.Form.Model.MetadataAddLogoutResponseLocation)
+                            {
+                                <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
+                            }
+                        }
                     }
                 </div>
             </div>

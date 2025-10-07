@@ -532,6 +532,18 @@ img.logo {
     border-color: #6c757d !important;  
 }
 
+.btn.btn-outline-secondary:hover .badge {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active, .show > .btn-outline-secondary.dropdown-toggle .badge {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d
+}
+
 .form-group {
     margin-bottom: 1.3rem;
 }

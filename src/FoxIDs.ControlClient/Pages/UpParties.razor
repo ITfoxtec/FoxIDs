@@ -119,14 +119,14 @@
                     <div class="row">
                         <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("OpenID Provider", PartyTypes.Oidc))" @onclick:preventDefault>
-                                <h5 class="py-2">OpenID Provider <div class="small">(OpenID Connect)</div></h5>
+                                <h5 class="py-2">OpenID Provider <div class="small pt-2"><div class="badge badge-light border">OpenID Connect</div></div></h5>
                                 <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
                                 <div class="py-2">Identity Provider that support OpenID Connect.</div>
                             </a>
                         </div>
                         <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider", PartyTypes.Saml2))" @onclick:preventDefault>
-                                <h5 class="py-2">Identity Provider <div class="small">(SAML 2.0)</div></h5>
+                                <h5 class="py-2">Identity Provider <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
                                 <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
                                 <div class="py-2">Identity Provider that support SAML 2.0.</div>
                             </a>
@@ -137,7 +137,7 @@
                         {
                             <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
+                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small pt-2"><div class="badge badge-light border">OAuth 2.0</div></div></h5>
                                     <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
                                     <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
                                 </a>
@@ -145,7 +145,7 @@
 
                             <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, true))" @onclick:preventDefault>
-                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
+                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small pt-2"><div class="badge badge-light border">SAML 2.0</div></div></h5>
                                     <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
                                     <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
                                 </a>

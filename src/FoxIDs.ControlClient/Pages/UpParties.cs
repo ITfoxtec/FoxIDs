@@ -308,7 +308,6 @@ namespace FoxIDs.Client.Pages
                 var newUpParty = ShowCreateUpParty(type.Value, tokenExchange);
                 if (newUpParty != null)
                 {
-                    upParties ??= new List<GeneralUpPartyViewModel>();
                     upParties.Insert(0, newUpParty);
                 }
                 HideNewUpParty();
@@ -436,7 +435,7 @@ namespace FoxIDs.Client.Pages
                 toastService.ShowSuccess("Environment Link authentication method created.");
 
                 var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });
-                upParties.Add(generalUpPartyViewModel);
+                upParties.Insert(0, generalUpPartyViewModel);
                 if (upParties.Count() <= 1)
                 {
                     ShowUpdateUpParty(generalUpPartyViewModel);

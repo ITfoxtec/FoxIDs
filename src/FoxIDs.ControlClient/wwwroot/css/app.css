@@ -610,8 +610,8 @@ img.logo {
     }
 
     .dropdown-item.track-option.is-selected {
-        /*background: linear-gradient(90deg, rgba(223, 137, 53, 0.18) 0%, rgba(223, 137, 53, 0) 100%);
-        box-shadow: inset 3px 0 0 0 #df8935;*/
+        background: linear-gradient(90deg, rgba(223, 137, 53, 0.08) 0%, rgba(223, 137, 53, 0) 100%);
+       /* box-shadow: inset 3px 0 0 0 #df8935;*/
         color: #d87513;
         font-weight: 600;
     }

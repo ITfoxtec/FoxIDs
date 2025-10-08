@@ -38,6 +38,7 @@ namespace FoxIDs.Client.Shared
         private bool selectTrackInitialized = false;
         private string selectTrackError;
         private IEnumerable<Track> selectTrackTasks;
+        private int selectTrackTotalCount;
         private Modal myProfileModal;
         private bool myProfileMasterMasterLogin;
         private bool showMyProfileClaims;
@@ -100,6 +101,8 @@ namespace FoxIDs.Client.Shared
         private bool EnableCreateNewTenant => ClientSettings.EnableCreateNewTenant;
 
         private bool RequestPayment => RouteBindingLogic.RequestPayment;
+
+        private bool ShowTrackFilter => selectTrackTotalCount > 10;
 
         protected override async Task OnInitializedAsync()
         {
@@ -346,7 +349,8 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = (await TrackService.GetTracksAsync(null)).Data.OrderTracks();                
+                selectTrackTasks = (await TrackService.GetTracksAsync(null)).Data.OrderTracks();
+                selectTrackTotalCount = selectTrackTasks.Count();
             }
             catch (TokenUnavailableException)
             {
@@ -363,6 +367,10 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackTasks = (await TrackService.GetTracksAsync(selectTrackFilterForm.Model.FilterName)).Data.OrderTracks();
+                if (selectTrackFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                {
+                    selectTrackTotalCount = selectTrackTasks.Count();
+                }
             }
             catch (FoxIDsApiException aex)
             {
@@ -401,6 +409,39 @@ namespace FoxIDs.Client.Shared
                 return true;
             }
             return false;
+        }
+
+        private bool IsTrackCurrentlySelected(Track track) => TrackSelectedLogic?.Track != null && track != null && track.Name.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+
+        private string GetTrackTitle(Track track)
+        {
+            if (track == null)
+            {
+                return string.Empty;
+            }
+
+            if (track.DisplayName.IsNullOrWhiteSpace())
+            {
+                var prodText = track.Name.GetProdTrackName();
+                return prodText.IsNullOrWhiteSpace() ? track.Name : $"{track.Name} {prodText}";
+            }
+
+            if (!track.Name.Equals(track.DisplayName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return $"{track.DisplayName} ({track.Name})";
+            }
+
+            return track.DisplayName;
+        }
+
+        private Task OnTrackClickedAsync(Track track)
+        {
+            if (IsTrackCurrentlySelected(track))
+            {
+                return Task.CompletedTask;
+            }
+
+            return SelectTrackAsync(track);
         }
 
         private async Task SelectTrackAsync(Track track)

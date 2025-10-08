@@ -44,7 +44,7 @@
                                     <label class="label-control">Environments</label>
                                     <div class="card">
                                         <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span style="width: 100%">
+                                            <span class="environment-selected-label" title="@GetTrackTitle(TrackSelectedLogic.Track)">
                                                 @if (TrackSelectedLogic.Track.DisplayName.IsNullOrWhiteSpace())
                                                 {
                                                     @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
@@ -69,9 +69,12 @@
                                                         <button type="button" class="btn btn-primary" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New environment</button>
                                                     </div>
                                                 </div>
-                                                <div class="form-group active-group pb-2">
-                                                    <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
-                                                </div>
+                                                @if (ShowTrackFilter)
+                                                {
+                                                    <div class="form-group active-group pb-2">
+                                                        <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                                                    </div>
+                                                }
                                             </PageEditForm>
 
                                             @if (selectTrackTasks != null)
@@ -81,15 +84,14 @@
                                                     <div class="list-striped">
                                                         @foreach (var track in selectTrackTasks)
                                                         {
-                                                            @if (track.Name != TrackSelectedLogic.Track.Name)
+                                                            @if (!IsTrackCurrentlySelected(track) && selectTrackTasks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
                                                             {
-                                                                @if (selectTrackTasks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
-                                                                {
-                                                                    <div class="info-text pl-1 pb-1">
-                                                                        Your tenant access is configured in the master environment.
-                                                                    </div>
-                                                                }
-                                                                <button type="button" class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
+                                                                <div class="info-text pl-1 pb-1">
+                                                                    Your tenant access is configured in the master environment.
+                                                                </div>
+                                                            }
+                                                            <button type="button" class="dropdown-item btn btn-link pl-1 pr-1 track-option @(IsTrackCurrentlySelected(track) ? "is-selected" : "")" aria-current="@(IsTrackCurrentlySelected(track) ? "page" : null)" title="@GetTrackTitle(track)" @onclick="@(() => OnTrackClickedAsync(track))">
+                                                                <span class="track-option-label">
                                                                     @if (track.DisplayName.IsNullOrWhiteSpace())
                                                                     {
                                                                         @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
@@ -102,9 +104,13 @@
                                                                     {
                                                                         @track.DisplayName
                                                                     }
-                                                                </button>
-                                                                <div class="list-striped-item"></div>
-                                                            }
+                                                                </span>
+                                                                @if (IsTrackCurrentlySelected(track))
+                                                                {
+                                                                    <span class="oi oi-check track-selected-icon" aria-hidden="true"></span>
+                                                                }
+                                                            </button>
+                                                            <div class="list-striped-item"></div>
                                                         }
                                                     </div>
                                                 }

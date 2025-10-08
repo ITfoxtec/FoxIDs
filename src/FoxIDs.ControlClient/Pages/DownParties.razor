@@ -48,9 +48,9 @@
                 @if (newDownPartyModal.Type == null)
                 {
                     <div class="modal-header sticky-header">
-                        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-                            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">New Application</span>
-                            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">Select the application type to continue</span>
+                        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                            <span class="text-nowrap first-header">New Application</span>
+                            <span class="ml-2 text-muted text-truncate second-header">Select the application type to continue</span>
                         </div>
                         <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAll" />
                     </div>
@@ -114,11 +114,14 @@
                 {
                     <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnAfterInit="@(async m => await OnNewDownPartyOidcModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
                         <div class="modal-header sticky-header">
-                            <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-                                <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">Complete the OpenID Connect application</span>
+                            <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
+                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OidcForm.Model.DisplayName : null) ?? "Complete the OpenID Connect application")</span>
                             </div>
-                            <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            @if (!newDownPartyModal.Created)
+                            {
+                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            }
                         </div>
                         @{
                             EnsureNewDownPartyOidcSummaryDefaults();
@@ -244,7 +247,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Edit</button>
+                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
                                     <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
                                 </div>
@@ -256,11 +259,14 @@
                 {
                     <PageEditForm @ref="newDownPartyModal.OAuthClientForm" TModel="NewDownPartyOAuthClientViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthClientModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthClientModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthClientForm, editContext))">
                         <div class="modal-header sticky-header">
-                            <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-                                <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">Complete the OAuth 2.0 client application</span>
+                            <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
+                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OAuthClientForm.Model.DisplayName : null) ?? "Complete the OAuth 2.0 client application")</span>
                             </div>
-                            <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            @if (!newDownPartyModal.Created)
+                            {
+                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            }
                         </div>
                         @{
                             EnsureNewDownPartyOAuthClientSummaryDefaults();
@@ -331,7 +337,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Edit</button>
+                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
                                     <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
                                 </div>
@@ -343,11 +349,14 @@
                 {
                     <PageEditForm @ref="newDownPartyModal.OAuthResourceForm" TModel="NewDownPartyOAuthResourceViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthResourceModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthResourceModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthResourceForm, editContext))">
                         <div class="modal-header sticky-header">
-                            <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-                                <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">Complete the OAuth 2.0 resource application</span>
+                            <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
+                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OAuthResourceForm.Model.DisplayName : null) ?? "Complete the OAuth 2.0 resource application")</span>
                             </div>
-                            <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            @if (!newDownPartyModal.Created)
+                            {
+                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            }
                         </div>
                         @{
                             EnsureNewDownPartyOAuthResourceSummaryDefaults();
@@ -429,7 +438,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Edit</button>
+                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
                                     <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
                                 </div>
@@ -441,11 +450,14 @@
                 {
                     <PageEditForm @ref="newDownPartyModal.SamlForm" TModel="NewDownPartySamlViewModel" OnAfterInit="@(async m => await OnNewDownPartySamlModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartySamlModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.SamlForm, editContext))">
                         <div class="modal-header sticky-header">
-                            <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-                                <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">Complete the SAML 2.0 application</span>
+                            <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
+                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.SamlForm.Model.DisplayName : null) ?? "Complete the SAML 2.0 application")</span>
                             </div>
-                            <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            @if (!newDownPartyModal.Created)
+                            {
+                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                            }
                         </div>
                         @{
                             EnsureNewDownPartySamlSummaryDefaults();
@@ -536,7 +548,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Edit</button>
+                                <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
                                     <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
                                 </div>

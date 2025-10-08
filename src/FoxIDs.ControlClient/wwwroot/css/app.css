@@ -758,6 +758,27 @@ img.logo {
         padding-left: 8px
     }
 
+.modal-header .hide-owerflow {
+    min-width: 0;
+    overflow: hidden;
+}
+    .modal-header .hide-owerflow .first-header {
+        flex-grow: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: clip;
+        white-space: nowrap;
+        padding-bottom: 0.15rem;
+    }
+    .modal-header .hide-owerflow .second-header {
+        flex-grow: 1;
+        flex-shrink: 100;
+        min-width: 0;
+        overflow: hidden;
+        padding-bottom: 0.15rem;
+    }
+
 .modal-dialog-scrollable .modal-content {
     overflow: auto;
 }

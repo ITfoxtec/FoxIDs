@@ -35,13 +35,14 @@
         {
             @if (!oidcUpParty.Form.Model.Name.IsNullOrWhiteSpace())
             {
-                <div class="mb-3 alert bg-light border" role="alert">
-                    @{
-                        (var redirect, var postLogoutRedirect, var frontChannelLogout) = MetadataLogic.GetUpRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
-                    }
-                    <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
-                    <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
-                    <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
+                EnsureOidcUpPartySummaryDefaults(oidcUpParty);
+                <div class="card bg-light border mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title mt-1 mb-3">Application information</h6>
+                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.RedirectUrl" For="@(() => oidcUpParty.Form.Model.RedirectUrl)" />
+                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.PostLogoutRedirectUrl" For="@(() => oidcUpParty.Form.Model.PostLogoutRedirectUrl)" />
+                        <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.FrontChannelLogoutUrl" For="@(() => oidcUpParty.Form.Model.FrontChannelLogoutUrl)" />
+                    </div>
                 </div>
             }
             @if (UpParty.ShowAdvanced)

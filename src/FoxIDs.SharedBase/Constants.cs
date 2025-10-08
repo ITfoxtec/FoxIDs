@@ -271,6 +271,7 @@ namespace FoxIDs
                 public const string Master = "master";
 
                 public const string Tenant = "tenant";
+                public const string TenantApiLock = "tlock";
                 public const string Track = "track";
                 public const string Party = "party";
                 public const string UpParty = "party:up";
@@ -476,6 +477,16 @@ namespace FoxIDs
                 public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
                 public const string CustomDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
+            }
+
+            public static class TenantApiLock
+            {
+                public const int IdLength = 90;
+                public const string IdRegExPattern = @"^[a-z0-9_:\-]*$";
+                public const int ScopeLength = 40;
+                public const string ScopeRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
+                public const int RequestIdLength = 120;
+                public const string RequestIdRegExPattern = @"^[\w\-:.]*$";
             }
 
             public static class Track

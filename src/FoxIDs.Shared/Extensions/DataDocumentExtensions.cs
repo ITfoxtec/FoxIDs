@@ -49,19 +49,23 @@ namespace FoxIDs
         public static string IdToTenantPartitionId(this string id)
         {
             var idList = id.Split(':');
-            if (id.StartsWith("tenant:"))
+            if (id.StartsWith($"{Constants.Models.DataType.Tenant}:"))
             {
                 return Tenant.PartitionIdFormat();
             }
-            else if (id.StartsWith("used:"))
+            else if (id.StartsWith($"{Constants.Models.DataType.Used}:"))
             {
                 return Used.PartitionIdFormat();
             }
-            else if (id.StartsWith("track:"))
+            else if (id.StartsWith($"{Constants.Models.DataType.TenantApiLock}:"))
+            {
+                return Tenant.PartitionIdFormat();
+            }
+            else if (id.StartsWith($"{Constants.Models.DataType.Track}:"))
             {
                 return Track.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });
             }
-            else if (id.StartsWith("party:"))
+            else if (id.StartsWith($"{Constants.Models.DataType.Party}:"))
             {
                 return DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = idList[2], TrackName = idList[3] });
             }

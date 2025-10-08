@@ -122,6 +122,19 @@ namespace FoxIDs.Controllers
             }
         }
 
+        public ObjectResult Locked(string apiErrorMessage, string internalErrorMessage)
+        {
+            try
+            {
+                throw new Exception(apiErrorMessage);
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex, internalErrorMessage);
+                return StatusCode(StatusCodes.Status423Locked, ex.Message);
+            }
+        }
+
         private string GetMessage(string message, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             return $"{message} at {memberName} in {sourceFilePath}:line {sourceLineNumber}";

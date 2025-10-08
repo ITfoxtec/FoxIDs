@@ -48,6 +48,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecretHashLogic>();
 
             services.AddTransient<MasterTenantLogic>();
+            services.AddTransient<TenantApiLockLogic>();
             services.AddTransient<TrackLogic>();
 
             services.AddSingleton<LogLogic>();

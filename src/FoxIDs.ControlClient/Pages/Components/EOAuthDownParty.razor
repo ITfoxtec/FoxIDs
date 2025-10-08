@@ -64,6 +64,12 @@
                                 <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.ResourceOidcDiscovery" For="@(() => oauthDownParty.Form.Model.ResourceOidcDiscovery)" />
                             }
                         }
+                        @if (oauthDownParty.Form.Model.ResourceClientScopes?.Count > 0)
+                        {
+                            <div class="mt-3">
+                                <FFieldTextListClipboard @bind-ValueList="oauthDownParty.Form.Model.ResourceClientScopes" For="@(() => oauthDownParty.Form.Model.ResourceClientScopes)" />
+                            </div>
+                        }
                     }
                 </div>
             </div>

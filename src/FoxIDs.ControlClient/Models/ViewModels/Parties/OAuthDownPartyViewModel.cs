@@ -80,6 +80,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "OIDC Discovery")]
         public string ResourceOidcDiscovery { get; set; }
 
+        [Display(Name = "Client requests scopes")]
+        public List<string> ResourceClientScopes { get; set; } = new List<string>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

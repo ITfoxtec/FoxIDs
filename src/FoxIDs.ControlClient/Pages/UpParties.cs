@@ -171,14 +171,15 @@ namespace FoxIDs.Client.Pages
             paginationToken = dataUpParties.PaginationToken;
         }
 
-        private void ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
+        private GeneralUpPartyViewModel ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
         {
+            GeneralUpPartyViewModel newUpParty = null;
             if (type == PartyTypes.Login)
             {
                 var loginUpParty = new GeneralLoginUpPartyViewModel();
                 loginUpParty.CreateMode = true;
                 loginUpParty.Edit = true;
-                upParties.Add(loginUpParty);
+                newUpParty = loginUpParty;
             }
             else if (type == PartyTypes.OAuth2)
             {
@@ -186,7 +187,7 @@ namespace FoxIDs.Client.Pages
                 oauthUpParty.CreateMode = true;
                 oauthUpParty.Edit = true;
                 oauthUpParty.TokenExchange = tokenExchange;
-                upParties.Add(oauthUpParty);
+                newUpParty = oauthUpParty;
             }
             else if (type == PartyTypes.Oidc)
             {
@@ -194,7 +195,7 @@ namespace FoxIDs.Client.Pages
                 oidcUpParty.CreateMode = true;
                 oidcUpParty.Edit = true;
                 oidcUpParty.TokenExchange = tokenExchange;
-                upParties.Add(oidcUpParty);
+                newUpParty = oidcUpParty;
             }
             else if (type == PartyTypes.Saml2)
             {
@@ -202,22 +203,24 @@ namespace FoxIDs.Client.Pages
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
                 samlUpParty.TokenExchange = tokenExchange;
-                upParties.Add(samlUpParty);
+                newUpParty = samlUpParty;
             }
             else if (type == PartyTypes.TrackLink)
             {
                 var trackLinkUpParty = new GeneralTrackLinkUpPartyViewModel();
                 trackLinkUpParty.CreateMode = true;
                 trackLinkUpParty.Edit = true;
-                upParties.Add(trackLinkUpParty);
+                newUpParty = trackLinkUpParty;
             }
             else if (type == PartyTypes.ExternalLogin)
             {
                 var extLoginUpParty = new GeneralExternalLoginUpPartyViewModel();
                 extLoginUpParty.CreateMode = true;
                 extLoginUpParty.Edit = true;
-                upParties.Add(extLoginUpParty);
+                newUpParty = extLoginUpParty;
             }
+
+            return newUpParty;
         }
 
         private void ShowUpdateUpParty(GeneralUpPartyViewModel upParty)
@@ -269,11 +272,31 @@ namespace FoxIDs.Client.Pages
         private void ShowNewUpParty()
         {
             newUpPartyModal.Init();
-            newUpPartyModal.Modal.Show();
+            newUpPartyModal.IsVisible = true;
+            StateHasChanged();
+        }
+
+        private void HideNewUpParty()
+        {
+            newUpPartyModal.Init();
+            StateHasChanged();
         }
 
         private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
         {
+            if (!type.HasValue)
+            {
+                newUpPartyModal.AppTitle = null;
+                newUpPartyModal.Type = null;
+                newUpPartyModal.ShowAdvanced = false;
+                newUpPartyModal.CreateWorking = false;
+                newUpPartyModal.Created = false;
+                newUpPartyModal.SelectTracks = null;
+                newUpPartyModal.SelectTrackFilterForm = new PageEditForm<FilterTrackViewModel>();
+                newUpPartyModal.EnvironmentLinkForm = new PageEditForm<NewUpPartyEnvironmentLinkViewModel>();
+                return;
+            }
+
             if(type == PartyTypes.TrackLink)
             {
                 await LoadTracksAsync();
@@ -282,8 +305,13 @@ namespace FoxIDs.Client.Pages
             }
             else if(type.HasValue)
             {
-                ShowCreateUpParty(type.Value, tokenExchange);
-                newUpPartyModal.Modal.Hide();
+                var newUpParty = ShowCreateUpParty(type.Value, tokenExchange);
+                if (newUpParty != null)
+                {
+                    upParties ??= new List<GeneralUpPartyViewModel>();
+                    upParties.Insert(0, newUpParty);
+                }
+                HideNewUpParty();
             }
         }
 
@@ -393,7 +421,10 @@ namespace FoxIDs.Client.Pages
                     DisplayName = newUpPartyOAuthEnvironmentLinkForm.Model.DisplayName,
                     ToUpTrackName = TrackSelectedLogic.Track.Name,
                     ToUpPartyName = trackLinkUpPartyResult.Name,
-                    AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
+                    AllowUpParties = new List<UpPartyLink>
+                    {
+                        new UpPartyLink { Name = Constants.DefaultLogin.Name }
+                    },
                     Claims = new List<OAuthDownClaim>
                     {
                         new OAuthDownClaim { Claim = "*" }
@@ -411,8 +442,9 @@ namespace FoxIDs.Client.Pages
                     ShowUpdateUpParty(generalUpPartyViewModel);
                 }
                 newDownPartyViewModel.Created = true;
+                HideNewUpParty();
             }
-            catch (FoxIDsApiException ex)
+            catch (FoxIDsApiException)
             {
                 newDownPartyViewModel.CreateWorking = false;
                 throw;

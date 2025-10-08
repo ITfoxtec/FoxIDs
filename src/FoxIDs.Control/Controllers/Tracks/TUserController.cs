@@ -14,7 +14,6 @@ using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Logic;
-using System.Security.Claims;
 
 namespace FoxIDs.Controllers
 {

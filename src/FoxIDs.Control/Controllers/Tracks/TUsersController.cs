@@ -20,7 +20,6 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TUsersController : ApiController
     {
-        private const string dataType = Constants.Models.DataType.User;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
@@ -97,7 +96,7 @@ namespace FoxIDs.Controllers
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (plan?.Users?.LimitedThreshold > 0)
+                    if (plan.Users.LimitedThreshold > 0)
                     {
                         tenantLock = await tenantApiLockLogic.AcquireAsync(RouteBinding.TenantName, TenantApiLock.UsersScope);
                         if (tenantLock == null)

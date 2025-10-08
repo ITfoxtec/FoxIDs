@@ -33,7 +33,7 @@
                         }
                         else if (TrackSelectedLogic.IsTrackSelected)
                         {
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown" style="max-width: 100%;">
                                 @if (!selectTrackError.IsNullOrWhiteSpace())
                                 {
                                     <div class="alert alert-danger" role="alert">
@@ -43,20 +43,22 @@
                                 <div class=" form-group active-group active">
                                     <label class="label-control">Environments</label>
                                     <div class="card">
-                                        <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="environment-selected-label" title="@GetTrackTitle(TrackSelectedLogic.Track)">
-                                                @if (TrackSelectedLogic.Track.DisplayName.IsNullOrWhiteSpace())
-                                                {
-                                                    @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
-                                                }
-                                                else if (!TrackSelectedLogic.Track.Name.Equals(TrackSelectedLogic.Track.DisplayName, StringComparison.InvariantCultureIgnoreCase))
-                                                {
-                                                    @TrackSelectedLogic.Track.DisplayName <small class="text-muted">(@TrackSelectedLogic.Track.Name)</small>
-                                                }
-                                                else
-                                                {
-                                                    @TrackSelectedLogic.Track.DisplayName
-                                                }
+                                        <div class="nav-link dropdown-toggle card-body px-3 pb-2 text-left env-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="env-dropdown-wrapper">
+                                                <span class="env-dropdown-label" title="@GetTrackTitle(TrackSelectedLogic.Track)">
+                                                    @if (TrackSelectedLogic.Track.DisplayName.IsNullOrWhiteSpace())
+                                                    {
+                                                        @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
+                                                    }
+                                                    else if (!TrackSelectedLogic.Track.Name.Equals(TrackSelectedLogic.Track.DisplayName, StringComparison.InvariantCultureIgnoreCase))
+                                                    {
+                                                        @TrackSelectedLogic.Track.DisplayName <small class="text-muted">(@TrackSelectedLogic.Track.Name)</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        @TrackSelectedLogic.Track.DisplayName
+                                                    }
+                                                </span>
                                             </span>
                                         </div>
                                         <div class="dropdown-menu search-dropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">

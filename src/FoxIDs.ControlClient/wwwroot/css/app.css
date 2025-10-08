@@ -176,6 +176,7 @@ img.logo {
 .navbar .dropdown-nav-item {
     z-index: 50;
     position: absolute;
+    max-width: 100%;
     min-width: 100px;
     right: auto;
     left: 50%;
@@ -212,8 +213,7 @@ img.logo {
 /*Medium ++ */
 @media (min-width: 860px) { /*774 860*/
     .navbar .dropdown-nav-item {
-        width: auto;
-        min-width: 460px;
+        width: 460px;
         top: 14px;
     }
 }
@@ -221,8 +221,7 @@ img.logo {
 /*Large*/
 @media (min-width: 992px) {
     .navbar .dropdown-nav-item {
-        width: auto;
-        min-width: 590px;
+        width: 590px;
         top: 14px;
     }
 }
@@ -230,11 +229,85 @@ img.logo {
 /*Extra large*/
 @media (min-width: 1200px) {
     .navbar .dropdown-nav-item {
-        width: auto;
-        min-width: 670px;
+        width: 670px;
         top: 14px;
     }
 }
+
+.navbar .dropdown-nav-item .dropdown-toggle::after {
+    float: right;
+    margin-top: 12px !important;
+}
+
+.env-dropdown {
+    padding-top: .34rem !important;
+    background-color: rgba(223, 137, 53, 0.08);
+}
+
+    .env-dropdown .env-dropdown-wrapper {
+        display: inline-flex;
+        max-width: calc(100% - 1.5rem);
+        width: auto;
+        overflow: hidden;
+        vertical-align: middle;
+    }
+
+    .env-dropdown .env-dropdown-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .env-dropdown .env-dropdown-label small {
+            margin-left: 0.35rem;
+            flex-shrink: 0;
+        }
+
+.dropdown-item.track-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+    .dropdown-item.track-option .track-option-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: left;
+        color: inherit;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dropdown-item.track-option .track-selected-icon {
+        opacity: 0;
+        transform: translateX(-4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        color: #df8935;
+    }
+
+    .dropdown-item.track-option:hover,
+    .dropdown-item.track-option:focus {
+        background-color: rgba(223, 137, 53, 0.08);
+        color: #d87513;
+    }
+
+    .dropdown-item.track-option.is-selected {
+        background: linear-gradient(90deg, rgba(223, 137, 53, 0.08) 0%, rgba(223, 137, 53, 0) 100%);
+        /* box-shadow: inset 3px 0 0 0 #df8935;*/
+        color: #d87513;
+        font-weight: 600;
+    }
+
+        .dropdown-item.track-option.is-selected .track-selected-icon {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
 .navbar .dropdown-menu {
     margin: 0px 0;
@@ -620,18 +693,6 @@ img.logo {
             opacity: 1;
             transform: translateX(0);
         }
-
-.environment-selected-label {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-    .environment-selected-label small {
-        margin-left: 0.35rem;
-    }
 
 .card-row {
     flex-direction: row;

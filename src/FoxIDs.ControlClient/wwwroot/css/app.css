@@ -239,8 +239,15 @@ img.logo {
     margin-top: 12px !important;
 }
 
+.env-dropdown-card {
+    height: 42px !important;
+}
+
 .env-dropdown {
-    padding-top: .34rem !important;
+    padding-top: .3rem !important;
+    padding-bottom: .2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     background-color: rgba(223, 137, 53, 0.08);
 }
 

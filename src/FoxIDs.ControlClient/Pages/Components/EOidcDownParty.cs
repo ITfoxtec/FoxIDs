@@ -46,6 +46,60 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void EnsureOidcDownPartySummaryDefaults(GeneralOidcDownPartyViewModel generalOidcDownParty)
+        {
+            var model = generalOidcDownParty?.Form?.Model;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.Name.IsNullOrWhiteSpace())
+            {
+                model.Authority = null;
+                model.OidcDiscovery = null;
+                model.AuthorizeUrl = null;
+                model.TokenUrl = null;
+                model.ResourceAuthority = null;
+                model.ResourceOidcDiscovery = null;
+                generalOidcDownParty.ShowAuthorityDetails = false;
+                generalOidcDownParty.ShowResourceAuthorityDetails = false;
+                return;
+            }
+
+            if (generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                var (authority, partyAuthority, oidcDiscovery, authorize, token) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true, model.PartyBindingPattern);
+                model.Authority = authority;
+                model.PartyAuthority = partyAuthority;  
+                model.OidcDiscovery = oidcDiscovery;
+                model.AuthorizeUrl = authorize;
+                model.TokenUrl = token;
+            }
+            else
+            {
+                model.Authority = null;
+                model.OidcDiscovery = null;
+                model.AuthorizeUrl = null;
+                model.TokenUrl = null;
+                generalOidcDownParty.ShowAuthorityDetails = false;
+            }
+
+            if (generalOidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                var (resourceAuthority, partyResourceAuthority, resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false, model.PartyBindingPattern);
+                model.ResourceAuthority = resourceAuthority;
+                model.PartyResourceAuthority = partyResourceAuthority;
+                model.ResourceOidcDiscovery = resourceOidcDiscovery;
+            }
+            else
+            {
+                model.ResourceAuthority = null;
+                model.ResourceOidcDiscovery = null;
+                generalOidcDownParty.ShowResourceAuthorityDetails = false;
+            }
+        }
+
         private OidcDownPartyViewModel ToViewModel(GeneralOidcDownPartyViewModel generalOidcDownParty, OidcDownParty oidcDownParty, List<OAuthClientSecretResponse> oidcDownSecrets)
         {
             return oidcDownParty.Map<OidcDownPartyViewModel>(afterMap =>

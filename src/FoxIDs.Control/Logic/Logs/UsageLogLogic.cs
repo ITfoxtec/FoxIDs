@@ -180,12 +180,15 @@ namespace FoxIDs.Logic
 
         private Expression<Func<User, bool>> GetUserCountWhereQuery(Track.IdKey idKey, bool usePartitionId)
         {
+            Expression<Func<User, bool>> baseFilter = p => p.DataType == Constants.Models.DataType.User || p.DataType == Constants.Models.DataType.ExternalUser;
+
             if (!usePartitionId && !idKey.TenantName.IsNullOrWhiteSpace())
             {
-                return p => (p.DataType.Equals(Constants.Models.DataType.User) || p.DataType.Equals(Constants.Models.DataType.ExternalUser)) && p.PartitionId.StartsWith($"{idKey.TenantName}:");
+                var tenantPartitionPrefix = string.Concat(idKey.TenantName, ":");
+                return p => (p.DataType == Constants.Models.DataType.User || p.DataType == Constants.Models.DataType.ExternalUser) && p.PartitionId.StartsWith(tenantPartitionPrefix);
             }
 
-            return p => p.DataType.Equals(Constants.Models.DataType.User) || p.DataType.Equals(Constants.Models.DataType.ExternalUser);
+            return baseFilter;
         }
 
         private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)

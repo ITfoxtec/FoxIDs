@@ -12,7 +12,7 @@ namespace FoxIDs.Logic.Seed
 {
     public class SeedLogic : LogicBase
     {
-        private readonly TimeSpan retryInterval = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan retryInterval = TimeSpan.FromSeconds(5);
         private readonly TimeSpan maxDuration = TimeSpan.FromSeconds(60);
 
         private readonly IServiceProvider serviceProvider;

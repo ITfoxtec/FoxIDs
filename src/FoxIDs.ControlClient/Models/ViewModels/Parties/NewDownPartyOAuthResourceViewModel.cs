@@ -21,10 +21,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Scopes")]
         public List<string> Scopes { get; set; }
 
+        [ListLength(Constants.Models.OAuthDownParty.Resource.ScopesMin, Constants.Models.OAuthDownParty.Resource.ScopesMax, Constants.Models.OAuthDownParty.ScopeLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
+        [Display(Name = "Scopes")]
+        public List<string> ScopesShow { get; set; }
+
         [Display(Name = "Client requests scopes")]
         public List<string> ClientScopes { get; set; }
 
         [Display(Name = "Authority")]
         public string Authority { get; set; }
+
+        [Display(Name = "OIDC Discovery")]
+        public string OidcDiscovery { get; set; }
     }
 }

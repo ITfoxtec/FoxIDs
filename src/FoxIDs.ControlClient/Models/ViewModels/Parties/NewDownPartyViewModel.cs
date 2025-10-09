@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewDownPartyViewModel 
     {
-        public Modal Modal;
+        public bool IsVisible { get; set; }
 
         public PartyTypes? Type { get; set; }
 
@@ -24,15 +24,26 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool Created { get; set; }
 
         public PageEditForm<NewDownPartyOidcViewModel> OidcForm { get; set; }
-        
+
         public PageEditForm<NewDownPartyOAuthClientViewModel> OAuthClientForm { get; set; }
 
         public PageEditForm<NewDownPartyOAuthResourceViewModel> OAuthResourceForm { get; set; }
 
         public PageEditForm<NewDownPartySamlViewModel> SamlForm { get; set; }
 
+        public GeneralDownPartyViewModel CreatedDownParty { get; set; }
+
+        public bool ShowOidcAuthorityDetails { get; set; }
+
+        public bool ShowOAuthClientAuthorityDetails { get; set; }
+
+        public bool ShowOAuthResourceAuthorityDetails { get; set; }
+
+    public bool ShowSamlMetadataDetails { get; set; }
+
         public void Init()
         {
+            IsVisible = false;
             AppTitle = null;
             Type = null;
             OAuthType = null;
@@ -41,6 +52,11 @@ namespace FoxIDs.Client.Models.ViewModels
             ShowAdvanced = false;
             CreateWorking = false;
             Created = false;
+            CreatedDownParty = null;
+            ShowOidcAuthorityDetails = false;
+            ShowOAuthClientAuthorityDetails = false;
+            ShowOAuthResourceAuthorityDetails = false;
+            ShowSamlMetadataDetails = false;
             OidcForm = new PageEditForm<NewDownPartyOidcViewModel>();
             OAuthClientForm = new PageEditForm<NewDownPartyOAuthClientViewModel>();
             OAuthResourceForm = new PageEditForm<NewDownPartyOAuthResourceViewModel>();

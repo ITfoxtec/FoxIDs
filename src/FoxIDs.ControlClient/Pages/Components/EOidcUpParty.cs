@@ -59,6 +59,28 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void EnsureOidcUpPartySummaryDefaults(GeneralOidcUpPartyViewModel generalOidcUpParty)
+        {
+            var model = generalOidcUpParty?.Form?.Model;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.DisableUserAuthenticationTrust || model.Name.IsNullOrWhiteSpace())
+            {
+                model.RedirectUrl = null;
+                model.PostLogoutRedirectUrl = null;
+                model.FrontChannelLogoutUrl = null;
+                return;
+            }
+
+            var (redirect, postLogoutRedirect, frontChannelLogout) = MetadataLogic.GetUpRedirectAndLogoutUrls(model.Name, model.PartyBindingPattern);
+            model.RedirectUrl = redirect;
+            model.PostLogoutRedirectUrl = postLogoutRedirect;
+            model.FrontChannelLogoutUrl = frontChannelLogout;
+        }
+
         private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty, OAuthClientKeyResponse clientKeyResponse)
         {
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>

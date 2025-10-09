@@ -170,6 +170,7 @@ namespace FoxIDs
             public const string Message = "Message";
             public const string Details = "Details";
             public const string Value = "Value";
+            public const string Data = "Data";
             public const string MachineName = "MachineName";
             public const string ClientIP = "ClientIP";
             public const string Domain = "Domain";
@@ -205,6 +206,10 @@ namespace FoxIDs
             public const string UsageSms = "UsageSms";
             public const string UsageSmsPrice = "UsageSmsPrice";
             public const string UsageEmail = "UsageEmail";
+            public const string AuditType = "AuditType";
+            public const string AuditAction = "AuditAction";
+            public const string AuditDataAction = "AuditDataAction";
+            public const string DocumentId = "DocumentId";
 
             public static class Results
             {
@@ -226,6 +231,7 @@ namespace FoxIDs
                 public const string ClientType = "ClientType";
                 public const string ClientIp = "ClientIP";
                 public const string UserAgent = "UserAgent";
+                public const string SessionId = "SessionId";
                 public const string AppRoleInstance = "AppRoleInstance";
                 public const string UpPartyId = "UpPartyId";
                 public const string DownPartyId = "DownPartyId";
@@ -234,6 +240,7 @@ namespace FoxIDs
                 public const string FailingLoginCount = "FailingLoginCount";
                 public const string TenantName = "TenantName";
                 public const string TrackName = "TrackName";
+                public const string DocumentId = "DocumentId";
             }
 
             public static class IndexName
@@ -264,6 +271,7 @@ namespace FoxIDs
                 public const string Master = "master";
 
                 public const string Tenant = "tenant";
+                public const string TenantApiLock = "tlock";
                 public const string Track = "track";
                 public const string Party = "party";
                 public const string UpParty = "party:up";
@@ -469,6 +477,16 @@ namespace FoxIDs
                 public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
                 public const string CustomDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
+            }
+
+            public static class TenantApiLock
+            {
+                public const int IdLength = 90;
+                public const string IdRegExPattern = @"^[a-z0-9_:\-]*$";
+                public const int ScopeLength = 40;
+                public const string ScopeRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
+                public const int RequestIdLength = 120;
+                public const string RequestIdRegExPattern = @"^[\w\-:.]*$";
             }
 
             public static class Track
@@ -942,6 +960,7 @@ namespace FoxIDs
 
             public const string AccessToAnyTrackKey = "access_to_any_track";
             public const string AccessToTrackNamesKey = "access_to_track_names";
+            public const string AuditLogEnabledKey = "audit_log_enabled";
 
             public const int SaveAndDeleteManyMin = 1;
             public const int SaveAndDeleteManyWithPasswordMax = 100;
@@ -978,6 +997,7 @@ namespace FoxIDs
                 public const string Basic = ":basic";
                 public const string Usage = ":usage";
                 public const string Log = ":log";
+                public const string Audit = ":audit";
                 public const string User = ":user";
                 public const string Party = ":party";
             }

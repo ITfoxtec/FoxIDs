@@ -216,7 +216,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
+                        <button type="button" class="btn btn-link pl-0" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
                             @TenantInfoText(tenant)
                         </button>
                         @if (tenant.Name != Constants.Routes.MasterTenantName)

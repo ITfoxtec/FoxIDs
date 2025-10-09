@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using FoxIDs.Models;
@@ -20,20 +20,21 @@ namespace FoxIDs.Controllers
     [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
     public class TUsersController : ApiController
     {
-        private const string dataType = Constants.Models.DataType.User;
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
+        private readonly TenantApiLockLogic tenantApiLockLogic;
 
-        public TUsersController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic) : base(logger)
+        public TUsersController(TelemetryScopedLogger logger, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
+            this.tenantApiLockLogic = tenantApiLockLogic;
         }
 
         /// <summary>
@@ -84,60 +85,82 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="usersRequest">Users.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status423Locked)]
         public async Task<IActionResult> PutUsers([FromBody] Api.UsersRequest usersRequest)
         {
             if (!await ModelState.TryValidateObjectAsync(usersRequest)) return BadRequest(ModelState);
 
-            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            TenantApiLock tenantLock = null;
+            try
             {
-                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                if (plan.Users.LimitedThreshold > 0)
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
-                    Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
-                    var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
-                    // included + one master user
-                    if (count + usersRequest.Users.Count > plan.Users.LimitedThreshold)
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (plan.Users.LimitedThreshold > 0)
                     {
-                        throw new PlanException(plan, $"Maximum number of users ({plan.Users.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
+                        tenantLock = await tenantApiLockLogic.AcquireAsync(RouteBinding.TenantName, TenantApiLock.UsersScope);
+                        if (tenantLock == null)
+                        {
+                            return Locked(
+                                $"User operations are currently locked for tenant '{RouteBinding.TenantName}'. Please retry shortly.",
+                                $"Tenant API lock for tenant '{RouteBinding.TenantName}' and scope '{TenantApiLock.UsersScope}' could not be acquired when creating {usersRequest.Users.Count} user(s).");
+                        }
+
+                        Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
+                        var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
+                        // included + one master user
+                        if (count + usersRequest.Users.Count > plan.Users.LimitedThreshold)
+                        {
+                            throw new PlanException(plan, $"Maximum number of users ({plan.Users.LimitedThreshold}) in the '{plan.Name}' plan has been reached.");
+                        }
                     }
                 }
-            }
 
-            var mUsers = new List<User>();
-            foreach (var user in usersRequest.Users)
-            {
-                var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
+                var mUsers = new List<User>();
+                foreach (var user in usersRequest.Users)
                 {
-                    UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
-                    Password = user.Password,
-                    ChangePassword = user.Password.IsNullOrWhiteSpace() ? false : user.ChangePassword,
-                    SetPasswordEmail = user.SetPasswordEmail,
-                    SetPasswordSms = user.SetPasswordSms,
-                    Claims = user.Claims.ToClaimList(),
-                    ConfirmAccount = user.ConfirmAccount,
-                    EmailVerified = user.EmailVerified,
-                    PhoneVerified = user.PhoneVerified,
-                    DisableAccount = user.DisableAccount,
-                    DisableTwoFactorApp = user.DisableTwoFactorApp,
-                    DisableTwoFactorSms = user.DisableTwoFactorSms,
-                    DisableTwoFactorEmail = user.DisableTwoFactorEmail,
-                    RequireMultiFactor = user.RequireMultiFactor
-                }, saveUser: false);
+                    var mUser = await accountLogic.CreateUserAsync(new CreateUserObj
+                    {
+                        UserIdentifier = new UserIdentifier { Email = user.Email, Phone = user.Phone, Username = user.Username },
+                        Password = user.Password,
+                        ChangePassword = user.Password.IsNullOrWhiteSpace() ? false : user.ChangePassword,
+                        SetPasswordEmail = user.SetPasswordEmail,
+                        SetPasswordSms = user.SetPasswordSms,
+                        Claims = user.Claims.ToClaimList(),
+                        ConfirmAccount = user.ConfirmAccount,
+                        EmailVerified = user.EmailVerified,
+                        PhoneVerified = user.PhoneVerified,
+                        DisableAccount = user.DisableAccount,
+                        DisableTwoFactorApp = user.DisableTwoFactorApp,
+                        DisableTwoFactorSms = user.DisableTwoFactorSms,
+                        DisableTwoFactorEmail = user.DisableTwoFactorEmail,
+                        DisableSetPasswordSms = user.DisableSetPasswordSms,
+                        DisableSetPasswordEmail = user.DisableSetPasswordEmail,
+                        RequireMultiFactor = user.RequireMultiFactor
+                    }, saveUser: false);
 
-                if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
-                {
-                    mUser.ChangePassword = user.ChangePassword;
-                    mUser.HashAlgorithm = user.PasswordHashAlgorithm;
-                    mUser.Hash = user.PasswordHash;
-                    mUser.HashSalt = user.PasswordHashSalt;
+                    if (!user.PasswordHashAlgorithm.IsNullOrWhiteSpace())
+                    {
+                        mUser.ChangePassword = user.ChangePassword;
+                        mUser.HashAlgorithm = user.PasswordHashAlgorithm;
+                        mUser.Hash = user.PasswordHash;
+                        mUser.HashSalt = user.PasswordHashSalt;
+                    }
+
+                    mUsers.Add(mUser);
                 }
 
-                mUsers.Add(mUser);
+                await tenantDataRepository.SaveManyAsync(mUsers);
+
+                return NoContent();
             }
-
-            await tenantDataRepository.SaveManyAsync(mUsers);
-
-            return NoContent();
+            finally
+            {
+                if (tenantLock != null)
+                {
+                    await tenantApiLockLogic.ReleaseAsync(tenantLock);
+                }
+            }
         }
 
         /// <summary>

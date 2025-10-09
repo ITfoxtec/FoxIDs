@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     {
         private readonly PartyLogic partyLogic;
 
-        public TNewPartyNameController(TelemetryScopedLogger logger, PartyLogic partyLogic) : base(logger)
+        public TNewPartyNameController(TelemetryScopedLogger logger, PartyLogic partyLogic) : base(logger, auditLogEnabled: false)
         {
             this.partyLogic = partyLogic;
         }

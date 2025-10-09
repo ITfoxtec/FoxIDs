@@ -1,5 +1,10 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
+using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System;
 using System.Text.Json;
@@ -24,11 +29,24 @@ namespace FoxIDs.IntegrationTests.Helpers
 
             var pgTenantDb = new PgKeyValueDB(dataSource, schema, "tenant", jsonSerializerOptions);
             SeedTenantDb(pgTenantDb);
-            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb);
+
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            var settings = new Settings();
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<StdoutTelemetryLogger>()
+                .BuildServiceProvider();
+            var telemetryLogger = new TelemetryLogger(settings, serviceProvider);
+            var auditLogic = new AuditLogic(settings, telemetryLogger, httpContextAccessor);
+
+            var pgTenantRepository = new PgTenantDataRepository(pgTenantDb, auditLogic, httpContextAccessor);
 
             var pgMasterDb = new PgKeyValueDB(dataSource, schema, "master", jsonSerializerOptions);
             SeedMasterDb(pgMasterDb);
-            var pgMasterRepository = new PgMasterDataRepository(pgMasterDb);
+            var pgMasterRepository = new PgMasterDataRepository(pgMasterDb, auditLogic);
 
             return (pgTenantRepository, pgMasterRepository);
         }

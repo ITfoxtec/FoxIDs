@@ -48,20 +48,24 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecretHashLogic>();
 
             services.AddTransient<MasterTenantLogic>();
+            services.AddTransient<TenantApiLockLogic>();
             services.AddTransient<TrackLogic>();
 
             services.AddSingleton<LogLogic>();
             services.AddSingleton<UsageLogLogic>();
+            services.AddSingleton<AuditLogLogic>();
             if (settings.Options.Log == LogOptions.OpenSearchAndStdoutErrors)
             {
                 services.AddSingleton<LogOpenSearchLogic>();
                 services.AddSingleton<UsageLogOpenSearchLogic>();
+                services.AddSingleton<AuditLogOpenSearchLogic>();
             }
             else if (settings.Options.Log == LogOptions.ApplicationInsights)
             {
                 services.AddSingleton<LogAnalyticsWorkspaceProvider>();
                 services.AddSingleton<LogApplicationInsightsLogic>();
                 services.AddSingleton<UsageLogApplicationInsightsLogic>();
+                services.AddSingleton<AuditLogApplicationInsightsLogic>();
             }
 
             services.AddTransient<PartyLogic>();

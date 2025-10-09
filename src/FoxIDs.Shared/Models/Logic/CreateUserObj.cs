@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace FoxIDs.Models.Logic
@@ -10,6 +10,10 @@ namespace FoxIDs.Models.Logic
         public string Password { get; set; }
 
         public bool ChangePassword { get; set; }
+
+        public bool DisableSetPasswordSms { get; set; }
+
+        public bool DisableSetPasswordEmail { get; set; }
 
         public bool SetPasswordSms { get; set; }
 

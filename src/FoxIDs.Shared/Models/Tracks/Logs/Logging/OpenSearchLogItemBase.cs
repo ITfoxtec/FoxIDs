@@ -12,7 +12,6 @@ namespace FoxIDs.Models
         public string RequestId { get; set; }
         public string SequenceId { get; set; }
         public string ExternalSequenceId { get; set; }
-
         public string MachineName { get; set; }
         public string ClientIP { get; set; }
         public string UserAgent { get; set; }

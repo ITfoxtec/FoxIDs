@@ -55,10 +55,25 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public bool EnableCreateUser { get; set; } = true;
 
-        /// <summary>
-        /// Default false.
-        /// </summary>
-        public bool DisableSetPassword { get; set; } 
+        [Obsolete($"Use {nameof(DisableSetPasswordEmail)} and {nameof(DisableSetPasswordSms)} instead. Delete after 2026-10-02.")]
+        public bool? DisableSetPassword
+        {
+            get { return null; }
+            set
+            {
+                if (value == true)
+                {
+                    DisableSetPasswordSms = true;
+                    DisableSetPasswordEmail = true;
+                }
+            }
+        }
+
+        [Display(Name = "Users cannot set / reset password with SMS")]
+        public bool DisableSetPasswordSms { get; set; }
+
+        [Display(Name = "Users cannot set / reset password with email")]
+        public bool DisableSetPasswordEmail { get; set; }
 
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 

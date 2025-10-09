@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
     public interface IUiLoginUpParty : IDataDocument
     {
-        bool DisableSetPassword { get; set; }
+        bool DisableSetPasswordSms { get; set; }
+        bool DisableSetPasswordEmail { get; set; }
 
-        public string Title { get; set; }
-        public string IconUrl { get; set; }
+        string Title { get; set; }
+        string IconUrl { get; set; }
         string Css { get; set; }
 
-        public List<DynamicElement> Elements { get; set; }
+        List<DynamicElement> Elements { get; set; }
     }
 }

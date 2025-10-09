@@ -24,6 +24,7 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly AuditLogic auditLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
@@ -31,12 +32,13 @@ namespace FoxIDs.Logic
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
+            this.auditLogic = auditLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -315,6 +317,9 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+                auditLogic.LogLogoutEvent(PartyTypes.Saml2, sequenceData.UpPartyId, sequenceData.SessionId);
+
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -487,6 +492,11 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> SingleLogoutResponseAsync(SamlUpParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
             logger.ScopeTrace(() => $"AppReg, SAML Single Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
+
+            if (status == Saml2StatusCodes.Success && !sessionIndex.IsNullOrWhiteSpace())
+            {
+                auditLogic.LogLogoutEvent(PartyTypes.Saml2, party.Id, sessionIndex);
+            }
 
             var binding = party.LogoutBinding.ResponseBinding;
             logger.ScopeTrace(() => $"Binding '{binding}'");

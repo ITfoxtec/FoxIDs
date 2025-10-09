@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace FoxIDs.Repository
     {
         private readonly FileDataRepository fileDataRepository;
 
-        public FileTenantDataRepository(FileDataRepository fileDataRepository)
+        public FileTenantDataRepository(FileDataRepository fileDataRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.fileDataRepository = fileDataRepository;
         }

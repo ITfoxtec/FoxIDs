@@ -157,6 +157,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
+        [Display(Name = "Metadata URL")]
+        public string Metadata { get; set; }
+
+        [Display(Name = "Entity ID")]
+        public string MetadataEntityId { get; set; }
+
+        [Display(Name = "ACS URL")]
+        public string MetadataAcs { get; set; }
+
         /// <summary>
         /// Default 10 hours.
         /// </summary>

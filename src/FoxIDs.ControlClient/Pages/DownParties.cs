@@ -96,6 +96,11 @@ namespace FoxIDs.Client.Pages
             try
             {
                 SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(downPartyFilterForm.Model.FilterName));
+
+                if (newDownPartyModal?.IsVisible == true && newDownPartyModal.Created)
+                {
+                    newDownPartyModal.IsVisible = false;
+                }
             }
             catch (FoxIDsApiException ex)
             {
@@ -263,7 +268,8 @@ namespace FoxIDs.Client.Pages
         private void ShowNewDownParty()
         {
             newDownPartyModal.Init();
-            newDownPartyModal.Modal.Show();
+            newDownPartyModal.IsVisible = true;
+            StateHasChanged();
         }
 
         private void ChangeNewDownPartyState(string appTitle = null, PartyTypes? type = null, DownPartyOAuthTypes? oauthType = null, DownPartyOAuthClientTypes? oauthClientType = null)
@@ -272,6 +278,51 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.Type = type;
             newDownPartyModal.OAuthType = oauthType;
             newDownPartyModal.OAuthClientType = oauthClientType;
+            newDownPartyModal.CreateWorking = false;
+            newDownPartyModal.Created = false;
+            newDownPartyModal.CreatedDownParty = null;
+            newDownPartyModal.ShowOidcAuthorityDetails = false;
+            newDownPartyModal.ShowOAuthClientAuthorityDetails = false;
+            newDownPartyModal.ShowOAuthResourceAuthorityDetails = false;
+            newDownPartyModal.ShowSamlMetadataDetails = false;
+        }
+
+        private void CancelNewDownParty()
+        {
+            newDownPartyModal.Init();
+            newDownPartyModal.IsVisible = false;
+            StateHasChanged();
+        }
+
+        private async Task AddNewDownPartyAsync(GeneralDownPartyViewModel generalDownPartyViewModel)
+        {
+            if (generalDownPartyViewModel == null)
+            {
+                return;
+            }
+
+            downParties ??= new List<GeneralDownPartyViewModel>();
+            downParties.RemoveAll(dp => dp?.Name != null && dp.Name.Equals(generalDownPartyViewModel.Name, StringComparison.OrdinalIgnoreCase));
+            downParties.Insert(0, generalDownPartyViewModel);
+
+            newDownPartyModal.CreatedDownParty = generalDownPartyViewModel;
+            newDownPartyModal.Created = true;
+            newDownPartyModal.CreateWorking = false;
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private void EditCreatedDownParty()
+        {
+            if (newDownPartyModal?.CreatedDownParty == null)
+            {
+                return;
+            }
+
+            ShowUpdateDownParty(newDownPartyModal.CreatedDownParty);
+            newDownPartyModal.Init();
+            newDownPartyModal.IsVisible = false;
+            StateHasChanged();
         }
 
         private async Task OnNewDownPartyOidcModalAfterInitAsync(NewDownPartyOidcViewModel model)
@@ -294,14 +345,14 @@ namespace FoxIDs.Client.Pages
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
-                if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential && newDownPartyOidcForm.Model.Secret.IsNullOrWhiteSpace())
                 {
                     newDownPartyOidcForm.Model.Secret = SecretGenerator.GenerateNewSecret();
                 }
 
                 var oidcDownParty = newDownPartyOidcForm.Model.Map<OidcDownParty>(afterMap: afterMap =>
                 {
-                    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+                    afterMap.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = Constants.DefaultLogin.Name } };
 
                     afterMap.Client = new OidcDownClient
                     {
@@ -357,15 +408,10 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOidcForm.Model.Name = oidcDownPartyResult.Name;
                 newDownPartyOidcForm.Model.DisplayName = oidcDownPartyResult.DisplayName;
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOidcForm.Model.Name, true);
                 newDownPartyOidcForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOidcDownPartyViewModel(new DownParty { Type = PartyTypes.Oidc, Name = newDownPartyOidcForm.Model.Name, DisplayName = newDownPartyOidcForm.Model.DisplayName });
-                downParties.Add(generalDownPartyViewModel);
-                if (downParties.Count() <= 1)
-                {
-                    ShowUpdateDownParty(generalDownPartyViewModel);
-                }
-                newDownPartyViewModel.Created = true;
+                await AddNewDownPartyAsync(generalDownPartyViewModel);
             }
             catch (FoxIDsApiException ex)
             {
@@ -395,7 +441,10 @@ namespace FoxIDs.Client.Pages
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
-                newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+                if (newDownPartyOAuthClientForm.Model.Secret.IsNullOrWhiteSpace())
+                {
+                    newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+                }
 
                 var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
@@ -414,15 +463,10 @@ namespace FoxIDs.Client.Pages
 
                 newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
                 newDownPartyOAuthClientForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
                 newDownPartyOAuthClientForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthClientForm.Model.Name, DisplayName = newDownPartyOAuthClientForm.Model.DisplayName });
-                downParties.Add(generalDownPartyViewModel);
-                if (downParties.Count() <= 1)
-                {
-                    ShowUpdateDownParty(generalDownPartyViewModel);
-                }
-                newDownPartyViewModel.Created = true;
+                await AddNewDownPartyAsync(generalDownPartyViewModel);
             }
             catch (FoxIDsApiException ex)
             {
@@ -454,7 +498,7 @@ namespace FoxIDs.Client.Pages
                 newDownPartyViewModel.CreateWorking = true;
                 var oauthDownParty = newDownPartyOAuthResourceForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
-                    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+                    afterMap.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = Constants.DefaultLogin.Name } };
 
                     afterMap.Resource = new OAuthDownResource
                     {
@@ -469,15 +513,10 @@ namespace FoxIDs.Client.Pages
                 newDownPartyOAuthResourceForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
                 newDownPartyOAuthResourceForm.Model.Scopes = oauthDownParty.Resource.Scopes;
                 newDownPartyOAuthResourceForm.Model.ClientScopes = oauthDownParty.Resource.Scopes.Select(s => $"{oauthDownPartyResult.Name}:{s}").ToList();
-                (var clientAuthority, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
+                (var clientAuthority, _, _, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthResourceForm.Model.Name, false);
                 newDownPartyOAuthResourceForm.Model.Authority = clientAuthority;
                 var generalDownPartyViewModel = new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthResourceForm.Model.Name, DisplayName = newDownPartyOAuthResourceForm.Model.DisplayName });
-                downParties.Add(generalDownPartyViewModel);
-                if (downParties.Count() <= 1)
-                {
-                    ShowUpdateDownParty(generalDownPartyViewModel);
-                }
-                newDownPartyViewModel.Created = true;
+                await AddNewDownPartyAsync(generalDownPartyViewModel);
             }
             catch (FoxIDsApiException ex)
             {
@@ -500,6 +539,11 @@ namespace FoxIDs.Client.Pages
         private async Task OnNewDownPartySamlModalAfterInitAsync(NewDownPartySamlViewModel model)
         {
             model.Name = await DownPartyService.GetNewPartyNameAsync();
+
+            if (!model.Name.IsNullOrWhiteSpace() && model.Issuer.IsNullOrWhiteSpace())
+            {
+                model.Issuer = $"uri:{model.Name}";
+            }
         }
 
         private async Task OnNewDownPartySamlModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartySamlViewModel> newDownPartySamlForm, EditContext editContext)
@@ -511,7 +555,7 @@ namespace FoxIDs.Client.Pages
                 var SamlDownPartyViewModel = newDownPartySamlForm.Model.Map<SamlDownPartyViewModel>();
                 var samlDownParty = SamlDownPartyViewModel.Map<SamlDownParty>(afterMap: afterMap =>
                 {
-                    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+                    afterMap.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = Constants.DefaultLogin.Name } };
                     afterMap.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
                 });
 
@@ -521,14 +565,13 @@ namespace FoxIDs.Client.Pages
                 newDownPartySamlForm.Model.Name = samlDownPartyResult.Name;
                 newDownPartySamlForm.Model.Issuer = samlDownPartyResult.Issuer;
                 newDownPartySamlForm.Model.DisplayName = samlDownPartyResult.DisplayName;
-                newDownPartySamlForm.Model.Metadata = MetadataLogic.GetDownSamlMetadata(newDownPartySamlForm.Model.Name);
+                var (metadata, issuer, authn, logout) = MetadataLogic.GetDownSamlMetadata(newDownPartySamlForm.Model.Name);
+                newDownPartySamlForm.Model.Metadata = metadata;
+                newDownPartySamlForm.Model.MetadataIssuer = issuer;
+                newDownPartySamlForm.Model.MetadataAuthn = authn;
+                newDownPartySamlForm.Model.MetadataLogout = logout;
                 var generalDownPartyViewModel = new GeneralSamlDownPartyViewModel(new DownParty { Type = PartyTypes.Saml2, Name = newDownPartySamlForm.Model.Name, DisplayName = newDownPartySamlForm.Model.DisplayName });
-                downParties.Add(generalDownPartyViewModel);
-                if (downParties.Count() <= 1)
-                {
-                    ShowUpdateDownParty(generalDownPartyViewModel);
-                }
-                newDownPartyViewModel.Created = true;
+                await AddNewDownPartyAsync(generalDownPartyViewModel);
             }
             catch (FoxIDsApiException ex)
             {
@@ -546,6 +589,156 @@ namespace FoxIDs.Client.Pages
             {
                 newDownPartyViewModel.CreateWorking = false;
             }
+        }
+
+        private void EnsureNewDownPartyOidcSummaryDefaults()
+        {
+            if (newDownPartyModal?.IsVisible != true || newDownPartyModal.OidcForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OidcForm.Model;
+
+            if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential && model.Secret.IsNullOrWhiteSpace())
+            {
+                model.Secret = SecretGenerator.GenerateNewSecret();
+            }
+            else if ((newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative) && string.IsNullOrWhiteSpace(model.Pkce))
+            {
+                model.Pkce = bool.TrueString;
+            }
+
+            if (model.Scopes == null || !model.Scopes.Any())
+            {
+                model.Scopes = new List<string>
+                {
+                    DefaultOidcScopes.OfflineAccess,
+                    DefaultOidcScopes.Profile,
+                    DefaultOidcScopes.Email,
+                    DefaultOidcScopes.Address,
+                    DefaultOidcScopes.Phone
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                model.OidcDiscovery = null;
+                model.AuthorizeUrl = null;
+                model.TokenUrl = null;
+                return;
+            }
+
+            (var authority, _, var clientOidcDiscovery, var clientAuthorize, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, true);
+            if (string.IsNullOrWhiteSpace(model.Authority))
+            {
+                model.Authority = authority;
+            }
+
+            model.OidcDiscovery = clientOidcDiscovery;
+            model.AuthorizeUrl = clientAuthorize;
+            model.TokenUrl = clientToken;
+        }
+
+        private void EnsureNewDownPartyOAuthClientSummaryDefaults()
+        {
+            if (newDownPartyModal?.IsVisible != true || newDownPartyModal.OAuthClientForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OAuthClientForm.Model;
+
+            if (model.Secret.IsNullOrWhiteSpace())
+            {
+                model.Secret = SecretGenerator.GenerateNewSecret();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                model.OidcDiscovery = null;
+                model.TokenUrl = null;
+                return;
+            }
+
+            (var authority, _, var clientOidcDiscovery, _, var clientToken) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            if (string.IsNullOrWhiteSpace(model.Authority))
+            {
+                model.Authority = authority;
+            }
+
+            model.OidcDiscovery = clientOidcDiscovery;
+            model.TokenUrl = clientToken;
+        }
+
+        private void EnsureNewDownPartyOAuthResourceSummaryDefaults()
+        {
+            if (newDownPartyModal?.IsVisible != true || newDownPartyModal.OAuthResourceForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.OAuthResourceForm.Model;
+
+            if (!string.IsNullOrWhiteSpace(model.Name) && model.Scopes != null)
+            {
+                model.ScopesShow = model.Scopes.Where(s => !s.IsNullOrWhiteSpace()).Select(s => s).ToList();
+                model.ClientScopes = model.Scopes.Where(s => !s.IsNullOrWhiteSpace()).Select(s => $"{model.Name}:{s}").ToList();
+            }
+            else
+            {
+                model.ScopesShow = new List<string>();
+                model.ClientScopes = new List<string>();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                model.OidcDiscovery = null;
+                return;
+            }
+
+            (var authority, _, var resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false);
+            if (string.IsNullOrWhiteSpace(model.Authority))
+            {
+                model.Authority = authority;
+            }
+
+            model.OidcDiscovery = resourceOidcDiscovery;
+        }
+
+        private void EnsureNewDownPartySamlSummaryDefaults()
+        {
+            if (newDownPartyModal?.IsVisible != true || newDownPartyModal.SamlForm?.Model == null)
+            {
+                return;
+            }
+
+            var model = newDownPartyModal.SamlForm.Model;
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                model.Metadata = null;
+                model.MetadataIssuer = null;
+                model.MetadataAuthn = null;
+                model.MetadataLogout = null;
+                return;
+            }
+
+            if (model.Issuer.IsNullOrWhiteSpace())
+            {
+                model.Issuer = $"uri:{model.Name}";
+            }
+
+            var (metadata, issuer, authn, logout) = MetadataLogic.GetDownSamlMetadata(model.Name);
+
+            if (string.IsNullOrWhiteSpace(model.Metadata))
+            {
+                model.Metadata = metadata;
+            }
+
+            model.MetadataIssuer = issuer;
+            model.MetadataAuthn = authn;
+            model.MetadataLogout = logout;
         }
     }
 }

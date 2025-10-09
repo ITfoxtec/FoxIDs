@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
     {
         private readonly IMapper mapper;
 
-        public TReadCertificateController(TelemetryScopedLogger logger, IMapper mapper) : base(logger)
+        public TReadCertificateController(TelemetryScopedLogger logger, IMapper mapper) : base(logger, auditLogEnabled: false)
         {
             this.mapper = mapper;
         }

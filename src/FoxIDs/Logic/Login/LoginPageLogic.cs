@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -503,7 +503,7 @@ namespace FoxIDs.Logic
                 ShowPasswordAuth = !(loginUpParty.DisablePasswordAuth == true),
                 ShowPasswordlessEmail = loginUpParty.EnablePasswordlessEmail == true,
                 ShowPasswordlessSms = loginUpParty.EnablePasswordlessSms == true,
-                ShowSetPassword = !loginUpParty.DisableSetPassword,
+                ShowSetPassword = !(loginUpParty.DisableSetPasswordSms && loginUpParty.DisableSetPasswordEmail),
                 ShowCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
                 EnableChangeUserIdentifier = supportChangeUserIdentifier && !sequenceData.DoSessionUserRequireLogin,
             };

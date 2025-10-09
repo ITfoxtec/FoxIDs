@@ -20,17 +20,19 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly AuditLogic auditLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutLogic singleLogoutLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantDataRepository tenantDataRepository, SequenceLogic sequenceLogic, AuditLogic auditLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutLogic singleLogoutLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantDataRepository = tenantDataRepository;
             this.sequenceLogic = sequenceLogic;
+            this.auditLogic = auditLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutLogic = singleLogoutLogic;
@@ -172,6 +174,9 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+                auditLogic.LogLogoutEvent(PartyTypes.TrackLink, sequenceData.UpPartyId, sequenceData.SessionId);
+
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

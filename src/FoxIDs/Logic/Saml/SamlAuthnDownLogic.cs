@@ -197,7 +197,7 @@ namespace FoxIDs.Logic
             {
                 if (HttpContext.Request.Query != null)
                 {
-                    foreach (var key in new[] { "login_hint", "LoginHint" })
+                    foreach (var key in new[] { "login_hint", "LoginHint", "username" })
                     {
                         if (HttpContext.Request.Query.TryGetValue(key, out var values))
                         {

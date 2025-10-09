@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,6 +15,7 @@ namespace FoxIDs
     public static class DynamicElementExtension
     {
         private static readonly Regex removeHtmlCommentsRegex = new Regex("<!--.*-->", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static readonly Regex htmlHrefRegex = new Regex("href\\s*=\\s*(\"([^\"]*)\"|'([^']*)')", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static IHtmlContent GetEmailControl(this IHtmlHelper html, string name, string value, int maxLength = Constants.Models.User.EmailLength, bool isRequired = false)
         {
@@ -87,13 +90,44 @@ namespace FoxIDs
             var contentBuilder = new HtmlContentBuilder();
             if (isHtml)
             {
-                contentBuilder.AppendHtml(stringLocalizer.GetString(RemoveHtmlComments(content)));
+                var cleanedContent = RemoveHtmlComments(content);
+                var contentWithoutHrefValues = ReplaceHrefValuesWithPlaceholders(cleanedContent, out var hrefValues);
+                if (hrefValues.Length > 0)
+                {
+                    contentBuilder.AppendHtml(stringLocalizer.GetString(contentWithoutHrefValues, hrefValues));
+                }
+                else
+                {
+                    contentBuilder.AppendHtml(stringLocalizer.GetString(contentWithoutHrefValues));
+                }
             }
             else
             {
                 contentBuilder.Append(stringLocalizer.GetString(content));
             }
             return contentBuilder;
+        }
+
+        private static string ReplaceHrefValuesWithPlaceholders(string html, out object[] hrefValues)
+        {
+            if (html.IsNullOrWhiteSpace())
+            {
+                hrefValues = Array.Empty<object>();
+                return html;
+            }
+
+            var urls = new List<object>();
+
+            var content = htmlHrefRegex.Replace(html, match =>
+            {
+                var url = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
+                var placeholder = $"{{{urls.Count}}}";
+                urls.Add(url);
+                return $"href=\"{placeholder}\"";
+            });
+
+            hrefValues = urls.ToArray();
+            return content;
         }
 
         private static string RemoveHtmlComments(string html)

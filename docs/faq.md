@@ -11,7 +11,7 @@ Navigating to the application registration then click Show advanced and add a `*
 
 ## Is it possible to avoid the "Pick an account" dialog?
 Yes FoxIDs support to forward the login hint from an authentication method to an external IdP or another FoxIDs application registration. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 
-In SAML 2.0 the login hint is forwarded as a `NameID` with the Email Format `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` in the `Subject` element.
+In SAML 2.0 the login hint is forwarded as a `NameID` in the `Subject` element and otherwise accepts a `login_hint`/`LoginHint`/`username` query parameter from the SAML relying party.
 
 ## Way can I not logout if the certificate container type is changed?
 **I am unable to logout of a client using OIDC if I login and thereafter changed the certificate container type.**

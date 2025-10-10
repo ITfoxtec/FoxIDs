@@ -175,11 +175,11 @@ namespace FoxIDs.Logic
         {
             var loginRequest = new LoginRequest { DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.SingleLogoutUrl), Id = party.Id, Type = party.Type } };
 
-            if(saml2AuthnRequest.ForceAuthn.HasValue && saml2AuthnRequest.ForceAuthn.Value)
+            if (saml2AuthnRequest.ForceAuthn.HasValue && saml2AuthnRequest.ForceAuthn.Value)
             {
                 loginRequest.LoginAction = LoginAction.SessionUserRequireLogin;
             }
-            else if(saml2AuthnRequest.IsPassive.HasValue && saml2AuthnRequest.IsPassive.Value)
+            else if (saml2AuthnRequest.IsPassive.HasValue && saml2AuthnRequest.IsPassive.Value)
             {
                 loginRequest.LoginAction = LoginAction.ReadSession;
             }
@@ -188,23 +188,25 @@ namespace FoxIDs.Logic
                 loginRequest.LoginAction = LoginAction.ReadSessionOrLogin;
             }
 
-            if (!string.IsNullOrWhiteSpace(saml2AuthnRequest.Subject?.NameID?.ID) && saml2AuthnRequest.Subject.NameID.Format == NameIdentifierFormats.Email.OriginalString)
+            if (!string.IsNullOrWhiteSpace(saml2AuthnRequest.Subject?.NameID?.ID))
             {
-                loginRequest.LoginHint = saml2AuthnRequest.Subject.NameID.ID;
+                loginRequest.LoginHint = saml2AuthnRequest.Subject.NameID.ID.Trim().ToLower();
             }
 
             if (loginRequest.LoginHint.IsNullOrWhiteSpace())
             {
-                if (HttpContext.Request.Query != null)
+                if (HttpContext.Request.Query != null && HttpContext.Request.Query.Keys?.Count() > 0)
                 {
-                    foreach (var key in new[] { "login_hint", "LoginHint", "username" })
+                    var candidateNames = new[] { "login_hint", "LoginHint", "username" };
+                    foreach (var candidate in candidateNames)
                     {
-                        if (HttpContext.Request.Query.TryGetValue(key, out var values))
+                        var actualKey = HttpContext.Request.Query.Keys.FirstOrDefault(k => candidate.Equals(k, StringComparison.OrdinalIgnoreCase));
+                        if (actualKey != null && HttpContext.Request.Query.TryGetValue(actualKey, out var values))
                         {
                             var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
                             if (!loginHintCandidate.IsNullOrWhiteSpace())
                             {
-                                loginRequest.LoginHint = loginHintCandidate;
+                                loginRequest.LoginHint = loginHintCandidate.Trim().ToLower();
                                 break;
                             }
                         }

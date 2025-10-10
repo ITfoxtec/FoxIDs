@@ -1,5 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -9,6 +11,15 @@ namespace FoxIDs.Repository
 {
     public abstract class TenantDataRepositoryBase : ITenantDataRepository
     {
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        protected TenantDataRepositoryBase(IHttpContextAccessor httpContextAccessor)
+        {
+            this.httpContextAccessor = httpContextAccessor;
+        }
+
+        protected HttpContext HttpContext => httpContextAccessor?.HttpContext;
+
         public abstract ValueTask<bool> ExistsAsync<T>(string id, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
         public abstract ValueTask<long> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument;
         public abstract ValueTask<T> GetAsync<T>(string id, bool required = true, bool delete = false, bool queryAdditionalIds = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument;
@@ -44,6 +55,11 @@ namespace FoxIDs.Repository
                 if (idKey == null) new ArgumentNullException(nameof(idKey));
                 return DataDocument.PartitionIdFormat(idKey);
             }
+        }
+
+        protected TelemetryScopedLogger GetScopedLogger(TelemetryScopedLogger scopedLogger = null)
+        {
+            return scopedLogger ?? HttpContext?.RequestServices.GetService<TelemetryScopedLogger>();
         }
     }
 }

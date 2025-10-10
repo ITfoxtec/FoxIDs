@@ -47,6 +47,64 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void EnsureOAuthDownPartySummaryDefaults(GeneralOAuthDownPartyViewModel generalOAuthDownParty)
+        {
+            var model = generalOAuthDownParty?.Form?.Model;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.Name.IsNullOrWhiteSpace())
+            {
+                model.Authority = null;
+                model.OidcDiscovery = null;
+                model.TokenUrl = null;
+                model.ResourceAuthority = null;
+                model.ResourceOidcDiscovery = null;
+                generalOAuthDownParty.ShowAuthorityDetails = false;
+                generalOAuthDownParty.ShowResourceAuthorityDetails = false;
+                return;
+            }
+
+            if (generalOAuthDownParty.DownPartyType == DownPartyOAuthTypes.Client || generalOAuthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                var (authority, _, oidcDiscovery, _, token) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false, model.PartyBindingPattern);
+                model.Authority = authority;
+                model.OidcDiscovery = oidcDiscovery;
+                model.TokenUrl = token;
+            }
+            else
+            {
+                model.Authority = null;
+                model.OidcDiscovery = null;
+                model.TokenUrl = null;
+                generalOAuthDownParty.ShowAuthorityDetails = false;
+            }
+
+            if (generalOAuthDownParty.DownPartyType == DownPartyOAuthTypes.Resource || generalOAuthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                var (resourceAuthority, _, resourceOidcDiscovery, _, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(model.Name, false, model.PartyBindingPattern);
+                model.ResourceAuthority = resourceAuthority;
+                model.ResourceOidcDiscovery = resourceOidcDiscovery;
+                if (!model.Name.IsNullOrWhiteSpace() && model.Resource?.Scopes != null)
+                {
+                    model.ResourceClientScopes = model.Resource.Scopes.Where(s => !s.IsNullOrWhiteSpace()).Select(s => $"{model.Name}:{s}").ToList();
+                }
+                else
+                {
+                    model.ResourceClientScopes = new List<string>();
+                }
+            }
+            else
+            {
+                model.ResourceAuthority = null;
+                model.ResourceOidcDiscovery = null;
+                generalOAuthDownParty.ShowResourceAuthorityDetails = false;
+                model.ResourceClientScopes = new List<string>();
+            }
+        }
+
         private OAuthDownPartyViewModel ToViewModel(GeneralOAuthDownPartyViewModel generalOAuthDownParty, OAuthDownParty oauthDownParty, List<OAuthClientSecretResponse> oauthDownSecrets)
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
@@ -159,6 +217,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     oauthDownParty.Form.Model.Resource = null;
                 }
+                oauthDownParty.Form.Model.ResourceClientScopes = new List<string>();
                 if (oauthDownParty.ShowResourceTab)
                 {
                     oauthDownParty.ShowClientTab = true;
@@ -175,6 +234,10 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     oauthDownParty.Form.Model.Resource = new OAuthDownResource();
                 }
+                if (oauthDownParty.Form.Model.ResourceClientScopes == null)
+                {
+                    oauthDownParty.Form.Model.ResourceClientScopes = new List<string>();
+                }
                 if (oauthDownParty.ShowClientTab)
                 {
                     oauthDownParty.ShowClientTab = false;
@@ -190,6 +253,10 @@ namespace FoxIDs.Client.Pages.Components
                 if (oauthDownParty.Form.Model.Resource == null)
                 {
                     oauthDownParty.Form.Model.Resource = new OAuthDownResource();
+                }
+                if (oauthDownParty.Form.Model.ResourceClientScopes == null)
+                {
+                    oauthDownParty.Form.Model.ResourceClientScopes = new List<string>();
                 }
             }
         }

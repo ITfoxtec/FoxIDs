@@ -19,7 +19,7 @@
 
     private string GetDisplayName()
     {
-        if(!LabelText.IsNullOrEmpty())
+        if (!LabelText.IsNullOrEmpty())
         {
             return LabelText;
         }
@@ -32,7 +32,7 @@
             }
 
             var expression = For.Body as MemberExpression;
-            if(expression == null)
+            if (expression == null)
             {
                 var ue = For.Body as UnaryExpression;
                 if (ue != null)

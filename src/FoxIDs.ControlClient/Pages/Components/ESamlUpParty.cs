@@ -52,6 +52,28 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void EnsureSamlUpPartySummaryDefaults(GeneralSamlUpPartyViewModel generalSamlUpParty)
+        {
+            var model = generalSamlUpParty?.Form?.Model;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.DisableUserAuthenticationTrust || model.Name.IsNullOrWhiteSpace())
+            {
+                model.Metadata = null;
+                model.MetadataEntityId = null;
+                model.MetadataAcs = null;
+                return;
+            }
+
+            var (metadata, entityId, acs) = MetadataLogic.GetUpSamlMetadata(model.Name, model.PartyBindingPattern);
+            model.Metadata = metadata;
+            model.MetadataEntityId = string.IsNullOrWhiteSpace(model.SpIssuer) ? entityId : model.SpIssuer;
+            model.MetadataAcs = acs;
+        }
+
         private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>

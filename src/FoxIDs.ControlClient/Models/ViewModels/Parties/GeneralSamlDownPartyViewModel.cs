@@ -27,5 +27,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool ShowSamlTab { get; set; } = true;
         public bool ShowClaimTransformTab { get; set; }
+
+        public bool ShowMetadataDetails { get; set; }
     }
 }

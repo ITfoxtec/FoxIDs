@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Pages.Logging
         private PageEditForm<LogRequestViewModel> logRequestForm;
         private LogResponseViewModel logResponse;
         private string logUsageHref;
+        private string logAuditHref;
         private string logSettingsHref;
 
         [Inject]
@@ -53,8 +54,10 @@ namespace FoxIDs.Client.Pages.Logging
 
         protected override async Task OnInitializedAsync()
         {
-            logUsageHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusage";
-            logSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logsettings";
+            var tenantRouteName = await RouteBindingLogic.GetTenantNameAsync();
+            logUsageHref = $"{tenantRouteName}/logusage";
+            logAuditHref = $"{tenantRouteName}/logaudit";
+            logSettingsHref = $"{tenantRouteName}/logsettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             NotificationLogic.OnClientSettingLoaded += OnClientSettingLoaded;

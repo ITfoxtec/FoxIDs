@@ -29,6 +29,7 @@ namespace FoxIDs.Client.Services
         private const string sendSmsApiUri = "api/{tenant}/{track}/!tracksendsms";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
         private const string logUsageApiUri = "api/{tenant}/{track}/!tracklogusage";
+        private const string logAuditApiUri = "api/{tenant}/{track}/!tracklogaudit";
         private const string logApiUri = "api/{tenant}/{track}/!tracklog";
         private const string logSettingApiUri = "api/{tenant}/{track}/!tracklogsetting";
         private const string logStreamsSettingsApiUri = "api/{tenant}/{track}/!tracklogstreamssettings";
@@ -82,6 +83,8 @@ namespace FoxIDs.Client.Services
         public async Task SaveTrackClaimMappingAsync(List<ClaimMap> claimMappings) => await PostAsync(claimMappingApiUri, claimMappings);
 
         public async Task<UsageLogResponse> GetTrackUsageLogAsync(UsageLogRequest usageLogRequest) => await GetAsync<UsageLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
+
+        public async Task<LogResponse> GetTrackAuditLogAsync(AuditLogRequest auditLogRequest) => await GetAsync<AuditLogRequest, LogResponse>(logAuditApiUri, auditLogRequest);
 
         public async Task<LogResponse> GetLogAsync(LogRequest logRequest) => await GetAsync<LogRequest, LogResponse>(logApiUri, logRequest);
 

@@ -28,6 +28,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Your notes")]
         public string Note { get; set; }
 
+        [Display(Name = "SAML 2.0 metadata")]
+        public string Metadata { get; set; }
+
+        [Display(Name = "IdP Issuer")]
+        public string MetadataIssuer { get; set; }
+
+        [Display(Name = "Single Sign-On URL")]   
+        public string MetadataAuthn { get; set; }
+
+        [Display(Name = "Single Logout URL")]   
+        public string MetadataLogout { get; set; }
+
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [Display(Name = "Allow applications")]

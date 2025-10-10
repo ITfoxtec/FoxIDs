@@ -15,12 +15,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
+        private readonly AuditLogic auditLogic;
 
-        public ExternalLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ExternalLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, AuditLogic auditLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
+            this.auditLogic = auditLogic;
         }
 
         public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest, bool isSingleLogout = false)
@@ -51,6 +53,9 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
             logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
+
+            auditLogic.LogLogoutEvent(PartyTypes.ExternalLogin, sequenceData.UpPartyId, sequenceData.SessionId);
+
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

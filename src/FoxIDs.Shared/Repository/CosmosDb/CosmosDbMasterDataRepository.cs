@@ -1,12 +1,13 @@
 ﻿using ITfoxtec.Identity;
+using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
 using FoxIDs.Models;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FoxIDs.Infrastructure;
-using System.Net;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
@@ -14,15 +15,17 @@ namespace FoxIDs.Repository
 {
     public class CosmosDbMasterDataRepository : MasterDataRepositoryBase
     {
-        private Container container;
-        private Container bulkContainer;
+        private readonly Container container;
+        private readonly Container bulkContainer;
         private readonly TelemetryLogger logger;
+        private readonly AuditLogic auditLogic;
 
-        public CosmosDbMasterDataRepository(TelemetryLogger logger, ICosmosDbDataRepositoryClient dataRepositoryClient, ICosmosDbDataRepositoryBulkClient dataRepositoryBulkClient)
+        public CosmosDbMasterDataRepository(TelemetryLogger logger, ICosmosDbDataRepositoryClient dataRepositoryClient, ICosmosDbDataRepositoryBulkClient dataRepositoryBulkClient, AuditLogic auditLogic)
         {
             container = dataRepositoryClient.Container;
             bulkContainer = dataRepositoryBulkClient.Container;
             this.logger = logger;
+            this.auditLogic = auditLogic;
         }
 
         public override async ValueTask<bool> ExistsAsync<T>(string id)
@@ -156,10 +159,16 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Create, default, item, item.Id);
+                }
             }
             catch (Exception ex)
             {
@@ -181,10 +190,26 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
             try
             {
+                if (shouldAudit)
+                {
+                    existing = await ReadItemAsync<T>(item.Id, item.PartitionId, required: true);
+                }
+
                 var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Update, existing, item, item.Id);
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -206,10 +231,26 @@ namespace FoxIDs.Repository
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
             try
             {
+                if (shouldAudit)
+                {
+                    existing = await ReadItemAsync<T>(item.Id, item.PartitionId, required: false);
+                }
+
                 var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Save, existing, item, item.Id);
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -229,10 +270,16 @@ namespace FoxIDs.Repository
             var partitionId = item.Id.IdToMasterPartitionId();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             try
             {
                 var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
                 totalRU += response.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, item, default, item.Id);
+                }
             }
             catch (Exception ex)
             {
@@ -259,8 +306,30 @@ namespace FoxIDs.Repository
             }
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            Dictionary<string, T> existingLookup = null;
             try
             {
+                if (shouldAudit)
+                {
+                    existingLookup = new Dictionary<string, T>(items.Count);
+                    foreach (var item in items)
+                    {
+                        try
+                        {
+                            var existingItem = await ReadItemAsync<T>(item.Id, partitionId, required: false);
+                            if (existingItem != null)
+                            {
+                                existingLookup[item.Id] = existingItem;
+                            }
+                        }
+                        catch (FoxIDsDataException)
+                        {
+                            throw;
+                        }
+                    }
+                }
+
                 var partitionKey = new PartitionKey(partitionId);
                 var concurrentTasks = new List<Task>(items.Count);
                 foreach (var item in items)
@@ -285,6 +354,19 @@ namespace FoxIDs.Repository
                 }
 
                 await Task.WhenAll(concurrentTasks);
+
+                if (shouldAudit)
+                {
+                    foreach (var item in items)
+                    {
+                        T existing = default;
+                        if (existingLookup != null && existingLookup.TryGetValue(item.Id, out var existingValue))
+                        {
+                            existing = existingValue;
+                        }
+                        auditLogic.LogDataEvent(AuditDataActions.Save, existing, item, item.Id);
+                    }
+                }
             }
             catch (FoxIDsDataException)
             {
@@ -307,10 +389,26 @@ namespace FoxIDs.Repository
             var partitionId = id.IdToMasterPartitionId();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
             try
             {
+                if (shouldAudit)
+                {
+                    existing = await ReadItemAsync<T>(id, partitionId, required: true);
+                }
+
                 var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                 totalRU += deleteResponse.RequestCharge;
+
+                if (shouldAudit)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, id);
+                }
+            }
+            catch (FoxIDsDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -331,8 +429,30 @@ namespace FoxIDs.Repository
             var partitionId = firstId.IdToMasterPartitionId();
 
             double totalRU = 0;
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            Dictionary<string, T> existingLookup = null;
             try
             {
+                if (shouldAudit)
+                {
+                    existingLookup = new Dictionary<string, T>(ids.Count);
+                    foreach (var id in ids)
+                    {
+                        try
+                        {
+                            var existingItem = await ReadItemAsync<T>(id, partitionId, required: false);
+                            if (existingItem != null)
+                            {
+                                existingLookup[id] = existingItem;
+                            }
+                        }
+                        catch (FoxIDsDataException)
+                        {
+                            throw;
+                        }
+                    }
+                }
+
                 var partitionKey = new PartitionKey(partitionId);
                 var concurrentTasks = new List<Task>(ids.Count);
                 foreach (var id in ids)
@@ -357,6 +477,14 @@ namespace FoxIDs.Repository
                 }
 
                 await Task.WhenAll(concurrentTasks);
+
+                if (shouldAudit && existingLookup?.Count > 0)
+                {
+                    foreach (var existing in existingLookup.Values)
+                    {
+                        auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, existing.Id);
+                    }
+                }
             }
             catch (FoxIDsDataException)
             {

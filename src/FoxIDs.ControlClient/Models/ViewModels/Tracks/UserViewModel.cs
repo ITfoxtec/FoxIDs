@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
@@ -45,11 +45,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
 
-        [Display(Name = "Require set password with email confirmation")]
-        public bool SetPasswordEmail { get; set; }
+        [Display(Name = "User can set / reset password (SMS confirmation)")]
+        public bool DisableSetPasswordSms { get; set; }
 
-        [Display(Name = "Require set password with phone confirmation")]
+        [Display(Name = "User can set / reset password (email confirmation)")]
+
+        public bool DisableSetPasswordEmail { get; set; }
+
+        [Display(Name = "Require user to set password at next log-in (SMS confirmation)")]
         public bool SetPasswordSms { get; set; }
+
+        [Display(Name = "Require user to set password at next log-in (email confirmation)")]
+        public bool SetPasswordEmail { get; set; }
 
         [Display(Name = "Account status")]
         public bool DisableAccount { get; set; }
@@ -89,6 +96,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
             if (SetPasswordEmail)
             {
+                if (DisableSetPasswordEmail)
+                {
+                    results.Add(new ValidationResult($"Set password with email is disabled.", [nameof(DisableSetPasswordEmail), nameof(SetPasswordEmail)]));
+                }
                 if (Email.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"The field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
@@ -96,6 +107,10 @@ namespace FoxIDs.Client.Models.ViewModels
             }
             if (SetPasswordSms)
             {
+                if (DisableSetPasswordSms)
+                {
+                    results.Add(new ValidationResult($"Set password with SMS is disabled.", [nameof(DisableSetPasswordSms), nameof(SetPasswordSms)]));
+                }
                 if (Phone.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));

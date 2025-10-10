@@ -6,9 +6,9 @@
 
 <PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(async m => await OAuthUpPartyViewModelAfterInitAsync(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
     <div class="modal-header sticky-header">
-        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">OAuth 2.0</span>
-            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetUpPartyDisplayName(oauthUpParty.Form.Model)</span>
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+            <span class="text-nowrap first-header">OAuth 2.0</span>
+            <span class="ml-2 text-muted text-truncate second-header">@GetUpPartyDisplayName(oauthUpParty.Form.Model)</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>

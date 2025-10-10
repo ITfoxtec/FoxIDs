@@ -12,7 +12,7 @@ namespace FoxIDs.Controllers.Client
         private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
 
-        public MClientSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper) : base(logger)
+        public MClientSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper) : base(logger, auditLogEnabled: false)
         {
             this.settings = settings;
             this.mapper = mapper;

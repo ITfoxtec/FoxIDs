@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Repository;
@@ -45,10 +45,12 @@ namespace FoxIDs.Logic
                 Username = createUserObj.UserIdentifier.Username,
                 ConfirmAccount = createUserObj.ConfirmAccount,
                 ChangePassword = createUserObj.ChangePassword,
-                SetPasswordEmail = createUserObj.SetPasswordEmail,
                 SetPasswordSms = createUserObj.SetPasswordSms,
-                EmailVerified = createUserObj.EmailVerified,
+                SetPasswordEmail = createUserObj.SetPasswordEmail,
+                DisableSetPasswordSms = createUserObj.DisableSetPasswordSms,
+                DisableSetPasswordEmail = createUserObj.DisableSetPasswordEmail,
                 PhoneVerified = createUserObj.PhoneVerified,
+                EmailVerified = createUserObj.EmailVerified,
                 DisableAccount = createUserObj.DisableAccount,
                 RequireMultiFactor = createUserObj.RequireMultiFactor,
                 DisableTwoFactorApp = createUserObj.DisableTwoFactorApp,

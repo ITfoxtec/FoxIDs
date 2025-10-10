@@ -6,7 +6,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewUpPartyViewModel 
     {
-        public Modal Modal;
+        public bool IsVisible { get; set; }
 
         public PartyTypes? Type { get; set; }
 
@@ -34,6 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public void Init()
         {
+            IsVisible = false;
             AppTitle = null;
             Type = null;
             ShowAll = false;

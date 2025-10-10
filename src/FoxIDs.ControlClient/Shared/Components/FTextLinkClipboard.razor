@@ -1,4 +1,7 @@
-﻿<span><a href="@Text" target="_blank">@Text</a> <button type="button" class="btn btn-link btn-icon-xs" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(Text))"><i class="bi bi-copy" title="Click to copy"></i></button></span>
+﻿<span class="d-inline-flex flex-nowrap align-items-center" style="min-width: 0; max-width: 100%;">
+    <a href="@Text" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block" title="@Text">@Text</a>
+    <button type="button" class="btn btn-link btn-icon-xs flex-shrink-0 mx-1" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(Text))"><i class="bi bi-copy" title="Click to copy"></i></button>
+</span>
 
 @code {
     [Inject]

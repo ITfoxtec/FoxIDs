@@ -13,6 +13,7 @@ namespace FoxIDs.Client.Services
         private const string usageTenantsApiUri = "api/{tenant}/master/!usagetenants";
         private const string logApiUri = "api/{tenant}/master/!tenantlog";
         private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
+        private const string logAuditApiUri = "api/{tenant}/master/!tenantlogaudit";
         private const string usageSettingsApiUri = "api/@master/!usagesettings";
         private const string listUsagesApiUri = "api/{tenant}/master/!usages";
         private const string usageApiUri = "api/{tenant}/master/!usage";
@@ -31,6 +32,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<LogResponse> GetLogAsync(TenantLogRequest logRequest) => await GetAsync<TenantLogRequest, LogResponse>(logApiUri, logRequest);
         public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
+        public async Task<LogResponse> GetAuditLogAsync(AuditLogRequest auditLogRequest) => await GetAsync<AuditLogRequest, LogResponse>(logAuditApiUri, auditLogRequest);
 
         public async Task<UsageSettings> GetUsageSettingsAsync() => await GetAsync<UsageSettings>(usageSettingsApiUri);
         public async Task<UsageSettings> UpdateUsageSettingsAsync(UsageSettings usageSettings) => await PutResponseAsync<UsageSettings, UsageSettings>(usageSettingsApiUri, usageSettings);

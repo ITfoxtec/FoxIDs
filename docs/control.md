@@ -399,6 +399,20 @@ and a `Production` environment with the technical name `-` is `:track[-]`.
         <td>read</td>
     </tr>
     <tr>
+        <td colspan=2><i>All audit logs in all environments in a tenant, not including the master environment.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:audit</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Audit logs in a specific environment in a tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:audit</code></td>
+        <td>read</td>
+    </tr>    
+    <tr>
         <td colspan=2><i>All logs in all environments in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
@@ -570,6 +584,13 @@ The master tenant access rights is at the same time both scopes and roles.
     <tr>
         <td><code>foxids:master.delete</code></td>
         <td>delete</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Audit log in the master tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:master:audit</code></td>
+        <td>read</td>
     </tr>
     <tr>
         <td colspan=2><i>Usage log in the master tenant.</i></td>

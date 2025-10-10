@@ -28,8 +28,9 @@ namespace FoxIDs.Controllers
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
+        private readonly TenantApiLockLogic tenantApiLockLogic;
 
-        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic) : base(logger)
+        public TTrackController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -39,6 +40,7 @@ namespace FoxIDs.Controllers
             this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
+            this.tenantApiLockLogic = tenantApiLockLogic;
         }
 
         /// <summary>
@@ -76,9 +78,11 @@ namespace FoxIDs.Controllers
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
         [ProducesResponseType(typeof(Api.Track), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status423Locked)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.Track>> PostTrack([FromBody] Api.Track track)
         {
+            TenantApiLock tenantLock = null;
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
@@ -95,9 +99,17 @@ namespace FoxIDs.Controllers
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (plan.Tracks.LimitedThreshold > 0)
                     {
+                        tenantLock = await tenantApiLockLogic.AcquireAsync(RouteBinding.TenantName, TenantApiLock.TracksScope);
+                        if (tenantLock == null)
+                        {
+                            return Locked(
+                                $"Environment operations are currently locked for tenant '{RouteBinding.TenantName}'. Please retry shortly.",
+                                $"Tenant API lock for tenant '{RouteBinding.TenantName}' and scope '{TenantApiLock.TracksScope}' could not be acquired when creating environment '{track.Name}'.");
+                        }
+
                         var count = await tenantDataRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
                         // included + master track
-                        if (count > plan.Tracks.LimitedThreshold) 
+                        if (count > plan.Tracks.LimitedThreshold)
                         {
                             throw new PlanException(plan, $"Maximum number of environments ({plan.Tracks.LimitedThreshold}) in the '{plan.Name}' plan has been reached. Master environment not counted.");
                         }
@@ -118,6 +130,13 @@ namespace FoxIDs.Controllers
                     return Conflict(typeof(Api.Track).Name, track.Name, nameof(track.Name));
                 }
                 throw;
+            }
+            finally
+            {
+                if (tenantLock != null)
+                {
+                    await tenantApiLockLogic.ReleaseAsync(tenantLock);
+                }
             }
         }
 

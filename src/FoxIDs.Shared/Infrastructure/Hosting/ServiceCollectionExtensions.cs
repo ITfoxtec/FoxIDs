@@ -35,6 +35,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SendSmsLogic>();
             services.AddTransient<SendEmailLogic>();
             services.AddTransient<PlanUsageLogic>();
+            services.AddTransient<AuditLogic>();
             services.AddTransient<ContainedKeyLogic>();
 
             if (settings.Options.KeyStorage == KeyStorageOptions.KeyVault)

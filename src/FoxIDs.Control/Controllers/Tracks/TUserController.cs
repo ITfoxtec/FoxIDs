@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using FoxIDs.Models;
@@ -14,7 +14,6 @@ using System.Linq.Expressions;
 using FoxIDs.Infrastructure.Security;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Logic;
-using System.Security.Claims;
 
 namespace FoxIDs.Controllers
 {
@@ -27,8 +26,9 @@ namespace FoxIDs.Controllers
         private readonly ITenantDataRepository tenantDataRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
+        private readonly TenantApiLockLogic tenantApiLockLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IMapper mapper, ITenantDataRepository tenantDataRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, TenantApiLockLogic tenantApiLockLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,6 +36,7 @@ namespace FoxIDs.Controllers
             this.tenantDataRepository = tenantDataRepository;
             this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
+            this.tenantApiLockLogic = tenantApiLockLogic;
         }
 
         /// <summary>
@@ -80,9 +81,11 @@ namespace FoxIDs.Controllers
         /// <param name="createUserRequest">User.</param>
         /// <returns>User.</returns>
         [ProducesResponseType(typeof(Api.User), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status423Locked)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.User>> PostUser([FromBody] Api.CreateUserRequest createUserRequest)
         {
+            TenantApiLock tenantLock = null;
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(createUserRequest)) return BadRequest(ModelState);
@@ -93,8 +96,17 @@ namespace FoxIDs.Controllers
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
-                    if (plan.Users.LimitedThreshold > 0)
+                    if (plan?.Users?.LimitedThreshold > 0)
                     {
+                        tenantLock = await tenantApiLockLogic.AcquireAsync(RouteBinding.TenantName, TenantApiLock.UsersScope);
+                        if (tenantLock == null)
+                        {
+                            var identifier = createUserRequest.Email ?? createUserRequest.Username ?? createUserRequest.Phone ?? "unknown";
+                            return Locked(
+                                $"User operations are currently locked for tenant '{RouteBinding.TenantName}'. Please retry shortly.",
+                                $"Tenant API lock for tenant '{RouteBinding.TenantName}' and scope '{TenantApiLock.UsersScope}' could not be acquired when creating user '{identifier}'.");
+                        }
+
                         Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
                         var count = await tenantDataRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
                         // included + one master user
@@ -120,6 +132,8 @@ namespace FoxIDs.Controllers
                     DisableTwoFactorApp = createUserRequest.DisableTwoFactorApp,
                     DisableTwoFactorSms = createUserRequest.DisableTwoFactorSms,
                     DisableTwoFactorEmail = createUserRequest.DisableTwoFactorEmail,
+                    DisableSetPasswordSms = createUserRequest.DisableSetPasswordSms,
+                    DisableSetPasswordEmail = createUserRequest.DisableSetPasswordEmail,
                     RequireMultiFactor = createUserRequest.RequireMultiFactor
                 });
                 return Created(mapper.Map<Api.User>(mUser));
@@ -142,6 +156,13 @@ namespace FoxIDs.Controllers
                     return Conflict(typeof(Api.User).Name, new { createUserRequest.Email, createUserRequest.Phone, createUserRequest.Username }.ToJson());
                 }
                 throw;
+            }
+            finally
+            {
+                if (tenantLock != null)
+                {
+                    await tenantApiLockLogic.ReleaseAsync(tenantLock);
+                }
             }
         }
 
@@ -207,6 +228,8 @@ namespace FoxIDs.Controllers
                 mUser.ChangePassword = mUser.Hash.IsNullOrWhiteSpace() ? false : user.ChangePassword;
                 mUser.SetPasswordEmail = user.SetPasswordEmail;
                 mUser.SetPasswordSms = user.SetPasswordSms;
+                mUser.DisableSetPasswordEmail = user.DisableSetPasswordEmail;
+                mUser.DisableSetPasswordSms = user.DisableSetPasswordSms;
                 mUser.DisableAccount = user.DisableAccount;
                 mUser.DisableTwoFactorApp = user.DisableTwoFactorApp;
                 mUser.DisableTwoFactorSms = user.DisableTwoFactorSms;

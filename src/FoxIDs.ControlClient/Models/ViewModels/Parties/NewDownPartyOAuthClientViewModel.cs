@@ -20,5 +20,11 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Client secret")]
         public string Secret { get; set; }
+
+        [Display(Name = "OIDC Discovery")]
+        public string OidcDiscovery { get; set; }
+
+        [Display(Name = "Token URL")]
+        public string TokenUrl { get; set; }
     }
 }

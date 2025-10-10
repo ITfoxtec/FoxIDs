@@ -557,7 +557,7 @@ namespace FoxIDs.Logic
             var loginHint = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.LoginHint);
             if (!loginHint.IsNullOrWhiteSpace())
             {
-                outputLoginRequest.LoginHint = loginHint;
+                outputLoginRequest.LoginHint = loginHint.Trim().ToLower();
             }
 
             var acrValue = claims.FindFirstOrDefaultValue(c => c.Type == Constants.ClaimTransformClaimTypes.Acr);

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
@@ -63,6 +63,12 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "change_password")]
         public bool ChangePassword  { get; set; }
+
+        [JsonProperty(PropertyName = "disable_set_password_sms")]
+        public bool DisableSetPasswordSms { get; set; }
+
+        [JsonProperty(PropertyName = "disable_set_password_email")]
+        public bool DisableSetPasswordEmail { get; set; }
 
         /// <summary>
         /// SetPasswordEmail require the user to have a email user identifier.
@@ -158,6 +164,10 @@ namespace FoxIDs.Models
 
             if (SetPasswordEmail)
             {
+                if (DisableSetPasswordEmail)
+                {
+                    results.Add(new ValidationResult($"Set password with email is disabled.", [nameof(DisableSetPasswordEmail), nameof(SetPasswordEmail)]));
+                }
                 if (Email.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"The field {nameof(Email)} is required to set password with email.", [nameof(Email), nameof(SetPasswordEmail)]));
@@ -165,6 +175,10 @@ namespace FoxIDs.Models
             }
             if (SetPasswordSms)
             {
+                if (DisableSetPasswordSms)
+                {
+                    results.Add(new ValidationResult($"Set password with SMS is disabled.", [nameof(DisableSetPasswordSms), nameof(SetPasswordSms)]));
+                }
                 if (Phone.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"The field {nameof(Phone)} is required to set password with SMS.", [nameof(Phone), nameof(SetPasswordSms)]));

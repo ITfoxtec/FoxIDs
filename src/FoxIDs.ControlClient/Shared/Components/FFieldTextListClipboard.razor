@@ -1,29 +1,33 @@
-﻿@using System.Linq.Expressions
+@using System.Linq.Expressions
 
 <div class="active-group active">
     @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
     {
         if (item.Index == 0)
         {
-            <div class="card card-row bg-light">
-                <div class="card-body">
-                    @item.Effect
+            <div class="card card-row bg-light d-flex align-items-center">
+                <div class="card-body py-2 mb-0 flex-fill">
+                    <div class="d-flex flex-nowrap align-items-center">
+                        <span class="text-truncate d-inline-block" title="@item.Effect">@item.Effect</span>
+                    </div>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
-                </div>
+                <div class="pr-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                    </div>
             </div>
             <Label For="@For" class="label-control" />
         }
         else
         {
-            <div class="card card-row bg-light">
-                <div class="card-body">
-                    @item.Effect
+            <div class="card card-row bg-light d-flex align-items-center">
+                <div class="card-body py-2 mb-0 flex-fill">
+                    <div class="d-flex flex-nowrap align-items-center">
+                        <span class="text-truncate d-inline-block" title="@item.Effect">@item.Effect</span>
+                    </div>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
-                </div>
+                <div class="pr-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-link" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                    </div>
             </div>
         }
     }

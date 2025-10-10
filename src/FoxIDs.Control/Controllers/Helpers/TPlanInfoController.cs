@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly IMasterDataRepository masterDataRepository;
 
-        public TPlanInfoController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger)
+        public TPlanInfoController(TelemetryScopedLogger logger, IMapper mapper, IMasterDataRepository masterDataRepository) : base(logger, auditLogEnabled: false)
         {
             this.mapper = mapper;
             this.masterDataRepository = masterDataRepository;

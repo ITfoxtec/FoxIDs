@@ -95,7 +95,7 @@ namespace FoxIDs.UnitTests
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            var fakeTenantRepository = new FakeTenantRepository();
+            var fakeTenantRepository = new FakeTenantRepository(mockHttpContextAccessor);
             var fakeMasterRepository = new FakeMasterRepository();
            
             var secretHashLogic = new SecretHashLogic();

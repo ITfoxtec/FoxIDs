@@ -29,5 +29,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool ShowClientTab { get; set; } = true;
         public bool ShowResourceTab { get; set; }
         public bool ShowClaimTransformTab { get; set; }
+
+        public bool ShowAuthorityDetails { get; set; }
+
+        public bool ShowResourceAuthorityDetails { get; set; }
     }
 }

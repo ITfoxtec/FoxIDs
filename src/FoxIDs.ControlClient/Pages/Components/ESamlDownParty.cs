@@ -19,9 +19,6 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlDownParty : DownPartyBase
     {
-        [Inject]
-        public HelpersService HelpersService { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -44,6 +41,27 @@ namespace FoxIDs.Client.Pages.Components
             {
                 DownParty.Error = ex.Message;
             }
+        }
+
+        private void EnsureSamlDownPartySummaryDefaults(GeneralSamlDownPartyViewModel generalSamlDownParty)
+        {
+            var model = generalSamlDownParty?.Form?.Model;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.Name.IsNullOrWhiteSpace())
+            {
+                model.Metadata = null;
+                model.MetadataIssuer = null;
+                model.MetadataAuthn = null;
+                model.MetadataLogout = null;
+                generalSamlDownParty.ShowMetadataDetails = false;
+                return;
+            }
+
+            (model.Metadata, model.MetadataIssuer, model.MetadataAuthn, model.MetadataLogout) = MetadataLogic.GetDownSamlMetadata(model.Name, model.PartyBindingPattern);
         }
 
         private SamlDownPartyViewModel ToViewModel(GeneralSamlDownPartyViewModel generalSamlDownParty, SamlDownParty samlDownParty)

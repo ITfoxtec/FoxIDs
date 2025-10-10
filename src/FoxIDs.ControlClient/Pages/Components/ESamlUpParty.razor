@@ -6,9 +6,9 @@
 
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(async m => await SamlUpPartyViewModelAfterInitAsync(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header sticky-header">
-        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">SAML 2.0</span>
-            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetUpPartyDisplayName(samlUpParty.Form.Model)</span>
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+            <span class="text-nowrap first-header">SAML 2.0</span>
+            <span class="ml-2 text-muted text-truncate second-header">@GetUpPartyDisplayName(samlUpParty.Form.Model)</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="samlUpParty.ShowAdvanced" />
     </div>
@@ -28,13 +28,14 @@
         {
             @if (!samlUpParty.Form.Model.Name.IsNullOrWhiteSpace())
             {
-                <div class="mb-3 alert alert-info overflow-hidden" role="alert">
-                    @{
-                        (var samlMetadata, var samlEntityId, var samlAcs) = @MetadataLogic.GetUpSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern);
-                    }
-                    <div>Metadata URL: <FTextLinkClipboard Text="@samlMetadata" /></div>
-                    <div>Entity ID: <FTextClipboard Text="@(string.IsNullOrWhiteSpace(samlUpParty.Form?.Model?.SpIssuer) ? samlEntityId : samlUpParty.Form.Model.SpIssuer)" /></div>
-                    <div>ACS URL: <FTextClipboard Text="@samlAcs" /></div>
+                EnsureSamlUpPartySummaryDefaults(samlUpParty);
+                <div class="card bg-light border mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title mt-1 mb-3">Application information</h6>
+                        <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.Metadata" For="@(() => samlUpParty.Form.Model.Metadata)" />
+                        <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataEntityId" For="@(() => samlUpParty.Form.Model.MetadataEntityId)" />
+                        <FFieldTextClipboard @bind-Value="samlUpParty.Form.Model.MetadataAcs" For="@(() => samlUpParty.Form.Model.MetadataAcs)" />
+                    </div>
                 </div>
             }
             @if (UpParty.ShowAdvanced)

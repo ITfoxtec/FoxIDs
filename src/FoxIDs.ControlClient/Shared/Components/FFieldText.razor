@@ -1,11 +1,14 @@
-﻿@inherits FInputBase<string>
+@inherits FInputBase<string>
 
 <div class="active-group active @Class">
-    <div class="card bg-light">
-        <div class="card-body">
-            @CurrentValue
+<div class="card card-row bg-light d-flex align-items-center">
+    <div class="card-body py-2 mb-0 flex-fill">
+        <div class="d-flex flex-nowrap align-items-center">
+            <span class="text-truncate d-inline-block" title="@CurrentValue">@CurrentValue</span>
         </div>
     </div>
+    <div class="pr-2"></div>
+</div>
     <Label For="@For" class="label-control" />
 </div>
 

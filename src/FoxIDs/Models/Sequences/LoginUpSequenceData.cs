@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models.Logic;
+using FoxIDs.Models.Logic;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 

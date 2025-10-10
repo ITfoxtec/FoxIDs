@@ -59,6 +59,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Keys")]
         public List<JwkWithCertificateInfo> Keys { get; set; }
 
+        [Display(Name = "Redirect URL")]
+        public string RedirectUrl { get; set; }
+
+        [Display(Name = "Post logout redirect URL")]
+        public string PostLogoutRedirectUrl { get; set; }
+
+        [Display(Name = "Front channel logout URL")]
+        public string FrontChannelLogoutUrl { get; set; }
+
         /// <summary>
         /// Default 10 hours.
         /// </summary>

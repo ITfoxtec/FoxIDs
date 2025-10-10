@@ -6,9 +6,9 @@
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header sticky-header">
-        <div class="h5 d-flex flex-nowrap align-items-center mb-0" style="min-width: 0; overflow: hidden;">
-            <span class="text-nowrap" style="flex-grow: 0; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap;">User Login UI</span>
-            <span class="ml-2 text-muted text-truncate" style="flex-grow: 1; flex-shrink: 100; min-width: 0; overflow: hidden;">@GetUpPartyDisplayName(loginUpParty.Form.Model)</span>
+        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+            <span class="text-nowrap first-header">User Login UI</span>
+            <span class="ml-2 text-muted text-truncate second-header">@GetUpPartyDisplayName(loginUpParty.Form.Model)</span>
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
@@ -139,8 +139,8 @@
                     <div class="card">
                         <div class="card-body pt-3 pb-0">
                             <FInputToggleN @bind-Value="loginUpParty.Form.Model.DisablePasswordAuth" For="@(() => loginUpParty.Form.Model.DisablePasswordAuth)" Negation="true" TextType="e.d" />
-                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
                             <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessSms" For="@(() => loginUpParty.Form.Model.EnablePasswordlessSms)" TextType="e.d" />
+                            <FInputToggleN @bind-Value="loginUpParty.Form.Model.EnablePasswordlessEmail" For="@(() => loginUpParty.Form.Model.EnablePasswordlessEmail)" TextType="e.d" />
                         </div>
                     </div>
                     <label class="label-control">Authentication</label>
@@ -149,7 +149,15 @@
                 {
                     @if (!(loginUpParty.Form.Model.DisablePasswordAuth == true))
                     {
-                        <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPassword" For="@(() => loginUpParty.Form.Model.DisableSetPassword)" Negation="true" TextType="e.d" />
+                        <div class="active-group active">
+                            <div class="card">
+                                <div class="card-body pt-3 pb-0">
+                                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPasswordSms" For="@(() => loginUpParty.Form.Model.DisableSetPasswordSms)" Negation="true" TextType="e.d" />
+                                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSetPasswordEmail" For="@(() => loginUpParty.Form.Model.DisableSetPasswordEmail)" Negation="true" TextType="e.d" />
+                                </div>
+                            </div>
+                            <label class="label-control">Set / reset password</label>
+                        </div>
                     }
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword" For="@(() => loginUpParty.Form.Model.DeleteRefreshTokenGrantsOnChangePassword)" TextType="e.d" />
                 }
@@ -427,14 +435,3 @@
         <div class="modal-backdrop fade show"></div>
     }
 </PageEditForm>
-
-
-
-
-
-
-
-
-
-
-

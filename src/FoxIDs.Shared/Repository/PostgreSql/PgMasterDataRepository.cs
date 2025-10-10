@@ -1,4 +1,7 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
+using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,8 +12,17 @@ using Wololo.PgKeyValueDB;
 
 namespace FoxIDs.Repository
 {
-    public class PgMasterDataRepository([FromKeyedServices(Constants.Models.DataType.Master)] PgKeyValueDB db) : MasterDataRepositoryBase
+    public class PgMasterDataRepository : MasterDataRepositoryBase
     {
+        private readonly PgKeyValueDB db;
+        private readonly AuditLogic auditLogic;
+
+        public PgMasterDataRepository([FromKeyedServices(Constants.Models.DataType.Master)] PgKeyValueDB db, AuditLogic auditLogic)
+        {
+            this.db = db ?? throw new ArgumentNullException(nameof(db));
+            this.auditLogic = auditLogic ?? throw new ArgumentNullException(nameof(auditLogic));
+        }
+
         public override async ValueTask<bool> ExistsAsync<T>(string id)
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
@@ -57,9 +69,16 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
-            if (!await db.CreateAsync(item.Id, item, item.PartitionId))
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            var created = await db.CreateAsync(item.Id, item, item.PartitionId);
+            if (!created)
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.Conflict };
+            }
+
+            if (shouldAudit)
+            {
+                auditLogic.LogDataEvent(AuditDataActions.Create, default, item, item.Id);
             }
         }
 
@@ -72,9 +91,25 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
+            if (shouldAudit)
+            {
+                existing = await db.GetAsync<T>(item.Id, item.PartitionId);
+                if (existing == null)
+                {
+                    throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+
             if(!await db.UpdateAsync(item.Id, item, item.PartitionId))
             {
                 throw new FoxIDsDataException(item.Id, item.PartitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+
+            if (shouldAudit)
+            {
+                auditLogic.LogDataEvent(AuditDataActions.Update, existing, item, item.Id);
             }
         }
 
@@ -87,7 +122,19 @@ namespace FoxIDs.Repository
             item.SetDataType();
             await item.ValidateObjectAsync();
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
+            if (shouldAudit)
+            {
+                existing = await db.GetAsync<T>(item.Id, item.PartitionId);
+            }
+
             await db.UpsertAsync(item.Id, item, item.PartitionId);
+
+            if (shouldAudit)
+            {
+                auditLogic.LogDataEvent(AuditDataActions.Save, existing, item, item.Id);
+            }
         }
 
         public override async ValueTask DeleteAsync<T>(T item)
@@ -98,7 +145,13 @@ namespace FoxIDs.Repository
             item.PartitionId = item.Id.IdToMasterPartitionId();
             await item.ValidateObjectAsync();
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             await db.RemoveAsync(item.Id, item.PartitionId);
+
+            if (shouldAudit)
+            {
+                auditLogic.LogDataEvent(AuditDataActions.Delete, item, default, item.Id);
+            }
         }
 
         public override async ValueTask SaveManyAsync<T>(IReadOnlyCollection<T> items)
@@ -127,18 +180,45 @@ namespace FoxIDs.Repository
 
             var partitionId = id.IdToMasterPartitionId();
 
+            var shouldAudit = auditLogic.ShouldLogAuditData();
+            T existing = default;
+            if (shouldAudit)
+            {
+                existing = await db.GetAsync<T>(id, partitionId);
+                if (existing == null)
+                {
+                    throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+                }
+            }
+
             if(!await db.RemoveAsync(id, partitionId))
             {
                 throw new FoxIDsDataException(id, partitionId) { StatusCode = DataStatusCode.NotFound };
+            }
+
+            if (shouldAudit)
+            {
+                auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, id);
             }
         }
 
         public override async ValueTask DeleteManyAsync<T>(IReadOnlyCollection<string> ids)
         {
+            var shouldAudit = auditLogic.ShouldLogAuditData();
             foreach (string id in ids)
             {
                 var partitionId = id.IdToMasterPartitionId();
-                _ = await db.RemoveAsync(id, partitionId);
+                T existing = default;
+                if (shouldAudit)
+                {
+                    existing = await db.GetAsync<T>(id, partitionId);
+                }
+
+                var removed = await db.RemoveAsync(id, partitionId);
+                if (shouldAudit && removed && existing != null)
+                {
+                    auditLogic.LogDataEvent(AuditDataActions.Delete, existing, default, id);
+                }
             }
         }
 

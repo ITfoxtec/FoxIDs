@@ -88,12 +88,14 @@
                 
                 @if (refreshTokenGrant.Details != null)
                 {
-                    <div class="modal-header">
-                        <div class="h5">
-                            Refresh Token Grant
+                    <div class="modal-header sticky-header">
+                        <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                            <span class="text-nowrap first-header">Refresh Token Grant</span>
+                            <span class="ml-2 text-muted text-truncate second-header">@GetInfoText(refreshTokenGrant)</span>
                         </div>
                     </div>
                     <div class="modal-body">
+                        <FFieldText @bind-Value="refreshTokenGrant.Details.CreatedAtText" For="@(() => refreshTokenGrant.Details.CreatedAtText)" />
                         @if (!refreshTokenGrant.Details.ExpireAtText.IsNullOrWhiteSpace())
                         {
                             <FFieldText @bind-Value="refreshTokenGrant.Details.ExpireAtText" For="@(() => refreshTokenGrant.Details.ExpireAtText)" />
@@ -158,6 +160,8 @@
                         <span>Authentication method: @refreshTokenGrant.UpPartyName (@refreshTokenGrant.UpPartyType)</span>
                         <br />
                         <span>Application: @refreshTokenGrant.ClientId</span>
+                        <br />
+                        <span>Created at: @refreshTokenGrant.CreatedAtText</span>
                         <br />
                         <span>Expire at: @refreshTokenGrant.ExpireAtText</span>
                     </button>

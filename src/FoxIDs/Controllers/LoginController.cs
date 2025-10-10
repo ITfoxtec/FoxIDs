@@ -420,7 +420,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Identifier post.");
 
-                sequenceData.UserIdentifier = GetUserIdentifier(login);
+                sequenceData.UserIdentifier = GetUserIdentifier(login)?.Trim()?.ToLower();
 
                 if (sequenceData.ToUpParties.Count() > 1)
                 {

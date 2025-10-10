@@ -67,6 +67,7 @@ namespace FoxIDs.Controllers
                     grant.Claims = null;
                     response.Data.Add(grant);
                 }
+                response.Data = response.Data.OrderByDescending(g => g.CreateTime).ToHashSet();
                 return Ok(response);
             }
             catch (FoxIDsDataException ex)

@@ -195,18 +195,16 @@ namespace FoxIDs.Logic
 
             if (loginRequest.LoginHint.IsNullOrWhiteSpace())
             {
-                if (HttpContext.Request.Query != null && HttpContext.Request.Query.Keys?.Count() > 0)
+                if (HttpContext.Request.Query != null)
                 {
-                    var candidateNames = new[] { "login_hint", "LoginHint", "username" };
-                    foreach (var candidate in candidateNames)
+                    foreach (var key in new[] { "login_hint", "LoginHint", "username" })
                     {
-                        var actualKey = HttpContext.Request.Query.Keys.FirstOrDefault(k => candidate.Equals(k, StringComparison.OrdinalIgnoreCase));
-                        if (actualKey != null && HttpContext.Request.Query.TryGetValue(actualKey, out var values))
+                        if (HttpContext.Request.Query.TryGetValue(key, out var values))
                         {
                             var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
                             if (!loginHintCandidate.IsNullOrWhiteSpace())
                             {
-                                loginRequest.LoginHint = loginHintCandidate.Trim().ToLower();
+                                loginRequest.LoginHint = loginHintCandidate;
                                 break;
                             }
                         }

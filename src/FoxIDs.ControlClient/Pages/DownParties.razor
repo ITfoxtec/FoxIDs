@@ -115,12 +115,14 @@
                     <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnAfterInit="@(async m => await OnNewDownPartyOidcModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
                         <div class="modal-header sticky-header">
                             <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OidcForm.Model.DisplayName : null) ?? "Complete the OpenID Connect application")</span>
+                                <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@(newDownPartyModal.OidcForm.Model.DisplayName ?? newDownPartyModal.AppTitle)</span>
+                                <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">@GetDownPartyTypeLabel(newDownPartyModal.Type)</span>
                             </div>
                             @if (!newDownPartyModal.Created)
                             {
-                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                <div class="ml-3 d-flex align-items-center">
+                                    <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                </div>
                             }
                         </div>
                         @{
@@ -135,19 +137,19 @@
                                     @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
                                     {
                                         <div class="info-text">
-                                            Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with a backend API (called a Public Client).
+                                            Create the new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with a backend API (called a Public Client).
                                         </div>
                                     }
                                     else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
                                     {
                                         <div class="info-text">
-                                            Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with a backend API (called a Public Client).
+                                            Create the new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with a backend API (called a Public Client).
                                         </div>
                                     }
                                     else
                                     {
                                         <div class="info-text">
-                                            Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
+                                            Create the new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
                                         </div>
                                     }
 
@@ -260,12 +262,14 @@
                     <PageEditForm @ref="newDownPartyModal.OAuthClientForm" TModel="NewDownPartyOAuthClientViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthClientModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthClientModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthClientForm, editContext))">
                         <div class="modal-header sticky-header">
                             <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OAuthClientForm.Model.DisplayName : null) ?? "Complete the OAuth 2.0 client application")</span>
+                                <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@(newDownPartyModal.OAuthClientForm.Model.DisplayName ?? newDownPartyModal.AppTitle)</span>
+                                <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">@GetDownPartyTypeLabel(newDownPartyModal.Type)</span>
                             </div>
                             @if (!newDownPartyModal.Created)
                             {
-                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                <div class="ml-3 d-flex align-items-center">
+                                    <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                </div>
                             }
                         </div>
                         @{
@@ -277,7 +281,7 @@
                             <div class="row">
                                 <div class="@formColumnClass">
                                     <div class="info-text">
-                                        Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that requests an access token using Client Credential Grant).
+                                        Create the new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that requests an access token using Client Credential Grant).
                                     </div>
 
                                     <div class="pt-2">
@@ -350,12 +354,14 @@
                     <PageEditForm @ref="newDownPartyModal.OAuthResourceForm" TModel="NewDownPartyOAuthResourceViewModel" OnAfterInit="@(async m => await OnNewDownPartyOAuthResourceModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthResourceModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthResourceForm, editContext))">
                         <div class="modal-header sticky-header">
                             <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.OAuthResourceForm.Model.DisplayName : null) ?? "Complete the OAuth 2.0 resource application")</span>
+                                <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@(newDownPartyModal.OAuthResourceForm.Model.DisplayName ?? newDownPartyModal.AppTitle)</span>
+                                <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">@GetDownPartyTypeLabel(newDownPartyModal.Type)</span>
                             </div>
                             @if (!newDownPartyModal.Created)
                             {
-                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                <div class="ml-3 d-flex align-items-center">
+                                    <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                </div>
                             }
                         </div>
                         @{
@@ -369,7 +375,7 @@
                             <div class="row">
                                 <div class="@formColumnClass">
                                     <div class="info-text">
-                                        Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
+                                        Create the new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
                                     </div>
 
                                     <div class="pt-2">
@@ -451,12 +457,14 @@
                     <PageEditForm @ref="newDownPartyModal.SamlForm" TModel="NewDownPartySamlViewModel" OnAfterInit="@(async m => await OnNewDownPartySamlModalAfterInitAsync(m))" OnValidSubmit="@(async (editContext) => await OnNewDownPartySamlModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.SamlForm, editContext))">
                         <div class="modal-header sticky-header">
                             <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-                                <span class="text-nowrap first-header">@newDownPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate second-header">@((newDownPartyModal.Created ? newDownPartyModal.SamlForm.Model.DisplayName : null) ?? "Complete the SAML 2.0 application")</span>
+                                <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@(newDownPartyModal.SamlForm.Model.DisplayName ?? newDownPartyModal.AppTitle)</span>
+                                <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">@GetDownPartyTypeLabel(newDownPartyModal.Type)</span>
                             </div>
                             @if (!newDownPartyModal.Created)
                             {
-                                <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                <div class="ml-3 d-flex align-items-center">
+                                    <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                                </div>
                             }
                         </div>
                         @{
@@ -468,7 +476,7 @@
                             <div class="row">
                                 <div class="@formColumnClass">
                                     <div class="info-text">
-                                        Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server.
+                                        Create the new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server.
                                         <br />
                                         SAML 2.0 is an old standard with its shortcomings, it is often better to use <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>.
                                     </div>

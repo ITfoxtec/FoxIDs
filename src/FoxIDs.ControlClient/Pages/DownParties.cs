@@ -265,6 +265,24 @@ namespace FoxIDs.Client.Pages
             };
         }
 
+        private string GetDownPartyTypeLabel(PartyTypes? type)
+        {
+            if (type == null)
+            {
+                return string.Empty;
+            }   
+
+            return type switch
+            {
+                PartyTypes.Oidc => "OpenID Connect",
+                PartyTypes.OAuth2 => "OAuth 2.0",
+                PartyTypes.Saml2 => "SAML 2.0",
+                PartyTypes.TrackLink => "Environment Link",
+                PartyTypes.ExternalLogin => "External API Login",
+                _ => type.ToString()
+            };
+        }
+
         private void ShowNewDownParty()
         {
             newDownPartyModal.Init();

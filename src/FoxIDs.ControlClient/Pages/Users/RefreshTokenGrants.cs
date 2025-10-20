@@ -203,7 +203,7 @@ namespace FoxIDs.Client.Pages.Users
             yield return deleteRtGrantFilter.FilterUserIdentifier.IsNullOrWhiteSpace() ? "all users refresh token grants" : $"refresh token grants for users with '{deleteRtGrantFilter.FilterUserIdentifier}'"; 
             if(!deleteRtGrantFilter.FilterAuthMethod.IsNullOrWhiteSpace())
             {
-                yield return  $"authenticated with '{deleteRtGrantFilter.FilterAuthMethod}'";
+                yield return  $"authenticated via '{deleteRtGrantFilter.FilterAuthMethod}'";
             }
             if (!deleteRtGrantFilter.FilterClientId.IsNullOrWhiteSpace())
             {

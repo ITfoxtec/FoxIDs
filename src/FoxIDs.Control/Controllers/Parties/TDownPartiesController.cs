@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.DownParty>(mDownPartys.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
+                foreach(var mDownParty in mDownPartys.OrderBy(p => p.DisplayName ?? p.Name).ThenBy(p => p.Type))
                 {
                     response.Data.Add(mapper.Map<Api.DownParty>(mDownParty));
                 }

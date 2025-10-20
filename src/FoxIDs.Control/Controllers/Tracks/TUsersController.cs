@@ -63,7 +63,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.User>(mUsers.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mUser in mUsers.OrderBy(t => t.Email))
+                foreach(var mUser in mUsers.OrderBy(t => t.Email ?? t.Username ?? t.Phone))
                 {
                     response.Data.Add(mapper.Map<Api.User>(mUser));
                 }

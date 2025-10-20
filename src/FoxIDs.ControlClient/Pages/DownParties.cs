@@ -299,14 +299,20 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.CreateWorking = false;
             newDownPartyModal.Created = false;
             newDownPartyModal.CreatedDownParty = null;
+            newDownPartyModal.CreatedDownPartyAdded = false;
             newDownPartyModal.ShowOidcAuthorityDetails = false;
             newDownPartyModal.ShowOAuthClientAuthorityDetails = false;
             newDownPartyModal.ShowOAuthResourceAuthorityDetails = false;
             newDownPartyModal.ShowSamlMetadataDetails = false;
         }
 
-        private void CancelNewDownParty()
+        private void CancelOrCloseNewDownParty()
         {
+            if (newDownPartyModal?.Created == true)
+            {
+                EnsureCreatedDownPartyAdded();
+            }
+
             newDownPartyModal.Init();
             newDownPartyModal.IsVisible = false;
             StateHasChanged();
@@ -319,15 +325,25 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            downParties ??= new List<GeneralDownPartyViewModel>();
-            downParties.RemoveAll(dp => dp?.Name != null && dp.Name.Equals(generalDownPartyViewModel.Name, StringComparison.OrdinalIgnoreCase));
-            downParties.Insert(0, generalDownPartyViewModel);
-
             newDownPartyModal.CreatedDownParty = generalDownPartyViewModel;
+            newDownPartyModal.CreatedDownPartyAdded = false;
             newDownPartyModal.Created = true;
             newDownPartyModal.CreateWorking = false;
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private void EnsureCreatedDownPartyAdded()
+        {
+            if (newDownPartyModal?.CreatedDownParty == null || newDownPartyModal.CreatedDownPartyAdded)
+            {
+                return;
+            }
+
+            downParties ??= new List<GeneralDownPartyViewModel>();
+            downParties.RemoveAll(dp => dp?.Name != null && dp.Name.Equals(newDownPartyModal.CreatedDownParty.Name, StringComparison.OrdinalIgnoreCase));
+            downParties.Insert(0, newDownPartyModal.CreatedDownParty);
+            newDownPartyModal.CreatedDownPartyAdded = true;
         }
 
         private void EditCreatedDownParty()
@@ -337,6 +353,7 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
+            EnsureCreatedDownPartyAdded();
             ShowUpdateDownParty(newDownPartyModal.CreatedDownParty);
             newDownPartyModal.Init();
             newDownPartyModal.IsVisible = false;

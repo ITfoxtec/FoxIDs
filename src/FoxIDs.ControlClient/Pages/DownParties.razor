@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Cancel</button>
+                        <button type="button" class="btn btn-secondary" @onclick="CancelOrCloseNewDownParty">Cancel</button>
                     </div>
                 }
                 else if (newDownPartyModal.Type == PartyTypes.Oidc)
@@ -244,14 +244,14 @@
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Create</button>
-                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelNewDownParty">Cancel</button>
+                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelOrCloseNewDownParty">Cancel</button>
                                 </div>
                             }
                             else
                             {
                                 <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
-                                    <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="CancelOrCloseNewDownParty">Close</button>
                                 </div>
                             }
                         </div>
@@ -336,14 +336,14 @@
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Create</button>
-                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelNewDownParty">Cancel</button>
+                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelOrCloseNewDownParty">Cancel</button>
                                 </div>
                             }
                             else
                             {
                                 <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
-                                    <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="CancelOrCloseNewDownParty">Close</button>
                                 </div>
                             }
                         </div>
@@ -439,14 +439,14 @@
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Create</button>
-                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelNewDownParty">Cancel</button>
+                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelOrCloseNewDownParty">Cancel</button>
                                 </div>
                             }
                             else
                             {
                                 <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
-                                    <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="CancelOrCloseNewDownParty">Close</button>
                                 </div>
                             }
                         </div>
@@ -551,14 +551,14 @@
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Create</button>
-                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelNewDownParty">Cancel</button>
+                                    <button type="button" class="btn btn-secondary ml-2 @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="CancelOrCloseNewDownParty">Cancel</button>
                                 </div>
                             }
                             else
                             {
                                 <button type="button" class="btn btn-link" @onclick="EditCreatedDownParty">Change application</button>
                                 <div>
-                                    <button type="button" class="btn btn-secondary" @onclick="CancelNewDownParty">Close</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="CancelOrCloseNewDownParty">Close</button>
                                 </div>
                             }
                         </div>

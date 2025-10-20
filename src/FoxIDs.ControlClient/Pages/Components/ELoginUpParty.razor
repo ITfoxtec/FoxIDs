@@ -7,10 +7,12 @@
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="@(async m => await LoginUpPartyViewModelAfterInitAsync(loginUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-            <span class="text-nowrap first-header">User Login UI</span>
-            <span class="ml-2 text-muted text-truncate second-header">@GetUpPartyDisplayName(loginUpParty.Form.Model)</span>
+            <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@GetUpPartyDisplayName(loginUpParty.Form.Model)</span>
+            <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">User Login UI</span>
         </div>
-        <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
+        <div class="ml-3 d-flex align-items-center">
+            <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
+        </div>
     </div>
     <div class="modal-body">
         <div class="info-text">
@@ -358,7 +360,7 @@
                                         <div class="row">
                                             <div class="col-md-4 col-sm-6 mb-3">
                                                 <label class="col-form-label-sm d-block">Preview</label>
-                                                <div class="d-flex align-items-center">
+                                                <div class="ml-3 d-flex align-items-center">
                                                     <input type="text" class="form-control" value="@ThemeColorHexDisplay" readonly />
                                                     <span class="color-preview ml-2" style="width: 2rem; height: 2rem; border: 1px solid #ced4da; background-color: @ThemeColorHexDisplay;"></span>
                                                 </div>
@@ -402,7 +404,7 @@
                                             </div>
                                             <div class="col-md-4 col-sm-6 mb-3">
                                                 <label class="col-form-label-sm d-block">Preview</label>
-                                                <div class="d-flex align-items-center">
+                                                <div class="ml-3 d-flex align-items-center">
                                                     <input type="text" class="form-control" value="@BackgroundColorHexDisplay" readonly />
                                                     <span class="color-preview ml-2" style="width: 2rem; height: 2rem; border: 1px solid #ced4da; background-color: @BackgroundColorHexDisplay;"></span>
                                                 </div>

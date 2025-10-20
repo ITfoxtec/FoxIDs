@@ -99,12 +99,21 @@
                     <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
                         <div class="modal-header sticky-header">
                             <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-                                <span class="text-nowrap first-header">@newUpPartyModal.AppTitle</span>
-                                <span class="ml-2 text-muted text-truncate second-header">Complete the Environment Link authentication</span>
+                                @if (newUpPartyModal.EnvironmentLinkForm.Model.DisplayName.IsNullOrWhiteSpace()) 
+                                {
+                                    <span class="text-muted text-truncate second-header flex-grow-1" style="min-width: 0;">Complete the Environment Link authentication</span>
+                                }
+                                else 
+                                {
+                                    <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName</span>
+                                }
+                                <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">@newUpPartyModal.AppTitle</span>
                             </div>
                             @if (!newUpPartyModal.Created)
                             {
-                                <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
+                                <div class="ml-3 d-flex align-items-center">
+                                    <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
+                                </div>
                             }
                         </div>
                         <div class="modal-body">

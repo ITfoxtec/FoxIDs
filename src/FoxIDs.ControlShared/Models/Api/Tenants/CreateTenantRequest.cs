@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class CreateTenantRequest : Tenant
+    public class CreateTenantRequest : Tenant, IValidatableObject
     {
         /// <summary>
         /// Administrator users email.
@@ -17,11 +18,16 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Administrator users password.
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string AdministratorPassword { get; set; }
-        
+
+        /// <summary>
+        /// True if the administrator account is created without an initial password.
+        /// </summary>
+        [Display(Name = "Enable passwordless login")]
+        public bool EnablePasswordlessLogin { get; set; }
+
         /// <summary>
         /// True if the administrator account password should be changed on first login. Default true.
         /// </summary>
@@ -40,5 +46,18 @@ namespace FoxIDs.Models.Api
 
         [ValidateComplexType]
         public Customer Customer { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!EnablePasswordlessLogin && string.IsNullOrWhiteSpace(AdministratorPassword))
+            {
+                yield return new ValidationResult($"The field {nameof(AdministratorPassword)} is required.", [nameof(AdministratorPassword)]);
+            }
+
+            if (EnablePasswordlessLogin && ChangeAdministratorPassword)
+            {
+                yield return new ValidationResult($"The fields {nameof(EnablePasswordlessLogin)} and {nameof(ChangeAdministratorPassword)} can not both be enabled.", [nameof(EnablePasswordlessLogin), nameof(ChangeAdministratorPassword)]);
+            }
+        }
     }
 }

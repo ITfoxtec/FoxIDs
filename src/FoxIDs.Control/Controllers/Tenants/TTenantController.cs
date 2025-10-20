@@ -135,9 +135,11 @@ namespace FoxIDs.Controllers
 
                     await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                     var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
-                    await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
+
+                    var administratorPassword = tenant.EnablePasswordlessLogin ? null : tenant.AdministratorPassword;
+                    await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, administratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount, tenant.EnablePasswordlessLogin);
                     await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
-                    await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
+                    await masterTenantLogic.CreateMasterControlClientDocumentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
                     if (tenant.ChangeAdministratorPassword)
                     {
@@ -145,7 +147,7 @@ namespace FoxIDs.Controllers
                     }
                     else
                     {
-                        await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword);
+                        await masterTenantLogic.CreateDefaultTracksDocmentsAsync(tenant.Name, tenant.AdministratorEmail, administratorPassword);
                     }
                 }
                 return Created(mapper.Map<Api.TenantResponse>(mTenant));
@@ -160,7 +162,8 @@ namespace FoxIDs.Controllers
                 {
                     logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
                 }
-                ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
+                var errorKey = tenant.EnablePasswordlessLogin ? nameof(tenant.EnablePasswordlessLogin) : nameof(tenant.AdministratorPassword);
+                ModelState.TryAddModelError(errorKey, aex.Message);
                 return BadRequest(ModelState, aex);
             }
             catch (FoxIDsDataException ex)

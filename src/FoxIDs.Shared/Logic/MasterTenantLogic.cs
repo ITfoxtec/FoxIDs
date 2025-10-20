@@ -99,14 +99,15 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
-        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool isMasterTenant = false)
+        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool enablePasswordlessLogin = false, bool isMasterTenant = false)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, isMasterTenant ? Constants.ControlApi.Access.TenantAdminRole : Constants.ControlApi.Access.Tenant) };
             await accountLogic.CreateUserAsync(new CreateUserObj 
             {
                 UserIdentifier = new UserIdentifier { Email = email },
-                Password = password, 
+                Password = password,
                 ChangePassword = changePassword,
+                SetPasswordEmail = enablePasswordlessLogin,
                 Claims = claims, 
                 ConfirmAccount = confirmAccount 
             }, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName);
@@ -176,7 +177,7 @@ namespace FoxIDs.Logic
             await tenantDataRepository.CreateAsync(mControlApiResourceDownParty);
         }
 
-        public async Task CreateMasterControlClientDocmentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
+        public async Task CreateMasterControlClientDocumentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
         {
             var mControlClientDownParty = new OidcDownParty
             {

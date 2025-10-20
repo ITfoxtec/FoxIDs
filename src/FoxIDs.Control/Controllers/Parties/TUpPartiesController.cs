@@ -38,10 +38,12 @@ namespace FoxIDs.Controllers
         /// <returns>Authentication methods.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.UpParty>>> GetUpParties(string filterName, string filterHrdDomains, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.UpParty>>> GetUpParties(string filterName, string filterHrdDomains, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
+                filterHrdDomains = filterHrdDomains?.Trim();
                 (var mUpPartys, var nextPaginationToken) = await GetFilterUpPartyInternalAsync(filterName, filterHrdDomains, paginationToken);
 
                 var response = new Api.PaginationResponse<Api.UpParty>

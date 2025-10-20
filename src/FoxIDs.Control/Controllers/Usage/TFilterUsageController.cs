@@ -45,10 +45,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.UsedBase>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TUsagesController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.UsedBase>>> GetFilterUsage(string filterTenantName, int year, int month)
+    public async Task<ActionResult<HashSet<Api.UsedBase>>> GetFilterUsage(string filterTenantName, int year, int month)
         {
             try
             {
+                filterTenantName = filterTenantName?.Trim();
                 if (year <= 0 || month <= 0)
                 {
                     var now = DateTimeOffset.Now;

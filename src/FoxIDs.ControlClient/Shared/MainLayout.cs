@@ -175,6 +175,34 @@ namespace FoxIDs.Client.Shared
             }
         }
 
+        private Task OnEnablePasswordlessLoginChanged(bool enabled)
+        {
+            if (createTenantForm?.Model == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (enabled)
+            {
+                createTenantForm.Model.AdministratorPassword = null;
+                createTenantForm.Model.ChangeAdministratorPassword = false;
+                createTenantForm.ClearFieldError(nameof(createTenantForm.Model.AdministratorPassword));
+                createTenantForm.ClearFieldError(nameof(createTenantForm.Model.ChangeAdministratorPassword));
+            }
+
+            if (createTenantForm.EditContext != null)
+            {
+                createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.EnablePasswordlessLogin)));
+                if (enabled)
+                {
+                    createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.AdministratorPassword)));
+                    createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.ChangeAdministratorPassword)));
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
         private async Task OnCreateTenantValidSubmitAsync(EditContext editContext)
         {
             try
@@ -184,6 +212,11 @@ namespace FoxIDs.Client.Shared
                     return;
                 }
                 createTenantWorking = true;
+                if (createTenantForm.Model.EnablePasswordlessLogin)
+                {
+                    createTenantForm.Model.AdministratorPassword = null;
+                    createTenantForm.Model.ChangeAdministratorPassword = false;
+                }
                 await TenantService.CreateTenantAsync(createTenantForm.Model.Map<CreateTenantRequest>(afterMap =>
                 {
                     afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();

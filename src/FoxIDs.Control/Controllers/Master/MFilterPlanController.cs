@@ -42,10 +42,11 @@ namespace FoxIDs.Controllers
         [Obsolete($"Use {nameof(MPlansController)} instead.")]
         [ProducesResponseType(typeof(HashSet<Api.Plan>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.Plan>>> GetFilterPlan(string filterName)
+    public async Task<ActionResult<HashSet<Api.Plan>>> GetFilterPlan(string filterName)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var mPlans = await GetFilterPlanInternalAsync(filterName);
                 var aPlans = new HashSet<Api.Plan>(mPlans.Count());
                 foreach (var mPlan in mPlans.OrderBy(p => p.CostPerMonth).ThenBy(t => t.Name))

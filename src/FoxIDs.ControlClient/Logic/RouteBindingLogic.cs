@@ -128,8 +128,18 @@ namespace FoxIDs.Client.Logic
 
         public void SetTenantName()
         {
-            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
-            tenantName = urlSplit[0];
+            var relative = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+            var urlSplit = relative.Split('/');
+            var urlSegment = urlSplit.Length > 0 ? urlSplit[0] : string.Empty;
+
+            if (string.IsNullOrWhiteSpace(urlSegment))
+            {
+                throw new Exception("Tenant name is missing in the URL.");
+            }
+
+            // Remove query string and fragment from the URL segment if present
+            var idx = urlSegment.IndexOfAny(['?', '#']);
+            tenantName = idx >= 0 ? urlSegment.Substring(0, idx) : urlSegment;
         }
 
         private async Task ValidateAndUpdateSessionTenantName()

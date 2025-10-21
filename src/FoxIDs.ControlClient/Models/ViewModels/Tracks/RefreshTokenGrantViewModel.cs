@@ -6,6 +6,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class RefreshTokenGrantViewModel : RefreshTokenGrant
     {
+        [Display(Name = "Created at")]
+        public string CreatedAtText 
+        {
+            get
+            {
+                return DateTimeOffset.FromUnixTimeSeconds(CreateTime).ToUniversalTime().ToLocalTime().ToString();
+            }
+            set { }
+        }
+
         [Display(Name = "Expire at")]
         public string ExpireAtText
         {

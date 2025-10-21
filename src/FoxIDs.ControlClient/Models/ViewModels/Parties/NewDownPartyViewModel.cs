@@ -33,13 +33,15 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public GeneralDownPartyViewModel CreatedDownParty { get; set; }
 
+        public bool CreatedDownPartyAdded { get; set; }
+
         public bool ShowOidcAuthorityDetails { get; set; }
 
         public bool ShowOAuthClientAuthorityDetails { get; set; }
 
         public bool ShowOAuthResourceAuthorityDetails { get; set; }
 
-    public bool ShowSamlMetadataDetails { get; set; }
+        public bool ShowSamlMetadataDetails { get; set; }
 
         public void Init()
         {
@@ -53,6 +55,7 @@ namespace FoxIDs.Client.Models.ViewModels
             CreateWorking = false;
             Created = false;
             CreatedDownParty = null;
+            CreatedDownPartyAdded = false;
             ShowOidcAuthorityDetails = false;
             ShowOAuthClientAuthorityDetails = false;
             ShowOAuthResourceAuthorityDetails = false;

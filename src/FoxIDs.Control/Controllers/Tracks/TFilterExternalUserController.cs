@@ -39,10 +39,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.ExternalUser>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TExternalUsersController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.ExternalUser>>> GetFilterExternalUser(string filterValue)
+    public async Task<ActionResult<HashSet<Api.ExternalUser>>> GetFilterExternalUser(string filterValue)
         {
             try
             {
+                filterValue = filterValue?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mExternalUsers, _) = filterValue.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 

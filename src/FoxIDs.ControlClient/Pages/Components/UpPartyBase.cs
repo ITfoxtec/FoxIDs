@@ -316,13 +316,24 @@ namespace FoxIDs.Client.Pages.Components
 
         protected string GetUpPartyDisplayName(IUpPartyName upParty)
         {
-            var displayName = upParty.DisplayName;
+            var displayName = upParty?.DisplayName;
+
             if (string.IsNullOrWhiteSpace(displayName))
             {
-                displayName = upParty.Name;
+                displayName = UpParty?.DisplayName;
             }
 
-            return displayName;
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = upParty?.Name;
+            }
+
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = UpParty?.Name;
+            }
+
+            return displayName ?? string.Empty;
         }
     }
 }

@@ -39,10 +39,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.Track>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TTracksController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.Track>>> GetFilterTrack(string filterName)
+    public async Task<ActionResult<HashSet<Api.Track>>> GetFilterTrack(string filterName)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mTracks, _) = filterName.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetManyAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 

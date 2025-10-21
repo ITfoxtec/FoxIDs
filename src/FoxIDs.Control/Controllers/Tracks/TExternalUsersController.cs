@@ -37,10 +37,11 @@ namespace FoxIDs.Controllers
         /// <returns>External users.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ExternalUser>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.ExternalUser>>> GetExternalUsers(string filterValue, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.ExternalUser>>> GetExternalUsers(string filterValue, string paginationToken = null)
         {
             try
             {
+                filterValue = filterValue?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mExternalUsers, var nextPaginationToken) = filterValue.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetManyAsync<ExternalUser>(idKey, whereQuery: u => u.DataType.Equals(dataType), paginationToken: paginationToken) : 

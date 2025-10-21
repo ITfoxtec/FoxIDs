@@ -35,14 +35,15 @@ namespace FoxIDs.Controllers
         /// <returns>Resource names.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.ResourceName>>> GetTrackOnlyResourceNames(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.ResourceName>>> GetTrackOnlyResourceNames(string filterName, string paginationToken = null)
         {
 
             try
             {
+                filterName = filterName?.Trim();
                 var mTrack = await tenantDataRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? mTrack.ResourceEnvelope?.Names : mTrack.ResourceEnvelope?.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
+                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? mTrack.ResourceEnvelope?.Names : mTrack.ResourceEnvelope?.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName, out var filterId) && r.Id == filterId));
 
                 var response = new Api.PaginationResponse<Api.ResourceName>
                 {

@@ -59,3 +59,7 @@ Alternatively, deleting the environment also deletes its users.
 
 ## How can I delete an environment?
 To delete an environment, go to the **Settings** tab in the environment, then the **Environment** tab. Scroll down and click **Delete environment**.
+
+## Why doesn't my custom domain change in the Master environment?
+This is expected. In the Master environment, the custom domain is not used. The custom domain takes effect in all other environments (for example, dev, test, and prod). 
+Switch to a non-Master environment to see your custom domain applied.

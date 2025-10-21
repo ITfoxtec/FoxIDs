@@ -138,13 +138,24 @@ namespace FoxIDs.Client.Pages.Components
 
         protected string GetDownPartyDisplayName(IDownPartyName downParty)
         {
-            var displayName = downParty.DisplayName;
+            var displayName = downParty?.DisplayName;
+
             if (string.IsNullOrWhiteSpace(displayName))
             {
-                displayName = downParty.Name;
+                displayName = DownParty?.DisplayName;
             }
 
-            return displayName;
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = downParty?.Name;
+            }
+
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = DownParty?.Name;
+            }
+
+            return displayName ?? string.Empty;
         }
     }
 }

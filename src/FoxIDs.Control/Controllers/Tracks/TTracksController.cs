@@ -37,10 +37,11 @@ namespace FoxIDs.Controllers
         /// <returns>Environments.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.Track>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.Track>>> GetTracks(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.Track>>> GetTracks(string filterName, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
                 (var mTracks, var nextPaginationToken) = await GetFilterTrackInternalAsync(filterName, paginationToken);
 
                 var response = new Api.PaginationResponse<Api.Track>

@@ -39,7 +39,7 @@ namespace FoxIDs.Logic.Seed
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MainTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MainTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false, isMasterTenant: true);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MainTenantName, isMasterTenant: true);
-                await masterTenantLogic.CreateMasterControlClientDocmentAsync(Constants.Routes.MainTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
+                await masterTenantLogic.CreateMasterControlClientDocumentAsync(Constants.Routes.MainTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
 
                 await masterTenantLogic.CreateDefaultTracksDocmentsAsync(Constants.Routes.MainTenantName);
                 return true;

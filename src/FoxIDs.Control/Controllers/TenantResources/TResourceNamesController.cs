@@ -35,12 +35,13 @@ namespace FoxIDs.Controllers
         /// <returns>Resource names.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Api.PaginationResponse<Api.ResourceName>> GetResourceNames(string filterName, string paginationToken = null)
+    public ActionResult<Api.PaginationResponse<Api.ResourceName>> GetResourceNames(string filterName, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
+                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName, out var filterId) && r.Id == filterId));
 
                 var response = new Api.PaginationResponse<Api.ResourceName>
                 {

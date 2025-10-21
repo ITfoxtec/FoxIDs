@@ -40,12 +40,13 @@ namespace FoxIDs.Controllers
         /// <returns>Application registrations.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.DownParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.DownParty>>> GetDownParties(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.DownParty>>> GetDownParties(string filterName, string paginationToken = null)
         {
             await partyLogic.DeleteExporedDownParties();
 
             try
             {
+                filterName = filterName?.Trim();
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mDownPartys, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ? 
@@ -58,7 +59,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.DownParty>(mDownPartys.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
+                foreach(var mDownParty in mDownPartys.OrderBy(p => p.DisplayName ?? p.Name).ThenBy(p => p.Type))
                 {
                     response.Data.Add(mapper.Map<Api.DownParty>(mDownParty));
                 }

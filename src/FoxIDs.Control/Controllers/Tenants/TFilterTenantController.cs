@@ -41,10 +41,12 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TTenantsController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName, string filterCustomDomain)
+    public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName, string filterCustomDomain)
         {
             try
             {
+                filterName = filterName?.Trim();
+                filterCustomDomain = filterCustomDomain?.Trim();
                 (var mTenants, _) = await GetFilterTenantInternalAsync(filterName, filterCustomDomain);
                 var aTenants = new HashSet<Api.Tenant>(mTenants.Count());
                 foreach (var mTenant in mTenants.OrderBy(t => t.Name))

@@ -48,10 +48,14 @@ namespace FoxIDs.Controllers
         /// <returns>Users.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.User>>> GetUsers(string filterEmail = null, string filterPhone = null, string filterUsername = null, string filterUserId = null, string paginationToken = null)
         {
             try
             {
+                filterEmail = filterEmail?.Trim();
+                filterPhone = filterPhone?.Trim();
+                filterUsername = filterUsername?.Trim();
+                filterUserId = filterUserId?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
 
                 var whereQuery = LinqFilterExpression.CreateUserFilterExpression(filterEmail, filterPhone, filterUsername, filterUserId);
@@ -63,7 +67,7 @@ namespace FoxIDs.Controllers
                     Data = new HashSet<Api.User>(mUsers.Count()),
                     PaginationToken = nextPaginationToken,
                 };
-                foreach(var mUser in mUsers.OrderBy(t => t.Email))
+                foreach(var mUser in mUsers.OrderBy(t => t.Email ?? t.Username ?? t.Phone))
                 {
                     response.Data.Add(mapper.Map<Api.User>(mUser));
                 }

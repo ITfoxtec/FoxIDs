@@ -1,8 +1,8 @@
-﻿# Connect to Context Handler with SAML 2.0
+﻿# Connect to Context Handler / FKA with SAML 2.0
 
 FoxIDs can be connected to Context Handler with a [SAML 2.0 authentication method](auth-method-saml-2.0.md).
 
-> Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation, in Danish called **Fælleskommunal Adgangsstyring**.
+> Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation, in Danish called **Fælleskommunal Adgangsstyring (FKA)**.
 
 [Context Handler is connected](#configuring-context-handler-as-identity-provider) as a SAML 2.0 Identity Provider (IdP) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
@@ -26,9 +26,11 @@ Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OC
 > Get read access with the user `reader@foxids.com` and password `gEh#V6kSw` then select the `context-handler`, `context-handler-test` or `context-handler-idp-test` environment.  
 > *The sample is configured with a separate environments for the Context Handler SAML 2.0 integration.*
 
-Context Handler documentation:
+Context Handler / FKA documentation:
 - Context Handler [guide](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
-- [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
+- Administration portal
+  - [Test](https://admin-test.serviceplatformen.dk/) 
+  - [Production](https://admin.serviceplatformen.dk/) 
 - Context Handler [test application](https://spwithnsis.eksterntest-stoettesystemerne.dk)
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
@@ -122,7 +124,9 @@ The following claims is most often used:
 18. Find the SP-metadata in **SAML 2.0 method URL**, in this case https://foxids.com/test-corp/context-handler-test/(g9ey6lfw)/saml/spmetadata. 
 19. The SP-metadata URL is used to configure a Context Handler user system (DK: brugervendt system).
  
-**2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
+**2 - Then go to the Context Handler administration portal in [Test](https://admin-test.serviceplatformen.dk/) or [Production](https://admin.serviceplatformen.dk/)**
+
+ 
 
 1. Select IT-systems (DK: IT-systemer) 
 2. Click Add IT-system (DK: Tilslut it-system)
@@ -206,7 +210,7 @@ The following claims is most often used:
 30. Find the test IdP-metadata in **SAML 2.0 Metadata**, in this case `https://foxids.com/test-corp/context-handler-idp-test/ch-idp(*)/saml/idpmetadata`  
     The test IdP-metadata is used to configure the Context Handler identity provider.
 
-**2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
+**2 - Then go to the Context Handler administration portal in [Test](https://admin-test.serviceplatformen.dk/)**
 
 1. Select IT-systems (DK: IT-systemer) 
 2. Click Add IT-system (DK: Tilslut it-system)

@@ -39,10 +39,11 @@ namespace FoxIDs.Controllers
         /// <returns>SMS prices.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.SmsPrice>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.SmsPrice>>> GetSmsPrices(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.SmsPrice>>> GetSmsPrices(string filterName, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var mSmsPrices = await masterDataRepository.GetAsync<SmsPrices>(await SmsPrices.IdFormatAsync(), required: false);
                 
                 var response = new Api.PaginationResponse<Api.SmsPrice>

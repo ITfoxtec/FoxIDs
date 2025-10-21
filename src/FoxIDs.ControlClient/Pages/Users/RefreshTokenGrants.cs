@@ -200,10 +200,10 @@ namespace FoxIDs.Client.Pages.Users
 
         private IEnumerable<string> GetDeleteText()
         {
-            yield return deleteRtGrantFilter.FilterUserIdentifier.IsNullOrWhiteSpace() ? "all users" : $"users with '{deleteRtGrantFilter.FilterUserIdentifier}'"; 
+            yield return deleteRtGrantFilter.FilterUserIdentifier.IsNullOrWhiteSpace() ? "all users refresh token grants" : $"refresh token grants for users with '{deleteRtGrantFilter.FilterUserIdentifier}'"; 
             if(!deleteRtGrantFilter.FilterAuthMethod.IsNullOrWhiteSpace())
             {
-                yield return  $"authenticated with '{deleteRtGrantFilter.FilterAuthMethod}'";
+                yield return  $"authenticated via '{deleteRtGrantFilter.FilterAuthMethod}'";
             }
             if (!deleteRtGrantFilter.FilterClientId.IsNullOrWhiteSpace())
             {

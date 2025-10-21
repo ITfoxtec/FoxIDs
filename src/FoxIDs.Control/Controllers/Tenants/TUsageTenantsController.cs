@@ -38,10 +38,11 @@ namespace FoxIDs.Controllers
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.Tenant>>> GetUsageTenants(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.Tenant>>> GetUsageTenants(string filterName, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
                 (var mTenants, var nextPaginationToken) = filterName.IsNullOrWhiteSpace() ?
                     await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName, paginationToken: paginationToken) :
                     await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase), paginationToken: paginationToken);

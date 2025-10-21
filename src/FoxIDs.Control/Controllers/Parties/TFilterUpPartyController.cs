@@ -40,10 +40,12 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TUpPartiesController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName, string filterHrdDomains)
+    public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName, string filterHrdDomains)
         {
             try
             {
+                filterName = filterName?.Trim();
+                filterHrdDomains = filterHrdDomains?.Trim();
                 (var mUpPartys, _) = await GetFilterUpPartyInternalAsync(filterName, filterHrdDomains);
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
                 foreach (var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))

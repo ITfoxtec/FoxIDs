@@ -5,7 +5,9 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using static ITfoxtec.Identity.IdentityConstants;
 
@@ -16,12 +18,14 @@ namespace FoxIDs.Client.Infrastructure.Security
         private readonly RouteBindingLogic routeBindingBase;
         private readonly ControlClientSettingLogic controlClientSettingLogic;
         private readonly ClientSettings clientSettings;
+        private readonly NavigationManager navigationManager;
 
-        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ControlClientSettingLogic controlClientSettingLogic, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, OidcHelper oidcHelper, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, oidcHelper, authenticationStateProvider)
+        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ControlClientSettingLogic controlClientSettingLogic, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager navigationManager, ISessionStorageService sessionStorage, OidcHelper oidcHelper, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, navigationManager, sessionStorage, oidcHelper, authenticationStateProvider)
         {
             this.routeBindingBase = routeBindingBase;
             this.controlClientSettingLogic = controlClientSettingLogic;
             this.clientSettings = clientSettings;
+            this.navigationManager = navigationManager;
         }
 
         public async Task TenantLoginAsync(string prompt = null)
@@ -38,7 +42,9 @@ namespace FoxIDs.Client.Infrastructure.Security
                 LogoutCallBackPath = await ReplaceTenantNameAsync(clientSettings.LogoutCallBackPath)
             };
 
-            await LoginAsync(openidConnectPkceSettings, prompt: prompt);
+            var loginHint = GetLoginHintFromFragment();
+
+            await LoginAsync(openidConnectPkceSettings, prompt: prompt, loginHint: loginHint);
         }
 
         public async Task TenantLogoutAsync()
@@ -80,6 +86,30 @@ namespace FoxIDs.Client.Infrastructure.Security
             {
                 return $"{DefaultOidcScopes.Profile} {DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant}";
             }
+        }
+
+        private string GetLoginHintFromFragment()
+        {
+            var uri = new Uri(navigationManager.Uri);
+            if (string.IsNullOrEmpty(uri.Fragment) || uri.Fragment.Length <= 1)
+            {
+                return null;
+            }
+
+            var fragment = uri.Fragment.TrimStart('#');
+            if (string.IsNullOrWhiteSpace(fragment))
+            {
+                return null;
+            }
+
+            var normalizedFragment = fragment.StartsWith("?", StringComparison.Ordinal) ? fragment : $"?{fragment}";
+            var query = QueryHelpers.ParseQuery(normalizedFragment);
+            if (query.TryGetValue("login_hint", out var loginHintValues))
+            {
+                return loginHintValues.FirstOrDefault();
+            }
+
+            return null;
         }
     }
 }

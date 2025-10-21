@@ -39,10 +39,12 @@ namespace FoxIDs.Controllers
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.Tenant>>> GetTenants(string filterName, string filterCustomDomain, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.Tenant>>> GetTenants(string filterName, string filterCustomDomain, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
+                filterCustomDomain = filterCustomDomain?.Trim();
                 (var mTenants, var nextPaginationToken) = await GetFilterTenantInternalAsync(filterName, filterCustomDomain, paginationToken);
 
                 var response = new Api.PaginationResponse<Api.Tenant>

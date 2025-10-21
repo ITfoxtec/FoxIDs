@@ -38,12 +38,13 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(List<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TResourceNamesController)} instead.")]
-        public ActionResult<List<Api.ResourceName>> GetFilterResourceName(string filterName)
+    public ActionResult<List<Api.ResourceName>> GetFilterResourceName(string filterName)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName.Trim(), out var filterId) && r.Id == filterId));
+                var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase) || (int.TryParse(filterName, out var filterId) && r.Id == filterId));
                 return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Id)));
             }
             catch (FoxIDsDataException ex)

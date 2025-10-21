@@ -39,10 +39,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TUsersController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.User>>> GetFilterUser(string filterEmail)
+    public async Task<ActionResult<HashSet<Api.User>>> GetFilterUser(string filterEmail)
         {
             try
             {
+                filterEmail = filterEmail?.Trim();
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mUsers, _) = filterEmail.IsNullOrWhiteSpace() ? 
                     await tenantDataRepository.GetManyAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : 

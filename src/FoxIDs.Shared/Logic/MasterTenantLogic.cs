@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
-        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool enablePasswordlessLogin = false, bool isMasterTenant = false)
+        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool setPasswordEmail = false, bool isMasterTenant = false)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, isMasterTenant ? Constants.ControlApi.Access.TenantAdminRole : Constants.ControlApi.Access.Tenant) };
             await accountLogic.CreateUserAsync(new CreateUserObj 
@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
                 UserIdentifier = new UserIdentifier { Email = email },
                 Password = password,
                 ChangePassword = changePassword,
-                SetPasswordEmail = enablePasswordlessLogin,
+                SetPasswordEmail = setPasswordEmail,
                 Claims = claims, 
                 ConfirmAccount = confirmAccount 
             }, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName);

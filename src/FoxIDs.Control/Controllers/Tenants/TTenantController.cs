@@ -136,8 +136,8 @@ namespace FoxIDs.Controllers
                     await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                     var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
 
-                    var administratorPassword = tenant.EnablePasswordlessLogin ? null : tenant.AdministratorPassword;
-                    await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, administratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount, tenant.EnablePasswordlessLogin);
+                    var administratorPassword = tenant.SetAdministratorPasswordEmail ? null : tenant.AdministratorPassword;
+                    await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, administratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount, setPasswordEmail: tenant.SetAdministratorPasswordEmail);
                     await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                     await masterTenantLogic.CreateMasterControlClientDocumentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
@@ -162,7 +162,7 @@ namespace FoxIDs.Controllers
                 {
                     logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
                 }
-                var errorKey = tenant.EnablePasswordlessLogin ? nameof(tenant.EnablePasswordlessLogin) : nameof(tenant.AdministratorPassword);
+                var errorKey = tenant.SetAdministratorPasswordEmail ? nameof(tenant.SetAdministratorPasswordEmail) : nameof(tenant.AdministratorPassword);
                 ModelState.TryAddModelError(errorKey, aex.Message);
                 return BadRequest(ModelState, aex);
             }

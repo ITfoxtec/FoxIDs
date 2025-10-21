@@ -33,10 +33,10 @@ namespace FoxIDs.Client.Models.ViewModels
         public string AdministratorPassword { get; set; }
 
         /// <summary>
-        /// True if the administrator account is created without an initial password.
+        /// True if the administrator account is created without an initial password and it is set with email confirmation.
         /// </summary>
-        [Display(Name = "Enable passwordless login")]
-        public bool EnablePasswordlessLogin { get; set; }
+        [Display(Name = "Set administrator password with email confirmation code")]
+        public bool SetAdministratorPasswordEmail { get; set; }
 
         /// <summary>
         /// True if the administrator account password should be changed on first login. Default true.
@@ -55,14 +55,14 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (!EnablePasswordlessLogin && string.IsNullOrWhiteSpace(AdministratorPassword))
+            if (!SetAdministratorPasswordEmail && string.IsNullOrWhiteSpace(AdministratorPassword))
             {
                 yield return new ValidationResult($"The field {nameof(AdministratorPassword)} is required.", new[] { nameof(AdministratorPassword) });
             }
 
-            if (EnablePasswordlessLogin && ChangeAdministratorPassword)
+            if (SetAdministratorPasswordEmail && ChangeAdministratorPassword)
             {
-                yield return new ValidationResult($"The fields {nameof(EnablePasswordlessLogin)} and {nameof(ChangeAdministratorPassword)} can not both be true.", new[] { nameof(EnablePasswordlessLogin), nameof(ChangeAdministratorPassword) });
+                yield return new ValidationResult($"The fields {nameof(SetAdministratorPasswordEmail)} and {nameof(ChangeAdministratorPassword)} can not both be true.", new[] { nameof(SetAdministratorPasswordEmail), nameof(ChangeAdministratorPassword) });
             }
         }
     }

@@ -175,7 +175,7 @@ namespace FoxIDs.Client.Shared
             }
         }
 
-        private Task OnEnablePasswordlessLoginChanged(bool enabled)
+        private Task OnSetAdministratorPasswordEmailChanged(bool enabled)
         {
             if (createTenantForm?.Model == null)
             {
@@ -186,17 +186,19 @@ namespace FoxIDs.Client.Shared
             {
                 createTenantForm.Model.AdministratorPassword = null;
                 createTenantForm.Model.ChangeAdministratorPassword = false;
+                createTenantForm.Model.ConfirmAdministratorAccount = true;
                 createTenantForm.ClearFieldError(nameof(createTenantForm.Model.AdministratorPassword));
                 createTenantForm.ClearFieldError(nameof(createTenantForm.Model.ChangeAdministratorPassword));
             }
 
             if (createTenantForm.EditContext != null)
             {
-                createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.EnablePasswordlessLogin)));
+                createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.SetAdministratorPasswordEmail)));
                 if (enabled)
                 {
                     createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.AdministratorPassword)));
                     createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.ChangeAdministratorPassword)));
+                    createTenantForm.EditContext.NotifyFieldChanged(new FieldIdentifier(createTenantForm.Model, nameof(createTenantForm.Model.ConfirmAdministratorAccount)));
                 }
             }
 
@@ -212,10 +214,11 @@ namespace FoxIDs.Client.Shared
                     return;
                 }
                 createTenantWorking = true;
-                if (createTenantForm.Model.EnablePasswordlessLogin)
+                if (createTenantForm.Model.SetAdministratorPasswordEmail)
                 {
                     createTenantForm.Model.AdministratorPassword = null;
                     createTenantForm.Model.ChangeAdministratorPassword = false;
+                    createTenantForm.Model.ConfirmAdministratorAccount = true;
                 }
                 await TenantService.CreateTenantAsync(createTenantForm.Model.Map<CreateTenantRequest>(afterMap =>
                 {

@@ -4,6 +4,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewDownPartyOAuthClientViewModel
     {
+        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Client ID")]

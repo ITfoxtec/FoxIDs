@@ -1,11 +1,11 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewDownPartyOidcViewModel
     {
+        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Client ID / Resource name")]

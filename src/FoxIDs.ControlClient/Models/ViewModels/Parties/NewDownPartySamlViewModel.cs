@@ -6,6 +6,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewDownPartySamlViewModel
     {
+        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Technical name")]

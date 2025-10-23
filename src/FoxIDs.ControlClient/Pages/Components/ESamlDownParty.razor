@@ -60,6 +60,32 @@
                             {
                                 <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
                             }
+
+                            @if (samlDownParty.KeyInfoList?.Count > 0)
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            @foreach (var keyInfo in samlDownParty.KeyInfoList)
+                                            {
+                                                <div class="my-1">
+                                                    <div>@keyInfo.Subject</div>
+                                                    <div class="small">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</div>
+                                                    <div class="small">Thumbprint: @keyInfo.Thumbprint</div>
+                                                    @if (!keyInfo.CertificateBase64.IsNullOrWhiteSpace())
+                                                    {
+                                                        <div class="pt-3">
+                                                            <FFieldTextClipboard Class="pb-0" @bind-Value="keyInfo.CertificateBase64" For="@(() => keyInfo.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                                        </div>
+                                                        <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadSamlSigningCertificateAsync(keyInfo))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <label class="label-control">IdP Signing certificates</label>
+                                </div>
+                            }                            
                         }
                     }
                 </div>

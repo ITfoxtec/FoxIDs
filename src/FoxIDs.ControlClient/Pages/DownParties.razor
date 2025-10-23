@@ -533,6 +533,30 @@
                                                             <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.MetadataLogout" For="@(() => newDownPartyModal.SamlForm.Model.MetadataLogout)" />
                                                         </div>
                                                     </div>
+
+                                                    @if (!newDownPartyModal.SamlForm.Model.SigningCertificateBase64.IsNullOrWhiteSpace())
+                                                    {
+                                                        <div class="active-group active">
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                   @*  @foreach (var keyInfo in samlDownParty.KeyInfoList)
+                                                                    { *@
+                                                                        <div class="my-1">
+                                                                            <div>@newDownPartyModal.SamlForm.Model.SigningCertificateSubject</div>
+                                                                        @*     <div class="small">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</div>
+                                                                            <div class="small">Thumbprint: @keyInfo.Thumbprint</div>
+                                                                            *@
+                                                                            <div class="pt-3">
+                                                                                <FFieldTextClipboard Class="pb-0" @bind-Value="newDownPartyModal.SamlForm.Model.SigningCertificateBase64" For="@(() => newDownPartyModal.SamlForm.Model.SigningCertificateBase64)" LabelText="Certificate (Base64)" />
+                                                                            </div>
+                                                                            <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="DownloadNewSamlSigningCertificateAsync"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                                                        </div>
+                                                                 @*    } *@
+                                                                </div>
+                                                            </div>
+                                                            <label class="label-control">IdP Signing certificates</label>
+                                                        </div>
+                                                    }
                                                 }
                                             </div>
                                             <div>

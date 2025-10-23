@@ -18,5 +18,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Password { get; set; }
 
         public string Name { get; set; }
+
+        public string CertificateBase64 { get; set; }
     }
 }

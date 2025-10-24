@@ -1,4 +1,5 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
+﻿using System;
+using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -44,5 +45,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SigningCertificateBase64 { get; set; }
 
         public string SigningCertificateSubject { get; set; }
+
+        public DateTime? IdPSigningCertificateValidFrom { get; set; }
+
+        public DateTime? IdPSigningCertificateValidTo { get; set; }
+
+        public string IdPSigningCertificateThumbprint { get; set; }
     }
 }

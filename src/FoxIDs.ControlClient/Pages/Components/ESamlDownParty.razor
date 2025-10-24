@@ -1,5 +1,6 @@
 @inherits DownPartyBase
 @using ITfoxtec.Identity.Saml2
+@using System.Linq
 
 @{
     var samlDownParty = DownParty as GeneralSamlDownPartyViewModel;
@@ -61,29 +62,27 @@
                                 <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
                             }
 
-                            @if (samlDownParty.KeyInfoList?.Count > 0)
+                            var primaryCertificate = samlDownParty.KeyInfoList?.FirstOrDefault();
+                            @if (primaryCertificate != null)
                             {
                                 <div class="active-group active">
                                     <div class="card bg-light">
                                         <div class="card-body">
-                                            @foreach (var keyInfo in samlDownParty.KeyInfoList)
+                                            <div>
+                                                <div>@primaryCertificate.Subject</div>
+                                                <div class="small">Valid from @primaryCertificate.ValidFrom.ToShortDateString() to @primaryCertificate.ValidTo.ToShortDateString()</div>
+                                                <div class="small">Thumbprint: @primaryCertificate.Thumbprint</div>
+                                            </div>
+                                            @if (!primaryCertificate.CertificateBase64.IsNullOrWhiteSpace())
                                             {
-                                                <div class="my-1">
-                                                    <div>@keyInfo.Subject</div>
-                                                    <div class="small">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</div>
-                                                    <div class="small">Thumbprint: @keyInfo.Thumbprint</div>
-                                                    @if (!keyInfo.CertificateBase64.IsNullOrWhiteSpace())
-                                                    {
-                                                        <div class="pt-3">
-                                                            <FFieldTextClipboard Class="pb-0" @bind-Value="keyInfo.CertificateBase64" For="@(() => keyInfo.CertificateBase64)" LabelText="Certificate (Base64)" />
-                                                        </div>
-                                                        <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadSamlSigningCertificateAsync(keyInfo))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
-                                                    }
+                                                <div class="pt-3">
+                                                    <FFieldTextClipboard Class="pb-0" @bind-Value="primaryCertificate.CertificateBase64" For="@(() => primaryCertificate.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                                    <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadSamlSigningCertificateAsync(primaryCertificate))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                                 </div>
                                             }
                                         </div>
                                     </div>
-                                    <label class="label-control">IdP Signing certificates</label>
+                                    <label class="label-control">IdP Signing Certificate</label>
                                 </div>
                             }                            
                         }
@@ -291,6 +290,7 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
 
 
 

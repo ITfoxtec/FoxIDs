@@ -808,5 +808,3 @@ namespace FoxIDs.Client.Pages
         }
     }
 }
-
-

@@ -23,6 +23,9 @@ namespace FoxIDs.Client.Pages.Components
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
+        [Inject]
+        public TrackService TrackService { get; set; }
+
         private KeyInfoViewModel IdPKeyInfo { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -68,6 +71,44 @@ namespace FoxIDs.Client.Pages.Components
             }
 
             (model.Metadata, model.MetadataIssuer, model.MetadataAuthn, model.MetadataLogout) = MetadataLogic.GetDownSamlMetadata(model.Name, model.PartyBindingPattern);
+        }
+
+        private async Task ShowSamlMetadataDetailsAsync(GeneralSamlDownPartyViewModel generalSamlDownParty)
+        {
+            if (generalSamlDownParty == null)
+            {
+                return;
+            }
+
+            if (IdPKeyInfo == null)
+            {
+                try
+                {
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    IdPKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,
+                        ValidFrom = trackKeys.PrimaryKey.CertificateInfo.ValidFrom,
+                        ValidTo = trackKeys.PrimaryKey.CertificateInfo.ValidTo,
+                        IsValid = trackKeys.PrimaryKey.CertificateInfo.IsValid(),
+                        Thumbprint = trackKeys.PrimaryKey.CertificateInfo.Thumbprint,
+                        KeyId = trackKeys.PrimaryKey.Kid,
+                        CertificateBase64 = trackKeys.PrimaryKey.X5c?.FirstOrDefault(),
+                        Key = trackKeys.PrimaryKey
+                    };
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    generalSamlDownParty.Form.SetError(ex.Message);
+                }
+            }
+
+            generalSamlDownParty.ShowMetadataDetails = true;
         }
 
         private SamlDownPartyViewModel ToViewModel(GeneralSamlDownPartyViewModel generalSamlDownParty, SamlDownParty samlDownParty)

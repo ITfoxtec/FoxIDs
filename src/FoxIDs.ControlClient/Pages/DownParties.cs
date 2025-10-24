@@ -48,6 +48,9 @@ namespace FoxIDs.Client.Pages
         public DownPartyService DownPartyService { get; set; }
 
         [Inject]
+        public TrackService TrackService { get; set; }
+
+        [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
         [Parameter]
@@ -753,6 +756,45 @@ namespace FoxIDs.Client.Pages
             }
 
             model.OidcDiscovery = resourceOidcDiscovery;
+        }
+
+        private async Task ShowNewDownPartySamlMetadataDetailsAsync()
+        {
+            if (newDownPartyModal?.SamlForm?.Model == null)
+            {
+                newDownPartyModal.ShowSamlMetadataDetails = true;
+                return;
+            }
+
+            if (newDownPartyModal.SamlForm.Model.IdPKeyInfo == null)
+            {
+                try
+                {
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    newDownPartyModal.SamlForm.Model.IdPKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,
+                        ValidFrom = trackKeys.PrimaryKey.CertificateInfo.ValidFrom,
+                        ValidTo = trackKeys.PrimaryKey.CertificateInfo.ValidTo,
+                        IsValid = trackKeys.PrimaryKey.CertificateInfo.IsValid(),
+                        Thumbprint = trackKeys.PrimaryKey.CertificateInfo.Thumbprint,
+                        KeyId = trackKeys.PrimaryKey.Kid,
+                        CertificateBase64 = trackKeys.PrimaryKey.X5c?.FirstOrDefault(),
+                        Key = trackKeys.PrimaryKey
+                    };
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    newDownPartyModal.SamlForm.SetError(ex.Message);
+                }
+            }
+
+            newDownPartyModal.ShowSamlMetadataDetails = true;
         }
 
         private void EnsureNewDownPartySamlSummaryDefaults()

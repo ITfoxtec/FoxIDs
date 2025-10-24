@@ -518,7 +518,7 @@
                                                 <FFieldTextClipboard Class="@(newDownPartyModal.ShowSamlMetadataDetails ? string.Empty : "pb-1")" @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
                                                 @if (!newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace() && hasSamlMetadataDetails)
                                                 {
-                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => { /* add method to load IdP certificate */ newDownPartyModal.ShowSamlMetadataDetails = true; }">Show more</button>
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="@(async () => await ShowNewDownPartySamlMetadataDetailsAsync())">Show more</button>
                                                 }
                                                 @if (newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace())
                                                 {
@@ -545,7 +545,7 @@
                                                                         <div class="small">Valid from @idPKeyInfo.ValidFrom.ToShortDateString() to @idPKeyInfo.ValidTo.ToShortDateString()</div>
                                                                         <div class="small">Thumbprint: @idPKeyInfo.Thumbprint</div>
                                                                     </div>
-                                                                    <div class="pt-3">
+                                                                    <div class="pt-2">
                                                                         <FFieldTextClipboard Class="pb-0" @bind-Value="idPKeyInfo.CertificateBase64" For="@(() => idPKeyInfo.CertificateBase64)" LabelText="Certificate (Base64)" />
                                                                         <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadCertificateAsync(idPKeyInfo.Subject, idPKeyInfo.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                                                     </div>

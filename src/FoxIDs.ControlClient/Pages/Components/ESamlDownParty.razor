@@ -43,7 +43,7 @@
                         <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
                         @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
                         {
-                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => { /* add method to load IdP certificate */ samlDownParty.ShowMetadataDetails = true; }">Show more</button>
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="@(async () => await ShowSamlMetadataDetailsAsync(samlDownParty))">Show more</button>
                         }
                         @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                         {
@@ -72,7 +72,7 @@
                                                 <div class="small">Valid from @IdPKeyInfo.ValidFrom.ToShortDateString() to @IdPKeyInfo.ValidTo.ToShortDateString()</div>
                                                 <div class="small">Thumbprint: @IdPKeyInfo.Thumbprint</div>
                                             </div>
-                                            <div class="pt-3">
+                                            <div class="pt-2">
                                                 <FFieldTextClipboard Class="pb-0" @bind-Value="IdPKeyInfo.CertificateBase64" For="@(() => IdPKeyInfo.CertificateBase64)" />
                                                 <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadCertificateAsync(IdPKeyInfo.Subject, IdPKeyInfo.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                             </div>

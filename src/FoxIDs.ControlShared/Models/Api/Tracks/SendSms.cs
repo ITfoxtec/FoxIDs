@@ -27,6 +27,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
 
+        [MaxLength(Constants.Models.Track.SendSms.LabelLength)]
+        [Display(Name = "Label")]
+        public string Label { get; set; }
+
         public JwkWithCertificateInfo Key { get; set; }
 
         //TODO add support for other SMS providers

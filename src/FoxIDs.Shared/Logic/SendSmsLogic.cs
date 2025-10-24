@@ -73,7 +73,8 @@ namespace FoxIDs.Logic
                 {
                     Recipients = [new GatewayApiRecipient { Msisdn = phone }],
                     Message = smsContent.Sms,
-                    Sender = smsSettings.FromName
+                    Sender = smsSettings.FromName,
+                    Label = smsSettings.Label
                 };
                 logger.ScopeTrace(() => $"SMS to '{smsSettings.Type}', SMS Gateway API request '{smsApiRequest.ToJson()}'.", traceType: TraceTypes.Message);
 
@@ -223,6 +224,16 @@ namespace FoxIDs.Logic
                 switch (settings.Sms.Type)
                 {
                     case SendSmsTypes.GatewayApi:
+                        return new SendSms
+                        {
+                            Type = settings.Sms.Type,
+                            FromName = settings.Sms.FromName,
+                            ApiUrl = settings.Sms.ApiUrl,
+                            ClientId = settings.Sms.ClientId,
+                            ClientSecret = settings.Sms.ClientSecret,
+                            Label = settings.Sms.Label,
+                        };
+
                     case SendSmsTypes.Smstools:
                         return new SendSms
                         {

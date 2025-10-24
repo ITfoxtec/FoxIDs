@@ -7,5 +7,6 @@ namespace FoxIDs.Models.External.Sms
         public string Message { get; set; }
         public List<GatewayApiRecipient> Recipients { get; set; }
         public string Sender { get; set; }
+        public string Label { get; set; }
     }
 }

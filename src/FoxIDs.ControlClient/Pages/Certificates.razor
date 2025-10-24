@@ -116,7 +116,7 @@
                                         @if (!certificate.Form.Model.CertificateBase64.IsNullOrWhiteSpace())
                                         {
                                             <div class="mt-4">
-                                                <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.Form.Model.CertificateBase64" For="@(() => certificate.Form.Model.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                                <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.Form.Model.CertificateBase64" For="@(() => certificate.Form.Model.CertificateBase64)" />
                                                 <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Form.Model.Subject, certificate.Form.Model.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                             </div>
                                         }

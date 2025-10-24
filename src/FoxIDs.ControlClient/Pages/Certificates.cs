@@ -100,8 +100,7 @@ namespace FoxIDs.Client.Pages
                 return;
             }
 
-            var fileName = subject.IsNullOrWhiteSpace() ? "Certificate.cer" : $"{subject}.cer";
-            await JSRuntime.InvokeAsync<object>("saveCertFile", fileName, certificateBase64);
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
         }
 
         private async Task DefaultLoadAsync()

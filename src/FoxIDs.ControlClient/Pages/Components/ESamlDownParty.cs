@@ -23,6 +23,8 @@ namespace FoxIDs.Client.Pages.Components
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
+        private KeyInfoViewModel IdPKeyInfo { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -90,8 +92,7 @@ namespace FoxIDs.Client.Pages.Components
                             ValidFrom = key.CertificateInfo.ValidFrom,
                             ValidTo = key.CertificateInfo.ValidTo,
                             Thumbprint = key.CertificateInfo.Thumbprint,
-                            Key = key,
-                            CertificateBase64 = key.X5c?.FirstOrDefault()
+                            Key = key
                         });
                     }
                 }
@@ -104,8 +105,7 @@ namespace FoxIDs.Client.Pages.Components
                         ValidFrom = afterMap.EncryptionKey.CertificateInfo.ValidFrom,
                         ValidTo = afterMap.EncryptionKey.CertificateInfo.ValidTo,
                         Thumbprint = afterMap.EncryptionKey.CertificateInfo.Thumbprint,
-                        Key = afterMap.EncryptionKey,
-                        CertificateBase64 = afterMap.EncryptionKey.X5c?.FirstOrDefault()
+                        Key = afterMap.EncryptionKey
                     };
                 }
                 else
@@ -149,8 +149,7 @@ namespace FoxIDs.Client.Pages.Components
                             ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
                             ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
                             Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwkWithCertificateInfo,
-                            CertificateBase64 = jwkWithCertificateInfo.X5c?.FirstOrDefault()
+                            Key = jwkWithCertificateInfo
                         };
                         generalSamlDownParty.Form.Model.EncryptionKey = jwkWithCertificateInfo;
                     }
@@ -215,8 +214,7 @@ namespace FoxIDs.Client.Pages.Components
                             ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
                             ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
                             Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwkWithCertificateInfo,
-                            CertificateBase64 = jwkWithCertificateInfo.X5c?.FirstOrDefault()
+                            Key = jwkWithCertificateInfo
                         });
                         generalSamlDownParty.Form.Model.Keys.Add(jwkWithCertificateInfo);
                     }
@@ -243,15 +241,14 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private async Task DownloadSamlSigningCertificateAsync(KeyInfoViewModel keyInfo)
+        private async Task DownloadCertificateAsync(string subject, string certificateBase64)
         {
-            if (keyInfo?.CertificateBase64.IsNullOrWhiteSpace() != false)
+            if (certificateBase64.IsNullOrWhiteSpace())
             {
                 return;
             }
 
-            var fileName = keyInfo.Subject.IsNullOrWhiteSpace() ? "SigningCertificate.cer" : $"{keyInfo.Subject}.cer";
-            await JSRuntime.InvokeAsync<object>("saveCertFile", fileName, keyInfo.CertificateBase64);
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
         }
 
         private async Task OnEditSamlDownPartyValidSubmitAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, EditContext editContext)

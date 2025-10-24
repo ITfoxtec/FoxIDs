@@ -322,17 +322,14 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
-        private async Task DownloadNewSamlSigningCertificateAsync()
+        private async Task DownloadCertificateAsync(string subject, string certificateBase64)
         {
-            var certificate = newDownPartyModal?.SamlForm?.Model?.SigningCertificateBase64;
-            if (certificate.IsNullOrWhiteSpace())
+            if (certificateBase64.IsNullOrWhiteSpace())
             {
                 return;
             }
 
-            var subject = newDownPartyModal?.SamlForm?.Model?.SigningCertificateSubject;
-            var fileName = subject.IsNullOrWhiteSpace() ? "SigningCertificate.cer" : $"{subject}.cer";
-            await JSRuntime.InvokeAsync<object>("saveCertFile", fileName, certificate);
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
         }
 
         private async Task AddNewDownPartyAsync(GeneralDownPartyViewModel generalDownPartyViewModel)
@@ -614,18 +611,6 @@ namespace FoxIDs.Client.Pages
                 var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
                 toastService.ShowSuccess("SAML 2.0 authentication method created.");
 
-                var primarySigningKey = samlDownPartyResult.Keys?.FirstOrDefault();
-                if (primarySigningKey?.X5c?.Any() == true)
-                {
-                    newDownPartySamlForm.Model.SigningCertificateBase64 = primarySigningKey.X5c.First();
-                    newDownPartySamlForm.Model.SigningCertificateSubject = primarySigningKey.CertificateInfo.Subject;
-                }
-                else
-                {
-                    newDownPartySamlForm.Model.SigningCertificateBase64 = null;
-                    newDownPartySamlForm.Model.SigningCertificateSubject = null;
-                }
-
                 newDownPartySamlForm.Model.Name = samlDownPartyResult.Name;
                 newDownPartySamlForm.Model.Issuer = samlDownPartyResult.Issuer;
                 newDownPartySamlForm.Model.DisplayName = samlDownPartyResult.DisplayName;
@@ -785,8 +770,6 @@ namespace FoxIDs.Client.Pages
                 model.MetadataIssuer = null;
                 model.MetadataAuthn = null;
                 model.MetadataLogout = null;
-                model.SigningCertificateBase64 = null;
-                model.SigningCertificateSubject = null;
                 return;
             }
 

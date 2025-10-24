@@ -43,7 +43,7 @@
                         <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
                         @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
                         {
-                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => samlDownParty.ShowMetadataDetails = true">Show more</button>
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => { /* add method to load IdP certificate */ samlDownParty.ShowMetadataDetails = true; }">Show more</button>
                         }
                         @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                         {
@@ -62,24 +62,20 @@
                                 <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
                             }
 
-                            var primaryCertificate = samlDownParty.KeyInfoList?.FirstOrDefault();
-                            @if (primaryCertificate != null)
+                            @if (IdPKeyInfo != null)
                             {
                                 <div class="active-group active">
                                     <div class="card bg-light">
                                         <div class="card-body">
                                             <div>
-                                                <div>@primaryCertificate.Subject</div>
-                                                <div class="small">Valid from @primaryCertificate.ValidFrom.ToShortDateString() to @primaryCertificate.ValidTo.ToShortDateString()</div>
-                                                <div class="small">Thumbprint: @primaryCertificate.Thumbprint</div>
+                                                <div>@IdPKeyInfo.Subject</div>
+                                                <div class="small">Valid from @IdPKeyInfo.ValidFrom.ToShortDateString() to @IdPKeyInfo.ValidTo.ToShortDateString()</div>
+                                                <div class="small">Thumbprint: @IdPKeyInfo.Thumbprint</div>
                                             </div>
-                                            @if (!primaryCertificate.CertificateBase64.IsNullOrWhiteSpace())
-                                            {
-                                                <div class="pt-3">
-                                                    <FFieldTextClipboard Class="pb-0" @bind-Value="primaryCertificate.CertificateBase64" For="@(() => primaryCertificate.CertificateBase64)" LabelText="Certificate (Base64)" />
-                                                    <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadSamlSigningCertificateAsync(primaryCertificate))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
-                                                </div>
-                                            }
+                                            <div class="pt-3">
+                                                <FFieldTextClipboard Class="pb-0" @bind-Value="IdPKeyInfo.CertificateBase64" For="@(() => IdPKeyInfo.CertificateBase64)" />
+                                                <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadCertificateAsync(IdPKeyInfo.Subject, IdPKeyInfo.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <label class="label-control">IdP Signing Certificate</label>

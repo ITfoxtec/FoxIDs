@@ -42,14 +42,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Single Logout URL")]
         public string MetadataLogout { get; set; }
 
-        public string SigningCertificateBase64 { get; set; }
-
-        public string SigningCertificateSubject { get; set; }
-
-        public DateTime? IdPSigningCertificateValidFrom { get; set; }
-
-        public DateTime? IdPSigningCertificateValidTo { get; set; }
-
-        public string IdPSigningCertificateThumbprint { get; set; }
+        public KeyInfoViewModel IdPKeyInfo { get; set; }
     }
 }

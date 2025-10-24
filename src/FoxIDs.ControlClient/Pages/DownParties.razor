@@ -518,7 +518,7 @@
                                                 <FFieldTextClipboard Class="@(newDownPartyModal.ShowSamlMetadataDetails ? string.Empty : "pb-1")" @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
                                                 @if (!newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace() && hasSamlMetadataDetails)
                                                 {
-                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => newDownPartyModal.ShowSamlMetadataDetails = true">Show more</button>
+                                                    <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => { /* add method to load IdP certificate */ newDownPartyModal.ShowSamlMetadataDetails = true; }">Show more</button>
                                                 }
                                                 @if (newDownPartyModal.ShowSamlMetadataDetails && !newDownPartyModal.SamlForm.Model.Name.IsNullOrWhiteSpace())
                                                 {
@@ -534,25 +534,20 @@
                                                         </div>
                                                     </div>
 
-                                                    @if (!newDownPartyModal.SamlForm.Model.SigningCertificateBase64.IsNullOrWhiteSpace())
+                                                    @if (newDownPartyModal.SamlForm.Model.IdPKeyInfo != null)
                                                     {
+                                                        var idPKeyInfo = newDownPartyModal.SamlForm.Model.IdPKeyInfo;
                                                         <div class="active-group active">
                                                             <div class="card bg-light">
                                                                 <div class="card-body">
                                                                     <div>
-                                                                        <div>@newDownPartyModal.SamlForm.Model.SigningCertificateSubject</div>
-                                                                        @if (newDownPartyModal.SamlForm.Model.IdPSigningCertificateValidFrom.HasValue && newDownPartyModal.SamlForm.Model.IdPSigningCertificateValidTo.HasValue)
-                                                                        {
-                                                                            <div class="small">Valid from @newDownPartyModal.SamlForm.Model.IdPSigningCertificateValidFrom.Value.ToShortDateString() to @newDownPartyModal.SamlForm.Model.IdPSigningCertificateValidTo.Value.ToShortDateString()</div>
-                                                                        }
-                                                                        @if (!newDownPartyModal.SamlForm.Model.IdPSigningCertificateThumbprint.IsNullOrWhiteSpace())
-                                                                        {
-                                                                            <div class="small">Thumbprint: @newDownPartyModal.SamlForm.Model.IdPSigningCertificateThumbprint</div>
-                                                                        }
+                                                                        <div>@idPKeyInfo.Subject</div>
+                                                                        <div class="small">Valid from @idPKeyInfo.ValidFrom.ToShortDateString() to @idPKeyInfo.ValidTo.ToShortDateString()</div>
+                                                                        <div class="small">Thumbprint: @idPKeyInfo.Thumbprint</div>
                                                                     </div>
                                                                     <div class="pt-3">
-                                                                        <FFieldTextClipboard Class="pb-0" @bind-Value="newDownPartyModal.SamlForm.Model.SigningCertificateBase64" For="@(() => newDownPartyModal.SamlForm.Model.SigningCertificateBase64)" LabelText="Certificate (Base64)" />
-                                                                        <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="DownloadNewSamlSigningCertificateAsync"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                                                        <FFieldTextClipboard Class="pb-0" @bind-Value="idPKeyInfo.CertificateBase64" For="@(() => idPKeyInfo.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                                                        <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadCertificateAsync(idPKeyInfo.Subject, idPKeyInfo.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
                                                                     </div>
                                                                 </div>
                                                             </div>

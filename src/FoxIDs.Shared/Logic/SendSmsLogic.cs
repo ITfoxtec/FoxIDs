@@ -4,7 +4,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.External.Sms;
 using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;

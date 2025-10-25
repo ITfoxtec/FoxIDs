@@ -63,11 +63,13 @@
                 <FInputText @bind-Value="smsSettingsForm.Model.ApiUrl" For="@(() => smsSettingsForm.Model.ApiUrl)" />
                 @if (smsSettingsForm.Model.Type == SendSmsTypes.GatewayApi)
                 {
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientSecret" For="@(() => smsSettingsForm.Model.ClientSecret)" />
                     <FInputText @bind-Value="smsSettingsForm.Model.Label" For="@(() => smsSettingsForm.Model.Label)" LabelText="Label (optional)" />
                 }
                 @if (smsSettingsForm.Model.Type == SendSmsTypes.Smstools)
                 {
                     <FInputText @bind-Value="smsSettingsForm.Model.ClientId" For="@(() => smsSettingsForm.Model.ClientId)" />
+                    <FInputText @bind-Value="smsSettingsForm.Model.ClientSecret" For="@(() => smsSettingsForm.Model.ClientSecret)" />
                 }
                 else if (smsSettingsForm.Model.Type == SendSmsTypes.TeliaSmsGateway)
                 {

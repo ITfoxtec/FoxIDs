@@ -83,6 +83,10 @@ namespace FoxIDs.Client.Pages
         private async Task DefaultLoadAsync()
         {
             downPartyFilterForm?.ClearError();
+            if (newDownPartyModal != null)
+            {
+                newDownPartyModal.IsVisible = false;
+            }
             try
             {
                 SetGeneralDownParties(await DownPartyService.GetDownPartiesAsync(null));

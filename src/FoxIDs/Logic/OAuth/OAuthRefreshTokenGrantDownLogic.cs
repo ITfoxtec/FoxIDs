@@ -93,41 +93,43 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task DeleteRefreshTokenGrantsByPhoneAsync(string phone)
+        public async Task DeleteRefreshTokenGrantsByPhoneAsync(string phone, PartyTypes upPartyType = PartyTypes.Login)
         {
             if (phone.IsNullOrWhiteSpace()) return;
 
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Phone '{phone}'.");
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Authentication method type '{upPartyType}', Phone '{phone}'.");
 
+            var upPartyTypeValue = upPartyType.GetPartyTypeValue();
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.UpPartyType == upPartyTypeValue && d.Phone == phone);
             if (ttlGrantCount > 0)
             {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Phone '{phone}'.");
+                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Authentication method type '{upPartyType}', Phone '{phone}'.");
             }
-            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Phone == phone);
+            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.UpPartyType == upPartyTypeValue && d.Phone == phone);
             if (grantCount > 0)
             {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, Phone '{phone}'.");
+                logger.ScopeTrace(() => $"Refresh Token grants deleted, Authentication method type '{upPartyType}', Phone '{phone}'.");
             }
         }
 
-        public async Task DeleteRefreshTokenGrantsByEmailAsync(string email)
+        public async Task DeleteRefreshTokenGrantsByEmailAsync(string email, PartyTypes upPartyType = PartyTypes.Login)
         {
             if (email.IsNullOrWhiteSpace()) return;
 
-            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Email '{email}'.");
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Authentication method type '{upPartyType}', Email '{email}'.");
 
+            var upPartyTypeValue = upPartyType.GetPartyTypeValue();
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
+            var ttlGrantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenTtlGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.UpPartyType == upPartyTypeValue && d.Email == email);
             if (ttlGrantCount > 0)
             {
-                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Email '{email}'.");
+                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Authentication method type '{upPartyType}', Email '{email}'.");
             }
-            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.Email == email);
+            var grantCount = await tenantDataRepository.DeleteManyAsync<RefreshTokenGrant>(idKey, d => d.DataType.Equals(Constants.Models.DataType.RefreshTokenGrant) && d.UpPartyType == upPartyTypeValue && d.Email == email);
             if (grantCount > 0)
             {
-                logger.ScopeTrace(() => $"Refresh Token grants deleted, Email '{email}'.");
+                logger.ScopeTrace(() => $"Refresh Token grants deleted, Authentication method type '{upPartyType}', Email '{email}'.");
             }
         }
 

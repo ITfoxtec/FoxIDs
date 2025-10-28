@@ -7,10 +7,12 @@
 <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-            <span class="text-nowrap first-header">OpenID Connect</span>
-            <span class="ml-2 text-muted text-truncate second-header">@GetDownPartyDisplayName(oidcDownParty.Form.Model)</span>
+            <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@GetDownPartyDisplayName(oidcDownParty.Form.Model)</span>
+            <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">OpenID Connect</span>
         </div>
-        <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
+        <div class="ml-3 d-flex align-items-center">
+            <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
+        </div>
     </div>
     <div class="modal-body">
         <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" />

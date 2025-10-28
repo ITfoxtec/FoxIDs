@@ -42,12 +42,13 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.DownParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TDownPartiesController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)
+    public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)
         {
             await partyLogic.DeleteExporedDownParties();
 
             try
             {
+                filterName = filterName?.Trim();
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mDownPartys, _) = filterName.IsNullOrWhiteSpace() ? 

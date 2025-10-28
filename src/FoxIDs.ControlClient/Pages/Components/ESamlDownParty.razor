@@ -1,5 +1,6 @@
 @inherits DownPartyBase
 @using ITfoxtec.Identity.Saml2
+@using System.Linq
 
 @{
     var samlDownParty = DownParty as GeneralSamlDownPartyViewModel;
@@ -8,10 +9,12 @@
 <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
     <div class="modal-header sticky-header">
         <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
-            <span class="text-nowrap first-header">SAML 2.0</span>
-            <span class="ml-2 text-muted text-truncate second-header">@GetDownPartyDisplayName(samlDownParty.Form.Model)</span>
+            <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@GetDownPartyDisplayName(samlDownParty.Form.Model)</span>
+            <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">SAML 2.0</span>
         </div>
-        <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
+        <div class="ml-3 d-flex align-items-center">
+            <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
+        </div>
     </div>
     <div class="modal-body">
         <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" />
@@ -40,7 +43,7 @@
                         <FFieldTextClipboard Class="@(samlDownParty.ShowMetadataDetails ? string.Empty : "pb-1")" @bind-Value="samlDownParty.Form.Model.Metadata" For="@(() => samlDownParty.Form.Model.Metadata)" />
                         @if (!samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace() && hasMetadataDetails)
                         {
-                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="() => samlDownParty.ShowMetadataDetails = true">Show more</button>
+                            <button type="button" class="btn btn-link btn-xs pl-1 pb-3" @onclick="@(async () => await ShowSamlMetadataDetailsAsync(samlDownParty))">Show more</button>
                         }
                         @if (samlDownParty.ShowMetadataDetails && !samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                         {
@@ -58,6 +61,26 @@
                             {
                                 <FFieldTextClipboard @bind-Value="samlDownParty.Form.Model.MetadataLogout" For="@(() => samlDownParty.Form.Model.MetadataLogout)" LabelText="Single Logout Response URL" />
                             }
+
+                            @if (IdPKeyInfo != null)
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div>
+                                                <div>@IdPKeyInfo.Subject</div>
+                                                <div class="small">Valid from @IdPKeyInfo.ValidFrom.ToShortDateString() to @IdPKeyInfo.ValidTo.ToShortDateString()</div>
+                                                <div class="small">Thumbprint: @IdPKeyInfo.Thumbprint</div>
+                                            </div>
+                                            <div class="pt-2">
+                                                <FFieldTextClipboard Class="pb-0" @bind-Value="IdPKeyInfo.CertificateBase64" For="@(() => IdPKeyInfo.CertificateBase64)" />
+                                                <button type="button" class="btn btn-link btn-xs pt-0 pl-0" @onclick="@(async () => await DownloadCertificateAsync(IdPKeyInfo.Subject, IdPKeyInfo.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <label class="label-control">IdP Signing Certificate</label>
+                                </div>
+                            }                            
                         }
                     }
                 </div>
@@ -263,6 +286,7 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>
+
 
 
 

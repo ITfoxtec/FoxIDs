@@ -72,6 +72,10 @@ namespace FoxIDs.Client.Pages
         private async Task DefaultLoadAsync()
         {
             upPartyFilterForm?.ClearError();
+            if (newUpPartyModal != null)
+            {
+                newUpPartyModal.IsVisible = false;
+            }
             try
             {
                 SetGeneralUpParties(await UpPartyService.GetUpPartiesAsync(null));

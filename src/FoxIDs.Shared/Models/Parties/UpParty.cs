@@ -73,7 +73,7 @@ namespace FoxIDs.Models
         public List<ExtendedUi> ExtendedUis { get; set; }
 
         /// <summary>
-        /// Claim transforms executed before exit / response from up-party and after the optional extended UI and the optional external users.
+        /// Claim transforms executed before exit / response from authentication method and after the optional extended UI and the optional external users.
         /// </summary>
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "exit_claim_transforms")]

@@ -204,7 +204,7 @@ namespace FoxIDs.Logic
                             var loginHintCandidate = values.FirstOrDefault(v => !v.IsNullOrWhiteSpace());
                             if (!loginHintCandidate.IsNullOrWhiteSpace())
                             {
-                                loginRequest.LoginHint = loginHintCandidate;
+                                loginRequest.LoginHint = loginHintCandidate.Trim().ToLower();
                                 break;
                             }
                         }

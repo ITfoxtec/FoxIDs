@@ -23,7 +23,10 @@
                     {
                         <PageEditForm @ref="tenant.Form" TModel="TenantViewModel" OnValidSubmit="@(async (editContext) => await OnEditTenantValidSubmitAsync(tenant, editContext))">
                             <div class="modal-header sticky-header">
-                                Tenant
+                                <div class="h5 d-flex flex-nowrap align-items-center mb-0 hide-owerflow">
+                                    <span class="text-truncate second-header flex-grow-1" style="min-width: 0;">@TenantInfoText(tenant)</span>
+                                    <span class="badge badge-light border ml-2 flex-shrink-0 d-inline-flex align-items-center first-header">Tenant</span>
+                                </div>
                             </div>
                             <div class="modal-body">
                                 <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
@@ -204,11 +207,11 @@
                                 </div>
                             }
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                                 @if (tenant.Name != Constants.Routes.MasterTenantName)
                                 {
-                                    <a class="btn btn-link @(tenantWorking ? "disabled" : "")" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                                    <a class="btn btn-outline-dark @(tenantWorking ? "disabled" : "")" href="@tenant.LoginUri" target="_blank">Open tenant</a>
                                 }
-                                <button type="button" class="btn btn-link @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                                 <button type="submit" class="btn btn-primary @(tenantWorking ? "disabled" : "")">Update</button>
                                 <button type="button" class="btn btn-secondary @(tenantWorking ? "disabled" : "")" @onclick="@(() => tenant.Edit = false)">Close</button>
                             </div>
@@ -216,8 +219,11 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link pl-0" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
-                            @TenantInfoText(tenant)
+                        <button type="button" class="btn btn-link text-left pl-0" style="min-width: 0; overflow: hidden;" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
+                            <span class="d-flex align-items-center flex-nowrap text-truncate overflow-hidden" style="min-width: 0;">
+                                <span class="text-truncate flex-grow-1" style="min-width: 0">@TenantInfoText(tenant)</span>
+                                <span class="badge badge-light border ml-2 mt-1 flex-shrink-0 d-inline-flex">Tenant</span>
+                            </span>
                         </button>
                         @if (tenant.Name != Constants.Routes.MasterTenantName)
                         {

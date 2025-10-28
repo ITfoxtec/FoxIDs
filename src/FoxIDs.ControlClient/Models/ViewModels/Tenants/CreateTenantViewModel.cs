@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class CreateTenantViewModel
+    public class CreateTenantViewModel : IValidatableObject
     {
         /// <summary>
         /// Tenant name.
@@ -26,11 +27,16 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Administrator password.
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         [Display(Name = "Administrator password")]
         public string AdministratorPassword { get; set; }
+
+        /// <summary>
+        /// True if the administrator account is created without an initial password and it is set with email confirmation.
+        /// </summary>
+        [Display(Name = "Set administrator password with email confirmation code")]
+        public bool SetAdministratorPasswordEmail { get; set; }
 
         /// <summary>
         /// True if the administrator account password should be changed on first login. Default true.
@@ -46,5 +52,18 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Plan")]
         public string PlanName { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!SetAdministratorPasswordEmail && string.IsNullOrWhiteSpace(AdministratorPassword))
+            {
+                yield return new ValidationResult($"The field {nameof(AdministratorPassword)} is required.", new[] { nameof(AdministratorPassword) });
+            }
+
+            if (SetAdministratorPasswordEmail && ChangeAdministratorPassword)
+            {
+                yield return new ValidationResult($"The fields {nameof(SetAdministratorPasswordEmail)} and {nameof(ChangeAdministratorPassword)} can not both be true.", new[] { nameof(SetAdministratorPasswordEmail), nameof(ChangeAdministratorPassword) });
+            }
+        }
     }
 }

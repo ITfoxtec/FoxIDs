@@ -43,10 +43,11 @@ namespace FoxIDs.Controllers
         /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.UsedBase>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.UsedBase>>> GetUsages(string filterTenantName, int year, int month, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.UsedBase>>> GetUsages(string filterTenantName, int year, int month, string paginationToken = null)
         {
             try
             {
+                filterTenantName = filterTenantName?.Trim();
                 if (year <= 0 || month <= 0)
                 {
                     var now = DateTimeOffset.Now;

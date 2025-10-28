@@ -40,10 +40,11 @@ namespace FoxIDs.Controllers
         /// <returns>Plans.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.Plan>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.Plan>>> GetPlans(string filterName, string paginationToken = null)
+    public async Task<ActionResult<Api.PaginationResponse<Api.Plan>>> GetPlans(string filterName, string paginationToken = null)
         {
             try
             {
+                filterName = filterName?.Trim();
                 var mPlans = await GetFilterPlanInternalAsync(filterName);
 
                 var response = new Api.PaginationResponse<Api.Plan>

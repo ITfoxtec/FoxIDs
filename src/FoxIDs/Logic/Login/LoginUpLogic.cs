@@ -119,7 +119,7 @@ namespace FoxIDs.Logic
                     MaxAge = loginRequest.MaxAge,
                     LoginHint = loginRequest.LoginHint,
                     Acr = loginRequest.Acr,
-                    DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.LoginHint.IsNullOrWhiteSpace())
+                    DoLoginIdentifierStep = loginRequest.LoginHint.IsNullOrWhiteSpace()
                 });
 
                 return HttpContext.GetUpPartyUrl(loginName, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();

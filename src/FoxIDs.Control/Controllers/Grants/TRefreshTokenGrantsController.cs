@@ -34,21 +34,21 @@ namespace FoxIDs.Controllers
         /// <param name="filterUserIdentifier">Filter by the user identifier which can be: email, phone or username.</param>
         /// <param name="filterSub">Filter by the users SUB claim.</param>
         /// <param name="filterClientId">Filter by the applications client ID.</param>
-        /// <param name="filterAuthMethod">Filter by the authentication method.</param>
+        /// <param name="filterUpPartyName">Filter by the authentication method.</param>
         /// <param name="paginationToken">The pagination token.</param>
         /// <returns>Refresh token grants.</returns>
         [ProducesResponseType(typeof(Api.PaginationResponse<Api.RefreshTokenGrant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.PaginationResponse<Api.RefreshTokenGrant>>> GetRefreshTokenGrants(string filterUserIdentifier, string filterSub, string filterClientId, string filterAuthMethod, string paginationToken = null)
+        public async Task<ActionResult<Api.PaginationResponse<Api.RefreshTokenGrant>>> GetRefreshTokenGrants(string filterUserIdentifier, string filterSub, string filterClientId, string filterUpPartyName, string paginationToken = null)
         {
             try
             {
                 filterUserIdentifier = filterUserIdentifier?.Trim().ToLower();
                 filterSub = filterSub?.Trim();
                 filterClientId = filterClientId?.Trim().ToLower();
-                filterAuthMethod = filterAuthMethod?.Trim().ToLower();
+                filterUpPartyName = filterUpPartyName?.Trim().ToLower();
 
-                (var mTtlGrants, var mGrants, var nextPaginationToken) = await oauthRefreshTokenGrantDownBaseLogic.ListRefreshTokenGrantsAsync(filterUserIdentifier, filterSub, filterClientId, filterAuthMethod, paginationToken);
+                (var mTtlGrants, var mGrants, var nextPaginationToken) = await oauthRefreshTokenGrantDownBaseLogic.ListRefreshTokenGrantsAsync(filterUserIdentifier, filterSub, filterClientId, filterUpPartyName, paginationToken);
                 
                 var response = new Api.PaginationResponse<Api.RefreshTokenGrant>
                 {
@@ -67,14 +67,15 @@ namespace FoxIDs.Controllers
                     grant.Claims = null;
                     response.Data.Add(grant);
                 }
+                response.Data = response.Data.OrderByDescending(g => g.CreateTime).ToHashSet();
                 return Ok(response);
             }
             catch (FoxIDsDataException ex)
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.RefreshTokenGrant).Name}' by filter user identifier '{filterUserIdentifier}', client ID '{filterClientId}', auth method '{filterAuthMethod}'.");
-                    return NotFound(typeof(Api.RefreshTokenGrant).Name, new { filterClientId, filterUserIdentifier, filterAuthMethod }.ToJson());
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.RefreshTokenGrant).Name}' by filter user identifier '{filterUserIdentifier}', client ID '{filterClientId}', auth method '{filterUpPartyName}'.");
+                    return NotFound(typeof(Api.RefreshTokenGrant).Name, new { filterClientId, filterUserIdentifier, filterUpPartyName }.ToJson());
                 }
                 throw;
             }
@@ -86,24 +87,24 @@ namespace FoxIDs.Controllers
         /// <param name="userIdentifier">User identifier which can be: email, phone or username.</param>
         /// <param name="sub">The users SUB claim.</param>
         /// <param name="clientId">Applications client ID.</param>
-        /// <param name="authMethod">Filter by the authentication method.</param>
+        /// <param name="upPartyName">Filter by the authentication method.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRefreshTokenGrants(string userIdentifier = null, string sub = null, string clientId = null, string authMethod = null)
+        public async Task<IActionResult> DeleteRefreshTokenGrants(string userIdentifier = null, string sub = null, string clientId = null, string upPartyName = null)
         {
             try
             {
-                if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && authMethod.IsNullOrWhiteSpace())
+                if (userIdentifier.IsNullOrWhiteSpace() && sub.IsNullOrWhiteSpace() && clientId.IsNullOrWhiteSpace() && upPartyName.IsNullOrWhiteSpace())
                 {
-                    ModelState.TryAddModelError(string.Empty, $"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(authMethod)} parameter is required.");
+                    ModelState.TryAddModelError(string.Empty, $"Either the {nameof(userIdentifier)} or the {nameof(sub)} or the {nameof(clientId)} or the {nameof(upPartyName)} parameter is required.");
                     return BadRequest(ModelState);
                 }
                 userIdentifier = userIdentifier?.Trim().ToLower();
                 sub = sub?.Trim();
                 clientId = clientId?.Trim().ToLower();
-                authMethod = authMethod?.Trim().ToLower();
+                upPartyName = upPartyName?.Trim().ToLower();
 
-                await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(userIdentifier, sub, clientId, authMethod);
+                await oauthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(userIdentifier, sub, clientId, upPartyName);
 
                 return NoContent();
             }
@@ -111,8 +112,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == DataStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.RefreshTokenGrant).Name}' by user identifier '{userIdentifier}', client ID '{clientId}', auth method '{authMethod}'.");
-                    return NotFound(typeof(Api.RefreshTokenGrant).Name, new { userIdentifier, clientId, authMethod }.ToJson());
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.RefreshTokenGrant).Name}' by user identifier '{userIdentifier}', client ID '{clientId}', auth method '{upPartyName}'.");
+                    return NotFound(typeof(Api.RefreshTokenGrant).Name, new { userIdentifier, clientId, upPartyName }.ToJson());
                 }
                 throw;
             }

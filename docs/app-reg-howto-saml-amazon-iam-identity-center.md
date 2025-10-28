@@ -14,10 +14,10 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 
 1. Select the **Certificates** tab
 2. Click **Change Container type**
-![Change certificate container type in FoxIDs](images/howto-oidc-amazon-iam-ic-certificate-type.png)
+![Change certificate container type in FoxIDs](images/howto-certificate-type.png)
 3. Find **Self-signed or your certificate** and click **Change to this container type**
 4. The self-signed certificate is valid for 3 years, and you can optionally upload you own certificate
-![Change certificate in FoxIDs](images/howto-oidc-amazon-iam-ic-certificate-change.png)
+![Change certificate in FoxIDs](images/howto-certificate-change.png)
 
 
 **2 - Then go to the Amazon IAM Identity Center in [AWS portal](https://aws.amazon.com/)**
@@ -29,7 +29,7 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
  5. Click **Next**
  6. Copy the **IAM Identity Center Assertion Consumer Service (ACS) URL** and save it for later
  7. Copy the **IAM Identity Center issuer URL** and save it for later
-![Read ACS and issuer in Amazon IAM Identity Center](images/howto-oidc-amazon-iam-ic-acs-issuer.png)
+![Read ACS and issuer in Amazon IAM Identity Center](images/app-reg-howto-saml-amazon-iam-ic-acs-issuer.png)
 
 **3 - Then creating an SAML 2.0 application in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -40,14 +40,14 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 5. Add the **Name** e.g. `Amazon IAM Identity Center`
 6. Add the **Application issuer** from Amazon IAM Identity Center called **IAM Identity Center issuer URL**
 7. Add the **Assertion consumer service (ACS) URL** from Amazon IAM Identity Center called **IAM Identity Center Assertion Consumer Service (ACS) URL** 
-![Add issuer and ACS in FoxIDs](images/howto-oidc-amazon-iam-ic-create.png)
+![Add issuer and ACS in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-create.png)
 8. Click **Register**
 9. Click **Close**
 10. Find the application in the list and click on it to edit
 11. Click **Show advanced**
 12. Set the **Authn request binding** to **Post**
 13. Set the **NameID format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
-![Set binding and NameID format in FoxIDs](images/howto-oidc-amazon-iam-ic-binding-format.png)
+![Set binding and NameID format in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-binding-format.png)
 14. Set the **NameID format in metadata** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` at the bottom of the application
 15. Click **Update**
 16. Go to the top of the application and click the **SAML 2.0 Metadata URL** link to open it in a browser

@@ -46,8 +46,7 @@ namespace FoxIDs.Client.Shared.Components
             await OnAfterInit.InvokeAsync(Model);
             afterInit?.Invoke(Model);
             error = null;
-            EditContext = new EditContext(Model);
-            validationMessageStore = new ValidationMessageStore(EditContext);
+            InitializeValidationState();
         }
 
         public void Init(TModel model = null, Action<TModel> afterInit = null)
@@ -55,16 +54,14 @@ namespace FoxIDs.Client.Shared.Components
             Model = model ?? new TModel();
             afterInit?.Invoke(Model);
             error = null;
-            EditContext = new EditContext(Model);
-            validationMessageStore = new ValidationMessageStore(EditContext);
+            InitializeValidationState();
         }
 
         public void UpdateModel(TModel model)
         {
             Model = model;
             error = null;
-            EditContext = new EditContext(Model);
-            validationMessageStore = new ValidationMessageStore(EditContext);
+            InitializeValidationState();
         }
 
         public void SetError(string error)
@@ -83,12 +80,14 @@ namespace FoxIDs.Client.Shared.Components
         public void SetFieldError(string fieldName, string error)
         {
             Console.WriteLine(error);
+            EnsureValidationStateInitialized();
             validationMessageStore.Add(EditContext.Field(fieldName), error);
             EditContext.NotifyValidationStateChanged();
         }
 
         public void ClearFieldError(string fieldName)
         {
+            EnsureValidationStateInitialized();
             validationMessageStore.Clear(EditContext.Field(fieldName));
             EditContext.NotifyValidationStateChanged();
         }
@@ -96,6 +95,7 @@ namespace FoxIDs.Client.Shared.Components
         public async Task<(bool isValid, string error)> Submit()
         {
             error = null;
+            EnsureValidationStateInitialized();
             validationMessageStore.Clear();
             var isValid = EditContext.Validate();
 
@@ -138,6 +138,20 @@ namespace FoxIDs.Client.Shared.Components
         private async Task OnSubmitAsync()
         {
             _ = await Submit();
+        }
+
+        private void InitializeValidationState()
+        {
+            EditContext = new EditContext(Model);
+            validationMessageStore = new ValidationMessageStore(EditContext);
+        }
+
+        private void EnsureValidationStateInitialized()
+        {
+            if (EditContext == null || validationMessageStore == null)
+            {
+                InitializeValidationState();
+            }
         }
     }
 }

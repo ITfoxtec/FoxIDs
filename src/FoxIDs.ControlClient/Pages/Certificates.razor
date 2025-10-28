@@ -113,6 +113,13 @@
                                                 }
                                             </li>
                                         </ul>
+                                        @if (!certificate.Form.Model.CertificateBase64.IsNullOrWhiteSpace())
+                                        {
+                                            <div class="mt-4">
+                                                <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.Form.Model.CertificateBase64" For="@(() => certificate.Form.Model.CertificateBase64)" />
+                                                <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Form.Model.Subject, certificate.Form.Model.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 @if (!certificate.IsPrimary && !certificate.CreateMode && certificate.DeleteAcknowledge)
@@ -158,8 +165,15 @@
                                 <button type="button" class="btn btn-link text-left p-0 btn-wrap" @onclick="@(() => ShowUpdateCertificate(certificate))">
                                     <strong>@certificate.Subject</strong>
                                 </button><br />
-                                <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
-                                <span>Thumbprint: @certificate.Thumbprint</span>
+                                <span class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
+                                <span class="small">Thumbprint: @certificate.Thumbprint</span>
+                                @if (!certificate.CertificateBase64.IsNullOrWhiteSpace())
+                                {
+                                    <div class="mt-4">
+                                        <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.CertificateBase64" For="@(() => certificate.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                        <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Subject, certificate.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                    </div>
+                                }
                             }
                         }
                     </div>
@@ -177,12 +191,39 @@
         }
         else if (trackKey?.Type == TrackKeyTypes.ContainedRenewSelfSigned)
         {
-            <div class="card bg-light">
+            <div class="card bg-light mb-3">
                 <div class="card-body">
                     <div><strong>Renewed self-signed certificates</strong></div>
                     <div>Automatically renewed with 3 month validity period. Renewed 10 days before expiration and promoted to primary certificate 5 days before expiration.</div>
                 </div>
             </div>
+            @if (certificates.Any(c => !c.CreateMode))
+            {
+                foreach (var certificate in certificates.Where(c => !c.CreateMode).OrderByDescending(c => c.IsPrimary))
+                {
+                    <h4 class="@(certificate.IsPrimary ? "pt-2" : "pt-4")">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</h4>
+                    <div class="card border">
+                        <div class="card-body">
+                            <div><strong>@certificate.Subject</strong></div>
+                            <div class="small @(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</div>
+                            <div class="small">Thumbprint: @certificate.Thumbprint</div>
+                            @if (!certificate.CertificateBase64.IsNullOrWhiteSpace())
+                            {
+                                <div class="mt-4">
+                                    <FFieldTextClipboard Class="pb-0" @bind-Value="certificate.CertificateBase64" For="@(() => certificate.CertificateBase64)" LabelText="Certificate (Base64)" />
+                                    <button type="button" class="btn btn-link btn-xs py-2 pl-0" @onclick="@(async () => await DownloadCertificateAsync(certificate.Subject, certificate.CertificateBase64))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download certificate</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    Certificates are being prepared. Please check back shortly.
+                </div>
+            }
         }
     </div>
 </div>

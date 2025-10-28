@@ -14,11 +14,20 @@ using System.IO;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlDownParty : DownPartyBase
     {
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
+        public TrackService TrackService { get; set; }
+
+        private KeyInfoViewModel IdPKeyInfo { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -62,6 +71,44 @@ namespace FoxIDs.Client.Pages.Components
             }
 
             (model.Metadata, model.MetadataIssuer, model.MetadataAuthn, model.MetadataLogout) = MetadataLogic.GetDownSamlMetadata(model.Name, model.PartyBindingPattern);
+        }
+
+        private async Task ShowSamlMetadataDetailsAsync(GeneralSamlDownPartyViewModel generalSamlDownParty)
+        {
+            if (generalSamlDownParty == null)
+            {
+                return;
+            }
+
+            if (IdPKeyInfo == null)
+            {
+                try
+                {
+                    var trackKeys = await TrackService.GetTrackKeyContainedAsync();
+                    IdPKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = trackKeys.PrimaryKey.CertificateInfo.Subject,
+                        ValidFrom = trackKeys.PrimaryKey.CertificateInfo.ValidFrom,
+                        ValidTo = trackKeys.PrimaryKey.CertificateInfo.ValidTo,
+                        IsValid = trackKeys.PrimaryKey.CertificateInfo.IsValid(),
+                        Thumbprint = trackKeys.PrimaryKey.CertificateInfo.Thumbprint,
+                        KeyId = trackKeys.PrimaryKey.Kid,
+                        CertificateBase64 = trackKeys.PrimaryKey.X5c?.FirstOrDefault(),
+                        Key = trackKeys.PrimaryKey
+                    };
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    generalSamlDownParty.Form.SetError(ex.Message);
+                }
+            }
+
+            generalSamlDownParty.ShowMetadataDetails = true;
         }
 
         private SamlDownPartyViewModel ToViewModel(GeneralSamlDownPartyViewModel generalSamlDownParty, SamlDownParty samlDownParty)
@@ -233,6 +280,16 @@ namespace FoxIDs.Client.Pages.Components
             {
                 generalSamlDownParty.KeyInfoList.Remove(keyInfo);
             }
+        }
+
+        private async Task DownloadCertificateAsync(string subject, string certificateBase64)
+        {
+            if (certificateBase64.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{subject}.cer", certificateBase64);
         }
 
         private async Task OnEditSamlDownPartyValidSubmitAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, EditContext editContext)

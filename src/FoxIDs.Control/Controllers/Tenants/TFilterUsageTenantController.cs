@@ -40,10 +40,11 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Obsolete($"Use {nameof(TUsageTenantsController)} instead.")]
-        public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterUsageTenant(string filterName)
+    public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterUsageTenant(string filterName)
         {
             try
             {
+                filterName = filterName?.Trim();
                 (var mTenants, _) = filterName.IsNullOrWhiteSpace() ?
                     await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName) :
                     await tenantDataRepository.GetManyAsync<Tenant>(whereQuery: t => t.ForUsage == true && t.Name != Constants.Routes.MasterTenantName && t.Name.Contains(filterName, StringComparison.CurrentCultureIgnoreCase));

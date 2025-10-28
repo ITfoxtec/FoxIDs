@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -20,6 +21,9 @@ namespace FoxIDs.Client.Models.ViewModels
             ValidTo = key.CertificateInfo.ValidTo;
             IsValid = key.CertificateInfo.IsValid();
             Thumbprint = key.CertificateInfo.Thumbprint;
+            Key = key;
+            KeyId = key.Kid;
+            CertificateBase64 = key.X5c?.FirstOrDefault();
         }
 
         public bool Edit { get; set; }

@@ -75,6 +75,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Users cannot set / reset password with email")]
         public bool DisableSetPasswordEmail { get; set; }
 
+        [Display(Name = "Delete refresh tokens if a user change / set password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
         /// <summary>

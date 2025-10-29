@@ -97,7 +97,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default false.
         /// </summary>
-        [Display(Name = "Delete refresh tokens if a user change password")]
+        [Display(Name = "Delete refresh tokens if a user change / set password")]
         public bool DeleteRefreshTokenGrantsOnChangePassword { get; set; }
 
         /// <summary>

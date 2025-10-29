@@ -186,7 +186,7 @@ namespace FoxIDs.Controllers
 
                 var mUser = await tenantDataRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = user.Email, UserIdentifier = user.Phone ?? user.Username }), queryAdditionalIds: true);
 
-                if ((!mUser.DisableAccount && user.DisableAccount) || user.ChangePassword || user.SetPasswordEmail || user.SetPasswordSms)
+                if (!mUser.DisableAccount && user.DisableAccount)
                 {
                     await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(user.Email ?? user.Phone ?? user.Username, upPartyType: PartyTypes.Login);
                 }
@@ -325,9 +325,10 @@ namespace FoxIDs.Controllers
                 phone = phone?.Trim();
                 username = username?.Trim()?.ToLower();
 
+                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
+
                 await oAuthRefreshTokenGrantDownBaseLogic.DeleteRefreshTokenGrantsAsync(email ?? phone ?? username, upPartyType: PartyTypes.Login);
 
-                await tenantDataRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, new User.IdKey { Email = email, UserIdentifier = phone ?? username }), queryAdditionalIds: true);
                 return NoContent();
             }
             catch (FoxIDsDataException ex)

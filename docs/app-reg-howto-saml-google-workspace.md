@@ -19,36 +19,36 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Google Workspace
 4. The self-signed certificate is valid for 3 years, and you can optionally upload your own certificate
 ![Change certificate in FoxIDs](images/howto-certificate-change.png)
 
-**2 - Then start to create a SAML 2.0 application in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then start creating a SAML 2.0 application in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the **Applications** tab
 2. Click **New application**
 3. Click **Show advanced**
 4. Click **Web application (SAML 2.0)**
-5. Add the **Name** e.g. `Google Workspace`
-6. Click **Show more** in the **The application will have the following information** section to the right
+5. Enter the **Name**, e.g. `Google Workspace`
+6. In the panel on the right, click **Show more** in the section labeled **The application will have the following information**
 ![Start creating app in FoxIDs](images/app-reg-howto-saml-google-workspace-pre-create.png)
-7. Save application information for later use in Google Workspace:
+7. Save the application information for later use in Google Workspace:
     - Copy the **IdP Issuer**
     - Copy the **Single Sign-On URL**
-    - In **IdP Signing Certificate** click **Download certificate**
+    - Under **IdP Signing Certificate**, click **Download certificate**
 8. Keep the FoxIDs application UI open for later use
 
 **3 - Then go to the [Google Workspace portal](https://workspace.google.com/)**
 
-1. Click **Admin console** where you are prompted to sign in
-2. Click **Security** and then **Authentication** and then **SSO with third party IdP**
+1. Open the **Admin console** and sign in if prompted
+2. Navigate to **Security** > **Authentication** > **SSO with third party IdP**
 3. In the **Third-party SSO profiles** section, click **ADD SAML PROFILE**
-4. Add a **SSO profile name**
-5. In **Autofill email** select **Send email address in the URL as the login_hint parameter**
+4. Enter an **SSO profile name**
+5. Under **Autofill email**, select **Send email address in the URL as the login_hint parameter**
 6. Find the **IDP details** section
-7. Set the **IDP entity ID** to the FoxIDs applications **IdP Issuer** you copied
-8. Set the **Sign-in page URL** to the FoxIDs applications **Single Sign-On UR** you copied
-9. Optionally set the **Sign-out page URL** to web page where users are redirected after sign-out (Google Workspace does not support single sign-out and FoxIDs is not called on sign-out)
-![Configue in Google Workspace](images/app-reg-howto-saml-google-workspace.png)
-11. Click **UPLOAD CERTIFICATE** and upload the **IdP Signing Certificate** you downloaded from FoxIDs
+7. Set the **IDP entity ID** to the FoxIDs application's **IdP Issuer** value you copied
+8. Set the **Sign-in page URL** to the FoxIDs application's **Single Sign-On URL** value you copied
+9. (Optional) Set the **Sign-out page URL** to the page users should land on after sign-out. Google Workspace does not support single logout, so FoxIDs is not invoked during sign-out.
+![Configure in Google Workspace](images/app-reg-howto-saml-google-workspace.png)
+10. Click **UPLOAD CERTIFICATE** and upload the **IdP Signing Certificate** you downloaded from FoxIDs
 11. Click **Save**
-12. Find the **SP details** section and save the information for later use in FoxIDs:
+12. In the **SP details** section, save the information for later use in FoxIDs:
     - Copy the **EntityID Issuer**
     - Copy the **ACS URL**
      
@@ -61,7 +61,7 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Google Workspace
 4. Click **Create**
 5. Click **Change application** to open the application in edit mode
 6. Select the **Claims Transform** tab
-7. Click **Add claim transform** and click **Map** to add a NameID claim with the user's email address matching the Google Workspace user's email address.
+7. Click **Add claim transform**, choose **Map**, and add a NameID claim with the user's email address matching the Google Workspace user's email address.
 8. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
 9. Set **Select claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`
 10. Click **Update**

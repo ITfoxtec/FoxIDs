@@ -39,7 +39,7 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 4. Click **Web application (SAML 2.0)**
 5. Add the **Name** e.g. `Amazon IAM Identity Center`
 6. Set the **Application issuer** to the **IAM Identity Center issuer URL** you copied
-7. Set the **Assertion consumer service (ACS) URL** to the **IAM Identity Center Assertion Consumer Service (ACS) URL** you copied
+7. Set the **Assertion consumer service (ACS) URL** to the **IAM Identity Center Assertion Consumer Service (ACS) URL** you copi  ed
 ![Add issuer and ACS in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-create.png)
 8. Click **Create**
 9. Click **Change application** to open the application in edit mode
@@ -60,4 +60,4 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 5. Click **Change identity source**
 6. In the **Identity source** section, select the **AWS access portal URL** link to test the sign-in flow (you may need to create a user in FoxIDs first)
 
-> Amazon IAM Identity Center does not support logout.
+> Amazon IAM Identity Center does not support single sign-out.

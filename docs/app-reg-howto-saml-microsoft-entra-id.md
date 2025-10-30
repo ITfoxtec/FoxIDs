@@ -74,7 +74,7 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    ```
 5. configure the domain federation:
    ```powershell
-   New-MgDomainFederationConfiguration -DomainName $domainName `
+   New-MgDomainFederationConfiguration -DomainId $domainName `
      -IssuerUri $idpIssuer `
      -PassiveSignInUri $ssoUrl `
      -LogoutUri $sloUrl `
@@ -88,9 +88,9 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    - `rejectMfaByFederatedIdp` – Entra always does MFA itself; MFA at FoxIDs is ignored.
 6. Validate the configuration:
    ```powershell
-   Get-MgDomainFederationConfiguration -DomainName $domainName
+   Get-MgDomainFederationConfiguration -DomainId $domainName
    # or
-   Get-MgDomain -DomainId $Domain | fl Id, AuthenticationType
+   Get-MgDomain -DomainId $domainName | fl Id, AuthenticationType
    ``` 
 
 **4a - Then configure the users Immutable ID in Microsoft Entra ID with PowerShell**

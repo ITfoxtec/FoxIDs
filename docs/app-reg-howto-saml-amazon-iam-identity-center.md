@@ -1,6 +1,6 @@
 ﻿# Connect to Amazon IAM Identity Center with SAML 2.0
 
-FoxIDs can be added as an external identity provider for Amazon IAM Identity Center with SAML 2.0.
+Connect FoxIDs as an **external identity provider for Amazon IAM Identity Center** with SAML 2.0.
 
 By configuring an [OpenID Connect authentication method](auth-method-oidc.md) and Amazon IAM Identity Center as a [SAML 2.0 application](app-reg-saml-2.0.md) FoxIDs become a [bridge](bridge.md) between OpenID Connect and SAML 2.0 and automatically convert JWT (OAuth 2.0) claims to SAML 2.0 claims.
 
@@ -41,17 +41,16 @@ You are required to upload the SAML 2.0 metadata from FoxIDs to Amazon IAM Ident
 6. Add the **Application issuer** from Amazon IAM Identity Center called **IAM Identity Center issuer URL**
 7. Add the **Assertion consumer service (ACS) URL** from Amazon IAM Identity Center called **IAM Identity Center Assertion Consumer Service (ACS) URL** 
 ![Add issuer and ACS in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-create.png)
-8. Click **Register**
-9. Click **Close**
-10. Find the application in the list and click on it to edit
-11. Click **Show advanced**
-12. Set the **Authn request binding** to **Post**
-13. Set the **NameID format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
+8. Click **Create**
+9. Click **Change application** - to open the application opens in edit mode
+10. Click **Show advanced**
+11. Set the **Authn request binding** to **Post**
+12. Set the **NameID format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
 ![Set binding and NameID format in FoxIDs](images/app-reg-howto-saml-amazon-iam-ic-binding-format.png)
-14. Set the **NameID format in metadata** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` at the bottom of the application
-15. Click **Update**
-16. Go to the top of the application and click the **SAML 2.0 Metadata URL** link to open it in a browser
-17. Download the metadata as a metadata file
+13. Set the **NameID format in metadata** to `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` at the bottom of the application
+14. Click **Update**
+15. Go to the top of the application and click the **SAML 2.0 Metadata URL** link to open it in a browser
+16. Download the metadata as a metadata file
  
 **4 - Go back to the Amazon IAM Identity Center in [AWS portal](https://aws.amazon.com/)**
 

@@ -1,12 +1,12 @@
 ﻿# Connect to Microsoft Entra ID with SAML 2.0
 
-FoxIDs can be added as an external identity provider for Microsoft Entra ID with SAML 2.0.
+Connect FoxIDs as an **external identity provider for Microsoft Entra ID** with SAML 2.0.
 
 By configuring an [OpenID Connect authentication method](auth-method-oidc.md) and Microsoft Entra ID as a [SAML 2.0 application](app-reg-saml-2.0.md) FoxIDs become a [bridge](bridge.md) between OpenID Connect and SAML 2.0 and automatically convert JWT (OAuth 2.0) claims to SAML 2.0 claims.
 
 ## Configure Microsoft Entra ID
 
-This guide describe how to setup FoxIDs as an external identity provider for Microsoft Entra ID. Users is connected with there email address and is required to exist in Microsoft Entra ID.
+This guide describe how to setup FoxIDs as an external identity provider for Microsoft Entra ID. Users is connected with there Immutable ID and is required to exist in Microsoft Entra ID.
 
 **1 - Start by configuring a certificate in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -19,7 +19,7 @@ You are required to upload the SAML 2.0 signing certificate used in FoxIDs to Mi
 4. The self-signed certificate is valid for 3 years, and you can optionally upload you own certificate
 ![Change certificate in FoxIDs](images/howto-certificate-change.png)
 
-**2 - Then creating an SAML 2.0 application in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then create a SAML 2.0 application in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the **Applications** tab
 2. Click **New application**
@@ -30,25 +30,26 @@ You are required to upload the SAML 2.0 signing certificate used in FoxIDs to Mi
 7. Set the **Assertion consumer service (ACS) URL** to `https://login.microsoftonline.com/login.srf`
 ![Add issuer and ACS in FoxIDs](images/auth-method-howto-saml-microsoft-entra-id-create.png)
 8. Click **Create**
-9. Click **Change application**
-10. The application opens in edit mode
-11. Click **Show advanced**
-12. Set the **Authn request binding** to **Post**
-13. Set the **NameID format** to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
-14. Set the **Optional logged out URL** and **Optional single logout URL** to `https://login.microsoftonline.com/login.srf`
+9. Click **Change application** - to open the application opens in edit mode
+10. Click **Show advanced**
+11. Set the **Authn request binding** to **Post**
+12. Set the **NameID format** to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+13. Set the **Optional logged out URL** and **Optional single logout URL** to `https://login.microsoftonline.com/login.srf`
 ![Set binding, NameID format, and logout URLs in FoxIDs](images/auth-method-howto-saml-microsoft-entra-id-binding-format-logout.png)
-15. Go to the top of the application, find the **Application information** section and click **Show more**
-    - Copy the signing certificate in Base64 format
+14. Go to the top of the application, find the **Application information** section and click **Show more**
     - Copy the **IdP Issuer**
     - Copy the **Single Sign-On URL**
     - Copy the **Single Logout URL**
-16. Select the **Claims Transform** tab
-17. Click **Add claim transform** and click **Map** to add a NameID claim with the users email address matching the Microsoft Entra ID users Immutable ID.
-18. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
-19. Set **Select claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`
-20. Click **Update**
+    - Copy the **IdP Signing Certificate** in Base64 format
+15. Select the **Claims Transform** tab
+16. Click **Add claim transform** and click **Map** to add a NameID claim with the users Immutable ID matching the Microsoft Entra ID users Immutable ID.
+17. Set **New claim** to `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` - which is the NameID claim URI
+18. Set **Select claim** to `http://schemas.foxids.com/ws/identity/claims/immutableid`
+19. Click **Update**
 
-> You can optionally use a different claim value for the NameID then a email address, but it must match the Immutable ID of the user in Microsoft Entra ID.
+> **You need to set the users Immutable ID as a claim in FoxIDs.**  
+  To set the Immutable ID on a internal user, select the **Users** tab and then **Internal Users** tab find the user and add a claim with the claim type `immutable_id` and the value of the Immutable ID in Microsoft Entra ID - it should be base64 encoded.  
+  The `immutable_id` claim type is mapped to the SAML 2.0 claim URI `http://schemas.foxids.com/ws/identity/claims/immutableid` in FoxIDs.
 
 **3 - Then configure domain federation in Microsoft Entra ID with PowerShell**
 
@@ -67,7 +68,7 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    $sloUrl = "copied Single Logout URL from FoxIDs"
    $signingCertBase64 = @"
    -----BEGIN CERTIFICATE-----
-   copied signing certificate from FoxIDs
+   copied IdP Signing Certificate from FoxIDs
    -----END CERTIFICATE-----
    "@
    ```
@@ -81,7 +82,7 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
      -PreferredAuthenticationProtocol "saml" ` 
      -FederatedIdpMfaBehavior "acceptIfMfaDoneByFederatedIdp" `
    ```
-   `FederatedIdpMfaBehavior` can be set to:
+   **FederatedIdpMfaBehavior** can be set to:
    - `acceptIfMfaDoneByFederatedIdp` – Entra accepts MFA from FoxIDs; if FoxIDs didn’t do MFA, Entra will do it.
    - `enforceMfaByFederatedIdp` – If a policy needs MFA, Entra will send the user back to FoxIDs to complete MFA.
    - `rejectMfaByFederatedIdp` – Entra always does MFA itself; MFA at FoxIDs is ignored.
@@ -92,7 +93,7 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
    Get-MgDomain -DomainId $Domain | fl Id, AuthenticationType
    ``` 
 
-**3 - Then configure the users Immutable ID in Microsoft Entra ID with PowerShell**
+**4a - Then configure the users Immutable ID in Microsoft Entra ID with PowerShell**
 
 1. Open PowerShell as administrator
 2. Install the [Microsoft Graph](https://www.powershellgallery.com/packages/Microsoft.Graph/) PowerShell module if not already installed: `Install-Module -Name Microsoft.Graph` and select `A`
@@ -101,8 +102,8 @@ It is not possible to configure an external SAML 2.0 identity provider in the [M
 3. Connect to Microsoft Graph: `Connect-MgGraph -Scopes "Domain.ReadWrite.All"`
 4. Setup the configuration variables:
    ```powershell
-   $userId = "user-id@my-domain.com" # The user ID to configure which is the User Principal Name (UPN) or the Object ID
-   $immutableId = "immutable-id" # The Immutable ID to set which must match the NameID claim sent from FoxIDs and can e.g. the user's email address / UPN
+   $userId = "user-id@my-domain.com" # The users User Principal Name (UPN) or the Object ID
+   $immutableId = "immutable-id" # The users Immutable ID - base64 encoded.
    ```
 5. Configure the user's Immutable ID:
    ```powershell
@@ -122,6 +123,7 @@ If the user already has an Immutable ID set, you need to move the user away from
    ```
 2. Set the user's new Immutable ID:
    ```powershell
+   $immutableId = "immutable-id" # The users Immutable ID - base64 encoded.
    Set-MgUser -UserId $userIdTemp -OnPremisesImmutableId $immutableId
    ```  
 3. Move the user back to the federated domain:
@@ -129,7 +131,7 @@ If the user already has an Immutable ID set, you need to move the user away from
    Update-MgUser -UserId $userIdTemp -UserPrincipalName $userId
    ```
 
-**3 - Then configure the users Immutable ID in Microsoft Entra ID with Graph API**  
+**4b - Or alternatively configure the users Immutable ID in Microsoft Entra ID with Graph API**  
 1. Get an access token for Microsoft Graph API with the required scopes.
 2. Make a `PATCH` request to the `/users/{id | userPrincipalName}` endpoint with the following JSON body:
    ```json
@@ -140,12 +142,8 @@ If the user already has an Immutable ID set, you need to move the user away from
    Replace `immutable-id` with the desired Immutable ID value that matches the NameID claim sent from FoxIDs.
 3. Validate the configuration by making a `GET` request to the `/users/{id | userPrincipalName}` endpoint and checking the `onPremisesImmutableId` property in the response.
 
-//Add a Postman example here for Graph API requests.
-
-
 If the user already has an Immutable ID set, you need to move the user away from the federated domain, set the Immutable ID, and then move the user back to the federated domain.
 1. Make a `PATCH` request to the `/users/{id | userPrincipalName}` endpoint to change the `userPrincipalName` to a non-federated domain.
 2. Make a `PATCH` request to set the new Immutable ID.
 3. Make a `PATCH` request to change the `userPrincipalName` back to the federated domain.
 4. Validate the configuration by making a `GET` request to the `/users/{id | userPrincipalName}` endpoint and checking the `onPremisesImmutableId` property in the response.
-5. If the user already has an Immutable ID set, you need to move the user away from the federated domain, set the Immutable ID, and then move the user back to the federated domain.

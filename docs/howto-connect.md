@@ -70,6 +70,10 @@ You would most often connect applications and APIs. But an application registrat
 ### OpenID Connect and OAuth 2.0
 It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
 
+How to guides:
+
+- Connect [Tailscale](app-reg-howto-oidc-tailscale.md)
+
 ### SAML 2.0
 Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
